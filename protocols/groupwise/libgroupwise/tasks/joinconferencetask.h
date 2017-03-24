@@ -39,7 +39,7 @@ public:
 	JoinConferenceTask(Task* parent);
 	~JoinConferenceTask();
 	void join( const ConferenceGuid & guid );
-	bool take( Transfer * transfer );
+	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
 	QStringList participants() const;
 	QStringList invitees() const;
 	ConferenceGuid guid() const;

@@ -58,15 +58,15 @@ public:
 	/**
 	 * Creates the "add contact" dialog specific to this protocol
 	 */
-	virtual AddContactPage *createAddContactWidget (QWidget * parent, Kopete::Account * i);
-	virtual KopeteEditAccountWidget *createEditAccountWidget (Kopete::Account * account, QWidget * parent);
-	virtual Kopete::Account *createNewAccount (const QString & accountId);
+	AddContactPage *createAddContactWidget (QWidget * parent, Kopete::Account * i) Q_DECL_OVERRIDE;
+	KopeteEditAccountWidget *createEditAccountWidget (Kopete::Account * account, QWidget * parent) Q_DECL_OVERRIDE;
+	Kopete::Account *createNewAccount (const QString & accountId) Q_DECL_OVERRIDE;
 
 	/**
 	 * Deserialize contact data
 	 */
-	virtual Kopete::Contact *deserializeContact (Kopete::MetaContact * metaContact,
-									 const QMap < QString, QString > &serializedData, const QMap < QString, QString > &addressBookData);
+	Kopete::Contact *deserializeContact (Kopete::MetaContact * metaContact,
+									 const QMap < QString, QString > &serializedData, const QMap < QString, QString > &addressBookData) Q_DECL_OVERRIDE;
 
 	enum OnlineStatus { JabberOnline, JabberFreeForChat, JabberAway, JabberXA, JabberDND,
 						JabberOffline, JabberInvisible, JabberConnecting };
@@ -148,7 +148,7 @@ public:
 	/**
 	 * inherited from Kopete::MimeTypeHandler
 	 */
-	virtual void handleURL(const QString&, const QUrl &url) const;
+	void handleURL(const QString&, const QUrl &url) const Q_DECL_OVERRIDE;
 	using Kopete::MimeTypeHandler::handleURL;
 
 private:

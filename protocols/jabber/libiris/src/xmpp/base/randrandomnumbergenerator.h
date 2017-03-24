@@ -28,11 +28,11 @@ namespace XMPP {
 		public:
 			RandRandomNumberGenerator() {}
 
-			virtual double generateNumber() const {
+			double generateNumber() const Q_DECL_OVERRIDE {
 				return rand();
 			}
 
-			virtual double getMaximumGeneratedNumber() const {
+			double getMaximumGeneratedNumber() const Q_DECL_OVERRIDE {
 				return RAND_MAX;
 			}
 	};

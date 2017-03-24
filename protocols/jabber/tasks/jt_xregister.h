@@ -29,11 +29,11 @@ public:
 
 	void setXForm(const Form &frm, const XData &_form);
 
-	bool take(const QDomElement &);
+	bool take(const QDomElement &) Q_DECL_OVERRIDE;
 	QDomElement iq() const;
 	QDomElement xdataElement() const;
 
-	void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 
 private:
 	QDomElement _iq;

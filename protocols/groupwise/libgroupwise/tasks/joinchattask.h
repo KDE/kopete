@@ -39,7 +39,7 @@ class JoinChatTask : public RequestTask
 		JoinChatTask(Task* parent);
 		~JoinChatTask();
 		void join( const QString & displayName );
-		bool take( Transfer * transfer );
+		bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
 		QStringList participants() const;
 		QStringList invitees() const;
 		QString displayName() const;

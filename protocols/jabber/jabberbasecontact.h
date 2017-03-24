@@ -69,19 +69,19 @@ public:
 	 * Return if the contact is reachable (this is true if the account
 	 * is online)
 	 */
-	virtual bool isReachable ();
+	bool isReachable () Q_DECL_OVERRIDE;
 
 	/**
 	 * Create custom context menu items for the contact
 	 * FIXME: implement manager version here?
 	 */
-	virtual QList<QAction *> *customContextMenuActions () = 0;
+	QList<QAction *> *customContextMenuActions () Q_DECL_OVERRIDE = 0;
 	using Kopete::Contact::customContextMenuActions;
 
 	/**
 	 * Serialize contact
 	 */
-	virtual void serialize (QMap < QString, QString > &serializedData, QMap < QString, QString > &addressBookData);
+	void serialize (QMap < QString, QString > &serializedData, QMap < QString, QString > &addressBookData) Q_DECL_OVERRIDE;
 
 	/**
 	 * Update contact if a roster item has been
@@ -152,7 +152,7 @@ public slots:
 	/**
 	 * Retrieve a vCard for the contact
 	 */
-	virtual void slotUserInfo ();
+	void slotUserInfo () Q_DECL_OVERRIDE;
 	
 	
 	/**

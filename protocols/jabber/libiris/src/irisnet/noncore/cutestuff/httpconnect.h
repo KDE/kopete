@@ -37,10 +37,10 @@ public:
 	void connectToHost(const QString &proxyHost, int proxyPort, const QString &host, int port);
 
 	// from ByteStream
-	void close();
-	qint64 bytesToWrite() const;
+	void close() Q_DECL_OVERRIDE;
+	qint64 bytesToWrite() const Q_DECL_OVERRIDE;
 protected:
-	qint64 writeData(const char *data, qint64 maxSize);
+	qint64 writeData(const char *data, qint64 maxSize) Q_DECL_OVERRIDE;
 
 signals:
 	void connected();

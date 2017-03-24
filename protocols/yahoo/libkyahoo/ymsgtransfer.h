@@ -48,7 +48,7 @@ public:
 	~YMSGTransfer();
 
 
-	TransferType type();
+	TransferType type() Q_DECL_OVERRIDE;
 
 	//! Get the validity of the transfer object
 	bool isValid() const;

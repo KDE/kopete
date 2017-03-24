@@ -32,7 +32,7 @@ public:
 	SendAuthRespTask(Task *parent);
 	~SendAuthRespTask();
 	
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 
 	void setGranted( bool );
 	void setTarget( const QString &to );

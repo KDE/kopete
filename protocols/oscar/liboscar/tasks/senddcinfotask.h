@@ -34,7 +34,7 @@ public:
 	void setIcqMood( int mood );
 	void setStatusMessage( const QString &message );
 
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 
 private:
 	Oscar::DWORD mStatus;

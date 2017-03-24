@@ -37,8 +37,8 @@ public:
 	explicit HighlightPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
 	~HighlightPreferences();
 
-	virtual void save();
-	virtual void load();
+	void save() Q_DECL_OVERRIDE;
+	void load() Q_DECL_OVERRIDE;
 
 private:
 	Ui::HighlightPrefsUI preferencesDialog;

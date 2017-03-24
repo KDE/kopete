@@ -63,15 +63,15 @@ public:
 
 	~BonjourContact();
 
-	virtual bool isReachable();
+	bool isReachable() Q_DECL_OVERRIDE;
 	/**
 	 * Serialize the contact's data into a key-value map
 	 * suitable for writing to a file
 	 *
 	 * @todo FIXME: As we don't save any contacts, this function is useless
 	 */
-	virtual void serialize(QMap< QString, QString >& serializedData,
-			QMap< QString, QString >& addressBookData);
+	void serialize(QMap< QString, QString >& serializedData,
+			QMap< QString, QString >& addressBookData) Q_DECL_OVERRIDE;
 
 	/**
 	 * @brief Returns a Kopete::ChatSession associated with this contact
@@ -79,7 +79,7 @@ public:
 	 * @param canCreate If @c true, then a new manager may be created
 	 * @return The Contats's ChatSession Manager
 	 */
-	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
+	Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate ) Q_DECL_OVERRIDE;
 
 	/**
 	 * The Following Properties are For saving Each Contact's IP address, hostname and

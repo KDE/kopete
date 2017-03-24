@@ -40,9 +40,9 @@ public:
 	void setRequestType( RequestType );
 	RequestType requestType();
 
-	virtual bool forMe( const Transfer* transfer ) const;
-	virtual bool take( Transfer* transfer );
-	virtual void onGo();
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
+	void onGo() Q_DECL_OVERRIDE;
     void createRoom( Oscar::WORD exchange, const QString& name ); //create a room. sends the packet as well
 
     QList<int> exchangeList() const;

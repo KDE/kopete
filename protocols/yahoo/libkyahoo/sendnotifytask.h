@@ -34,7 +34,7 @@ public:
 	SendNotifyTask(Task *parent);
 	~SendNotifyTask();
 	
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 
 	void setType( Type type );
 	void setTarget( const QString &to );

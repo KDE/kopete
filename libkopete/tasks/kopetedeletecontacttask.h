@@ -76,7 +76,7 @@ public:
 	 * @brief Begin the task.
 	 * Inherited from Kopete::Task::start()
 	 */
-	virtual void start();
+	void start() Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
 	/**
@@ -85,14 +85,14 @@ protected Q_SLOTS:
 	 * This slot is called when a subjob has finished.
 	 * @param subJob sub job that has been finished.
 	 */
-	virtual void slotResult(KJob *subJob);
+	void slotResult(KJob *subJob) Q_DECL_OVERRIDE;
 
 protected:
 	/**
 	 * @brief Return Task Type
 	 * @return DeleteContactTask
 	 */
-	QString taskType() const;
+	QString taskType() const Q_DECL_OVERRIDE;
 private:
 	class Private;
 	Private * const d;

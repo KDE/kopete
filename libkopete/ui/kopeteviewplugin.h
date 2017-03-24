@@ -54,7 +54,7 @@ class KOPETE_EXPORT ViewPlugin : public Plugin
 		/**
 		 * @brief Reimplemented from Kopete::Plugin
 		 */
-		virtual void aboutToUnload();
+		void aboutToUnload() Q_DECL_OVERRIDE;
 };
 
 }

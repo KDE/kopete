@@ -44,7 +44,7 @@ public:
 	 */
 	~SearchLine();
 	
-	void updateSearch( const QString &s );
+	void updateSearch( const QString &s ) Q_DECL_OVERRIDE;
 	
 protected:
 	virtual void checkItemParentsNotVisible();

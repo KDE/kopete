@@ -65,7 +65,7 @@ public:
 	 * @param initialStatus is the status to connect with. If it is an invalid status for this
 	 * account, the default online for the account should be used.
 	 */
-	void connect( const OnlineStatus& initialStatus );
+	void connect( const OnlineStatus& initialStatus ) Q_DECL_OVERRIDE;
 
 	/**
 	 * \brief Get the initial status
@@ -80,7 +80,7 @@ public:
 	 *
 	 * @return Always true
 	 */
-	virtual bool removeAccount();
+	bool removeAccount() Q_DECL_OVERRIDE;
 
 
 public slots:
@@ -104,7 +104,7 @@ protected slots:
 	 * @internal
 	 * Reimplemented to set the password wrong if the reason is BadPassword
 	 */
-	virtual void disconnected( Kopete::Account::DisconnectReason reason );
+	void disconnected( Kopete::Account::DisconnectReason reason ) Q_DECL_OVERRIDE;
 
 
 private:

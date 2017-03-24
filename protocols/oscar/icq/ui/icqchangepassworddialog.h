@@ -35,7 +35,7 @@ public:
 	~ICQChangePasswordDialog();
 
 protected slots:
-	virtual void slotButtonClicked( int button );
+	void slotButtonClicked( int button ) Q_DECL_OVERRIDE;
 
 private slots:
 	void slotPasswordChanged( bool error );

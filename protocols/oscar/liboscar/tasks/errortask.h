@@ -30,13 +30,13 @@ class ErrorTask : public Task
 public:
     ErrorTask( Task* parent );
     ~ErrorTask();
-    bool take( Transfer* transfer );
+    bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 
 signals:
 	void messageError( const QString& contact, uint messageId );
 
 protected:
-    bool forMe( const Transfer* transfer ) const;
+    bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 
 };
 

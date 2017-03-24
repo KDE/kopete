@@ -35,7 +35,7 @@ public:
 
 protected slots:
 	void load();
-	virtual void slotSave();
+	void slotSave() Q_DECL_OVERRIDE;
 
 private slots:
 	void slotSelectPhoto();

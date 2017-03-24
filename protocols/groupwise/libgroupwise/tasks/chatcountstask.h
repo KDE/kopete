@@ -37,7 +37,7 @@ class ChatCountsTask : public RequestTask
 	public:
 		ChatCountsTask(Task* parent);
 		~ChatCountsTask();
-		bool take( Transfer * transfer );
+		bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
 		/**
 		 * Contains a list of all the chatrooms that have participants on the server.  If a chatroom exists but is empty, this task does not return a result, so update the participants count to 0.
 		 */

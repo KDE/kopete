@@ -57,7 +57,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
 	void slotAboutToShowMenu();
-	void activate(const QPoint &pos=QPoint());
+	void activate(const QPoint &pos=QPoint()) Q_DECL_OVERRIDE;
 
 	void slotBlink();
 	void slotNewEvent(Kopete::MessageEvent*);

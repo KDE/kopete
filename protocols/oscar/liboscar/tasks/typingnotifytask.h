@@ -34,9 +34,9 @@ public:
 	TypingNotifyTask( Task* parent );
 	~TypingNotifyTask();
 	
-	virtual bool forMe( const Transfer* transfer) const;
-	virtual bool take( Transfer* transfer );
-	virtual void onGo();
+	bool forMe( const Transfer* transfer) const Q_DECL_OVERRIDE;
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
+	void onGo() Q_DECL_OVERRIDE;
 	
 	void setParams( const QString & contact, int notifyType );
 	

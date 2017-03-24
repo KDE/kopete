@@ -22,9 +22,9 @@ public:
 	~AIMAddContactPage();
 
 	/** Validates the data entered */
-	virtual bool validateData();
+	bool validateData() Q_DECL_OVERRIDE;
 	/** Applies the addition to the account */
-	virtual bool apply( Kopete::Account *account, Kopete::MetaContact *);
+	bool apply( Kopete::Account *account, Kopete::MetaContact *) Q_DECL_OVERRIDE;
 
 protected:
 	/** The actual GUI */

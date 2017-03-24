@@ -32,10 +32,10 @@ public:
 	MailNotifierTask(Task *parent);
 	~MailNotifierTask();
 	
-	bool take(Transfer *transfer);
+	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 
 protected:
-	virtual bool forMe( const Transfer *transfer ) const;
+	bool forMe( const Transfer *transfer ) const Q_DECL_OVERRIDE;
 	void parseMail( YMSGTransfer *transfer );
 signals:
 	void mailNotify(const QString&, const QString&, int);

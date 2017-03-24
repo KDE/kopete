@@ -25,8 +25,8 @@ class JabberBoBCache : public XMPP::BoBCache
 public:
 	JabberBoBCache(QObject *parent = NULL);
 
-	virtual void put(const XMPP::BoBData &data);
-	virtual XMPP::BoBData get(const QString &cid);
+	void put(const XMPP::BoBData &data) Q_DECL_OVERRIDE;
+	XMPP::BoBData get(const QString &cid) Q_DECL_OVERRIDE;
 
 private:
 	QHash <QString, XMPP::BoBData> mem;

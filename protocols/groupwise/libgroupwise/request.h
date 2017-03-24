@@ -31,7 +31,7 @@ friend class RequestFactory;
 public:
 	~Request( );
 	QString command();
-	TransferType type() { return Transfer::RequestTransfer; }
+	TransferType type() Q_DECL_OVERRIDE { return Transfer::RequestTransfer; }
 private:
 	Request( const int transactionId, const QString &command );
 	QString m_command;

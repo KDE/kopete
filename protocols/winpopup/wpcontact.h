@@ -51,14 +51,14 @@ public:
 	WPContact(Kopete::Account *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact);
 
 //	virtual bool isOnline() const;
-	virtual bool isReachable();
-	virtual QList<QAction *> *customContextMenuActions();
+	bool isReachable() Q_DECL_OVERRIDE;
+	QList<QAction *> *customContextMenuActions() Q_DECL_OVERRIDE;
 	using Kopete::Contact::customContextMenuActions;
-	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
-	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
+	Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate) Q_DECL_OVERRIDE;
+	void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData) Q_DECL_OVERRIDE;
 
 public slots:
-	virtual void slotUserInfo();
+	void slotUserInfo() Q_DECL_OVERRIDE;
 	void slotCheckStatus();	// the call back for the checkStatus timer
 	void slotNewMessage(const QString &Body, const QDateTime &Arrival);
 

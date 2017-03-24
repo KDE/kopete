@@ -70,7 +70,7 @@ public:
 	/**
 	 * Construct the context menu used for the status bar icon
 	 */
-	virtual void fillActionMenu( KActionMenu *actionMenu );
+	void fillActionMenu( KActionMenu *actionMenu ) Q_DECL_OVERRIDE;
 
 	// DEBUG ONLY
 	void dumpManagers();
@@ -79,7 +79,7 @@ public:
 	 * Creates a protocol specific Kopete::Contact subclass and adds it to the supplied
 	 * Kopete::MetaContact
 	 */
-	virtual bool createContact(const QString& contactId, Kopete::MetaContact* parentContact);
+	bool createContact(const QString& contactId, Kopete::MetaContact* parentContact) Q_DECL_OVERRIDE;
 	/**
 	 * Delete a contact on the server
 	 */
@@ -152,19 +152,19 @@ public slots:
 	void slotTestRTFize();
 
 	/* Connects to the server. */
-	void connectWithPassword ( const QString &password );
+	void connectWithPassword ( const QString &password ) Q_DECL_OVERRIDE;
 
 	/* Disconnects from the server. */
-	virtual void disconnect();
+	void disconnect() Q_DECL_OVERRIDE;
 	virtual void disconnect( Kopete::Account::DisconnectReason reason );
 
 	/** Set the online status for the account. Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
-	                      const OnlineStatusOptions& options = None );
+	                      const OnlineStatusOptions& options = None ) Q_DECL_OVERRIDE;
 	/**
 	 * Set the status message for the account. Reimplemented from Kopete::Account
 	 */
-	void setStatusMessage( const Kopete::StatusMessage &statusMessage );
+	void setStatusMessage( const Kopete::StatusMessage &statusMessage ) Q_DECL_OVERRIDE;
 
 signals:
 	void conferenceCreated( const int mmId, const GroupWise::ConferenceGuid & guid );

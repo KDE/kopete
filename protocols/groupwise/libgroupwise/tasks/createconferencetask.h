@@ -41,7 +41,7 @@ public:
 	 * @param participants A list of Novell DNs of the people taking part in the conference.
 	 */
 	void conference( const int confId, const QStringList &participants );
-	bool take( Transfer * transfer );
+	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
 	int clientConfId() const;
 	GroupWise::ConferenceGuid conferenceGUID() const;
 	

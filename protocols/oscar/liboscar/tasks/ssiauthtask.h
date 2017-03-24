@@ -34,8 +34,8 @@ public:
 
 	~SSIAuthTask();
 	
-	virtual bool forMe( const Transfer* t ) const;
-	virtual bool take( Transfer* t );
+	bool forMe( const Transfer* t ) const Q_DECL_OVERRIDE;
+	bool take( Transfer* t ) Q_DECL_OVERRIDE;
 	
 	void grantFutureAuth( const QString& uin, const QString& reason );
 	void sendAuthRequest( const QString& uin, const QString& reason );

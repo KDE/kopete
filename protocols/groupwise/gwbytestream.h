@@ -41,8 +41,8 @@ public:
 	~KNetworkByteStream ();
 
 	bool connect ( QString host, QString service );
-	virtual bool isOpen () const;
-	virtual void close ();
+	bool isOpen () const Q_DECL_OVERRIDE;
+	void close () Q_DECL_OVERRIDE;
 
 	QTcpSocket *socket () const;
 
@@ -50,7 +50,7 @@ signals:
 	void connected ();
 
 protected:
-	virtual int tryWrite ();
+	int tryWrite () Q_DECL_OVERRIDE;
 
 private slots:
 	void slotConnected ();

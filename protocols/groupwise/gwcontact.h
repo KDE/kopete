@@ -89,23 +89,23 @@ public:
 	 */
 	void updateDetails( const GroupWise::ContactDetails & details );
 	
-	virtual bool isReachable();
+	bool isReachable() Q_DECL_OVERRIDE;
 	/**
 	 * Serialize the contact's data into a key-value map
 	 * suitable for writing to a file
 	 */
-    virtual void serialize(QMap< QString, QString >& serializedData,
-			QMap< QString, QString >& addressBookData);
+    void serialize(QMap< QString, QString >& serializedData,
+			QMap< QString, QString >& addressBookData) Q_DECL_OVERRIDE;
 	/**
 	 * Return the actions for this contact
 	 */
-	virtual QList<QAction *> *customContextMenuActions();
+	QList<QAction *> *customContextMenuActions() Q_DECL_OVERRIDE;
 	using Kopete::Contact::customContextMenuActions;
 	
 	/**
 	 * Returns a Kopete::ChatSession associated with this contact
 	 */
-	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate =  Kopete::Contact::CannotCreate );
+	Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate =  Kopete::Contact::CannotCreate ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Access the contact's server properties
@@ -114,7 +114,7 @@ public:
 	/** 
 	 * Updates this contact's group membership and display name on the server
 	 */
-	void sync( unsigned int);
+	void sync( unsigned int) Q_DECL_OVERRIDE;
 	/**
 	 * Updates this contact's online status, including blocking status
 	 */
@@ -150,7 +150,7 @@ public slots:
 	/**
 	 * Delete this contact on the server
 	 */
-	virtual void deleteContact();
+	void deleteContact() Q_DECL_OVERRIDE;
 	/**
 	 * Called when the call to rename the contact on the server has completed
 	 */
@@ -163,7 +163,7 @@ protected slots:
 	/**
 	 * Show the contact's properties
 	 */
-	void slotUserInfo();
+	void slotUserInfo() Q_DECL_OVERRIDE;
 	/**
 	 * Block or unblock the contact, toggle its current blocking state
 	 */

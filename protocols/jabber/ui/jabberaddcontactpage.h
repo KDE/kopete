@@ -36,8 +36,8 @@ class JabberAddContactPage:public AddContactPage
 public:
 	  explicit JabberAddContactPage (Kopete::Account * owner, QWidget * parent = nullptr);
 	 ~JabberAddContactPage ();
-	virtual bool validateData ();
-	virtual bool apply (Kopete::Account *, Kopete::MetaContact *);
+	bool validateData () Q_DECL_OVERRIDE;
+	bool apply (Kopete::Account *, Kopete::MetaContact *) Q_DECL_OVERRIDE;
 	Ui::dlgAddContact *jabData;
 	QLabel *noaddMsg1;
 	QLabel *noaddMsg2;

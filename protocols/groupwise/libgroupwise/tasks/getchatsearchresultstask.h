@@ -40,7 +40,7 @@ class GetChatSearchResultsTask : public RequestTask
 		GetChatSearchResultsTask(Task* parent);
 		~GetChatSearchResultsTask();
 		void poll( int queryHandle);
-		bool take( Transfer * transfer );
+		bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
 		int queryStatus();
 		QList< GroupWise::ChatroomSearchResult > results();
 	private:

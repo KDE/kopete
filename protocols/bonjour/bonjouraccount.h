@@ -108,7 +108,7 @@ public:
 	 *
 	 * @return @c true if the contact is created, @c false otherwise
 	 */
-	virtual bool createContact(const QString& contactId, Kopete::MetaContact* parentContact);
+	bool createContact(const QString& contactId, Kopete::MetaContact* parentContact) Q_DECL_OVERRIDE;
 
 	/**
 	 * @brief Called when Kopete is set globally away
@@ -122,9 +122,9 @@ public:
 	 *
 	 * @todo FIXME: This Only Makes us go online or offline, we cannot go away
 	 */
-	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
-	                             const OnlineStatusOptions& options = None);
-	virtual void setStatusMessage(const Kopete::StatusMessage& statusMessage);
+	void setOnlineStatus(const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
+	                             const OnlineStatusOptions& options = None) Q_DECL_OVERRIDE;
+	void setStatusMessage(const Kopete::StatusMessage& statusMessage) Q_DECL_OVERRIDE;
 	
 	/**
 	 * @brief 'Connect' to the bonjour service.
@@ -135,7 +135,7 @@ public:
 	 *
 	 * @param initialStatus FIXME: This is pretty much ignored
 	 */
-	virtual void connect( const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus() );
+	void connect( const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus() ) Q_DECL_OVERRIDE;
 
 	/**
 	 * @brief Disconnect from the service.
@@ -143,7 +143,7 @@ public:
 	 * This will disconnect from the service. It will stop everything started in connect
 	 * It cleans out the contact list after it is finished
 	 */
-	virtual void disconnect();
+	void disconnect() Q_DECL_OVERRIDE;
 
 	/**
 	 * Set Properties Such As username, firstName, emailAddress, lastName

@@ -121,8 +121,8 @@ public:
 	 */
 	virtual void paint( QPainter *painter, const QPalette &pal );
 
-	void repaint();
-	void relayout();
+	void repaint() Q_DECL_OVERRIDE;
+	void relayout() Q_DECL_OVERRIDE;
 
 	/**
 	 * @return the rect this component was allocated last time it was laid out
@@ -178,7 +178,7 @@ public:
 	 * @return a pair where the first element is the tooltip, and the second is
 	 *         the rectangle within the item for which the tip should be displayed.
 	 */
-	std::pair<QString,QRect> toolTip( const QPoint &relativePos );
+	std::pair<QString,QRect> toolTip( const QPoint &relativePos ) Q_DECL_OVERRIDE;
 
 	/**
 	 * RTTI: Runtime Type Information
@@ -214,8 +214,8 @@ protected:
 	 */
 	bool setMinHeight( int height );
 
-	void componentAdded( Component *component );
-	void componentRemoved( Component *component );
+	void componentAdded( Component *component ) Q_DECL_OVERRIDE;
+	void componentRemoved( Component *component ) Q_DECL_OVERRIDE;
 
 private:
 	// calls the three functions below
@@ -237,18 +237,18 @@ public:
 	explicit BoxComponent( ComponentBase *parent, Direction dir = Horizontal );
 	~BoxComponent();
 
-	void layout( const QRect &rect );
+	void layout( const QRect &rect ) Q_DECL_OVERRIDE;
 
-	virtual int widthForHeight( int height );
-	virtual int heightForWidth( int width );
+	int widthForHeight( int height ) Q_DECL_OVERRIDE;
+	int heightForWidth( int width ) Q_DECL_OVERRIDE;
 
 	static int RTTI;
-	virtual int rtti() const { return RTTI; }
+	int rtti() const Q_DECL_OVERRIDE { return RTTI; }
 
 protected:
-	void componentAdded( Component *component );
-	void componentRemoved( Component *component );
-	void componentResized( Component *component );
+	void componentAdded( Component *component ) Q_DECL_OVERRIDE;
+	void componentRemoved( Component *component ) Q_DECL_OVERRIDE;
+	void componentResized( Component *component ) Q_DECL_OVERRIDE;
 
 private:
 	void calcMinSize();
@@ -273,12 +273,12 @@ public:
 	void setColor( const QColor &color );
 	void setDefaultColor();
 
-	int widthForHeight( int );
+	int widthForHeight( int ) Q_DECL_OVERRIDE;
 
-	void paint( QPainter *painter, const QPalette &pal );
+	void paint( QPainter *painter, const QPalette &pal ) Q_DECL_OVERRIDE;
 
 	static int RTTI;
-	virtual int rtti() const { return RTTI; }
+	int rtti() const Q_DECL_OVERRIDE { return RTTI; }
 
 private:
 	void calcMinSize();
@@ -297,11 +297,11 @@ public:
 	void setPixmap( const QPixmap &img, bool adjustSize = true);
 	QPixmap pixmap( void );
 
-	void paint( QPainter *painter, const QPalette &pal );
+	void paint( QPainter *painter, const QPalette &pal ) Q_DECL_OVERRIDE;
 
 	void scale( int w, int h, Qt::AspectRatioMode );
 	static int RTTI;
-	virtual int rtti() const { return RTTI; }
+	int rtti() const Q_DECL_OVERRIDE { return RTTI; }
 private:
 	class Private;
 	Private * const d;
@@ -317,7 +317,7 @@ public:
 	~ContactComponent();
 	void updatePixmap();
 	Kopete::Contact *contact();
-	std::pair<QString,QRect> toolTip( const QPoint &relativePos );
+	std::pair<QString,QRect> toolTip( const QPoint &relativePos ) Q_DECL_OVERRIDE;
 protected:
 	class Private;
 	Private * const d;
@@ -348,7 +348,7 @@ public:
 	 * Dtor
 	 */
 	~DisplayNameComponent();
-	void layout( const QRect& rect );
+	void layout( const QRect& rect ) Q_DECL_OVERRIDE;
 
 	QString text();
 	void setText( const QString& text );
@@ -356,7 +356,7 @@ public:
 	void setColor( const QColor& color );
 	void setDefaultColor();
 	static int RTTI;
-	virtual int rtti() const { return RTTI; }
+	int rtti() const Q_DECL_OVERRIDE { return RTTI; }
 	/**
 	 * reparse again for emoticon (call this when emoticon theme change)
 	 */
@@ -371,20 +371,20 @@ class KOPETE_EXPORT HSpacerComponent : public Component
 {
 public:
 	explicit HSpacerComponent( ComponentBase *parent );
-	int widthForHeight( int );
+	int widthForHeight( int ) Q_DECL_OVERRIDE;
 
 	static int RTTI;
-	virtual int rtti() const { return RTTI; }
+	int rtti() const Q_DECL_OVERRIDE { return RTTI; }
 };
 
 class KOPETE_EXPORT VSpacerComponent : public Component
 {
 public:
 	explicit VSpacerComponent( ComponentBase *parent );
-	int heightForWidth( int );
+	int heightForWidth( int ) Q_DECL_OVERRIDE;
 
 	static int RTTI;
-	virtual int rtti() const { return RTTI; }
+	int rtti() const Q_DECL_OVERRIDE { return RTTI; }
 };
 
 /**
@@ -401,8 +401,8 @@ public:
 	explicit Item( QTreeWidgetItem *parent, QObject *owner = 0 );
 	~Item();
 
-	void repaint();
-	void relayout();
+	void repaint() Q_DECL_OVERRIDE;
+	void relayout() Q_DECL_OVERRIDE;
 
 	void setup();
 	virtual void paintCell( QPainter *p, const QPalette &cg, int column, int width, int align );
@@ -433,9 +433,9 @@ public:
 	virtual void setSearchMatch( bool match, bool searching );
 
 protected:
-	void componentAdded( Component *component );
-	void componentRemoved( Component *component );
-	void componentResized( Component *component );
+	void componentAdded( Component *component ) Q_DECL_OVERRIDE;
+	void componentRemoved( Component *component ) Q_DECL_OVERRIDE;
+	void componentResized( Component *component ) Q_DECL_OVERRIDE;
 
 	void setHeight( int );
 	

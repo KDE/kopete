@@ -44,10 +44,10 @@ private:
 public:
 	YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0);
 
-	virtual bool validateData();
+	bool validateData() Q_DECL_OVERRIDE;
 
 public slots:
-	virtual Kopete::Account *apply();
+	Kopete::Account *apply() Q_DECL_OVERRIDE;
 
 private slots:
 	void slotOpenRegister();

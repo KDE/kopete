@@ -29,8 +29,8 @@ public:
 	OftTransfer();
 	virtual ~OftTransfer();
 
-	virtual TransferType type() const;
-	virtual QByteArray toWire();
+	TransferType type() const Q_DECL_OVERRIDE;
+	QByteArray toWire() Q_DECL_OVERRIDE;
 
 	//! Set the OFT data
 	void setData( OFT data );

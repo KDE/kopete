@@ -43,10 +43,10 @@ public:
 	explicit YahooAddContact(YahooProtocol *owner, QWidget *parent = 0);
 	~YahooAddContact();
 
-	virtual bool validateData();
+	bool validateData() Q_DECL_OVERRIDE;
 
 public slots:
-	virtual bool apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact);
+	bool apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact) Q_DECL_OVERRIDE;
 };
 
 #endif

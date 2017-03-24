@@ -39,13 +39,13 @@ public:
 	explicit ICQAddContactPage(ICQAccount *owner, QWidget *parent = nullptr);
 	~ICQAddContactPage();
 
-	virtual bool validateData();
-	virtual bool apply(Kopete::Account* , Kopete::MetaContact *parentContact);
+	bool validateData() Q_DECL_OVERRIDE;
+	bool apply(Kopete::Account* , Kopete::MetaContact *parentContact) Q_DECL_OVERRIDE;
 
 	void setUINFromSearch( const QString& );
 
 protected:
-	void showEvent(QShowEvent *e);
+	void showEvent(QShowEvent *e) Q_DECL_OVERRIDE;
 
 private slots:
 	void showSearchDialog();

@@ -60,7 +60,7 @@ private slots:
 	void searchFinished( int numLeft );
 
 protected slots:
-	virtual void slotButtonClicked( int button );
+	void slotButtonClicked( int button ) Q_DECL_OVERRIDE;
 
 private:
 	ICQAccount* m_account;

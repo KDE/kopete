@@ -80,7 +80,7 @@ public:
 	MessageEvent *event();
 	
 public slots:
-	void start();
+	void start() Q_DECL_OVERRIDE;
 	void slotDone();
 	void kill( bool );
 	

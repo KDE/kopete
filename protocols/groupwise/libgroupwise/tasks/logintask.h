@@ -43,7 +43,7 @@ public:
 	 * Only accepts the contact list that comes back from the server, 
 	 * processes it and notifies the client of the contact list
 	 */
-	bool take( Transfer * transfer );
+	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
 protected:
 	void extractFolder( Field::MultiField * folderContainer );
 	void extractContact( Field::MultiField * contactContainer );

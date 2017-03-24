@@ -53,9 +53,9 @@ public:
 	int errorCode() const;
 
 	// reimplemented
-	bool isOpen() const;
-	void write(const QByteArray &);
-	int bytesToWrite() const;
+	bool isOpen() const Q_DECL_OVERRIDE;
+	void write(const QByteArray &) Q_DECL_OVERRIDE;
+	int bytesToWrite() const Q_DECL_OVERRIDE;
 
 signals:
 	void tlsHandshaken();

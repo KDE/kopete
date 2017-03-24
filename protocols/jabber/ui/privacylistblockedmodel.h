@@ -28,9 +28,9 @@ class PrivacyListBlockedModel : public QSortFilterProxyModel
 public:
 	PrivacyListBlockedModel(QObject* parent = NULL);
 
-	bool lessThan(const QModelIndex & left, const QModelIndex & right ) const;
-	bool filterAcceptsColumn(int source_column, const QModelIndex & source_parent ) const;
-	bool filterAcceptsRow(int source_row, const QModelIndex & source_parent ) const;
+	bool lessThan(const QModelIndex & left, const QModelIndex & right ) const Q_DECL_OVERRIDE;
+	bool filterAcceptsColumn(int source_column, const QModelIndex & source_parent ) const Q_DECL_OVERRIDE;
+	bool filterAcceptsRow(int source_row, const QModelIndex & source_parent ) const Q_DECL_OVERRIDE;
 };
 
 #endif

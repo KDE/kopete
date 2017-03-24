@@ -55,10 +55,10 @@ public:
 	~JabberTransport ();
 
 	/** Returns the action menu for this account. */
-	virtual void fillActionMenu( KActionMenu *actionMenu );
+	void fillActionMenu( KActionMenu *actionMenu ) Q_DECL_OVERRIDE;
 
 	/** Returns the action menu for this account. */
-	virtual bool hasCustomStatusMenu() const;
+	bool hasCustomStatusMenu() const Q_DECL_OVERRIDE;
 
 	/** the parent account */
 	JabberAccount *account() const
@@ -67,14 +67,14 @@ public:
 	/* to get the protocol from the account */
 	JabberProtocol *protocol () const;
 
-	void connect( const Kopete::OnlineStatus& ) {}
-	virtual void disconnect( ) {}
+	void connect( const Kopete::OnlineStatus& ) Q_DECL_OVERRIDE {}
+	void disconnect( ) Q_DECL_OVERRIDE {}
 
 	/**
 	 * called when the account is removed in the config ui
 	 * will remove the subscription
 	 */
-	virtual bool removeAccount();
+	bool removeAccount() Q_DECL_OVERRIDE;
 
 
 	enum TransportStatus { Normal , Creating, Removing , AccountRemoved };
@@ -90,8 +90,8 @@ public slots:
 
 	/* Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
-	                      const OnlineStatusOptions& options = None );
-	void setStatusMessage( const Kopete::StatusMessage &statusMessage );
+	                      const OnlineStatusOptions& options = None ) Q_DECL_OVERRIDE;
+	void setStatusMessage( const Kopete::StatusMessage &statusMessage ) Q_DECL_OVERRIDE;
 	/**
 	 * the account has been unregistered.
 	 * loop over all contact and remove them
@@ -126,7 +126,7 @@ protected:
 	 * @param contactId The unique ID for this protocol
 	 * @param parentContact The metacontact to add this contact to
 	 */
-	virtual bool createContact (const QString & contactID, Kopete::MetaContact * parentContact);
+	bool createContact (const QString & contactID, Kopete::MetaContact * parentContact) Q_DECL_OVERRIDE;
 
 private:
 	JabberAccount *m_account;

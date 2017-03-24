@@ -48,13 +48,13 @@ public:
 
     ~TestbedContact();
 
-    virtual bool isReachable();
+    bool isReachable() Q_DECL_OVERRIDE;
 	/**
 	 * Serialize the contact's data into a key-value map
 	 * suitable for writing to a file
 	 */
-    virtual void serialize(QMap< QString, QString >& serializedData,
-			QMap< QString, QString >& addressBookData);
+    void serialize(QMap< QString, QString >& serializedData,
+			QMap< QString, QString >& addressBookData) Q_DECL_OVERRIDE;
 	/**
 	 * Return the actions for this contact
 	 */
@@ -63,7 +63,7 @@ public:
 	/**
 	 * Returns a Kopete::ChatSession associated with this contact
 	 */
-	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
+	Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Set the Type of this contact

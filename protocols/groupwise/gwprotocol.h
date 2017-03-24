@@ -42,23 +42,23 @@ public:
 	 * Convert the serialised data back into a GroupWiseContact and add this
 	 * to its Kopete::MetaContact
 	 */
-	virtual Kopete::Contact *deserializeContact(
+	Kopete::Contact *deserializeContact(
 			Kopete::MetaContact *metaContact,
 			const QMap< QString, QString > & serializedData,
 			const QMap< QString, QString > & addressBookData
-		);
+		) Q_DECL_OVERRIDE;
 	/**
 	 * Generate the widget needed to add GroupWiseContacts
 	 */
-	virtual AddContactPage * createAddContactWidget( QWidget *parent, Kopete::Account *account );
+	AddContactPage * createAddContactWidget( QWidget *parent, Kopete::Account *account ) Q_DECL_OVERRIDE;
 	/**
 	 * Generate the widget needed to add/edit accounts for this protocol
 	 */
-	virtual KopeteEditAccountWidget * createEditAccountWidget( Kopete::Account *account, QWidget *parent );
+	KopeteEditAccountWidget * createEditAccountWidget( Kopete::Account *account, QWidget *parent ) Q_DECL_OVERRIDE;
 	/**
 	 * Generate a GroupWiseAccount
 	 */
-	virtual Kopete::Account * createNewAccount( const QString &accountId );
+	Kopete::Account * createNewAccount( const QString &accountId ) Q_DECL_OVERRIDE;
 	/**
 	 * Access the instance of this protocol
 	 */

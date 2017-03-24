@@ -49,11 +49,11 @@ public:
     explicit XmlContactStorage(const QString &fileName);
     ~XmlContactStorage();
 
-    virtual bool isValid() const;
-    virtual QString errorMessage() const;
-    virtual bool isBusy() const;
-    virtual void load();
-    virtual void save();
+    bool isValid() const Q_DECL_OVERRIDE;
+    QString errorMessage() const Q_DECL_OVERRIDE;
+    bool isBusy() const Q_DECL_OVERRIDE;
+    void load() Q_DECL_OVERRIDE;
+    void save() Q_DECL_OVERRIDE;
 
 protected:
     bool parseMetaContact( Kopete::MetaContact *metaContact, const QDomElement &element );

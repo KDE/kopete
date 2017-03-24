@@ -61,7 +61,7 @@ public:
 	WebcamTask(Task *parent);
 	~WebcamTask();
 	
-	bool take(Transfer *transfer);
+	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 
 	bool transmitting() { return transmittingData; }
 	
@@ -92,7 +92,7 @@ private slots:
 	void doPendingInvitations();
 	void transmitWebcamImage();
 protected:
-	virtual bool forMe( const Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 private:
 	void parseWebcamInformation( YMSGTransfer *transfer );
 	void parseData( QByteArray &data, KStreamSocket *socket );

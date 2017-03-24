@@ -96,7 +96,7 @@ public:
 	/**
 	 * @brief Disable file open, because it's not used by this part.
 	 */
-	virtual bool openFile() {
+	bool openFile() Q_DECL_OVERRIDE {
 	    return false;
 	}
 	

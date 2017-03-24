@@ -68,8 +68,8 @@ public:
 	JT_AHCommand(const XMPP::Jid &jid, const AHCommand &command, XMPP::Task *parent);
 	~JT_AHCommand();
 
-	void onGo();
-	bool take(const QDomElement &e);
+	void onGo() Q_DECL_OVERRIDE;
+	bool take(const QDomElement &e) Q_DECL_OVERRIDE;
 private:
 	XMPP::Jid mJid;
 	AHCommand mCommand;
@@ -87,8 +87,8 @@ public:
 
 	JT_AHCGetList(XMPP::Task *t, const XMPP::Jid &j);
 
-	void onGo();
-	bool take(const QDomElement &x);
+	void onGo() Q_DECL_OVERRIDE;
+	bool take(const QDomElement &x) Q_DECL_OVERRIDE;
 
 	const QList<Item> &commands() const {return mCommands; }
 

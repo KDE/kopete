@@ -32,7 +32,7 @@ public:
 	StealthTask(Task *parent);
 	~StealthTask();
 	
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 
 	void setTarget( const QString &to );
 	void setState( Yahoo::StealthStatus state );

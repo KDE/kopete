@@ -47,7 +47,7 @@ public:
 	void setServer ( const QString &server );
 
 public slots:
-	virtual void accept ();
+	void accept () Q_DECL_OVERRIDE;
 
 private slots:
 	void slotChooseServer ();

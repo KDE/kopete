@@ -31,8 +31,8 @@ public:
 	ICBMParamsTask( Task* parent );
 	~ICBMParamsTask();
 
-	bool forMe( const Transfer* transfer ) const;
-	bool take( Transfer* transfer );
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Handle the ICBM Parameters we get back from SNAC 0x04, 0x05
@@ -47,7 +47,7 @@ public:
 	void sendMessageParams( int channel );
 
 protected:
-	void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 
 };
 

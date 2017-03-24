@@ -37,8 +37,8 @@ public:
 
 	~ServerVersionsTask();
 
-	bool forMe(const Transfer* transfer) const;
-	bool take(Transfer* transfer);
+	bool forMe(const Transfer* transfer) const Q_DECL_OVERRIDE;
+	bool take(Transfer* transfer) Q_DECL_OVERRIDE;
 
 	static QList<int> buildFamiliesList( Buffer* );
 

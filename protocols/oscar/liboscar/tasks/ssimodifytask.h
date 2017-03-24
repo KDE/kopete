@@ -55,8 +55,8 @@ public:
     explicit SSIModifyTask( Task* parent, bool staticTask = false );
     ~SSIModifyTask();
 
-	virtual void onGo();
-	virtual bool take( Transfer* transfer );
+	void onGo() Q_DECL_OVERRIDE;
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 
 	/* Contact properties */
 	enum OperationType { NoType = 0x00, Add = 0x10, Remove = 0x20, Rename = 0x40, Change = 0x80 };
@@ -107,7 +107,7 @@ public:
 	bool modifyContact( const OContact& oldItem, const OContact& newItem );
 
 protected:
-	virtual bool forMe( const Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 
 private:
 	//! Handle the acknowledgement from the server

@@ -39,7 +39,7 @@ class ICQMyselfContact : public OscarMyselfContact
 Q_OBJECT
 public:
 	ICQMyselfContact( ICQAccount *acct );
-	void userInfoUpdated();
+	void userInfoUpdated() Q_DECL_OVERRIDE;
 
 public slots:
 	void receivedShortInfo( const QString& );
@@ -58,23 +58,23 @@ public:
 	ICQProtocol *protocol();
 
 	// fill the menu for this account
-	virtual void fillActionMenu( KActionMenu *actionMenu );
+	void fillActionMenu( KActionMenu *actionMenu ) Q_DECL_OVERRIDE;
 
 	/** Reimplementation from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
-	                      const OnlineStatusOptions& options = None );
-	void setStatusMessage( const Kopete::StatusMessage& );
+	                      const OnlineStatusOptions& options = None ) Q_DECL_OVERRIDE;
+	void setStatusMessage( const Kopete::StatusMessage& ) Q_DECL_OVERRIDE;
 
-	void connectWithPassword( const QString &password );
+	void connectWithPassword( const QString &password ) Q_DECL_OVERRIDE;
 
 	void setUserProfile( const QString &profile );
 
 protected:
-	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem );
+	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem ) Q_DECL_OVERRIDE;
 
 protected slots:
-	virtual void loginActions();
-	virtual void disconnected( DisconnectReason reason );
+	void loginActions() Q_DECL_OVERRIDE;
+	void disconnected( DisconnectReason reason ) Q_DECL_OVERRIDE;
 
 
 private:

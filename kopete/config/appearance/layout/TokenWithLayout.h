@@ -27,7 +27,7 @@ class QMenu;
 class TokenWithLayoutFactory : public TokenFactory
 {
 public:
-    virtual Token * createToken( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr );
+    Token * createToken( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr ) Q_DECL_OVERRIDE;
 };
 
 /**
@@ -67,7 +67,7 @@ public slots:
 protected:
     virtual void fillMenu( QMenu * menu );
     virtual void menuExecuted( const QAction* action );
-    virtual void contextMenuEvent( QContextMenuEvent * event );
+    void contextMenuEvent( QContextMenuEvent * event ) Q_DECL_OVERRIDE;
 
 private:
 

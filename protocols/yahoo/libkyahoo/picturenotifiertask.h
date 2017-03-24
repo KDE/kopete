@@ -33,10 +33,10 @@ public:
 	PictureNotifierTask(Task *parent);
 	~PictureNotifierTask();
 	
-	bool take(Transfer *transfer);
+	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 
 protected:
-	virtual bool forMe( const Transfer *transfer ) const;
+	bool forMe( const Transfer *transfer ) const Q_DECL_OVERRIDE;
 	void parsePictureChecksum( YMSGTransfer *transfer );
 	void parsePictureStatus( YMSGTransfer *transfer );
 	void parsePicture( YMSGTransfer *transfer );

@@ -34,8 +34,8 @@ public:
 	AppearanceConfig( QWidget *parent, const QVariantList &args );
 	~AppearanceConfig();
 
-	virtual void save();
-	virtual void load();
+	void save() Q_DECL_OVERRIDE;
+	void load() Q_DECL_OVERRIDE;
 
 private slots:
 	void slotHighlightChanged();

@@ -41,13 +41,13 @@ public:
 	 * Create custom context menu items for the contact
 	 * FIXME: implement manager version here?
 	 */
-	QList<QAction *> *customContextMenuActions ();
+	QList<QAction *> *customContextMenuActions () Q_DECL_OVERRIDE;
 	using JabberBaseContact::customContextMenuActions;
 
 	/**
 	 * Deal with an incoming message for this contact.
 	 */
-	void handleIncomingMessage ( const XMPP::Message &message );
+	void handleIncomingMessage ( const XMPP::Message &message ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Add a contact to this room.
@@ -59,7 +59,7 @@ public:
 	 */
 	void removeSubContact ( const XMPP::RosterItem &rosterItem );
 
-	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate );
+	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate ) Q_DECL_OVERRIDE;
 
 public slots:
 
@@ -72,8 +72,8 @@ public slots:
 	 * @param fileSize (Optional) Size of the file being sent. Used when sending
 	 *                 a nondeterminate file size (such as over a socket)
 	 */
-	virtual void sendFile( const QUrl &sourceURL = QUrl(),
-		const QString &fileName = QString(), uint fileSize = 0L );
+	void sendFile( const QUrl &sourceURL = QUrl(),
+		const QString &fileName = QString(), uint fileSize = 0L ) Q_DECL_OVERRIDE;
 
 private slots:
 

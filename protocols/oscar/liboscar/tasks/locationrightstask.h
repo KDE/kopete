@@ -38,11 +38,11 @@ class LocationRightsTask : public Task
 public:
 	LocationRightsTask( Task* parent );
 	~LocationRightsTask();
-	bool take( Transfer* transfer );
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 
 protected:
-	bool forMe( const Transfer* transfer ) const;
-	void onGo();
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
+	void onGo() Q_DECL_OVERRIDE;
 
 private:
 	//! Send the location rights request ( SNAC 0x02, 0x02 )

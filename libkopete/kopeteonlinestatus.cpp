@@ -43,20 +43,20 @@ public:
 	                        const QColor &c, bool _idle )
 		: status(s) , icon(i), color(c), idle(_idle) {}
 
-	virtual QIconEngineV2 *clone() const
+	QIconEngineV2 *clone() const Q_DECL_OVERRIDE
 	{ return new OnlineStatusIconEngine(status,icon,color,idle); }
 
-	virtual QString key () const
+	QString key () const Q_DECL_OVERRIDE
 	{ return OnlineStatusManager::self()->fingerprint( status, icon, 0, color, idle ); }
 
-	QPixmap pixmap ( const QSize & size, QIcon::Mode mode, QIcon::State state )
+	QPixmap pixmap ( const QSize & size, QIcon::Mode mode, QIcon::State state ) Q_DECL_OVERRIDE
 	{
 		const int iconSize = qMin(size.width(), size.height());
 		QIcon i(OnlineStatusManager::self()->cacheLookupByObject( status, icon, iconSize, color, idle ));
 		return i.pixmap(size, mode, state);
 	}
 
-	void paint( QPainter * painter, const QRect & rect, QIcon::Mode mode, QIcon::State state )
+	void paint( QPainter * painter, const QRect & rect, QIcon::Mode mode, QIcon::State state ) Q_DECL_OVERRIDE
 	{
 		QPixmap pix = pixmap(rect.size() , mode, state);
 		painter->drawPixmap(rect, pix);

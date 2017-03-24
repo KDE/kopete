@@ -48,9 +48,9 @@ public:
 	WPProtocol( QObject *parent, const QVariantList & );
 	~WPProtocol();
 
-	virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *theAccount);
-	virtual KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
-	virtual Kopete::Account *createNewAccount(const QString &accountId);
+	AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *theAccount) Q_DECL_OVERRIDE;
+	KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent) Q_DECL_OVERRIDE;
+	Kopete::Account *createNewAccount(const QString &accountId) Q_DECL_OVERRIDE;
 
 	const QStringList getGroups() {return popupClient->getGroups(); }
 	const QStringList getHosts(const QString &Group) { return popupClient->getHosts(Group); }
@@ -58,7 +58,7 @@ public:
 
 // Kopete::Plugin overloading
 public:
-	virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData);
+	Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData) Q_DECL_OVERRIDE;
 
 // Stuff used internally & by colleague classes
 public:

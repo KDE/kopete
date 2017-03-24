@@ -70,7 +70,7 @@ public:
 	 ~JabberAccount ();
 
 	/* Fills the menu for this account. */
-	virtual void fillActionMenu( KActionMenu *actionMenu );
+	void fillActionMenu( KActionMenu *actionMenu ) Q_DECL_OVERRIDE;
 
 	/* Return the resource of the client */
 	QString resource () const;
@@ -130,7 +130,7 @@ public:
 	/**
 	 * called when the account is removed in the config ui
 	*/
-	virtual bool removeAccount();
+	bool removeAccount() Q_DECL_OVERRIDE;
 
 	/**
 	 * return if kopete show all messges from all resources to one session
@@ -165,10 +165,10 @@ public:
 
 public slots:
 	/* Connects to the server. */
-	void connectWithPassword ( const QString &password );
+	void connectWithPassword ( const QString &password ) Q_DECL_OVERRIDE;
 
 	/* Disconnects from the server. */
-	void disconnect ();
+	void disconnect () Q_DECL_OVERRIDE;
 
 	/* Disconnect with a reason */
 	void disconnect ( Kopete::Account::DisconnectReason reason );
@@ -177,8 +177,8 @@ public slots:
     void disconnect( Kopete::Account::DisconnectReason reason, XMPP::Status &status );
 	/* Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
-	                      const OnlineStatusOptions& options = None );
-	void setStatusMessage( const Kopete::StatusMessage &statusMessage );
+	                      const OnlineStatusOptions& options = None ) Q_DECL_OVERRIDE;
+	void setStatusMessage( const Kopete::StatusMessage &statusMessage ) Q_DECL_OVERRIDE;
 
 	void addTransport( JabberTransport *tr ,  const QString &jid);
 	void removeTransport( const QString &jid );
@@ -202,7 +202,7 @@ protected:
 	 * @param contactId The unique ID for this protocol
 	 * @param parentContact The metacontact to add this contact to
 	 */
-	virtual bool createContact (const QString & contactID, Kopete::MetaContact * parentContact);
+	bool createContact (const QString & contactID, Kopete::MetaContact * parentContact) Q_DECL_OVERRIDE;
 
 
 

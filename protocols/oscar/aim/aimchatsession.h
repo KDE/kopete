@@ -74,7 +74,7 @@ public:
      * @p contactId is the id of the contact. the contact is supposed to be of the same account as
      * the @ref account() but we can't be sure the Kopete::Contact is really on the contact list
      */
-    virtual void inviteContact(const QString &contactId);
+    void inviteContact(const QString &contactId) Q_DECL_OVERRIDE;
 
 private:
     QString m_roomName;

@@ -41,7 +41,7 @@ public:
 	ReceiveFileTask(Task *parent);
 	~ReceiveFileTask();
 	
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 	
 	void setRemoteUrl( KUrl url );
 	void setLocalUrl( KUrl url );
@@ -50,10 +50,10 @@ public:
 	void setType( Type type );
 	void setUserId( const QString & userId );
 	
-	bool take(Transfer *transfer);
+	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 
 protected:
-	virtual bool forMe( const Transfer *transfer ) const;
+	bool forMe( const Transfer *transfer ) const Q_DECL_OVERRIDE;
 
 signals:
 	void bytesProcessed( unsigned int, unsigned int );

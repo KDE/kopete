@@ -44,7 +44,7 @@ public:
 	 * Create custom context menu items for the contact
 	 * FIXME: implement manager version here?
 	 */
-	QList<QAction *> *customContextMenuActions ();
+	QList<QAction *> *customContextMenuActions () Q_DECL_OVERRIDE;
 	using JabberBaseContact::customContextMenuActions;
 
 	/**
@@ -55,7 +55,7 @@ public:
 	/**
 	 * Deal with an incoming message for this contact.
 	 */
-	void handleIncomingMessage ( const XMPP::Message &message );
+	void handleIncomingMessage ( const XMPP::Message &message ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Create a message manager for this contact.
@@ -63,27 +63,27 @@ public:
 	 * not suitable for groupchat, as it only looks for
 	 * managers with ourselves in the contact list.
 	 */
-	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags );
+	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags ) Q_DECL_OVERRIDE;
 	
 
-	virtual bool isContactRequestingEvent( XMPP::MsgEvent event );
-	virtual bool isContactRequestingReceiptDelivery();
+	bool isContactRequestingEvent( XMPP::MsgEvent event ) Q_DECL_OVERRIDE;
+	bool isContactRequestingReceiptDelivery() Q_DECL_OVERRIDE;
 
-	virtual QString lastReceivedMessageId () const;
+	QString lastReceivedMessageId () const Q_DECL_OVERRIDE;
 
 public slots:
 
 	/**
 	 * Remove this contact from the roster
 	 */
-	void deleteContact ();
+	void deleteContact () Q_DECL_OVERRIDE;
 
 	/**
 	 * Sync Groups with server
 	 * 
 	 * operations are alctually performed in sloDelayedSync()
 	 */
-	void sync(unsigned int);
+	void sync(unsigned int) Q_DECL_OVERRIDE;
 
 	/**
 	 * This is the JabberContact level slot for sending files.
@@ -94,8 +94,8 @@ public slots:
 	 * @param fileSize (Optional) Size of the file being sent. Used when sending
 	 *                 a nondeterminate file size (such as over a socket)
 	 */
-	virtual void sendFile( const QUrl &sourceURL = QUrl(),
-		const QString &fileName = QString(), uint fileSize = 0L );
+	void sendFile( const QUrl &sourceURL = QUrl(),
+		const QString &fileName = QString(), uint fileSize = 0L ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Update the vCard on the server.

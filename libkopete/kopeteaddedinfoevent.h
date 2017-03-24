@@ -136,12 +136,12 @@ public Q_SLOTS:
 	/**
 	 * Activate the action specified action
 	 */
-	virtual void activate( uint actionId );
+	void activate( uint actionId ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Emit the event.
 	 */
-	virtual void sendEvent();
+	void sendEvent() Q_DECL_OVERRIDE;
 
 private Q_SLOTS:
 	void addDialogOk();

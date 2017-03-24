@@ -38,7 +38,7 @@ public:
     bool onlyShowOnce();
 
 protected:
-    virtual void slotButtonClicked( int buttonCode );
+    void slotButtonClicked( int buttonCode ) Q_DECL_OVERRIDE;
 
 signals:
     void closing();

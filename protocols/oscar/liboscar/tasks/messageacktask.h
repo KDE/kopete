@@ -28,8 +28,8 @@ class MessageAckTask : public Task
 public:
 	MessageAckTask( Task* parent );
 
-	virtual bool forMe( const Transfer* transfer ) const;
-	virtual bool take( Transfer* transfer );
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 
 signals:
 	void messageAck( const QString& contact, uint messageId );

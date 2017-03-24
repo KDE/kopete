@@ -29,7 +29,7 @@ class AIMProtocolHandler : public Kopete::MimeTypeHandler
 {
 public:
 	AIMProtocolHandler();
-	void handleURL( const QString&, const QUrl & url ) const;
+	void handleURL( const QString&, const QUrl & url ) const Q_DECL_OVERRIDE;
 	using Kopete::MimeTypeHandler::handleURL;
 };
 
@@ -48,11 +48,11 @@ public:
 
 	bool canSendOffline() const { return false; }
 
-	AddContactPage*createAddContactWidget( QWidget *parent, Kopete::Account *account );
-	KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account *account, QWidget *parent );
-	Kopete::Account* createNewAccount( const QString &accountId );
+	AddContactPage*createAddContactWidget( QWidget *parent, Kopete::Account *account ) Q_DECL_OVERRIDE;
+	KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account *account, QWidget *parent ) Q_DECL_OVERRIDE;
+	Kopete::Account* createNewAccount( const QString &accountId ) Q_DECL_OVERRIDE;
 
-	OscarStatusManager *statusManager() const;
+	OscarStatusManager *statusManager() const Q_DECL_OVERRIDE;
 
 	const Kopete::PropertyTmpl clientProfile;
 

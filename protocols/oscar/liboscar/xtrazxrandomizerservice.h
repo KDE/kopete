@@ -29,7 +29,7 @@ class XRandomizerService : public XService
 public:
 	XRandomizerService();
 
-	virtual QString serviceId() const;
+	QString serviceId() const Q_DECL_OVERRIDE;
 };
 
 }

@@ -92,8 +92,8 @@ class FakeContact : public Kopete::Contact
 {
 public:
 	FakeContact (Kopete::Account *account, const QString &id, Kopete::MetaContact *mc ) : Kopete::Contact( account, id, mc ) {}
-	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags /*c*/) { return 0L; }
-	virtual void slotUserInfo() {}
+	Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags /*c*/) Q_DECL_OVERRIDE { return 0L; }
+	void slotUserInfo() Q_DECL_OVERRIDE {}
 };
 
 // This is for style preview.
@@ -101,9 +101,9 @@ class FakeProtocol : public Kopete::Protocol
 {
 public:
 FakeProtocol( QObject *parent ) : Kopete::Protocol(parent){}
-Kopete::Account* createNewAccount( const QString &/*accountId*/ ){return 0L;}
-AddContactPage* createAddContactWidget( QWidget */*parent*/, Kopete::Account */*account*/){return 0L;}
-KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, QWidget */*parent */){return 0L;}
+Kopete::Account* createNewAccount( const QString &/*accountId*/ )Q_DECL_OVERRIDE {return 0L;}
+AddContactPage* createAddContactWidget( QWidget */*parent*/, Kopete::Account */*account*/)Q_DECL_OVERRIDE {return 0L;}
+KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, QWidget */*parent */)Q_DECL_OVERRIDE {return 0L;}
 };
 
 // This is for style preview.
@@ -133,11 +133,11 @@ public:
 		delete m_identity;
 	}
 
-bool createContact( const QString &/*contactId*/, Kopete::MetaContact */*parentContact*/ ){return true;}
-void connect( const Kopete::OnlineStatus& /*initialStatus*/){}
-void disconnect(){}
-void setOnlineStatus( const Kopete::OnlineStatus& /*status*/, const Kopete::StatusMessage &/*reason*/, const OnlineStatusOptions&/*options*/){}
-void setStatusMessage(const Kopete::StatusMessage& /*statusMessage*/){}
+bool createContact( const QString &/*contactId*/, Kopete::MetaContact */*parentContact*/ )Q_DECL_OVERRIDE {return true;}
+void connect( const Kopete::OnlineStatus& /*initialStatus*/)Q_DECL_OVERRIDE {}
+void disconnect()Q_DECL_OVERRIDE {}
+void setOnlineStatus( const Kopete::OnlineStatus& /*status*/, const Kopete::StatusMessage &/*reason*/, const OnlineStatusOptions&/*options*/)Q_DECL_OVERRIDE {}
+void setStatusMessage(const Kopete::StatusMessage& /*statusMessage*/)Q_DECL_OVERRIDE {}
 
 private:
 	FakeIdentity *m_identity;

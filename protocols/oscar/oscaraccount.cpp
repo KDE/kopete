@@ -104,12 +104,12 @@ public:
 
 	bool buddyIconDirty;
 
-	virtual QTextCodec* codecForContact( const QString& contactName ) const
+	QTextCodec* codecForContact( const QString& contactName ) const Q_DECL_OVERRIDE
 	{
 		return account.contactCodec( Oscar::normalize( contactName ) );
 	}
 
-	virtual QTextCodec* codecForAccount() const
+	QTextCodec* codecForAccount() const Q_DECL_OVERRIDE
 	{
 		return account.defaultCodec();
 	}

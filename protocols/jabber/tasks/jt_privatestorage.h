@@ -35,8 +35,8 @@ class JT_PrivateStorage : public XMPP::Task
 		
 		QDomElement element();
 
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() Q_DECL_OVERRIDE;
+		bool take(const QDomElement &) Q_DECL_OVERRIDE;
 		
 	private:
 		class Private;

@@ -35,9 +35,9 @@ public:
 	ProfileTask( Task* parent );
 	~ProfileTask();
 
-	bool forMe( const Transfer* transfer ) const;
-	bool take( Transfer* transfer );
-	void onGo();
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
+	void onGo() Q_DECL_OVERRIDE;
 
 	void setProfileText( const QString& text );
 	void setAwayMessage( const QString& text );

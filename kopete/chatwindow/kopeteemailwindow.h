@@ -38,18 +38,18 @@ public:
 	KopeteEmailWindow( Kopete::ChatSession *, EmailWindowPlugin *parent, bool foreignMessage );
 	~KopeteEmailWindow();
 
-	virtual Kopete::Message currentMessage();
-	virtual void setCurrentMessage( const Kopete::Message &newMessage );
-	virtual void raise(bool activate=false);
-	virtual void makeVisible();
-	virtual bool closeView( bool force = false );
-	virtual bool isVisible();
-	virtual QWidget *mainWidget() { return this; }
+	Kopete::Message currentMessage() Q_DECL_OVERRIDE;
+	void setCurrentMessage( const Kopete::Message &newMessage ) Q_DECL_OVERRIDE;
+	void raise(bool activate=false) Q_DECL_OVERRIDE;
+	void makeVisible() Q_DECL_OVERRIDE;
+	bool closeView( bool force = false ) Q_DECL_OVERRIDE;
+	bool isVisible() Q_DECL_OVERRIDE;
+	QWidget *mainWidget() Q_DECL_OVERRIDE { return this; }
 
 public slots:
 	virtual void sendMessage();
-	virtual void appendMessage( Kopete::Message &message );
-	virtual void messageSentSuccessfully();
+	void appendMessage( Kopete::Message &message ) Q_DECL_OVERRIDE;
+	void messageSentSuccessfully() Q_DECL_OVERRIDE;
 
 signals:
 	void shown();
@@ -58,8 +58,8 @@ signals:
 	void activated( KopeteView *view );
 
 protected:
-	virtual void closeEvent( QCloseEvent *e );
-	virtual void changeEvent( QEvent *e );
+	void closeEvent( QCloseEvent *e ) Q_DECL_OVERRIDE;
+	void changeEvent( QEvent *e ) Q_DECL_OVERRIDE;
 
 private slots:
 	void slotReplySend();
@@ -95,7 +95,7 @@ class EmailWindowPlugin : public Kopete::ViewPlugin
 {
     public:
 	EmailWindowPlugin(QObject *parent, const QVariantList &args);
-	KopeteView* createView( Kopete::ChatSession *manager );
+	KopeteView* createView( Kopete::ChatSession *manager ) Q_DECL_OVERRIDE;
 };
 
 #endif // __KOPETEEMAILWINDOW_H__

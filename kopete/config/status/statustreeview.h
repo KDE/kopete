@@ -27,7 +27,7 @@ public:
 	
 protected:
 	// FIXME: is there an easier way to set default action of QDrag to Qt::MoveAction
-	virtual void startDrag( Qt::DropActions supportedActions )
+	void startDrag( Qt::DropActions supportedActions ) Q_DECL_OVERRIDE
 	{
 		QModelIndexList indexes = selectedIndexes();
 		if ( indexes.count() > 0 )

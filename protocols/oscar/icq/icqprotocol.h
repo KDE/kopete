@@ -28,7 +28,7 @@ class ICQProtocolHandler : public Kopete::MimeTypeHandler
 {
 public:
 	ICQProtocolHandler();
-	void handleURL(const QString &mimeType, const QUrl & url) const;
+	void handleURL(const QString &mimeType, const QUrl & url) const Q_DECL_OVERRIDE;
 	using Kopete::MimeTypeHandler::handleURL;
 };
 
@@ -48,11 +48,11 @@ public:
 
 	virtual bool canSendOffline() const;
 
-	AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
-	KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
-	Kopete::Account *createNewAccount(const QString &accountId);
+	AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account) Q_DECL_OVERRIDE;
+	KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent) Q_DECL_OVERRIDE;
+	Kopete::Account *createNewAccount(const QString &accountId) Q_DECL_OVERRIDE;
 
-	OscarStatusManager *statusManager() const;
+	OscarStatusManager *statusManager() const Q_DECL_OVERRIDE;
 
 
 	const Kopete::PropertyTmpl firstName;

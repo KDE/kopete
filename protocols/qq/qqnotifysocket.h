@@ -48,7 +48,7 @@ public:
 	QQNotifySocket( QQAccount* account, const QString &password );
 	~QQNotifySocket();
 
-	virtual void disconnect();
+	void disconnect() Q_DECL_OVERRIDE;
 
 	/**
 	 * this should return a  Kopete::Account::DisconnectReason value
@@ -79,20 +79,20 @@ protected:
 	/**
 	 * Handle an QQ incoming packet.
 	 */
-	virtual void handleIncomingPacket( const QByteArray& rawData );
+	void handleIncomingPacket( const QByteArray& rawData ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Handle an QQ error condition.
 	 * This reimplementation handles most of the other QQ error codes.
 	 */
-	virtual void handleError( uint code, uint id );
+	void handleError( uint code, uint id ) Q_DECL_OVERRIDE;
 
 	/**
 	 * This reimplementation sets up the negotiating with the server and
 	 * suppresses the change of the status to online until the handshake
 	 * is complete.
 	 */
-	virtual void doneConnect();
+	void doneConnect() Q_DECL_OVERRIDE;
 
 	// QQ operations
 	void sendGoodbye() { return; }

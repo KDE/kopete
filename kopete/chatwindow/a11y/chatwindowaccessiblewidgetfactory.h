@@ -24,7 +24,7 @@
 class ChatWindowAccessibleWidgetFactory: public QAccessiblePlugin {
 public:
     ChatWindowAccessibleWidgetFactory( QObject *parent = nullptr );
-    virtual QAccessibleInterface *create( const QString &key, QObject *object );
+    QAccessibleInterface *create( const QString &key, QObject *object ) Q_DECL_OVERRIDE;
     virtual QStringList keys() const;
 };
 

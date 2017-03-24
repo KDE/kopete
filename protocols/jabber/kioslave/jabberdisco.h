@@ -41,12 +41,12 @@ public:
 	JabberDiscoProtocol ( const QByteArray &pool_socket, const QByteArray &app_socket );
 	virtual ~JabberDiscoProtocol ();
 
-	virtual void setHost(const QString& host, quint16 port, const QString& user, const QString& pass);
+	void setHost(const QString& host, quint16 port, const QString& user, const QString& pass) Q_DECL_OVERRIDE;
 
-	void openConnection ();
-	void closeConnection ();
+	void openConnection () Q_DECL_OVERRIDE;
+	void closeConnection () Q_DECL_OVERRIDE;
 
-	void slave_status ();
+	void slave_status () Q_DECL_OVERRIDE;
 
 	void get ( const KUrl &url );
 	void listDir ( const KUrl &url );

@@ -30,7 +30,7 @@ public:
 	SendMessageTask(Task *parent);
 	~SendMessageTask();
 	
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 	
 	void setText( const QString &text );
 	void setTarget( const QString &to );

@@ -35,13 +35,13 @@ Q_OBJECT
 public:
 	RateInfoTask( Task* parent );
 	~RateInfoTask();
-	bool take( Transfer* transfer );
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 	static QList<RateClass*> parseRateClasses(Buffer *);
 
 protected:
 
-	bool forMe( const Transfer* transfer ) const;
-	void onGo();
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
+	void onGo() Q_DECL_OVERRIDE;
 
 signals:
 	void gotRateLimits();

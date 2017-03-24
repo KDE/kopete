@@ -37,7 +37,7 @@ public:
     TokenDragger( const QString &mimeType, TokenDropTarget *parent ) : QObject(parent), m_mimeType( mimeType )
     {}
 protected:
-    bool eventFilter( QObject *o, QEvent *e )
+    bool eventFilter( QObject *o, QEvent *e ) Q_DECL_OVERRIDE
     {
         if ( e->type() == QEvent::MouseMove )
         {

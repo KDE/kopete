@@ -36,9 +36,9 @@ public:
 	SendFileTask(Task *parent);
 	~SendFileTask();
 	
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 	
-	bool take(Transfer *transfer);
+	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 
 	void setTarget( const QString &to );
 	void setMessage( const QString &msg );
@@ -53,7 +53,7 @@ signals:
 	void declined();
 
 protected:
-	bool forMe( const Transfer *transfer ) const;
+	bool forMe( const Transfer *transfer ) const Q_DECL_OVERRIDE;
 	void sendFileTransferInfo();
 	void parseFileTransfer( const Transfer *transfer );
 	void parseTransferAccept(const Transfer *transfer);

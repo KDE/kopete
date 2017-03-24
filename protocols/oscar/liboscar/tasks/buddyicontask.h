@@ -39,9 +39,9 @@ public:
 	void setHashType( Oscar::BYTE type );
 
 	//! Task implementation
-	void onGo();
-	bool forMe( const Transfer* transfer ) const;
-	bool take( Transfer* transfer );
+	void onGo() Q_DECL_OVERRIDE;
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 
 signals:
 	void haveIcon( const QString&, QByteArray );

@@ -32,10 +32,10 @@ class LIBGROUPWISE_EXPORT RequestTask : public Task
 Q_OBJECT
 	public:
 		RequestTask( Task *parent );
-		bool take( Transfer * transfer );
-		virtual void onGo();
+		bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
+		void onGo() Q_DECL_OVERRIDE;
 	protected:
-		virtual bool forMe( const Transfer * transfer ) const;
+		bool forMe( const Transfer * transfer ) const Q_DECL_OVERRIDE;
 		void createTransfer( const QString & command, const Field::FieldList & fields );
 	private:
 		int m_transactionId;

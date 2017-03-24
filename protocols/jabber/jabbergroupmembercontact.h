@@ -39,23 +39,23 @@ public:
 	 * Create custom context menu items for the contact
 	 * FIXME: implement manager version here?
 	 */
-	QList<QAction *> *customContextMenuActions ();
+	QList<QAction *> *customContextMenuActions () Q_DECL_OVERRIDE;
 	using JabberBaseContact::customContextMenuActions;
 
 	/**
 	 * Return message manager for this instance.
 	 */
-	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate );
+	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Deal with incoming messages.
 	 */
-	void handleIncomingMessage ( const XMPP::Message &message );
+	void handleIncomingMessage ( const XMPP::Message &message ) Q_DECL_OVERRIDE;
 
-	virtual bool isContactRequestingEvent( XMPP::MsgEvent event );
-	virtual bool isContactRequestingReceiptDelivery();
+	bool isContactRequestingEvent( XMPP::MsgEvent event ) Q_DECL_OVERRIDE;
+	bool isContactRequestingReceiptDelivery() Q_DECL_OVERRIDE;
 	
-	virtual QString lastReceivedMessageId () const;
+	QString lastReceivedMessageId () const Q_DECL_OVERRIDE;
 
 public slots:
 
@@ -68,8 +68,8 @@ public slots:
 	 * @param fileSize (Optional) Size of the file being sent. Used when sending
 	 *                 a nondeterminate file size (such as over a socket)
 	 */
-	virtual void sendFile( const QUrl &sourceURL = QUrl(),
-		const QString &fileName = QString(), uint fileSize = 0L );
+	void sendFile( const QUrl &sourceURL = QUrl(),
+		const QString &fileName = QString(), uint fileSize = 0L ) Q_DECL_OVERRIDE;
 
 private slots:
 	/**

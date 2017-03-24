@@ -43,8 +43,8 @@ Q_OBJECT
 	public slots:
 		void slotConfigChanged();
 	protected:
-		bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
-		bool filterAcceptsRow ( int source_row, const QModelIndex & source_parent ) const;
+		bool lessThan(const QModelIndex &left, const QModelIndex &right) const Q_DECL_OVERRIDE;
+		bool filterAcceptsRow ( int source_row, const QModelIndex & source_parent ) const Q_DECL_OVERRIDE;
 		bool showOffline;
 		bool showEmptyFolders;
 		int rootRowCount;

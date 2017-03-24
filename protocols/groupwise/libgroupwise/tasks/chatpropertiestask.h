@@ -42,7 +42,7 @@ class ChatPropertiesTask : public RequestTask
 		 * Specify which chatroom to get properties for
 		 */
 		void setChat( const QString & );
-		bool take( Transfer * transfer );
+		bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
 		/**
 		 * Contains a list of the ACL entries for the specified chatroom
 		 */

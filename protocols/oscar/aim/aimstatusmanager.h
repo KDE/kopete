@@ -29,9 +29,9 @@ public:
 	AIMStatusManager();
 	~AIMStatusManager();
 
-	virtual Kopete::OnlineStatus connectingStatus() const;
-	virtual Kopete::OnlineStatus unknownStatus() const;
-	virtual Kopete::OnlineStatus waitingForAuth() const;
+	Kopete::OnlineStatus connectingStatus() const Q_DECL_OVERRIDE;
+	Kopete::OnlineStatus unknownStatus() const Q_DECL_OVERRIDE;
+	Kopete::OnlineStatus waitingForAuth() const Q_DECL_OVERRIDE;
 
 private:
 	class Private;

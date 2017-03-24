@@ -78,8 +78,8 @@ public:
 	static KContacts::Addressee getAddressee( const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent = nullptr );
 
 protected slots:
-	virtual void accept();
-	virtual void reject();
+	void accept() Q_DECL_OVERRIDE;
+	void reject() Q_DECL_OVERRIDE;
 	void slotWidgetAddresseeListClicked( QTreeWidgetItem *addressee );
 protected:
 	 AddressBookSelectorWidget *m_addressBookSelectorWidget;

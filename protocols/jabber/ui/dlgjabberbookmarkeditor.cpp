@@ -44,7 +44,7 @@ class JabberBookmarkModel : public QAbstractListModel
       return m_bookmarks;
     }
 
-    int rowCount( const QModelIndex &parent ) const
+    int rowCount( const QModelIndex &parent ) const Q_DECL_OVERRIDE
     {
       if ( parent.isValid() )
         return 0;
@@ -52,7 +52,7 @@ class JabberBookmarkModel : public QAbstractListModel
       return m_bookmarks.count();
     }
 
-    QVariant data( const QModelIndex &index, int role = Qt::DisplayRole ) const
+    QVariant data( const QModelIndex &index, int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE
     {
       if ( index.row() >= m_bookmarks.count() )
         return QVariant();
@@ -72,7 +72,7 @@ class JabberBookmarkModel : public QAbstractListModel
       return QVariant();
     }
 
-    bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole )
+    bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole ) Q_DECL_OVERRIDE
     {
       if ( index.row() >= m_bookmarks.count() )
         return false;
@@ -91,7 +91,7 @@ class JabberBookmarkModel : public QAbstractListModel
       return false;
     }
 
-    bool removeRows( int row, int count, const QModelIndex &parent = QModelIndex() )
+    bool removeRows( int row, int count, const QModelIndex &parent = QModelIndex() ) Q_DECL_OVERRIDE
     {
       beginRemoveRows( parent, row, row + count - 1 );
       for ( int i = 0; i < count; ++i )

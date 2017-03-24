@@ -48,11 +48,11 @@ public:
 
 	/** Base Class Reimplementations **/
 	virtual bool isOnline() const;
-	virtual bool isReachable();
-    virtual QList<QAction*> *customContextMenuActions();
+	bool isReachable() Q_DECL_OVERRIDE;
+    QList<QAction*> *customContextMenuActions() Q_DECL_OVERRIDE;
 	using Kopete::Contact::customContextMenuActions;
-	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate= Kopete::Contact::CanCreate );
-	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
+	Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate= Kopete::Contact::CanCreate ) Q_DECL_OVERRIDE;
+	void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData ) Q_DECL_OVERRIDE;
 
 	void setOnlineStatus(const Kopete::OnlineStatus &status);
 	void setYahooStatus( const Kopete::OnlineStatus& );
@@ -76,9 +76,9 @@ public:
 	static QString prepareMessage( const QString &messageText );
 
 public slots:
-	virtual void slotUserInfo();
+	void slotUserInfo() Q_DECL_OVERRIDE;
 	virtual void slotSendFile( const KUrl &file );
-	virtual void deleteContact();
+	void deleteContact() Q_DECL_OVERRIDE;
 	virtual void sendFile( const KUrl &sourceURL = KUrl(), const QString &fileName = QString(), uint fileSize = 0L );
 	void slotUserProfile();
 	void stealthContact();
@@ -94,7 +94,7 @@ public slots:
 	 */
 	void syncToServer();
 
-	void sync(unsigned int flags);
+	void sync(unsigned int flags) Q_DECL_OVERRIDE;
 
 signals:
 	void signalReceivedWebcamImage( const QPixmap &pic );

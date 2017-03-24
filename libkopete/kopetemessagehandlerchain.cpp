@@ -31,12 +31,12 @@ namespace Kopete
 class MessageHandlerChainTerminator : public MessageHandler
 {
 public:
-	void handleMessage( MessageEvent *event )
+	void handleMessage( MessageEvent *event ) Q_DECL_OVERRIDE
 	{
 		qCCritical(LIBKOPETE_LOG) << "message got to end of chain!" << endl;
 		event->discard();
 	}
-	int capabilities()
+	int capabilities() Q_DECL_OVERRIDE
 	{
 		qCCritical(LIBKOPETE_LOG) << "request got to end of chain!" << endl;
 		return 0;

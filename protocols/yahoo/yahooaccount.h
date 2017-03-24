@@ -79,7 +79,7 @@ public:
 	 */
 	YahooContact *contact(const QString &id);
 
-    virtual void fillActionMenu( KActionMenu *actionMenu );
+    void fillActionMenu( KActionMenu *actionMenu ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Sets the yahoo away status
@@ -130,16 +130,16 @@ public slots:
 	/**
 	 * Connect to the Yahoo service
 	 */
-	virtual void connectWithPassword( const QString & );
+	void connectWithPassword( const QString & ) Q_DECL_OVERRIDE;
 	/**
 	 * Disconnect from the Yahoo service
 	 */
-	virtual void disconnect();
+	void disconnect() Q_DECL_OVERRIDE;
 
 	/** Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
-	                      const OnlineStatusOptions& options = None );
-	void setStatusMessage(const Kopete::StatusMessage&);
+	                      const OnlineStatusOptions& options = None ) Q_DECL_OVERRIDE;
+	void setStatusMessage(const Kopete::StatusMessage&) Q_DECL_OVERRIDE;
 signals:
 	/**
 	 * Emitted when we receive notification that the person we're talking to is typing
@@ -155,7 +155,7 @@ protected:
 	/**
 	 * Adds our Yahoo contact to a metacontact
 	 */
-	virtual bool createContact(const QString &contactId,  Kopete::MetaContact *parentContact);
+	bool createContact(const QString &contactId,  Kopete::MetaContact *parentContact) Q_DECL_OVERRIDE;
 
 	virtual bool createChatContact( const QString &nick );
 

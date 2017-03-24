@@ -40,7 +40,7 @@ Q_OBJECT
 public:
 	ConferenceTask( Task* parent );
 	~ConferenceTask();
-	bool take( Transfer * transfer );
+	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
 signals:
 	void typing( const ConferenceEvent & );
 	void notTyping( const ConferenceEvent & );

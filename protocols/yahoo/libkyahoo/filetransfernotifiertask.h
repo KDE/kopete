@@ -34,10 +34,10 @@ public:
 	FileTransferNotifierTask(Task *parent);
 	~FileTransferNotifierTask();
 	
-	bool take(Transfer *transfer);
+	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 
 protected:
-	virtual bool forMe( const Transfer *transfer ) const;
+	bool forMe( const Transfer *transfer ) const Q_DECL_OVERRIDE;
 signals:
 	void incomingFileTransfer( const QString &who, const QString &url, long expires, const QString &msg ,
 	const QString &fname, unsigned long size, const QPixmap &preview );

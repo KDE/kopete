@@ -49,7 +49,7 @@ public:
 	~OtrMessageHandler(){
 //		kdDebug() << "MessageHandler destroyed" << endl;
 	}
-	void handleMessage( Kopete::MessageEvent *event );
+	void handleMessage( Kopete::MessageEvent *event ) Q_DECL_OVERRIDE;
 };
 
 class OtrMessageHandlerFactory : public Kopete::MessageHandlerFactory
@@ -59,12 +59,12 @@ private:
 	OtrMessageHandler *messageHandler;
 public:
 	OtrMessageHandlerFactory( OTRPlugin *plugin ) : plugin(plugin) {}
-	Kopete::MessageHandler *create( Kopete::ChatSession *, Kopete::Message::MessageDirection direction )
+	Kopete::MessageHandler *create( Kopete::ChatSession *, Kopete::Message::MessageDirection direction ) Q_DECL_OVERRIDE
 	{
 		Q_UNUSED(direction)
 		return new OtrMessageHandler(plugin);
 	}
-	int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection )
+	int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection ) Q_DECL_OVERRIDE
 	{
 		return Kopete::MessageHandlerFactory::InStageToSent+1;
 	}

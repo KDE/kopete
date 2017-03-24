@@ -29,8 +29,8 @@ public:
 	                             QObject *target, const char *slot );
 	~PrivacyMessageHandlerFactory();
 	
-	MessageHandler *create( ChatSession *manager, Message::MessageDirection direction );
-	int filterPosition( ChatSession *manager, Message::MessageDirection direction );
+	MessageHandler *create( ChatSession *manager, Message::MessageDirection direction ) Q_DECL_OVERRIDE;
+	int filterPosition( ChatSession *manager, Message::MessageDirection direction ) Q_DECL_OVERRIDE;
 	
 private:
 	class Private;
@@ -44,7 +44,7 @@ public:
 	PrivacyMessageHandler();
 	~PrivacyMessageHandler();
 	
-	void handleMessage( MessageEvent *event );
+	void handleMessage( MessageEvent *event ) Q_DECL_OVERRIDE;
 	
 Q_SIGNALS:
 	void handle( Kopete::MessageEvent *event );

@@ -30,7 +30,7 @@ public:
 	Response( int transactionId, int resultCode, Field::FieldList fields );
 	virtual ~Response( );
 
-	TransferType type() { return Transfer::ResponseTransfer; }
+	TransferType type() Q_DECL_OVERRIDE { return Transfer::ResponseTransfer; }
 	int resultCode() const;
 private:
 	int m_resultCode;

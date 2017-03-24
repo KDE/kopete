@@ -65,14 +65,14 @@ public:
 	~KopeteContactListView();
 
 	void initActions( KActionCollection *ac );
-	virtual void setModel( QAbstractItemModel *newModel );
+	void setModel( QAbstractItemModel *newModel ) Q_DECL_OVERRIDE;
 
 	int visibleContentHeight() const;
 
-	virtual void keyboardSearch( const QString &search );
+	void keyboardSearch( const QString &search ) Q_DECL_OVERRIDE;
 
 public Q_SLOTS:
-	virtual void reset();
+	void reset() Q_DECL_OVERRIDE;
 	void contactActivated( const QModelIndex& index );
 
 	void showItemProperties();
@@ -92,17 +92,17 @@ Q_SIGNALS:
 	void visibleContentHeightChanged();
 
 protected:
-	virtual void contextMenuEvent( QContextMenuEvent* event );
-	virtual void mouseReleaseEvent( QMouseEvent *event );
-	virtual void startDrag( Qt::DropActions supportedActions );
-	virtual void dragMoveEvent( QDragMoveEvent *event );
-	virtual void timerEvent( QTimerEvent *event );
-	virtual bool eventFilter( QObject *object, QEvent *event );
-	virtual bool viewportEvent( QEvent *event );
+	void contextMenuEvent( QContextMenuEvent* event ) Q_DECL_OVERRIDE;
+	void mouseReleaseEvent( QMouseEvent *event ) Q_DECL_OVERRIDE;
+	void startDrag( Qt::DropActions supportedActions ) Q_DECL_OVERRIDE;
+	void dragMoveEvent( QDragMoveEvent *event ) Q_DECL_OVERRIDE;
+	void timerEvent( QTimerEvent *event ) Q_DECL_OVERRIDE;
+	bool eventFilter( QObject *object, QEvent *event ) Q_DECL_OVERRIDE;
+	bool viewportEvent( QEvent *event ) Q_DECL_OVERRIDE;
 
 protected slots:
-	virtual void rowsInserted( const QModelIndex &parent, int start, int end );
-	virtual void selectionChanged( const QItemSelection& selected, const QItemSelection& deselected );
+	void rowsInserted( const QModelIndex &parent, int start, int end ) Q_DECL_OVERRIDE;
+	void selectionChanged( const QItemSelection& selected, const QItemSelection& deselected ) Q_DECL_OVERRIDE;
 
 private slots:
 	void reexpandGroups();

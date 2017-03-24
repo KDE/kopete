@@ -46,7 +46,7 @@ class StatisticsDialog : public KDialog
 		StatisticsDialog(StatisticsContact *contact, StatisticsDB* db, QWidget* parent=0);
 		~StatisticsDialog();
 		
-		QSize sizeHint () const { return QSize ( 800, 600 ); }
+		QSize sizeHint () const Q_DECL_OVERRIDE { return QSize ( 800, 600 ); }
 		
 	private:
 		QString generateHTMLChart(const int *hours, const int *hours2, const int *hours3, const QString & caption, const QColor & color);

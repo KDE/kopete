@@ -120,16 +120,16 @@ public:
 	/** Protocol Accessor **/
 	static YahooProtocol *protocol();
 
-	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
+	Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
 					 const QMap<QString,QString> &serializedData,
-					 const QMap<QString, QString> &addressBookData );
+					 const QMap<QString, QString> &addressBookData ) Q_DECL_OVERRIDE;
 
 	Kopete::OnlineStatus statusFromYahoo( int status );
 
 public slots:
-	virtual AddContactPage *createAddContactWidget(QWidget * parent, Kopete::Account* a);
-	virtual KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
-	virtual Kopete::Account *createNewAccount(const QString &accountId);
+	AddContactPage *createAddContactWidget(QWidget * parent, Kopete::Account* a) Q_DECL_OVERRIDE;
+	KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent) Q_DECL_OVERRIDE;
+	Kopete::Account *createNewAccount(const QString &accountId) Q_DECL_OVERRIDE;
 
 
 private:

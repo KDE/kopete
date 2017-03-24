@@ -30,7 +30,7 @@ public:
 	PingTask(Task *parent);
 	~PingTask();
 	
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 };
 
 #endif

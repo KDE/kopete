@@ -51,12 +51,12 @@ public:
 	/**
 	 * Creates and returns a SimpleMessageHandler object.
 	 */
-	MessageHandler *create( ChatSession *manager, Message::MessageDirection direction );
+	MessageHandler *create( ChatSession *manager, Message::MessageDirection direction ) Q_DECL_OVERRIDE;
 	/**
 	 * Returns the filter position passed to the constructor if @p direction matches the
 	 * direction passed to the constructor, otherwise returns @c StageDoNotCreate.
 	 */
-	int filterPosition( ChatSession *manager, Message::MessageDirection direction );
+	int filterPosition( ChatSession *manager, Message::MessageDirection direction ) Q_DECL_OVERRIDE;
 	
 private:
 	class Private;
@@ -73,7 +73,7 @@ public:
 	SimpleMessageHandler();
 	~SimpleMessageHandler();
 	
-	void handleMessage( MessageEvent *event );
+	void handleMessage( MessageEvent *event ) Q_DECL_OVERRIDE;
 	
 signals:
 	void handle( Kopete::Message &message );

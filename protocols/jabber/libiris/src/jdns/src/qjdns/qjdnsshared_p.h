@@ -74,7 +74,7 @@ public:
 	void waitForShutdown(const QList<QJDnsShared*> &_list);
 
 protected:
-	virtual void run();
+	void run() Q_DECL_OVERRIDE;
 
 private slots:
 	void agent_started();

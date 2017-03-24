@@ -74,9 +74,9 @@ public:
 	
 	virtual ~OscarContact();
 	
-	virtual void serialize(QMap<QString, QString>&, QMap<QString, QString>&);
+	void serialize(QMap<QString, QString>&, QMap<QString, QString>&) Q_DECL_OVERRIDE;
 	
-	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate );
+	Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate ) Q_DECL_OVERRIDE;
 	
 	const QString &contactName() const { return mName; }
 	OscarAccount *account() const { return mAccount; }
@@ -116,10 +116,10 @@ public:
 
 public slots:	
 	/** Remove this contact from the server. Reimplemented from Kopete::Contact */
-	virtual void deleteContact();
+	void deleteContact() Q_DECL_OVERRIDE;
 
 	/** the metacontact owning this contact changed */
-	virtual void sync(unsigned int flags);
+	void sync(unsigned int flags) Q_DECL_OVERRIDE;
 	
 	/** our user info has been updated */
 	virtual void userInfoUpdated( const QString& contact, const UserDetails& details );

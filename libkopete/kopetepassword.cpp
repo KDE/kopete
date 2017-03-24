@@ -95,7 +95,7 @@ public:
 		Kopete::WalletManager::self()->openWallet( this, SLOT(walletReceived(KWallet::Wallet*)) );
 	}
 
-	void walletReceived( KWallet::Wallet *wallet )
+	void walletReceived( KWallet::Wallet *wallet ) Q_DECL_OVERRIDE
 	{
 		qCDebug(LIBKOPETE_LOG) ;
 		mWallet = wallet;
@@ -107,8 +107,8 @@ public:
 	 */
 	virtual void processRequest() = 0;
 
-	void gotPassword(const QString&, bool) {}
-	void slotCancelPressed() {}
+	void gotPassword(const QString&, bool) Q_DECL_OVERRIDE {}
+	void slotCancelPressed() Q_DECL_OVERRIDE {}
 
 protected:
 	Kopete::Password mPassword;
@@ -166,7 +166,7 @@ public:
 	{
 	}
 
-	void processRequest()
+	void processRequest() Q_DECL_OVERRIDE
 	{
 		const QString result = grabPassword();
 		if ( mSource == Kopete::Password::FromUser || result.isNull() )
@@ -190,7 +190,7 @@ public:
 		passwdDialog->show();
 	}
 
-	void gotPassword(const QString& pass, bool keep)
+	void gotPassword(const QString& pass, bool keep) Q_DECL_OVERRIDE
 	{
 		if ( keep )
 			mPassword.set( pass );
@@ -198,7 +198,7 @@ public:
 		finished( pass );
 	}
 
-	void slotCancelPressed()
+	void slotCancelPressed() Q_DECL_OVERRIDE
 	{
 		finished( QString() );
 	}
@@ -218,7 +218,7 @@ public:
 	{
 	}
 
-	void processRequest()
+	void processRequest() Q_DECL_OVERRIDE
 	{
 		finished( grabPassword() );
 	}
@@ -242,7 +242,7 @@ public:
 		KGlobal::deref();
 		qCDebug(LIBKOPETE_LOG) << "job complete";
 	}
-	void processRequest()
+	void processRequest() Q_DECL_OVERRIDE
 	{
 		if ( setPassword() )
 		{
@@ -304,7 +304,7 @@ public:
 		KGlobal::deref();
 		qCDebug(LIBKOPETE_LOG) << "job complete";
 	}
-	void processRequest()
+	void processRequest() Q_DECL_OVERRIDE
 	{
 		if ( clearPassword() )
 		{

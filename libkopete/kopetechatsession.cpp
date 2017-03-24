@@ -237,7 +237,7 @@ public:
 	: manager(manager)
 	{
 	}
-	void handleMessage( Kopete::MessageEvent *event )
+	void handleMessage( Kopete::MessageEvent *event ) Q_DECL_OVERRIDE
 	{
 		Kopete::Message message = event->message();
 
@@ -251,11 +251,11 @@ public:
 class TempFactory : public Kopete::MessageHandlerFactory
 {
 public:
-	Kopete::MessageHandler *create( Kopete::ChatSession *manager, Kopete::Message::MessageDirection )
+	Kopete::MessageHandler *create( Kopete::ChatSession *manager, Kopete::Message::MessageDirection ) Q_DECL_OVERRIDE
 	{
 		return new Kopete::TemporaryKMMCallbackAppendMessageHandler( manager );
 	}
-	int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection )
+	int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection ) Q_DECL_OVERRIDE
 	{
 		// FIXME: somewhere after everyone else.
 		return 100000;

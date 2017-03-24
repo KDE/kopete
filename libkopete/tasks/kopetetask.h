@@ -98,7 +98,7 @@ public:
 	 * For example, for DeleteContactTask, the default behavior
 	 * should call deleteLater() on contact instance.
 	 */
-	virtual void start();
+	void start() Q_DECL_OVERRIDE;
 
 private:
 	class Private;

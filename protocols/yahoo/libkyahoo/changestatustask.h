@@ -33,7 +33,7 @@ public:
 	ChangeStatusTask(Task *parent);
 	~ChangeStatusTask();
 	
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 
 	void setMessage( const QString &msg );
 	void setStatus( Yahoo::Status status );

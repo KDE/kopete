@@ -38,11 +38,11 @@ public:
 	/**
 	 * Make an account out of the entered data
 	 */
-	virtual Kopete::Account* apply();
+	Kopete::Account* apply() Q_DECL_OVERRIDE;
 	/**
 	 * Is the data correct?
 	 */
-	virtual bool validateData();
+	bool validateData() Q_DECL_OVERRIDE;
 
 private slots:
 	void slotOpenRegister();

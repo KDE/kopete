@@ -56,8 +56,8 @@ class LIBOSCAR_EXPORT ICQShortInfo : public ICQInfoBase
 public:
 	ICQShortInfo();
 	~ICQShortInfo() {}
-	void fill( Buffer* buffer );
-	void store( Buffer* buffer );
+	void fill( Buffer* buffer ) Q_DECL_OVERRIDE;
+	void store( Buffer* buffer ) Q_DECL_OVERRIDE;
 	
 public:
 	unsigned long uin;
@@ -75,8 +75,8 @@ class LIBOSCAR_EXPORT ICQGeneralUserInfo : public ICQInfoBase
 public:
 	ICQGeneralUserInfo();
 	~ICQGeneralUserInfo() {}
-	void fill( Buffer* buffer );
-	void store( Buffer* buffer );
+	void fill( Buffer* buffer ) Q_DECL_OVERRIDE;
+	void store( Buffer* buffer ) Q_DECL_OVERRIDE;
 	
 public:
 	ICQInfoValue<unsigned long> uin;
@@ -104,8 +104,8 @@ class LIBOSCAR_EXPORT ICQWorkUserInfo : public ICQInfoBase
 public:
 	ICQWorkUserInfo();
 	~ICQWorkUserInfo() {}
-	void fill( Buffer* buffer );
-	void store( Buffer* buffer );
+	void fill( Buffer* buffer ) Q_DECL_OVERRIDE;
+	void store( Buffer* buffer ) Q_DECL_OVERRIDE;
 	
 public:
 	ICQInfoValue<QByteArray> city;
@@ -127,8 +127,8 @@ class LIBOSCAR_EXPORT ICQMoreUserInfo : public ICQInfoBase
 public:
 	ICQMoreUserInfo();
 	~ICQMoreUserInfo() {}
-	void fill( Buffer* buffer );
-	void store( Buffer* buffer );
+	void fill( Buffer* buffer ) Q_DECL_OVERRIDE;
+	void store( Buffer* buffer ) Q_DECL_OVERRIDE;
 	
 public:
 	ICQInfoValue<int> age;
@@ -152,8 +152,8 @@ class LIBOSCAR_EXPORT ICQEmailInfo : public ICQInfoBase
 public:
 	ICQEmailInfo();
 	~ICQEmailInfo() {}
-	void fill( Buffer* buffer );
-	void store( Buffer* buffer );
+	void fill( Buffer* buffer ) Q_DECL_OVERRIDE;
+	void store( Buffer* buffer ) Q_DECL_OVERRIDE;
 
 public:
 	class EmailItem
@@ -175,8 +175,8 @@ class LIBOSCAR_EXPORT ICQNotesInfo : public ICQInfoBase
 public:
 	ICQNotesInfo();
 	~ICQNotesInfo() {}
-	void fill( Buffer* buffer );
-	void store( Buffer* buffer );
+	void fill( Buffer* buffer ) Q_DECL_OVERRIDE;
+	void store( Buffer* buffer ) Q_DECL_OVERRIDE;
 	
 public:
 	ICQInfoValue<QByteArray> notes;
@@ -187,8 +187,8 @@ class LIBOSCAR_EXPORT ICQInterestInfo : public ICQInfoBase
 public:
 	ICQInterestInfo();
 	~ICQInterestInfo() {}
-	void fill( Buffer* buffer );
-	void store( Buffer* buffer );
+	void fill( Buffer* buffer ) Q_DECL_OVERRIDE;
+	void store( Buffer* buffer ) Q_DECL_OVERRIDE;
 	
 public:
 	ICQInfoValue<int> topics[4];
@@ -200,8 +200,8 @@ class LIBOSCAR_EXPORT ICQOrgAffInfo : public ICQInfoBase
 public:
 	ICQOrgAffInfo();
 	~ICQOrgAffInfo() {}
-	void fill( Buffer* buffer );
-	void store( Buffer* buffer );
+	void fill( Buffer* buffer ) Q_DECL_OVERRIDE;
+	void store( Buffer* buffer ) Q_DECL_OVERRIDE;
 	
 public:
 	ICQInfoValue<int> org1Category;
@@ -266,8 +266,8 @@ public:
 	ICQFullInfo( bool assumeDirty = true );
 	~ICQFullInfo() {}
 
-	void fill( Buffer* buffer );
-	void store( Buffer* buffer );
+	void fill( Buffer* buffer ) Q_DECL_OVERRIDE;
+	void store( Buffer* buffer ) Q_DECL_OVERRIDE;
 
 public:
 	class AddressItem

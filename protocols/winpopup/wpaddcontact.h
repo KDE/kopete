@@ -43,10 +43,10 @@ public:
 	WPAddContact(QWidget *parent, WPAccount *newAccount);
 	~WPAddContact();
 
-	virtual bool validateData();
+	bool validateData() Q_DECL_OVERRIDE;
 
 public slots:
-	virtual bool apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact);
+	bool apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact) Q_DECL_OVERRIDE;
 
 	void slotSelected(const QString &Group);
 	void slotUpdateGroups();

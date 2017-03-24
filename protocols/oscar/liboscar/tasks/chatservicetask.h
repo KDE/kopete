@@ -33,8 +33,8 @@ public:
     ChatServiceTask( Task* parent, Oscar::WORD exchange, const QString& room );
     ~ChatServiceTask();
 
-    void onGo();
-    bool take( Transfer* t );
+    void onGo() Q_DECL_OVERRIDE;
+    bool take( Transfer* t ) Q_DECL_OVERRIDE;
 
     void parseRoomInfo();
 
@@ -53,7 +53,7 @@ signals:
     void newChatMessage( const Oscar::Message& msg );
 
 protected:
-    bool forMe( const Transfer* t ) const;
+    bool forMe( const Transfer* t ) const Q_DECL_OVERRIDE;
 
 private:
     Oscar::WORD m_exchange;

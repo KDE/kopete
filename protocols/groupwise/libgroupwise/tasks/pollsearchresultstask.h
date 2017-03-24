@@ -38,7 +38,7 @@ public:
 	PollSearchResultsTask(Task* parent);
 	~PollSearchResultsTask();
 	void poll( const QString & queryHandle);
-	bool take( Transfer * transfer );
+	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
 	int queryStatus();
 	QList< GroupWise::ContactDetails > results();
 GroupWise::ContactDetails extractUserDetails( Field::FieldList & fields );

@@ -37,9 +37,9 @@ public:
 	~MoveContactTask();
 	void moveContact( const ContactItem & contact, const int newParent );
 	void moveContactToNewFolder( const ContactItem & contact, const int newSequenceNumber, const QString & folderDisplayName );
-	void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 protected:
-	void onFolderCreated();
+	void onFolderCreated() Q_DECL_OVERRIDE;
 private:
 	int m_targetFolder;
 	QString m_dn;

@@ -335,13 +335,13 @@ public:
 		connect(&t, SIGNAL(timeout()), SLOT(check()));
 	}
 
-	void start()
+	void start() Q_DECL_OVERRIDE
 	{
 		t.start(5000);
 		poll();
 	}
 
-	QList<Info> interfaces() const
+	QList<Info> interfaces() const Q_DECL_OVERRIDE
 	{
 		return info;
 	}
@@ -415,7 +415,7 @@ class UnixNetProvider : public IrisNetProvider
 	Q_OBJECT
 	Q_INTERFACES(XMPP::IrisNetProvider);
 public:
-	virtual NetInterfaceProvider *createNetInterfaceProvider()
+	NetInterfaceProvider *createNetInterfaceProvider() Q_DECL_OVERRIDE
 	{
 		return new UnixNet;
 	}

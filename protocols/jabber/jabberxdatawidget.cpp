@@ -89,7 +89,7 @@ public:
 		}
 	}
 
-	virtual XMPP::XData::Field field() const
+	XMPP::XData::Field field() const Q_DECL_OVERRIDE
 	{
 		XMPP::XData::Field f = XDataWidgetField::field();
 		QStringList val;
@@ -177,7 +177,7 @@ public:
 		}
 	}
 
-	virtual XMPP::XData::Field field() const
+	XMPP::XData::Field field() const Q_DECL_OVERRIDE
 	{
 		// TODO is value unique?
 		QString lbl = combo->currentText();
@@ -239,7 +239,7 @@ public:
 		}
 	}
 
-	XMPP::XData::Field field() const
+	XMPP::XData::Field field() const Q_DECL_OVERRIDE
 	{
 		XMPP::XData::Field f = XDataWidgetField::field();
 		QStringList val;
@@ -304,7 +304,7 @@ public:
 		}
 	}
 
-	virtual XMPP::XData::Field field() const
+	XMPP::XData::Field field() const Q_DECL_OVERRIDE
 	{
 		XMPP::XData::Field f = XDataWidgetField::field();
 		f.setValue(edit->toPlainText().split('\n'));
@@ -345,7 +345,7 @@ public:
 		}
 	}
 
-	virtual XMPP::XData::Field field() const
+	XMPP::XData::Field field() const Q_DECL_OVERRIDE
 	{
 		XMPP::XData::Field f = XDataWidgetField::field();
 		QStringList val;
@@ -380,7 +380,7 @@ public:
 	{
 	}
 
-	virtual bool isValid() const
+	bool isValid() const Q_DECL_OVERRIDE
 	{
 		// TODO
 		return true;
@@ -397,7 +397,7 @@ public:
 	{
 	}
 
-	virtual bool isValid() const
+	bool isValid() const Q_DECL_OVERRIDE
 	{
 		// TODO
 		return true;

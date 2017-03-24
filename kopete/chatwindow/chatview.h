@@ -102,7 +102,7 @@ public:
 	 *
 	 * Reimplemented from KopeteView
 	 */
-	virtual void clear();
+	void clear() Q_DECL_OVERRIDE;
 
 	/**
 	 * Sets the text to be displayed on tab label and window caption
@@ -121,7 +121,7 @@ public:
 	 *
 	 * Reimplemented from KopeteView
 	 */
-	virtual Kopete::Message currentMessage();
+	Kopete::Message currentMessage() Q_DECL_OVERRIDE;
 
 	/**
 	 * Sets the current message in the chat window
@@ -129,7 +129,7 @@ public:
 	 *
 	 * Reimplemented from KopeteView
 	 */
-	virtual void setCurrentMessage( const Kopete::Message &newMessage );
+	void setCurrentMessage( const Kopete::Message &newMessage ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Returns the chat window this view is in
@@ -144,16 +144,16 @@ public:
 	bool sendInProgress() const;
 
 	/** Reimplemented from KopeteView **/
-	virtual void raise( bool activate=false );
+	void raise( bool activate=false ) Q_DECL_OVERRIDE;
 
 	/** Reimplemented from KopeteView **/
-	virtual void makeVisible();
+	void makeVisible() Q_DECL_OVERRIDE;
 
 	/** Reimplemented from KopeteView **/
-	virtual bool isVisible();
+	bool isVisible() Q_DECL_OVERRIDE;
 
 	/** Reimplemented from KopeteView **/
-	virtual QWidget *mainWidget();
+	QWidget *mainWidget() Q_DECL_OVERRIDE;
 
 	KTextEdit *editWidget();
 
@@ -161,10 +161,10 @@ public:
 	bool canSendFile() const;
 	
 	/** Reimplemented from KopeteView **/
-	virtual void registerContextMenuHandler( QObject *target, const char* slot );
+	void registerContextMenuHandler( QObject *target, const char* slot ) Q_DECL_OVERRIDE;
 
 	/** Reimplemented from KopeteView **/
-	virtual void registerTooltipHandler( QObject *target, const char* slot );
+	void registerTooltipHandler( QObject *target, const char* slot ) Q_DECL_OVERRIDE;
 
 public slots:
 	/**
@@ -200,7 +200,7 @@ public slots:
 	 * Called when a message is received from someone
 	 * @param message The message received
 	 */
-	virtual void appendMessage( Kopete::Message &message );
+	void appendMessage( Kopete::Message &message ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Send file (opens file dialog)
@@ -228,11 +228,11 @@ public slots:
 	void slotRecalculateSize(int difference);
 
 	/** Reimplemented from KopeteView **/
-	virtual void messageSentSuccessfully();
+	void messageSentSuccessfully() Q_DECL_OVERRIDE;
 
-	virtual bool closeView( bool force = false );
+	bool closeView( bool force = false ) Q_DECL_OVERRIDE;
 	
-	virtual void dropEvent ( QDropEvent * );
+	void dropEvent ( QDropEvent * ) Q_DECL_OVERRIDE;
 	bool isDragEventAccepted( const QDragMoveEvent * ) const;
 
 	/** Retrieves the tab state. */
@@ -339,8 +339,8 @@ private slots:
 	void slotDisplayNameChanged(const QString &oldValue, const QString &newValue);
 
 protected:
-	virtual void dragEnterEvent ( QDragEnterEvent * );
-	virtual void dragMoveEvent ( QDragMoveEvent * );
+	void dragEnterEvent ( QDragEnterEvent * ) Q_DECL_OVERRIDE;
+	void dragMoveEvent ( QDragMoveEvent * ) Q_DECL_OVERRIDE;
 
 private:
 	// widget stuff
@@ -380,7 +380,7 @@ class ChatWindowPlugin : public Kopete::ViewPlugin
 {
 	public:
 		ChatWindowPlugin(QObject *parent, const QVariantList &args);
-		KopeteView* createView( Kopete::ChatSession *manager );
+		KopeteView* createView( Kopete::ChatSession *manager ) Q_DECL_OVERRIDE;
 };
 
 #endif

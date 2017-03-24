@@ -38,7 +38,7 @@ public:
 	//! our ip address
 	void setIp( Oscar::DWORD ip );
 
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 
 private:
 	void addBasicTLVs( Buffer* b );

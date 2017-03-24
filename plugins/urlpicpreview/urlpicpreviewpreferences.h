@@ -34,9 +34,9 @@ class URLPicPreviewPreferences : public KCModule
 		explicit URLPicPreviewPreferences ( QWidget* parent = nullptr, const QVariantList& args = QVariantList() );
 
 		virtual ~URLPicPreviewPreferences();
-		virtual void load();
-		virtual void save();
-		virtual void defaults();
+		void load() Q_DECL_OVERRIDE;
+		void save() Q_DECL_OVERRIDE;
+		void defaults() Q_DECL_OVERRIDE;
 
 	private:
 		QLayout * m_layout;

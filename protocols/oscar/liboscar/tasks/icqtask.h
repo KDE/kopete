@@ -32,9 +32,9 @@ public:
 	ICQTask( Task* parent );
 	~ICQTask();
 
-	virtual void onGo();
-	virtual bool forMe( const Transfer* t ) const;
-	virtual bool take( Transfer* t );
+	void onGo() Q_DECL_OVERRIDE;
+	bool forMe( const Transfer* t ) const Q_DECL_OVERRIDE;
+	bool take( Transfer* t ) Q_DECL_OVERRIDE;
 
 	void parseInitialData( Buffer buf );
 	Buffer* addInitialData( Buffer* buf = 0 ) const;

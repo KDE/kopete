@@ -37,12 +37,12 @@ class TokenPool : public KListWidget
         QString mimeType() const;
         void setMimeType( const QString& mimeType );
     protected:
-        void mouseDoubleClickEvent( QMouseEvent *event );
-        void mousePressEvent( QMouseEvent *event );
-        void mouseMoveEvent( QMouseEvent *event );
-        void dragEnterEvent( QDragEnterEvent *event );
-        void dragMoveEvent( QDragMoveEvent *event );
-        void dropEvent( QDropEvent *event );
+        void mouseDoubleClickEvent( QMouseEvent *event ) Q_DECL_OVERRIDE;
+        void mousePressEvent( QMouseEvent *event ) Q_DECL_OVERRIDE;
+        void mouseMoveEvent( QMouseEvent *event ) Q_DECL_OVERRIDE;
+        void dragEnterEvent( QDragEnterEvent *event ) Q_DECL_OVERRIDE;
+        void dragMoveEvent( QDragMoveEvent *event ) Q_DECL_OVERRIDE;
+        void dropEvent( QDropEvent *event ) Q_DECL_OVERRIDE;
 
     signals:
         void onDoubleClick( Token *token );     //connects to TokenLayoutWidget::addToken( QString )

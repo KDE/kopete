@@ -40,7 +40,7 @@ public:
 	ModifyYABTask(Task *parent);
 	~ModifyYABTask();
 
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 	void setAction( Action action );
 	void setEntry( const YABEntry & );
 signals:

@@ -266,7 +266,7 @@ public:
 	/**
 	 * @copydoc KJob::start()
 	 */
-	virtual void start();
+	void start() Q_DECL_OVERRIDE;
 
 	/**
 	 * @brief Get the avatar list based on the query

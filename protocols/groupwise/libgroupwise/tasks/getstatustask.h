@@ -34,7 +34,7 @@ public:
 	GetStatusTask(Task* parent);
 	~GetStatusTask();
 	void userDN( const QString & dn );
-	bool take( Transfer * transfer );
+	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
 signals:
 	void gotStatus( const QString & contactId, quint16 status, const QString & statusText );
 private:

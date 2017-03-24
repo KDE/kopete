@@ -35,7 +35,7 @@ public:
 	HttpPoll(QObject *parent=0);
 	~HttpPoll();
 
-	virtual QAbstractSocket* abstractSocket() const;
+	QAbstractSocket* abstractSocket() const Q_DECL_OVERRIDE;
 
 	void setAuth(const QString &user, const QString &pass="");
 	void connectToUrl(const QUrl &url);
@@ -46,7 +46,7 @@ public:
 
 	// from ByteStream
 	bool isOpen() const;
-	void close();
+	void close() Q_DECL_OVERRIDE;
 
 signals:
 	void connected();
@@ -54,7 +54,7 @@ signals:
 	void syncFinished();
 
 protected:
-	int tryWrite();
+	int tryWrite() Q_DECL_OVERRIDE;
 
 private slots:
 	void http_result();

@@ -43,8 +43,8 @@ public:
 	LoginTask(Task *parent);
 	~LoginTask();
 	
-	bool take(Transfer* transfer);
-	virtual void onGo();
+	bool take(Transfer* transfer) Q_DECL_OVERRIDE;
+	void onGo() Q_DECL_OVERRIDE;
 
 	void reset();
 	void setStateOnConnect( Yahoo::Status status );
@@ -55,7 +55,7 @@ public:
 	const QString &tCookie();
 	const QString &loginCookie();
 protected:
-	virtual bool forMe( const Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 	enum State { InitialState, SentVerify, GotVerifyACK, SentAuth, GotAuthACK, SentAuthResp };
 	void sendVerify();
 	void sendAuth(YMSGTransfer* transfer);

@@ -38,7 +38,7 @@ public:
 	~PrivKeyPopup();
 
 	void setCloseLock( bool locked );
-	void closeEvent( QCloseEvent *e );
+	void closeEvent( QCloseEvent *e ) Q_DECL_OVERRIDE;
 
 private:
 	Ui::PrivKeyPopup ui;

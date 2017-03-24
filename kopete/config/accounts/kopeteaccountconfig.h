@@ -50,11 +50,11 @@ public:
 	KopeteAccountConfig(QWidget *parent, const QVariantList &args );
 
 protected:
-	virtual bool eventFilter( QObject *obj, QEvent *event );
+	bool eventFilter( QObject *obj, QEvent *event ) Q_DECL_OVERRIDE;
 
 public slots:
-	virtual void save();
-	virtual void load();
+	void save() Q_DECL_OVERRIDE;
+	void load() Q_DECL_OVERRIDE;
 
 private:
 	KopeteAccountLVI* selectedAccount();

@@ -31,7 +31,7 @@ public:
 	RequestPictureTask(Task *parent);
 	virtual ~RequestPictureTask();
 	
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 	
 	void setTarget( const QString &target );
 private:

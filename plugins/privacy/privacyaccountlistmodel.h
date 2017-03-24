@@ -37,11 +37,11 @@ public:
 	void addAccount(const QString &accountId, Kopete::Protocol *protocol);
 	void addAccount(const AccountListEntry &entry);
 
-	int rowCount(const QModelIndex &parent = QModelIndex()) const;
-	int columnCount(const QModelIndex &parent = QModelIndex()) const;
-	QVariant data(const QModelIndex &index, int role) const;
+	int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+	QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
 	bool removeRow(int position, const QModelIndex &index = QModelIndex());
-	bool removeRows(int position, int rows, const QModelIndex &index = QModelIndex());
+	bool removeRows(int position, int rows, const QModelIndex &index = QModelIndex()) Q_DECL_OVERRIDE;
 
 	QStringList toStringList() const;
 

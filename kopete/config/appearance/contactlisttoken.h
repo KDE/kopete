@@ -23,7 +23,7 @@
 class ContactListTokenFactory : public TokenFactory
 {
 public:
-	virtual Token * createToken( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr );
+	Token * createToken( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr ) Q_DECL_OVERRIDE;
 };
 
 class ContactListToken : public TokenWithLayout
@@ -39,8 +39,8 @@ public:
 	void setOptimalSize( bool optimalSize );
 
 protected:
-	virtual void fillMenu( QMenu * menu );
-	virtual void menuExecuted( const QAction* action );
+	void fillMenu( QMenu * menu ) Q_DECL_OVERRIDE;
+	void menuExecuted( const QAction* action ) Q_DECL_OVERRIDE;
 
 private:
 	bool m_small;

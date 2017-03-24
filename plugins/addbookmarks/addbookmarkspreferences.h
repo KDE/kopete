@@ -31,8 +31,8 @@ public:
 
     ~BookmarksPreferences();
     
-    virtual void load();
-    virtual void save();
+    void load() Q_DECL_OVERRIDE;
+    void save() Q_DECL_OVERRIDE;
     
 signals:
     void PreferencesChanged();

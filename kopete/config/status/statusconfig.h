@@ -34,8 +34,8 @@ class StatusConfig : public KCModule
 		StatusConfig( QWidget *parent, const QVariantList &args );
 
 	public slots:
-		virtual void save();
-		virtual void load();
+		void save() Q_DECL_OVERRIDE;
+		void load() Q_DECL_OVERRIDE;
 
 	private:
 		QTabWidget* mStatusTabCtl;

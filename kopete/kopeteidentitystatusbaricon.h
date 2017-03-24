@@ -47,7 +47,7 @@ signals:
 	void leftClicked( Kopete::Identity *identity, const QPoint &p );
 
 protected:
-	virtual void mousePressEvent( QMouseEvent *me );
+	void mousePressEvent( QMouseEvent *me ) Q_DECL_OVERRIDE;
 
 private slots:
 	void updateMessage( Kopete::StatusRootAction *statusRootAction );

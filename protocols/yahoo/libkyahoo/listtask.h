@@ -32,10 +32,10 @@ public:
 	ListTask(Task *parent);
 	~ListTask();
 	
-	bool take(Transfer *transfer);
+	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 
 protected:
-	virtual bool forMe( const Transfer *transfer ) const;
+	bool forMe( const Transfer *transfer ) const Q_DECL_OVERRIDE;
 	void parseBuddyList( YMSGTransfer *transfer );
 
 signals:

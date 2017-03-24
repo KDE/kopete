@@ -39,11 +39,11 @@ public:
 	 * Convert the serialised data back into a BonjourContact and add this
 	 * to its Kopete::MetaContact
 	 */
-	virtual Kopete::Contact *deserializeContact(
+	Kopete::Contact *deserializeContact(
 			Kopete::MetaContact *metaContact,
 			const QMap< QString, QString > & serializedData,
 			const QMap< QString, QString > & addressBookData
-		);
+		) Q_DECL_OVERRIDE;
 
 	/**
 	 * @brief Generate an Add Contact Page (not actually useful)
@@ -55,7 +55,7 @@ public:
 	 *
 	 * @return The Add Contact Page Widget
 	 */
-	virtual AddContactPage * createAddContactWidget( QWidget *parent, Kopete::Account *account );
+	AddContactPage * createAddContactWidget( QWidget *parent, Kopete::Account *account ) Q_DECL_OVERRIDE;
 
 	/**
 	 * @brief Generate an Edit Account Page
@@ -67,7 +67,7 @@ public:
 	 *
 	 * @return The Edit Account Page Widget
 	 */
-	virtual KopeteEditAccountWidget * createEditAccountWidget( Kopete::Account *account, QWidget *parent );
+	KopeteEditAccountWidget * createEditAccountWidget( Kopete::Account *account, QWidget *parent ) Q_DECL_OVERRIDE;
 
 	/**
 	 * @brief Create a New Account
@@ -76,7 +76,7 @@ public:
 	 * @param accountId A Unique String to identify the Account
 	 * @return The Newly Created Account
 	 */
-	virtual Kopete::Account * createNewAccount( const QString &accountId );
+	Kopete::Account * createNewAccount( const QString &accountId ) Q_DECL_OVERRIDE;
 
 	/**
 	 * @brief Access the instance of this protocol

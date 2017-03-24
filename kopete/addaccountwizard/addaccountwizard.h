@@ -58,10 +58,10 @@ private slots:
 	void slotProtocolListDoubleClicked();
 
 protected slots:
-	virtual void back();
-	virtual void next();
-	virtual void accept();
-	virtual void reject();
+	void back() Q_DECL_OVERRIDE;
+	void next() Q_DECL_OVERRIDE;
+	void accept() Q_DECL_OVERRIDE;
+	void reject() Q_DECL_OVERRIDE;
 
 private:
 	class Private;

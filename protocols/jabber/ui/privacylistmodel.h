@@ -38,10 +38,10 @@ public:
 	PrivacyListModel(const PrivacyList& list = PrivacyList(""), QObject* parent = NULL);
 
 	// Overridden from QAbstractListModel
-	int rowCount(const QModelIndex &parent = QModelIndex()) const;
-	int columnCount(const QModelIndex &parent = QModelIndex()) const;
-	QVariant data(const QModelIndex &index, int role) const;
-	bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex());
+	int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+	QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
+	bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex()) Q_DECL_OVERRIDE;
 	void reset() { QAbstractListModel::reset(); } // Not really clean
 
 	// Own functions

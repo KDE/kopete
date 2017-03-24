@@ -98,7 +98,7 @@ public:
 	/**
 	 * Reimplemented from Kopete::ChatSession - invites contacts via DND
 	 */
-	virtual void inviteContact(const QString& );
+	void inviteContact(const QString& ) Q_DECL_OVERRIDE;
 signals:
 	/**
 	 * Tell the contact we got a GUID so it can route incoming messages here.

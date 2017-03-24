@@ -50,19 +50,19 @@ public:
 	 * Returns a set of custom menu items for
 	 * the context menu
 	 */
-	virtual QList<QAction*> *customContextMenuActions();
+	QList<QAction*> *customContextMenuActions() Q_DECL_OVERRIDE;
 	using ICQContactBase::customContextMenuActions;
 
 	/** Return whether or not this contact is reachable. */
-	virtual bool isReachable();
+	bool isReachable() Q_DECL_OVERRIDE;
 
-	virtual void setSSIItem( const OContact& ssiItem );
+	void setSSIItem( const OContact& ssiItem ) Q_DECL_OVERRIDE;
 
 public slots:
-	void userInfoUpdated( const QString& contact, const UserDetails& details );
+	void userInfoUpdated( const QString& contact, const UserDetails& details ) Q_DECL_OVERRIDE;
 
-	void userOnline( const QString& userId );
-	void userOffline( const QString& userID );
+	void userOnline( const QString& userId ) Q_DECL_OVERRIDE;
+	void userOffline( const QString& userID ) Q_DECL_OVERRIDE;
 	void loggedIn();
 
 private:

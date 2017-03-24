@@ -57,7 +57,7 @@ public:
 	Oscar::Client* engine();
 
 	/** Disconnects this account */
-	virtual void disconnect();
+	void disconnect() Q_DECL_OVERRIDE;
 
 	/**
 	 * Handle the various ways we can be logged off the oscar service
@@ -73,12 +73,12 @@ public:
 	/**
 	 * Fill the menu for this account
 	 */
-	virtual void fillActionMenu( KActionMenu *actionMenu ) = 0;
+	void fillActionMenu( KActionMenu *actionMenu ) Q_DECL_OVERRIDE = 0;
 
 	/**
 	 * Sets the identity this account belongs to
 	 */
-	virtual bool setIdentity( Kopete::Identity *ident );
+	bool setIdentity( Kopete::Identity *ident ) Q_DECL_OVERRIDE;
 
 	/** Set the server address */
 	void setServerAddress( const QString& server );
@@ -148,8 +148,8 @@ protected:
 	 * Adds a contact to a meta contact
 	 */
 	friend class OscarProtocol;
-	virtual bool createContact(const QString &contactId,
-		 Kopete::MetaContact *parentContact );
+	bool createContact(const QString &contactId,
+		 Kopete::MetaContact *parentContact ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Protocols using Oscar must implement this to perform the instantiation

@@ -34,21 +34,21 @@ public:
 	            const QString& icon = QString() );
 	virtual ~AIMContact();
 
-	bool isReachable();
+	bool isReachable() Q_DECL_OVERRIDE;
 
 	/**
 	 * Returns a set of custom menu items for
 	 * the context menu
 	 */
-	virtual QList<QAction*> *customContextMenuActions();
+	QList<QAction*> *customContextMenuActions() Q_DECL_OVERRIDE;
 	using AIMContactBase::customContextMenuActions;
 
-	virtual void setSSIItem( const OContact& ssiItem );
+	void setSSIItem( const OContact& ssiItem ) Q_DECL_OVERRIDE;
 
 public slots:
-	void userInfoUpdated( const QString& contact, const UserDetails& details );
-	void userOnline( const QString& userId );
-	void userOffline( const QString& userId );
+	void userInfoUpdated( const QString& contact, const UserDetails& details ) Q_DECL_OVERRIDE;
+	void userOnline( const QString& userId ) Q_DECL_OVERRIDE;
+	void userOffline( const QString& userId ) Q_DECL_OVERRIDE;
 
 private slots:
 

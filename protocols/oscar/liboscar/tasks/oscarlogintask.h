@@ -30,8 +30,8 @@ Q_OBJECT
 public:
 	OscarLoginTask( Task* parent );
 	~OscarLoginTask();
-	bool take( Transfer* transfer );
-	virtual void onGo();
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
+	void onGo() Q_DECL_OVERRIDE;
 
 	//Protocol specific stuff
 	const QByteArray& cookie() const;
@@ -41,7 +41,7 @@ public:
 	const QString& bosSSLName() const;
 
 protected:
-	bool forMe( const Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 
 signals:
 	void haveAuthKey();

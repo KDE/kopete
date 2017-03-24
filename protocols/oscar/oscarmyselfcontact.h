@@ -40,8 +40,8 @@ public:
 	OscarMyselfContact( OscarAccount* account );
 	virtual ~OscarMyselfContact();
 	
-	virtual bool isReachable();
-	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate );
+	bool isReachable() Q_DECL_OVERRIDE;
+	Kopete::ChatSession *manager( CanCreateFlags canCreate ) Q_DECL_OVERRIDE;
 	
 	UserDetails details();
 	
@@ -50,7 +50,7 @@ public slots:
 	virtual void userInfoUpdated() = 0;
 	
 	/** I'm sorry Dave, I can't let you do that... */
-	virtual void deleteContact();
+	void deleteContact() Q_DECL_OVERRIDE;
 };
 
 #endif

@@ -55,10 +55,10 @@ public:
 	QString room() const;
 
 	//! Task implementation
-	virtual bool take( Transfer* transfer );
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 
 protected:
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 
 public slots:
 	void doInvite();

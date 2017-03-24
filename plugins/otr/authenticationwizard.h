@@ -54,8 +54,8 @@ public:
 	
 protected:
 
-	virtual int nextId() const;
-	virtual bool validateCurrentPage();
+	int nextId() const Q_DECL_OVERRIDE;
+	bool validateCurrentPage() Q_DECL_OVERRIDE;
 
 private:
 	enum { Page_SelectMethod, Page_QuestionAnswer, Page_SharedSecret, Page_ManualVerification, Page_Wait1, Page_Wait2, Page_Final };
@@ -102,7 +102,7 @@ public:
 	WaitPage(const QString &text);
 	void ready(){canContinue = true;};
 protected:
-	virtual bool isComplete() const{return canContinue;};
+	bool isComplete() const Q_DECL_OVERRIDE {return canContinue;};
 };
 
 #endif //AUTHENTICATIONWIZARD_H

@@ -36,8 +36,8 @@ class JT_GetLastActivity : public XMPP::Task
 		int seconds() const;
 		const QString &message() const;
 
-		void onGo();
-		bool take(const QDomElement &x);
+		void onGo() Q_DECL_OVERRIDE;
+		bool take(const QDomElement &x) Q_DECL_OVERRIDE;
 
 	private:
 		class Private;

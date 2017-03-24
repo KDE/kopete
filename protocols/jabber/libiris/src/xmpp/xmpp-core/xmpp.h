@@ -147,14 +147,14 @@ namespace XMPP
 
 		void changePollInterval(int secs);
 
-		void setOptHostPort(const QString &host, quint16 port);
-		void connectToServer(const QString &server);
-		ByteStream *stream() const;
-		void done();
+		void setOptHostPort(const QString &host, quint16 port) Q_DECL_OVERRIDE;
+		void connectToServer(const QString &server) Q_DECL_OVERRIDE;
+		ByteStream *stream() const Q_DECL_OVERRIDE;
+		void done() Q_DECL_OVERRIDE;
 
 		int errorCode() const;
 
-		virtual QString host() const;
+		QString host() const Q_DECL_OVERRIDE;
 
 	signals:
 		void srvLookup(const QString &server);
@@ -210,10 +210,10 @@ namespace XMPP
 		bool XMPPCertCheck();
 		bool certMatchesHostname();
 
-		void reset();
-		void startClient(const QString &host);
-		void write(const QByteArray &a);
-		void writeIncoming(const QByteArray &a);
+		void reset() Q_DECL_OVERRIDE;
+		void startClient(const QString &host) Q_DECL_OVERRIDE;
+		void write(const QByteArray &a) Q_DECL_OVERRIDE;
+		void writeIncoming(const QByteArray &a) Q_DECL_OVERRIDE;
 
 	signals:
 		void tlsHandshaken();

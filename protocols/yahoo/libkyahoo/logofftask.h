@@ -29,7 +29,7 @@ public:
 	LogoffTask(Task *parent);
 	~LogoffTask();
 	
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 };
 
 #endif

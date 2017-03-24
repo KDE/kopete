@@ -54,7 +54,7 @@ signals:
     void focussed( QWidget* );
 
 protected:
-    bool eventFilter( QObject *, QEvent * );
+    bool eventFilter( QObject *, QEvent * ) Q_DECL_OVERRIDE;
     QBoxLayout *rowBox( QWidget *w, QPoint *idx = 0 ) const;
     QBoxLayout *rowBox( const QPoint &pt ) const;
 protected:

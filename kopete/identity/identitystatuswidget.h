@@ -53,10 +53,10 @@ public:
 	Kopete::Identity *identity() const;
 	void setIdentity(Kopete::Identity *identity);
 
-	virtual void setVisible(bool visible);
+	void setVisible(bool visible) Q_DECL_OVERRIDE;
 
 protected:
-	bool eventFilter( QObject *watched, QEvent *event );
+	bool eventFilter( QObject *watched, QEvent *event ) Q_DECL_OVERRIDE;
 
 private:
 	/**

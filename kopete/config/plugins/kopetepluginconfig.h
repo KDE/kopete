@@ -39,10 +39,10 @@ public:
 	~KopetePluginConfig();
 
 public slots:
-	virtual void load();
-	virtual void save();
+	void load() Q_DECL_OVERRIDE;
+	void save() Q_DECL_OVERRIDE;
 
-	virtual void defaults();
+	void defaults() Q_DECL_OVERRIDE;
     void reparseConfiguration(const QByteArray&conf);
 private:
 	KPluginSelector *m_pluginSelector;

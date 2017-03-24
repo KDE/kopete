@@ -46,7 +46,7 @@ Q_OBJECT
 public:
 	StageOneLoginTask( Task* parent );
 	~StageOneLoginTask();
-	bool take( Transfer* transfer );
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 
 	//Protocol specific stuff
 	
@@ -75,7 +75,7 @@ public slots:
 	void loginTaskFinished();
 
 protected:
-	bool forMe( const Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 
 private:
 	
@@ -110,8 +110,8 @@ Q_OBJECT
 public:
 	StageTwoLoginTask( Task* parent );
 	~StageTwoLoginTask();
-	bool take( Transfer* transfer );
-	void onGo();
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
+	void onGo() Q_DECL_OVERRIDE;
 
 	//protocol specifics
 	//! Set the cookie to send to the server
@@ -132,7 +132,7 @@ public slots:
 	void rateTaskFinished();
 	
 protected:
-	bool forMe( const Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 
 private:
 	QByteArray m_cookie;

@@ -63,7 +63,7 @@ public:
 	SocksClient(qintptr, QObject *parent=0);
 	~SocksClient();
 
-	virtual QAbstractSocket* abstractSocket() const;
+	QAbstractSocket* abstractSocket() const Q_DECL_OVERRIDE;
 
 	bool isIncoming() const;
 
@@ -79,9 +79,9 @@ public:
 	void grantUDPAssociate(const QString &relayHost, int relayPort);
 
 	// from ByteStream
-	void close();
-	qint64 bytesAvailable() const;
-	qint64 bytesToWrite() const;
+	void close() Q_DECL_OVERRIDE;
+	qint64 bytesAvailable() const Q_DECL_OVERRIDE;
+	qint64 bytesToWrite() const Q_DECL_OVERRIDE;
 
 	// remote address
 	QHostAddress peerAddress() const;
@@ -93,8 +93,8 @@ public:
 	SocksUDP *createUDP(const QString &host, int port, const QHostAddress &routeAddr, int routePort);
 
 protected:
-	qint64 writeData(const char *data, qint64 maxSize);
-	qint64 readData(char *data, qint64 maxSize);
+	qint64 writeData(const char *data, qint64 maxSize) Q_DECL_OVERRIDE;
+	qint64 readData(char *data, qint64 maxSize) Q_DECL_OVERRIDE;
 
 signals:
 	// outgoing

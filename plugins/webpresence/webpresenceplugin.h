@@ -59,7 +59,7 @@ public:
 	WebPresencePlugin( QObject *parent, const QVariantList &args );
 	virtual ~WebPresencePlugin();
 
-	virtual void aboutToUnload();
+	void aboutToUnload() Q_DECL_OVERRIDE;
 
 protected slots:
 	/**

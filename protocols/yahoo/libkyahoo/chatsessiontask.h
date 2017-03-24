@@ -33,7 +33,7 @@ public:
 	ChatSessionTask(Task *parent);
 	~ChatSessionTask();
 	
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 	
 	void setTarget( const QString &to );
 	void setType( Type type );

@@ -74,7 +74,7 @@ public:
 		delete dec;
 	}
 
-	void reset()
+	void reset() Q_DECL_OVERRIDE
 	{
 		delete dec;
 		dec = 0;
@@ -112,7 +112,7 @@ public:
 		return last;
 	}
 
-	QChar next()
+	QChar next() Q_DECL_OVERRIDE
 	{
 		if(paused)
 			return EndOfData;
@@ -371,18 +371,18 @@ namespace XMPP
 			}
 		}
 
-		bool startDocument()
+		bool startDocument() Q_DECL_OVERRIDE
 		{
 			depth = 0;
 			return true;
 		}
 
-		bool endDocument()
+		bool endDocument() Q_DECL_OVERRIDE
 		{
 			return true;
 		}
 
-		bool startPrefixMapping(const QString &prefix, const QString &uri)
+		bool startPrefixMapping(const QString &prefix, const QString &uri) Q_DECL_OVERRIDE
 		{
 			if(depth == 0) {
 				nsnames += prefix;
@@ -391,7 +391,7 @@ namespace XMPP
 			return true;
 		}
 
-		bool startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts)
+		bool startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts) Q_DECL_OVERRIDE
 		{
 			if(depth == 0) {
 				Parser::Event *e = new Parser::Event;
@@ -441,7 +441,7 @@ namespace XMPP
 			return true;
 		}
 
-		bool endElement(const QString &namespaceURI, const QString &localName, const QString &qName)
+		bool endElement(const QString &namespaceURI, const QString &localName, const QString &qName) Q_DECL_OVERRIDE
 		{
 			--depth;
 			if(depth == 0) {
@@ -475,7 +475,7 @@ namespace XMPP
 			return true;
 		}
 
-		bool characters(const QString &str)
+		bool characters(const QString &str) Q_DECL_OVERRIDE
 		{
 			if(depth >= 1) {
 				QString content = str;

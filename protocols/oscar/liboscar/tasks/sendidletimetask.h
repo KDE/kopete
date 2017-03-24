@@ -31,7 +31,7 @@ class SendIdleTimeTask : public Task
 public:
 	SendIdleTimeTask( Task* parent );
 	~SendIdleTimeTask();
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 
 	//! Set the idle time to send
 	void setIdleTime( Oscar::DWORD );

@@ -156,7 +156,7 @@ private:
 		startMutex = 0;
 	}
 
-	void run() {
+	void run() Q_DECL_OVERRIDE {
 		{
 			QMutexLocker locker(startMutex);
 

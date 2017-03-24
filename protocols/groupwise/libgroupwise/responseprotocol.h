@@ -54,7 +54,7 @@ public:
 	 * @param bytes An integer used to return the number of bytes read.
 	 * @return A pointer to an Response object if successful, otherwise 0.  The caller is responsible for deleting this object.
 	 */
-	Transfer * parse( QByteArray &, uint & bytes );
+	Transfer * parse( QByteArray &, uint & bytes ) Q_DECL_OVERRIDE;
 protected:
 	/**
 	 * read a line ending in \r\n, including the \r\n

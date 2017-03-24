@@ -50,7 +50,7 @@ class LIBGROUPWISE_EXPORT SearchChatTask : public RequestTask
 	/** 
 		 * If the query was accepted, start a timer to poll for results using PollSearchResultsTask
 	 */
-		virtual bool take( Transfer * transfer );
+		bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
 	/**
 		 * Access the results of the search
 	 */

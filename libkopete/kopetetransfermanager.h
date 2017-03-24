@@ -219,7 +219,7 @@ public:
 protected:
 	void emitCopying(const QUrl &src, const QUrl &dest);
 
-	virtual void timerEvent ( QTimerEvent * event );
+	void timerEvent ( QTimerEvent * event ) Q_DECL_OVERRIDE;
 
 public slots:
 	/**

@@ -135,18 +135,18 @@ public slots:
 	void slotSort() { sortItems(currentColumn(), Qt::AscendingOrder); }
 
 protected:
-	virtual void keyPressEvent( QKeyEvent *e );
+	void keyPressEvent( QKeyEvent *e ) Q_DECL_OVERRIDE;
 	/**
 	 * Invoked on each timeout of a QTimer of this listview,
 	 * This will manage the smooth scrolling animation, continuous presses to the scrollbars.
 	 */
-	virtual void timerEvent( QTimerEvent *e );
+	void timerEvent( QTimerEvent *e ) Q_DECL_OVERRIDE;
 
 	/**
 	 * To make smooth scrolling work well, we need extensive event intercepting.
 	 * This event filter is suppposed to achieve that.
 	 */
-	virtual bool eventFilter( QObject *o, QEvent *e );
+	bool eventFilter( QObject *o, QEvent *e ) Q_DECL_OVERRIDE;
 
 signals:
 	void visibleSizeChanged ();

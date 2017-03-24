@@ -33,8 +33,8 @@ public:
 	explicit PrivacyPreferences(QWidget *parent=0, const QVariantList &args = QVariantList());
 	~PrivacyPreferences();
 
-	virtual void save();
-	virtual void load();	
+	void save() Q_DECL_OVERRIDE;
+	void load() Q_DECL_OVERRIDE;
 private Q_SLOTS:
 	void slotConfigChanged();
 	void slotModified();

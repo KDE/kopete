@@ -87,25 +87,25 @@ public:
 
 	void setLocalAddr(const QHostAddress &addr, quint16 port);
 
-	void close();
+	void close() Q_DECL_OVERRIDE;
 	
 	/**
 	 * Are there any messages waiting to be read
 	 */
-	bool transfersAvailable() const;
+	bool transfersAvailable() const Q_DECL_OVERRIDE;
 	
 	/**
 	 * Read a message received from the server
 	 */
-	Transfer * read();
+	Transfer * read() Q_DECL_OVERRIDE;
 
 	/**
 	 * Send a message to the server
 	 */
-	void write( Transfer* request );
+	void write( Transfer* request ) Q_DECL_OVERRIDE;
 
-	int errorCondition() const;
-	QString errorText() const;
+	int errorCondition() const Q_DECL_OVERRIDE;
+	QString errorText() const Q_DECL_OVERRIDE;
 
 	// extrahttp://bugs.kde.org/show_bug.cgi?id=85158
 /*#	void writeDirect(const QString &s); // must be for debug testing*/

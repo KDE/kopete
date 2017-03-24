@@ -42,7 +42,7 @@ public:
 
 protected:
 	void initTree();
-	bool eventFilter(QObject *object, QEvent *event);
+	bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
 
 private slots:
 	//void slotSetSelection (Q3ListViewItem *);

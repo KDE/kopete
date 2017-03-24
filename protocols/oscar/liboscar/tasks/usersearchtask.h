@@ -39,9 +39,9 @@ public:
 	
 	enum SearchType { UINSearch, WhitepageSearch };
 	
-	virtual void onGo();
-	virtual bool forMe( const Transfer* t ) const;
-	virtual bool take( Transfer* t );
+	void onGo() Q_DECL_OVERRIDE;
+	bool forMe( const Transfer* t ) const Q_DECL_OVERRIDE;
+	bool take( Transfer* t ) Q_DECL_OVERRIDE;
 	
 	/** Search by UIN */
 	void searchUserByUIN( const QString& uin );

@@ -42,8 +42,8 @@ public:
 	virtual ~KopeteAccountStatusBarIcon();
 
 protected:
-	virtual void mousePressEvent( QMouseEvent *me );
-	virtual bool event( QEvent *event );
+	void mousePressEvent( QMouseEvent *me ) Q_DECL_OVERRIDE;
+	bool event( QEvent *event ) Q_DECL_OVERRIDE;
 
 private slots:
 	void statusIconChanged();

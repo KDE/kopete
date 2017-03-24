@@ -31,8 +31,8 @@ public:
 	ConferenceTask(Task *parent);
 	~ConferenceTask();
 	
-	bool take(Transfer *transfer);
-	bool forMe( const Transfer* transfer ) const;
+	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 
 	void joinConference( const QString &room, const QStringList &members );
 	void declineConference( const QString &room, const QStringList &members, const QString &msg );

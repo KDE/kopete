@@ -57,8 +57,8 @@ public:
 	QString description() const;
 
 	//! Task implementation
-	void onGo();
-	bool take( Transfer* transfer );
+	void onGo() Q_DECL_OVERRIDE;
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 	bool take( int type, QByteArray cookie, Buffer b );
 	bool takeAutoResponse( int type, QByteArray cookie, Buffer* b );
 

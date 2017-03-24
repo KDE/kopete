@@ -208,7 +208,7 @@ private slots:
 	void saveVoiceClip( uint messageId );
 
 protected:
-	virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
+	void khtmlDrawContentsEvent( khtml::DrawContentsEvent * ) Q_DECL_OVERRIDE;
 
 private:
 	void readOverrides();
@@ -308,7 +308,7 @@ class HTMLEventListener: public QObject, public DOM::EventListener
 {
 	Q_OBJECT
 public:
-	virtual void handleEvent( DOM::Event &event );
+	void handleEvent( DOM::Event &event ) Q_DECL_OVERRIDE;
 Q_SIGNALS:
 	void resendMessage( uint messageId );
 	void playVoiceClip( uint messageId );

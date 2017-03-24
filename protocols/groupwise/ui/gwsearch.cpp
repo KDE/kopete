@@ -54,7 +54,7 @@ public:
 	~GroupWiseContactSearchModel()
 	{
 	}
-	QModelIndex index( int row, int column, const QModelIndex& index ) const
+	QModelIndex index( int row, int column, const QModelIndex& index ) const Q_DECL_OVERRIDE
 	{
 		if ( row >= 0 && column >= 0 &&
 				row < rowCount() &&
@@ -66,18 +66,18 @@ public:
 			return QModelIndex();
 		}
 	}
-	QModelIndex parent( const QModelIndex & /*index*/ ) const
+	QModelIndex parent( const QModelIndex & /*index*/ ) const Q_DECL_OVERRIDE
 	{
 		return QModelIndex();
 	}
-	int columnCount( const QModelIndex & parent = QModelIndex() ) const
+	int columnCount( const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE
 	{
 		if ( parent.isValid() )
 			return 0;
 		else
 			return 4;
 	}
-	int rowCount( const QModelIndex & parent = QModelIndex() ) const
+	int rowCount( const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE
 	{
 		if ( parent.isValid() )
 			return 0;
@@ -85,7 +85,7 @@ public:
 			return m_contents.count();
 	}
 
-	QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const
+	QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE
 	{
 		if ( orientation == Qt::Horizontal && role == Qt::DisplayRole )
 		{
@@ -108,7 +108,7 @@ public:
 		return QAbstractItemModel::headerData( section, orientation, role );
 	}
 
-	Qt::ItemFlags flags( const QModelIndex & index ) const
+	Qt::ItemFlags flags( const QModelIndex & index ) const Q_DECL_OVERRIDE
 	{
 		if ( !index.isValid() )
 		{
@@ -116,7 +116,7 @@ public:
 		}
 		return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 	}
-	QVariant data( const QModelIndex & index, int role = Qt::DisplayRole ) const
+	QVariant data( const QModelIndex & index, int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE
 	{
 		if ( !index.isValid() ) return QVariant();
 		GroupWise::ContactDetails contactDetails = m_contents.at( index.row() );
@@ -217,7 +217,7 @@ class GroupWiseContactSearchSortProxyModel : public QSortFilterProxyModel
 public:
 	GroupWiseContactSearchSortProxyModel( QObject * parent = 0 ) : QSortFilterProxyModel( parent )
 	{}
-	bool lessThan( const QModelIndex &left, const QModelIndex &right ) const
+	bool lessThan( const QModelIndex &left, const QModelIndex &right ) const Q_DECL_OVERRIDE
 	{
 		if ( left.column() == 0 && right.column() == 0 ) {
 			return left.data( GroupWiseContactSearchModel::StatusOrderedRole ).toInt() < right.data( GroupWiseContactSearchModel::StatusOrderedRole ).toInt();
@@ -232,7 +232,7 @@ class OnlineOnlyGroupWiseContactSearchSortProxyModel : public GroupWiseContactSe
 public:
 	OnlineOnlyGroupWiseContactSearchSortProxyModel( QObject * parent = 0 ) : GroupWiseContactSearchSortProxyModel( parent )
 	{}
-	bool filterAcceptsRow( int source_row, const QModelIndex & source_parent ) const
+	bool filterAcceptsRow( int source_row, const QModelIndex & source_parent ) const Q_DECL_OVERRIDE
 	{
 		QModelIndex index = sourceModel()->index( source_row, 0, source_parent );
 		int statusOrdered = sourceModel()->data( index, GroupWiseContactSearchModel::StatusOrderedRole ).toInt();

@@ -50,7 +50,7 @@ public:
 	 */
 	bool isShuttingDown() const { return m_isShuttingDown; }
 
-	virtual int newInstance();
+	int newInstance() Q_DECL_OVERRIDE;
 
 public slots:
 	/**

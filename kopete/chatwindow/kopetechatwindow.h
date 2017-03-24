@@ -105,7 +105,7 @@ public:
 	 * Reimplemented from KXmlGuiWindow - asks each ChatView in the window if it is ok to close the window
 	 * @return true if no ChatView objects to closing.
 	 */
-	virtual bool queryClose();
+	bool queryClose() Q_DECL_OVERRIDE;
 	virtual bool queryExit();
 
 	KTemporaryFile *backgroundFile;
@@ -247,10 +247,10 @@ private:
 	void updateSpellCheckAction();
 
 protected:
-	virtual void closeEvent( QCloseEvent *e );
-	virtual void changeEvent( QEvent *e );
-	virtual void resizeEvent( QResizeEvent *e);
-	virtual bool eventFilter( QObject *obj, QEvent *event );
+	void closeEvent( QCloseEvent *e ) Q_DECL_OVERRIDE;
+	void changeEvent( QEvent *e ) Q_DECL_OVERRIDE;
+	void resizeEvent( QResizeEvent *e) Q_DECL_OVERRIDE;
+	bool eventFilter( QObject *obj, QEvent *event ) Q_DECL_OVERRIDE;
 };
 
 #endif

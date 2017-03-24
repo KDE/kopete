@@ -33,8 +33,8 @@ public:
 	JT_PubSubPublish(XMPP::Task *parent, const QString &node, XMPP::PubSubItem &psitem);
 	~JT_PubSubPublish();
 
-	void onGo();
-	bool take(const QDomElement &);
+	void onGo() Q_DECL_OVERRIDE;
+	bool take(const QDomElement &) Q_DECL_OVERRIDE;
 
 private:
 	QDomElement mIQ;

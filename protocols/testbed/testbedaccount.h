@@ -44,13 +44,13 @@ public:
 	/**
 	 * Construct the context menu used for the status bar icon
 	 */
-	virtual void fillActionMenu( KActionMenu *actionMenu );
+	void fillActionMenu( KActionMenu *actionMenu ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Creates a protocol specific Kopete::Contact subclass and adds it to the supplie
 	 * Kopete::MetaContact
 	 */
-	virtual bool createContact(const QString& contactId, Kopete::MetaContact* parentContact);
+	bool createContact(const QString& contactId, Kopete::MetaContact* parentContact) Q_DECL_OVERRIDE;
 	/**
 	 * Called when Kopete is set globally away
 	 */
@@ -58,17 +58,17 @@ public:
 	/**
 	 * Called when Kopete status is changed globally
 	 */
-	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
-	                             const OnlineStatusOptions& options = None);
-	virtual void setStatusMessage(const Kopete::StatusMessage& statusMessage);
+	void setOnlineStatus(const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
+	                             const OnlineStatusOptions& options = None) Q_DECL_OVERRIDE;
+	void setStatusMessage(const Kopete::StatusMessage& statusMessage) Q_DECL_OVERRIDE;
 	/**
 	 * 'Connect' to the testbed server.  Only sets myself() online.
 	 */
-	virtual void connect( const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus() );
+	void connect( const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus() ) Q_DECL_OVERRIDE;
 	/**
 	 * Disconnect from the server.  Only sets myself() offline.
 	 */
-	virtual void disconnect();
+	void disconnect() Q_DECL_OVERRIDE;
 	/**
 	 * Return a reference to the server stub
 	 */

@@ -75,7 +75,7 @@ public:
 	/**
 	 * Accessors for the transfer's contents
 	 */
-	TransferType type() { return Transfer::EventTransfer; }
+	TransferType type() Q_DECL_OVERRIDE { return Transfer::EventTransfer; }
 	int eventType() const;
 	QString source();
 	QDateTime timeStamp();

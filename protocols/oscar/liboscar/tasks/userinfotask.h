@@ -40,9 +40,9 @@ public:
 	enum { Profile = 0x0001, General = 0x0002, AwayMessage = 0x0003, Capabilities = 0x0004 };
 
 	//! Task implementation
-	bool forMe( const Transfer* transfer ) const;
-	bool take( Transfer* transfer );
-	void onGo();
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
+	void onGo() Q_DECL_OVERRIDE;
 
 	void requestInfoFor( const QString& userId, unsigned int types );
 	UserDetails getInfoFor( Oscar::DWORD sequence ) const;

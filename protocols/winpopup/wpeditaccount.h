@@ -43,11 +43,11 @@ private:
 public:
 	WPEditAccount(QWidget *parent, Kopete::Account *theAccount);
 
-	virtual bool validateData();
+	bool validateData() Q_DECL_OVERRIDE;
 	void writeConfig();
 
 public slots:
-	virtual Kopete::Account *apply();
+	Kopete::Account *apply() Q_DECL_OVERRIDE;
 	virtual void installSamba();
 };
 

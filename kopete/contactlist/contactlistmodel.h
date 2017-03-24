@@ -47,13 +47,13 @@ public:
 
 	void init();
 
-	virtual int columnCount ( const QModelIndex & parent = QModelIndex() ) const;
+	int columnCount ( const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 
 	/* drag-n-drop stuff */
-	virtual Qt::DropActions supportedDropActions() const;
-	virtual QMimeData* mimeData(const QModelIndexList &indexes) const;
-	virtual QStringList mimeTypes() const;
-	virtual bool setData(const QModelIndex &index, const QVariant &value, const int role);
+	Qt::DropActions supportedDropActions() const Q_DECL_OVERRIDE;
+	QMimeData* mimeData(const QModelIndexList &indexes) const Q_DECL_OVERRIDE;
+	QStringList mimeTypes() const Q_DECL_OVERRIDE;
+	bool setData(const QModelIndex &index, const QVariant &value, const int role) Q_DECL_OVERRIDE;
 
 	bool loadModelSettings( const QString& modelType );
 	bool saveModelSettings( const QString& modelType );

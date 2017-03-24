@@ -67,8 +67,8 @@ public slots:
 	void prepareList();
 
 protected:
-	virtual void hideEvent( QHideEvent* );
-	virtual void showEvent( QShowEvent* );
+	void hideEvent( QHideEvent* ) Q_DECL_OVERRIDE;
+	void showEvent( QShowEvent* ) Q_DECL_OVERRIDE;
 
 protected slots:
 	void emoticonClicked( QListWidgetItem* );

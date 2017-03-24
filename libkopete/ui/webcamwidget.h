@@ -56,7 +56,7 @@ public:
 	 */
 	void setText(const QString& text);
 protected slots:
-	void paintEvent(QPaintEvent* event);
+	void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
 
 private:
 	QPixmap mPixmap;

@@ -34,11 +34,11 @@ public:
 	
 	~CloseConnectionTask();
 	
-	virtual bool take(Transfer* transfer);
+	bool take(Transfer* transfer) Q_DECL_OVERRIDE;
 
 protected:
-	virtual bool forMe(const Transfer* transfer) const;
-	virtual void onGo();
+	bool forMe(const Transfer* transfer) const Q_DECL_OVERRIDE;
+	void onGo() Q_DECL_OVERRIDE;
 
 };
 

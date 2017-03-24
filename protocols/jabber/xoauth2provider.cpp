@@ -56,7 +56,7 @@ public:
 		reset();
 	}
 
-	virtual QCA::Provider::Context *clone() const {
+	QCA::Provider::Context *clone() const Q_DECL_OVERRIDE {
 		XOAuth2SASLContext *s = new XOAuth2SASLContext(provider());
 		s->user = user;
 		s->clientId = clientId;
@@ -67,7 +67,7 @@ public:
 		return s;
 	}
 
-	virtual void reset() {
+	void reset() Q_DECL_OVERRIDE {
 		user.clear();
 		clientId.clear();
 		clientSecretKey.clear();
@@ -78,13 +78,13 @@ public:
 		authCondition_ = QCA::SASL::AuthFail;
 	}
 
-	virtual void setup(const QString &, const QString &, const QCA::SASLContext::HostPort *, const QCA::SASLContext::HostPort *, const QString &, int) {
+	void setup(const QString &, const QString &, const QCA::SASLContext::HostPort *, const QCA::SASLContext::HostPort *, const QString &, int) Q_DECL_OVERRIDE {
 	}
 
-	virtual void setConstraints(QCA::SASL::AuthFlags, int, int) {
+	void setConstraints(QCA::SASL::AuthFlags, int, int) Q_DECL_OVERRIDE {
 	}
 
-	virtual void startClient(const QStringList &mechlist, bool) {
+	void startClient(const QStringList &mechlist, bool) Q_DECL_OVERRIDE {
 		if (!mechlist.contains(QLatin1String("X-OAUTH2"))) {
 			qWarning("No X-OAUTH2 auth method");
 			authCondition_ = QCA::SASL::NoMechanism;
@@ -97,21 +97,21 @@ public:
 		tryAgain();
 	}
 
-	virtual void startServer(const QString &, bool) {
+	void startServer(const QString &, bool) Q_DECL_OVERRIDE {
 		result_ = QCA::SASLContext::Error;
 		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
 	}
 
-	virtual void serverFirstStep(const QString &, const QByteArray *) {
+	void serverFirstStep(const QString &, const QByteArray *) Q_DECL_OVERRIDE {
 		result_ = QCA::SASLContext::Error;
 		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
 	}
 
-	virtual void nextStep(const QByteArray &) {
+	void nextStep(const QByteArray &) Q_DECL_OVERRIDE {
 		tryAgain();
 	}
 
-	virtual void tryAgain() {
+	void tryAgain() Q_DECL_OVERRIDE {
 		if (user.isEmpty() || (accessToken.isEmpty() && (clientId.isEmpty() || clientSecretKey.isEmpty() || requestUrl.isEmpty() || refreshToken.isEmpty()))) {
 			result_ = QCA::SASLContext::Params;
 			QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
@@ -124,64 +124,64 @@ public:
 		sendAuth();
 	}
 
-	virtual void update(const QByteArray &from_net, const QByteArray &from_app) {
+	void update(const QByteArray &from_net, const QByteArray &from_app) Q_DECL_OVERRIDE {
 		result_to_app = from_net;
 		result_to_net = from_app;
 		result_ = QCA::SASLContext::Success;
 		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
 	}
 
-	virtual bool waitForResultsReady(int) {
+	bool waitForResultsReady(int) Q_DECL_OVERRIDE {
 		return true;
 	}
 
-	virtual QCA::SASLContext::Result result() const {
+	QCA::SASLContext::Result result() const Q_DECL_OVERRIDE {
 		return result_;
 	}
 
-	virtual QStringList mechlist() const {
+	QStringList mechlist() const Q_DECL_OVERRIDE {
 		return QStringList();
 	}
 
-	virtual QString mech() const {
+	QString mech() const Q_DECL_OVERRIDE {
 		return QLatin1String("X-OAUTH2");
 	}
 
-	virtual bool haveClientInit() const {
+	bool haveClientInit() const Q_DECL_OVERRIDE {
 		return false;
 	}
 
-	virtual QByteArray stepData() const {
+	QByteArray stepData() const Q_DECL_OVERRIDE {
 		return data;
 	}
 
-	virtual QByteArray to_net() {
+	QByteArray to_net() Q_DECL_OVERRIDE {
 		return result_to_net;
 	}
 
-	virtual int encoded() const {
+	int encoded() const Q_DECL_OVERRIDE {
 		return result_to_net.size();
 	}
 
-	virtual QByteArray to_app() {
+	QByteArray to_app() Q_DECL_OVERRIDE {
 		return result_to_app;
 	}
 
-	virtual int ssf() const {
+	int ssf() const Q_DECL_OVERRIDE {
 		return 0;
 	}
 
-	virtual QCA::SASL::AuthCondition authCondition() const {
+	QCA::SASL::AuthCondition authCondition() const Q_DECL_OVERRIDE {
 		return authCondition_;
 	}
 
-	virtual QCA::SASL::Params clientParams() const {
+	QCA::SASL::Params clientParams() const Q_DECL_OVERRIDE {
 		bool needUser = user.isEmpty();
 		bool needPass = (accessToken.isEmpty() && (clientId.isEmpty() || clientSecretKey.isEmpty() || requestUrl.isEmpty() || refreshToken.isEmpty()));
 		return QCA::SASL::Params(needUser, false, needPass, false);
 	}
 
-	virtual void setClientParams(const QString *userParam, const QString *, const QCA::SecureArray *passParam, const QString *) {
+	void setClientParams(const QString *userParam, const QString *, const QCA::SecureArray *passParam, const QString *) Q_DECL_OVERRIDE {
 		if (userParam)
 			user = *userParam;
 		if (passParam) {
@@ -205,15 +205,15 @@ public:
 		}
 	}
 
-	virtual QStringList realmlist() const {
+	QStringList realmlist() const Q_DECL_OVERRIDE {
 		return QStringList();
 	}
 
-	virtual QString username() const {
+	QString username() const Q_DECL_OVERRIDE {
 		return QString();
 	}
 
-	virtual QString authzid() const {
+	QString authzid() const Q_DECL_OVERRIDE {
 		return QString();
 	}
 
@@ -302,22 +302,22 @@ public:
 	virtual ~QCAXOAuth2SASL() {
 	}
 
-	virtual void init() {
+	void init() Q_DECL_OVERRIDE {
 	}
 
-	virtual int qcaVersion() const {
+	int qcaVersion() const Q_DECL_OVERRIDE {
 		return QCA_VERSION;
 	}
 
-	virtual QString name() const {
+	QString name() const Q_DECL_OVERRIDE {
 		return QLatin1String("xoauth2sasl");
 	}
 
-	virtual QStringList features() const {
+	QStringList features() const Q_DECL_OVERRIDE {
 		return QStringList(QLatin1String("sasl"));
 	}
 
-	QCA::Provider::Context *createContext(const QString& type) {
+	QCA::Provider::Context *createContext(const QString& type) Q_DECL_OVERRIDE {
 		if (type == QLatin1String("sasl"))
 			return new XOAuth2SASLContext(this);
 		return NULL;

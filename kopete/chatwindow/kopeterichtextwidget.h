@@ -87,8 +87,8 @@ signals:
     void documentSizeUpdated(int difference);
 
 protected:
-    virtual void insertFromMimeData(const QMimeData * source);
-    virtual bool event(QEvent *event);
+    void insertFromMimeData(const QMimeData * source) Q_DECL_OVERRIDE;
+    bool event(QEvent *event) Q_DECL_OVERRIDE;
 
 protected slots:
     void updateTextFormat();

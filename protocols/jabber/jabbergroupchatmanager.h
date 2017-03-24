@@ -64,7 +64,7 @@ public slots:
 	 * reimplemented from Kopete::ChatSession
 	 * called when a contact is dropped in the window
 	 */
-	virtual void inviteContact(const QString &contactId);
+	void inviteContact(const QString &contactId) Q_DECL_OVERRIDE;
 
 private slots:
 	///Slot to show invite menu for other user to chat

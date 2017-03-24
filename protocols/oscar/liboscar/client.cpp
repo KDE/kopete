@@ -82,11 +82,11 @@ namespace
 	class DefaultCodecProvider : public Client::CodecProvider
 	{
 	public:
-		virtual QTextCodec* codecForContact( const QString& ) const
+		QTextCodec* codecForContact( const QString& ) const Q_DECL_OVERRIDE
 		{
 			return QTextCodec::codecForMib( 4 );
 		}
-		virtual QTextCodec* codecForAccount() const
+		QTextCodec* codecForAccount() const Q_DECL_OVERRIDE
 		{
 			return QTextCodec::codecForMib( 4 );
 		}

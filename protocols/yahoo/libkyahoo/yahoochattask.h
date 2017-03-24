@@ -47,9 +47,9 @@ public:
 	YahooChatTask(Task *parent);
 	virtual ~YahooChatTask();
 	
-	virtual void onGo();
-	virtual bool forMe( const Transfer *transfer ) const;
-	bool take(Transfer *transfer);
+	void onGo() Q_DECL_OVERRIDE;
+	bool forMe( const Transfer *transfer ) const Q_DECL_OVERRIDE;
+	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 
 	void getYahooChatCategories();
 	void getYahooChatRooms( const Yahoo::ChatCategory &category );

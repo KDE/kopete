@@ -39,7 +39,7 @@ class PrivacyListListener : public Task
 	public:
 		PrivacyListListener ( Task* parent );
 
-		bool take ( const QDomElement &e );
+		bool take ( const QDomElement &e ) Q_DECL_OVERRIDE;
 };
 
 class GetPrivacyListsTask : public Task
@@ -54,8 +54,8 @@ class GetPrivacyListsTask : public Task
 	public:
 		GetPrivacyListsTask ( Task* parent );
 
-		void onGo();
-		bool take ( const QDomElement &x );
+		void onGo() Q_DECL_OVERRIDE;
+		bool take ( const QDomElement &x ) Q_DECL_OVERRIDE;
 		const QStringList& lists();
 		const QString& defaultList();
 		const QString& activeList();
@@ -73,11 +73,11 @@ class SetPrivacyListsTask : public Task
 	public:
 		SetPrivacyListsTask ( Task* parent );
 
-		void onGo();
+		void onGo() Q_DECL_OVERRIDE;
 		void setActive ( const QString& active );
 		void setDefault ( const QString& d );
 		void setList ( const PrivacyList& list );
-		bool take ( const QDomElement &x );
+		bool take ( const QDomElement &x ) Q_DECL_OVERRIDE;
 };
 
 class GetPrivacyListTask : public Task
@@ -92,8 +92,8 @@ class GetPrivacyListTask : public Task
 	public:
 		GetPrivacyListTask ( Task* parent, const QString& name );
 
-		void onGo();
-		bool take ( const QDomElement &x );
+		void onGo() Q_DECL_OVERRIDE;
+		bool take ( const QDomElement &x ) Q_DECL_OVERRIDE;
 		const PrivacyList& list();
 
 };

@@ -203,7 +203,7 @@ public:
 	 *          at all, so I left out the necessary hooks on purpose.
 	 *          - Martijn
 	 */
-	virtual void aboutToUnload();
+	void aboutToUnload() Q_DECL_OVERRIDE;
 
 private slots:
 	/**
@@ -234,7 +234,7 @@ public:
 	 *
 	 * @todo we probably should think to another way to save the contacltist.
 	 */
-	virtual void deserialize( MetaContact *metaContact, const QMap<QString, QString> &serializedData );
+	void deserialize( MetaContact *metaContact, const QMap<QString, QString> &serializedData ) Q_DECL_OVERRIDE;
 
 	/**
 	 * @brief Deserialize the plugin data for a meta contact's contacts.

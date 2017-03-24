@@ -47,7 +47,7 @@ Q_OBJECT
 		KabcExportWizard( QWidget *parent = nullptr );
 		~KabcExportWizard();
 	public slots:
-		void accept();
+		void accept() Q_DECL_OVERRIDE;
 	protected slots:
 		void slotDeselectAll();
 		void slotSelectAll();

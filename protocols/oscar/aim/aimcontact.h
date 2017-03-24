@@ -34,19 +34,19 @@ public:
 	            const QString& icon = QString() );
 	virtual ~AIMContact();
 
-	bool isReachable();
-	QList<QAction*> *customContextMenuActions();
+	bool isReachable() Q_DECL_OVERRIDE;
+	QList<QAction*> *customContextMenuActions() Q_DECL_OVERRIDE;
 	using AIMContactBase::customContextMenuActions;
 
 	int warningLevel() const;
 
-	virtual void setSSIItem( const OContact& ssiItem );
+	void setSSIItem( const OContact& ssiItem ) Q_DECL_OVERRIDE;
 
 public slots:
-	void slotUserInfo();
-	void userInfoUpdated( const QString& contact, const UserDetails& details );
-	void userOnline( const QString& userId );
-	void userOffline( const QString& userId );
+	void slotUserInfo() Q_DECL_OVERRIDE;
+	void userInfoUpdated( const QString& contact, const UserDetails& details ) Q_DECL_OVERRIDE;
+	void userOnline( const QString& userId ) Q_DECL_OVERRIDE;
+	void userOffline( const QString& userId ) Q_DECL_OVERRIDE;
 	void updateProfile( const QString& contact, const QString& profile );
 	void gotWarning( const QString& contact, quint16, quint16 );
 

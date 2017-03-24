@@ -37,7 +37,7 @@ public:
 	void setReadOnly( bool readOnly );
 	bool isReadOnly() const;
 
-	virtual void showPopup();
+	void showPopup() Q_DECL_OVERRIDE;
 
 private:
 	bool mReadOnly;

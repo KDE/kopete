@@ -141,17 +141,17 @@ public:
 	 * Returns true if StatusItem is group
 	 * @note for StatusGroup it always returns true;
 	 **/
-	virtual bool isGroup() const { return true; }
+	bool isGroup() const Q_DECL_OVERRIDE { return true; }
 	
 	/**
 	 * Returns number of childes
 	 **/
-	virtual int childCount() const { return mChildItems.count(); }
+	int childCount() const Q_DECL_OVERRIDE { return mChildItems.count(); }
 
 	/**
 	 * Returns a StatusItem at given @p index or 0 if there is no item at given @p index
 	 **/
-	virtual StatusItem *child( int index ) const { return mChildItems.value( index, 0 ); }
+	StatusItem *child( int index ) const Q_DECL_OVERRIDE { return mChildItems.value( index, 0 ); }
 
 	/**
 	 * Returns list of all childes
@@ -184,7 +184,7 @@ public:
 	 * @note this copies also uid so it should only be used when we know
 	 * that the original or copy object will be destroyed
 	 **/
-	virtual StatusItem* copy() const;
+	StatusItem* copy() const Q_DECL_OVERRIDE;
 Q_SIGNALS:
 	/**
 	 * This signal is emitted after new child was inserted is inserted at position @p index
@@ -223,19 +223,19 @@ public:
 	 * Returns true if the item is group
 	 * @note for Status it always returns false;
 	 **/
-	virtual bool isGroup() const { return false; }
+	bool isGroup() const Q_DECL_OVERRIDE { return false; }
 
 	/**
 	 * Returns number of childes
 	 * @note for Status it always returns 0;
 	 **/
-	virtual int childCount() const { return 0; }
+	int childCount() const Q_DECL_OVERRIDE { return 0; }
 
 	/**
 	 * Returns the item at given @p index or 0 if there is no item at given @p index
 	 * @note for Status it always returns 0;
 	 **/
-	virtual StatusItem *child( int ) const { return 0; }
+	StatusItem *child( int ) const Q_DECL_OVERRIDE { return 0; }
 
 	/**
 	 * Set message
@@ -253,7 +253,7 @@ public:
 	 * @note this copies also uid so it should only be used when we know
 	 * that the original or copy object will be destroyed
 	 **/
-	virtual StatusItem* copy() const;
+	StatusItem* copy() const Q_DECL_OVERRIDE;
 
 private:
 	QString mMessage;

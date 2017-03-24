@@ -39,7 +39,7 @@ class ClickableLabel : public QLabel
     ClickableLabel( QWidget* parent = nullptr );
     ~ClickableLabel();
 
-    void mouseReleaseEvent( QMouseEvent *e );
+    void mouseReleaseEvent( QMouseEvent *e ) Q_DECL_OVERRIDE;
 
   signals:
     void clicked();
@@ -51,10 +51,10 @@ class ArrowButton : public QAbstractButton
     ArrowButton(QWidget *parent = nullptr);
     ~ArrowButton();
 
-    QSize sizeHint() const { return QSize(16, 16); }
+    QSize sizeHint() const Q_DECL_OVERRIDE { return QSize(16, 16); }
 
   protected:
-    void paintEvent( QPaintEvent* );
+    void paintEvent( QPaintEvent* ) Q_DECL_OVERRIDE;
 
   private:
 };

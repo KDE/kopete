@@ -110,8 +110,8 @@ private slots:
 	void slotLoadAccounts();
 
 protected slots:
-	virtual void accept();
-	virtual void reject();
+	void accept() Q_DECL_OVERRIDE;
+	void reject() Q_DECL_OVERRIDE;
 
 private:
 	class Private;

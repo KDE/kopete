@@ -53,11 +53,11 @@ class AIMMyselfContact : public OscarMyselfContact
 Q_OBJECT
 public:
 	AIMMyselfContact( AIMAccount *acct );
-	void userInfoUpdated();
+	void userInfoUpdated() Q_DECL_OVERRIDE;
 	void setOwnProfile( const QString& newProfile );
 	QString userProfile();
 
-    virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate );
+    Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate ) Q_DECL_OVERRIDE;
     virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags canCreate,
                                           Oscar::WORD exchange, const QString& room );
 
@@ -87,9 +87,9 @@ public:
 	AIMProtocol *protocol() const;
 
 	// fill the menu for this account
-	virtual void fillActionMenu( KActionMenu *actionMenu );
+	void fillActionMenu( KActionMenu *actionMenu ) Q_DECL_OVERRIDE;
 
-	virtual void connectWithPassword( const QString &password );
+	void connectWithPassword( const QString &password ) Q_DECL_OVERRIDE;
 
 	void setUserProfile(const QString &profile);
 
@@ -98,8 +98,8 @@ public:
 public slots:
 	/** Reimplementation from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
-	                      const OnlineStatusOptions& options = None );
-	void setStatusMessage( const Kopete::StatusMessage& statusMessage );
+	                      const OnlineStatusOptions& options = None ) Q_DECL_OVERRIDE;
+	void setStatusMessage( const Kopete::StatusMessage& statusMessage ) Q_DECL_OVERRIDE;
 	void slotEditInfo();
 
 	void slotToggleInvisible();
@@ -109,9 +109,9 @@ public slots:
 protected slots:
     void joinChatDialogClosed( int );
 
-	virtual void loginActions();
-	virtual void disconnected( Kopete::Account::DisconnectReason reason );
-	virtual void messageReceived( const Oscar::Message& message );
+	void loginActions() Q_DECL_OVERRIDE;
+	void disconnected( Kopete::Account::DisconnectReason reason ) Q_DECL_OVERRIDE;
+	void messageReceived( const Oscar::Message& message ) Q_DECL_OVERRIDE;
 
     void connectedToChatRoom( Oscar::WORD exchange, const QString& roomName );
     void userJoinedChat( Oscar::WORD exchange, const QString& room, const QString& contact );
@@ -123,7 +123,7 @@ protected:
 	* Implement virtual method from OscarAccount
 	* This allows OscarAccount to take care of adding new contacts
 	*/
-	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem );
+	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem ) Q_DECL_OVERRIDE;
 
 private:
 	Oscar::Presence presence();

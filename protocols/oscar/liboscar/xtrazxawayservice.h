@@ -41,13 +41,13 @@ public:
 	void setMessage( const QString& message );
 	QString message() const;
 
-	virtual QString serviceId() const;
+	QString serviceId() const Q_DECL_OVERRIDE;
 
 protected:
-	virtual void createRequest( QDomDocument& doc, QDomElement &e ) const;
-	virtual void createResponse( QDomDocument& doc, QDomElement &e ) const;
-	virtual void handleRequest( QDomElement& eRoot );
-	virtual void handleResponse( QDomElement& eRoot );
+	void createRequest( QDomDocument& doc, QDomElement &e ) const Q_DECL_OVERRIDE;
+	void createResponse( QDomDocument& doc, QDomElement &e ) const Q_DECL_OVERRIDE;
+	void handleRequest( QDomElement& eRoot ) Q_DECL_OVERRIDE;
+	void handleResponse( QDomElement& eRoot ) Q_DECL_OVERRIDE;
 
 private:
 	int m_iconIndex;

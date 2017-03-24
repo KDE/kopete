@@ -35,7 +35,7 @@ public:
 
 	~InfoEventWidget();
 
-	virtual void setVisible( bool visible );
+	void setVisible( bool visible ) Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
 	void showRequest();

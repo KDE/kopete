@@ -104,19 +104,19 @@ public:
 		qDeleteAll( mItems );
 	}
 
-	virtual bool isGroup() const
+	bool isGroup() const Q_DECL_OVERRIDE
 	{
 		return true;
 	}
 
-	virtual int count() const
+	int count() const Q_DECL_OVERRIDE
 	{
 		return mItems.count();
 	}
 
-	virtual int metaContactCount() const;
+	int metaContactCount() const Q_DECL_OVERRIDE;
 
-	virtual bool hasChildren() const
+	bool hasChildren() const Q_DECL_OVERRIDE
 	{
 		return !mItems.isEmpty();
 	}
@@ -148,7 +148,7 @@ public:
 		return mItems;
 	}
 
-	virtual void sort( bool (*lessThan)(const ContactListModelItem*, const ContactListModelItem*) );
+	void sort( bool (*lessThan)(const ContactListModelItem*, const ContactListModelItem*) ) Q_DECL_OVERRIDE;
 
 protected:
 	friend class ContactListModelItem;

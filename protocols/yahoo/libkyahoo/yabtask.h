@@ -39,7 +39,7 @@ public:
 	YABTask(Task *parent);
 	~YABTask();
 	
-	bool take(Transfer *transfer);
+	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 
 	void getAllEntries( long lastMerge, long lastRemoteRevision );
 	void saveEntry( const YABEntry & );
@@ -47,7 +47,7 @@ signals:
 	void gotEntry( YABEntry * );
 	void gotRevision( long rev, bool merged );
 protected:
-	virtual bool forMe( const Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 	void parseContactDetails( YMSGTransfer* t );
 private slots:
 	void slotData( KIO::Job*, const QByteArray & );

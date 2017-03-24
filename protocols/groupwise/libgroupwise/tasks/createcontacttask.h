@@ -69,11 +69,11 @@ public:
 	/** 
 	 * This task doesn't do any I/O itself, so this take prints an error and returns false;
 	 */
-	bool take( Transfer * );
+	bool take( Transfer * ) Q_DECL_OVERRIDE;
 	/** 
 	 * Starts off the whole process
 	 */
-	void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 protected slots:
 	void slotContactAdded( const ContactItem & );
 	void slotCheckContactInstanceCreated();

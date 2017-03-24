@@ -41,7 +41,7 @@ public:
 
 	bool isOpen() const;
 
-	void close();
+	void close() Q_DECL_OVERRIDE;
 
 	/** Connection related stuff */
 	void setConnection( Connection* c );
@@ -50,20 +50,20 @@ public:
 	/**
 	 * Are there any messages waiting to be read
 	 */
-	bool transfersAvailable() const;
+	bool transfersAvailable() const Q_DECL_OVERRIDE;
 
 	/**
 	 * Read a message received from the server
 	 */
-	Transfer * read();
+	Transfer * read() Q_DECL_OVERRIDE;
 
 	/**
 	 * Send a message to the server
 	 */
-	void write( Transfer* request );
+	void write( Transfer* request ) Q_DECL_OVERRIDE;
 
-	int error() const;
-	QString errorString() const;
+	int error() const Q_DECL_OVERRIDE;
+	QString errorString() const Q_DECL_OVERRIDE;
 
 	void setNoopTime( int mills );
 

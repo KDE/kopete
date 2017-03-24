@@ -41,16 +41,16 @@ public:
 	static QFont normalFont( const QFont& naturalFont );
 	static QFont smallFont( const QFont& naturalFont );
 
-	virtual void paint ( QPainter * painter, 
+	void paint ( QPainter * painter, 
 	                     const QStyleOptionViewItem & option,
-	                     const QModelIndex & index ) const;
-	virtual QSize sizeHint ( const QStyleOptionViewItem & option,
-	                         const QModelIndex & index ) const;
+	                     const QModelIndex & index ) const Q_DECL_OVERRIDE;
+	QSize sizeHint ( const QStyleOptionViewItem & option,
+	                         const QModelIndex & index ) const Q_DECL_OVERRIDE;
 
 	Kopete::Contact* contactAt( const QStyleOptionViewItem& option, const QModelIndex& index, const QPoint& point ) const;
 
 public slots:
-	bool helpEvent( QHelpEvent* event, QAbstractItemView* view, const QStyleOptionViewItem& option, const QModelIndex& index );
+	bool helpEvent( QHelpEvent* event, QAbstractItemView* view, const QStyleOptionViewItem& option, const QModelIndex& index ) Q_DECL_OVERRIDE;
 
 private:
 	void paintItem( ContactList::LayoutItemConfig config, QPainter* painter,

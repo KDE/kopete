@@ -53,7 +53,7 @@ public:
 	/** Returns the index of the cell which is currently selected */
 	int selectedIndex() const;
 
-	virtual QSize sizeHint () const;
+	QSize sizeHint () const Q_DECL_OVERRIDE;
 
 signals:
 	/** Emitted when a icon is selected in the table */
@@ -65,9 +65,9 @@ protected slots:
 protected:
 	// the three methods below are used to ensure equal column widths and row heights
 	// for all cells and to update the widths/heights when the widget is resized
-	virtual void resizeEvent( QResizeEvent* event );
-	virtual int sizeHintForColumn( int column ) const;
-	virtual int sizeHintForRow( int row ) const;
+	void resizeEvent( QResizeEvent* event ) Q_DECL_OVERRIDE;
+	int sizeHintForColumn( int column ) const Q_DECL_OVERRIDE;
+	int sizeHintForRow( int row ) const Q_DECL_OVERRIDE;
 
 	int rowFromIndex( int index ) const;
 	int columnFromIndex( int index ) const;

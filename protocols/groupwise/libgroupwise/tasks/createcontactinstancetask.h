@@ -42,10 +42,10 @@ public:
 	void contactFromDN( const QString & dn, const QString & displayName, const int parentFolder );
 	void contactFromUserIdAndFolder( const QString & userId, const QString & displayName, const int folderSequence, const QString & folderDisplayName );
 	void contactFromDNAndFolder( const QString & dn, const QString & displayName, const int folderSequence, const QString & folderDisplayName );
-	void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 protected:
 	void contact( Field::SingleField * id, const QString & displayName, const int parentFolder );
-	void onFolderCreated();
+	void onFolderCreated() Q_DECL_OVERRIDE;
 private:
 	QString m_userId;
 	QString m_dn;

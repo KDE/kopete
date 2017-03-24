@@ -35,9 +35,9 @@ public:
 	explicit LatexPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
 	~LatexPreferences();
 
-	void save();
-	void load();
-	void defaults();
+	void save() Q_DECL_OVERRIDE;
+	void load() Q_DECL_OVERRIDE;
+	void defaults() Q_DECL_OVERRIDE;
 
 private:
 	Ui::LatexPrefsUI *m_preferencesDialog;

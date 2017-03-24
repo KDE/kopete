@@ -45,32 +45,32 @@ public:
 	ContactListPlainModel(QObject* parent = nullptr);
 	~ContactListPlainModel();
 
-	virtual QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
-	virtual QModelIndex index ( int row, int column, const QModelIndex & parent = QModelIndex() ) const;
+	QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
+	QModelIndex index ( int row, int column, const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 
-	virtual QModelIndex parent ( const QModelIndex & index ) const;
-	virtual int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
-	virtual bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const;
+	QModelIndex parent ( const QModelIndex & index ) const Q_DECL_OVERRIDE;
+	int rowCount ( const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+	bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 
-	virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+	Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
 
-	virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
-	                          int row, int column, const QModelIndex &parent);
+	bool dropMimeData(const QMimeData *data, Qt::DropAction action,
+	                          int row, int column, const QModelIndex &parent) Q_DECL_OVERRIDE;
 
 public Q_SLOTS:
-	virtual void addMetaContact( Kopete::MetaContact* );
-	virtual void removeMetaContact( Kopete::MetaContact* );
+	void addMetaContact( Kopete::MetaContact* ) Q_DECL_OVERRIDE;
+	void removeMetaContact( Kopete::MetaContact* ) Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
-	virtual void handleContactDataChange(Kopete::MetaContact*);
-	virtual void appearanceConfigChanged();
-	virtual void loadContactList();
+	void handleContactDataChange(Kopete::MetaContact*) Q_DECL_OVERRIDE;
+	void appearanceConfigChanged() Q_DECL_OVERRIDE;
+	void loadContactList() Q_DECL_OVERRIDE;
 
 protected:
-	virtual void loadModelSettingsImpl( QDomElement& rootElement );
-	virtual void saveModelSettingsImpl( QDomDocument& doc, QDomElement& rootElement );
+	void loadModelSettingsImpl( QDomElement& rootElement ) Q_DECL_OVERRIDE;
+	void saveModelSettingsImpl( QDomDocument& doc, QDomElement& rootElement ) Q_DECL_OVERRIDE;
 
-	virtual bool dropMetaContacts( int row, const QModelIndex &parent, Qt::DropAction action, const QList<GroupMetaContactPair> &items );
+	bool dropMetaContacts( int row, const QModelIndex &parent, Qt::DropAction action, const QList<GroupMetaContactPair> &items ) Q_DECL_OVERRIDE;
 
 private:
 	void addMetaContactImpl( Kopete::MetaContact *mc );

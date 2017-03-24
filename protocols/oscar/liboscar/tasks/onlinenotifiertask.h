@@ -40,10 +40,10 @@ public:
 
 	~OnlineNotifierTask();
 
-	virtual bool take( Transfer* transfer );
+	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 
 protected:
-	virtual bool forMe( const Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 
 signals:
 	void userIsOnline( const QString& user, const UserDetails& ud );

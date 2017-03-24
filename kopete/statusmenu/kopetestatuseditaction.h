@@ -61,8 +61,8 @@ namespace Kopete
 			void statusChanged( const Kopete::StatusMessage& statusMessage );
 
 		protected:
-			virtual void mouseReleaseEvent( QMouseEvent * );
-			virtual void keyPressEvent( QKeyEvent* event );
+			void mouseReleaseEvent( QMouseEvent * ) Q_DECL_OVERRIDE;
+			void keyPressEvent( QKeyEvent* event ) Q_DECL_OVERRIDE;
 
 		private Q_SLOTS:
 			void changeClicked();

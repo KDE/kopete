@@ -40,8 +40,8 @@ public:
 	                     QWidget *parent=0);
 	~ICQEditAccountWidget();
 	
-	virtual bool validateData();
-	virtual Kopete::Account *apply();
+	bool validateData() Q_DECL_OVERRIDE;
+	Kopete::Account *apply() Q_DECL_OVERRIDE;
 	
 private slots:
 	void slotOpenRegister();

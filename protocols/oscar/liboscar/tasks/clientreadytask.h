@@ -32,7 +32,7 @@ class ClientReadyTask : public Task
 public:
 	ClientReadyTask( Task* parent );
 	~ClientReadyTask();
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 
 	void setFamilies( const QList<int>& families );
 

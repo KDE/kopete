@@ -57,31 +57,31 @@ public:
 	/**
 	 * Construct the context menu used for the status bar icon
 	 */
-	virtual void fillActionMenu( KActionMenu *actionMenu );
+	void fillActionMenu( KActionMenu *actionMenu ) Q_DECL_OVERRIDE;
 
 	/** FIXME: connect is used only for testing, once the kwalletd fixed.
 	 * all the code is going to move to connectWithPassword
 	 */
-	virtual void connect( const Kopete::OnlineStatus& /* initialStatus */ );
+	void connect( const Kopete::OnlineStatus& /* initialStatus */ ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Creates a protocol specific Kopete::Contact subclass and adds it to the supplie
 	 * Kopete::MetaContact
 	 */
-	virtual bool createContact(const QString& contactId, Kopete::MetaContact* parentContact);
+	bool createContact(const QString& contactId, Kopete::MetaContact* parentContact) Q_DECL_OVERRIDE;
 
 	/**
 	 * Called when Kopete status is changed globally
 	 */
-	virtual void setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
-	                             const OnlineStatusOptions& options = None);
-	virtual void setStatusMessage(const Kopete::StatusMessage& statusMessage);
+	void setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
+	                             const OnlineStatusOptions& options = None) Q_DECL_OVERRIDE;
+	void setStatusMessage(const Kopete::StatusMessage& statusMessage) Q_DECL_OVERRIDE;
 
 	/**
 	 * Connect/Disconnect 
 	 */
-	virtual void connectWithPassword( const QString &password );
-	virtual void disconnect();
+	void connectWithPassword( const QString &password ) Q_DECL_OVERRIDE;
+	void disconnect() Q_DECL_OVERRIDE;
 
 	/**
 	 * Returns the address of the QQ server

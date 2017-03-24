@@ -74,8 +74,8 @@ public:
 	FlapTransfer();
 	virtual ~FlapTransfer();
 
-	virtual TransferType type() const;
-	virtual QByteArray toWire();
+	TransferType type() const Q_DECL_OVERRIDE;
+	QByteArray toWire() Q_DECL_OVERRIDE;
 
 
 	//! Set the FLAP channel
@@ -122,8 +122,8 @@ public:
 	SnacTransfer();
 	virtual ~SnacTransfer();
 
-	TransferType type() const;
-	virtual QByteArray toWire();
+	TransferType type() const Q_DECL_OVERRIDE;
+	QByteArray toWire() Q_DECL_OVERRIDE;
 
 
 	//! Set the SNAC service

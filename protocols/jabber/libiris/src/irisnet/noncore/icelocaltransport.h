@@ -77,12 +77,12 @@ public:
 	int relayedPort() const;
 
 	// reimplemented
-	virtual void stop();
-	virtual bool hasPendingDatagrams(int path) const;
-	virtual QByteArray readDatagram(int path, QHostAddress *addr, int *port);
-	virtual void writeDatagram(int path, const QByteArray &buf, const QHostAddress &addr, int port);
-	virtual void addChannelPeer(const QHostAddress &addr, int port);
-	virtual void setDebugLevel(DebugLevel level);
+	void stop() Q_DECL_OVERRIDE;
+	bool hasPendingDatagrams(int path) const Q_DECL_OVERRIDE;
+	QByteArray readDatagram(int path, QHostAddress *addr, int *port) Q_DECL_OVERRIDE;
+	void writeDatagram(int path, const QByteArray &buf, const QHostAddress &addr, int port) Q_DECL_OVERRIDE;
+	void addChannelPeer(const QHostAddress &addr, int port) Q_DECL_OVERRIDE;
+	void setDebugLevel(DebugLevel level) Q_DECL_OVERRIDE;
 
 signals:
 	// may be emitted multiple times.

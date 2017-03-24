@@ -40,9 +40,9 @@ public:
 
 	virtual ~KNetworkConnector ();
 
-	virtual void connectToServer ( const QString &server );
-	virtual ByteStream *stream () const;
-	virtual void done ();
+	void connectToServer ( const QString &server ) Q_DECL_OVERRIDE;
+	ByteStream *stream () const Q_DECL_OVERRIDE;
+	void done () Q_DECL_OVERRIDE;
 
 	void setOptHostPort ( const QString &host, quint16 port );
 	void setOptSSL ( bool );

@@ -38,11 +38,11 @@ public:
     /**
 	 * Make a contact out of the entered data
 	 */
-	virtual bool apply(Kopete::Account* a, Kopete::MetaContact* m);
+	bool apply(Kopete::Account* a, Kopete::MetaContact* m) Q_DECL_OVERRIDE;
 	/**
 	 * Is the data correct?
 	 */
-    virtual bool validateData();
+    bool validateData() Q_DECL_OVERRIDE;
 
 protected:
 	Ui::TestbedAddUI m_testbedAddUI;

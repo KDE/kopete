@@ -30,7 +30,7 @@ public:
 	AliveTask(Task *parent);
 	~AliveTask();
 	
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 };
 
 #endif

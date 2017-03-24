@@ -30,7 +30,7 @@ class SSIActivateTask : public Task
 public:
 	SSIActivateTask( Task* parent );
 	~SSIActivateTask();
-	void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 };
 
 #endif

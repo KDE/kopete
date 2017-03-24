@@ -39,10 +39,10 @@ public:
 	QCA::TLS *tls() const;
 	int tlsError() const;
 
-	void reset();
-	void startClient(const QString &host);
-	void write(const QByteArray &a);
-	void writeIncoming(const QByteArray &a);
+	void reset() Q_DECL_OVERRIDE;
+	void startClient(const QString &host) Q_DECL_OVERRIDE;
+	void write(const QByteArray &a) Q_DECL_OVERRIDE;
+	void writeIncoming(const QByteArray &a) Q_DECL_OVERRIDE;
 
 signals:
 	void tlsHandshaken();

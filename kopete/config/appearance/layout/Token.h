@@ -52,7 +52,7 @@ class Token : public QWidget
         void changed();
 
     protected:
-        virtual void paintEvent(QPaintEvent *pe);
+        void paintEvent(QPaintEvent *pe) Q_DECL_OVERRIDE;
 
     protected:
 

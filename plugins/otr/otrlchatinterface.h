@@ -124,7 +124,7 @@ private:
 
 public:
 	KeyGenThread( const QString &accountname, const QString &protocol );
-	virtual void run();
+	void run() Q_DECL_OVERRIDE;
 };
 
 #endif

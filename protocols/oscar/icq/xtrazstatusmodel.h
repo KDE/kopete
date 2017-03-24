@@ -32,20 +32,20 @@ public:
 	QList<Xtraz::Status> getStatuses() const;
 	void setStatuses( const QList<Xtraz::Status> &statusList );
 
-	virtual int rowCount( const QModelIndex &parent = QModelIndex() ) const;
-	virtual int columnCount( const QModelIndex &parent = QModelIndex() ) const;
+	int rowCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+	int columnCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 
-	virtual bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole );
-	virtual QVariant data( const QModelIndex &index, int role = Qt::DisplayRole ) const;
+	bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole ) Q_DECL_OVERRIDE;
+	QVariant data( const QModelIndex &index, int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
 
-	virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
+	QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
 
-	virtual Qt::ItemFlags flags( const QModelIndex &index ) const;
+	Qt::ItemFlags flags( const QModelIndex &index ) const Q_DECL_OVERRIDE;
 
 	bool swapRows( int i, int j );
 
-	virtual bool insertRows( int row, int count, const QModelIndex &parent = QModelIndex() );
-	virtual bool removeRows( int row, int count, const QModelIndex &parent = QModelIndex() );
+	bool insertRows( int row, int count, const QModelIndex &parent = QModelIndex() ) Q_DECL_OVERRIDE;
+	bool removeRows( int row, int count, const QModelIndex &parent = QModelIndex() ) Q_DECL_OVERRIDE;
 
 private:
 	QList<Xtraz::Status> mStatuses;

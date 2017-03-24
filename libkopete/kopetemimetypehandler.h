@@ -125,8 +125,8 @@ public:
 
 	const QStringList mimeTypes() const;
 
-	void handleURL( const QString &mimeType, const QUrl &url ) const;
-	KDE_DEPRECATED void handleURL( const QUrl &url ) const;
+	void handleURL( const QString &mimeType, const QUrl &url ) const Q_DECL_OVERRIDE;
+	KDE_DEPRECATED void handleURL( const QUrl &url ) const Q_DECL_OVERRIDE;
 };
 
 } // Kopete

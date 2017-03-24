@@ -91,9 +91,9 @@ public:
 	uint clientFlags() const;
 	void setClientFlags( uint );
 
-	virtual bool isReachable();
+	bool isReachable() Q_DECL_OVERRIDE;
 
-    virtual QList<QAction*> *customContextMenuActions();
+    QList<QAction*> *customContextMenuActions() Q_DECL_OVERRIDE;
 	using Kopete::Contact::customContextMenuActions;
 
 	/**
@@ -102,7 +102,7 @@ public:
 	void contactRemovedFromGroup( const QString& groupId );
 	void contactAddedToGroup(const QString& groupId, Kopete::Group *group );
 
-	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
+	void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Rename contact on server
@@ -112,7 +112,7 @@ public:
 	/**
 	 * Returns the QQ Message Manager associated with this contact
 	 */
-	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate );
+	Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate ) Q_DECL_OVERRIDE;
 
 
 	/**
@@ -132,15 +132,15 @@ public:
 	{ m_contactDetail = map; }
 
 public slots:
-	virtual void slotUserInfo();
-	virtual void deleteContact();
+	void slotUserInfo() Q_DECL_OVERRIDE;
+	void deleteContact() Q_DECL_OVERRIDE;
 	virtual void sendFile( const KUrl &sourceURL = KUrl(),
 						   const QString &fileName = QString(), uint fileSize = 0L );
 
 	/**
 	 * Every time the kopete's contact list is modified, we sync the serverlist with it
 	 */
-	virtual void sync( unsigned int cvhanged= 0xff);
+	void sync( unsigned int cvhanged= 0xff) Q_DECL_OVERRIDE;
 
 
 	void setDisplayPicture(KTemporaryFile *f) ;

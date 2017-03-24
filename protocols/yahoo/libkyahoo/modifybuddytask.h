@@ -32,9 +32,9 @@ public:
 	ModifyBuddyTask(Task *parent);
 	~ModifyBuddyTask();
 	
-	virtual void onGo();
+	void onGo() Q_DECL_OVERRIDE;
 	
-	bool take(Transfer *transfer);
+	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 
 	void setType( Type type );
 	void setMessage( const QString &text );
@@ -48,7 +48,7 @@ signals:
 	void buddyChangeGroupResult( const QString &, const QString &, bool );
 
 protected:
-	virtual bool forMe( const Transfer *transfer ) const;
+	bool forMe( const Transfer *transfer ) const Q_DECL_OVERRIDE;
 
 private:
 	void addBuddy();

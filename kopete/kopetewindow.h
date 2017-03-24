@@ -53,13 +53,13 @@ public:
 	explicit KopeteWindow ( QWidget *parent = nullptr );
 	~KopeteWindow();
 
-	virtual bool eventFilter( QObject* o, QEvent* e );
+	bool eventFilter( QObject* o, QEvent* e ) Q_DECL_OVERRIDE;
 
 protected:
-	virtual void closeEvent( QCloseEvent *ev );
-	virtual void leaveEvent( QEvent* ev );
-	virtual void showEvent( QShowEvent* ev );
-	virtual void hideEvent( QHideEvent* ev );
+	void closeEvent( QCloseEvent *ev ) Q_DECL_OVERRIDE;
+	void leaveEvent( QEvent* ev ) Q_DECL_OVERRIDE;
+	void showEvent( QShowEvent* ev ) Q_DECL_OVERRIDE;
+	void hideEvent( QHideEvent* ev ) Q_DECL_OVERRIDE;
 
 private slots:
 	void slotToggleShowAllOfflineEmpty( bool toggled );
@@ -218,7 +218,7 @@ private:
 	void makeTrayToolTip();
 	void startAutoHideTimer();
 
-	virtual bool queryClose();
+	bool queryClose() Q_DECL_OVERRIDE;
 	virtual bool queryExit();
 
 	/**
@@ -240,7 +240,7 @@ public:
       GlobalStatusMessageIconLabel(QWidget *parent = nullptr);
 
 protected:
-      void mouseReleaseEvent(QMouseEvent *event);
+      void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
 signals:
       void iconClicked(const QPoint &position);
@@ -254,7 +254,7 @@ public:
 	InfoEventIconLabel( QWidget *parent = nullptr );
 
 protected:
-	void mouseReleaseEvent( QMouseEvent *event );
+	void mouseReleaseEvent( QMouseEvent *event ) Q_DECL_OVERRIDE;
 
 signals:
 	void clicked();

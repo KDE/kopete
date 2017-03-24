@@ -37,7 +37,7 @@ Q_OBJECT
 public:
 	GetDetailsTask( Task * parent );
 	~GetDetailsTask();
-	bool take( Transfer * transfer );
+	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
 	void userDNs( const QStringList & userDNs );
 signals:
 	void gotContactUserDetails( const GroupWise::ContactDetails & );

@@ -46,7 +46,7 @@ private:
 	QTextEdit *m_linesEdit;
 	
 protected slots: // Protected slots
-	virtual void slotButtonClicked(int buttonCode);
+	void slotButtonClicked(int buttonCode) Q_DECL_OVERRIDE;
 signals: // Signals
 	void notesChanged(const QString&, Kopete::MetaContact*);
 };
