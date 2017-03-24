@@ -87,10 +87,9 @@ AvatarManager::AvatarManager(QObject *parent)
  : QObject(parent), d(new Private)
 {
 	// Locate avatar data dir on disk
-	d->baseDir = QUrl( QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1String("/avatars") ) ;
-
-	// Create directory on disk, if necessary
-	d->createDirectory( d->baseDir );
+    const QString avatarPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1String("/avatars");
+    d->createDirectory(QUrl(avatarPath));
+    d->baseDir = QUrl(avatarPath);
 }
 
 AvatarManager::~AvatarManager()
@@ -323,7 +322,7 @@ void AvatarManager::Private::createDirectory(const QUrl &directory)
 	if( !QFile::exists(directory.toLocalFile()) )
 	{
 		qCDebug(LIBKOPETE_LOG) << "Creating directory: " << directory.toLocalFile();
-		if( !KIO::NetAccess::mkdir(directory,0) )
+        if( !KIO::NetAccess::mkdir(directory,0) )
 		{
 			qCDebug(LIBKOPETE_LOG) << "Directory " << directory.toLocalFile() <<" creating failed.";
 		}
