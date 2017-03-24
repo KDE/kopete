@@ -220,7 +220,6 @@ std::string JingleGroupInfoXml(const std::string& content_name_a,
   return group_info;
 }
 
-
 std::string JingleEmptyContentXml(const std::string& content_name,
                                   const std::string& content_type,
                                   const std::string& transport_type) {
@@ -478,7 +477,6 @@ std::string AcceptXml(SignalingProtocol protocol,
   }
   return "";
 }
-
 
 std::string AcceptXml(SignalingProtocol protocol,
                       const std::string& content_name,
@@ -1457,7 +1455,6 @@ class SessionTest : public testing::Test {
         resulting_protocol,
         content_name_a, content_type);
 
-
     TestSession(initiator_protocol, responder_protocol, resulting_protocol,
                 content_type,
                 content_type,
@@ -1498,7 +1495,6 @@ class SessionTest : public testing::Test {
         gingle_content_type,
         content_name, content_type,
         "", "");
-
 
     TestSession(initiator_protocol, responder_protocol, resulting_protocol,
                 gingle_content_type,
@@ -1921,7 +1917,6 @@ class SessionTest : public testing::Test {
     EXPECT_TRUE_WAIT(responder->chan_b->writable() &&
                      responder->chan_b->readable(), kEventTimeout);
 
-
     // Both sessions should be in progress and have functioning
     // channels.
     EXPECT_EQ(protocol, initiator->session->current_protocol());
@@ -2094,7 +2089,6 @@ TEST_F(SessionTest, GingleToGingleVideoContents) {
   TestVideoContents(PROTOCOL_GINGLE, PROTOCOL_GINGLE, PROTOCOL_GINGLE);
 }
 
-
 // Jingle => Jingle = Jingle (with other content)
 TEST_F(SessionTest, JingleToJingleOtherContent) {
   TestOtherContent(PROTOCOL_JINGLE, PROTOCOL_JINGLE, PROTOCOL_JINGLE);
@@ -2109,7 +2103,6 @@ TEST_F(SessionTest, JingleToJingleAudioContent) {
 TEST_F(SessionTest, JingleToJingleVideoContents) {
   TestVideoContents(PROTOCOL_JINGLE, PROTOCOL_JINGLE, PROTOCOL_JINGLE);
 }
-
 
 // Hybrid => Hybrid = Jingle (with other content)
 TEST_F(SessionTest, HybridToHybridOtherContent) {
@@ -2126,7 +2119,6 @@ TEST_F(SessionTest, HybridToHybridVideoContents) {
   TestVideoContents(PROTOCOL_HYBRID, PROTOCOL_HYBRID, PROTOCOL_JINGLE);
 }
 
-
 // Gingle => Hybrid = Gingle (with other content)
 TEST_F(SessionTest, GingleToHybridOtherContent) {
   TestOtherContent(PROTOCOL_GINGLE, PROTOCOL_HYBRID, PROTOCOL_GINGLE);
@@ -2141,7 +2133,6 @@ TEST_F(SessionTest, GingleToHybridAudioContent) {
 TEST_F(SessionTest, GingleToHybridVideoContents) {
   TestVideoContents(PROTOCOL_GINGLE, PROTOCOL_HYBRID, PROTOCOL_GINGLE);
 }
-
 
 // Jingle => Hybrid = Jingle (with other content)
 TEST_F(SessionTest, JingleToHybridOtherContent) {
@@ -2158,7 +2149,6 @@ TEST_F(SessionTest, JingleToHybridVideoContents) {
   TestVideoContents(PROTOCOL_JINGLE, PROTOCOL_HYBRID, PROTOCOL_JINGLE);
 }
 
-
 // Hybrid => Gingle = Gingle (with other content)
 TEST_F(SessionTest, HybridToGingleOtherContent) {
   TestOtherContent(PROTOCOL_HYBRID, PROTOCOL_GINGLE, PROTOCOL_GINGLE);
@@ -2174,7 +2164,6 @@ TEST_F(SessionTest, HybridToGingleVideoContents) {
   TestVideoContents(PROTOCOL_HYBRID, PROTOCOL_GINGLE, PROTOCOL_GINGLE);
 }
 
-
 // Hybrid => Jingle = Jingle (with other content)
 TEST_F(SessionTest, HybridToJingleOtherContent) {
   TestOtherContent(PROTOCOL_HYBRID, PROTOCOL_JINGLE, PROTOCOL_JINGLE);
@@ -2189,7 +2178,6 @@ TEST_F(SessionTest, HybridToJingleAudioContent) {
 TEST_F(SessionTest, HybridToJingleVideoContents) {
   TestVideoContents(PROTOCOL_HYBRID, PROTOCOL_JINGLE, PROTOCOL_JINGLE);
 }
-
 
 TEST_F(SessionTest, GingleEarlyTerminationFromInitiator) {
   TestEarlyTerminationFromInitiator(PROTOCOL_GINGLE);

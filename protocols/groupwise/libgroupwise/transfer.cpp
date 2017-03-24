@@ -22,9 +22,7 @@ Transfer::Transfer()
 {
 }
 
-
 Transfer::~Transfer()
 {
 }
-
 

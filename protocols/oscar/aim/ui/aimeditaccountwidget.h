@@ -15,7 +15,6 @@
     *************************************************************************
 */
 
-
 #ifndef AIMEDITACCOUNTWIDGET_H
 #define AIMEDITACCOUNTWIDGET_H
 
@@ -60,4 +59,3 @@ private:
 	OscarPrivacyEngine* m_invisibleEngine;
 };
 #endif
-//kate: tab-width 4; indent-mode csands;

@@ -113,7 +113,6 @@ RemoteVideoTrackHandler::~RemoteVideoTrackHandler() {
   provider_->SetRemoteRenderer(video_track_->label(), NULL);
 }
 
-
 void RemoteVideoTrackHandler::OnRendererChanged() {
   VideoRendererWrapperInterface* renderer = video_track_->GetRenderer();
   if (renderer)
@@ -149,7 +148,6 @@ MediaStreamInterface* MediaStreamHandler::stream() {
 void MediaStreamHandler::OnChanged() {
   // TODO: Implement state change and enabled changed.
 }
-
 
 LocalMediaStreamHandler::LocalMediaStreamHandler(
     MediaStreamInterface* stream,
@@ -249,6 +247,5 @@ void MediaStreamHandlers::CommitLocalStreams(
     }
   }
 };
-
 
 }  // namespace webrtc

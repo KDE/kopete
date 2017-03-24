@@ -1,6 +1,5 @@
 // Copyright 2004 Google Inc. All Rights Reserved
 
-
 #include "talk/base/gunit.h"
 #include "talk/xmpp/jid.h"
 

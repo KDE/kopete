@@ -24,7 +24,7 @@
 #include <QStringList>
 #include <QList>
 
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include "jabberprotocol.h"
 
 #define ORDER_INCREMENT 10
@@ -61,7 +61,6 @@ void PrivacyList::reNumber()
 		order += ORDER_INCREMENT;
 	}
 }
-
 
 bool PrivacyList::moveItemUp(int index)
 {
@@ -133,9 +132,9 @@ QDomElement PrivacyList::toXml(QDomDocument& doc) const
 
 void PrivacyList::fromXml(const QDomElement& el)
 {
-	//kDebug (JABBER_DEBUG_GLOBAL) << "Parsing privacy list";
+	//qDebug (JABBER_PROTOCOL_LOG) << "Parsing privacy list";
 	if (el.isNull() || el.tagName() != QLatin1String("list")) {
-		kWarning (JABBER_DEBUG_GLOBAL) << "Invalid root tag for privacy list.";
+		qCWarning (JABBER_PROTOCOL_LOG) << "Invalid root tag for privacy list.";
 		return;
 	}
 

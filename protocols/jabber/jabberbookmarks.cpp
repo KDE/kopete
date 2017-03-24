@@ -18,9 +18,8 @@
 
 #include <kopetecontact.h>
 
-
 #include <QPointer>
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <QAction>
 #include <kselectaction.h>
 #include <KLocalizedString>
@@ -193,7 +192,6 @@ void JabberBookmarks::slotReceivedBookmarks( )
 		}
 	}
 }
-
 
 void JabberBookmarks::insertGroupChat(const XMPP::Jid &jid)
 {

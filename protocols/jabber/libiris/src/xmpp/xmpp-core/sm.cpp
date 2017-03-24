@@ -22,7 +22,6 @@
 #include <QDebug>
 #endif
 
-
 #include "sm.h"
 
 using namespace XMPP;
@@ -42,7 +41,6 @@ void SMState::reset()
 	resumption_location.host.clear();
 	resumption_location.port = 0;
 }
-
 
 StreamManagement::StreamManagement(QObject *parent)
 	: QObject(parent)

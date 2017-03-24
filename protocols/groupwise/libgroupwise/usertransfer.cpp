@@ -43,4 +43,3 @@ Field::FieldList UserTransfer::fields()
 	return m_fields;
 }
 
-

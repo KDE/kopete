@@ -39,7 +39,8 @@ public:
      * to its Kopete::MetaContact
      */
     Kopete::Contact *deserializeContact(
-        Kopete::MetaContact *metaContact, const QMap< QString, QString > &serializedData, const QMap< QString, QString > &addressBookData) Q_DECL_OVERRIDE;
+        Kopete::MetaContact *metaContact, const QMap< QString, QString > &serializedData,
+        const QMap< QString, QString > &addressBookData) Q_DECL_OVERRIDE;
 
     /**
      * @brief Generate an Add Contact Page (not actually useful)
@@ -51,7 +52,8 @@ public:
      *
      * @return The Add Contact Page Widget
      */
-    AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account) Q_DECL_OVERRIDE;
+    AddContactPage *createAddContactWidget(QWidget *parent,
+                                           Kopete::Account *account) Q_DECL_OVERRIDE;
 
     /**
      * @brief Generate an Edit Account Page
@@ -63,7 +65,8 @@ public:
      *
      * @return The Edit Account Page Widget
      */
-    KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent) Q_DECL_OVERRIDE;
+    KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account,
+                                                     QWidget *parent) Q_DECL_OVERRIDE;
 
     /**
      * @brief Create a New Account

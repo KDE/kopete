@@ -22,7 +22,6 @@
 #ifndef _OSCARMESSAGE_H_
 #define _OSCARMESSAGE_H_
 
-
 #include <QDateTime>
 #include <QSharedDataPointer>
 
@@ -254,7 +253,5 @@ private:
 };
 
 }
-
-//kate: indent-mode csands; auto-insert-doxygen on; tab-width 4;
 
 #endif

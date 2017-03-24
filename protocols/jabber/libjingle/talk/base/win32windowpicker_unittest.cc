@@ -1,6 +1,5 @@
 // Copyright 2010 Google Inc. All Rights Reserved
 
-
 #include "talk/base/gunit.h"
 #include "talk/base/common.h"
 #include "talk/base/logging.h"

@@ -60,7 +60,6 @@ bool IsPubSubEventItemsElem(const XmlElement* stanza,
   return (actual_node == expected_node);
 }
 
-
 // Creates <pubsub node="node"><items></pubsub>
 XmlElement* CreatePubSubItemsElem(const std::string& node) {
   XmlElement* items_elem = new XmlElement(QN_PUBSUB_ITEMS, false);

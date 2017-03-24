@@ -80,7 +80,6 @@ bool WlmContact::dontShowEmoticons()
     return m_dontShowEmoticons;
 }
 
-
 void WlmContact::setDisabled(bool disabled, bool updateServer)
 {
     WlmAccount* acc = qobject_cast<WlmAccount*>(account());
@@ -490,5 +489,3 @@ WlmContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 		Kopete::Contact::setOnlineStatus(status);
 }
 
-
-// vim: set noet ts=4 sts=4 sw=4:

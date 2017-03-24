@@ -21,9 +21,7 @@ TransferBase::TransferBase()
 {
 }
 
-
 TransferBase::~TransferBase()
 {
 }
-
 

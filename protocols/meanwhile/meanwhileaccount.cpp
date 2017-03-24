@@ -106,7 +106,6 @@ void MeanwhileAccount::connectWithPassword(const QString &password)
 
    //     void connect(QString host, int port, QString account, QString password);
 
-
     if (!m_session->isConnected() && !m_session->isConnecting())
         m_session->connect(password);
 

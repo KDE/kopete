@@ -25,12 +25,10 @@
 #include "connection.h"
 #include <QList>
 
-
 ChatNavServiceTask::ChatNavServiceTask( Task* parent ) : Task( parent )
 {
 	m_type = Limits;
 }
-
 
 ChatNavServiceTask::~ChatNavServiceTask()
 {
@@ -149,7 +147,6 @@ void ChatNavServiceTask::createRoom( Oscar::WORD exchange, const QString& name )
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
 }
-
 
 void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 {
@@ -358,4 +355,3 @@ void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
 	}
 }
 
-//kate: indent-mode csands; tab-width 4;

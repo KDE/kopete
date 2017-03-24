@@ -234,7 +234,6 @@ class Port : public talk_base::MessageHandler, public sigslot::has_slots<> {
   void OnReadPacket(const char* data, size_t size,
                     const talk_base::SocketAddress& addr);
 
-
   // If the given data comprises a complete and correct STUN message then the
   // return value is true, otherwise false. If the message username corresponds
   // with this port's username fragment, msg will contain the parsed STUN

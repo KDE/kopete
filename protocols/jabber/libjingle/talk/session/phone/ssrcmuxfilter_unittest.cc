@@ -25,7 +25,6 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "talk/base/gunit.h"
 #include "talk/session/phone/ssrcmuxfilter.h"
 

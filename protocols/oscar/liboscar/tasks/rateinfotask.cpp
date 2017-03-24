@@ -35,12 +35,10 @@ RateInfoTask::RateInfoTask( Task* parent )
 	connect( this, SIGNAL(gotRateLimits()), this, SLOT(sendRateInfoAck()) );
 }
 
-
 RateInfoTask::~RateInfoTask()
 {
 	
 }
-
 
 bool RateInfoTask::forMe( const Transfer* transfer ) const
 {
@@ -173,7 +171,4 @@ void RateInfoTask::sendRateInfoAck()
 	send( st );
 	setSuccess( 0, QString() );
 }
-
-
-//kate: tab-width 4; indent-mode csands;
 

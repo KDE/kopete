@@ -22,9 +22,6 @@
 #include "buffer.h"
 #include "connection.h"
 
-
-
-
 TypingNotifyTask::TypingNotifyTask( Task* parent )
 : Task( parent )
 {
@@ -117,7 +114,6 @@ void TypingNotifyTask::setParams( const QString& contact, int notifyType )
 	m_contact = contact;
 	m_notificationType = notifyType;
 }
-
 
 // kate: indent-mode csands; space-indent off; replace-tabs off;
 

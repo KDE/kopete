@@ -40,7 +40,6 @@ public:
     QString roomName() const;
     QString exchange() const;
 
-
 protected slots:
 	void joinChat();
 	void closeClicked();
@@ -58,4 +57,3 @@ private:
 };
 
 #endif
-//kate: space-indent on; indent-width 4;

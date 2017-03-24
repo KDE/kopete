@@ -26,7 +26,7 @@
 #include <QMenu>
 #include <KMessageBox>
 #include <KLocale>
-#include <KDebug>
+#include "jabber_protocol_debug.h"
 #include <KConfigGroup>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
@@ -154,8 +154,6 @@ void dlgJabberServices::slotService()
 	serviceTask->go (true);*/
 }
 
-
-
 void dlgJabberServices::slotServiceFinished ()
 {
 /*	kDebug (14130) << "[dlgJabberServices] Query task finished";
@@ -204,10 +202,6 @@ void dlgJabberServices::slotDisco()
 	jt->go(true);*/
 }
 
-
-
-
-
 void dlgJabberServices::slotDiscoFinished( )
 {
 /*	XMPP::JT_DiscoItems *jt = (JT_DiscoItems *)sender();
@@ -221,7 +215,7 @@ void dlgJabberServices::slotDiscoFinished( )
 		{
 			const DiscoItem a = *it;
 			//dlgJabberServies_item *item=new dlgJabberServies_item( lvServices ,a.jid().full() , a.node() , a.name());
-			qDebug() << a.jid().full() << " " << a.node() << " " << a.name();
+			qCDebug(JABBER_PROTOCOL_LOG) << a.jid().full() << " " << a.node() << " " << a.name();
 			ServiceItem *item = new ServiceItem(a.jid().full(), a.node(), a.name());
 			trServices->addTopLevelItem(item);
 		}
@@ -231,7 +225,6 @@ void dlgJabberServices::slotDiscoFinished( )
 		//slotService();
 	}*/
 }
-
 
 void dlgJabberServices::slotRegister()
 {
@@ -305,7 +298,7 @@ void ServiceItem::slotDiscoFinished()
 		for(DiscoList::ConstIterator it = list.begin(); it != list.end(); ++it)
 		{
 			const DiscoItem a = *it;
-			//qDebug() << a.jid().full() << " " << a.node() << " " << a.name();
+			//qCDebug(JABBER_PROTOCOL_LOG) << a.jid().full() << " " << a.node() << " " << a.name();
 			ServiceItem *item = new ServiceItem(mAccount, a.jid().full(), a.node(), a.name());
 			addChild(item);
 		}

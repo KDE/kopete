@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-
 #include "kircclientsocket.h"
 
 #include <kdebug.h>
@@ -219,7 +218,6 @@ void I18nTask::topic(Event *e)
 {
 //	e->setText(i18n("%1 changed %2 topic to: %3").arg(e->message().prefixEntity(), e->message().arg(0), e->message().suffix()));
 }
-
 
 /* IMPORTANT NOTE:
  * Numeric replies always have the current nick or * as first argmuent.
@@ -455,7 +453,6 @@ void I18nTask::numericReply_305(Event *e)
 */
 }
 
-
 /* 306: ":You have been marked as being away"
  */
 void I18nTask::numericReply_306(Event *e)
@@ -642,7 +639,6 @@ void I18nTask::numericReply_352(Event *e)
 	);
 */
 }
-
 
 /* 353:
  * NAMES list

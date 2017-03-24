@@ -127,7 +127,6 @@ class CustomThread : public talk_base::Thread {
   bool Start() { return false; }
 };
 
-
 // A thread that does nothing when it runs and signals an event
 // when it is destroyed.
 class SignalWhenDestroyedThread : public Thread {

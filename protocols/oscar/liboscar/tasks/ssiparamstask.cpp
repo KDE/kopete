@@ -31,11 +31,9 @@ SSIParamsTask::SSIParamsTask(Task* parent): Task(parent)
 {
 }
 
-
 SSIParamsTask::~SSIParamsTask()
 {
 }
-
 
 bool SSIParamsTask::forMe(const Transfer* transfer) const
 {
@@ -97,6 +95,4 @@ void SSIParamsTask::handleParamReply()
 	}
 	setSuccess( 0, QString() );
 }
-
-// kate: tab-width 4; indent-mode csands;
 

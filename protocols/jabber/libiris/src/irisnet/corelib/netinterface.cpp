@@ -61,11 +61,9 @@ public:
 		delete c;
 	}
 
-
 signals:
 	void updated();
 private:
-
 
 	static QList<NetInterfaceProvider::Info> filterList(const QList<NetInterfaceProvider::Info> &in) {
 		QList<NetInterfaceProvider::Info> out;
@@ -85,7 +83,6 @@ private slots:
 		emit updated();
 	}
 
-
 private:
 	// this are all protected by m
 	NetInterfaceProvider *c;
@@ -93,7 +90,6 @@ private:
 	QList<NetInterfaceProvider::Info> info;
 
 };
-
 
 // Global because static getRef needs this too.
 Q_GLOBAL_STATIC(QMutex, nettracker_mutex)
@@ -133,11 +129,9 @@ public:
 		return nettracker->getInterfaces();
 	}
 
-
 	~NetTrackerThread() {
 		// locked from caller
 	}
-
 
 signals:
 	void updated();
@@ -180,7 +174,6 @@ private:
 };
 
 NetTrackerThread *NetTrackerThread::self = 0;
-
 
 //----------------------------------------------------------------------------
 // NetInterface

@@ -103,7 +103,6 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->edtProxyServerAddress->setText( proxyServerEntry );
 		mAccountSettings->edtProxyServerPort->setValue( proxyPortEntry );
 
-
 		bool configChecked = mAccount->configGroup()->readEntry( "RequireAuth", false );
 		mAccountSettings->chkRequireAuth->setChecked( configChecked );
 
@@ -350,5 +349,4 @@ void ICQEditAccountWidget::slotChangePassword()
 	delete passwordDlg;
 }
 
-// vim: set noet ts=4 sts=4 sw=4:
 // kate: indent-mode csands; space-indent off; replace-tabs off;

@@ -81,7 +81,6 @@ void XDomNodeList::append(const QDomNode &i)
 	list += i;
 }
 
-
 QDateTime stamp2TS(const QString &ts)
 {
 	if(ts.length() != 17)
@@ -156,7 +155,6 @@ QString tagContent(const QDomElement &e)
 	return QLatin1String("");
 }
 
-
 /**
  * \brief obtain direct child elements of a certain kind.  unlike
  *        elementsByTagNameNS, this function does not descend beyond the first
@@ -178,7 +176,6 @@ XDomNodeList childElementsByTagNameNS(const QDomElement &e, const QString &nsURI
 	}
 	return out;
 }
-
 
 /**
  * \brief create a new IQ stanza

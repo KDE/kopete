@@ -64,7 +64,6 @@ public:
 	 * managers with ourselves in the contact list.
 	 */
 	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags ) Q_DECL_OVERRIDE;
-	
 
 	bool isContactRequestingEvent( XMPP::MsgEvent event ) Q_DECL_OVERRIDE;
 	bool isContactRequestingReceiptDelivery() Q_DECL_OVERRIDE;

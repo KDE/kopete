@@ -106,7 +106,6 @@ QByteArray Field::KOPETE_NM_USER_DETAILS_SURNAME("Surname");
 QByteArray Field::KOPETE_NM_USER_DETAILS_ARCHIVE_FLAG("nnmArchive");
 QByteArray Field::KOPETE_NM_USER_DETAILS_FULL_NAME("Full Name");
 
-
 QByteArray Field::NM_FIELD_TRUE				("1");
 QByteArray Field::NM_FIELD_FALSE				("0");
 
@@ -213,7 +212,6 @@ MultiField * FieldList::findMultiField( FieldListIterator &it, const QByteArray 
 	else
 	return dynamic_cast<MultiField *>( *found );
 }
-
 
 /* === FieldBase ========================================================= */
 

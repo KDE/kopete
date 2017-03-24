@@ -28,7 +28,6 @@
 #include <qtextcodec.h>
 #include <qtimer.h>
 
-
 using namespace KIrc;
 
 SocketPrivate::SocketPrivate(KIrc::Socket *socket)

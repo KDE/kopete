@@ -1,6 +1,5 @@
 // Copyright 2011 Google Inc. All Rights Reserved.
 
-
 #ifndef TALK_P2P_CLIENT_CONNECTIVITYCHECKER_H_
 #define TALK_P2P_CLIENT_CONNECTIVITYCHECKER_H_
 

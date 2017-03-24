@@ -22,7 +22,6 @@
 class QDomElement;
 class QString;
 
-    
 class JT_PrivateStorage : public XMPP::Task
 {
 	Q_OBJECT

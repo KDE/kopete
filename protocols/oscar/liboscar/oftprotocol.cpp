@@ -150,4 +150,3 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 	return ft;
 }
 
-

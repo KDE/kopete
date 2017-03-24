@@ -160,7 +160,6 @@ class CallClient: public sigslot::has_slots<> {
     secure_policy_ = secure_policy;
   }
 
-
   typedef std::map<buzz::Jid, buzz::Muc*> MucMap;
 
   const MucMap& mucs() const {
@@ -236,7 +235,6 @@ class CallClient: public sigslot::has_slots<> {
   bool RemoveStaticRenderedView(uint32 ssrc);
   void RemoveAllStaticRenderedViews();
   void SendViewRequest(cricket::Session* session);
-
 
   static const std::string strerror(buzz::XmppEngine::Error err);
 

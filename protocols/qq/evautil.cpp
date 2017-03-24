@@ -273,4 +273,3 @@ std::string textToStream(const std::string &text, bool& hasImage)
 	return converted;
 }
 
-

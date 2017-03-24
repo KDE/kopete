@@ -89,7 +89,6 @@ int GetInt(const std::vector<std::string>& words, size_t index, int def) {
   }
 }
 
-
 }  // namespace
 
 const char* CALL_COMMANDS =

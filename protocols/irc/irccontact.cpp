@@ -16,7 +16,6 @@
     *************************************************************************
 */
 
-
 #include "ircaccount.h"
 #include "ircprotocol.h"
 #include "ksparser.h"

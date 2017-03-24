@@ -1811,7 +1811,6 @@ int WebRtcVoiceMediaChannel::GetOutputLevel() {
   return highest;
 }
 
-
 bool WebRtcVoiceMediaChannel::SetOutputScaling(
     uint32 ssrc, double left, double right) {
   talk_base::CritScope lock(&mux_channels_cs_);

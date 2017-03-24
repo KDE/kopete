@@ -152,5 +152,4 @@ PresenceOutTask::TranslateStatus(const Status & s) {
   return result;
 }
 
-
 }

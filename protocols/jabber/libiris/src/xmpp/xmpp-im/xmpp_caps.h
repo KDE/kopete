@@ -26,7 +26,6 @@
 #include "xmpp_discoitem.h"
 #include "xmpp_status.h"
 
-
 namespace XMPP {
 
 class CapsInfo
@@ -46,7 +45,6 @@ private:
 	QDateTime _lastSeen;
 	XMPP::DiscoItem _disco;
 };
-
 
 class CapsRegistry : public QObject
 {
@@ -77,7 +75,6 @@ private:
 	static CapsRegistry *instance_;
 	QHash<QString,CapsInfo> capsInfo_;
 };
-
 
 class CapsManager : public QObject
 {

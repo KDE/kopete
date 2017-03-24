@@ -55,7 +55,6 @@ class LIBOSCAR_EXPORT Buffer
 		 */
 		Buffer( const QByteArray& data );
 
-
 		/** Default destructor */
 		~Buffer();
 
@@ -335,5 +334,3 @@ class LIBOSCAR_EXPORT Buffer
 };
 
 #endif
-// kate: tab-width 4; indent-mode csands;
-// vim: set noet ts=4 sts=4 sw=4:

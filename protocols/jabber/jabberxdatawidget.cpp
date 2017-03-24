@@ -21,7 +21,7 @@
 #include <QListWidget>
 #include <QLineEdit>
 #include <QTextEdit>
-#include <KDebug>
+#include "jabber_protocol_debug.h"
 
 //-------------------------------------------------------------------------------------------------//
 class XDataWidgetField
@@ -59,7 +59,6 @@ public:
 private:
 	XMPP::XData::Field mField;
 };
-
 
 //-------------------------------------------------------------------------------------------------//
 
@@ -405,8 +404,6 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------//
-
-
 
 JabberXDataWidget::JabberXDataWidget(const XMPP::XData &data, QWidget *parent) : QWidget(parent)
 {

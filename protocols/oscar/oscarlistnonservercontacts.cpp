@@ -17,7 +17,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
-
 #include "oscarlistnonservercontacts.h"
 #include "ui_oscarlistcontactsbase.h"
 #include <qstringlist.h>
@@ -60,7 +59,6 @@ bool OscarListNonServerContacts::onlyShowOnce()
 {
     return m_contactsList->doNotShowAgain->isChecked();
 }
-
 
 void OscarListNonServerContacts::slotButtonClicked( int buttonCode )
 {

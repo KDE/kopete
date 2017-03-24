@@ -26,11 +26,9 @@ ErrorTask::ErrorTask( Task* parent )
 {
 }
 
-
 ErrorTask::~ErrorTask()
 {
 }
-
 
 bool ErrorTask::forMe( const Transfer* transfer ) const
 {
@@ -73,6 +71,5 @@ bool ErrorTask::take( Transfer* transfer )
 	else 
 		return false;
 }
-
 
 //kate indent-mode csands;

@@ -75,7 +75,6 @@ void P2PTransport::OnTransportError(const buzz::XmlElement* error) {
   }
 }
 
-
 bool P2PTransportParser::ParseCandidates(SignalingProtocol protocol,
                                          const buzz::XmlElement* elem,
                                          Candidates* candidates,

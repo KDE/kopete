@@ -149,7 +149,6 @@ public:
   virtual bool Prev() = 0;
 };
 
-
 //! Represents a single member in a chatroom
 class XmppChatroomMember {
 public:
@@ -224,7 +223,6 @@ public:
   virtual void ChatroomEnteredStatus(XmppChatroomModule* room,
                                      XmppChatroomEnteredStatus status) = 0;
 
-
   //! Indicates that the user has exited the chatroom, either due to
   //! a call to RequestExitChatroom or for some other reason.
   //! status indicates the reason the user exited
@@ -252,7 +250,6 @@ public:
   virtual void MessageReceived(XmppChatroomModule* room,
                                const XmlElement& message) = 0;
 };
-
 
 }
 

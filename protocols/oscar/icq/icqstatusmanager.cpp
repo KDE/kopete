@@ -123,7 +123,7 @@ Kopete::OnlineStatus ICQStatusManager::waitingForAuth() const
 
 void ICQStatusManager::loadXtrazStatuses()
 {
-	KConfigGroup config = KGlobal::config()->group( "Xtraz Statuses" );
+	KConfigGroup config = KSharedConfig::openConfig()->group( "Xtraz Statuses" );
 
 	QList<int> t; t<<500;//trick to detect the usage of default value
 	QList<int> statusList = config.readEntry( "Statuses", t);
@@ -186,12 +186,11 @@ void ICQStatusManager::loadXtrazStatuses()
 		d->xtrazStatusList.append( status );
 	}
 
-	
 }
 
 void ICQStatusManager::saveXtrazStatuses()
 {
-	KConfigGroup config = KGlobal::config()->group( "Xtraz Statuses" );
+	KConfigGroup config = KSharedConfig::openConfig()->group( "Xtraz Statuses" );
 
 	QList<int> statusList;
 	QList<QString> descriptionList;

@@ -31,4 +31,3 @@ QString Request::command()
 	return m_command;
 }
 
-

@@ -105,7 +105,6 @@ class MediaStreamInterface;
 // // string. Provide this answer string to RoapSignaling.
 // pc.ProcessSignalingMessage(remote_message, &local_streams);
 
-
 class RoapSignaling : public IceCandidateObserver {
  public:
   enum State {

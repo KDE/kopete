@@ -36,7 +36,6 @@ UserDetails::UserDetails()
 	clear();
 }
 
-
 UserDetails::~UserDetails()
 {
 }
@@ -884,4 +883,3 @@ void UserDetails::merge( const UserDetails& ud )
 	m_onlineStatusMsgSupport = ud.m_onlineStatusMsgSupport;
 }
 
-//kate: tab-width 4; indent-mode csands;

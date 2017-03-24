@@ -273,7 +273,6 @@ void ParseFileArg(const char* arg, buzz::Jid* jid, std::string* file) {
   }
 }
 
-
 void SetConsoleEcho(bool on) {
 #ifdef WIN32
   HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);

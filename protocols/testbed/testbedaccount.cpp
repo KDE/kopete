@@ -14,7 +14,6 @@
     *************************************************************************
 */
 
-
 #include "testbedaccount.h"
 
 #include <QAction>
@@ -30,7 +29,6 @@
 #include "testbedcontact.h"
 #include "testbedfakeserver.h"
 #include "testbedprotocol.h"
-
 
 TestbedAccount::TestbedAccount( TestbedProtocol *parent, const QString& accountID )
 : Kopete::Account ( parent, accountID )
@@ -151,7 +149,6 @@ void TestbedAccount::slotGoBusy ()
 	updateContactStatus();
 }
 
-
 void TestbedAccount::slotGoOffline ()
 {
 	kDebug ( 14210 ) ;
@@ -199,5 +196,4 @@ void TestbedAccount::updateContactStatus()
 		itr.value()->setOnlineStatus( myself()->onlineStatus() );
 	}
 }
-
 

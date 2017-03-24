@@ -152,7 +152,6 @@ private:
                  XmlElement** element,
                  XmlChild** child_before);
 
-
   friend class XmppRosterContact;
   friend class XmppRosterModuleImpl;
 

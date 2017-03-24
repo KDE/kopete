@@ -31,7 +31,6 @@ using namespace Oscar;
 class QString;
 class Transfer;
 
-
 /**
  * \short Handle OSCAR login - stage 1
  *
@@ -68,7 +67,6 @@ public:
 
 	//! Get the error reason so it can be displayed
 	const QString& errorReason() const;
-
 
 public slots:
 	void closeTaskFinished();
@@ -145,4 +143,3 @@ private:
 
 #endif
 
-//kate: tab-width 4; indent-mode csands;

@@ -30,7 +30,6 @@ class SSIParamsTask;
 class SSIListTask;
 class SSIActivateTask;
 
-
 /**
 Set up the various services for the BOS connection
 @author Matt Rogers
@@ -66,4 +65,3 @@ private:
 
 #endif
 
-//kate: tab-width 4; indent-mode csands;

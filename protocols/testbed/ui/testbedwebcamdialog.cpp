@@ -93,4 +93,3 @@ void TestbedWebcamDialog::slotUpdateImage()
 #endif
 }
 
-

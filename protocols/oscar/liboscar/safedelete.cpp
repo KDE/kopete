@@ -128,4 +128,3 @@ void SafeDeleteLater::explode()
 	delete this;
 }
 
-

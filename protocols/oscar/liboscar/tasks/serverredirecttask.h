@@ -17,7 +17,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301  USA
 
-
 #ifndef SERVERREDIRECTTASK_H
 #define SERVERREDIRECTTASK_H
 
@@ -64,6 +63,5 @@ private:
     Oscar::WORD m_chatInstance;
     QString m_chatRoom;
 };
-
 
 #endif

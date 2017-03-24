@@ -38,7 +38,6 @@ K_EXPORT_PLUGIN( AIMProtocolFactory( "kopete_aim" ) )
 
 AIMProtocol* AIMProtocol::protocolStatic_ = 0L;
 
-
 AIMProtocolHandler::AIMProtocolHandler() : Kopete::MimeTypeHandler(false)
 {
 	registerAsProtocolHandler(QString::fromLatin1("aim"));
@@ -220,9 +219,6 @@ void AIMProtocolHandler::handleURL(const QString&, const QUrl &url) const
 
 }
 
-
-
-
 AIMProtocol::AIMProtocol(QObject *parent, const QVariantList &)
 : OscarProtocol( parent, true ),
 	clientProfile( "clientProfile", i18n( "User Profile"), 0, Kopete::PropertyTmpl::RichTextProperty)
@@ -273,4 +269,3 @@ OscarStatusManager *AIMProtocol::statusManager() const
 }
 
 #include "aimprotocol.moc"
-// vim: set noet ts=4 sts=4 sw=4:

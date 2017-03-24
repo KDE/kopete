@@ -122,7 +122,6 @@ public:
     ss_ <<"]";
   }
 
-
   void ChatroomExitedStatus(XmppChatroomModule* room,
                             XmppChatroomExitedStatus status) {
     UNUSED(room);
@@ -151,7 +150,6 @@ public:
     UNUSED2(room, message);
   }
 
- 
   std::string Str() {
     return ss_.str();
   }

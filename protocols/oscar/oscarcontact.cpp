@@ -37,7 +37,6 @@
 #include <kstandarddirs.h>
 #include <qinputdialog.h>
 
-
 #include <kfiledialog.h>
 
 #include "kopeteaccount.h"
@@ -661,4 +660,3 @@ QString OscarContact::brMargin( int margin, int fontPointSize, bool forceBr ) co
 	return s;
 }
 
-//kate: tab-width 4; indent-mode csands;

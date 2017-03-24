@@ -333,7 +333,6 @@ int64 SystemInfo::GetMemorySize() {
   return memory_;
 }
 
-
 // Return the name of the machine model we are currently running on.
 // This is a human readable string that consists of the name and version
 // number of the hardware, i.e 'MacBookAir1,1'. Returns an empty string if

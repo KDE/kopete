@@ -169,7 +169,6 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	d->callCount = 0;
 }
 
-
 SkypeAccount::~SkypeAccount() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 

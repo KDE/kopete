@@ -20,7 +20,6 @@
 #include <kopeteprotocol.h>
 #include <kopeteproperty.h>
 
-
 /**
  * Encapsulates the generic actions associated with this protocol
  * @author Will Stephenson
@@ -106,7 +105,6 @@ public:
 	const Kopete::PropertyTmpl propZodiac;
 	const Kopete::PropertyTmpl propBloodType;
 	const Kopete::PropertyTmpl propEmail;
-
 
 protected:
 	static QQProtocol *s_protocol;

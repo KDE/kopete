@@ -32,7 +32,6 @@ GetDetailsTask::GetDetailsTask( Task * parent )
 {
 }
 
-
 GetDetailsTask::~GetDetailsTask()
 {
 }

@@ -28,7 +28,6 @@ KeepAliveTask::KeepAliveTask(Task* parent): RequestTask(parent)
 {
 }
 
-
 KeepAliveTask::~KeepAliveTask()
 {
 }

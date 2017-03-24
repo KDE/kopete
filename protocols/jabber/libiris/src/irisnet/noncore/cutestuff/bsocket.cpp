@@ -35,7 +35,6 @@
 # define BSDEBUG (qDebug() << this << "#" << __FUNCTION__ << ":")
 #endif
 
-
 #define READBUFSIZE 65536
 
 // CS_NAMESPACE_BEGIN
@@ -95,7 +94,6 @@ public slots:
 		emit error(x);
 	}
 };
-
 
 class HappyEyeballsConnector : public QObject
 {
@@ -161,7 +159,6 @@ public:
 		}
 		fallbackTimer.stop();
 	}
-
 
 	void connectToHost(const QHostAddress &address, quint16 port)
 	{
@@ -425,7 +422,6 @@ BSocket::~BSocket()
 	resetConnection(true);
 	delete d;
 }
-
 
 void BSocket::resetConnection(bool clear)
 {

@@ -23,7 +23,7 @@
 #include <QUdpSocket>
 #include <QImage>
 #include <QByteArray>
-#include <KDebug>
+#include "jabber_protocol_debug.h"
 #include <QDomElement>
 
 JingleRtpSession::JingleRtpSession(Direction d)
@@ -46,12 +46,12 @@ JingleRtpSession::JingleRtpSession(Direction d)
 
     rtp_session_set_scheduling_mode(m_rtpSession, 0);
     rtp_session_set_blocking_mode(m_rtpSession, 0);
-    kDebug() << "Created";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Created";
 }
 
 JingleRtpSession::~JingleRtpSession()
 {
-    kDebug() << "destroyed";
+    qCDebug(JABBER_PROTOCOL_LOG) << "destroyed";
     rtp_session_bye(m_rtpSession, "Ended");
     rtp_session_destroy(m_rtpSession);
 
@@ -66,7 +66,7 @@ JingleRtpSession::~JingleRtpSession()
 
 void JingleRtpSession::setRtpSocket(QAbstractSocket *socket, int rtcpPort)
 {
-    kDebug() << (socket->isValid() ? "Socket ready" : "Socket not ready");
+    qCDebug(JABBER_PROTOCOL_LOG) << (socket->isValid() ? "Socket ready" : "Socket not ready");
 
     //rtpSocket = (QUdpSocket*) socket;
 
@@ -84,8 +84,8 @@ void JingleRtpSession::setRtpSocket(QAbstractSocket *socket, int rtcpPort)
         delete socket;
         rtpSocket->bind(localPort); // ^ Part of the workaround
 
-        kDebug() << "Given socket is bound to :" << rtpSocket->localPort();
-        kDebug() << "RTCP socket will be bound to :" << (rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort);
+        qCDebug(JABBER_PROTOCOL_LOG) << "Given socket is bound to :" << rtpSocket->localPort();
+        qCDebug(JABBER_PROTOCOL_LOG) << "RTCP socket will be bound to :" << (rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort);
         connect(rtpSocket, SIGNAL(readyRead()), this, SLOT(rtpDataReady()));
         connect(rtcpSocket, SIGNAL(readyRead()), this, SLOT(rtcpDataReady()));
         rtcpSocket->bind(rtpSocket->localAddress(), rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort);
@@ -95,8 +95,8 @@ void JingleRtpSession::setRtpSocket(QAbstractSocket *socket, int rtcpPort)
         delete socket;
         rtpSocket->connectToHost(peerAddress, peerPort); //Part of the workaround
 
-        kDebug() << "Given socket is connected to" << rtpSocket->peerAddress() << ":" << rtpSocket->peerPort();
-        kDebug() << "RTCP socket will be connected to" << rtpSocket->peerAddress() << ":" << (rtcpPort == 0 ? rtpSocket->peerPort() + 1 : rtcpPort);
+        qCDebug(JABBER_PROTOCOL_LOG) << "Given socket is connected to" << rtpSocket->peerAddress() << ":" << rtpSocket->peerPort();
+        qCDebug(JABBER_PROTOCOL_LOG) << "RTCP socket will be connected to" << rtpSocket->peerAddress() << ":" << (rtcpPort == 0 ? rtpSocket->peerPort() + 1 : rtcpPort);
         rtcpSocket->connectToHost(rtpSocket->peerAddress(), rtcpPort == 0 ? rtpSocket->peerPort() + 1 : rtcpPort, QIODevice::ReadWrite);
     }
 
@@ -110,7 +110,7 @@ void JingleRtpSession::send(const QByteArray &outData)
     int ts = m_mediaSession->timeStamp();
     int size = rtp_session_sendm_with_ts(m_rtpSession, packet, ts);
     if (size == -1) {
-        kDebug() << "Error sending packet";
+        qCDebug(JABBER_PROTOCOL_LOG) << "Error sending packet";
         return;
     }
 }
@@ -124,12 +124,12 @@ void JingleRtpSession::rtpDataReady()
 
     int ret = rtp_session_recv_with_ts(m_rtpSession, static_cast<uint8_t *>(buf), bufSize, ts, &more);
     if (ret == 0) {
-        kDebug() << "Error receiving Rtp packet. (Most likely this timestamp has expired)";
+        qCDebug(JABBER_PROTOCOL_LOG) << "Error receiving Rtp packet. (Most likely this timestamp has expired)";
         if (more != 0) {
-            kDebug() << "Still some data to read";
+            qCDebug(JABBER_PROTOCOL_LOG) << "Still some data to read";
         }
 
-        kDebug() << "Purging the socket.";
+        qCDebug(JABBER_PROTOCOL_LOG) << "Purging the socket.";
         QByteArray b;
         b.resize(rtpSocket->pendingDatagramSize());
         rtpSocket->readDatagram(b.data(), rtpSocket->pendingDatagramSize());
@@ -144,14 +144,14 @@ void JingleRtpSession::rtpDataReady()
     b.resize(rtpSocket->pendingDatagramSize());
     rtpSocket->readDatagram(b.data(), rtpSocket->pendingDatagramSize());
 
-    //kDebug() << "Data :" << data.toBase64() << "(" << data.size() << "bytes)";
+    //qCDebug(JABBER_PROTOCOL_LOG) << "Data :" << data.toBase64() << "(" << data.size() << "bytes)";
 
     emit readyRead(inData);
 }
 
 void JingleRtpSession::rtcpDataReady()
 {
-    //kDebug() << "Received :" << rtcpSocket->readAll();
+    //qCDebug(JABBER_PROTOCOL_LOG) << "Received :" << rtcpSocket->readAll();
 }
 
 void JingleRtpSession::setPayload(const QDomElement &payload)

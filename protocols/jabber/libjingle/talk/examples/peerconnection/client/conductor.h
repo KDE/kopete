@@ -90,8 +90,6 @@ class Conductor
   virtual void OnIceCandidate(const webrtc::IceCandidateInterface* candidate);
   virtual void OnIceComplete();
 
-
-
   //
   // PeerConnectionClientObserver implementation.
   //

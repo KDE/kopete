@@ -137,7 +137,7 @@ void WPProtocol::settingsChanged()
 
 void WPProtocol::readConfig()
 {
-	KConfigGroup group = KGlobal::config()->group("WinPopup");
+	KConfigGroup group = KSharedConfig::openConfig()->group("WinPopup");
 	smbClientBin = group.readEntry("SmbcPath", "/usr/bin/smbclient");
 	groupCheckFreq = group.readEntry("HostCheckFreq", 60);
 }
@@ -190,5 +190,3 @@ void WPProtocol::sendMessage(const QString &Body, const QString &Destination)
 
 #include "wpprotocol.moc"
 
-// vim: set noet ts=4 sts=4 sw=4:
-// kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

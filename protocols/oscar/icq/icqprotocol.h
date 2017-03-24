@@ -32,7 +32,6 @@ public:
 	using Kopete::MimeTypeHandler::handleURL;
 };
 
-
 class ICQProtocol : public OscarProtocol
 {
 Q_OBJECT
@@ -53,7 +52,6 @@ public:
 	Kopete::Account *createNewAccount(const QString &accountId) Q_DECL_OVERRIDE;
 
 	OscarStatusManager *statusManager() const Q_DECL_OVERRIDE;
-
 
 	const Kopete::PropertyTmpl firstName;
 	const Kopete::PropertyTmpl lastName;
@@ -105,7 +103,6 @@ private:
 	ICQProtocolHandler protohandler;
 };
 
-
 #define CP1250 2250
 #define CP1251 2251
 #define CP1252 2252
@@ -116,7 +113,4 @@ private:
 #define CP1257 2257
 #define CP1258 2258
 
-
-
 #endif
-// vim: set noet ts=4 sts=4 sw=4:

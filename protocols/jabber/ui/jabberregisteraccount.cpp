@@ -21,7 +21,7 @@
 
 #include "jabberregisteraccount.h"
 
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <KLocalizedString>
 #include <kiconloader.h>
 #include <kglobal.h>
@@ -113,7 +113,6 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	// display validation info
 	validateData ();
 }
-
 
 JabberRegisterAccount::~JabberRegisterAccount()
 {
@@ -263,7 +262,7 @@ void JabberRegisterAccount::slotOk ()
 
 	mMainWidget->lblStatusMessage->setText ( QLatin1String("") );
 
-	kDebug ( JABBER_DEBUG_GLOBAL ) << "Registering a new Jabber account.";
+	qCDebug(JABBER_PROTOCOL_LOG) << "Registering a new Jabber account.";
 
 	enableButtonOk ( false );
 
@@ -319,7 +318,7 @@ void JabberRegisterAccount::slotHandleTLSWarning (
 		QCA::TLS::IdentityResult identityResult,
 		QCA::Validity validityResult )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << "Handling TLS warning...";
+	qCDebug(JABBER_PROTOCOL_LOG) << "Handling TLS warning...";
 
 	if ( JabberAccount::handleTLSWarning ( jabberClient, identityResult, validityResult ) )
 	{
@@ -336,7 +335,7 @@ void JabberRegisterAccount::slotHandleTLSWarning (
 
 void JabberRegisterAccount::slotCSError (int error)
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << "Error in stream signalled, disconnecting.";
+	qCDebug(JABBER_PROTOCOL_LOG) << "Error in stream signalled, disconnecting.";
 
 	Kopete::Account::DisconnectReason errorClass;
 
@@ -351,7 +350,7 @@ void JabberRegisterAccount::slotCSError (int error)
 
 void JabberRegisterAccount::slotConnected ()
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "Launching registration task...";
+	qDebug (JABBER_PROTOCOL_LOG) << "Launching registration task...";
 
 	mMainWidget->lblStatusMessage->setText ( i18n ( "Connected successfully, registering new account..." ) );
 
@@ -420,7 +419,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 void JabberRegisterAccount::slotDebugMessage ( const QString &msg )
 {
 
-	kDebug (JABBER_DEBUG_PROTOCOL) << msg;
+	qCDebug(JABBER_PROTOCOL_LOG) << msg;
 
 }
 

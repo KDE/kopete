@@ -114,7 +114,6 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 	QTimer::singleShot(0, this, SLOT(hideSkype())); //We need immediately connect signal-slot in account, start this as slot
 }
 
-
 SkypeCallDialog::~SkypeCallDialog(){
 	kDebug(SKYPE_DEBUG_GLOBAL);
 

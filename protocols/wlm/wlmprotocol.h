@@ -20,7 +20,6 @@
 #include <kopeteprotocol.h>
 #include "kopeteproperty.h"
 
-
 /**
  * Encapsulates the generic actions associated with this protocol
  * @author Will Stephenson

@@ -114,9 +114,9 @@ DlgJabberBookmarkEditor::DlgJabberBookmarkEditor( const JabberBookmark::List &bo
   m_model->setBookmarks( bookmarks );
   m_ui.listView->setModel( m_model );
 
-  connect( m_ui.renameButton, SIGNAL( clicked() ), SLOT( renameBookmark() ) );
-  connect( m_ui.autoJoinButton, SIGNAL( clicked() ), SLOT( toggleAutoJoin() ) );
-  connect( m_ui.removeButton, SIGNAL( clicked() ), SLOT( removeBookmark() ) );
+  connect( m_ui.renameButton, SIGNAL(clicked()), SLOT(renameBookmark()) );
+  connect( m_ui.autoJoinButton, SIGNAL(clicked()), SLOT(toggleAutoJoin()) );
+  connect( m_ui.removeButton, SIGNAL(clicked()), SLOT(removeBookmark()) );
 }
 
 DlgJabberBookmarkEditor::~DlgJabberBookmarkEditor()

@@ -22,7 +22,6 @@
 
 #include <QStringList>
 
-
 class SMSClientPrefsUI;
 class QGridLayout;
 class K3Process;

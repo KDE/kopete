@@ -215,7 +215,6 @@ void SecureTunnelSessionClient::OnIncomingTunnel(const buzz::Jid &jid,
 //   </session>
 // </iq>
 
-
 bool SecureTunnelSessionClient::ParseContent(SignalingProtocol protocol,
                                              const buzz::XmlElement* elem,
                                              const ContentDescription** content,

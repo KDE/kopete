@@ -65,7 +65,6 @@ protected slots:
 	virtual void slotSendingFailure(const Kopete::Message &msg, const QString &error);
 	virtual void slotConnected();
 	virtual void slotDisconnected();
-	
 
 protected:
 	bool createContact(const QString &contactId,  Kopete::MetaContact *parentContact);

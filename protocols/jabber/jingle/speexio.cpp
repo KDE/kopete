@@ -16,7 +16,7 @@
   */
 
 #include "speexio.h"
-#include <KDebug>
+#include "jabber_protocol_debug.h"
 
 class SpeexIO::Private
 {
@@ -43,7 +43,7 @@ SpeexIO::SpeexIO()
     d->samplingRate = -1;
     d->frameSize = 0;
     d->bitRate = 0;
-    qDebug() << "SpeexIO : created.";
+    qCDebug(JABBER_PROTOCOL_LOG) << "SpeexIO : created.";
 }
 
 SpeexIO::~SpeexIO()
@@ -54,7 +54,7 @@ SpeexIO::~SpeexIO()
     speex_bits_destroy(&d->decBits);
     speex_decoder_destroy(d->decoder);
     delete d;
-    kDebug() << "Destroyed SpeexIO";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Destroyed SpeexIO";
 }
 
 void SpeexIO::setSamplingRate(int sr)
@@ -62,7 +62,7 @@ void SpeexIO::setSamplingRate(int sr)
     if (d->samplingRate != -1) {
         //FIXME:this should simply change the current sampling rate (SPEEX_SET_SAMPLING_RATE)
         //FIXME:is that possible ?
-        qDebug() << "Sampling rate already set... Abort";
+        qCDebug(JABBER_PROTOCOL_LOG) << "Sampling rate already set... Abort";
         return;
     }
 
@@ -87,7 +87,7 @@ void SpeexIO::setSamplingRate(int sr)
 
     d->samplingRate = sr;
 
-    qDebug() << "encoder and decoder initiated.";
+    qCDebug(JABBER_PROTOCOL_LOG) << "encoder and decoder initiated.";
 }
 
 int SpeexIO::setQuality(int q)
@@ -158,7 +158,7 @@ void SpeexIO::encode(const QByteArray &rawData)
     speex_bits_reset(&d->encBits);
     int ret = speex_encode_int(d->encoder, (short *)rawData.data(), &d->encBits);
     if (ret == 0) {
-        qDebug() << "Error encoding speex data : frame needs not be transmitted";
+        qCDebug(JABBER_PROTOCOL_LOG) << "Error encoding speex data : frame needs not be transmitted";
         return;
     }
 
@@ -192,7 +192,7 @@ void SpeexIO::decode(const QByteArray &speexData)
     d->rawData.resize(frameSizeBytes());
     int ret = speex_decode_int(d->decoder, &d->decBits, (short *)d->rawData.data());
     if (ret != 0) {
-        qDebug() << "Error decoding speex data :" << (ret == -1 ? "end of stream" : "corrupt stream");
+        qCDebug(JABBER_PROTOCOL_LOG) << "Error decoding speex data :" << (ret == -1 ? "end of stream" : "corrupt stream");
         return;
     }
 

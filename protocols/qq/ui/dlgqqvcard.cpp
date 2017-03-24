@@ -190,7 +190,6 @@ void dlgQQVCard::setEnabled(bool state)
 	m_mainWidget->cbGender->setEnabled (state);
 	m_mainWidget->teSignature->setEnabled (state);
 
-
 	// Contact tab
 	m_mainWidget->leStreet->setEnabled (state);
 	m_mainWidget->leCity->setEnabled (state);
@@ -368,12 +367,9 @@ void dlgQQVCard::slotOpenURL(const QString &url)
 	*/
 }
 
-
 /*
  * Local variables:
  * c-indentation-style: k&r
- * c-basic-offset: 8
  * indent-tabs-mode: t
  * End:
  */
-// vim: set noet ts=4 sts=4 sw=4:

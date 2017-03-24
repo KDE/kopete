@@ -229,5 +229,4 @@ class MucStatus : public Status {
 
 }
 
-
 #endif

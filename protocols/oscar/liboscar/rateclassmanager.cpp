@@ -21,11 +21,9 @@
 #include <QList>
 #include <kdebug.h>
 
-
 #include "transfer.h"
 #include "connection.h"
 #include "rateclass.h"
-
 
 class RateClassManagerPrivate
 {
@@ -128,7 +126,6 @@ void RateClassManager::transferReady( Transfer* t )
 	d->client->forcedSend( t );
 }
 
-
 RateClass* RateClassManager::findRateClass( SnacTransfer* st ) const
 {
 	SNAC s = st->snac();
@@ -173,5 +170,3 @@ int RateClassManager::timeToInitialLevel( SNAC s )
 	return 0;
 }
 
-
-//kate: tab-width 4; indent-mode csands;

@@ -69,7 +69,6 @@ void ICQContact::setSSIItem( const OContact& ssiItem )
 	ICQContactBase::setSSIItem( ssiItem );
 }
 
-
 void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& details )
 {
 	//kDebug(OSCAR_AIM_DEBUG) << contact << contactId();
@@ -176,7 +175,6 @@ QList<QAction*> *ICQContact::customContextMenuActions()
 	return actions;
 }
 
-
 void ICQContact::slotVisibleTo()
 {
 	account()->engine()->setVisibleTo( contactId(), m_actionVisibleTo->isChecked() );
@@ -187,4 +185,3 @@ void ICQContact::slotInvisibleTo()
 	account()->engine()->setInvisibleTo( contactId(), m_actionInvisibleTo->isChecked() );
 }
 
-//kate: indent-mode csands; tab-width 4; replace-tabs off; space-indent off;

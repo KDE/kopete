@@ -49,7 +49,6 @@ void ServerRedirectTask::setChatRoom( const QString& roomName )
     m_chatRoom = roomName;
 }
 
-
 void ServerRedirectTask::onGo()
 {
 	if ( m_service != 0 )
@@ -79,7 +78,6 @@ bool ServerRedirectTask::take( Transfer* transfer )
     setTransfer( 0 );
 	return value;
 }
-
 
 void ServerRedirectTask::requestNewService()
 {
@@ -167,6 +165,4 @@ QString ServerRedirectTask::chatRoomName() const
 {
     return m_chatRoom;
 }
-
-//kate: indent-mode csands; tab-width 4;
 

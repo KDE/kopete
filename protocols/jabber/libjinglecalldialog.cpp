@@ -26,4 +26,3 @@ void LibjingleCallDialog::closeEvent(QCloseEvent * e) {
 	emit(closed());
 }
 
-

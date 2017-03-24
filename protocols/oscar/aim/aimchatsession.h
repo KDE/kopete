@@ -82,5 +82,4 @@ private:
     Oscar::Client* m_engine;
 };
 
-
 #endif

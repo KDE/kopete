@@ -1,7 +1,6 @@
 // Copyright 2007 Google Inc.
 // All Rights Reserved.
 
-
 #include "talk/base/gunit.h"
 #include "talk/base/httpserver.h"
 #include "talk/base/testutils.h"

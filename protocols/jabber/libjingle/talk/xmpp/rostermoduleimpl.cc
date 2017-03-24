@@ -897,7 +897,6 @@ XmppRosterModuleImpl::SendSubscriptionRequest(const Jid& jid,
   return engine()->SendStanza(&presence_request);
 }
 
-
 void
 XmppRosterModuleImpl::InternalSubscriptionRequest(const Jid& jid,
                                                   const XmlElement* stanza,
@@ -968,7 +967,6 @@ XmppRosterModuleImpl::InternalIncomingPresence(const Jid& jid,
   if (roster_handler_)
     roster_handler_->IncomingPresenceChanged(this, presence);
 }
-
 
 void
 XmppRosterModuleImpl::InternalIncomingPresenceError(const Jid& jid,

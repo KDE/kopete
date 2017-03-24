@@ -28,7 +28,7 @@
 #include <qapplication.h>
 
 // KDE includes
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <QPushButton>
 #include <QLineEdit>
 #include <KLocalizedString>
@@ -108,7 +108,7 @@ dlgJabberVCard::~dlgJabberVCard ()
  */
 void dlgJabberVCard::slotClose()
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << "Deleting dialog.";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Deleting dialog.";
 	deleteLater();
 }
 
@@ -514,12 +514,9 @@ void dlgJabberVCard::slotOpenURL(const QString &url)
 		new KRun( QUrl( url ), this );
 }
 
-
 /*
  * Local variables:
  * c-indentation-style: k&r
- * c-basic-offset: 8
  * indent-tabs-mode: t
  * End:
  */
-// vim: set noet ts=4 sts=4 sw=4:

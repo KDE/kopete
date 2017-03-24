@@ -21,7 +21,6 @@
 #ifndef LIBGW_CLIENT_H
 #define LIBGW_CLIENT_H
 
-
 #include <QByteArray>
 #include <QList>
 

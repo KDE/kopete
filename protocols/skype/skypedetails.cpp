@@ -40,7 +40,6 @@ SkypeDetails::SkypeDetails() : KDialog() {
 	connect(dialog->authorCombo, SIGNAL(activated(int)), this, SLOT(changeAuthor(int)));
 }
 
-
 SkypeDetails::~SkypeDetails() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 	delete dialog;

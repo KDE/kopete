@@ -32,7 +32,7 @@ AutoReplaceConfig::AutoReplaceConfig()
 // reload configuration reading it from kopeterc
 void AutoReplaceConfig::load()
 {
-    KConfigGroup config(KGlobal::config(), "AutoReplace Plugin");
+    KConfigGroup config(KSharedConfig::openConfig(), "AutoReplace Plugin");
 
     QStringList wordsList = config.readEntry("WordsToReplace", QStringList());
     if (wordsList.isEmpty()) {
@@ -131,7 +131,7 @@ AutoReplaceConfig::WordsToReplace AutoReplaceConfig::map() const
 
 void AutoReplaceConfig::save()
 {
-    KConfigGroup config(KGlobal::config(), "AutoReplace Plugin");
+    KConfigGroup config(KSharedConfig::openConfig(), "AutoReplace Plugin");
 
     QStringList newWords;
     WordsToReplace::ConstIterator it;

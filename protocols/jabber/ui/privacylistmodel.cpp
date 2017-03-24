@@ -86,7 +86,7 @@ bool PrivacyListModel::moveDown(const QModelIndex& index)
 
 bool PrivacyListModel::removeRows(int row, int count, const QModelIndex&)
 {
-	//kDebug (JABBER_DEBUG_GLOBAL) << "PrivacyListModel::removeRows";
+	//qDebug (JABBER_PROTOCOL_LOG) << "PrivacyListModel::removeRows";
 	beginRemoveRows(QModelIndex(), row, row+count-1);
 	while(count > 0) {
 		list_.removeItem(row);

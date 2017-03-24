@@ -92,7 +92,6 @@ void LinphoneMediaEngine::Terminate() {
   fflush(stdout);
 }
 
-
 int LinphoneMediaEngine::GetCapabilities() {
   int capabilities = 0;
   capabilities |= AUDIO_SEND;
@@ -123,7 +122,6 @@ bool LinphoneMediaEngine::FindAudioCodec(const AudioCodec &c) {
     return true;
   return false;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 // Implementation of LinphoneVoiceChannel.

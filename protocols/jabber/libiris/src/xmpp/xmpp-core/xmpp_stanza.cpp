@@ -82,7 +82,6 @@ Stanza::Error::Error(int _type, int _condition, const QString &_text, const QDom
 	originalCode = 0;
 }
 
-
 class Stanza::Error::Private
 {
 public:
@@ -115,7 +114,6 @@ public:
 		const char *str;
 	};
 	static ErrorDescEntry errorDescriptions[];
-
 
 	static int stringToErrorType(const QString &s)
 	{

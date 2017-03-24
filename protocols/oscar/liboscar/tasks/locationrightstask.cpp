@@ -31,11 +31,9 @@ LocationRightsTask::LocationRightsTask( Task* parent )
 {
 }
 
-
 LocationRightsTask::~LocationRightsTask()
 {
 }
-
 
 bool LocationRightsTask::forMe( const Transfer* transfer ) const
 {
@@ -83,5 +81,3 @@ void LocationRightsTask::handleLocationRightsResponse()
 	setSuccess( 0, QString() );
 }
 
-
-//kate: tab-width 4; indent-mode csands;

@@ -1314,7 +1314,6 @@ void GroupWiseAccount::receiveContactDeleted( const ContactItem & instance )
 	}
 }
 
-
 void GroupWiseAccount::slotConnectedElsewhere()
 {
 	if ( !isBusy() )

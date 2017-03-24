@@ -41,7 +41,6 @@ struct ChatroomSearchResult
 	uint participants;
 };
 
-
 class Chatroom
 {
 	public:

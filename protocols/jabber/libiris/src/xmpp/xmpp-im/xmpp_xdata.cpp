@@ -339,9 +339,6 @@ QDomElement XData::Field::toXml(QDomDocument *doc, bool submitForm) const
 	return f;
 }
 
-
-
-
 //----------------------------------------------------------------------------
 // MediaElement
 //----------------------------------------------------------------------------
@@ -378,9 +375,6 @@ bool XData::Field::MediaElement::checkSupport(const QStringList &wildcards)
 	}
 	return false;
 }
-
-
-
 
 //----------------------------------------------------------------------------
 // XData

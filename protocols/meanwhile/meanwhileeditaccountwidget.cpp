@@ -113,7 +113,6 @@ void MeanwhileEditAccountWidget::selectClientListItem(int selectedID)
     }
 }
 
-
 Kopete::Account* MeanwhileEditAccountWidget::apply()
 {
     if(!account())
@@ -136,7 +135,6 @@ Kopete::Account* MeanwhileEditAccountWidget::apply()
     } else {
         myAccount->resetClientID();
     }
-
 
     return myAccount;
 }

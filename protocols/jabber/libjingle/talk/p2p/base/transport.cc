@@ -230,7 +230,6 @@ void Transport::DestroyAllChannels_w() {
     }
   channels_.clear();
 
-
   for (size_t i = 0; i < impls.size(); ++i)
     DestroyTransportChannel(impls[i]);
 }

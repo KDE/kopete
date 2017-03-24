@@ -22,7 +22,6 @@
 #include "kopetemimetypehandler.h"
 #include "kopeteonlinestatus.h"
 
-
 class AIMStatusManager;
 
 class AIMProtocolHandler : public Kopete::MimeTypeHandler
@@ -64,4 +63,3 @@ private:
 };
 
 #endif
-//kate: tab-width 4; indent-mode csands;

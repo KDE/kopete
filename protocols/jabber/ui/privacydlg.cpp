@@ -301,7 +301,6 @@ void PrivacyDlg::revertSettings()
 	ui_.cb_lists->setCurrentIndex(previousList_);
 }
 
-
 void PrivacyDlg::newList()
 {
 	bool done = false;

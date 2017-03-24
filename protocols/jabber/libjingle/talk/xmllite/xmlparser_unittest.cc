@@ -81,7 +81,6 @@ class XmlParserTestHandler : public XmlParseHandler {
   std::stringstream ss_;
 };
 
-
 TEST(XmlParserTest, TestTrivial) {
   XmlParserTestHandler handler;
   XmlParser::ParseXml(&handler, "<testing/>");

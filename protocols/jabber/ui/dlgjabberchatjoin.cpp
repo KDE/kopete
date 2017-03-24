@@ -17,7 +17,7 @@
  ***************************************************************************/
 
 #include "dlgjabberchatjoin.h"
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <KLocalizedString>
 #include <kmessagebox.h>
 #include <qlineedit.h>
@@ -175,5 +175,4 @@ void dlgJabberChatJoin::slotCheckData()
 }
 
 // end todo
-
 

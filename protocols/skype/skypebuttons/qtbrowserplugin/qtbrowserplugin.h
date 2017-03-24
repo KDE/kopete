@@ -29,7 +29,6 @@
 #include <QtGui/QPainter>
 #include <QMetaClassInfo>
 
-
 struct QtNPInstance;
 class QtNPBindable;
 class QtNPStreamPrivate;

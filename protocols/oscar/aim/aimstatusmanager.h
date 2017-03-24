@@ -15,7 +15,6 @@
     *************************************************************************
 */
 
-
 #ifndef AIMSTATUSMANAGER_H
 #define AIMSTATUSMANAGER_H
 

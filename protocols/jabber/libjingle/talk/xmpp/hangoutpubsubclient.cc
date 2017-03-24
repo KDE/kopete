@@ -33,7 +33,6 @@
 #include "talk/xmllite/qname.h"
 #include "talk/xmllite/xmlelement.h"
 
-
 // Gives a high-level API for MUC call PubSub needs such as
 // presenter state, recording state, mute state, and remote mute.
 
@@ -53,7 +52,6 @@ const std::string GetPublisherNickFromPubSubItem(const XmlElement* item_elem) {
 }
 
 }  // namespace
-
 
 // Knows how to handle specific states and XML.
 template <typename C>

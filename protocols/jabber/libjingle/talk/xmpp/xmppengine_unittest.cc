@@ -208,7 +208,6 @@ TEST_F(XmppEngineTest, TestSuccessfulLoginAndConnectionClosed) {
   EXPECT_EQ("", handler()->StanzaActivity());
 }
 
-
 // TestNotXmpp()
 //    This tests the error case when connecting to a non XMPP service
 TEST_F(XmppEngineTest, TestNotXmpp) {

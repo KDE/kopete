@@ -27,7 +27,6 @@
 #include "oscarutils.h"
 #include "transfer.h"
 
-
 SSIModifyTask::SSIModifyTask( Task* parent, bool staticTask ) : Task( parent )
 {
 	m_ssiManager = parent->client()->ssiManager();
@@ -36,7 +35,6 @@ SSIModifyTask::SSIModifyTask( Task* parent, bool staticTask ) : Task( parent )
 	m_opSubject = NoSubject;
 	m_id = 0;
 }
-
 
 SSIModifyTask::~SSIModifyTask()
 {
@@ -297,7 +295,6 @@ void SSIModifyTask::handleContactAck()
 		}
 	};
 
-
 }
 
 void SSIModifyTask::sendContactUpdate()
@@ -419,7 +416,6 @@ void SSIModifyTask::changeGroupOnServer()
 		list.append( newGroupTLV );
 		oldGroupItem.setTLVList( list );
 	}
-
 
 	//Change the 0x00C8 TLV in the new group item to add the bid we're
 	//adding to this group
@@ -642,4 +638,3 @@ void SSIModifyTask::handleContactRemove()
 	}
 }
 
-//kate: tab-width 4; indent-mode csands;

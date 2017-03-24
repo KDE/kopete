@@ -36,7 +36,6 @@
 // Prints an error message to stderr and aborts execution.
 void Fatal(const char* file, int line, const char* format, ...);
 
-
 // The UNREACHABLE macro is very useful during development.
 #define UNREACHABLE()                                   \
   Fatal(__FILE__, __LINE__, "unreachable code")

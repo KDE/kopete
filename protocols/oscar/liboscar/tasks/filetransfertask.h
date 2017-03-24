@@ -19,7 +19,6 @@
     *************************************************************************
 */
 
-
 #ifndef FILETRANSFERTASK_H
 #define FILETRANSFERTASK_H
 
@@ -130,4 +129,3 @@ private:
 };
 
 #endif
-//kate: space-indent off; tab-width 4; indent-mode csands;

@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
 //
@@ -66,7 +65,8 @@ GaduRegisterAccount::GaduRegisterAccount(QWidget *parent)
     connect(ui->valueEmailAddress, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)));
     connect(ui->valuePassword, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)));
     connect(ui->valuePasswordVerify, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)));
-    connect(ui->valueVerificationSequence, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)));
+    connect(ui->valueVerificationSequence, SIGNAL(textChanged(QString)),
+            SLOT(inputChanged(QString)));
 
     connect(cRegister, SIGNAL(tokenRecieved(QPixmap,QString)), SLOT(displayToken(QPixmap,QString)));
     connect(cRegister, SIGNAL(done(QString,QString)), SLOT(registrationDone(QString,QString)));
@@ -82,7 +82,8 @@ GaduRegisterAccount::GaduRegisterAccount(QWidget *parent)
 void
 GaduRegisterAccount::doRegister()
 {
-    cRegister->setUserinfo(ui->valueEmailAddress->text(), ui->valuePassword->text(), ui->valueVerificationSequence->text());
+    cRegister->setUserinfo(ui->valueEmailAddress->text(),
+                           ui->valuePassword->text(), ui->valueVerificationSequence->text());
     cRegister->execute();
     enableButton(User1, false);
 }
@@ -101,7 +102,8 @@ GaduRegisterAccount::validateInput()
         ui->pixmapEmailAddress->setText("");
     }
 
-    if (valid && ((ui->valuePassword->text().isEmpty()) || (ui->valuePasswordVerify->text().isEmpty()))) {
+    if (valid
+        && ((ui->valuePassword->text().isEmpty()) || (ui->valuePasswordVerify->text().isEmpty()))) {
         updateStatus(i18n("Please enter the same password twice."));
         valid = false;
         passwordHighlight = true;

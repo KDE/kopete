@@ -17,7 +17,7 @@
 
 #include "jabbergroupmembercontact.h"
 
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <KLocalizedString>
 #include <kfiledialog.h>
 #include "jabberprotocol.h"
@@ -107,7 +107,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	QString viewType = QStringLiteral("kopete_chatwindow");
 	Kopete::Message *newMessage = 0L;
 
-	kDebug (JABBER_DEBUG_GLOBAL) << "Received Message Type:" << message.type ();
+	qDebug (JABBER_PROTOCOL_LOG) << "Received Message Type:" << message.type ();
 
 	Kopete::ChatSession *kmm = manager( Kopete::Contact::CanCreate );
 	if(!kmm)
@@ -234,7 +234,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 		// convert XMPP::Message into Kopete::Message
 		if( message.containsHTML() )
 		{
-			kDebug ( JABBER_DEBUG_GLOBAL ) << "Received a xHTML message";
+			qCDebug(JABBER_PROTOCOL_LOG) << "Received a xHTML message";
 			newMessage = new Kopete::Message ( this, contactList );
 			newMessage->setTimestamp( message.timeStamp() );
 			newMessage->setHtmlBody( message.html().toString() );
@@ -245,7 +245,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 		}
 		else if ( !body.isEmpty () )
 		{
-			kDebug ( JABBER_DEBUG_GLOBAL ) << "Received a plain text message";
+			qCDebug(JABBER_PROTOCOL_LOG) << "Received a plain text message";
 			newMessage = new Kopete::Message ( this, contactList );
 			newMessage->setTimestamp( message.timeStamp() );
 			newMessage->setPlainBody( body );
@@ -310,5 +310,4 @@ void JabberGroupMemberContact::sendFile ( const QUrl &sourceURL, const QString &
 	}
 
 }
-
 

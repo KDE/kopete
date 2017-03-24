@@ -15,7 +15,6 @@
     *************************************************************************
 */
 
-
 #ifndef OSCARSTATUSMANAGER_H
 #define OSCARSTATUSMANAGER_H
 

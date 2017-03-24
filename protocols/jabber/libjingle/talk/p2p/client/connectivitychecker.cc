@@ -1,6 +1,5 @@
 // Copyright 2011 Google Inc. All Rights Reserved.
 
-
 #include <string>
 
 #include "talk/p2p/client/connectivitychecker.h"

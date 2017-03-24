@@ -30,7 +30,7 @@
 #include "jabberformtranslator.h"
 #include "jabberxdatawidget.h"
 #include "jt_xsearch.h"
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <KConfigGroup>
 #include <QDialogButtonBox>
 #include <QPushButton>

@@ -73,7 +73,6 @@ class TaskParent {
   DISALLOW_EVIL_CONSTRUCTORS(TaskParent);
 };
 
-
 } // namespace talk_base
 
 #endif  // TALK_BASE_TASKPARENT_H__

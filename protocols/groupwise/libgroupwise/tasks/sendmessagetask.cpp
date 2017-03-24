@@ -24,7 +24,6 @@ SendMessageTask::SendMessageTask(Task* parent): RequestTask(parent)
 {
 }
 
-
 SendMessageTask::~SendMessageTask()
 {
 }

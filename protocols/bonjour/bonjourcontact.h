@@ -64,7 +64,8 @@ class BonjourContact : public Kopete::Contact
     QMap <QString, QByteArray> textdata;
 
 public:
-    BonjourContact(Kopete::Account *_account, const QString &uniqueName, Kopete::MetaContact *parent);
+    BonjourContact(Kopete::Account *_account, const QString &uniqueName,
+                   Kopete::MetaContact *parent);
 
     ~BonjourContact();
 
@@ -75,7 +76,9 @@ public:
      *
      * @todo FIXME: As we don't save any contacts, this function is useless
      */
-    void serialize(QMap< QString, QString > &serializedData, QMap< QString, QString > &addressBookData) Q_DECL_OVERRIDE;
+    void serialize(QMap< QString, QString > &serializedData, QMap< QString,
+                                                                   QString > &addressBookData)
+    Q_DECL_OVERRIDE;
 
     /**
      * @brief Returns a Kopete::ChatSession associated with this contact

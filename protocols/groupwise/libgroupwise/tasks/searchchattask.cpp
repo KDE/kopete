@@ -30,7 +30,6 @@
 
 #include "getchatsearchresultstask.h"
 
-
 // the delay we allow the server to initially do the search
 #define GW_POLL_INITIAL_DELAY 1000
 // the maximum number of times to poll the server
@@ -43,7 +42,6 @@ using namespace GroupWise;
 SearchChatTask::SearchChatTask(Task* parent): RequestTask(parent), m_polls( 0 )
 {
 }
-
 
 SearchChatTask::~SearchChatTask()
 {

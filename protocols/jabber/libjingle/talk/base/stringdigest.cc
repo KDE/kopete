@@ -25,7 +25,6 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "talk/base/md5.h"
 #include "talk/base/stringdigest.h"
 #include "talk/base/stringencode.h"

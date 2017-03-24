@@ -22,7 +22,6 @@
 #include "oscarutils.h"
 #include "buffer.h"
 
-
 // using namespace Oscar;
 
 Oscar::TLV::TLV()
@@ -49,8 +48,5 @@ Oscar::TLV::operator bool() const
 {
 	return type != 0;
 }
-
-
-
 
 //kate: indent-mode csands;

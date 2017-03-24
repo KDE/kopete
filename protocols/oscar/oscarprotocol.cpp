@@ -38,7 +38,7 @@ OscarProtocol::OscarProtocol( QObject *parent, bool canAddMyself )
 	client("client", i18n("Client"), QString(), 0),
 	protocolVersion("protocolVersion", i18n("Protocol Version"), QString(), 0)
 {
-	KConfigGroup config( KGlobal::config(), "OscarProtocol" );
+	KConfigGroup config( KSharedConfig::openConfig(), "OscarProtocol" );
 	if ( config.hasKey( "StartFlapSequences" ) )
 	{
 		kWarning(OSCAR_GEN_DEBUG) << "Overriding default start flap sequence algorithm!";
@@ -114,4 +114,3 @@ Kopete::Contact *OscarProtocol::deserializeContact(Kopete::MetaContact *metaCont
 	return ocontact;
 }
 
-// vim: set noet ts=4 sts=4 sw=4:

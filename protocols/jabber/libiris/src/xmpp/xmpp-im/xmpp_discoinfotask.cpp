@@ -76,7 +76,6 @@ void DiscoInfoTask::get (const Jid &j, const QString &node, DiscoItem::Identity 
 	d->ident = ident;
 }
 
-
 /**
  * Original requested jid.
  * Is here because sometimes the responder does not include this information
@@ -161,5 +160,4 @@ bool DiscoInfoTask::take(const QDomElement &x)
 
 	return true;
 }
-
 

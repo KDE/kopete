@@ -61,7 +61,6 @@ static const unsigned int kMaxBandwidthKbps = 2000;
 
 static const unsigned int kNumberOfTemporalLayers = 3;
 
-
 class FakeViEWrapper : public cricket::ViEWrapper {
  public:
   explicit FakeViEWrapper(cricket::FakeWebRtcVideoEngine* engine)
@@ -224,7 +223,6 @@ TEST_F(WebRtcVideoEngineTestFake, SetSendCodecs) {
   EXPECT_FALSE(vie_.GetNackStatus(channel_num));
   // TODO: Check RTCP, PLI, TMMBR.
 }
-
 
 // Test that we constrain send codecs properly.
 TEST_F(WebRtcVideoEngineTestFake, ConstrainSendCodecs) {
@@ -655,7 +653,6 @@ TEST_F(WebRtcVideoEngineTestFake, SetSendSsrcAndCname) {
   EXPECT_STREQ("cname", rtcp_cname);
 }
 
-
 // Test that the local SSRC is the same on sending and receiving channels if the
 // receive channel is created before the send channel.
 TEST_F(WebRtcVideoEngineTestFake, SetSendSsrcAfterCreatingReceiveChannel) {
@@ -675,7 +672,6 @@ TEST_F(WebRtcVideoEngineTestFake, SetSendSsrcAfterCreatingReceiveChannel) {
   EXPECT_EQ(1234U, ssrc);
   EXPECT_EQ(1, vie_.GetNumSsrcs(receive_channel_num));
 }
-
 
 // Test SetOptions with denoising flag.
 TEST_F(WebRtcVideoEngineTestFake, SetOptionsWithDenoising) {
@@ -955,7 +951,6 @@ TEST_F(WebRtcVideoMediaChannelTest, SetOptionsFailsWhenSending) {
 TEST_F(WebRtcVideoMediaChannelTest, RejectEmptyStreamParams) {
   Base::RejectEmptyStreamParams();
 }
-
 
 // TODO: Investigate why this test is flaky.
 TEST_F(WebRtcVideoMediaChannelTest, DISABLED_AdaptResolution16x10) {

@@ -1021,7 +1021,6 @@ bool GetMacProxySettingsFromDictionary(ProxyInfo* proxy,
   // the function result.
   bool gotProxy = false;
 
-
   // first we see if there's a SOCKS proxy in place.
   gotProxy = p_getProxyInfoForTypeFromDictWithKeys(proxy,
                                                    PROXY_SOCKS5,

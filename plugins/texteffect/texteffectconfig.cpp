@@ -30,7 +30,7 @@ TextEffectConfig::TextEffectConfig()
 
 void TextEffectConfig::load()
 {
-    KConfigGroup config(KGlobal::config(), "TextEffect Plugin");
+    KConfigGroup config(KSharedConfig::openConfig(), "TextEffect Plugin");
 
     mColors = config.readEntry("Colors", QStringList());
     if (mColors.isEmpty()) {
@@ -52,7 +52,7 @@ QStringList TextEffectConfig::defaultColorList()
 
 void TextEffectConfig::save()
 {
-    KConfigGroup config(KGlobal::config(), "TextEffect Plugin");
+    KConfigGroup config(KSharedConfig::openConfig(), "TextEffect Plugin");
 
     config.writeEntry("Colors", mColors);
     config.writeEntry("Color Random Order", mColorRandom);

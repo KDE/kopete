@@ -54,7 +54,6 @@ class XmlChild {
   XmlText* AsText() { return AsTextImpl(); }
   const XmlText* AsText() const { return AsTextImpl(); }
 
-
  protected:
   XmlChild() :
     next_child_(NULL) {
@@ -63,7 +62,6 @@ class XmlChild {
   virtual bool IsTextImpl() const = 0;
   virtual XmlElement* AsElementImpl() const = 0;
   virtual XmlText* AsTextImpl() const = 0;
-
 
   virtual ~XmlChild();
 

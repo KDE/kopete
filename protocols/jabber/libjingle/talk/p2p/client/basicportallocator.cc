@@ -197,7 +197,6 @@ class AllocationSequence : public talk_base::MessageHandler {
   int expected_candidates_;
 };
 
-
 // BasicPortAllocator
 BasicPortAllocator::BasicPortAllocator(
     talk_base::NetworkManager* network_manager,

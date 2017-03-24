@@ -517,7 +517,6 @@ TEST_F(ChannelManagerTest, RegisterProcessors) {
   EXPECT_FALSE(fme_->voice_processor_registered(cricket::MPD_TX));
   EXPECT_TRUE(fme_->voice_processor_registered(cricket::MPD_RX));
 
-
   EXPECT_TRUE(cm_->UnregisterVoiceProcessor(1,
                                             &fmp,
                                             cricket::MPD_RX));

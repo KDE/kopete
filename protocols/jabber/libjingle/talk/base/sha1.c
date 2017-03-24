@@ -125,7 +125,6 @@ void SHA1Transform(uint32 state[5], const uint8 buffer[64]);
 #define R3(v,w,x,y,z,i) z+=(((w|x)&y)|(w&x))+blk(i)+0x8F1BBCDC+rol(v,5);w=rol(w,30);
 #define R4(v,w,x,y,z,i) z+=(w^x^y)+blk(i)+0xCA62C1D6+rol(v,5);w=rol(w,30);
 
-
 #ifdef VERBOSE  /* SAK */
 void SHAPrintContext(SHA1_CTX *context, char *msg)
 {
@@ -198,7 +197,6 @@ void SHA1Transform(uint32 state[5], const uint8 buffer[64])
     a = b = c = d = e = 0;
 }
 
-
 /* SHA1Init - Initialize new context */
 void SHA1Init(SHA1_CTX* context)
 {
@@ -210,7 +208,6 @@ void SHA1Init(SHA1_CTX* context)
     context->state[4] = 0xC3D2E1F0;
     context->count[0] = context->count[1] = 0;
 }
-
 
 /* Run your data through this. */
 void SHA1Update(SHA1_CTX* context, const uint8* data, const size_t len)
@@ -242,7 +239,6 @@ void SHA1Update(SHA1_CTX* context, const uint8* data, const size_t len)
     SHAPrintContext(context, "after ");
 #endif
 }
-
 
 /* Add padding and return the message digest. */
 void SHA1Final(SHA1_CTX* context, uint8 digest[SHA1_DIGEST_SIZE])

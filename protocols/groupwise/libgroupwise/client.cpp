@@ -202,21 +202,26 @@ void Client::initialiseEventTasks()
 {
     // The StatusTask handles incoming status changes
     StatusTask *st = new StatusTask(d->root);    // FIXME - add an additional EventRoot?
-    connect(st, SIGNAL(gotStatus(QString,quint16,QString)), SIGNAL(statusReceived(QString,quint16,QString)));
+    connect(st, SIGNAL(gotStatus(QString,quint16,QString)),
+            SIGNAL(statusReceived(QString,quint16,QString)));
     // The ConferenceTask handles incoming conference events, messages, joins, leaves, etc
     ConferenceTask *ct = new ConferenceTask(d->root);
     connect(ct, SIGNAL(message(ConferenceEvent)), SLOT(ct_messageReceived(ConferenceEvent)));
     connect(ct, SIGNAL(typing(ConferenceEvent)), SIGNAL(contactTyping(ConferenceEvent)));
     connect(ct, SIGNAL(notTyping(ConferenceEvent)), SIGNAL(contactNotTyping(ConferenceEvent)));
-    connect(ct, SIGNAL(joined(ConferenceEvent)), SIGNAL(conferenceJoinNotifyReceived(ConferenceEvent)));
+    connect(ct, SIGNAL(joined(ConferenceEvent)),
+            SIGNAL(conferenceJoinNotifyReceived(ConferenceEvent)));
     connect(ct, SIGNAL(left(ConferenceEvent)), SIGNAL(conferenceLeft(ConferenceEvent)));
     connect(ct, SIGNAL(invited(ConferenceEvent)), SIGNAL(invitationReceived(ConferenceEvent)));
-    connect(ct, SIGNAL(otherInvited(ConferenceEvent)), SIGNAL(inviteNotifyReceived(ConferenceEvent)));
-    connect(ct, SIGNAL(invitationDeclined(ConferenceEvent)), SIGNAL(invitationDeclined(ConferenceEvent)));
+    connect(ct, SIGNAL(otherInvited(ConferenceEvent)),
+            SIGNAL(inviteNotifyReceived(ConferenceEvent)));
+    connect(ct, SIGNAL(invitationDeclined(ConferenceEvent)),
+            SIGNAL(invitationDeclined(ConferenceEvent)));
     connect(ct, SIGNAL(closed(ConferenceEvent)), SIGNAL(conferenceClosed(ConferenceEvent)));
     connect(ct, SIGNAL(autoReply(ConferenceEvent)), SIGNAL(autoReplyReceived(ConferenceEvent)));
     connect(ct, SIGNAL(broadcast(ConferenceEvent)), SIGNAL(broadcastReceived(ConferenceEvent)));
-    connect(ct, SIGNAL(systemBroadcast(ConferenceEvent)), SIGNAL(systemBroadcastReceived(ConferenceEvent)));
+    connect(ct, SIGNAL(systemBroadcast(ConferenceEvent)),
+            SIGNAL(systemBroadcastReceived(ConferenceEvent)));
 
     // The ConnectionTask handles incoming connection events
     ConnectionTask *cont = new ConnectionTask(d->root);
@@ -237,7 +242,8 @@ void Client::requestStatus(const QString &userDN)
 {
     GetStatusTask *gst = new GetStatusTask(d->root);
     gst->userDN(userDN);
-    connect(gst, SIGNAL(gotStatus(QString,quint16,QString)), SIGNAL(statusReceived(QString,quint16,QString)));
+    connect(gst, SIGNAL(gotStatus(QString,quint16,QString)),
+            SIGNAL(statusReceived(QString,quint16,QString)));
     gst->go(true);
 }
 
@@ -303,7 +309,8 @@ void Client::leaveConference(const GroupWise::ConferenceGuid &guid)
     lct->go(true);
 }
 
-void Client::sendInvitation(const GroupWise::ConferenceGuid &guid, const QString &dn, const GroupWise::OutgoingMessage &message)
+void Client::sendInvitation(const GroupWise::ConferenceGuid &guid, const QString &dn,
+                            const GroupWise::OutgoingMessage &message)
 {
     SendInviteTask *sit = new SendInviteTask(d->root);
     QStringList invitees(dn);
@@ -373,7 +380,9 @@ void Client::ct_messageReceived(const ConferenceEvent &messageEvent)
     transformedEvent.message.replace(rx, QStringLiteral("</span></span></span>"));
     // missing linebreak after first line of an encrypted message
     QRegExp ry("-----BEGIN PGP MESSAGE----- </span> </span> </span>");
-    transformedEvent.message.replace(ry, QStringLiteral("-----BEGIN PGP MESSAGE-----</span></span></span><br/>"));
+    transformedEvent.message.replace(ry,
+                                     QStringLiteral(
+                                         "-----BEGIN PGP MESSAGE-----</span></span></span><br/>"));
 
     emit messageReceived(transformedEvent);
 }

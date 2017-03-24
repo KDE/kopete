@@ -105,7 +105,6 @@ private:
     //! Do client detection 
     void detectClient();
 
-
 private:
 	QString m_userId; /// the screename/uin of the contact
 	int m_warningLevel; /// the warning level of the contact
@@ -156,4 +155,3 @@ private:
 };
 
 #endif 
-//kate: tab-width 4; indent-mode csands;

@@ -19,7 +19,6 @@
 #include <kdebug.h>
 #include "testbedincomingmessage.h"
 
-
 TestbedFakeServer::TestbedFakeServer()
 {
 }

@@ -24,17 +24,13 @@
 #include "oscarutils.h"
 #include "transfer.h"
 
-
-
 SSIActivateTask::SSIActivateTask(Task* parent): Task(parent)
 {
 }
 
-
 SSIActivateTask::~SSIActivateTask()
 {
 }
-
 
 void SSIActivateTask::onGo()
 {
@@ -47,4 +43,3 @@ void SSIActivateTask::onGo()
 	setSuccess( 0, QString() );
 }
 
-// kate: tab-width 4; indent-mode csands;

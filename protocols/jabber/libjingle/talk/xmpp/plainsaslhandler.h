@@ -73,7 +73,6 @@ private:
   bool allow_plain_;
 };
 
-
 }
 
 #endif

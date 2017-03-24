@@ -42,7 +42,6 @@ class XmlElement;
 class XmppEngineImpl;
 class SaslMechanism;
 
-
 // TODO: Rename to LoginTask.
 class XmppLoginTask {
 

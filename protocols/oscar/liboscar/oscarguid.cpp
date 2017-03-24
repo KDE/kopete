@@ -82,4 +82,3 @@ Oscar::Guid::operator QByteArray() const
 	return m_data;
 }
 
-//kate: indent-mode csands; auto-insert-doxygen on; tab-width 4;

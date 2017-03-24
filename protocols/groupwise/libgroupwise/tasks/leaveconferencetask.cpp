@@ -24,7 +24,6 @@ LeaveConferenceTask::LeaveConferenceTask(Task* parent): RequestTask(parent)
 {
 }
 
-
 LeaveConferenceTask::~LeaveConferenceTask()
 {
 }

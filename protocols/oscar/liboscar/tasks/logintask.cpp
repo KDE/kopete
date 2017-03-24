@@ -31,8 +31,6 @@
 #include "serverversionstask.h"
 #include "transfer.h"
 
-
-
 /**
  * Stage One Task Implementation
  */
@@ -133,7 +131,6 @@ const QString& StageOneLoginTask::bosSSLName() const
 	return m_bosSSLName;
 }
 
-
 /**
  * Stage Two Task Implementation
  */
@@ -213,5 +210,3 @@ void StageTwoLoginTask::rateTaskFinished()
 	setSuccess( 0, QString() );
 }
 
-
-//kate: tab-width 4; indent-mode csands;

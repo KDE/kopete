@@ -95,4 +95,3 @@ void QQWebcamDialog::slotUpdateImage()
 #endif
 }
 
-

@@ -1,6 +1,5 @@
 // Copyright 2011 Google Inc. All Rights Reserved
 
-
 #include <string>
 
 #include "talk/base/faketaskrunner.h"
@@ -560,7 +559,6 @@ TEST_F(HangoutPubSubClientTest, TestPublishPresenterError) {
   EXPECT_EQ(1, listener->publish_presenter_error_count);
   EXPECT_EQ("0", listener->error_task_id);
 }
-
 
 TEST_F(HangoutPubSubClientTest, TestPublishAudioMuteError) {
   std::string result_iq =

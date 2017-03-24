@@ -55,4 +55,3 @@ Field::FieldList UpdateFolderTask::folderToFields( const GroupWise::FolderItem &
 	return lst;
 }
 
-

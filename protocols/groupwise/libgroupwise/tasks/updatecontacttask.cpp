@@ -29,7 +29,6 @@ UpdateContactTask::UpdateContactTask(Task* parent): UpdateItemTask(parent)
 {
 }
 
-
 UpdateContactTask::~UpdateContactTask()
 {
 }

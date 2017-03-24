@@ -24,7 +24,6 @@
 
 class FlapTransfer;
 
-
 class FlapProtocol : public InputProtocolBase
 {
 Q_OBJECT

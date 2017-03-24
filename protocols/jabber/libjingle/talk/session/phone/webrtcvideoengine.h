@@ -265,7 +265,6 @@ class WebRtcVideoMediaChannel : public VideoMediaChannel,
  private:
   typedef std::map<uint32, WebRtcVideoChannelInfo*> ChannelMap;
 
-
   // Creates and initializes a WebRtc video channel.
   bool ConfigureChannel(int channel_id);
   bool ConfigureReceiving(int channel_id, uint32 remote_ssrc);

@@ -23,7 +23,7 @@
 #include "jabberclient.h"
 #include "jabberbobcache.h"
 
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include "kopetesockettimeoutwatcher.h"
 
 #include <QTimer>
@@ -824,7 +824,6 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	// Set cache for XEP-0231
 	d->jabberClient->bobManager()->setCache ( new JabberBoBCache ( d->jabberClient ) );
 
-
 	// XMPP Features from http://xmpp.org/registrar/disco-features.html
 
 	// Standard features automatically supported and added by libiris:
@@ -858,7 +857,6 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	// http://jabber.org/protocol/pubsub                           // XEP-0060: Publish-Subscribe
 	// http://jabber.org/protocol/address                          // XEP-0033: Extended Stanza Addressing
 	// http://jabber.org/protocol/rosterx                          // XEP-0144: Roster Item Exchange
-
 
 	d->jabberClient->connectToServer ( d->jabberClientStream, jid, auth );
 
@@ -942,7 +940,6 @@ void JabberClient::changeGroupChatNick( const QString & host, const QString & ro
 {
 	client()->groupChatChangeNick( host, room, nick, status );
 }
-
 
 void JabberClient::sendMessage ( const XMPP::Message &message )
 {
@@ -1116,7 +1113,6 @@ void JabberClient::slotSessionStarted()
 		emit csError ( -1 );
 }
 
-
 void JabberClient::slotCSDisconnected ()
 {
 
@@ -1271,5 +1267,4 @@ void JabberClient::slotSubscription ( const Jid &jid, const QString &type )
 	emit subscription ( jid, type );
 
 }
-
 

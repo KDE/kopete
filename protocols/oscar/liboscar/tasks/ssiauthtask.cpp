@@ -204,4 +204,3 @@ QString SSIAuthTask::parseReason( Buffer* buffer )
 		return QString::fromUtf8( reasonData );
 }
 
-//kate: tab-width 4; indent-mode csands;

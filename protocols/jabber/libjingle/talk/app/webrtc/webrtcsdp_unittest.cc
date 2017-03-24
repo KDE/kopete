@@ -496,7 +496,6 @@ TEST_F(WebRtcSdpTest, SerializeSessionDescriptionInterfaceWithoutCandidates) {
   EXPECT_EQ(std::string(kSdpString), message);
 }
 
-
 TEST_F(WebRtcSdpTest, SerializeSessionDescriptionInterfaceWithBundle) {
   ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
   group.AddContentName(kAudioContentName);

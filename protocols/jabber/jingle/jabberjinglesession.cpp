@@ -23,7 +23,7 @@
 #include "jinglesession.h"
 #include "jinglecontent.h"
 
-#include <KDebug>
+#include "jabber_protocol_debug.h"
 
 //using namespace XMPP;
 
@@ -31,13 +31,13 @@ JabberJingleSession::JabberJingleSession(JingleCallsManager *parent)
     : m_callsManager(parent)
 {
     m_mediaManager = m_callsManager->mediaManager();
-    qDebug() << "Created a new JabberJingleSession";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Created a new JabberJingleSession";
     m_startTime = QTime(0, 0);
 }
 
 JabberJingleSession::~JabberJingleSession()
 {
-    kDebug() << "destroyed";
+    qCDebug(JABBER_PROTOCOL_LOG) << "destroyed";
     for (int i = 0; i < jabberJingleContents.count(); i++) {
         delete jabberJingleContents[i];
     }
@@ -46,7 +46,7 @@ JabberJingleSession::~JabberJingleSession()
 
 void JabberJingleSession::setJingleSession(XMPP::JingleSession *sess)
 {
-    qDebug() << "Setting JingleSession in the JabberJingleSession :" << sess;
+    qCDebug(JABBER_PROTOCOL_LOG) << "Setting JingleSession in the JabberJingleSession :" << sess;
     m_jingleSession = sess;
     connect(sess, SIGNAL(stateChanged()), this, SLOT(slotStateChanged()));
     connect(sess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
@@ -66,7 +66,7 @@ void JabberJingleSession::slotStateChanged()
     for (int i = 0; i < m_jingleSession->contents().count(); i++) {
         JabberJingleContent *jContent = contentWithName(m_jingleSession->contents()[i]->name());
         if (jContent == 0) {
-            qDebug() << "Create JabberJingleContent for content" << m_jingleSession->contents()[i]->name();
+            qCDebug(JABBER_PROTOCOL_LOG) << "Create JabberJingleContent for content" << m_jingleSession->contents()[i]->name();
             jContent = new JabberJingleContent(this, m_jingleSession->contents()[i]);
             jabberJingleContents << jContent;
         }
@@ -89,7 +89,7 @@ void JabberJingleSession::slotSessionTerminated()
 
 /*void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)
 {
-    qDebug() << "Called void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Called void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)";
     JabberJingleContent *jContent = contentWithName(content->name());
     if (jContent == 0)
     {

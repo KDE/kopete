@@ -17,7 +17,7 @@
 
 #include "jabbergroupchatmanager.h"
 
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <KLocalizedString>
 #include <QMenu>
 #include <kactionmenu.h>
@@ -34,7 +34,7 @@ JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const
 											 Kopete::ContactPtrList others, XMPP::Jid roomJid )
 											 : Kopete::ChatSession ( user, others, protocol )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << "New message manager for " << user->contactId ();
+	qCDebug(JABBER_PROTOCOL_LOG) << "New message manager for " << user->contactId ();
 
 	mRoomJid = roomJid;
 	
@@ -63,7 +63,7 @@ JabberGroupChatManager::~JabberGroupChatManager()
 
 void JabberGroupChatManager::updateDisplayName ()
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) ;
+	qCDebug(JABBER_PROTOCOL_LOG) ;
 
 	setDisplayName ( mRoomJid.full () );
 
@@ -207,8 +207,4 @@ void JabberGroupChatManager::hideInviteMenu() {
 	//Clear menu
 	mInviteAction->menu()->clear();
 }
-
-
-
-// vim: set noet ts=4 sts=4 sw=4:
 

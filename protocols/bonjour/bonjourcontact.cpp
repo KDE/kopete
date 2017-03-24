@@ -33,7 +33,8 @@
 
 // FIXME: Here, we hardcode the icon (bonjour_protocol) into the constructor.
 // This shouldn't be necessary
-BonjourContact::BonjourContact(Kopete::Account *_account, const QString &uniqueName, Kopete::MetaContact *parent)
+BonjourContact::BonjourContact(Kopete::Account *_account, const QString &uniqueName,
+                               Kopete::MetaContact *parent)
     : Kopete::Contact(_account, uniqueName, parent, QStringLiteral("bonjour_protocol"))
     , connection(NULL)
     , remoteHostName()
@@ -58,7 +59,8 @@ bool BonjourContact::isReachable()
     return true;
 }
 
-void BonjourContact::serialize(QMap< QString, QString > & /*serializedData*/, QMap< QString, QString > & /* addressBookData */)
+void BonjourContact::serialize(QMap< QString, QString > & /*serializedData*/, QMap< QString,
+                                                                                    QString > & /* addressBookData */)
 {
     // Really Do Nothing
 }
@@ -72,8 +74,9 @@ Kopete::ChatSession *BonjourContact::manager(CanCreateFlags canCreateFlags)
         QList<Kopete::Contact *> contacts;
         contacts.append(this);
         Kopete::ChatSession::Form form = (Kopete::ChatSession::Small);
-        m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol(), form);
-        connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession *)),
+        m_msgManager = Kopete::ChatSessionManager::self()->create(
+            account()->myself(), contacts, protocol(), form);
+        connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
                 this, SLOT(sendMessage(Kopete::Message&)));
         connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
         return m_msgManager;
@@ -195,8 +198,8 @@ void BonjourContact::setConnection(BonjourContactConnection *c)
     // can delete the connection (and the socket hence)
     connection->setParent(this);
 
-    connect(connection, SIGNAL(disconnected(BonjourContactConnection *)),
-            this, SLOT(connectionDisconnected(BonjourContactConnection *)));
+    connect(connection, SIGNAL(disconnected(BonjourContactConnection*)),
+            this, SLOT(connectionDisconnected(BonjourContactConnection*)));
 
     connect(connection, SIGNAL(messageReceived(Kopete::Message)),
             this, SLOT(receivedMessage(Kopete::Message)));
@@ -210,4 +213,3 @@ void BonjourContact::connectionDisconnected(BonjourContactConnection *c)
     }
 }
 
-// vim: set noet ts=4 sts=4 sw=4:

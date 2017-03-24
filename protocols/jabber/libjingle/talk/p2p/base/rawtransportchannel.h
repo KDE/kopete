@@ -88,7 +88,6 @@ class RawTransportChannel : public TransportChannelImpl,
 
   void OnRemoteAddress(const talk_base::SocketAddress& remote_address);
 
-
  private:
   RawTransport* raw_transport_;
   talk_base::Thread *worker_thread_;

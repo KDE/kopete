@@ -73,7 +73,6 @@ private:
 	 */
     QList<Kopete::ChatSession*> m_chatRoomSessions;
 
-
 };
 
 class AIMAccount : public OscarAccount
@@ -140,4 +139,3 @@ private:
 	KToggleAction* mActionInvisible;
 };
 #endif
-//kate: tab-width 4; indent-mode csands;

@@ -24,7 +24,6 @@
 
 class SnacTransfer;
 
-
 class SnacProtocol : public InputProtocolBase
 {
 Q_OBJECT

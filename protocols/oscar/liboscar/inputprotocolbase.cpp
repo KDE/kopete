@@ -27,7 +27,6 @@ InputProtocolBase::InputProtocolBase(QObject *parent)
 	m_bytes = 0;
 }
 
-
 InputProtocolBase::~InputProtocolBase()
 {
 }
@@ -46,7 +45,6 @@ bool InputProtocolBase::readString( QString &message )
 	message = QString::fromUtf8( rawData.data(), len - 1 );
 	return true;
 }
-
 
 bool InputProtocolBase::okToProceed()
 {

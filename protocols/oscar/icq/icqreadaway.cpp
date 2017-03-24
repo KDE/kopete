@@ -27,7 +27,6 @@
 
 #include <assert.h>
 
-
 ICQReadAway::ICQReadAway(ICQContact *c, QWidget *parent, const char* name)
 	: KDialog(parent, QString(), KDialog::Close | KDialog::User1, 0, KGuiItem(i18n("&Fetch Again")))
 {
@@ -101,4 +100,3 @@ void ICQReadAway::slotMailClicked(const QString&, const QString &address)
 	new KRun(KUrl(address));
 }
 
-// vim: set noet ts=4 sts=4 sw=4:

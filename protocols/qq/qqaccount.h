@@ -95,7 +95,6 @@ public:
 	uint serverPort()
 	{ return configGroup()->readEntry(  "serverPort" , 80 ); }
 
-
 	/**
 	 * Returns the online status from Eva status
 	 */
@@ -136,8 +135,6 @@ protected slots:
 private:
 	void createNotificationServer( const QString &host, uint port );
 	QQChatSession * findChatSessionByGuid( const QString& guid );
-
-
 
 private:
 	QQNotifySocket *m_notifySocket;

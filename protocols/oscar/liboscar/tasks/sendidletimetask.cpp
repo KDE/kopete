@@ -28,12 +28,10 @@ SendIdleTimeTask::SendIdleTimeTask( Task* parent ) : Task( parent )
 	m_idleTime = 0;
 }
 
-
 SendIdleTimeTask::~SendIdleTimeTask()
 {
 	
 }
-
 
 void SendIdleTimeTask::onGo()
 {
@@ -54,4 +52,3 @@ void SendIdleTimeTask::setIdleTime( Oscar::DWORD newTime )
 	m_idleTime = newTime;
 }
 
-// kate: tab-width 4; indent-mode csands;

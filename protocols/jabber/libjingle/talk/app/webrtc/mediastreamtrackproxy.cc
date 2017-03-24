@@ -51,7 +51,6 @@ typedef talk_base::TypedMessageData
     <webrtc::MediaStreamTrackInterface::TrackState> TrackStateMessageData;
 typedef talk_base::TypedMessageData<bool> EnableMessageData;
 
-
 class AudioDeviceMessageData : public talk_base::MessageData {
  public:
   talk_base::scoped_refptr<webrtc::AudioDeviceModule> audio_device_;

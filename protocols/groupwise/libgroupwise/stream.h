@@ -27,7 +27,6 @@
 #ifndef GW_STREAM_H
 #define GW_STREAM_H
 
-
 class Stream : public QObject
 {
 	Q_OBJECT

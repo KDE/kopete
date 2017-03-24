@@ -16,7 +16,6 @@
 #ifndef JT_GETLASTACTIVITY_H
 #define JT_GETLASTACTIVITY_H
 
-
 #include "xmpp_task.h"	
 #include "xmpp_jid.h"
 

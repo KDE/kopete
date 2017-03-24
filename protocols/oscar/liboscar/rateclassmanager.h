@@ -30,7 +30,6 @@ class RateClass;
 class Connection;
 class RateClassManagerPrivate;
 
-
 class RateClassManager : public QObject
 {
 Q_OBJECT
@@ -80,4 +79,3 @@ private:
 
 #endif
 
-//kate: tab-width 4; indent-mode csands;

@@ -313,7 +313,6 @@ const StaticQName QN_XMLNS_CLIENT = { NS_XMLNS, STR_CLIENT };
 const StaticQName QN_XMLNS_SERVER = { NS_XMLNS, STR_SERVER };
 const StaticQName QN_XMLNS_STREAM = { NS_XMLNS, STR_STREAM };
 
-
 // Presence
 const char STR_SHOW_AWAY[] = "away";
 const char STR_SHOW_CHAT[] = "chat";

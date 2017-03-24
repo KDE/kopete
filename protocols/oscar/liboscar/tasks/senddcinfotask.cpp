@@ -32,7 +32,6 @@ SendDCInfoTask::SendDCInfoTask(Task* parent, Oscar::DWORD status): Task(parent),
 	mMood = -1;
 }
 
-
 SendDCInfoTask::~SendDCInfoTask()
 {
 }
@@ -140,4 +139,3 @@ void SendDCInfoTask::onGo()
 	setSuccess( 0, QString() );
 }
 
-// kate: tab-width 4; indent-mode csands;

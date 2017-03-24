@@ -151,7 +151,6 @@ const XService* XtrazNotify::findService( const QString& serviceId ) const
 	return 0;
 }
 
-
 QString XtrazNotify::createRequest( const QString &pluginId, const XService* service ) const
 {
 	QString body = QStringLiteral( "<N><QUERY>%1</QUERY><NOTIFY>%2</NOTIFY></N>\r\n" );
@@ -216,7 +215,6 @@ QDomDocument XtrazNotify::xmlRet( const QString &event, const QList<XService*> &
 	return doc;
 }
 
-
 bool XtrazNotify::handleResponse( QDomElement eRoot )
 {
 	QDomNode childNode;
@@ -238,7 +236,6 @@ bool XtrazNotify::handleResponse( QDomElement eRoot )
 	}
 	return false;
 }
-
 
 bool XtrazNotify::handleRequest( QDomElement eRoot )
 {

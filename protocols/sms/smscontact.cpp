@@ -92,7 +92,6 @@ void SMSContact::slotChatSessionDestroyed()
 	m_msgManager = 0L;
 }
 
-
 void SMSContact::slotUserInfo()
 {
 }
@@ -149,7 +148,4 @@ void SMSContact::userPrefs()
 	SMSUserPreferences* p = new SMSUserPreferences( this );
 	p->show();
 }
-
-
-// vim: set noet ts=4 sts=4 sw=4:
 

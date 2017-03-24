@@ -25,7 +25,6 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 // Originally comes from shared/commandlineflags/flags.h
 
 // Flags are defined and declared using DEFINE_xxx and DECLARE_xxx macros,
@@ -81,7 +80,6 @@ union FlagValue {
   double f;
   const char* s;
 };
-
 
 // Each flag can be accessed programmatically via a Flag object.
 class Flag {
@@ -166,7 +164,6 @@ class Flag {
   friend class FlagList;  // accesses next_
 };
 
-
 // Internal use only.
 #define DEFINE_FLAG(type, c_type, name, default, comment) \
   /* define and initialize the flag */                    \
@@ -176,12 +173,10 @@ class Flag {
                           Flag::type, &FLAG_##name,       \
                           FlagValue::New_##type(default))
 
-
 // Internal use only.
 #define DECLARE_FLAG(c_type, name)              \
   /* declare the external flag */               \
   extern c_type FLAG_##name
-
 
 // Use the following macros to define a new flag:
 #define DEFINE_bool(name, default, comment) \
@@ -193,13 +188,11 @@ class Flag {
 #define DEFINE_string(name, default, comment) \
   DEFINE_FLAG(STRING, const char*, name, default, comment)
 
-
 // Use the following macros to declare a flag defined elsewhere:
 #define DECLARE_bool(name)  DECLARE_FLAG(bool, name)
 #define DECLARE_int(name)  DECLARE_FLAG(int, name)
 #define DECLARE_float(name)  DECLARE_FLAG(double, name)
 #define DECLARE_string(name)  DECLARE_FLAG(const char*, name)
-
 
 // The global list of all flags.
 class FlagList {
@@ -279,6 +272,5 @@ class WindowsCommandLineArguments {
   DISALLOW_EVIL_CONSTRUCTORS(WindowsCommandLineArguments);
 };
 #endif  // WIN32
-
 
 #endif  // SHARED_COMMANDLINEFLAGS_FLAGS_H__

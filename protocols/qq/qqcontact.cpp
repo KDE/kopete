@@ -164,7 +164,6 @@ QList<QAction*> *QQContact::customContextMenuActions()
 	m_actionCollection->append( actionWebcamReceive );
 	m_actionCollection->append( actionWebcamSend );
 
-
 	return m_actionCollection;
 }
 
@@ -300,7 +299,6 @@ void QQContact::setInfo(const  QString &type,const QString &data )
 	}
 }
 
-
 void QQContact::serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> & /* addressBookData */ )
 {
 	// Contact id and display name are already set for us, only add the rest
@@ -345,13 +343,11 @@ void QQContact::serialize( QMap<QString, QString> &serializedData, QMap<QString,
 	*/
 }
 
-
 QString QQContact::guid(){ return 0; }//property(QQProtocol::protocol()->propGuid).value().toString(); }
 
 QString QQContact::phoneHome(){ return m_phoneHome ;}
 QString QQContact::phoneWork(){ return m_phoneWork ;}
 QString QQContact::phoneMobile(){ return m_phoneMobile ;}
-
 
 const QMap<QString, Kopete::Group*>  QQContact::serverGroups() const
 {
@@ -361,7 +357,6 @@ void QQContact::clearServerGroups()
 {
 	m_serverGroups.clear();
 }
-
 
 void QQContact::sync( unsigned int changed )
 {
@@ -385,7 +380,6 @@ void QQContact::contactRemovedFromGroup( const QString& groupId )
 	m_moving=false;
 }
 
-
 void QQContact::rename( const QString &newName )
 {
 	Q_UNUSED(newName);
@@ -402,7 +396,6 @@ void QQContact::slotShowProfile()
 {
 	KToolInvocation::invokeBrowser( QLatin1String("http://members.qq.com/default.qqw?mem=") + contactId()) ;
 }
-
 
 /**
  * FIXME: Make this a standard KMM API call
@@ -454,7 +447,6 @@ void QQContact::setDisplayPicture(KTemporaryFile *f)
 
 	KIO::Job *j=KIO::file_move( KUrl( fileName ), KUrl( newlocation ), -1, KIO::Overwrite | KIO::HideProgressInfo );
 
-
 	//let the time to KIO to copy the file
 	connect(j, SIGNAL(result(KJob*)) , this, SLOT(slotEmitDisplayPictureChanged()));
 }
@@ -466,7 +458,6 @@ void QQContact::slotEmitDisplayPictureChanged()
 	emit displayPictureChanged();
 }
 
-
 void QQContact::setObject(const QString &obj)
 {
 	if(m_obj==obj && (obj.isEmpty() || hasProperty(Kopete::Global::Properties::self()->photo().key())))
@@ -477,13 +468,9 @@ void QQContact::setObject(const QString &obj)
 	removeProperty( Kopete::Global::Properties::self()->photo()  ) ;
 	emit displayPictureChanged();
 
-	KConfigGroup config(KGlobal::config(), "QQ");
+	KConfigGroup config(KSharedConfig::openConfig(), "QQ");
 	if ( config.readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty()
 			 && account()->myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
 		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }
-
-
-
-// vim: set noet ts=4 sts=4 sw=4:
 

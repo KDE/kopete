@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-
 #include "ircaccount.h"
 #include "irccontact.h"
 #include "ircprotocol.h"
@@ -108,7 +107,6 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 	connect( addButton, SIGNAL(clicked()), this, SLOT(slotAddCommand()) );
 	connect( editButton, SIGNAL(clicked()), this, SLOT(slotEditNetworks()) );
 	connect( addReply, SIGNAL(clicked()), this, SLOT(slotAddCtcp()) );
-
 
         connect( network, SIGNAL(activated(QString)),
 		this, SLOT(slotUpdateNetworkDescription(QString)) );

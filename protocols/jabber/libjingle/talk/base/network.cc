@@ -69,7 +69,6 @@ const uint32 kSignalNetworksMessage = 2;
 // Fetch list of networks every two seconds.
 const int kNetworksUpdateIntervalMs = 2000;
 
-
 // Makes a string key for this network. Used in the network manager's maps.
 // Network objects are keyed on interface name, network prefix and the
 // length of that prefix.
@@ -88,7 +87,6 @@ bool CompareNetworks(const Network* a, const Network* b) {
   }
   return a->name() < b->name();
 }
-
 
 }  // namespace
 

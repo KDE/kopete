@@ -80,7 +80,6 @@ namespace XMPP
 		bool cont() const;
 		void setCont(bool);
 
-
 		void fromXml(const QDomElement&);
 		QDomElement toXml(QDomDocument&) const;
 		bool isNull() const;

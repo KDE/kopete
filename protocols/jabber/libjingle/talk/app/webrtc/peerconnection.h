@@ -51,7 +51,6 @@
 // 8. Once a remote candidate is received from the remote peer, provide it to
 // the peerconnection by calling AddCandidate.
 
-
 // The Receiver of a call can decide to accept or reject the call.
 // This decision will be taken by the application not peerconnection.
 // If application decides to accept the call
@@ -132,7 +131,6 @@ class PeerConnectionObserver : public IceCandidateObserver {
   // Dtor protected as objects shouldn't be deleted via this interface.
   ~PeerConnectionObserver() {}
 };
-
 
 class PeerConnectionInterface : public JsepInterface,
                                 public talk_base::RefCountInterface {

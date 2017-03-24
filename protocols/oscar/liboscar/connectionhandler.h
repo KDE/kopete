@@ -23,7 +23,6 @@
 #include <qstring.h>
 #include <qpair.h>
 
-
 class Connection;
 
 typedef QPair<Oscar::WORD, QString> ConnectionRoomInfo;

@@ -30,7 +30,6 @@
 #include "qqsocket.h"
 #include "libeva.h"
 
-
 class QQAccount;
 class QTimer;
 
@@ -62,8 +61,6 @@ public:
 	{ sendPacket( Eva::downloadGroups( m_qqId, m_id++, m_sessionKey, next ) ); }
 
 	void sendTextMessage( const uint toId, const QByteArray& message );
-
-		
 
 signals:
 	void statusChanged( const Kopete::OnlineStatus &newStatus );
@@ -154,6 +151,4 @@ private:
 };
 
 #endif
-
-// vim: set noet ts=4 sts=4 sw=4:
 

@@ -723,7 +723,6 @@ void OpenSSLStreamAdapter::Cleanup() {
   Thread::Current()->Clear(this, MSG_TIMEOUT);
 }
 
-
 void OpenSSLStreamAdapter::OnMessage(Message* msg) {
   // Process our own messages and then pass others to the superclass
   if (MSG_TIMEOUT == msg->message_id) {

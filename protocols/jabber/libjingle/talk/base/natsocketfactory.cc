@@ -80,7 +80,6 @@ size_t UnpackAddressFromNAT(const char* buf, size_t buf_size,
   return 0U;
 }
 
-
 // NATSocket
 class NATSocket : public AsyncSocket, public sigslot::has_slots<> {
  public:
@@ -417,7 +416,6 @@ NATSocketServer::Translator::Translator(
   nat_server_.reset(new NATServer(type, internal_server, int_ip,
                                   ext_factory, ext_ip));
 }
-
 
 NATSocketServer::Translator* NATSocketServer::Translator::GetTranslator(
     const SocketAddress& ext_ip) {

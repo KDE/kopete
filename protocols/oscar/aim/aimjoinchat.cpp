@@ -67,7 +67,6 @@ void AIMJoinChatUI::setExchangeList( const QList<int>& list )
         ++it;
     }
 
-
     m_joinUI->exchange->insertItems( 0, exchangeList );
 }
 
@@ -96,4 +95,3 @@ QString AIMJoinChatUI::exchange() const
     return m_exchange;
 }
 
-//kate: space-indent on; indent-width 4;

@@ -50,7 +50,6 @@ namespace talk_base {
 // for doing this are in SSLAdapter. They should possibly be moved out
 // to a neutral class.
 
-
 enum SSLRole { SSL_CLIENT, SSL_SERVER };
 enum SSLMode { SSL_MODE_TLS, SSL_MODE_DTLS };
 
@@ -158,7 +157,6 @@ class SSLStreamAdapter : public StreamAdapterInterface {
                                     size_t result_len) {
     return false;  // Default is unsupported
   }
-
 
   // DTLS-SRTP interface
   virtual bool SetDtlsSrtpCiphers(const std::vector<std::string>& ciphers) {

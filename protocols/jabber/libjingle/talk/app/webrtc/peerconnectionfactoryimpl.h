@@ -73,7 +73,6 @@ class PeerConnectionFactory : public PeerConnectionFactoryInterface,
       AudioDeviceModule* default_adm);
   virtual ~PeerConnectionFactory();
 
-
  private:
   bool Initialize_s();
   void Terminate_s();

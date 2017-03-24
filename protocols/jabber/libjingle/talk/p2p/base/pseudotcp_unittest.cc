@@ -330,7 +330,6 @@ class PseudoTcpTest : public PseudoTcpTestBase {
   talk_base::MemoryStream recv_stream_;
 };
 
-
 class PseudoTcpTestPingPong : public PseudoTcpTestBase {
  public:
   PseudoTcpTestPingPong()

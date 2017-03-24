@@ -124,7 +124,6 @@ void GSMLibThread::send(const Kopete::Message& msg)
 	}
 }
 
-
 bool GSMLibThread::doConnect()
 {
 	// open the port and ME/TA
@@ -447,14 +446,11 @@ const QString& GSMLib::description()
 	return m_description;
 }
 
-
 #endif
 /*
  * Local variables:
  * c-indentation-style: k&r
- * c-basic-offset: 8
  * indent-tabs-mode: t
  * End:
  */
-// vim: set noet ts=4 sts=4 sw=4:
 

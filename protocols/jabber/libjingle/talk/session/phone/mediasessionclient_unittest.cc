@@ -90,7 +90,6 @@ const std::string kJingleCryptoOffer = \
     "  key-params='inline:J4lfdUL8W1F7TNJKcbuygaQuA429SJy2e9JctPUy'/>" \
     "</rtp:encryption>                                         ";
 
-
 const std::string kGingleRequiredCryptoOffer = \
     "<rtp:encryption xmlns:rtp='urn:xmpp:jingle:apps:rtp:1' required='true'> "\
     "  <usage/>                                                "  \
@@ -108,7 +107,6 @@ const std::string kJingleRequiredCryptoOffer = \
     "  key-params='inline:J4lfdUL8W1F7TNJKcbuygaQuA429SJy2e9JctPUy'/>" \
     "</rtp:encryption>                                         ";
 
-
 const std::string kGingleUnsupportedCryptoOffer = \
     "<rtp:encryption xmlns:rtp='urn:xmpp:jingle:apps:rtp:1'>   "  \
     "  <usage/>                                                "  \
@@ -125,7 +123,6 @@ const std::string kJingleUnsupportedCryptoOffer =                 \
     "  <rtp:crypto tag='51' crypto-suite='NOT_SUPPORTED_2'" \
     "  key-params='inline:J4lfdUL8W1F7TNJKcbuygaQuA429SJy2e9JctPUy'/>" \
     "</rtp:encryption>                                         ";
-
 
 // With unsupported but with required="true"
 const std::string kGingleRequiredUnsupportedCryptoOffer =         \
@@ -1022,7 +1019,6 @@ static std::string AddEncryption(std::string stanza, std::string encryption) {
   }
   return stanza;
 }
-
 
 int IntFromJingleCodecParameter(const buzz::XmlElement* parameter,
                                 const std::string& expected_name) {
@@ -2711,7 +2707,6 @@ TEST(MediaSessionTest,
       AddEncryption(kJingleInitiate, kJingleRequiredUnsupportedCryptoOffer));
 }
 
-
 TEST(MediaSessionTest, JingleGoodOutgoingInitiateWithCrypto) {
   talk_base::scoped_ptr<MediaSessionClientTest> test(JingleTest());
   test->ExpectCrypto(cricket::SEC_ENABLED);
@@ -2821,7 +2816,6 @@ TEST(MediaSessionTest, GingleBadInitiateWrongChannels) {
   talk_base::scoped_ptr<MediaSessionClientTest> test(GingleTest());
   test->TestBadIncomingInitiate(kGingleInitiateWrongChannels);
 }
-
 
 TEST(MediaSessionTest, GingleBadInitiateNoPayloadTypes) {
   talk_base::scoped_ptr<MediaSessionClientTest> test(GingleTest());

@@ -27,7 +27,6 @@ UserSearchTask::UserSearchTask( Task* parent )
 {
 }
 
-
 UserSearchTask::~UserSearchTask()
 {
 }
@@ -311,6 +310,3 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	send( t );
 }
 
-
-
-//kate: indent-mode csands; tab-width 4; space-indent off; replace-tabs off;

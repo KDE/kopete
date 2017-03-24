@@ -937,7 +937,6 @@ HKEY RegKey::GetRootKeyInfo(std::wstring* full_key_name) {
   return h_key;
 }
 
-
 // Returns true if this key name is 'safe' for deletion
 // (doesn't specify a key root)
 bool RegKey::SafeKeyNameForDeletion(const wchar_t* key_name) {

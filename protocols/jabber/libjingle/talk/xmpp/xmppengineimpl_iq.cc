@@ -51,7 +51,6 @@ private:
   XmppIqHandler * const iq_handler_;
 };
 
-
 XmppReturnStatus
 XmppEngineImpl::SendIq(const XmlElement * element, XmppIqHandler * iq_handler,
   XmppIqCookie* cookie) {
@@ -81,7 +80,6 @@ XmppEngineImpl::SendIq(const XmlElement * element, XmppIqHandler * iq_handler,
 
   return XMPP_RETURN_OK;
 }
-
 
 XmppReturnStatus
 XmppEngineImpl::RemoveIqHandler(XmppIqCookie cookie,
@@ -123,7 +121,6 @@ AecImpl(XmlElement * error_element, const QName & name,
   error_element->AddAttr(QN_TYPE, type, 1);
   error_element->AddElement(new XmlElement(name, true), 1);
 }
-
 
 static void
 AddErrorCode(XmlElement * error_element, XmppStanzaError code) {
@@ -196,7 +193,6 @@ AddErrorCode(XmlElement * error_element, XmppStanzaError code) {
   }
 }
 
-
 XmppReturnStatus
 XmppEngineImpl::SendStanzaError(const XmlElement * element_original,
                                 XmppStanzaError code,
@@ -244,7 +240,6 @@ XmppEngineImpl::SendStanzaError(const XmlElement * element_original,
 
   return XMPP_RETURN_OK;
 }
-
 
 bool
 XmppEngineImpl::HandleIqResponse(const XmlElement * element) {

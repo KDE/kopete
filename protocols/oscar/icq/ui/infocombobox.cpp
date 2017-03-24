@@ -50,5 +50,3 @@ void InfoComboBox::showPopup()
 	QComboBox::showPopup();
 }
 
-
-

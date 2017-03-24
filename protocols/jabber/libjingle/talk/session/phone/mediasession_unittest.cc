@@ -647,7 +647,6 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoOffer) {
   EXPECT_TRUE(dcd->rtcp_mux());                 // rtcp-mux defaults on
   ASSERT_CRYPTO(dcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
 
-
   // Update the offer. Add a new video track that is not synched to the
   // other tracks and replace audio track 2 with audio track 3.
   opts.AddStream(MEDIA_TYPE_VIDEO, kVideoTrack2, kMediaStream2);

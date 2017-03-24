@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
 // Copyright (C) 2002-2003 Zack Rusin   <zack@kde.org>
@@ -69,7 +68,9 @@ public:
         return true;
     }
 
-    virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData);
+    virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact,
+                                                const QMap<QString, QString> &serializedData,
+                                                const QMap<QString, QString> &addressBookData);
     // }
     //!Plugin reimplementation
 

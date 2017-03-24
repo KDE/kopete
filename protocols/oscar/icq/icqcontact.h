@@ -122,4 +122,3 @@ private slots:
 };
 
 #endif
-//kate: tab-width 4; indent-mode csands; space-indent off; replace-tabs off;

@@ -28,11 +28,9 @@ BLMLimitsTask::BLMLimitsTask( Task* parent )
 {
 }
 
-
 BLMLimitsTask::~BLMLimitsTask()
 {
 }
-
 
 bool BLMLimitsTask::forMe(const Transfer* transfer) const
 {
@@ -88,4 +86,3 @@ void BLMLimitsTask::onGo()
 	send( t );
 }
 
-//kate: tab-width 4; indent-mode csands;

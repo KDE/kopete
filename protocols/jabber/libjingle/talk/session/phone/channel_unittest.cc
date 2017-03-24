@@ -915,7 +915,6 @@ class ChannelTest : public testing::Test, public sigslot::has_slots<> {
     EXPECT_TRUE(CheckRtcp1());
   }
 
-
   // Check that RTCP data is not muxed until both sides have enabled muxing,
   // but that we properly demux before we get the accept message, since there
   // is a race between RTP data and the jingle accept.
@@ -1378,7 +1377,6 @@ class ChannelTest : public testing::Test, public sigslot::has_slots<> {
   typename T::MediaChannel::Error error_;
 };
 
-
 template<>
 void ChannelTest<VoiceTraits>::CreateContent(
     int flags,
@@ -1489,7 +1487,6 @@ class VideoChannelTest
                             kRtcpReport, sizeof(kRtcpReport)) {
   }
 };
-
 
 // VoiceChannelTest
 
@@ -1979,7 +1976,6 @@ TEST_F(VideoChannelTest, TestApplyViewRequest) {
 TEST_F(VideoChannelTest, TestSetChannelOptions) {
   Base::TestSetChannelOptions(true);
 }
-
 
 // DataChannelTest
 

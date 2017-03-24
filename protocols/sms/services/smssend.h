@@ -19,7 +19,6 @@
 
 #include <QList>
 
-
 #include <QLineEdit>
 
 #include "smsservice.h"

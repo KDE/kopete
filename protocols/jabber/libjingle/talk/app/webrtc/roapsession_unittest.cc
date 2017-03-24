@@ -230,7 +230,6 @@ TEST(RoapSessionTest, SequenceNumberOnOfferInGlare) {
             roap_session2.Parse(god_offer.Serialize()));
 }
 
-
 TEST(RoapSessionTest, SequenceNumberOnAnswer) {
   RoapSession roap_session1;
   RoapSession roap_session2;

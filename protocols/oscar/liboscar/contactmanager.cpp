@@ -60,7 +60,6 @@ ContactManager::ContactManager( QObject *parent )
 	d->maxVisible = 999;
 }
 
-
 ContactManager::~ContactManager()
 {
 	clear();
@@ -184,7 +183,6 @@ OContact ContactManager::findGroup( const QString &group ) const
 	for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_GROUP && (*it ).name().toLower() == group.toLower() )
 			return ( *it );
-
 
 	return m_dummyItem;
 }
@@ -653,5 +651,3 @@ Oscar::WORD ContactManager::findFreeId( const QSet<Oscar::WORD>& idSet, Oscar::W
 	return 0xFFFF;
 }
 
-
-//kate: tab-width 4; indent-mode csands;

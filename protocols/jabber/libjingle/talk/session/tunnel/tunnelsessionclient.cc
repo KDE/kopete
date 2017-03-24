@@ -219,7 +219,6 @@ TunnelSessionClient::TunnelSessionClient(const buzz::Jid& jid,
 TunnelSessionClient::~TunnelSessionClient() {
 }
 
-
 bool TunnelSessionClient::ParseContent(SignalingProtocol protocol,
                                        const buzz::XmlElement* elem,
                                        const ContentDescription** content,

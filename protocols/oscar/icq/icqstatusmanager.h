@@ -15,7 +15,6 @@
     *************************************************************************
 */
 
-
 #ifndef ICQSTATUSMANAGER_H
 #define ICQSTATUSMANAGER_H
 

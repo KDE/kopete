@@ -34,4 +34,3 @@ Request* RequestFactory::request( const QString &command )
 	return new Request( m_nextTransaction++, command );
 }
 
-

@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-
 #include "kircclientsocket.h"
 #include "kirctransferhandler.h"
 

@@ -26,7 +26,6 @@ OscarTestBase::OscarTestBase()
 {
 }
 
-
 OscarTestBase::~OscarTestBase()
 {
 	delete m_data;

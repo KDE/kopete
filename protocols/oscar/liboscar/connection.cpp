@@ -31,7 +31,6 @@
 #include <QList>
 #include <krandom.h>
 
-
 class ConnectionPrivate
 {
 public:
@@ -296,4 +295,3 @@ void Connection::streamSocketError( int code )
 	emit socketError( code, d->clientStream->errorString() );
 }
 
-//kate: tab-width 4; indent-mode csands;

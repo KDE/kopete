@@ -1,5 +1,3 @@
-// vim: set noet ts=4 sts=4 sw=4 :
-// -*- Mode: c++; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003-2004 Grzegorz Jaskiewicz  <gj at pointblue.com.pl>
 // Copyright (C) 2003 Zack Rusin        <zack@kde.org>
@@ -201,23 +199,28 @@ GaduAccount::initActions()
 
     p->listPutAction = new QAction(i18n("Export Contacts to Server"), this);
     p->listPutAction->setIcon(QIcon::fromTheme(QStringLiteral("document-export")));
-    QObject::connect(p->listPutAction, SIGNAL(triggered(bool)), this, SLOT(slotExportContactsList()));
+    QObject::connect(p->listPutAction, SIGNAL(triggered(bool)), this,
+                     SLOT(slotExportContactsList()));
 
     p->listGetAction = new QAction(i18n("Import Contacts from Server"), this);
     p->listGetAction->setIcon(QIcon::fromTheme(QStringLiteral("document-import")));
-    QObject::connect(p->listGetAction, SIGNAL(triggered(bool)), this, SLOT(slotImportContactsList()));
+    QObject::connect(p->listGetAction, SIGNAL(triggered(bool)), this,
+                     SLOT(slotImportContactsList()));
 
     p->listDeleteAction = new QAction(i18n("Delete Contacts from Server"), this);
     p->listDeleteAction->setIcon(QIcon::fromTheme(QStringLiteral("document-close")));
-    QObject::connect(p->listDeleteAction, SIGNAL(triggered(bool)), this, SLOT(slotDeleteContactsList()));
+    QObject::connect(p->listDeleteAction, SIGNAL(triggered(bool)), this,
+                     SLOT(slotDeleteContactsList()));
 
     p->listToFileAction = new QAction(i18n("Export Contacts to File..."), this);
     p->listToFileAction->setIcon(QIcon::fromTheme(QStringLiteral("document-save")));
-    QObject::connect(p->listToFileAction, SIGNAL(triggered(bool)), this, SLOT(slotExportContactsListToFile()));
+    QObject::connect(p->listToFileAction, SIGNAL(triggered(bool)), this,
+                     SLOT(slotExportContactsListToFile()));
 
     p->listFromFileAction = new QAction(i18n("Import Contacts from File..."), this);
     p->listFromFileAction->setIcon(QIcon::fromTheme(QStringLiteral("document-open")));
-    QObject::connect(p->listFromFileAction, SIGNAL(triggered(bool)), this, SLOT(slotImportContactsFromFile()));
+    QObject::connect(p->listFromFileAction, SIGNAL(triggered(bool)), this,
+                     SLOT(slotImportContactsFromFile()));
 
     p->friendsModeAction = new KToggleAction(i18n("Only for Friends"), this);
     QObject::connect(p->friendsModeAction, SIGNAL(triggered(bool)), this, SLOT(slotFriendsMode()));
@@ -230,10 +233,10 @@ GaduAccount::initConnections()
 {
     QObject::connect(p->session_, SIGNAL(error(QString,QString)),
                      SLOT(error(QString,QString)));
-    QObject::connect(p->session_, SIGNAL(messageReceived(KGaduMessage *)),
-                     SLOT(messageReceived(KGaduMessage *)));
-    QObject::connect(p->session_, SIGNAL(contactStatusChanged(KGaduNotify *)),
-                     SLOT(contactStatusChanged(KGaduNotify *)));
+    QObject::connect(p->session_, SIGNAL(messageReceived(KGaduMessage*)),
+                     SLOT(messageReceived(KGaduMessage*)));
+    QObject::connect(p->session_, SIGNAL(contactStatusChanged(KGaduNotify*)),
+                     SLOT(contactStatusChanged(KGaduNotify*)));
     QObject::connect(p->session_, SIGNAL(connectionFailed(gg_failure_t)),
                      SLOT(connectionFailed(gg_failure_t)));
     QObject::connect(p->session_, SIGNAL(connectionSucceed()),
@@ -280,7 +283,9 @@ GaduAccount::fillActionMenu(KActionMenu *actionMenu)
 
     actionMenu->setIcon(myself()->onlineStatus().iconFor(this));
     actionMenu->menu()->addTitle(myself()->onlineStatus().iconFor(myself()), i18n("%1 <%2> ",
-                                                                                  myself()->displayName(), accountId()));
+                                                                                  myself()->
+                                                                                  displayName(),
+                                                                                  accountId()));
 
     if (p->session_->isConnected()) {
         p->searchAction->setEnabled(true);
@@ -316,34 +321,39 @@ GaduAccount::fillActionMenu(KActionMenu *actionMenu)
     }
 
     QAction *action = new QAction(
-        QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus(GG_STATUS_AVAIL).iconFor(this))),
+        QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus(GG_STATUS_AVAIL).iconFor(
+                                   this))),
         i18n("Go O&nline"), this);
     //, "actionGaduConnect" );
     QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(slotGoOnline()));
     actionMenu->addAction(action);
 
     action = new QAction(
-        QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus(GG_STATUS_BUSY).iconFor(this))),
+        QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus(GG_STATUS_BUSY).iconFor(
+                                   this))),
         i18n("Set &Busy"), this);
     //, "actionGaduConnect" );
     QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(slotGoBusy()));
     actionMenu->addAction(action);
 
     action = new QAction(
-        QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus(GG_STATUS_INVISIBLE).iconFor(this))),
+        QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus(GG_STATUS_INVISIBLE).iconFor(
+                                   this))),
         i18n("Set &Invisible"), this);
     //, "actionGaduConnect" );
     QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(slotGoInvisible()));
     actionMenu->addAction(action);
 
     action = new QAction(
-        QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus(GG_STATUS_NOT_AVAIL).iconFor(this))),
+        QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus(GG_STATUS_NOT_AVAIL).iconFor(
+                                   this))),
         i18n("Go &Offline"), this);
     //, "actionGaduConnect" );
     QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(slotGoOffline()));
     actionMenu->addAction(action);
 
-    action = new QAction(QIcon::fromTheme(QStringLiteral("edit-rename")), i18n("Set &Description..."), this);
+    action = new QAction(QIcon::fromTheme(QStringLiteral("edit-rename")), i18n(
+                             "Set &Description..."), this);
     //, "actionGaduDescription" );
     QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(slotDescription()));
     actionMenu->addAction(action);
@@ -375,7 +385,9 @@ GaduAccount::fillActionMenu(KActionMenu *actionMenu)
 
     actionMenu->addAction(listMenuAction);
 
-    QAction *propertiesAction = new QAction(QIcon::fromTheme(QStringLiteral("configure")), i18n("Properties"), actionMenu);
+    QAction *propertiesAction
+        = new QAction(QIcon::fromTheme(QStringLiteral("configure")), i18n("Properties"),
+                      actionMenu);
     QObject::connect(propertiesAction, SIGNAL(triggered(bool)), this, SLOT(editAccount()));
     actionMenu->addAction(propertiesAction);
 }
@@ -414,7 +426,9 @@ GaduAccount::disconnect(DisconnectReason reason)
 }
 
 void
-GaduAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions & /*options*/)
+GaduAccount::setOnlineStatus(const Kopete::OnlineStatus &status,
+                             const Kopete::StatusMessage &reason,
+                             const OnlineStatusOptions & /*options*/)
 {
     kDebug(14100) << "Called";
     changeStatus(status, reason.message());
@@ -480,7 +494,8 @@ GaduAccount::changeStatus(const Kopete::OnlineStatus &status, const QString &des
             return;//already logged off
         } else {
             if (status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR) {
-                if (p->session_->changeStatusDescription(status.internalStatus(), descr, p->forFriends) != 0) {
+                if (p->session_->changeStatusDescription(status.internalStatus(), descr,
+                                                         p->forFriends) != 0) {
                     return;
                 }
             }
@@ -489,7 +504,8 @@ GaduAccount::changeStatus(const Kopete::OnlineStatus &status, const QString &des
         dccOff();
     } else {
         // if status is for no desc, but we get some desc, than convert it to status with desc
-        if (!descr.isEmpty() && !GaduProtocol::protocol()->statusWithDescription(status.internalStatus())) {
+        if (!descr.isEmpty()
+            && !GaduProtocol::protocol()->statusWithDescription(status.internalStatus())) {
             // and rerun us again. This won't cause any recursive call, as both conversions are static
             ns = GaduProtocol::protocol()->statusToWithDescription(status);
             changeStatus(GaduProtocol::protocol()->convertStatus(ns), descr);
@@ -497,7 +513,8 @@ GaduAccount::changeStatus(const Kopete::OnlineStatus &status, const QString &des
         }
 
         // well, if it's empty but we want to set status with desc, change it too
-        if (descr.isEmpty() && GaduProtocol::protocol()->statusWithDescription(status.internalStatus())) {
+        if (descr.isEmpty()
+            && GaduProtocol::protocol()->statusWithDescription(status.internalStatus())) {
             ns = GaduProtocol::protocol()->statusToWithoutDescription(status);
             changeStatus(GaduProtocol::protocol()->convertStatus(ns), descr);
             return;
@@ -531,7 +548,8 @@ GaduAccount::changeStatus(const Kopete::OnlineStatus &status, const QString &des
                     return;
                 }
             } else {
-                if (p->session_->changeStatusDescription(status.internalStatus(), descr, p->forFriends) != 0) {
+                if (p->session_->changeStatusDescription(status.internalStatus(), descr,
+                                                         p->forFriends) != 0) {
                     return;
                 }
             }
@@ -541,7 +559,8 @@ GaduAccount::changeStatus(const Kopete::OnlineStatus &status, const QString &des
     myself()->setOnlineStatus(status);
     myself()->setStatusMessage(Kopete::StatusMessage(descr));
 
-    if (status.internalStatus() == GG_STATUS_NOT_AVAIL || status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR) {
+    if (status.internalStatus() == GG_STATUS_NOT_AVAIL
+        || status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR) {
         if (p->pingTimer_) {
             p->pingTimer_->stop();
         }
@@ -584,7 +603,8 @@ GaduAccount::slotLogin(int status, const QString &dscr)
 void
 GaduAccount::slotLogoff()
 {
-    if (p->session_->isConnected() || p->status == GaduProtocol::protocol()->convertStatus(GG_STATUS_CONNECTING)) {
+    if (p->session_->isConnected()
+        || p->status == GaduProtocol::protocol()->convertStatus(GG_STATUS_CONNECTING)) {
         p->status = GaduProtocol::protocol()->convertStatus(GG_STATUS_NOT_AVAIL);
         changeStatus(p->status);
         p->session_->logoff();
@@ -755,7 +775,8 @@ GaduAccount::connectionFailed(gg_failure_t failure)
     default:
         if (p->connectWithSSL) {
             if (useTls() != TLS_only) {
-                slotCommandDone(QString(), i18n("connection using SSL was not possible, retrying without."));
+                slotCommandDone(QString(),
+                                i18n("connection using SSL was not possible, retrying without."));
                 kDebug(14100) << "try without tls now";
                 p->connectWithSSL = false;
                 tryReconnect = true;
@@ -780,7 +801,8 @@ GaduAccount::connectionFailed(gg_failure_t failure)
     if (tryReconnect) {
         slotLogin(p->status.internalStatus(), p->lastDescription);
     } else {
-        error(i18n("unable to connect to the Gadu-Gadu server(\"%1\").", GaduSession::failureDescription(failure)),
+        error(i18n("unable to connect to the Gadu-Gadu server(\"%1\").",
+                   GaduSession::failureDescription(failure)),
               i18n("Connection Error"));
         p->status = GaduProtocol::protocol()->convertStatus(GG_STATUS_NOT_AVAIL);
         myself()->setOnlineStatus(p->status);
@@ -936,15 +958,18 @@ GaduAccount::userlist(const QString &contactsListString)
         } else {
             kDebug(14100) << "Adding UIN";
             contactName = GaduContact::findBestContactName(&contactsList[i]);
-            bool s = addContact(contactsList[i].uin, contactName, 0L, Kopete::Account::DontChangeKABC);
+            bool s = addContact(contactsList[i].uin, contactName, 0L,
+                                Kopete::Account::DontChangeKABC);
             if (s == false) {
-                kDebug(14100) << "There was a problem adding UIN "<< contactsList[i].uin << "to users list";
+                kDebug(14100) << "There was a problem adding UIN "<< contactsList[i].uin
+                              << "to users list";
                 continue;
             }
         }
         contact = static_cast<GaduContact *>(contacts().value(contactsList[i].uin));
         if (contact == NULL) {
-            kDebug(14100) << "oops, no Kopete::Contact in contacts()[] for some reason, for \"" << contactsList[i].uin << "\"";
+            kDebug(14100) << "oops, no Kopete::Contact in contacts()[] for some reason, for \""
+                          << contactsList[i].uin << "\"";
             continue;
         }
 
@@ -958,7 +983,8 @@ GaduAccount::userlist(const QString &contactsListString)
             metaContact->removeFromGroup(Kopete::Group::topLevel());
             // put him in all desired groups:
             groups = contactsList[i].group.split(',', QString::SkipEmptyParts);
-            for (QStringList::Iterator groupsIterator = groups.begin(); groupsIterator != groups.end(); ++groupsIterator) {
+            for (QStringList::Iterator groupsIterator = groups.begin();
+                 groupsIterator != groups.end(); ++groupsIterator) {
                 metaContact->addToGroup(Kopete::ContactList::self()->findGroup(*groupsIterator));
             }
         }

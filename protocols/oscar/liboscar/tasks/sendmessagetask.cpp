@@ -24,14 +24,12 @@
 #include "transfer.h"
 #include "oscarmessageplugin.h"
 
-
 SendMessageTask::SendMessageTask(Task* parent): Task(parent)
 {
 	m_autoResponse = false;
 	m_cookieCount = 0x7FFF;
 	m_ip = 0;
 }
-
 
 SendMessageTask::~SendMessageTask()
 {
@@ -99,7 +97,6 @@ void SendMessageTask::onGo()
 	b->addByte( m_message.receiver().length() );
 	b->addString( m_message.receiver().toLatin1() );
 
-
 	if ( snacSubfamily == 0x0006 )
 	{
 		/* send a regular message */
@@ -148,13 +145,11 @@ void SendMessageTask::onGo()
 	setSuccess(true);
 }
 
-
 void SendMessageTask::addBasicTLVs( Buffer* b )
 {
 	Q_UNUSED( b );
 	//TODO add stuff like user class, user status, online time, etc TLVS
 }
-
 
 void SendMessageTask::addChannel1Data( Buffer* b )
 {
@@ -241,7 +236,6 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 				tlv5buffer.addTLV( 0x0016, proxy );
 			}
 		}
-
 
 		/* now comes the important TLV 0x2711 */
 		Buffer tlv2711;
@@ -342,7 +336,6 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 		b->addLEWord( 0x0000 ); // priority (?)
 	}
 
-
 	b->addLEWord( m_message.textArray().size() + 1 ); // length of string + zero termination
 	b->addString( m_message.textArray() ); // string itself
 	b->addByte( 0x00 ); // zero termination
@@ -409,7 +402,6 @@ QByteArray SendMessageTask::encodeFileName( const QString &fileName, QString &en
 	encodingType = QStringLiteral( "utf-8" );
 	return codec->fromUnicode( fileName );
 }
-
 
 /* Old oscarsocket code, which is here for reference in case this doesn't work
 QTextCodec *codec = 0L;
@@ -509,7 +501,3 @@ if(mIsICQ)
 sendBuf(outbuf,0x02);
 */
 
-
-
-
-//kate: tab-width 4; indent-mode csands;

@@ -69,7 +69,6 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Accoun
 	connect (preferencesDialog->descButton, SIGNAL(clicked()),
 		this, SLOT(showDescription()));
 
-
 	for (int i=0; i < preferencesDialog->serviceName->count(); i++)
 	{
 		if (preferencesDialog->serviceName->itemText(i) == sName)
@@ -138,13 +137,10 @@ void SMSEditAccountWidget::showDescription()
 	KMessageBox::information(Kopete::UI::Global::mainWidget(), d, i18n("Description"));
 }
 
-
 /*
  * Local variables:
  * c-indentation-style: k&r
- * c-basic-offset: 8
  * indent-tabs-mode: t
  * End:
  */
-// vim: set noet ts=4 sts=4 sw=4:
 

@@ -191,6 +191,3 @@ void ChatRoomTask::doAccept()
 	setSuccess( true );
 }
 
-
-//kate: space-indent off; tab-width 4; indent-mode csands;
-

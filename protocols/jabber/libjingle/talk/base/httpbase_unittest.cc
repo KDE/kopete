@@ -420,7 +420,6 @@ TEST_F(HttpBaseTest, DISABLED_AllowsCloseStreamBeforeDocumentIsComplete) {
   int old_sev = talk_base::LogMessage::GetLogToDebug();
   talk_base::LogMessage::LogToDebug(LS_VERBOSE);
 
-
   // Switch to pull mode
   ObtainDocumentStream();
   VerifyDocumentStreamIsOpening();

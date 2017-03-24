@@ -29,14 +29,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 #ifdef WIN32
 #include "talk/base/win32.h"
 #include <shellapi.h>
 #endif
 
 #include "talk/base/flags.h"
-
 
 // -----------------------------------------------------------------------------
 // Implementation of Flag
@@ -51,7 +49,6 @@ Flag::Flag(const char* file, const char* name, const char* comment,
       default_(default__) {
   FlagList::Register(this);
 }
-
 
 void Flag::SetToDefault() {
   // Note that we cannot simply do '*variable_ = default_;' since
@@ -76,7 +73,6 @@ void Flag::SetToDefault() {
   UNREACHABLE();
 }
 
-
 static const char* Type2String(Flag::Type type) {
   switch (type) {
     case Flag::BOOL: return "bool";
@@ -87,7 +83,6 @@ static const char* Type2String(Flag::Type type) {
   UNREACHABLE();
   return NULL;
 }
-
 
 static void PrintFlagValue(Flag::Type type, FlagValue* p) {
   switch (type) {
@@ -107,7 +102,6 @@ static void PrintFlagValue(Flag::Type type, FlagValue* p) {
   UNREACHABLE();
 }
 
-
 void Flag::Print(bool print_current_value) {
   printf("  --%s (%s)  type: %s  default: ", name_, comment_,
           Type2String(type_));
@@ -119,12 +113,10 @@ void Flag::Print(bool print_current_value) {
   printf("\n");
 }
 
-
 // -----------------------------------------------------------------------------
 // Implementation of FlagList
 
 Flag* FlagList::list_ = NULL;
-
 
 FlagList::FlagList() {
   list_ = NULL;
@@ -145,14 +137,12 @@ void FlagList::Print(const char* file, bool print_current_value) {
   }
 }
 
-
 Flag* FlagList::Lookup(const char* name) {
   Flag* f = list_;
   while (f != NULL && strcmp(name, f->name()) != 0)
     f = f->next();
   return f;
 }
-
 
 void FlagList::SplitArgument(const char* arg,
                              char* buffer, int buffer_size,
@@ -191,7 +181,6 @@ void FlagList::SplitArgument(const char* arg,
     }
   }
 }
-
 
 int FlagList::SetFlagsFromCommandLine(int* argc, const char** argv,
                                       bool remove_flags) {

@@ -15,7 +15,6 @@
     *************************************************************************
 */
 
-
 #include "kircentity.h"
 
 #include <QtCore/QEvent>
@@ -151,7 +150,6 @@ void Context::remove(EntityPtr entity)
 	d->entities.removeAll(entity);
 //	disconnect(entity);
 }
-
 
 #if 0
 Status Context::SET()

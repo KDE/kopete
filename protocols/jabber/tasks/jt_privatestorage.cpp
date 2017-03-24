@@ -19,8 +19,6 @@
 
 using namespace XMPP;
 
-
-
 //----------------------------------------------------------------------------
 // JT_PrivateStorage
 //----------------------------------------------------------------------------
@@ -101,7 +99,6 @@ bool JT_PrivateStorage::take(const QDomElement &x)
 
 	return true;
 }
-
 
 QDomElement JT_PrivateStorage::element( )
 {

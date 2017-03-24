@@ -169,7 +169,6 @@ void ChannelMember::SetWaitingSocket(DataSocket* ds) {
   }
 }
 
-
 //
 // PeerChannel
 //

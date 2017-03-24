@@ -30,7 +30,6 @@
 #include "talk/examples/peerconnection/client/peer_connection_client.h"
 #include "talk/base/win32socketinit.h"
 
-
 int PASCAL wWinMain(HINSTANCE instance, HINSTANCE prev_instance,
                     wchar_t* cmd_line, int cmd_show) {
   talk_base::EnsureWinsockInit();

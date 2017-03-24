@@ -173,7 +173,6 @@ signals:
 	void contactNotTyping( const ConferenceEvent & );
 	void privacyChanged( const QString & dn, bool allowed );
 
-	
 protected slots:
     void slotMessageSendingFailed();
 	/**

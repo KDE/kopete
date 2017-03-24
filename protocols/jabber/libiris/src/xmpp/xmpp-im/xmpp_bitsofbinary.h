@@ -64,8 +64,6 @@ namespace XMPP
 		QSharedDataPointer<Private> d;
 	};
 
-
-
 	class BoBCache : public QObject
 	{
 		Q_OBJECT
@@ -75,8 +73,6 @@ namespace XMPP
 		virtual void put(const BoBData &) = 0;
 		virtual BoBData get(const QString &) = 0;
 	};
-
-
 
 	class BoBManager : public QObject
 	{

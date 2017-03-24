@@ -55,7 +55,8 @@ void BonjourContactConnection::setSocket(QTcpSocket *aSocket)
     connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
 }
 
-BonjourContactConnection::BonjourContactConnection(QTcpSocket *aSocket, QObject *parent) : QObject(parent)
+BonjourContactConnection::BonjourContactConnection(QTcpSocket *aSocket, QObject *parent) : QObject(
+        parent)
     , connectionState(BonjourConnectionNewIncoming)
     , parser()
     , local()
@@ -64,7 +65,9 @@ BonjourContactConnection::BonjourContactConnection(QTcpSocket *aSocket, QObject 
     setSocket(aSocket);
 }
 
-BonjourContactConnection::BonjourContactConnection(const QHostAddress &address, short int port, const QString &alocal, const QString &aremote, QObject *parent) : QObject(parent)
+BonjourContactConnection::BonjourContactConnection(const QHostAddress &address, short int port,
+                                                   const QString &alocal, const QString &aremote,
+                                                   QObject *parent) : QObject(parent)
 {
     QTcpSocket *aSocket = new QTcpSocket;
     aSocket->connectToHost(address, port);
@@ -122,7 +125,8 @@ const BonjourContactConnection::BonjourXmlToken BonjourContactConnection::getNex
     return ret;
 }
 
-const BonjourContactConnection::BonjourXmlToken BonjourContactConnection::getNextToken(BonjourXmlTokenName name)
+const BonjourContactConnection::BonjourXmlToken BonjourContactConnection::getNextToken(
+    BonjourXmlTokenName name)
 {
     BonjourXmlToken token;
 
@@ -148,7 +152,8 @@ const BonjourContactConnection::BonjourXmlToken BonjourContactConnection::getNex
     case BonjourXmlStartOrEndElement:
         do {
             token = getNextToken();
-            if (token.type == QXmlStreamReader::StartElement || token.type == QXmlStreamReader::EndElement) {
+            if (token.type == QXmlStreamReader::StartElement
+                || token.type == QXmlStreamReader::EndElement) {
                 break;
             }
         } while (token.name != BonjourXmlTokenError);
@@ -174,7 +179,8 @@ void BonjourContactConnection::dataInSocket()
     // Hense, we get the next Start Element or End Element
     token = getNextToken(BonjourXmlStartOrEndElement);
 
-    qDebug()<<"Data Available: "<<token.qualifiedName.toString()<<" ConnectionState: "<<connectionState;
+    qDebug()<<"Data Available: "<<token.qualifiedName.toString()<<" ConnectionState: "
+            <<connectionState;
 
     switch (connectionState) {
     case BonjourConnectionConnected:

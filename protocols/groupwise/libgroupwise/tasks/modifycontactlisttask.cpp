@@ -133,4 +133,3 @@ void ModifyContactListTask::processFolderChange( Field::MultiField * container )
 	
 }
 
-

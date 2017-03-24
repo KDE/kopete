@@ -23,7 +23,7 @@
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QHeaderView>
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <KLocalizedString>
 #include <kio/global.h>
 #include <kio/job.h>
@@ -107,7 +107,7 @@ void JabberChooseServer::slotTransferData ( KIO::Job */*job*/, const QByteArray 
 
 	memcpy ( &xmlServerList.data()[oldSize], data.data (), data.size () );
 
-	kDebug ( JABBER_DEBUG_GLOBAL ) << "Server list now " << xmlServerList.size ();
+	qCDebug(JABBER_PROTOCOL_LOG) << "Server list now " << xmlServerList.size ();
 
 }
 
@@ -122,7 +122,7 @@ void JabberChooseServer::slotTransferResult ( KJob *kJob )
 	}
 	else
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << "Received server list ok!";
+		qCDebug(JABBER_PROTOCOL_LOG) << "Received server list ok!";
 
 		// clear status message
 		mMainWidget->lblStatus->setText ( QLatin1String("") );
@@ -155,5 +155,4 @@ void JabberChooseServer::slotTransferResult ( KJob *kJob )
 	}
 
 }
-
 

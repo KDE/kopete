@@ -8,7 +8,6 @@
 #include <qlineedit.h>
 #include <qspinbox.h>
 
-
 #include <kdebug.h>
 #include <ktoolinvocation.h>
 #include <kpassworddialog.h>
@@ -94,7 +93,6 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 		//mGui->sbxLastPort->setDisabled( configChecked );
 		configValue = mAccount->configGroup()->readEntry( "Timeout", 10 );
 		mGui->sbxTimeout->setValue( configValue );
-
 
 		if ( mAccount->engine()->isActive() )
 		{
@@ -228,4 +226,3 @@ void AIMEditAccountWidget::slotOpenRegister()
 	KToolInvocation::invokeBrowser( QString::fromLatin1("http://my.screenname.aol.com/_cqr/login/login.psp?siteId=snshomepage&mcState=initialized&createSn=1") );
 }
 
-// vim: set noet ts=4 sts=4 sw=4:

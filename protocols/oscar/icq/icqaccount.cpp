@@ -161,12 +161,10 @@ ICQProtocol* ICQAccount::protocol()
 	return static_cast<ICQProtocol*>(OscarAccount::protocol());
 }
 
-
 Oscar::Presence ICQAccount::presence()
 {
 	return protocol()->statusManager()->presenceOf( myself()->onlineStatus() );
 }
-
 
 void ICQAccount::fillActionMenu( KActionMenu *actionMenu )
 {
@@ -214,7 +212,6 @@ void ICQAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	actionMenu->addAction( xtrazStatusMenu );
 }
-
 
 void ICQAccount::connectWithPassword( const QString &password )
 {
@@ -295,7 +292,6 @@ void ICQAccount::disconnected( DisconnectReason reason )
 
 	OscarAccount::disconnected( reason );
 }
-
 
 void ICQAccount::slotToggleInvisible()
 {
@@ -545,5 +541,3 @@ void ICQAccount::addedInfoEventActionActivated( uint actionId )
 	}
 }
 
-
-//kate: tab-width 4; indent-mode csands;

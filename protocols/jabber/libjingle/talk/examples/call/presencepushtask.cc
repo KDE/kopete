@@ -31,8 +31,6 @@
 #include "talk/examples/call/muc.h"
 #include "talk/xmpp/constants.h"
 
-
-
 namespace buzz {
 
 // string helper functions -----------------------------------------------------
@@ -52,7 +50,6 @@ static bool ListContainsToken(const std::string & list,
                          IsXmlSpace(list[i + token.length()]));
   return boundary_before && boundary_after;
 }
-
 
 bool PresencePushTask::HandleStanza(const XmlElement * stanza) {
   if (stanza->Name() != QN_PRESENCE)

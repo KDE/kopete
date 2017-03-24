@@ -225,7 +225,6 @@ bool ObjectSessionWatcher::isValid() const
 		return false;
 }
 
-
 ObjectSession::ObjectSession(QObject *parent) :
 	QObject(parent)
 {

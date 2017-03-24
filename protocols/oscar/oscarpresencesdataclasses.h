@@ -15,7 +15,6 @@
     *************************************************************************
 */
 
-
 #ifndef OSCARSPRESENCEDATACLASSES_H
 #define OSCARSPRESENCEDATACLASSES_H
 
@@ -27,7 +26,6 @@
 #include "kopete_export.h"
 
 namespace Kopete { class OnlineStatus; }
-
 
 namespace Oscar
 {

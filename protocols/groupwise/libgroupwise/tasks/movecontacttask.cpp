@@ -28,7 +28,6 @@ MoveContactTask::MoveContactTask(Task* parent): NeedFolderTask(parent)
 	connect( this, SIGNAL(gotContactAdded(ContactItem)), client(), SIGNAL(contactReceived(ContactItem)) );
 }
 
-
 MoveContactTask::~MoveContactTask()
 {
 }

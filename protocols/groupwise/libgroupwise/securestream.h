@@ -102,7 +102,6 @@ USE_TLSHANDLER
 	QList<Item> list;
 };
 
-
 class SecureLayer : public QObject
 {
 	Q_OBJECT

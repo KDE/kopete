@@ -169,4 +169,3 @@ void AIMContact::slotInvisibleTo()
 	account()->engine()->setInvisibleTo( contactId(), m_actionInvisibleTo->isChecked() );
 }
 
-//kate: tab-width 4; indent-mode csands;

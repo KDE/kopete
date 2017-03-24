@@ -26,7 +26,6 @@ Settings::Settings()
 {
 }
 
-
 Settings::~Settings()
 {
 }
@@ -101,8 +100,5 @@ int Settings::timeout() const
 	return m_timeout;
 }
 
-
 }
-
-//kate: indent-mode csands; tab-width 4;
 

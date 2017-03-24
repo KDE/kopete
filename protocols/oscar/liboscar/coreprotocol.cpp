@@ -75,7 +75,6 @@ static QString toString( const QByteArray& buffer )
 	return output;
 }
 
-
 using namespace Oscar;
 
 CoreProtocol::CoreProtocol() : QObject()
@@ -258,4 +257,3 @@ bool CoreProtocol::okToProceed( const QDataStream &din )
 		return true;
 }
 
-//kate: indent-mode csands; tab-width 4;

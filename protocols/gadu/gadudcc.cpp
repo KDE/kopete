@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2004 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
 //
@@ -134,7 +133,7 @@ GaduDCC::registerAccount(GaduAccount *account)
         dccServer = new GaduDCCServer();
     }
 
-    connect(dccServer, SIGNAL(incoming(gg_dcc *,bool&)), SLOT(slotIncoming(gg_dcc *,bool&)));
+    connect(dccServer, SIGNAL(incoming(gg_dcc*,bool&)), SLOT(slotIncoming(gg_dcc*,bool&)));
 
     initmutex.unlock();
 

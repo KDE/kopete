@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2004 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
 //

@@ -25,18 +25,15 @@
 #include "userdetails.h"
 #include "contactmanager.h"
 
-
 using namespace Oscar;
 
 OwnUserInfoTask::OwnUserInfoTask( Task* parent ) : Task( parent )
 {
 }
 
-
 OwnUserInfoTask::~OwnUserInfoTask()
 {
 }
-
 
 bool OwnUserInfoTask::forMe( const Transfer* transfer ) const
 {
@@ -130,6 +127,4 @@ UserDetails OwnUserInfoTask::getInfo() const
 {
 	return m_details;
 }
-
-//kate: tab-width 4; indent-mode csands;
 

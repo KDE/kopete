@@ -390,7 +390,6 @@ extern const StaticQName QN_CAPS_C;
 extern const StaticQName QN_VER;
 extern const StaticQName QN_EXT;
 
-
 // Avatar - JEP 0153
 extern const char kNSVCard[];
 extern const StaticQName kQnVCardX;

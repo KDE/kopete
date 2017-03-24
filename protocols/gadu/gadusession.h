@@ -1,5 +1,3 @@
-// vim: set noet ts=4 sts=4 sw=4 :
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003-2004	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
 // Copyright (C) 2002	    Zack Rusin <zack@kde.org>

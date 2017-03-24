@@ -79,4 +79,3 @@ void IRCGUIClient::slotSelectCodec(QTextCodec *codec)
 //	m_contact->setCodec(codec);
 }
 
-

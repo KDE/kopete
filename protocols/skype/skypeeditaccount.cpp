@@ -18,7 +18,6 @@
 
 */
 
-
 #include "skypeeditaccount.h"
 #include "skypeprotocol.h"
 #include "skypeaccount.h"

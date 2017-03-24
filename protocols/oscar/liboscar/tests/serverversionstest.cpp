@@ -37,4 +37,3 @@ void ServerVersionsTest::testSupportedFamilies()
     delete b;
 }
 
-

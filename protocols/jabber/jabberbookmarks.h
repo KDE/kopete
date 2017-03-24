@@ -4,7 +4,6 @@
 
     Kopete    (c) 2006 by the Kopete developers <kopete-devel@kde.org>
 
-
     *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
@@ -87,7 +86,6 @@ class JabberBookmarks : public QObject
 		void accountConnected();
 		void slotReceivedBookmarks();
 		void slotJoinChatBookmark(const QString&);
-		
 
 	private:
 		JabberAccount *m_account;

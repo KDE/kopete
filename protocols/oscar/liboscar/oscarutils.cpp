@@ -23,7 +23,6 @@
 
 #include <kdebug.h>
 
-
 using namespace Oscar;
 
 QString Oscar::normalize( const QString& contact )
@@ -267,5 +266,3 @@ QTextCodec * Oscar::codecForName( const QByteArray& name )
 		return QTextCodec::codecForName( name );
 }
 
-
-//kate: tab-width 4; indent-mode csands;

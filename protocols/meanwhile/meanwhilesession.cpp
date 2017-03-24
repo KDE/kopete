@@ -77,7 +77,6 @@ static struct MeanwhileClientID ids[] = {
     { 0, NULL },
 };
 
-
 MeanwhileSession::MeanwhileSession(MeanwhileAccount *acc)
     : session(0), state(mwSession_STOPPED), account(acc), socket(0)
 {
@@ -192,7 +191,6 @@ void MeanwhileSession::connect(QString password)
     useCustomID = account->getClientIDParams(&clientID,
 		    &versionMajor, &versionMinor);
 
-
     QTcpSocket *sock = new QTcpSocket(this);
     Kopete::SocketTimeoutWatcher* timeoutWatcher = Kopete::SocketTimeoutWatcher::watch(sock);
     if (timeoutWatcher)
@@ -230,7 +228,6 @@ void MeanwhileSession::connect(QString password)
 	mwSession_setProperty(session, mwSession_CLIENT_VER_MINOR,
 			GUINT_TO_POINTER(versionMinor), NULL);
     }
-
 
     /* go!! */
     mwSession_start(session);
@@ -501,7 +498,6 @@ void MeanwhileSession::slotSocketAboutToClose()
 
     mwSession_stop(session, 0x00);
 }
-
 
 Kopete::OnlineStatus MeanwhileSession::convertStatus(int mstatus)
 {

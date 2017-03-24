@@ -638,7 +638,6 @@ int _r_out(mdnsd d, jdns_packet_t *m, mdnsdr *list)
     return ret;
 }
 
-
 mdnsd mdnsd_new(int class, int frame, int port, int (*time_now)(mdnsd d, void *arg), int (*rand_int)(mdnsd d, void *arg), void *arg)
 {
     //int i;

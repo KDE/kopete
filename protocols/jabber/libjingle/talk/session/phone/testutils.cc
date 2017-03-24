@@ -259,7 +259,6 @@ void VideoCapturerListener::OnCaptureEvent(VideoCapturer* capturer,
                                            CaptureEvent ev) {
 }
 
-
 // Returns the absolute path to a file in the testdata/ directory.
 std::string GetTestFilePath(const std::string& filename) {
   // Locate test data directory.

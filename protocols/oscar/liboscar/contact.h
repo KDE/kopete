@@ -143,4 +143,3 @@ private:
 };
 
 #endif
-//kate: space-indent off; tab-width 4; auto-insert-doxygen on; indent-mode csands;

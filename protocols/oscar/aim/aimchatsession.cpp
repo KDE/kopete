@@ -78,4 +78,3 @@ void AIMChatSession::setExchange( Oscar::WORD exchange )
     m_exchange = exchange;
 }
 
-

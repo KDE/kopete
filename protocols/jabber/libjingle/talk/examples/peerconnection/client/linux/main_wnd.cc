@@ -25,7 +25,6 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "talk/examples/peerconnection/client/linux/main_wnd.h"
 
 #include <gdk/gdkkeysyms.h>
@@ -478,5 +477,4 @@ bool GtkMainWnd::VideoRenderer::RenderFrame(const cricket::VideoFrame* frame) {
 
   return true;
 }
-
 

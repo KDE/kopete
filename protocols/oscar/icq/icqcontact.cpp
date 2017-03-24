@@ -41,7 +41,6 @@
 #include "contactmanager.h"
 #include "oscarstatusmanager.h"
 
-
 ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::MetaContact *parent,
 						const QString& icon )
 : ICQContactBase( account, name, parent, icon )
@@ -527,7 +526,6 @@ void ICQContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &me
 	manager(true)->appendMessage(msg);
 }
 
-
 void ICQContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 {
 	if (message.plainBody().isEmpty()) // no text, do nothing
@@ -627,7 +625,6 @@ QList<QAction*> *ICQContact::customContextMenuActions()
 	return actions;
 }
 
-
 void ICQContact::slotUserInfo()
 {
 	if ( m_infoWidget )
@@ -695,20 +692,17 @@ void ICQContact::slotReadAwayMessage()
 	}
 }
 
-
 void ICQContact::slotCloseAwayMessageDialog()
 {
 	awayMessageDialog->deleteLater();
 	awayMessageDialog = 0L;
 }
 
-
 const QString ICQContact::awayMessage()
 {
 	kDebug(14150) <<  property(mProtocol->statusMessage).value().toString();
 	return property(mProtocol->statusMessage).value().toString();
 }
-
 
 void ICQContact::setAwayMessage(const QString &message)
 {
@@ -717,7 +711,6 @@ void ICQContact::setAwayMessage(const QString &message)
 	setProperty(mProtocol->statusMessage, message);
 	emit awayMessageChanged();
 }
-
 
 void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf)
 {
@@ -762,7 +755,6 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 	incUserInfoCounter();
 }
 
-
 void ICQContact::slotSnacFailed(WORD snacID)
 {
 	if (userinfoRequestSequence != 0)
@@ -790,4 +782,3 @@ void ICQContact::slotVisibleTo()
 	setVisibleTo(actionVisibleTo->isChecked(), true);
 }
 #endif
-//kate: indent-mode csands; tab-width 4; replace-tabs off; space-indent off;

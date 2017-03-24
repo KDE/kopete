@@ -73,4 +73,3 @@ QTextCodec * codecForName( const QByteArray& name );
 
 #endif
 
-//kate: auto-insert-doxygen on; tab-width 4; indent-mode csands;

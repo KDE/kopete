@@ -144,7 +144,6 @@ class HangoutPubSubClient : public sigslot::has_slots<> {
                    const std::string&,
                    const XmlElement*> SignalMediaBlockError;
 
-
  private:
   void OnPresenterRequestError(PubSubClient* client,
                                const XmlElement* stanza);

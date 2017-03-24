@@ -33,7 +33,6 @@
 #include "talk/xmllite/qname.h"
 #include "talk/xmllite/xmlelement.h"
 
-
 namespace buzz {
 
 class XmppEngine;
@@ -296,7 +295,6 @@ public:
   virtual XmppReturnStatus RemoveIqHandler(XmppIqCookie cookie,
                                       XmppIqHandler** iq_handler) = 0;
 
-
   //! Forms and sends an error in response to the given stanza.
   //! Swaps to and from, sets type to "error", and adds error information
   //! based on the passed code.  Text is optional and may be STR_EMPTY.
@@ -318,12 +316,10 @@ public:
 
 }
 
-
 // Move these to a better location
 
 #define XMPP_FAILED(x)                      \
   ( (x) == buzz::XMPP_RETURN_OK ? false : true)   \
-
 
 #define XMPP_SUCCEEDED(x)                   \
   ( (x) == buzz::XMPP_RETURN_OK ? true : false)   \
@@ -336,7 +332,6 @@ public:
     }                                 \
   } while (false)                     \
 
-
 #define IFC(x)                        \
   do {                                \
     xmpp_status = (x);                \
@@ -344,6 +339,5 @@ public:
       goto Cleanup;                   \
     }                                 \
   } while (false)                     \
-
 
 #endif

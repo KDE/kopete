@@ -241,7 +241,6 @@ static void qt_dispatchEnterLeave(QWidget* enter, QWidget* leave) {
     }
 }
 
-
 extern "C" bool qtns_event(QtNPInstance *This, NPEvent *event)
 {
     static QPointer<QWidget> lastWidget;
@@ -450,7 +449,6 @@ void* MachOFunctionPointerForCFMFunctionPointer(void* inCfmProcPtr)
     return(vMachProcPtr);
 }
 #endif
-
 
 extern "C" void qtns_initialize(QtNPInstance *)
 {

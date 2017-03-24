@@ -18,7 +18,7 @@
 
 #include "jabbercontactpool.h"
 
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <kmessagebox.h>
 #include <kopeteaccountmanager.h>
 #include <kopetecontactlist.h>
@@ -61,12 +61,12 @@ JabberContact *JabberContactPool::addContact(const XMPP::RosterItem &contact, Ko
     // see if the contact already exists
     JabberContactPoolItem *mContactItem = findPoolItem(contact);
     if (mContactItem) {
-        kDebug(JABBER_DEBUG_GLOBAL) << "Updating existing contact " << contact.jid().full() << "   -  " <<   mContactItem->contact();
+        qCDebug(JABBER_PROTOCOL_LOG) << "Updating existing contact " << contact.jid().full() << "   -  " <<   mContactItem->contact();
 
         JabberContact *retval = dynamic_cast<JabberContact *>(mContactItem->contact());
 
         if (!retval) {
-            kWarning(JABBER_DEBUG_GLOBAL) << "ERROR: Wrong contact: " << mContactItem->contact()->contactId() << mContactItem->contact();
+            qCWarning(JABBER_PROTOCOL_LOG) << "ERROR: Wrong contact: " << mContactItem->contact()->contactId() << mContactItem->contact();
             KMessageBox::error(Kopete::UI::Global::mainWidget(),
                                "Fatal error in the Jabber contact pool. Please restart Kopete and submit a debug log "
                                "of your session to http://bugs.kde.org.",
@@ -81,7 +81,7 @@ JabberContact *JabberContactPool::addContact(const XMPP::RosterItem &contact, Ko
         return retval;
     }
 
-    kDebug(JABBER_DEBUG_GLOBAL) << "Adding new contact " << contact.jid().full();
+    qCDebug(JABBER_PROTOCOL_LOG) << "Adding new contact " << contact.jid().full();
 
     JabberTransport *transport = 0l;
     QString legacyId;
@@ -94,7 +94,7 @@ JabberContact *JabberContactPool::addContact(const XMPP::RosterItem &contact, Ko
     // create new contact instance and add it to the dictionary
     JabberContact *newContact = new JabberContact(contact, transport ? (Kopete::Account *)transport : (Kopete::Account *)mAccount, metaContact, legacyId);
     JabberContactPoolItem *newContactItem = new JabberContactPoolItem(newContact);
-    connect(newContact, SIGNAL(contactDestroyed(Kopete::Contact *)), this, SLOT(slotContactDestroyed(Kopete::Contact *)));
+    connect(newContact, SIGNAL(contactDestroyed(Kopete::Contact*)), this, SLOT(slotContactDestroyed(Kopete::Contact*)));
     newContactItem->setDirty(dirty);
     mPool.append(newContactItem);
 
@@ -110,7 +110,7 @@ JabberBaseContact *JabberContactPool::addGroupContact(const XMPP::RosterItem &co
     if (mContactItem) {
         if (mContactItem->contact()->inherits(roomContact
                                               ? (const char *)("JabberGroupContact") : (const char *)("JabberGroupMemberContact"))) {
-            kDebug(JABBER_DEBUG_GLOBAL) << "Updating existing contact " << mContact.jid().full();
+            qCDebug(JABBER_PROTOCOL_LOG) << "Updating existing contact " << mContact.jid().full();
 
             // It exists, update it.
             mContactItem->contact()->updateContact(mContact);
@@ -121,7 +121,7 @@ JabberBaseContact *JabberContactPool::addGroupContact(const XMPP::RosterItem &co
         } else {
             //this happen if we receive a MUC invitaiton:  when the invitaiton is received, it's from the muc itself
             //and then kopete will create a temporary contact for it. but it will not be a good contact.
-            kDebug(JABBER_DEBUG_GLOBAL) << "Bad contact will be removed and re-added " << mContact.jid().full();
+            qCDebug(JABBER_PROTOCOL_LOG) << "Bad contact will be removed and re-added " << mContact.jid().full();
             Kopete::MetaContact *old_mc = mContactItem->contact()->metaContact();
             delete mContactItem->contact();
             mContactItem = 0L;
@@ -131,7 +131,7 @@ JabberBaseContact *JabberContactPool::addGroupContact(const XMPP::RosterItem &co
         }
     }
 
-    kDebug(JABBER_DEBUG_GLOBAL) << "Adding new contact " << mContact.jid().full();
+    qCDebug(JABBER_PROTOCOL_LOG) << "Adding new contact " << mContact.jid().full();
 
     // create new contact instance and add it to the dictionary
     JabberBaseContact *newContact;
@@ -144,7 +144,7 @@ JabberBaseContact *JabberContactPool::addGroupContact(const XMPP::RosterItem &co
 
     JabberContactPoolItem *newContactItem = new JabberContactPoolItem(newContact);
 
-    connect(newContact, SIGNAL(contactDestroyed(Kopete::Contact *)), this, SLOT(slotContactDestroyed(Kopete::Contact *)));
+    connect(newContact, SIGNAL(contactDestroyed(Kopete::Contact*)), this, SLOT(slotContactDestroyed(Kopete::Contact*)));
 
     newContactItem->setDirty(dirty);
     mPool.append(newContactItem);
@@ -154,7 +154,7 @@ JabberBaseContact *JabberContactPool::addGroupContact(const XMPP::RosterItem &co
 
 void JabberContactPool::removeContact(const XMPP::Jid &jid)
 {
-    kDebug(JABBER_DEBUG_GLOBAL) << "Removing contact " << jid.full();
+    qCDebug(JABBER_PROTOCOL_LOG) << "Removing contact " << jid.full();
 
     foreach (JabberContactPoolItem *mContactItem, mPool) {
         if (mContactItem->contact()->rosterItem().jid().full().toLower() == jid.full().toLower()) {
@@ -173,12 +173,12 @@ void JabberContactPool::removeContact(const XMPP::Jid &jid)
         }
     }
 
-    kDebug(JABBER_DEBUG_GLOBAL) << "WARNING: No match found!";
+    qCDebug(JABBER_PROTOCOL_LOG) << "WARNING: No match found!";
 }
 
 void JabberContactPool::slotContactDestroyed(Kopete::Contact *contact)
 {
-    kDebug(JABBER_DEBUG_GLOBAL) << "Contact deleted, collecting the pieces...";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Contact deleted, collecting the pieces...";
 
     JabberBaseContact *jabberContact = static_cast<JabberBaseContact *>(contact);
     //WARNING  this ptr is not usable, we are in the Kopete::Contact destructor
@@ -205,7 +205,7 @@ void JabberContactPool::slotContactDestroyed(Kopete::Contact *contact)
 
 void JabberContactPool::clear()
 {
-    kDebug(JABBER_DEBUG_GLOBAL) << "Clearing the contact pool.";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Clearing the contact pool.";
 
     foreach (JabberContactPoolItem *mContactItem, mPool) {
         /*
@@ -219,7 +219,7 @@ void JabberContactPool::clear()
 
 void JabberContactPool::setDirty(const XMPP::Jid &jid, bool dirty)
 {
-    kDebug(JABBER_DEBUG_GLOBAL) << "Setting flag for " << jid.full() << " to " << dirty;
+    qCDebug(JABBER_PROTOCOL_LOG) << "Setting flag for " << jid.full() << " to " << dirty;
 
     foreach (JabberContactPoolItem *mContactItem, mPool) {
         if (mContactItem->contact()->rosterItem().jid().full().toLower() == jid.full().toLower()) {
@@ -228,16 +228,16 @@ void JabberContactPool::setDirty(const XMPP::Jid &jid, bool dirty)
         }
     }
 
-    kDebug(JABBER_DEBUG_GLOBAL) << "WARNING: No match found!";
+    qCDebug(JABBER_PROTOCOL_LOG) << "WARNING: No match found!";
 }
 
 void JabberContactPool::cleanUp()
 {
-    kDebug(JABBER_DEBUG_GLOBAL) << "Cleaning dirty items from contact pool.";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Cleaning dirty items from contact pool.";
 
     foreach (JabberContactPoolItem *mContactItem, mPool) {
         if (mContactItem->dirty()) {
-            kDebug(JABBER_DEBUG_GLOBAL) << "Removing dirty contact " << mContactItem->contact()->contactId();
+            qCDebug(JABBER_PROTOCOL_LOG) << "Removing dirty contact " << mContactItem->contact()->contactId();
 
             /*
              * The following deletion will cause slotContactDestroyed()

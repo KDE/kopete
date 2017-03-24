@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
 //
@@ -34,7 +33,8 @@ namespace Kopete {
 class Account;
 }
 
-class GaduEditAccount : public QWidget, private Ui::GaduAccountEditUI, public KopeteEditAccountWidget
+class GaduEditAccount : public QWidget, private Ui::GaduAccountEditUI,
+    public KopeteEditAccountWidget
 {
     Q_OBJECT
 

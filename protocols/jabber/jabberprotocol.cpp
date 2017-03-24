@@ -18,7 +18,7 @@
   */
 
 #include "jabberprotocol.h"
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <kgenericfactory.h>
 #include <kconfig.h>
 
@@ -113,13 +113,13 @@ JabberProtocol::JabberProtocol (QObject * parent, const QVariantList &)
 
 {
 
-	kDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ...";
+	qDebug (JABBER_PROTOCOL_LOG) << "[JabberProtocol] Loading ...";
 
 	/* This is meant to be a singleton, so we will check if we have
 	 * been loaded before. */
 	if (protocolInstance)
 	{
-		kDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Warning: Protocol already " << "loaded, not initializing again.";
+		qDebug (JABBER_PROTOCOL_LOG) << "[JabberProtocol] Warning: Protocol already " << "loaded, not initializing again.";
 		return;
 	}
 
@@ -147,17 +147,15 @@ JabberProtocol::~JabberProtocol ()
 	protocolInstance = 0L;
 }
 
-
-
 AddContactPage *JabberProtocol::createAddContactWidget (QWidget * parent, Kopete::Account * i)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "Create Add Contact  Widget";
+	qDebug (JABBER_PROTOCOL_LOG) << "Create Add Contact  Widget";
 	return new JabberAddContactPage (i, parent);
 }
 
 KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Account * account, QWidget * parent)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "Edit Account Widget";
+	qDebug (JABBER_PROTOCOL_LOG) << "Edit Account Widget";
 	JabberAccount *ja=dynamic_cast < JabberAccount * >(account);
 	if(ja || !account)
 		return new JabberEditAccountWidget (this,ja , parent);
@@ -175,7 +173,7 @@ KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Accoun
 
 Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "Create New Account. ID: " << accountId;
+	qDebug (JABBER_PROTOCOL_LOG) << "Create New Account. ID: " << accountId;
 	if( Kopete::AccountManager::self()->findAccount( pluginId() , accountId ) )
 		return 0L;  //the account may already exist if greated just above
 
@@ -253,7 +251,7 @@ Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resou
 		else
 		{
 			status = JabberKOSOnline; // Assume that contact is online bug 210558
-			kDebug (JABBER_DEBUG_GLOBAL) << "Unknown status <show>" << resource.status ().show () << "</show> for contact. One of your contact is probably using a broken client, ask him to report a bug";
+			qDebug (JABBER_PROTOCOL_LOG) << "Unknown status <show>" << resource.status ().show () << "</show> for contact. One of your contact is probably using a broken client, ask him to report a bug";
 		}
 	}
 
@@ -275,7 +273,7 @@ JabberProtocol *JabberProtocol::protocol ()
 Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaContact,
 										 const QMap < QString, QString > &serializedData, const QMap < QString, QString > & /* addressBookData */ )
 {
-//  kDebug (JABBER_DEBUG_GLOBAL) << "Deserializing data for metacontact " << metaContact->displayName () << "\n";
+//  qDebug (JABBER_PROTOCOL_LOG) << "Deserializing data for metacontact " << metaContact->displayName () << "\n";
 
 	QString contactId = serializedData[QStringLiteral("contactId")];
 	QString accountId = serializedData[QStringLiteral("accountId")];
@@ -293,7 +291,7 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 
 	if (!account)
 	{
-		kDebug(JABBER_DEBUG_GLOBAL) << "WARNING: Account for contact does not exist, skipping.";
+		qCDebug(JABBER_PROTOCOL_LOG) << "WARNING: Account for contact does not exist, skipping.";
 		return 0;
 	}
 	
@@ -375,7 +373,7 @@ void JabberProtocol::handleURL(const QString&, const QUrl &url) const
 	XMPP::Jid jid = jid_str;
 	QString action=query.queryItems().isEmpty() ? QString() : query.queryItems().first().first;
 	 
-	qDebug() << query.queryItemValue(QStringLiteral("body"));
+	qCDebug(JABBER_PROTOCOL_LOG) << query.queryItemValue(QStringLiteral("body"));
 
 	if(jid.isEmpty())
 	{
@@ -551,7 +549,7 @@ void JabberProtocol::handleURL(const QString&, const QUrl &url) const
 	}//TODO: recvfile
 	else
 	{
-		kWarning(JABBER_DEBUG_GLOBAL) << "unable to handle URL "<< url.toDisplayString();
+		qCWarning(JABBER_PROTOCOL_LOG) << "unable to handle URL "<< url.toDisplayString();
 	}
 
 }

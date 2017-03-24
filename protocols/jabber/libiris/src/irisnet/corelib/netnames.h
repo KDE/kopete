@@ -310,7 +310,6 @@ private:
 IRISNET_EXPORT QDebug operator<<(QDebug, XMPP::NameRecord::Type);
 IRISNET_EXPORT QDebug operator<<(QDebug, const XMPP::NameRecord &);
 
-
 class IRISNET_EXPORT ServiceInstance
 {
 public:
@@ -479,7 +478,6 @@ private:
 
 IRISNET_EXPORT QDebug operator<<(QDebug, XMPP::NameResolver::Error);
 
-
 class IRISNET_EXPORT WeightedNameRecordList
 {
 	friend QDebug operator<<(QDebug, const WeightedNameRecordList&);
@@ -513,7 +511,6 @@ private:
 
 QDebug operator<<(QDebug, const XMPP::WeightedNameRecordList&);
 
-
 class IRISNET_EXPORT ServiceBrowser : public QObject
 {
 	Q_OBJECT
@@ -543,7 +540,6 @@ private:
 
 	friend class NameManager;
 };
-
 
 /*! DNS resolver with DNS-SD/mDNS and recursive lookup support */
 /*
@@ -699,8 +695,6 @@ private:
 
 }
 
-
 Q_DECLARE_METATYPE(XMPP::NameResolver::Error)
-
 
 #endif

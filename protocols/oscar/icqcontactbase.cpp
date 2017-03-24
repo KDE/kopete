@@ -26,7 +26,6 @@
 #include "oscarprotocol.h"
 #include "oscarstatusmanager.h"
 
-
 ICQContactBase::ICQContactBase( Kopete::Account *account, const QString &name, Kopete::MetaContact *parent,
 						const QString& icon )
 : OscarContact( account, name, parent, icon )
@@ -56,4 +55,3 @@ void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, c
 	setStatusMessage( statusMessage );
 }
 
-//kate: indent-mode csands; tab-width 4; replace-tabs off; space-indent off;

@@ -64,7 +64,6 @@ class PresencePushTask : public XmppTask {
   CallClient* client_;
 };
 
-
 }
 
 #endif

@@ -72,4 +72,3 @@ class IRCServerContact
 
 #endif // IRCCONTACT_SERVER_H
 
-// vim: set noet ts=4 sts=4 tw=4:

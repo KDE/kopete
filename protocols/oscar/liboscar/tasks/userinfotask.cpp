@@ -24,12 +24,10 @@ Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 #include "transfer.h"
 #include "userdetails.h"
 
-
 UserInfoTask::UserInfoTask( Task* parent )
 : Task( parent )
 {
 }
-
 
 UserInfoTask::~UserInfoTask()
 {
@@ -146,9 +144,4 @@ UserDetails UserInfoTask::getInfoFor( Oscar::DWORD sequence ) const
 {
 	return m_sequenceInfoMap[sequence];
 }
-
-
-
-//kate: indent-mode csands; tab-width 4;
-
 

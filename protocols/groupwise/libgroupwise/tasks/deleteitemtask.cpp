@@ -24,7 +24,6 @@ DeleteItemTask::DeleteItemTask(Task* parent): ModifyContactListTask(parent)
 {
 }
 
-
 DeleteItemTask::~DeleteItemTask()
 {
 }

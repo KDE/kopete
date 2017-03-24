@@ -19,7 +19,6 @@
 #ifndef XTRAZXSERVICE_H
 #define XTRAZXSERVICE_H
 
-
 #include <QDomDocument>
 #include <QDomElement>
 

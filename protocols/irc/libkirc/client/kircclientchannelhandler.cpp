@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-
 #include "kircclientsocket.h"
 
 #include "kircclientmotdhandler.h"
@@ -37,7 +36,6 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
 
 // For now lets define it to be empty
 #define CHECK_ARGS(min, max)
@@ -242,7 +240,6 @@ KIrc::Handler::Handled ClientChannelHandler::TOPIC(KIrc::Context *context, const
 	return KIrc::Handler::NotHandled;
 }
 
-
 /* IMPORTANT NOTE:
  * Numeric replies always have the current nick or * as first argmuent.
  * NOTE: * means undefined in most (all ?) of the cases.
@@ -412,7 +409,6 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_305(KIrc::Context *con
 	return KIrc::Handler::NotHandled;
 }
 
-
 /* 306: ":You have been marked as being away"
  */
 KIrc::Handler::Handled ClientChannelHandler::numericReply_306(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
@@ -546,7 +542,6 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_352(KIrc::Context *con
 */
 	return KIrc::Handler::NotHandled;
 }
-
 
 /* 353:
  * NAMES list

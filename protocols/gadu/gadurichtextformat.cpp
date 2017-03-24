@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2004 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
 //
@@ -101,7 +100,8 @@ GaduRichTextFormat::convertToHtml(const QString &msg, unsigned int formats, void
             }
             style += QString(" color: rgb( %1, %2, %3 ); ").arg(r).arg(g).arg(b);
 
-            tmp += formatOpeningTag(QString::fromLatin1("span"), QString::fromLatin1("style=\"%1\"").arg(style));
+            tmp += formatOpeningTag(QString::fromLatin1("span"), QString::fromLatin1(
+                                        "style=\"%1\"").arg(style));
             opened = true;
         }
 
@@ -185,7 +185,8 @@ GaduRichTextFormat::convertToGaduMessage(const Kopete::Message &message)
 
                 lastpos = pos + replacement.length();
 
-                for (QStringList::Iterator attrPair = styleAttrs.begin(); attrPair != styleAttrs.end(); ++attrPair) {
+                for (QStringList::Iterator attrPair = styleAttrs.begin();
+                     attrPair != styleAttrs.end(); ++attrPair) {
                     QString attribute = (*attrPair).section(':', 0, 0);
                     QString value = (*attrPair).section(':', 1);
                     parseAttributes(attribute, value);
@@ -196,7 +197,8 @@ GaduRichTextFormat::convertToGaduMessage(const Kopete::Message &message)
                     return NULL;
                 }
 
-                QString rep = QString("<span style=\"%1\">%2</span>").arg(styleHTML).arg(replacement);
+                QString rep
+                    = QString("<span style=\"%1\">%2</span>").arg(styleHTML).arg(replacement);
                 htmlString.replace(findTags.pos(0), rep.length(), replacement);
 
                 replacement = unescapeGaduMessage(replacement);
@@ -227,7 +229,8 @@ GaduRichTextFormat::parseAttributes(const QString attribute, const QString value
     if (attribute == QString::fromLatin1("font-weight") && value == QString::fromLatin1("600")) {
         rtfs.font |= GG_FONT_BOLD;
     }
-    if (attribute == QString::fromLatin1("text-decoration") && value == QString::fromLatin1("underline")) {
+    if (attribute == QString::fromLatin1("text-decoration")
+        && value == QString::fromLatin1("underline")) {
         rtfs.font |= GG_FONT_UNDERLINE;
     }
     if (attribute == QString::fromLatin1("font-style") && value == QString::fromLatin1("italic")) {

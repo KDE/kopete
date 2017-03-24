@@ -93,7 +93,6 @@ void VoicemailJidRequester::OnSecondVoicemailJidSuccess(buzz::Jid jid,
   Wake();
 }
 
-
 void VoicemailJidRequester::StartSecondQuery() {
   // Send a query to your own jid to get the voicemail jid
   DiscoItemsQueryTask* disco_items_task = new DiscoItemsQueryTask(this,

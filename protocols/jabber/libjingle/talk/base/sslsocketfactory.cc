@@ -135,7 +135,6 @@ AsyncSocket* SslSocketFactory::CreateAsyncSocket(int family, int type) {
   }
 }
 
-
 AsyncSocket* SslSocketFactory::CreateProxySocket(const ProxyInfo& proxy,
                                                  int family,
                                                  int type) {

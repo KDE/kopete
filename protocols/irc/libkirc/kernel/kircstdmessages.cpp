@@ -37,7 +37,6 @@ using namespace KIrc;
 #warning make usage of KUser (done!) and make more useful using some default strings (todo!)
 #endif
 
-
 static const QByteArray AWAY("AWAY");
 static const QByteArray ERROR("ERROR");
 static const QByteArray INVITE("INVITE");

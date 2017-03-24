@@ -92,7 +92,6 @@ void PrivacyManager::setDeny( const QString & dn )
 	}
 }
 
-
 void PrivacyManager::setDefaultAllow( bool allow )
 {
 	PrivacyItemTask * pit = new PrivacyItemTask( m_client->rootTask() );

@@ -114,7 +114,6 @@ void QQChatSession::setClosed()
 	m_guid.clear();
 }
 
-
 QQAccount *  QQChatSession::account()
 {
 	return static_cast<QQAccount *>( Kopete::ChatSession::account() );

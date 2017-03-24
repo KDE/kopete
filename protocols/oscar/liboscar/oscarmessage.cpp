@@ -485,5 +485,3 @@ Message::operator bool() const
 
 }
 
-//kate: indent-mode csands; auto-insert-doxygen on; tab-width 4;
-

@@ -21,7 +21,7 @@
 #include <QRadioButton>
 #include <QPushButton>
 #include <KLocale>
-#include <KDebug>
+#include "jabber_protocol_debug.h"
 
 #include "tasks/jt_ahcommand.h"
 

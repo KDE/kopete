@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-
 #include "kircclientsocket.h"
 
 #include "kircclientmotdhandler.h"
@@ -37,7 +36,6 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
 
 // For now lets define it to be empty
 #define CHECK_ARGS(min, max)

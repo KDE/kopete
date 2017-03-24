@@ -23,7 +23,6 @@ EventTransfer::EventTransfer( const quint32 eventType, const QString & source, Q
 	m_contentFlags |= ( EventType | Source | TimeStamp );
 }
 
-
 EventTransfer::~EventTransfer()
 {
 }

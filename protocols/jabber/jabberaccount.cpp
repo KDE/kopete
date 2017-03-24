@@ -41,7 +41,7 @@
 #include <QPointer>
 
 #include <kconfig.h>
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <kmessagebox.h>
 #include <knotification.h>
 #include <KLocalizedString>
@@ -88,12 +88,10 @@
 
 #define KOPETE_CAPS_NODE "http://kopete.kde.org/jabber/caps"
 
-
-
 JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId)
 			  :Kopete::PasswordedAccount ( parent, accountId, false )
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << "Instantiating new account " << accountId;
+    qCDebug(JABBER_PROTOCOL_LOG) << "Instantiating new account " << accountId;
 
 	m_protocol = parent;
 
@@ -227,7 +225,6 @@ void JabberAccount::fillActionMenu( KActionMenu *actionMenu )
 	actionMenu->addAction(action);
 	action->setEnabled( isConnected() );
 
-
 	actionMenu->addSeparator();
 	
 	action = new QAction( this );
@@ -337,7 +334,7 @@ bool JabberAccount::isConnecting ()
 
 void JabberAccount::connectWithPassword ( const QString &password )
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "called";
+	qDebug (JABBER_PROTOCOL_LOG) << "called";
 
 	/* Cancel connection process if no password has been supplied. */
 	if ( password.isEmpty () )
@@ -377,7 +374,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	m_jabberClient->setUseXOAuth2 ( configGroup()->readEntry ( "UseXOAuth2", false ) );
 
 	// enable file transfer (if empty, IP will be set after connection has been established)
-	KConfigGroup config = KGlobal::config()->group ( "Jabber" );
+	KConfigGroup config = KSharedConfig::openConfig()->group ( "Jabber" );
 	m_jabberClient->setFileTransfersEnabled ( true, config.readEntry ( "LocalIP" ) );
 	setS5BServerPort ( config.readEntry ( "LocalPort", 8010 ) );
 
@@ -437,11 +434,11 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		timezoneString = str;
 	//END of timezone code
 
-	kDebug (JABBER_DEBUG_GLOBAL) << "Determined timezone " << timezoneString << " with UTC offset " << timezoneOffset << " hours.";
+	qDebug (JABBER_PROTOCOL_LOG) << "Determined timezone " << timezoneString << " with UTC offset " << timezoneOffset << " hours.";
 
 	m_jabberClient->setTimeZone ( timezoneString, timezoneOffset );
 
-	kDebug (JABBER_DEBUG_GLOBAL) << "Connecting to Jabber server " << server() << ":" << port();
+	qDebug (JABBER_PROTOCOL_LOG) << "Connecting to Jabber server " << server() << ":" << port();
 
 	setPresence( XMPP::Status (QStringLiteral("connecting"), QLatin1String(""), 0, true) );
 
@@ -471,7 +468,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 void JabberAccount::slotClientDebugMessage ( const QString &msg )
 {
 
-	kDebug (JABBER_DEBUG_PROTOCOL) << msg;
+    qCDebug(JABBER_PROTOCOL_LOG) << msg;
 
 }
 
@@ -587,7 +584,7 @@ void JabberAccount::slotHandleTLSWarning (
 		QCA::TLS::IdentityResult identityResult,
 		QCA::Validity validityResult )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << "Handling TLS warning...";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Handling TLS warning...";
 
 	if ( handleTLSWarning ( m_jabberClient, identityResult, validityResult ) )
 	{
@@ -604,7 +601,7 @@ void JabberAccount::slotHandleTLSWarning (
 
 void JabberAccount::slotClientError ( JabberClient::ErrorCode errorCode )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << "Handling client error...";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Handling client error...";
 
 	switch ( errorCode )
 	{
@@ -621,18 +618,18 @@ void JabberAccount::slotClientError ( JabberClient::ErrorCode errorCode )
 
 void JabberAccount::slotConnected ()
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "Connected to Jabber server.";
+	qDebug (JABBER_PROTOCOL_LOG) << "Connected to Jabber server.";
 
 #ifdef LIBJINGLE_SUPPORT
 	loginLibjingle();
 #endif
 
 #ifdef JINGLE_SUPPORT
-	qDebug() << "Create JingleCallsManager";
+	qCDebug(JABBER_PROTOCOL_LOG) << "Create JingleCallsManager";
 	m_jcm = new JingleCallsManager(this);
 #endif
 
-	kDebug (JABBER_DEBUG_GLOBAL) << "Requesting roster...";
+	qDebug (JABBER_PROTOCOL_LOG) << "Requesting roster...";
 	m_jabberClient->requestRoster ();
 }
 
@@ -651,7 +648,7 @@ void JabberAccount::slotRosterRequestFinished ( bool success )
 	* information before we have updated our roster with actual
 	* contacts from the server! (Iris won't forward presence
 	* information in that case either). */
-	kDebug (JABBER_DEBUG_GLOBAL) << "Setting initial presence...";
+	qDebug (JABBER_PROTOCOL_LOG) << "Setting initial presence...";
 	setPresence ( m_initialPresence );
 
 }
@@ -675,7 +672,7 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 			m_libjingle->logout();
 		#endif
 			xmppStatus.setIsAvailable( false );
-			kDebug (JABBER_DEBUG_GLOBAL) << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD";
+			qDebug (JABBER_PROTOCOL_LOG) << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD";
 			disconnect (Manual, xmppStatus);	
 			return;
     	}
@@ -684,7 +681,6 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 	{
 		return;
 	}
-	
 
 	if ( !isConnected () )
 	{
@@ -708,11 +704,11 @@ void JabberAccount::setStatusMessage( const Kopete::StatusMessage &statusMessage
 
 void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "disconnect() called";
+	qDebug (JABBER_PROTOCOL_LOG) << "disconnect() called";
 
 	if (isConnected ())
 	{
-		kDebug (JABBER_DEBUG_GLOBAL) << "Still connected, closing connection...";
+		qDebug (JABBER_PROTOCOL_LOG) << "Still connected, closing connection...";
 		/* Tell backend class to disconnect. */
 		m_jabberClient->disconnect ();
 	}
@@ -730,18 +726,18 @@ void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 	 * Instead, the instance will lurk until the next
 	 * connection attempt.
 	 */
-	kDebug (JABBER_DEBUG_GLOBAL) << "Disconnected.";
+	qDebug (JABBER_PROTOCOL_LOG) << "Disconnected.";
 
 	disconnected ( reason );
 }
 
 void JabberAccount::disconnect( Kopete::Account::DisconnectReason reason, XMPP::Status &status )
 {
-    kDebug (JABBER_DEBUG_GLOBAL) << "disconnect( reason, status ) called";
+    qDebug (JABBER_PROTOCOL_LOG) << "disconnect( reason, status ) called";
     
 	if (isConnected ())
 	{
-		kDebug (JABBER_DEBUG_GLOBAL) << "Still connected, closing connection...";
+		qDebug (JABBER_PROTOCOL_LOG) << "Still connected, closing connection...";
 		/* Tell backend class to disconnect. */
 		m_jabberClient->disconnect (status);
 	}
@@ -758,7 +754,7 @@ void JabberAccount::disconnect( Kopete::Account::DisconnectReason reason, XMPP::
 	 * Instead, the instance will lurk until the next
 	 * connection attempt.
 	 */
-	kDebug (JABBER_DEBUG_GLOBAL) << "Disconnected.";
+	qDebug (JABBER_PROTOCOL_LOG) << "Disconnected.";
 
 	Kopete::Account::disconnected ( reason );
 }
@@ -780,7 +776,7 @@ void JabberAccount::slotDisconnect ()
 
 void JabberAccount::slotCSDisconnected ()
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "Disconnected from Jabber server.";
+	qDebug (JABBER_PROTOCOL_LOG) << "Disconnected from Jabber server.";
 
 	/*
 	 * We should delete the JabberClient instance here,
@@ -1042,19 +1038,19 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 
 void JabberAccount::slotCSError ( int error )
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << "Error in stream signalled.";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Error in stream signalled.";
 
 	if ( ( error == XMPP::ClientStream::ErrAuth )
 		&& ( client()->clientStream()->errorCondition () == XMPP::ClientStream::NotAuthorized ) )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << "Incorrect password, retrying.";
+        qCDebug(JABBER_PROTOCOL_LOG) << "Incorrect password, retrying.";
 		disconnect(Kopete::Account::BadPassword);
 	}
 	else
 	{
 		Kopete::Account::DisconnectReason errorClass =  Kopete::Account::Unknown;
 
-		kDebug ( JABBER_DEBUG_GLOBAL ) << "Disconnecting.";
+        qCDebug(JABBER_PROTOCOL_LOG) << "Disconnecting.";
 
 		// display message to user
 		// when removing or disconnecting, connection errors are normal
@@ -1073,7 +1069,7 @@ void JabberAccount::slotCSError ( int error )
 /* Set presence (usually called by dialog widget). */
 void JabberAccount::setPresence ( const XMPP::Status &status )
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << "Status: " << status.show () << ", Reason: " << status.status ();
+    qCDebug(JABBER_PROTOCOL_LOG) << "Status: " << status.show () << ", Reason: " << status.status ();
 
 	// fetch input status
 	XMPP::Status newStatus = status;
@@ -1092,7 +1088,7 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 		newPriority = configGroup()->readEntry( "AwayPriority", 0 );
 	}
 	newStatus.setPriority ( newPriority );
-	kDebug(JABBER_DEBUG_GLOBAL) << "New priority: " << newPriority;
+    qCDebug(JABBER_PROTOCOL_LOG) << "New priority: " << newPriority;
 
 	XMPP::Jid jid;
 
@@ -1107,7 +1103,7 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 
 	XMPP::Resource oldResource ( m_lastResource );
 
-	kDebug(JABBER_DEBUG_GLOBAL) << "Old resource:" << m_lastResource;
+    qCDebug(JABBER_PROTOCOL_LOG) << "Old resource:" << m_lastResource;
 
 	// update resource from jabber client
 	m_lastResource = jid.resource();
@@ -1131,7 +1127,7 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 			resourcePool()->removeResource ( jid, oldResource );
 	}
 
-	kDebug(JABBER_DEBUG_GLOBAL) << "New resource:" << m_lastResource;
+    qCDebug(JABBER_PROTOCOL_LOG) << "New resource:" << m_lastResource;
 
 	/*
 	 * Unless we are in the connecting status, send a presence packet to the server
@@ -1143,7 +1139,7 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 		 */
 		if (isConnected())
 		{
-			kDebug(JABBER_DEBUG_GLOBAL) << "Sending new presence to the server.";
+            qCDebug(JABBER_PROTOCOL_LOG) << "Sending new presence to the server.";
 
 			XMPP::JT_Presence * task = new XMPP::JT_Presence ( client()->rootTask ());
 
@@ -1161,7 +1157,7 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 		}
 		else
 		{
-			kDebug(JABBER_DEBUG_GLOBAL) << "We were not connected, presence update aborted.";
+            qCDebug(JABBER_PROTOCOL_LOG) << "We were not connected, presence update aborted.";
 		}
 	}
 
@@ -1202,14 +1198,14 @@ void JabberAccount::slotSetMood()
 
 void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & type)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << jid.full () << ", " << type;
+	qDebug (JABBER_PROTOCOL_LOG) << jid.full () << ", " << type;
 
 	if (type == QLatin1String("subscribe"))
 	{
 		/*
 		 * A user wants to subscribe to our presence.
 		 */
-		kDebug (JABBER_DEBUG_GLOBAL) << jid.full () << " is asking for authorization to subscribe.";
+		qDebug (JABBER_PROTOCOL_LOG) << jid.full () << " is asking for authorization to subscribe.";
 
 		// Is the user already in our contact list?
 		JabberBaseContact *contact = contactPool()->findExactMatch( jid );
@@ -1235,7 +1231,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 		/*
 		 * Someone else removed our authorization to see them.
 		 */
-		kDebug (JABBER_DEBUG_GLOBAL) << jid.full() << " revoked our presence authorization";
+		qDebug (JABBER_PROTOCOL_LOG) << jid.full() << " revoked our presence authorization";
 
 		XMPP::JT_Roster *task;
 
@@ -1338,8 +1334,6 @@ void JabberAccount::slotAddedInfoEventActionActivated ( uint actionId )
 	}
 }
 
-
-
 void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 {
 
@@ -1358,7 +1352,7 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 	 * a roster item here.
 	 */
 
-	kDebug (JABBER_DEBUG_GLOBAL) << "New roster item " << item.jid().full () << " (Subscription: " << item.subscription().toString () << ")";
+	qDebug (JABBER_PROTOCOL_LOG) << "New roster item " << item.jid().full () << " (Subscription: " << item.subscription().toString () << ")";
 
 	/*
 	 * See if the contact need to be added, according to the criterias of 
@@ -1442,7 +1436,7 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 		Kopete::MetaContact *metaContact=c->metaContact();
 		if(metaContact->isTemporary())
 			return;
-		kDebug (JABBER_DEBUG_GLOBAL) << c->contactId() << 
+		qDebug (JABBER_PROTOCOL_LOG) << c->contactId() << 
 				" is on the contact list while it should not.  we are removing it.  - " << c << endl;
 		delete c;
 		if(metaContact->contacts().isEmpty())
@@ -1453,7 +1447,7 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 
 void JabberAccount::slotContactDeleted (const XMPP::RosterItem & item)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "Deleting contact " << item.jid().full ();
+	qDebug (JABBER_PROTOCOL_LOG) << "Deleting contact " << item.jid().full ();
 
 	// since the contact instance will get deleted here, the GUI should be updated
 	contactPool()->removeContact ( item.jid () );
@@ -1462,7 +1456,7 @@ void JabberAccount::slotContactDeleted (const XMPP::RosterItem & item)
 
 void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "New message from " << message.from().full ();
+	qDebug (JABBER_PROTOCOL_LOG) << "New message from " << message.from().full ();
 
 	JabberBaseContact *contactFrom;
 
@@ -1483,7 +1477,7 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 		 */
 		if ( !contactFrom )
 		{
-			kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Received a groupchat message but could not find room contact. Ignoring message.";
+            qCDebug(JABBER_PROTOCOL_LOG) << "WARNING: Received a groupchat message but could not find room contact. Ignoring message.";
 			return;
 		}
 	}
@@ -1510,7 +1504,7 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 			XMPP::Jid jid ( message.from().bare() );
 
 			// the contact is not in our pool, add it as a temporary contact
-			kDebug (JABBER_DEBUG_GLOBAL) << jid.full () << " is unknown to us, creating temporary contact.";
+			qDebug (JABBER_PROTOCOL_LOG) << jid.full () << " is unknown to us, creating temporary contact.";
 
 			Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
 
@@ -1547,7 +1541,7 @@ void JabberAccount::slotJoinNewChat ()
 
 void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "Joined groupchat " << jid.full ();
+	qDebug (JABBER_PROTOCOL_LOG) << "Joined groupchat " << jid.full ();
 
 	// Create new meta contact that holds the groupchat contact.
 	Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
@@ -1584,7 +1578,7 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 
 void JabberAccount::slotGroupChatLeft (const XMPP::Jid & jid)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "Left groupchat " << jid.full ();
+	qDebug (JABBER_PROTOCOL_LOG) << "Left groupchat " << jid.full ();
 	
 	// remove group contact from list
 	Kopete::Contact *contact = 
@@ -1606,20 +1600,20 @@ void JabberAccount::slotGroupChatLeft (const XMPP::Jid & jid)
 
 void JabberAccount::slotGroupChatPresence (const XMPP::Jid & jid, const XMPP::Status & status)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "Received groupchat presence for room " << jid.full ();
+	qDebug (JABBER_PROTOCOL_LOG) << "Received groupchat presence for room " << jid.full ();
 
 	// fetch room contact (the one without resource)
 	JabberGroupContact *groupContact = dynamic_cast<JabberGroupContact *>( contactPool()->findExactMatch ( XMPP::Jid ( jid.bare() ) ) );
 
 	if ( !groupContact )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Groupchat presence signalled, but we do not have a room contact?";
+        qCDebug(JABBER_PROTOCOL_LOG) << "WARNING: Groupchat presence signalled, but we do not have a room contact?";
 		return;
 	}
 
 	if ( !status.isAvailable () )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << jid.full () << " has become unavailable, removing from room";
+        qCDebug(JABBER_PROTOCOL_LOG) << jid.full () << " has become unavailable, removing from room";
 
 		// remove the resource from the pool
 		resourcePool()->removeResource ( jid, XMPP::Resource ( jid.resource (), status ) );
@@ -1640,7 +1634,7 @@ void JabberAccount::slotGroupChatPresence (const XMPP::Jid & jid, const XMPP::St
 
 void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const QString &reason)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "Group chat error - room " << jid.full () << " had error " << error << " (" << reason << ")";
+	qDebug (JABBER_PROTOCOL_LOG) << "Group chat error - room " << jid.full () << " had error " << error << " (" << reason << ")";
 
 	switch (error)
 	{
@@ -1694,7 +1688,7 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 void JabberAccount::slotResourceAvailable (const XMPP::Jid & jid, const XMPP::Resource & resource)
 {
 
-	kDebug (JABBER_DEBUG_GLOBAL) << "New resource available for " << jid.full();
+	qDebug (JABBER_PROTOCOL_LOG) << "New resource available for " << jid.full();
 
 	resourcePool()->addResource ( jid, resource );
 
@@ -1703,7 +1697,7 @@ void JabberAccount::slotResourceAvailable (const XMPP::Jid & jid, const XMPP::Re
 void JabberAccount::slotResourceUnavailable (const XMPP::Jid & jid, const XMPP::Resource & resource)
 {
 
-	kDebug (JABBER_DEBUG_GLOBAL) << "Resource now unavailable for " << jid.full ();
+	qDebug (JABBER_PROTOCOL_LOG) << "Resource now unavailable for " << jid.full ();
 
 	resourcePool()->removeResource ( jid, resource );
 
@@ -1854,7 +1848,7 @@ void JabberAccount::loginLibjingleResolver(const QHostAddress &address, quint16 
 		resolver->deleteLater();
 	}
 
-	kDebug (JABBER_DEBUG_GLOBAL) << "address:" << address.toString() << "port:" << port;
+	qDebug (JABBER_PROTOCOL_LOG) << "address:" << address.toString() << "port:" << port;
 
 	m_libjingle->setServer(address.toString(), port);
 	m_libjingle->login();
@@ -1923,5 +1917,3 @@ void JabberMoodAction::triggered()
 	emit triggered(mType);
 }*/
 
-
-// vim: set noet ts=4 sts=4 sw=4:

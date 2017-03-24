@@ -524,7 +524,6 @@ void Thread::UnwrapCurrent() {
   started_ = false;
 }
 
-
 AutoThread::AutoThread(SocketServer* ss) : Thread(ss) {
   if (!ThreadManager::Instance()->CurrentThread()) {
     ThreadManager::Instance()->SetCurrentThread(this);

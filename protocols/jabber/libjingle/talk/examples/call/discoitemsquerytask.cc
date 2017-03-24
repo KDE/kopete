@@ -29,7 +29,6 @@
 #include "talk/base/scoped_ptr.h"
 #include "talk/xmpp/constants.h"
 
-
 namespace buzz {
 
 namespace {

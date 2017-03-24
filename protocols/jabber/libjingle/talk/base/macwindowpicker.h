@@ -1,6 +1,5 @@
 // Copyright 2010 Google Inc. All Rights Reserved
 
-
 #ifndef TALK_BASE_MACWINDOWPICKER_H_
 #define TALK_BASE_MACWINDOWPICKER_H_
 

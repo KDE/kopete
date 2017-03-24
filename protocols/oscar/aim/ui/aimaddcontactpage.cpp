@@ -47,7 +47,6 @@ AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent)
 	}
 }
 
-
 AIMAddContactPage::~AIMAddContactPage()
 {
 	delete m_gui;
@@ -100,5 +99,4 @@ bool AIMAddContactPage::apply(Kopete::Account *account,
 	}
 	return false;
 }
-//kate: tab-width 4; indent-mode csands;
 

@@ -135,7 +135,6 @@ class WebRtcRenderAdapter : public webrtc::ExternalRenderer {
                        1, 1, render_time_stamp_in_ns,
                        rtp_time_stamp_in_ns, 0);
 
-
     // Sanity check on decoded frame size.
     if (buffer_size != static_cast<int>(VideoFrame::SizeOf(width_, height_))) {
       LOG(LS_WARNING) << "WebRtcRenderAdapter received a strange frame size: "
@@ -1526,7 +1525,6 @@ bool WebRtcVideoMediaChannel::StopSend() {
   return true;
 }
 
-
 bool WebRtcVideoMediaChannel::IsOneSsrcStream(const StreamParams& sp) {
   return (sp.ssrcs.size() == 1 && sp.ssrc_groups.size() == 0);
 }
@@ -2069,7 +2067,6 @@ bool WebRtcVideoMediaChannel::SetNackFec(int channel_id,
   return true;
 }
 
-
 bool WebRtcVideoMediaChannel::SetSendCodec(const webrtc::VideoCodec& codec,
                                            int min_bitrate,
                                            int start_bitrate,
@@ -2080,12 +2077,10 @@ bool WebRtcVideoMediaChannel::SetSendCodec(const webrtc::VideoCodec& codec,
   target_codec.minBitrate = min_bitrate;
   target_codec.maxBitrate = max_bitrate;
 
-
   if (engine()->vie()->codec()->SetSendCodec(vie_channel_, target_codec) != 0) {
     LOG_RTCERR2(SetSendCodec, vie_channel_, send_codec_->plName);
     return false;
   }
-
 
   // Reset the send_codec_ only if SetSendCodec is success.
   send_codec_.reset(new webrtc::VideoCodec(target_codec));
@@ -2185,7 +2180,6 @@ bool WebRtcVideoMediaChannel::MaybeResetVieSendCodec(int new_width,
     // Set the new codec on vie.
     vie_codec.width = target_width;
     vie_codec.height = target_height;
-
 
     if (engine()->vie()->codec()->SetSendCodec(vie_channel_, vie_codec) != 0) {
       LOG_RTCERR1(SetSendCodec, vie_channel_);

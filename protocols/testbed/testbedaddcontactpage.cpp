@@ -69,4 +69,3 @@ bool TestbedAddContactPage::validateData()
     return true;
 }
 
-

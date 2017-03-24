@@ -23,7 +23,7 @@
 #include <qicon.h>
 
 #include <kconfig.h>
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <KLocalizedString>
 #include <QIcon>
 #include <QAction>
@@ -46,17 +46,17 @@ JabberChatSession::JabberChatSession (JabberProtocol *protocol, const JabberBase
     : Kopete::ChatSession(user, others, protocol)
     , mTypingNotificationSent(false)
 {
-    kDebug(JABBER_DEBUG_GLOBAL) << "New message manager for " << user->contactId();
+    qCDebug(JABBER_PROTOCOL_LOG) << "New message manager for " << user->contactId();
 
     // make sure Kopete knows about this instance
     Kopete::ChatSessionManager::self()->registerChatSession(this);
 
-    connect(this, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession *)),
-            this, SLOT(slotMessageSent(Kopete::Message&,Kopete::ChatSession *)));
+    connect(this, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
+            this, SLOT(slotMessageSent(Kopete::Message&,Kopete::ChatSession*)));
 
     connect(this, SIGNAL(myselfTyping(bool)), this, SLOT(slotSendTypingNotification(bool)));
 
-    connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)), this, SLOT(slotUpdateDisplayName()));
+    connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)), this, SLOT(slotUpdateDisplayName()));
 
     // check if the user ID contains a hardwired resource,
     // we'll have to use that one in that case
@@ -70,11 +70,9 @@ JabberChatSession::JabberChatSession (JabberProtocol *protocol, const JabberBase
     jingleSessionGui->setIcon(QIcon::fromTheme(QStringLiteral("voicecall")));
     connect(jingleSessionGui, SIGNAL(triggered(bool)), SLOT(slotJingleSessionGui()));
 
-
     QAction *jingleSession = new QAction(i18n("Start audio call"), members().first());
     jingleSession->setIcon(QIcon::fromTheme(QStringLiteral("voicecall")));
     connect(jingleSession, SIGNAL(triggered(bool)), SLOT(slotJingleSession()));
-
 
     Kopete::ContactPtrList chatMembers = members();
     if (!chatMembers.isEmpty()) {
@@ -133,7 +131,7 @@ JabberChatSession::~JabberChatSession()
 
 void JabberChatSession::slotUpdateDisplayName()
 {
-    kDebug(JABBER_DEBUG_GLOBAL);
+    qCDebug(JABBER_PROTOCOL_LOG);
 
     Kopete::ContactPtrList chatMembers = members();
 
@@ -334,7 +332,7 @@ void JabberChatSession::slotSendTypingNotification(bool typing)
     // send only one Composing notification; CancelComposing and slotMessageSent reset this
     mTypingNotificationSent = typing;
 
-    kDebug(JABBER_DEBUG_GLOBAL) << "Sending out typing notification (" << typing << ") to all chat members.";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Sending out typing notification (" << typing << ") to all chat members.";
 
     typing ? sendNotification(Composing) : sendNotification(CancelComposing);
 }
@@ -507,5 +505,3 @@ void JabberChatSession::slotJingleSession()
 
 #endif
 
-// vim: set noet ts=4 sts=4 sw=4:
-// kate: tab-width 4; replace-tabs off; space-indent off;

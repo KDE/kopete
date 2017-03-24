@@ -18,7 +18,7 @@
 #include "jabberfiletransfer.h"
 #include <QBuffer>
 #include <QTimer>
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <im.h>
 #include <xmpp.h>
 #include <KLocalizedString>
@@ -39,7 +39,7 @@
 
 JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTransfer *incomingTransfer )
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << "New incoming transfer from " << incomingTransfer->peer().full () << ", filename " << incomingTransfer->fileName () << ", size " << QString::number ( incomingTransfer->fileSize () );
+	qCDebug(JABBER_PROTOCOL_LOG) << "New incoming transfer from " << incomingTransfer->peer().full () << ", filename " << incomingTransfer->fileName () << ", size " << QString::number ( incomingTransfer->fileSize () );
 
 	mAccount = account;
 	mXMPPTransfer = incomingTransfer;
@@ -55,7 +55,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTrans
 
 	if ( !mContact )
 	{
-		kDebug(JABBER_DEBUG_GLOBAL) << "No matching local contact found, creating a new one.";
+		qCDebug(JABBER_PROTOCOL_LOG) << "No matching local contact found, creating a new one.";
 
 		Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
 
@@ -112,7 +112,7 @@ void JabberFileTransfer::askIncomingTransfer ( const QByteArray &thumbnail )
 
 JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseContact *contact, const QString &file )
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << "New outgoing transfer for " << contact->contactId() << ": " << file;
+	qCDebug(JABBER_PROTOCOL_LOG) << "New outgoing transfer for " << contact->contactId() << ": " << file;
 
 	mAccount = account;
 	mContact = contact;
@@ -124,7 +124,6 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 																			  mLocalFile.size (),
 																			  contact->contactId (),
 																			  Kopete::FileTransferInfo::Outgoing );
-
 
 	connect ( mKopeteTransfer, SIGNAL (result(KJob*)), this, SLOT (slotTransferResult()) );
 
@@ -148,7 +147,6 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 		preview= FTThumbnail(ba,QStringLiteral("image/png"),img.width(),img.height());
 	}
 
-	  
 	if(canOpen) {
 		mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), QUrl(file).fileName (), mLocalFile.size (), QLatin1String(""), preview);
 	} else {
@@ -159,7 +157,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 
 JabberFileTransfer::~JabberFileTransfer ()
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << "Destroying Jabber file transfer object.";
+	qCDebug(JABBER_PROTOCOL_LOG) << "Destroying Jabber file transfer object.";
 
 	mLocalFile.close ();
 
@@ -184,7 +182,7 @@ void JabberFileTransfer::slotIncomingTransferAccepted ( Kopete::Transfer *transf
 	if ( (long)transfer->info().transferId () != mTransferId )
 		return;
 
-	kDebug(JABBER_DEBUG_GLOBAL) << "Accepting transfer for " << mXMPPTransfer->peer().full ();
+	qCDebug(JABBER_PROTOCOL_LOG) << "Accepting transfer for " << mXMPPTransfer->peer().full ();
 
 	mKopeteTransfer = transfer;
 	mLocalFile.setFileName ( fileName );
@@ -255,7 +253,7 @@ void JabberFileTransfer::slotTransferRefused ( const Kopete::FileTransferInfo &t
 	if ( (long)transfer.transferId () != mTransferId )
 		return;
 
-	kDebug(JABBER_DEBUG_GLOBAL) << "Local user refused transfer from " << mXMPPTransfer->peer().full ();
+	qCDebug(JABBER_PROTOCOL_LOG) << "Local user refused transfer from " << mXMPPTransfer->peer().full ();
 
 	deleteLater ();
 
@@ -266,7 +264,7 @@ void JabberFileTransfer::slotTransferResult ()
 
 	if ( mKopeteTransfer->error () == KIO::ERR_USER_CANCELED )
 	{
-		kDebug(JABBER_DEBUG_GLOBAL) << "Transfer with " << mXMPPTransfer->peer().full () << " has been canceled.";
+		qCDebug(JABBER_PROTOCOL_LOG) << "Transfer with " << mXMPPTransfer->peer().full () << " has been canceled.";
 		mXMPPTransfer->close ();
 		deleteLater ();
 	}
@@ -325,7 +323,7 @@ void JabberFileTransfer::slotIncomingDataReady ( const QByteArray &data )
 
 	if ( mBytesToTransfer <= 0 )
 	{
-		kDebug(JABBER_DEBUG_GLOBAL) << "Transfer from " << mXMPPTransfer->peer().full () << " done.";
+		qCDebug(JABBER_PROTOCOL_LOG) << "Transfer from " << mXMPPTransfer->peer().full () << " done.";
 
 		mKopeteTransfer->slotComplete ();
 
@@ -337,7 +335,7 @@ void JabberFileTransfer::slotIncomingDataReady ( const QByteArray &data )
 void JabberFileTransfer::slotOutgoingConnected ()
 {
 
-	kDebug ( JABBER_DEBUG_GLOBAL ) << "Outgoing data connection is open.";
+	qCDebug(JABBER_PROTOCOL_LOG) << "Outgoing data connection is open.";
 
 	mBytesTransferred = mXMPPTransfer->offset ();
 	mLocalFile.seek ( mXMPPTransfer->offset () );
@@ -367,7 +365,7 @@ void JabberFileTransfer::slotOutgoingBytesWritten ( qint64 nrWritten )
 	}
 	else
 	{
-		kDebug(JABBER_DEBUG_GLOBAL) << "Transfer to " << mXMPPTransfer->peer().full () << " done.";
+		qCDebug(JABBER_PROTOCOL_LOG) << "Transfer to " << mXMPPTransfer->peer().full () << " done.";
 
 		mKopeteTransfer->slotComplete ();
 

@@ -90,7 +90,6 @@ private:
 	 */
 	void handleSSIUpToDate();
 
-	
 private:
 	/**
 	 * Pointer to the Contact manager so we don't have to keep
@@ -103,4 +102,3 @@ private:
 
 #endif
 
-// kate: tab-width 4; indent-mode csands;

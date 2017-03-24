@@ -44,7 +44,6 @@
 #include <QTextDocument> // Qt::escape
 #include <QAbstractButton>
 
-
 #include <kdebug.h>
 #include <kconfig.h>
 #include <KLocalizedString>
@@ -75,7 +74,6 @@
 #include <kopetesockettimeoutwatcher.h>
 
 using namespace Oscar;
-
 
 class OscarAccountPrivate : public Client::CodecProvider
 {
@@ -629,7 +627,6 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	Kopete::ChatSession* chatSession = ocSender->manager( Kopete::Contact::CanCreate );
 	chatSession->receivedTypingMsg( ocSender, false ); //person is done typing
 
-
 	//decode message
 	QString realText( message.text( contactCodec( ocSender ) ) );
 
@@ -724,7 +721,6 @@ void OscarAccount::setServerEncrypted( bool encrypted )
 {
 	configGroup()->writeEntry( QString::fromLatin1( "Encrypted" ), encrypted);
 }
-
 
 void OscarAccount::setProxyServerSocks5( bool enable )
 {
@@ -1145,7 +1141,6 @@ void OscarAccount::updateBuddyIconInSSI()
 		tList.append( TLV( 0x00D5, iconTLVData.size(), iconTLVData ) );
 		tList.append( TLV( 0x0131, 0, 0 ) );
 
-
 		//find old item, create updated item
 		if ( !item )
 		{
@@ -1521,4 +1516,3 @@ void OscarAccount::createClientStream( ClientStream **clientStream )
 	*clientStream = cs;
 }
 
-//kate: tab-width 4; indent-mode cstyle; replace-tabs 0;

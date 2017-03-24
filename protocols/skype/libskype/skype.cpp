@@ -129,7 +129,6 @@ Skype::Skype(SkypeAccount &account) : QObject() {
 	connect(d->fixGroupTimer, SIGNAL(timeout()), this, SLOT(fixGroups()));//fix & load groups to memory
 }
 
-
 Skype::~Skype() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
@@ -773,7 +772,6 @@ QString Skype::sendToChat(const QString &chat, const QString &message) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	QString resp = d->connection % (QString("CHATMESSAGE %1 %2").arg(chat).arg(message));
-
 
 	QString messageType = resp.section(' ', 0, 0).trimmed().toUpper();
 	if (messageType == "CHATMESSAGE") {

@@ -134,5 +134,4 @@ void SocketStream::OnCloseEvent(AsyncSocket* socket, int err) {
   SignalEvent(this, SE_CLOSE, err);
 }
 
-
 }  // namespace talk_base

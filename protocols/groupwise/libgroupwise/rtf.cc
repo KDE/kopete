@@ -652,7 +652,6 @@ YY_DECL
     
 #line 46 "rtf.ll"
 
-
 #line 657 "rtf.cc"
 
 	if ( (yy_init) )
@@ -1718,8 +1717,6 @@ void rtffree (void * ptr )
 #undef YY_DECL
 #endif
 #line 57 "rtf.ll"
-
-
 
 #include "rtf2html.h"
 

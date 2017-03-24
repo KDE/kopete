@@ -12,7 +12,7 @@
 #include "dlgjabberchatroomslist.h"
 #include <kmessagebox.h>
 #include <KLocalizedString>
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 
 #include <qlineedit.h>
 #include <qpushbutton.h>
@@ -62,7 +62,7 @@ void dlgJabberChatRoomsList::slotJoin()
 
 	if( m_selectedItem )
 	{
-		kDebug (JABBER_DEBUG_GLOBAL) << "join chat room : " <<  m_account->client()->client()->user() << " @ " << m_selectedItem->text() << " on " << m_chatServer;
+		qDebug (JABBER_PROTOCOL_LOG) << "join chat room : " <<  m_account->client()->client()->user() << " @ " << m_selectedItem->text() << " on " << m_chatServer;
 		m_account->client()->joinGroupChat(m_chatServer, m_selectedItem->text(), m_nick);
 	}
 }
@@ -118,5 +118,4 @@ void dlgJabberChatRoomsList::slotClick(QTableWidgetItem *item)
 {
 	m_selectedItem = item;
 }
-
 

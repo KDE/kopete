@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003-2004 Grzegorz Jaskiewicz  <gj at pointblue.com.pl>
 // Copyright (C) 2003 Zack Rusin        <zack@kde.org>
@@ -78,7 +77,9 @@ public slots:
     void connectWithPassword(const QString &password);
     void disconnect(DisconnectReason);
     void disconnect();
-    void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(), const OnlineStatusOptions &options = None);
+    void setOnlineStatus(const Kopete::OnlineStatus &status,
+                         const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
+                         const OnlineStatusOptions &options = None);
     void setStatusMessage(const Kopete::StatusMessage &statusMessage);
     //}
 

@@ -24,7 +24,6 @@
 
 class KExtendedSocket;
 
-
 namespace KIrc
 {
 

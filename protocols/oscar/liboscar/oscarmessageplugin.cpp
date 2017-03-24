@@ -101,7 +101,6 @@ void MessagePlugin::setType( MessagePlugin::Types type )
 	d->type = type;
 }
 
-
 void MessagePlugin::setType( Guid guid )
 {
 	if ( guid == Guid( QStringLiteral( GUID_MESSAGE ) ) )

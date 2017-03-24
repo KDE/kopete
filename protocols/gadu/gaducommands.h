@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003-2004 Grzegorz Jaskiewicz  <gj at pointblue.com.pl>
 // Copyright (C) 2002-2003	 Zack Rusin     <zack@kde.org>
@@ -93,7 +92,8 @@ protected slots:
 
 private:
     enum RegisterState {
-        RegisterStateNoToken, RegisterStateWaitingForToken, RegisterStateGotToken, RegisterStateWaitingForNumber, RegisterStateDone
+        RegisterStateNoToken, RegisterStateWaitingForToken, RegisterStateGotToken,
+        RegisterStateWaitingForNumber, RegisterStateDone
     };
     RegisterState state;
     QString email_;
@@ -132,7 +132,8 @@ public:
     ChangePasswordCommand(QObject *parent = 0);
     ~ChangePasswordCommand();
 
-    void setInfo(uin_t uin, const QString &passwd, const QString &newpasswd, const QString &newemail);
+    void setInfo(uin_t uin, const QString &passwd, const QString &newpasswd,
+                 const QString &newemail);
     void execute();
 
 protected slots:

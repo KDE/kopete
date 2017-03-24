@@ -35,7 +35,6 @@ ConnectionHandler::ConnectionHandler()
 	d = new Private;
 }
 
-
 ConnectionHandler::~ConnectionHandler()
 {
 	delete d;

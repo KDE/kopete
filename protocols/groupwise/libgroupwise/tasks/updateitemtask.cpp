@@ -24,7 +24,6 @@ UpdateItemTask::UpdateItemTask( Task* parent) : RequestTask( parent )
 {
 }
 
-
 UpdateItemTask::~UpdateItemTask()
 {
 }

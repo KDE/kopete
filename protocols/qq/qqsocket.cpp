@@ -133,7 +133,6 @@ void QQSocket::setOnlineStatus( QQSocket::OnlineStatus status )
 	emit onlineStatusChanged( status );
 }
 
-
 void QQSocket::sendPacket( const QByteArray& data )
 {
 	kDebug(14140) << data;
@@ -221,7 +220,6 @@ void QQSocket::slotDataReceived()
 	delete[] buffer;
 }
 
-
 void QQSocket::handleError( uint code, uint /* id */ )
 {
 	kDebug(14140) ;
@@ -264,7 +262,6 @@ void QQSocket::slotReadyWrite()
 		m_socket->enableWrite( false );
 }
 
-
 void QQSocket::slotConnectionSuccess()
 {
 	kDebug ( 14140 ) << "slotConnectionSuccess: calling doneConnect()";
@@ -306,7 +303,4 @@ QString QQSocket::getLocalIP()
 	kDebug( 14140 ) << "IP: " << ip;
 	return ip;
 }
-
-
-// vim: set noet ts=4 sts=4 sw=4:
 

@@ -21,7 +21,6 @@
 #include "oscartypes.h"
 #include "buffer.h"
 
-
 using namespace Oscar;
 
 class Transfer
@@ -77,7 +76,6 @@ public:
 	TransferType type() const Q_DECL_OVERRIDE;
 	QByteArray toWire() Q_DECL_OVERRIDE;
 
-
 	//! Set the FLAP channel
 	void setFlapChannel( Oscar::BYTE channel );
 
@@ -124,7 +122,6 @@ public:
 
 	TransferType type() const Q_DECL_OVERRIDE;
 	QByteArray toWire() Q_DECL_OVERRIDE;
-
 
 	//! Set the SNAC service
 	void setSnacService( Oscar::WORD service );

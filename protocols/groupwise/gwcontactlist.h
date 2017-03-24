@@ -46,7 +46,9 @@ class GWContactList : public QObject
 public:
     GWContactList(QObject *parent);
     GWFolder *addFolder(unsigned int id, unsigned int sequence, const QString &displayName);
-    GWContactInstance *addContactInstance(unsigned int id, unsigned int parent, unsigned int sequence, const QString &displayName, const QString &dn);
+    GWContactInstance *addContactInstance(unsigned int id, unsigned int parent,
+                                          unsigned int sequence, const QString &displayName,
+                                          const QString &dn);
     GWFolder *findFolderById(unsigned int id);
     GWFolder *findFolderByName(const QString &name);
     GWContactInstanceList instancesWithDn(const QString &dn);
@@ -62,7 +64,8 @@ class GWContactListItem : public QObject
 {
     Q_OBJECT
 public:
-    GWContactListItem(QObject *parent, unsigned int theId, unsigned int theSequence, const QString &theDisplayName);
+    GWContactListItem(QObject *parent, unsigned int theId, unsigned int theSequence,
+                      const QString &theDisplayName);
 
     unsigned int id;        // OBJECT_ID
     unsigned int sequence;  // SEQUENCE_NUMBER
@@ -73,7 +76,8 @@ class GWFolder : public GWContactListItem
 {
     Q_OBJECT
 public:
-    GWFolder(QObject *parent, unsigned int theId, unsigned int theSequence, const QString &theDisplayName);
+    GWFolder(QObject *parent, unsigned int theId, unsigned int theSequence,
+             const QString &theDisplayName);
     virtual void dump(unsigned int depth);
 };
 
@@ -81,7 +85,8 @@ class GWContactInstance : public GWContactListItem
 {
     Q_OBJECT
 public:
-    GWContactInstance(QObject *parent, unsigned int theId, unsigned int theSequence, const QString &theDisplayName, const QString &theDn);
+    GWContactInstance(QObject *parent, unsigned int theId, unsigned int theSequence,
+                      const QString &theDisplayName, const QString &theDn);
     QString dn;             // DN
     virtual void dump(unsigned int depth);
 };

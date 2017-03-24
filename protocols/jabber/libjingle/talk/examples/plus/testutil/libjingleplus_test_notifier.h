@@ -45,9 +45,8 @@ class Notifier : virtual public LibjinglePlusNotify {
   
   virtual void OnXmppInput(const std::string &input) {
     std::cout << "<<<<<<<<" << std::endl << input << std::endl << "<<<<<<<<" << std::endl;
-  } 
+  }
 
-  
   virtual void OnStatusUpdate(const buzz::Status &status) {
     std::string from = status.jid().Str();
     std::cout  << from  << " - " << status.status() << std::endl;

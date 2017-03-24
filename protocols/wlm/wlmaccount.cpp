@@ -1055,7 +1055,6 @@ WlmAccount::connectionCompleted ()
     QObject::connect (&m_server->cb, SIGNAL(gotRemovedGroup(bool,QString)),
                       this, SLOT(gotRemovedGroup(bool,QString)) );
 
-
     QObject::connect (&m_server->cb, SIGNAL(gotAddedContactToAddressBook(bool,QString,QString,QString)),
                       this, SLOT(gotAddedContactToAddressBook(bool,QString,QString,QString)));
 
@@ -1376,7 +1375,6 @@ void WlmAccount::error( int /*errCode*/ )
 {
     logOff( Kopete::Account::ConnectionReset );
 }
-
 
 void WlmAccount::logOff( Kopete::Account::DisconnectReason reason )
 {

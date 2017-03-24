@@ -711,7 +711,6 @@ bool LinuxWindowPicker::MoveToFront(const WindowId& id) {
   return enumerator_->MoveToFront(id);
 }
 
-
 uint8* LinuxWindowPicker::GetWindowIcon(const WindowId& id, int* width,
                                         int* height) {
   return enumerator_->GetWindowIcon(id, width, height);

@@ -1,6 +1,5 @@
 // Copyright 2009 Google Inc. All Rights Reserved.
 
-
 #include "talk/base/gunit.h"
 #include "talk/base/socket_unittest.h"
 #include "talk/base/thread.h"

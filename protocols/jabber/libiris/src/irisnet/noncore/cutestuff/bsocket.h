@@ -34,7 +34,6 @@ class QByteArray;
 
 // CS_NAMESPACE_BEGIN
 
-
 /*!
 	Socket with automatic hostname lookups, using SRV, AAAA and A DNS queries.
 */

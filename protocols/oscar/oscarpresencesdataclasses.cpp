@@ -59,6 +59,5 @@ PresenceType::PresenceType( Presence::Type type, Kopete::OnlineStatus::StatusTyp
 
 //END class PresenceType
 
-
 } // end namespace Oscar
 

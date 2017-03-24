@@ -28,10 +28,8 @@ ICBMParamsTask::ICBMParamsTask( Task* parent )
 		: Task( parent )
 {}
 
-
 ICBMParamsTask::~ICBMParamsTask()
 {}
-
 
 bool ICBMParamsTask::forMe( const Transfer* transfer ) const
 {
@@ -85,8 +83,7 @@ void ICBMParamsTask::handleICBMParameters()
 	Oscar::WORD maxSendWarnLvl = buffer->getWord(); // max sender Warning Level
 	Oscar::WORD maxRecvWarnLvl = buffer->getWord(); // max Receiver Warning Level
 	Oscar::WORD minMsgInterval = buffer->getWord(); // minimum message interval (msec)
-	
-	
+
 	kDebug(OSCAR_RAW_DEBUG) << "messageFlags       = " << messageFlags;
 	kDebug(OSCAR_RAW_DEBUG) << "maxMessageSnacSize = " << maxMessageSnacSize;
 	kDebug(OSCAR_RAW_DEBUG) << "maxSendWarnLvl     = " << maxSendWarnLvl;
@@ -142,5 +139,4 @@ void ICBMParamsTask::sendMessageParams( int channel )
 	send( st );
 	setSuccess( 0, QString() );
 }
-//kate: tab-width 4; indent-mode csands;
 

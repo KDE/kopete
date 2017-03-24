@@ -73,7 +73,6 @@ size_t IPAddress::Size() const {
   return 0;
 }
 
-
 bool IPAddress::operator==(const IPAddress &other) const {
   if (family_ != other.family_) {
     return false;

@@ -16,7 +16,6 @@ void NetworkConfig::accept()
     QDialog::accept();
 }
 
-
 void NetworkConfig::reject()
 {
     emit rejected();

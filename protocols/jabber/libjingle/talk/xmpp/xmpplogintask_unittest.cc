@@ -1,6 +1,5 @@
 // Copyright 2004 Google Inc. All Rights Reserved
 
-
 #include <string>
 #include <sstream>
 #include <iostream>

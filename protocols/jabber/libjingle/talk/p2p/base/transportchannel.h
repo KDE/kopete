@@ -103,7 +103,6 @@ class TransportChannel: public sigslot::has_slots<> {
   // Sets the writable state, signaling if necessary.
   void set_writable(bool writable);
 
-
  private:
   std::string session_id_;
   std::string name_;

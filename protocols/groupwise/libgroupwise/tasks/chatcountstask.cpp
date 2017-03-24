@@ -30,7 +30,6 @@ ChatCountsTask::ChatCountsTask(Task* parent): RequestTask(parent)
 	createTransfer( QStringLiteral("chatcounts"), lst );
 }
 
-
 ChatCountsTask::~ChatCountsTask()
 {
 }

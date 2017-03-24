@@ -28,7 +28,6 @@
 // Copyright 2005 Google Inc.  All Rights Reserved.
 //
 
-
 #ifndef TALK_BASE_HTTPBASE_H__
 #define TALK_BASE_HTTPBASE_H__
 

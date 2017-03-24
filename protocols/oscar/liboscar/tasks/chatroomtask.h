@@ -18,7 +18,6 @@
     *************************************************************************
 */
 
-
 #ifndef CHATROOMTASK_H
 #define CHATROOMTASK_H
 
@@ -78,4 +77,3 @@ private:
 };
 
 #endif
-//kate: space-indent off; tab-width 4; indent-mode csands;

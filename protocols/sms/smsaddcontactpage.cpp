@@ -20,8 +20,6 @@
 #include <qlayout.h>
 #include <qlineedit.h>
 
-
-
 SMSAddContactPage::SMSAddContactPage(QWidget *parent)
 				  : AddContactPage(parent)
 {
@@ -49,7 +47,6 @@ bool SMSAddContactPage::apply(Kopete::Account* a, Kopete::MetaContact* m)
 	return false;
 }
 
-
 bool SMSAddContactPage::validateData()
 {
 	return true;
@@ -58,9 +55,7 @@ bool SMSAddContactPage::validateData()
 /*
  * Local variables:
  * c-indentation-style: k&r
- * c-basic-offset: 8
  * indent-tabs-mode: t
  * End:
  */
-// vim: set noet ts=4 sts=4 sw=4:
 

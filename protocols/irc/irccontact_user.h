@@ -134,4 +134,3 @@ private:
 
 #endif // IRCCONTACT_USER_H
 
-// vim: set noet ts=4 sts=4 tw=4:

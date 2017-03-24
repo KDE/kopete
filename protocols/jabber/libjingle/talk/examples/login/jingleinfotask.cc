@@ -75,7 +75,6 @@ class JingleInfoTask::JingleInfoGetTask : public XmppTask {
   bool done_;
 };
 
-
 void JingleInfoTask::RefreshJingleInfoNow() {
   JingleInfoGetTask* get_task = new JingleInfoGetTask(this);
   get_task->Start();

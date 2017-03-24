@@ -58,7 +58,6 @@ int Presence::xtrazStatus() const
 		return -1;
 }
 
-
 void Presence::setMood( int mood )
 {
 	if ( -1 < mood && mood <= 23 )

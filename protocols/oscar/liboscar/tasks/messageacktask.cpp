@@ -53,6 +53,4 @@ bool MessageAckTask::take( Transfer* transfer )
 	return false;
 }
 
-
-
 //kate: indent-mode csands;

@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003-2004 Grzegorz Jaskiewicz  <gj at pointblue.com.pl>
 // Copyright (C) 2002-2003	 Zack Rusin     <zack@kde.org>
@@ -178,12 +177,17 @@ RegisterCommand::cancel()
 void
 RegisterCommand::execute()
 {
-    if (state != RegisterStateGotToken || email_.isEmpty() || password_.isEmpty() || tokenString.isEmpty()) {
+    if (state != RegisterStateGotToken || email_.isEmpty() || password_.isEmpty()
+        || tokenString.isEmpty()) {
         // get token first || fill information
-        kDebug(14100) << "not enough info to run execute, state: " << state << " , email: " << email_ << ", password present " << !password_.isEmpty() << ", token string:" << tokenString;
+        kDebug(14100) << "not enough info to run execute, state: " << state << " , email: "
+                      << email_ << ", password present " << !password_.isEmpty()
+                      << ", token string:"
+                      << tokenString;
         return;
     }
-    session_ = gg_register3(email_.toAscii(), password_.toAscii(), tokenId.toAscii(), tokenString.toAscii(), 1);
+    session_ = gg_register3(email_.toAscii(), password_.toAscii(),
+                            tokenId.toAscii(), tokenString.toAscii(), 1);
     if (!session_) {
         error(i18n("Gadu-Gadu"), i18n("Registration FAILED"));
         return;
@@ -209,7 +213,8 @@ void RegisterCommand::watcher()
         }
 
         pubDir = (struct gg_pubdir *)session_->data;
-        emit operationStatus(i18n("Token retrieving status: %1", GaduSession::stateDescription(session_->state)));
+        emit operationStatus(i18n("Token retrieving status: %1", GaduSession::stateDescription(
+                                      session_->state)));
         switch (session_->state) {
         case GG_STATE_CONNECTING:
             kDebug(14100) << "Recreating notifiers ";
@@ -218,7 +223,8 @@ void RegisterCommand::watcher()
             break;
         case GG_STATE_ERROR:
             deleteNotifiers();
-            emit error(i18n("Gadu-Gadu token retrieve problem"), GaduSession::errorDescription(session_->error));
+            emit error(i18n("Gadu-Gadu token retrieve problem"), GaduSession::errorDescription(
+                           session_->error));
             gg_token_free(session_);
             session_ = NULL;
             state = RegisterStateNoToken;
@@ -258,7 +264,8 @@ void RegisterCommand::watcher()
             return;
         }
         pubDir = (gg_pubdir *)session_->data;
-        emit operationStatus(i18n("Registration status: %1", GaduSession::stateDescription(session_->state)));
+        emit operationStatus(i18n("Registration status: %1", GaduSession::stateDescription(
+                                      session_->state)));
         switch (session_->state) {
         case GG_STATE_CONNECTING:
             kDebug(14100) << "Recreating notifiers ";
@@ -267,7 +274,8 @@ void RegisterCommand::watcher()
             break;
         case GG_STATE_ERROR:
             deleteNotifiers();
-            emit error(i18n("Gadu-Gadu Registration Error"), GaduSession::errorDescription(session_->error));
+            emit error(i18n("Gadu-Gadu Registration Error"), GaduSession::errorDescription(
+                           session_->error));
             gg_free_register(session_);
             session_ = NULL;
             state = RegisterStateGotToken;
@@ -279,7 +287,8 @@ void RegisterCommand::watcher()
             if (pubDir->success && pubDir->uin) {
                 uin = pubDir->uin;
                 state = RegisterStateDone;
-                emit done(i18n("Registration Finished"), i18n("Registration has been completed successfully."));
+                emit done(i18n("Registration Finished"), i18n(
+                              "Registration has been completed successfully."));
             } else {
                 emit error(i18n("Registration Error"), i18n("Incorrect data sent to server."));
                 state = RegisterStateGotToken;
@@ -332,7 +341,8 @@ RemindPasswordCommand::watcher()
 
     if (gg_remind_passwd_watch_fd(session_) == -1) {
         gg_free_remind_passwd(session_);
-        emit error(i18n("Connection Error"), i18n("Password reminding finished prematurely due to a connection error."));
+        emit error(i18n("Connection Error"), i18n(
+                       "Password reminding finished prematurely due to a connection error."));
         done_ = true;
         deleteLater();
         return;
@@ -340,7 +350,8 @@ RemindPasswordCommand::watcher()
 
     if (session_->state == GG_STATE_ERROR) {
         gg_free_remind_passwd(session_);
-        emit error(i18n("Connection Error"), i18n("Password reminding finished prematurely due to a connection error."));
+        emit error(i18n("Connection Error"), i18n(
+                       "Password reminding finished prematurely due to a connection error."));
         done_ = true;
         deleteLater();
         return;
@@ -369,7 +380,8 @@ ChangePasswordCommand::~ChangePasswordCommand()
 }
 
 void
-ChangePasswordCommand::setInfo(uin_t uin, const QString &passwd, const QString &newpasswd, const QString &newemail)
+ChangePasswordCommand::setInfo(uin_t uin, const QString &passwd, const QString &newpasswd,
+                               const QString &newemail)
 {
     uin_ = uin;
     passwd_ = passwd;
@@ -389,7 +401,8 @@ ChangePasswordCommand::watcher()
 
     if (gg_pubdir_watch_fd(session_) == -1) {
         gg_change_passwd_free(session_);
-        emit error(i18n("Connection Error"), i18n("Password changing finished prematurely due to a connection error."));
+        emit error(i18n("Connection Error"), i18n(
+                       "Password changing finished prematurely due to a connection error."));
         done_ = true;
         deleteLater();
         return;
@@ -398,7 +411,8 @@ ChangePasswordCommand::watcher()
     if (session_->state == GG_STATE_ERROR) {
         gg_free_change_passwd(session_);
         emit error(i18n("State Error"),
-                   i18n("Password changing finished prematurely due to a session related problem (try again later)."));
+                   i18n(
+                       "Password changing finished prematurely due to a session related problem (try again later)."));
         done_ = true;
         deleteLater();
         return;

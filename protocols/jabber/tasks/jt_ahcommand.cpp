@@ -206,8 +206,6 @@ bool JT_AHCommand::take(const QDomElement &e)
 
 //----------------------------------------------------------------------------------------------
 
-
-
 JT_AHCGetList::JT_AHCGetList(Task *t, const Jid &j):
 Task(t)
 {

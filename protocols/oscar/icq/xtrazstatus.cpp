@@ -23,7 +23,6 @@ Status::Status()
 	mStatus = 0;
 }
 
-
 Status::~Status()
 {
 }

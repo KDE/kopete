@@ -52,7 +52,6 @@ public:
     QWidget *m_sessionInk;
 };
 
-
 WlmChatSessionInkAction::WlmChatSessionInkAction( QObject* parent )
   : KActionMenu( i18n( "Send Ink" ), parent )
 {

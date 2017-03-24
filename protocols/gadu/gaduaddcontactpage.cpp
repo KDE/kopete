@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
 // Copyright (C) 2002-2003 Zack Rusin   <zack@kde.org>
@@ -127,10 +126,14 @@ GaduAddContactPage::apply(Kopete::Account *a, Kopete::MetaContact *mc)
         }
         GaduContact *contact = static_cast<GaduContact *>(a->contacts().value(userid));
 
-        contact->setProperty(GaduProtocol::protocol()->propEmail, addUI_->emailEdit_->text().trimmed());
-        contact->setProperty(GaduProtocol::protocol()->propFirstName, addUI_->fornameEdit_->text().trimmed());
-        contact->setProperty(GaduProtocol::protocol()->propLastName, addUI_->snameEdit_->text().trimmed());
-        contact->setProperty(GaduProtocol::protocol()->propPhoneNr, addUI_->telephoneEdit_->text().trimmed());
+        contact->setProperty(GaduProtocol::protocol()->propEmail,
+                             addUI_->emailEdit_->text().trimmed());
+        contact->setProperty(GaduProtocol::protocol()->propFirstName,
+                             addUI_->fornameEdit_->text().trimmed());
+        contact->setProperty(GaduProtocol::protocol()->propLastName,
+                             addUI_->snameEdit_->text().trimmed());
+        contact->setProperty(GaduProtocol::protocol()->propPhoneNr,
+                             addUI_->telephoneEdit_->text().trimmed());
         /*
         contact->setProperty( "ignored", i18n( "ignored" ), "false" );
         contact->setProperty( "nickName", i18n( "nickname" ), name );

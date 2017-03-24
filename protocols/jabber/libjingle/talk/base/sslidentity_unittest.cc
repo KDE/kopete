@@ -95,7 +95,6 @@ class SSLIdentityTest : public testing::Test {
     EXPECT_EQ(expected_len, digest1b_len);
     EXPECT_EQ(0, memcmp(digest1, digest1b, expected_len));
 
-
     rv = identity2_->certificate().ComputeDigest(algorithm,
                                                  digest2, sizeof(digest2),
                                                  &digest2_len);

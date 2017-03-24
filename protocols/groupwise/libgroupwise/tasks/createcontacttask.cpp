@@ -117,8 +117,7 @@ void CreateContactTask::slotContactAdded( const ContactItem & addedContact )
 			
 	if ( m_dn.isEmpty() )
 		m_dn = addedContact.dn;
-			
-			
+
 	if ( !m_folders.isEmpty() )
 		m_folders.pop_back();
 

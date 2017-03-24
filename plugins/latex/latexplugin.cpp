@@ -187,7 +187,7 @@ void LatexPlugin::slotMessageAboutToSend(Kopete::Message &msg)
     Q_UNUSED(msg)
     //disabled because to work correctly, we need to find what special has the gif we can send over MSN
 #if 0
-    KSharedConfig::Ptr config = KGlobal::config();
+    KSharedConfig::Ptr config = KSharedConfig::openConfig();
     config->setGroup("Latex Plugin");
 
     if (!config->readEntry("ParseOutgoing", false)) {

@@ -29,7 +29,6 @@
 #include <QSharedData>
 #include <QTextCodec>
 
-
 //QRegExp Message::sd->("^()\\r\\n$")
 /*
 #ifndef _IRC_STRICTNESS_
@@ -137,7 +136,6 @@ Message Message::fromLine(const QByteArray &line, bool *ok)
 	QByteArray prefix;
 	QList<QByteArray> args;
 	QByteArray suffix;
-
 
 	// Match a regexp instead of the replace ...
 	QList<QByteArray> parts=line.trimmed().split(' ');

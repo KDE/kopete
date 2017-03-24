@@ -60,7 +60,6 @@ QQNotifySocket::~QQNotifySocket()
 	delete m_heartbeat;
 }
 
-
 void QQNotifySocket::doneConnect()
 {
 	// setup the status first
@@ -72,7 +71,6 @@ void QQNotifySocket::doneConnect()
 	else
 		sendPacket( Eva::loginToken(m_qqId, m_id++) );
 }
-
 
 void QQNotifySocket::disconnect()
 {
@@ -136,7 +134,6 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 			
 	kDebug( 14140 ) << "text = " << QByteArray( text.c_str(), text.size() );
 
-	
 	switch( packet.command() )
 	{
 		// FIXME: use table-driven pattern ?
@@ -160,7 +157,6 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 			emit contactDetailReceived(id, qmap);
 		}
 
-			
 			break;
 		case Eva::Command::AddBuddy:
 		case Eva::Command::RemoveBuddy:
@@ -304,8 +300,6 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 					// fetch the online contacts
 					sendListOnlineContacts();
 
-
-
 					break;
 
 				case Eva::LoginRedirect :
@@ -391,7 +385,6 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 	}
 }
 
-
 void QQNotifySocket::contactDetail(Eva::uint qqId)
 {
 	sendPacket( Eva::contactDetail( m_qqId, m_id++, m_sessionKey, qqId) );
@@ -410,7 +403,6 @@ void QQNotifySocket::sendTextMessage( const uint toId, const QByteArray& message
 	Eva::ByteArray packet = Eva::textMessage(m_qqId, m_id++, m_sessionKey, toId, m_transferKey, text );
 	QQSocket::sendPacket( QByteArray( packet.c_str(), packet.size()) );
 }
-
 
 void QQNotifySocket::heartbeat()
 {
@@ -467,4 +459,3 @@ void QQNotifySocket::doGetContactStatuses( const Eva::ByteArray& text )
 		sendListOnlineContacts(pos);
 }
 
-// vim: set noet ts=4 sts=4 sw=4:

@@ -100,7 +100,7 @@ void WPUserInfo::slotDetailsProcess(int i, QProcess::ExitStatus status)
 
 	delete ipProcess;
 
-	KConfigGroup group = KGlobal::config()->group("WinPopup");
+	KConfigGroup group = KSharedConfig::openConfig()->group("WinPopup");
 	QString theSMBClientPath = group.readEntry("SMBClientPath", "/usr/bin/smbclient");
 
 	if ( host == QLatin1String("LOCALHOST") ) //do not cycle
@@ -161,6 +161,3 @@ void WPUserInfo::slotCloseClicked()
 	emit closing();
 }
 
-
-// vim: set noet ts=4 sts=4 sw=4:
-// kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

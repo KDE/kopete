@@ -108,5 +108,3 @@ Kopete::Account* SMSProtocol::createNewAccount(const QString &accountId)
 
 #include "smsprotocol.moc"
 
-// vim: set noet ts=4 sts=4 sw=4:
-

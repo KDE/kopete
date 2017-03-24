@@ -595,7 +595,6 @@ bool ClientStream::handleNeed()
 	return false;
 }
 
-
 void ClientStream::doNoop()
 {
 }

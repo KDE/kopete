@@ -47,7 +47,6 @@ protected:
   virtual bool HandleStanza(const XmlElement * stanza);
 };
 
-  
 }
 
 #endif

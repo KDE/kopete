@@ -402,7 +402,6 @@ class FakeWebRtcVoiceEngine
   WEBRTC_STUB(SetDtmfPlayoutStatus, (int channel, bool enable));
   WEBRTC_STUB(GetDtmfPlayoutStatus, (int channel, bool& enabled));
 
-
   WEBRTC_STUB(PlayDtmfTone,
       (int eventCode, int lengthMs = 200, int attenuationDb = 10));
   WEBRTC_STUB(StartPlayingDtmfTone,

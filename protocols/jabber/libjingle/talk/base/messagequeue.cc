@@ -35,7 +35,6 @@
 #include "talk/base/nullsocketserver.h"
 #include "talk/base/physicalsocketserver.h"
 
-
 namespace talk_base {
 
 #ifdef NO_SOCKETSERVER

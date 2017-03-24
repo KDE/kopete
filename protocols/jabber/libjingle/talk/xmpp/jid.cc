@@ -195,7 +195,6 @@ std::string Jid::PrepNode(const std::string& node, bool* valid) {
   return result;
 }
 
-
 // Returns the appropriate mapping for an ASCII character in a node.
 char Jid::PrepNodeAscii(char ch, bool* valid) {
   *valid = true;
@@ -220,7 +219,6 @@ char Jid::PrepNodeAscii(char ch, bool* valid) {
       return ch;
   }
 }
-
 
 // Checks and normalizes the resource part of a JID.
 std::string Jid::PrepResource(const std::string& resource, bool* valid) {
@@ -282,7 +280,6 @@ std::string Jid::PrepDomain(const std::string& domain, bool* valid) {
   *valid = true;
   return result;
 }
-
 
 // Checks and normalizes an IDNA domain.
 void Jid::PrepDomain(const std::string& domain, std::string* buf, bool* valid) {
@@ -349,7 +346,6 @@ void Jid::PrepDomainLabel(
   }
   *valid = true;
 }
-
 
 // Returns the appropriate mapping for an ASCII character in a domain label.
 char Jid::PrepDomainLabelAscii(char ch, bool* valid) {

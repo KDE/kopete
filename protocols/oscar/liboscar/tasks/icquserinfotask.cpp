@@ -22,18 +22,15 @@
 #include "transfer.h"
 #include "buffer.h"
 
-
 ICQUserInfoRequestTask::ICQUserInfoRequestTask( Task* parent ) : ICQTask( parent )
 {
 	//by default, request short info. it saves bandwidth
 	m_type = Short;
 }
 
-
 ICQUserInfoRequestTask::~ICQUserInfoRequestTask()
 {
 }
-
 
 bool ICQUserInfoRequestTask::forMe( const Transfer* transfer ) const
 {
@@ -155,8 +152,7 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 		default:
 			break;
 		}
-		
-		
+
 		if ( m_type == Short )
 			emit receivedInfoFor( contactId, Short );
 
@@ -248,5 +244,3 @@ ICQOrgAffInfo ICQUserInfoRequestTask::orgAffInfoFor( const QString& contact )
 	return m_orgAffInfoMap[seq];
 }
 
-
-//kate: indent-mode csands; tab-width 4; space-indent off; replace-tabs off;

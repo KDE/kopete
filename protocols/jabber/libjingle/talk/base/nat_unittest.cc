@@ -239,7 +239,6 @@ TEST(NatTest, TestVirtual) {
   TestFilters(int_vss, int_addr, ext_vss, ext_addrs);
 }
 
-
 // TODO: Finish this test
 class NatTcpTest : public testing::Test, public sigslot::has_slots<> {
  public:
@@ -281,7 +280,6 @@ TEST_F(NatTcpTest, DISABLED_TestConnectOut) {
   client_ = int_vss_->CreateAsyncSocket(SOCK_STREAM);
   EXPECT_GE(0, client_->Bind(SocketAddress()));
   EXPECT_GE(0, client_->Connect(server_->GetLocalAddress()));
-
 
   ConnectEvents();
 

@@ -27,7 +27,6 @@ WarningTask::WarningTask( Task* parent ): Task( parent )
 {
 }
 
-
 WarningTask::~WarningTask()
 {
 }
@@ -90,6 +89,4 @@ void WarningTask::onGo()
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
 }
-
-//kate: indent-mode csands; space-indent off; replace-tabs off; tab-width 4;
 

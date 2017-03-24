@@ -46,7 +46,6 @@ static const unsigned char kReservedSpace[] = {
   0x00, 0x00, 0x00, 0x00
 };
 
-
 DataEngine::DataEngine() {
   data_codecs_.push_back(
       DataCodec(cricket::kGoogleDataCodecId,
@@ -98,7 +97,6 @@ void DataMediaChannel::Construct(talk_base::Timing* timing) {
   timing_ = timing;
   send_limiter_.reset(new talk_base::RateLimiter(kDataMaxBandwidth / 8, 1.0));
 }
-
 
 DataMediaChannel::~DataMediaChannel() {
   std::map<uint32, RtpClock*>::const_iterator iter;

@@ -220,7 +220,6 @@ void AIMContact::warnUser()
 	                        " certain point, they will not be able to sign on. Please do not abuse" \
 	                        " this function, it is meant for legitimate practices.)</qt>", nick );
 
-
 	int result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), message,
 	                                               i18n( "Warn User %1?", nick ),
 	                                               KGuiItem( i18n( "Warn Anonymously" ) ), KGuiItem( i18n( "Warn" ) ) );
@@ -241,4 +240,3 @@ void AIMContact::slotInvisibleTo()
 	account()->engine()->setInvisibleTo( contactId(), m_actionInvisibleTo->isChecked() );
 }
 
-//kate: tab-width 4; indent-mode csands;

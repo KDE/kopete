@@ -279,7 +279,6 @@ bool ParseCryptoParams(const buzz::XmlElement* element,
   return true;
 }
 
-
 // Parse the first encryption element found with a matching 'usage'
 // element.
 // <usage/> is specific to Gingle. In Jingle, <crypto/> is already
@@ -401,7 +400,6 @@ int FindWithDefault(const std::map<std::string, std::string>& map,
   std::map<std::string, std::string>::const_iterator iter = map.find(key);
   return (iter == map.end()) ? def : atoi(iter->second.c_str());
 }
-
 
 // Parse the first encryption element found.
 // Return false if there was an encryption element and it could not be

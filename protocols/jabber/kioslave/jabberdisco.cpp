@@ -18,7 +18,7 @@
 
 #include "jabberdisco.h"
 
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 
 #include <stdlib.h>
 #include <qthread.h>

@@ -23,7 +23,6 @@
 #include "oscartypes.h"
 #include "oscaraccount.h"
 
-
 OscarMyselfContact::OscarMyselfContact( OscarAccount* account )
 : Kopete::Contact( account, account->accountId(), Kopete::ContactList::self()->myself() )
 {
@@ -55,6 +54,5 @@ void OscarMyselfContact::deleteContact()
 {
 	kWarning( OSCAR_GEN_DEBUG ) << "called on myself contact! Ignoring." << endl << kBacktrace();
 }
-
 
 //kate: indent-mode csands;

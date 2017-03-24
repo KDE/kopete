@@ -68,4 +68,3 @@ bool QQAddContactPage::validateData()
     return true;
 }
 
-

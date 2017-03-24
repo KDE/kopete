@@ -25,7 +25,7 @@
 #include "xmpp_xmlcommon.h"
 #include "xmpp_jid.h"
 
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include "jabberprotocol.h"
 
 PrivacyListItem::PrivacyListItem() : message_(true), presenceIn_(true), presenceOut_(true), iq_(true)
@@ -121,9 +121,9 @@ QDomElement PrivacyListItem::toXml(QDomDocument& doc) const
 
 void PrivacyListItem::fromXml(const QDomElement& el)
 {
-	//kDebug (JABBER_DEBUG_GLOBAL) << "Parsing privacy list item";
+	//qDebug (JABBER_PROTOCOL_LOG) << "Parsing privacy list item";
 	if (el.isNull() || el.tagName() != QLatin1String("item")) {
-		kWarning (JABBER_DEBUG_GLOBAL) << "Invalid root tag for privacy list item.";
+		qCWarning (JABBER_PROTOCOL_LOG) << "Invalid root tag for privacy list item.";
 		return;
 	}
 
@@ -140,13 +140,13 @@ void PrivacyListItem::fromXml(const QDomElement& el)
 	QString value = el.attribute(QStringLiteral("value"));
 	value_ = value;
 	if (type_ == JidType && XMPP::Jid(value_).isEmpty()) 
-		kWarning (JABBER_DEBUG_GLOBAL) << "Invalid value for item of type 'jid'.";
+		qCWarning (JABBER_PROTOCOL_LOG) << "Invalid value for item of type 'jid'.";
 	else if (type_ == GroupType && value_.isEmpty()) 
-		kWarning (JABBER_DEBUG_GLOBAL) << "Empty value for item of type 'group'.";
+		qCWarning (JABBER_PROTOCOL_LOG) << "Empty value for item of type 'group'.";
 	else if (type_ == SubscriptionType && value_ != QLatin1String("from") && value != QLatin1String("to") && value_ != QLatin1String("both") && value_ != QLatin1String("none"))
-		kWarning (JABBER_DEBUG_GLOBAL) << "Invalid value for item of type 'subscription'.";
+		qCWarning (JABBER_PROTOCOL_LOG) << "Invalid value for item of type 'subscription'.";
 	else if (type_ == FallthroughType && !value_.isEmpty()) 
-		kWarning (JABBER_DEBUG_GLOBAL) << "Value given for item of fallthrough type.";
+		qCWarning (JABBER_PROTOCOL_LOG) << "Value given for item of fallthrough type.";
 		
 	QString action = el.attribute(QStringLiteral("action"));
 	if (action == QLatin1String("allow")) 
@@ -154,12 +154,12 @@ void PrivacyListItem::fromXml(const QDomElement& el)
 	else if (action == QLatin1String("deny"))
 		action_ = Deny;
 	else
-		kWarning (JABBER_DEBUG_GLOBAL) << "Invalid action given for item.";
+		qCWarning (JABBER_PROTOCOL_LOG) << "Invalid action given for item.";
 
 	bool ok;
 	order_ = el.attribute(QStringLiteral("order")).toUInt(&ok);
 	if (!ok)
-		kWarning (JABBER_DEBUG_GLOBAL) << "Invalid order value for item.";
+		qCWarning (JABBER_PROTOCOL_LOG) << "Invalid order value for item.";
 
 	if (el.hasChildNodes()) {
 		message_ = !el.firstChildElement(QStringLiteral("message")).isNull();

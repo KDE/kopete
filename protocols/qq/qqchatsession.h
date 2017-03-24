@@ -19,7 +19,6 @@
 #include <kopetemessage.h>
 #include <kopetechatsession.h>
 
-
 class QLabel;
 class QAction;
 class KActionMenu;
@@ -37,7 +36,6 @@ struct ConferenceEvent
 		quint32 flags;
 		QString message;
 	};
-
 
 class QQ_EXPORT QQChatSession : public Kopete::ChatSession
 {

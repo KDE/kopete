@@ -4,7 +4,6 @@
 
     Kopete    (c) 2006 by the Kopete developers <kopete-devel@kde.org>
 
-
     *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
@@ -29,13 +28,12 @@
 #include <kopetestatusmessage.h>
 #include <kopeteversion.h>
 
-
 #include <qpixmap.h>
 #include <qtimer.h>
 #include <QMenu>
 #include <QAction>
 #include <kactionmenu.h>
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <KLocalizedString>
 #include <kconfig.h>
 
@@ -51,7 +49,7 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const XMPP::Ros
 	JabberContact *myContact = m_account->contactPool()->addContact ( item , Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
 	
-	kDebug(JABBER_DEBUG_GLOBAL) << accountId() <<" transport created:  myself: " << myContact;
+	qCDebug(JABBER_PROTOCOL_LOG) << accountId() <<" transport created:  myself: " << myContact;
 	
 	setColor( account()->color() );
 
@@ -99,7 +97,7 @@ JabberTransport::JabberTransport( JabberAccount * parentAccount, const QString &
 	
 	if(contactJID_s.isEmpty())
 	{
-		kError(JABBER_DEBUG_GLOBAL) << _accountId <<": GatewayJID is empty: MISCONFIGURATION  (have you used Kopete 0.12 beta ?)" << endl;
+        qCCritical(JABBER_PROTOCOL_LOG) << _accountId <<": GatewayJID is empty: MISCONFIGURATION  (have you used Kopete 0.12 beta ?)" << endl;
 	}
 	
 	XMPP::Jid contactJID= XMPP::Jid( contactJID_s );
@@ -109,13 +107,10 @@ JabberTransport::JabberTransport( JabberAccount * parentAccount, const QString &
 	JabberContact *myContact = m_account->contactPool()->addContact ( contactJID , Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
 	
-	kDebug(JABBER_DEBUG_GLOBAL) << accountId() <<" transport created:  myself: " << myContact;
+	qCDebug(JABBER_PROTOCOL_LOG) << accountId() <<" transport created:  myself: " << myContact;
 	
 	m_status=Normal;
 }
-
-
-
 
 JabberTransport::~JabberTransport ()
 {
@@ -167,12 +162,10 @@ void JabberTransport::fillActionMenu( KActionMenu *actionMenu )
 	return m_actionMenu;*/
 }
 
-
 bool JabberTransport::hasCustomStatusMenu() const
 {
 	return true;
 }
-
 
 bool JabberTransport::createContact (const QString & contactId,  Kopete::MetaContact * metaContact)
 {
@@ -198,7 +191,6 @@ bool JabberTransport::createContact (const QString & contactId,  Kopete::MetaCon
 #endif
 	return false;
 }
-
 
 void JabberTransport::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options )
 {
@@ -301,7 +293,7 @@ void JabberTransport::removeAllContacts( )
 									i18n ("Jabber Service Unregistration"));
 	*/ //we don't really care, we remove everithing anyway.
 
-	kDebug(JABBER_DEBUG_GLOBAL) << "delete all contacts of the transport";
+	qCDebug(JABBER_PROTOCOL_LOG) << "delete all contacts of the transport";
 	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd();
 	for( it = contacts().constBegin(); it != itEnd; ++it )
 	{
@@ -344,7 +336,7 @@ void JabberTransport::eatContacts( )
 	*            - a new contact will born, with the same characteristics, but owned by the transport
 	* - Olivier 2006-01-17 -
 	*/
-    kDebug(JABBER_DEBUG_GLOBAL) ;
+    qCDebug(JABBER_PROTOCOL_LOG) ;
 	QHash<QString, Kopete::Contact*> cts=account()->contacts();
 	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = cts.constEnd(); 
 	for( it = cts.constBegin(); it != itEnd; ++it )
@@ -355,7 +347,7 @@ void JabberTransport::eatContacts( )
 			XMPP::RosterItem item=contact->rosterItem();
 			Kopete::MetaContact *mc=contact->metaContact();
 			Kopete::OnlineStatus status = contact->onlineStatus();
-			kDebug(JABBER_DEBUG_GLOBAL) << item.jid().full() << " will be soon eat  - " << contact;
+			qCDebug(JABBER_PROTOCOL_LOG) << item.jid().full() << " will be soon eat  - " << contact;
 			delete contact;
 			Kopete::Contact *c2=account()->contactPool()->addContact( item , mc , false ); //not sure this is false;
 			if(c2)
@@ -364,7 +356,3 @@ void JabberTransport::eatContacts( )
 	}
 }
 
-
-
-
-// vim: set noet ts=4 sts=4 sw=4:

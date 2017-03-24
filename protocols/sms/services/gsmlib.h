@@ -78,7 +78,6 @@ protected:
 
 } ;
 
-
 /// Custom event for async-events
 class GSMLibEvent : public QCustomEvent
 {

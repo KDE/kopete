@@ -43,7 +43,6 @@ SearchUserTask::SearchUserTask(Task* parent): RequestTask(parent), m_polls( 0 )
 {
 }
 
-
 SearchUserTask::~SearchUserTask()
 {
 }

@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
 //
@@ -64,7 +63,8 @@ GaduEditContact::GaduEditContact(GaduAccount *account, GaduContact *contact, QWi
     fillIn();
 }
 
-GaduEditContact::GaduEditContact(GaduAccount *account, GaduContactsList::ContactLine *clin, QWidget *parent)
+GaduEditContact::GaduEditContact(GaduAccount *account, GaduContactsList::ContactLine *clin,
+                                 QWidget *parent)
     : KDialog(parent)
     , account_(account)
     , contact_(NULL)
@@ -131,7 +131,8 @@ GaduEditContact::init()
 
     show();
     connect(this, SIGNAL(okClicked()), SLOT(slotApply()));
-    connect(ui_->groups, SIGNAL(itemClicked(QTreeWidgetItem *,0)), SLOT(listClicked(QTreeWidgetItem *)));
+    connect(ui_->groups, SIGNAL(itemClicked(QTreeWidgetItem*,0)),
+            SLOT(listClicked(QTreeWidgetItem*)));
 }
 
 void
@@ -168,14 +169,16 @@ GaduEditContact::slotApply()
 
     if (contact_ == NULL) {
         // contact doesn't exists yet, create it and set all the details
-        bool s = account_->addContact(cl_->uin, GaduContact::findBestContactName(cl_), 0L, Kopete::Account::DontChangeKABC);
+        bool s = account_->addContact(cl_->uin, GaduContact::findBestContactName(
+                                          cl_), 0L, Kopete::Account::DontChangeKABC);
         if (s == false) {
             kDebug(14100) << "There was a problem adding UIN "<< cl_->uin << "to users list";
             return;
         }
         contact_ = static_cast<GaduContact *>(account_->contacts().value(cl_->uin));
         if (contact_ == NULL) {
-            kDebug(14100) << "oops, no Kopete::Contact in contacts()[] for some reason, for \"" << cl_->uin << "\"";
+            kDebug(14100) << "oops, no Kopete::Contact in contacts()[] for some reason, for \""
+                          << cl_->uin << "\"";
             return;
         }
     }

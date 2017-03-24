@@ -413,7 +413,6 @@ void RosterExchangeItem::fromXml(const QDomElement& e)
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // MUCItem
 //----------------------------------------------------------------------------
@@ -919,7 +918,6 @@ void HTMLElement::filterOutUnwantedRecursive(QDomElement &el, bool strict)
 		child = sibling;
 	}
 }
-
 
 //----------------------------------------------------------------------------
 // Message
@@ -2268,7 +2266,6 @@ bool Subscription::fromString(const QString &s)
 	return true;
 }
 
-
 //---------------------------------------------------------------------------
 // Status
 //---------------------------------------------------------------------------
@@ -2279,7 +2276,6 @@ CapsSpec::CapsSpec() :
     hashAlgo_(CapsSpec::invalidAlgo)
 {
 }
-
 
 /**
  * \brief Basic constructor.
@@ -2308,7 +2304,6 @@ bool CapsSpec::isValid() const
 	return !node_.isEmpty() && !ver_.isEmpty() && (hashAlgo_ != CapsSpec::invalidAlgo);
 }
 
-
 /**
  * \brief Returns the node of the capabilities specification.
  */
@@ -2316,7 +2311,6 @@ const QString& CapsSpec::node() const
 {
 	return node_;
 }
-
 
 /**
  * \brief Returns the version of the capabilities specification.
@@ -2421,7 +2415,6 @@ bool CapsSpec::operator<(const CapsSpec& s) const
 			 hashAlgorithm() < s.hashAlgorithm()));
 }
 
-
 class StatusPrivate : public QSharedData
 {
 public:
@@ -2462,7 +2455,6 @@ public:
 	int ecode;
 	QString estr;
 };
-
 
 Status::Status(const QString &show, const QString &status, int priority, bool available)
 {
@@ -2630,7 +2622,6 @@ void Status::setMUCHistory(int maxchars, int maxstanzas, int seconds, const QDat
 	d->mucHistorySeconds = seconds;
 	d->mucHistorySince = since;
 }
-
 
 const QString& Status::photoHash() const
 {
@@ -2831,7 +2822,6 @@ const QString & Status::errorString() const
 	return d->estr;
 }
 
-
 //---------------------------------------------------------------------------
 // Resource
 //---------------------------------------------------------------------------
@@ -2869,7 +2859,6 @@ void Resource::setStatus(const Status & _status)
 {
 	v_status = _status;
 }
-
 
 //---------------------------------------------------------------------------
 // ResourceList
@@ -2926,7 +2915,6 @@ ResourceList::ConstIterator ResourceList::priority() const
 
 	return highest;
 }
-
 
 //---------------------------------------------------------------------------
 // RosterItem
@@ -3075,7 +3063,6 @@ bool RosterItem::fromXml(const QDomElement &item)
 	return true;
 }
 
-
 //---------------------------------------------------------------------------
 // Roster
 //---------------------------------------------------------------------------
@@ -3107,7 +3094,6 @@ Roster::ConstIterator Roster::find(const Jid &j) const
 
 	return end();
 }
-
 
 //---------------------------------------------------------------------------
 // FormField
@@ -3232,7 +3218,6 @@ QString FormField::typeToTagName(int type) const
 	};
 }
 
-
 //---------------------------------------------------------------------------
 // Form
 //---------------------------------------------------------------------------
@@ -3275,7 +3260,6 @@ void Form::setKey(const QString &s)
 {
 	v_key = s;
 }
-
 
 //---------------------------------------------------------------------------
 // SearchResult
@@ -3357,7 +3341,6 @@ const QDomElement& PubSubItem::payload() const
 	return payload_;
 }
 
-
 PubSubRetraction::PubSubRetraction()
 {
 }
@@ -3370,8 +3353,6 @@ const QString& PubSubRetraction::id() const
 {
 	return id_;
 }
-
-
 
 // =========================================
 //            CaptchaChallenge

@@ -216,7 +216,6 @@ void  App::start()
 		QTimer::singleShot(quit_time * 1000, this, SLOT(doShutdown()));
 }
 
-
 void App::jdns_resultsReady(int id, const QJDns::Response &results)
 {
 	printf("[%d] Results\n", id);

@@ -79,7 +79,6 @@ public:
 
 	OContact findGroup( const QString& group ) const;
 	OContact findGroup( int groupId ) const;
-	
 
 	OContact findContact( const QString& contact, const QString& group ) const;
 	OContact findContact( const QString& contact ) const;
@@ -152,4 +151,3 @@ private:
 
 #endif
 
-//kate: tab-width 4; indent-mode csands;

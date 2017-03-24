@@ -145,7 +145,6 @@ const TestData Win32ToolhelpTest::kTestData[] = {
   {1, 1, 1}, {2, 2, 2}, {3, 3, 3}
 };
 
-
 class TestTraits {
  public:
   typedef TestData Type;
@@ -240,7 +239,6 @@ TEST_F(Win32ToolhelpTest, TestNextNextFails) {
   t.reset();
   EXPECT_TRUE(CheckCallCounters(1, 0, 1, 1));
 }
-
 
 // Tests that current returns an object is all zero's
 // if Next() hasn't been called.

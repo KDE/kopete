@@ -140,7 +140,6 @@ void TransportProxy::AddUnsentCandidates(const Candidates& candidates) {
   }
 }
 
-
 TransportChannelProxy* TransportProxy::GetProxy(const std::string& name) {
   ChannelMap::iterator iter = channels_.find(name);
   return (iter != channels_.end()) ? iter->second : NULL;

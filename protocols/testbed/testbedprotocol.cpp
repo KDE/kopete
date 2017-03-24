@@ -113,6 +113,4 @@ TestbedProtocol *TestbedProtocol::protocol()
 	return s_protocol;
 }
 
-
-
 #include "testbedprotocol.moc"

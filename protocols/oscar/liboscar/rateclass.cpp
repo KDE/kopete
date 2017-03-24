@@ -237,5 +237,3 @@ void RateClass::dumpQueue()
 	}
 }
 
-
-//kate: tab-width 4; indent-mode csands;

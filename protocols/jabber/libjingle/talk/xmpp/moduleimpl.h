@@ -80,7 +80,6 @@ private:
   ModuleStanzaHandler stanza_handler_;
 };
 
-
 // This macro will implement the XmppModule interface for a class
 // that derives from both XmppModuleImpl and XmppModule
 #define IMPLEMENT_XMPPMODULE \

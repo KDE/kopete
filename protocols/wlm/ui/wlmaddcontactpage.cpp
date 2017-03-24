@@ -69,4 +69,3 @@ WlmAddContactPage::validateData ()
     return false;
 }
 
-

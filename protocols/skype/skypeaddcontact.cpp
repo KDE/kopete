@@ -51,7 +51,6 @@ SkypeAddContact::SkypeAddContact(SkypeProtocol *protocol, QWidget *parent, Skype
 	d->widget->setupUi( w );
 }
 
-
 SkypeAddContact::~SkypeAddContact() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 

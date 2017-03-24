@@ -51,5 +51,4 @@
   TypeName();                                    \
   DISALLOW_EVIL_CONSTRUCTORS(TypeName)
 
-
 #endif  // TALK_BASE_CONSTRUCTORMAGIC_H_

@@ -38,7 +38,6 @@
 #include "talk/xmpp/xmppengine.h"
 #include "talk/base/scoped_ptr.h"
 
-
 class LibjinglePlusWorker;
 
 class LibjinglePlusNotify {

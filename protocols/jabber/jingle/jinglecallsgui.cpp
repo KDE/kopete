@@ -22,7 +22,7 @@
 #include "jinglesession.h"
 #include "jinglecontent.h"
 
-#include <KDebug>
+#include "jabber_protocol_debug.h"
 
 static QString stateToString(JabberJingleSession::State s)
 {
@@ -42,7 +42,7 @@ static QString stateToString(JabberJingleSession::State s)
 JingleCallsGui::JingleCallsGui(JingleCallsManager *parent)
     : m_callsManager(parent)
 {
-    kDebug() << "Created";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Created";
     ui.setupUi(this);
     setWindowTitle("Jingle calls");
     setupActions();
@@ -57,7 +57,7 @@ JingleCallsGui::JingleCallsGui(JingleCallsManager *parent)
 
 JingleCallsGui::~JingleCallsGui()
 {
-    kDebug() << "deleted";
+    qCDebug(JABBER_PROTOCOL_LOG) << "deleted";
     delete updater;
     delete model;
 }
@@ -108,7 +108,7 @@ void JingleCallsGui::slotAddContent()
 
 void JingleCallsGui::slotTerminate()
 {
-    kDebug() << "Terminate session";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Terminate session";
     TreeItem *item = static_cast<TreeItem *>(ui.treeView->currentIndex().internalPointer());
     if (item == 0 || item->session() == 0) {
         return;
@@ -130,7 +130,7 @@ void JingleCallsGui::slotClose()
 
 void JingleCallsGui::addSession(JabberJingleSession *sess)
 {
-    kDebug() << "Add session" << sess;
+    qCDebug(JABBER_PROTOCOL_LOG) << "Add session" << sess;
     if (!sess) {
         return;
     }
@@ -143,7 +143,7 @@ void JingleCallsGui::addSession(JabberJingleSession *sess)
         return;
     }
 
-    //kDebug() << "Session inserted in the model !";
+    //qCDebug(JABBER_PROTOCOL_LOG) << "Session inserted in the model !";
 
     QVector<QVariant> sessData;
     sessData << sess->session()->to().full();
@@ -164,7 +164,7 @@ void JingleCallsGui::addSession(JabberJingleSession *sess)
         return;
     }
 
-    //kDebug() << "Contents inserted in the model !";
+    //qCDebug(JABBER_PROTOCOL_LOG) << "Contents inserted in the model !";
 
     for (int i = 0; i < sess->contents().count(); i++) {
         QVector<QVariant> contData;
@@ -193,10 +193,10 @@ void JingleCallsGui::changeState(JabberJingleSession *sess)
 
     while (child.isValid())
     {
-        kDebug() << child.data();
+        qCDebug(JABBER_PROTOCOL_LOG) << child.data();
         TreeItem *childItem = static_cast<TreeItem *>(child.internalPointer());
         if (childItem == 0) {
-            kDebug() << "childItem is NULL";
+            qCDebug(JABBER_PROTOCOL_LOG) << "childItem is NULL";
         }
         if (childItem->session() == sess) {
             // We have the right index :)
@@ -231,7 +231,7 @@ void JingleCallsGui::updateTime()
 
 void JingleCallsGui::removeSession(JabberJingleSession *sess)
 {
-    kDebug() << "Remove session" << sess;
+    qCDebug(JABBER_PROTOCOL_LOG) << "Remove session" << sess;
     int i = 0;
 
     //Looking for the QModelIndex with the session sess.
@@ -242,12 +242,12 @@ void JingleCallsGui::removeSession(JabberJingleSession *sess)
 
     while (child.isValid())
     {
-        kDebug() << child.data();
+        qCDebug(JABBER_PROTOCOL_LOG) << child.data();
         TreeItem *childItem = static_cast<TreeItem *>(child.internalPointer());
         if (childItem == 0) {
-            kDebug() << "childItem is NULL";
+            qCDebug(JABBER_PROTOCOL_LOG) << "childItem is NULL";
         }
-        kDebug() << "Compare" << childItem->session() << "to" << sess;
+        qCDebug(JABBER_PROTOCOL_LOG) << "Compare" << childItem->session() << "to" << sess;
         if (childItem->session() == sess) {
             //Children of this line will be automatically removed.
             model->removeRow(i, child.parent());
@@ -270,7 +270,7 @@ void JingleCallsGui::removeSession(JabberJingleSession *sess)
 JingleCallsModel::JingleCallsModel(const QList<JabberJingleSession *> &data, QObject *parent)
     : QAbstractItemModel(parent)
 {
-    kDebug() << "Create Model";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Create Model";
     QVector<QVariant> rootData;
     rootData << "Session with" << "State" << "Time";
     rootItem = new TreeItem(rootData);
@@ -434,13 +434,13 @@ bool JingleCallsModel::insertRows(int position, int rows, const QModelIndex &par
 
 void JingleCallsModel::printTree()
 {
-    kDebug() << "|-(rootItem)" << rootItem->data(0) << "|" << rootItem->data(1) << "|" << rootItem->data(2);
+    qCDebug(JABBER_PROTOCOL_LOG) << "|-(rootItem)" << rootItem->data(0) << "|" << rootItem->data(1) << "|" << rootItem->data(2);
     for (int i = 0; i < rootItem->childCount(); i++) {
         TreeItem *sessItem = rootItem->child(i);
-        kDebug() << " |-" << sessItem->data(0) << "|" << sessItem->data(1) << "|" << sessItem->data(2);
+        qCDebug(JABBER_PROTOCOL_LOG) << " |-" << sessItem->data(0) << "|" << sessItem->data(1) << "|" << sessItem->data(2);
         for (int j = 0; j < sessItem->childCount(); j++) {
             TreeItem *contItem = sessItem->child(j);
-            kDebug() << "  |-" << contItem->data(0);
+            qCDebug(JABBER_PROTOCOL_LOG) << "  |-" << contItem->data(0);
         }
     }
 }
@@ -465,7 +465,7 @@ TreeItem *JingleCallsModel::getItem(const QModelIndex &index) const
             return item;
         }
     }
-    //kDebug() << "Return ROOT Item";
+    //qCDebug(JABBER_PROTOCOL_LOG) << "Return ROOT Item";
     return rootItem;
 }
 
@@ -521,7 +521,7 @@ bool TreeItem::removeChildren(int pos, int count)
 
 bool TreeItem::appendChild(int columns)
 {
-    //kDebug() << "Adding a TreeItem with" << columns << "columns";
+    //qCDebug(JABBER_PROTOCOL_LOG) << "Adding a TreeItem with" << columns << "columns";
     QVector<QVariant> data(columns);
     TreeItem *item = new TreeItem(data, this);
     childItems.append(item);
@@ -535,7 +535,7 @@ bool TreeItem::setData(int column, const QVariant &val)
         return false;
     }
 
-    //kDebug() << "Set value" << val << "in column" << column;
+    //qCDebug(JABBER_PROTOCOL_LOG) << "Set value" << val << "in column" << column;
     itemData[column] = val;
     return true;
 }

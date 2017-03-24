@@ -93,7 +93,6 @@ private:
   void FireMemberEntered(const XmppChatroomMember* entered_member);
   void FireMemberExited(const XmppChatroomMember* exited_member);
 
-
   typedef std::map<Jid, XmppChatroomMemberImpl*> JidMemberMap;
   
   XmppChatroomHandler*              chatroom_handler_;
@@ -103,7 +102,6 @@ private:
   JidMemberMap                      chatroom_jid_members_;
   int                               chatroom_jid_members_version_;
 };
-
 
 class XmppChatroomMemberImpl : public XmppChatroomMember {
 public:
@@ -142,7 +140,6 @@ private:
   bool                                            before_beginning_;
 };
 
-
 // XmppChatroomModuleImpl ------------------------------------------------
 XmppChatroomModule *
 XmppChatroomModule::Create() {
@@ -163,7 +160,6 @@ XmppChatroomModuleImpl::~XmppChatroomModuleImpl() {
     iterator++;
   }
 }
-
 
 bool 
 XmppChatroomModuleImpl::HandleStanza(const XmlElement* stanza) {
@@ -189,14 +185,12 @@ XmppChatroomModuleImpl::HandleStanza(const XmlElement* stanza) {
   }
 }
 
-
 XmppReturnStatus
 XmppChatroomModuleImpl::set_chatroom_handler(XmppChatroomHandler* handler) {
   // Calling with NULL removes the handler.
   chatroom_handler_ = handler;
   return XMPP_RETURN_OK;
 }
-
 
 XmppChatroomHandler* 
 XmppChatroomModuleImpl::chatroom_handler() {
@@ -241,7 +235,6 @@ XmppChatroomModuleImpl::member_jid() const {
   return Jid(chatroom_jid_.node(), chatroom_jid_.domain(), nickname_);
 }
 
-
 bool 
 XmppChatroomModuleImpl::CheckEnterChatroomStateOk() {
   if (chatroom_jid_.IsValid() == false) {
@@ -279,7 +272,6 @@ XmppChatroomModuleImpl::RequestEnterChatroom(const std::string& password) {
   return status;
 }
 
-
 XmppReturnStatus 
 XmppChatroomModuleImpl::RequestExitChatroom() {
   if (!engine())
@@ -307,8 +299,6 @@ XmppChatroomModuleImpl::RequestStatusChange(XmppPresenceShow status,
   UNUSED2(status, extended_status);
   return XMPP_RETURN_BADSTATE; //NYI
 }
-
-
 
 size_t 
 XmppChatroomModuleImpl::GetChatroomMemberCount() {
@@ -388,8 +378,6 @@ StateTransitionDescription Transitions[] = {
   { XMPP_CHATROOM_STATE_REQUESTED_EXIT,  XMPP_CHATROOM_STATE_IN_ROOM,         false, false, TRANSITION_TYPE_NONE, },
 };
 
-
-
 void
 XmppChatroomModuleImpl::FireEnteredStatus(XmppChatroomEnteredStatus status) {
   if (chatroom_handler_)
@@ -425,7 +413,6 @@ XmppChatroomModuleImpl::FireMemberExited(const XmppChatroomMember* exited_member
       chatroom_handler_->MemberExited(this, exited_member);
   }
 }
-
 
 XmppReturnStatus 
 XmppChatroomModuleImpl::ServerChangedOtherPresence(const XmlElement& 
@@ -603,7 +590,6 @@ XmppChatroomMemberImpl::presence() const {
   return presence_.get();
 }
 
-
 // XmppChatroomMemberEnumeratorImpl --------------------------------------
 XmppChatroomMemberEnumeratorImpl::XmppChatroomMemberEnumeratorImpl(
         XmppChatroomModuleImpl::JidMemberMap* map, int* map_version) {
@@ -670,7 +656,5 @@ bool
 XmppChatroomMemberEnumeratorImpl::IsAfterEnd() {
   return (iterator_ == map_->end());
 }
-
-
 
 } // namespace buzz

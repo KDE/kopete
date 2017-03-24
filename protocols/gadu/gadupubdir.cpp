@@ -262,7 +262,10 @@ GaduPublicDir::slotSearchResult(const SearchResult &result, unsigned int)
 
     for (r = result.begin(); r != result.end(); ++r) {
         kDebug(14100) << "adding" << (*r).uin;
-        args = (QStringList() << QString::fromAscii("") << (*r).firstname << (*r).nickname << (*r).age << (*r).city << QString::number((*r).uin).toAscii());
+        args
+            = (QStringList() << QString::fromAscii("") << (*r).firstname << (*r).nickname
+                             << (*r).age
+                             << (*r).city << QString::number((*r).uin).toAscii());
         sl = new QTreeWidgetItem(list, args);
         sl->setIcon(0, QIcon(iconForStatus((*r).status)));
     }

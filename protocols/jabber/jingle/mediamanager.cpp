@@ -19,7 +19,7 @@
 #include "mediasession.h"
 #include "alsaio.h"
 
-#include <KDebug>
+#include "jabber_protocol_debug.h"
 
 class MediaManager::Private
 {
@@ -45,14 +45,14 @@ MediaManager::MediaManager(QString inputDev, QString outputDev)
 
     d->started = false;
 
-    qDebug() << "Created Media Manager.";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Created Media Manager.";
 }
 
 MediaManager::~MediaManager()
 {
     stop();
     delete d;
-    qDebug() << "Deleted Media Manager.";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Deleted Media Manager.";
 }
 
 AlsaIO *MediaManager::alsaIn() const
@@ -107,7 +107,7 @@ QByteArray MediaManager::read()
 
 void MediaManager::write(const QByteArray &data)
 {
-    //kDebug() << "Writin on alsa device !";
+    //qCDebug(JABBER_PROTOCOL_LOG) << "Writin on alsa device !";
     if (alsaOut()) {
         alsaOut()->write(data);
     }

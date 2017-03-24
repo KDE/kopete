@@ -83,7 +83,6 @@ bool JabberAddContactPage::validateData ()
 	return true;
 }
 
-
 bool JabberAddContactPage::apply ( Kopete::Account *account, Kopete::MetaContact *parentContact )
 {
 
@@ -234,14 +233,9 @@ void JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND::slot
 	}
 }
 
-
-
-
 /*
  * Local variables:
  * c-indentation-style: k&r
- * c-basic-offset: 8
  * indent-tabs-mode: t
  * End:
  */
-// vim: set noet ts=4 sts=4 sw=4:

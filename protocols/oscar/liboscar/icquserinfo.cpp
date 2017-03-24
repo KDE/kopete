@@ -1212,4 +1212,3 @@ QByteArray ICQFullInfo::storeInfoItemList( const ICQFullInfo::InfoItemList& info
 	return buffer.buffer();
 }
 
-//kate: space-indent off; tab-width 4; replace-tabs off; indent-mode csands;

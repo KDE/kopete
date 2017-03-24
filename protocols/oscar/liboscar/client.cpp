@@ -76,7 +76,6 @@
 #include "chatroomtask.h"
 #include "chatroomhandler.h"
 
-
 namespace
 {
 	class DefaultCodecProvider : public Client::CodecProvider
@@ -1647,7 +1646,6 @@ void Client::checkRedirectionQueue( Oscar::WORD family )
 	}
 }
 
-
 void Client::requestChatNavLimits()
 {
 	Connection* c = d->connections.connectionForFamily( 0x000D );
@@ -1856,4 +1854,3 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 
 }
 
-//kate: tab-width 4; indent-mode csands; space-indent off; replace-tabs off;

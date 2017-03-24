@@ -77,7 +77,6 @@ static const int kMediaContentIndex1 = 1;
 
 static const int kIceCandidatesTimeout = 3000;
 
-
 class MockCandidateObserver : public webrtc::IceCandidateObserver {
  public:
   MockCandidateObserver()
@@ -696,7 +695,6 @@ TEST_F(WebRtcSessionTest, TestSetLocalAndRemoteDescriptionWithCandidates) {
   EXPECT_TRUE(session_->SetLocalDescription(JsepInterface::kOffer, offer));
   EXPECT_TRUE(session_->SetRemoteDescription(JsepInterface::kAnswer, answer));
 }
-
 
 TEST_F(WebRtcSessionTest, TestDefaultSetSecurePolicy) {
   WebRtcSessionTest::Init();

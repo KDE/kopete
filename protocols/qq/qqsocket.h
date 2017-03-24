@@ -26,7 +26,6 @@ namespace KNetwork {
     class KBufferedSocket;
 }
 
-
 /**
  * @author Hui Jin <blueangle.jin@gmail.com>
  *
@@ -49,7 +48,6 @@ public:
 	enum LookupStatus { Processing, Success, Failed };
 	enum Transport { TcpTransport, HttpTransport };
 	enum ErrorType { ErrorNormal, ErrorInternal, ErrorInformation, ErrorSorry };
-	
 
 	OnlineStatus onlineStatus() { return m_onlineStatus; }
 

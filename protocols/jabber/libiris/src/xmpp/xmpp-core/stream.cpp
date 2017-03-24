@@ -67,7 +67,6 @@
 #include "td.h"
 #endif
 
-
 //#define XMPP_DEBUG
 
 using namespace XMPP;
@@ -1483,7 +1482,6 @@ void ClientStream::setSMEnabled(bool e)
 	d->client.sm.state().setEnabled(e);
 }
 
-
 QStringList ClientStream::hosts() const
 {
 	return d->client.hosts;
@@ -1498,7 +1496,6 @@ QList<QDomElement> ClientStream::unhandledFeatures() const
 {
 	return d->client.unhandledFeatures;
 }
-
 
 //----------------------------------------------------------------------------
 // Debug

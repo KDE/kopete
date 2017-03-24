@@ -272,8 +272,7 @@ void LoginTask::extractPrivacy( Field::FieldList & fields )
 	Field::SingleField * sf = fields.findSingleField( Field::NM_A_BLOCKING );
 	if ( sf )
 		defaultDeny = ( sf->value().toInt() != 0 );
-	
-		
+
 	// read deny list
 	denyList = readPrivacyItems( Field::NM_A_BLOCKING_DENY_LIST, fields );
 	// read allow list

@@ -1,6 +1,5 @@
 // Copyright 2010 Google Inc. All Rights Reserved
 
-
 #include "talk/base/win32windowpicker.h"
 
 #include <string>

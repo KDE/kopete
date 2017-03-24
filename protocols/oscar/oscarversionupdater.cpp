@@ -25,7 +25,6 @@
 #include <kglobal.h>
 #include <kconfiggroup.h>
 
-
 QMutex updateMutex;
 OscarVersionUpdater *OscarVersionUpdater::versionUpdaterStatic = 0L;
 
@@ -67,7 +66,7 @@ bool OscarVersionUpdater::update( unsigned int stamp )
 	{
 		mVersionData.resize( 0 );
 		
-		KConfigGroup config( KGlobal::config(), "Oscar" );
+		KConfigGroup config( KSharedConfig::openConfig(), "Oscar" );
 		QString url = config.readEntry( "NewVersionURL", "http://kopete.kde.org/oscarversions.xml" );
 		mTransferJob = KIO::get ( url );
 		kDebug(OSCAR_GEN_DEBUG) << "Download version info from server.";
@@ -88,7 +87,7 @@ unsigned int OscarVersionUpdater::stamp() const
 void OscarVersionUpdater::initICQVersionInfo()
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
-	KConfigGroup config( KGlobal::config(), "ICQVersion" );
+	KConfigGroup config( KSharedConfig::openConfig(), "ICQVersion" );
 	
 	mICQVersion.clientString = config.readEntry( "ClientString", "ICQ Client" );
 	mICQVersion.clientId = config.readEntry( "ClientId", "0x010A" ).toUShort( 0, 0 );
@@ -105,7 +104,7 @@ void OscarVersionUpdater::initAIMVersionInfo()
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
 	
-	KConfigGroup config( KGlobal::config(), "AIMVersion" );
+	KConfigGroup config( KSharedConfig::openConfig(), "AIMVersion" );
 	
 	mAIMVersion.clientString = config.readEntry( "ClientString", "AOL Instant Messenger (SM), version 5.1.3036/WIN32" );
 	mAIMVersion.clientId = config.readEntry( "ClientId", "0x0109" ).toUShort( 0, 0 );
@@ -266,7 +265,7 @@ bool OscarVersionUpdater::parseVersion( Oscar::ClientVersion& version, QDomEleme
 void OscarVersionUpdater::storeVersionInfo( const QString& group, const Oscar::ClientVersion& version ) const
 {
 	kDebug(OSCAR_GEN_DEBUG) << "Storing version info to group: " << group;
-	KConfigGroup config( KGlobal::config(), group );
+	KConfigGroup config( KSharedConfig::openConfig(), group );
 	
 	config.writeEntry( "ClientString", version.clientString );
 	config.writeEntry( "ClientId", uint(version.clientId) );

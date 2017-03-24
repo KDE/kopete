@@ -29,7 +29,6 @@ ChatPropertiesTask::ChatPropertiesTask(Task* parent): RequestTask(parent)
 {
 }
 
-
 ChatPropertiesTask::~ChatPropertiesTask()
 {
 }

@@ -46,6 +46,4 @@ public:
 
 }
 
-//kate: indent-mode csands; auto-insert-doxygen on; tab-width 4;
-
 #endif

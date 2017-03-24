@@ -42,7 +42,6 @@ class ChatSession;
 class MetaContact;
 }
 
-
 class QTextCodec;
 
 /**

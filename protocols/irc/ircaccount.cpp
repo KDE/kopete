@@ -49,8 +49,6 @@
 #include <QMenu>
 #include <kmessagebox.h>
 
-
-
 #include <qtextcodec.h>
 #include <QTimer>
 
@@ -178,9 +176,7 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 		kError() << "No network name defined, and could not import network information from ID" << endl;
 	}
 
-
 //	setAccountLabel( QString::fromLatin1("%1@%2").arg(mNickName,networkName) );
-
 
 #ifdef __GNUC__
 	#warning spurus slot calls for now
@@ -198,7 +194,6 @@ IRCAccount::~IRCAccount()
 
 	delete d;
 }
-
 
 void IRCAccount::clientSetup()
 {

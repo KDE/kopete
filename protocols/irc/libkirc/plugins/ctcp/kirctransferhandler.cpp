@@ -15,7 +15,6 @@
     *************************************************************************
 */
 
-
 #include "kirctransferserver.h"
 
 #include <kglobal.h>
@@ -91,4 +90,3 @@ File *DCCHandler::openFile( QString file, int mode = QIODevice::ReadWrite )
 }
 */
 
-// vim: set noet ts=4 sts=4 sw=4:

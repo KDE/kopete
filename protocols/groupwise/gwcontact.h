@@ -30,7 +30,6 @@
 
 #include <QMap>
 
-
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 

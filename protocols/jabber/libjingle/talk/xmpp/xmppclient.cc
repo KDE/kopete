@@ -299,7 +299,6 @@ XmppClient::jid() const {
   return d_->engine_->FullJid();
 }
 
-
 std::string
 XmppClient::NextId() {
   return d_->engine_->NextId();
@@ -410,6 +409,5 @@ XmppClient::EnsureClosed() {
     delivering_signal_ = false;
   }
 }
-
 
 }

@@ -47,7 +47,6 @@
 //          </query>
 //      </iq>
 
-
 #ifndef _DISCOITEMSQUERYTASK_H_
 #define _DISCOITEMSQUERYTASK_H_
 

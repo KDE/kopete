@@ -30,11 +30,9 @@ OnlineNotifierTask::OnlineNotifierTask( Task* parent ) : Task( parent )
 {
 }
 
-
 OnlineNotifierTask::~OnlineNotifierTask()
 {
 }
-
 
 bool OnlineNotifierTask::forMe( const Transfer* transfer ) const
 {
@@ -95,4 +93,3 @@ void OnlineNotifierTask::userOffline()
 	emit userIsOffline( user, ud );
 }
 
-//kate: tab-width 4; indent-mode csands;

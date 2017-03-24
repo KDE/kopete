@@ -44,7 +44,6 @@ XmppEngine* XmppEngine::Create() {
   return new XmppEngineImpl();
 }
 
-
 XmppEngineImpl::XmppEngineImpl()
     : stanza_parse_handler_(this),
       stanza_parser_(&stanza_parse_handler_),

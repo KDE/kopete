@@ -39,7 +39,6 @@
 #include <kstandarddirs.h>
 #include <ksharedconfig.h>
 
-
 // Kopete Includes
 #include <addcontactpage.h>
 
@@ -137,6 +136,3 @@ Kopete::Account *WPEditAccount::apply()
 	return account();
 }
 
-
-// vim: set noet ts=4 sts=4 sw=4:
-// kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

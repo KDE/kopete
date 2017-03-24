@@ -148,7 +148,6 @@ void RoapSignaling::ProcessSignalingMessage(
         break;
       }
 
-
       // Let the remote peer know we have received the answer.
       SignalNewPeerConnectionMessage(roap_session_.CreateOk());
       // Check if we have more offers waiting in the queue.

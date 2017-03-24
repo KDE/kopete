@@ -162,7 +162,6 @@ void BuddyIconTask::handleUploadResponse()
 	setSuccess( 0, QString() );
 }
 
-
 void BuddyIconTask::sendAIMBuddyIconRequest()
 {
 	kDebug(OSCAR_RAW_DEBUG) << "requesting buddy icon for " << m_user;
@@ -242,6 +241,4 @@ void BuddyIconTask::handleICQBuddyIconResponse()
 	emit haveIcon( user, icon );
 	setSuccess( 0, QString() );
 }
-
-
 

@@ -32,7 +32,6 @@ SSIListTask::SSIListTask( Task* parent ) : Task( parent )
 	QObject::connect( this, SIGNAL(newItem(OContact)), m_ssiManager, SLOT(newItem(OContact)) );
 }
 
-
 SSIListTask::~SSIListTask()
 {}
 
@@ -172,5 +171,3 @@ void SSIListTask::checkContactTimestamp()
 	send( t );
 }
 
-
-// kate: tab-width 4; indent-mode csands;

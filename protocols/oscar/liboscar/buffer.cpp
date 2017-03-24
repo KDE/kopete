@@ -22,7 +22,6 @@
 #include <ctype.h>
 #include <kdebug.h>
 
-
 Buffer::Buffer()
 {
 	mReadPos=0;
@@ -47,11 +46,9 @@ Buffer::Buffer( const QByteArray& data )
 	mReadPos = 0;
 }
 
-
 Buffer::~Buffer()
 {
 }
-
 
 int Buffer::addByte(Oscar::BYTE b)
 {
@@ -68,7 +65,6 @@ int Buffer::addLEByte(Oscar::BYTE b)
 
 	return mBuffer.size();
 }
-
 
 int Buffer::addWord(Oscar::WORD w)
 {
@@ -87,7 +83,6 @@ int Buffer::addLEWord(Oscar::WORD w)
 
 	return mBuffer.size();
 }
-
 
 int Buffer::addDWord(Oscar::DWORD dw)
 {
@@ -146,7 +141,6 @@ int Buffer::addLEString(const char *s, Oscar::DWORD len)
 	}
 	return mBuffer.size();
 }
-
 
 void Buffer::clear()
 {
@@ -269,7 +263,6 @@ QByteArray Buffer::getBBlock(Oscar::WORD len)
 	return data;
 }
 
-
 Oscar::WORD *Buffer::getWordBlock(Oscar::WORD len)
 {
 	kDebug(14150) << "of length " << len;
@@ -281,7 +274,6 @@ Oscar::WORD *Buffer::getWordBlock(Oscar::WORD len)
 	ch[len]=0;
 	return ch;
 }
-
 
 QByteArray Buffer::getLEBlock(Oscar::WORD len)
 {
@@ -483,8 +475,6 @@ int Buffer::bytesAvailable() const
 	return (mBuffer.size() - mReadPos);
 }
 
-
-
 QString Buffer::toString() const
 {
 	// line format:
@@ -538,14 +528,12 @@ QString Buffer::peekBUIN()
 	return QString( qba );
 }
 
-
 int Buffer::addGuid( const Guid & g )
 {
 	if (g.isValid())
 		return addString( g.data() );
 	return mBuffer.size();
 }
-
 
 Guid Buffer::getGuid()
 {
@@ -640,4 +628,3 @@ Buffer::operator QByteArray() const
 {
 	return mBuffer;
 }
-//kate: tab-width 4; indent-mode csands;

@@ -50,7 +50,6 @@ private:
 	Oscar::DWORD m_sequence;
 };
 
-
 class LIBOSCAR_EXPORT ICQShortInfo : public ICQInfoBase
 {
 public:
@@ -346,4 +345,3 @@ private:
 };
 
 #endif
-//kate: space-indent off; tab-width 4; replace-tabs off; indent-mode csands;

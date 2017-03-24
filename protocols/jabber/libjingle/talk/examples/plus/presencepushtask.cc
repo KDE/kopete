@@ -30,7 +30,6 @@
 #include "talk/xmpp/constants.h"
 #include <sstream>
 
-
 namespace buzz {
 
 // string helper functions -----------------------------------------------------
@@ -49,7 +48,6 @@ ListContainsToken(const std::string & list, const std::string & token) {
   bool boundary_after = (i == list.length() - token.length() || IsXmlSpace(list[i + token.length()]));
   return boundary_before && boundary_after;
 }
-
 
 bool
 PresencePushTask::HandleStanza(const XmlElement * stanza) {
@@ -196,6 +194,5 @@ PresencePushTask::ProcessStart() {
 
   return STATE_START;
 }
-
 
 }

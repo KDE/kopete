@@ -260,7 +260,6 @@ void Engine::numericReply_305(Message &msg)
 */
 }
 
-
 /* 306: ":You have been marked as being away"
  */
 void Engine::numericReply_306(Message &msg)
@@ -447,7 +446,6 @@ void Engine::numericReply_352(Message &msg)
 	);
 */
 }
-
 
 /* 353:
  * NAMES list

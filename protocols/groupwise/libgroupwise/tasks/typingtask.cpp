@@ -26,7 +26,6 @@ TypingTask::TypingTask(Task* parent): RequestTask(parent)
 {
 }
 
-
 TypingTask::~TypingTask()
 {
 }

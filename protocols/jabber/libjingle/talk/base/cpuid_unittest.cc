@@ -31,7 +31,6 @@
 #include "talk/base/gunit.h"
 #include "talk/base/stringutils.h"
 
-
 // Tests CPUID instruction for Vendor identification.
 TEST(CpuInfoTest, CpuVendorNonEmpty) {
   EXPECT_FALSE(talk_base::CpuInfo::GetCpuVendor().empty());

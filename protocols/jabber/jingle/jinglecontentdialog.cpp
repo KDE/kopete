@@ -17,7 +17,7 @@
 #include "jinglecontentdialog.h"
 #include <QVBoxLayout>
 #include <QLabel>
-#include <KDebug>
+#include "jabber_protocol_debug.h"
 
 using namespace XMPP;
 
@@ -43,7 +43,7 @@ static QString typeToString(JingleContent::Type t)
 JingleContentDialog::JingleContentDialog(QWidget *parent)
     : QDialog(parent)
 {
-    kDebug() << "Created";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Created";
     ui.setupUi(this);
 }
 
@@ -83,7 +83,7 @@ QStringList JingleContentDialog::checked()
     QStringList ret;
     for (int i = 0; i < m_checkBoxes.count(); i++) {
         if (m_checkBoxes[i]->checkState() == Qt::Checked) {
-            qDebug() << "JingleContentDialog::checked() : checked : " << m_contentNames.at(i);
+            qCDebug(JABBER_PROTOCOL_LOG) << "JingleContentDialog::checked() : checked : " << m_contentNames.at(i);
             ret << m_contentNames.at(i);
         }
     }
@@ -95,7 +95,7 @@ QStringList JingleContentDialog::unChecked()
     QStringList ret;
     for (int i = 0; i < m_checkBoxes.count(); i++) {
         if (m_checkBoxes[i]->checkState() == Qt::Unchecked) {
-            qDebug() << "JingleContentDialog::unChecked() : unchecked : " << m_contentNames.at(i);
+            qCDebug(JABBER_PROTOCOL_LOG) << "JingleContentDialog::unChecked() : unchecked : " << m_contentNames.at(i);
             ret << m_contentNames.at(i);
         }
     }

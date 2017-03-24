@@ -30,7 +30,6 @@
 #include <qdatetime.h>
 #include <QByteArray>
 
-
 #include <kdebug.h>
 #include <kurl.h>
 

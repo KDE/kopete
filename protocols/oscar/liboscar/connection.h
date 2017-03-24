@@ -32,7 +32,6 @@ class ContactManager;
 class Task;
 class QHostAddress;
 
-
 namespace Oscar
 {
 class Client;
@@ -203,7 +202,6 @@ signals:
 	 */
 	void socketError( int errCode, const QString& errString );
 
-
 private:
 	/** Seed the sequence numbers with random values */
 	void initSequence();
@@ -234,4 +232,3 @@ private:
 
 #endif
 
-//kate: tab-width 4; indent-mode csands; auto-insert-doxygen on;

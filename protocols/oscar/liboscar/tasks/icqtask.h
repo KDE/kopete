@@ -58,6 +58,4 @@ private:
 	Oscar::WORD m_requestSubType; //little endian
 };
 
-//kate: tab-width 4; indent-mode csands;
-
 #endif

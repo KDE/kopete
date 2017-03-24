@@ -20,7 +20,6 @@
 #include <QtTest/QtTest>
 #include <QObject>
 
-
 class Buffer;
 
 /**

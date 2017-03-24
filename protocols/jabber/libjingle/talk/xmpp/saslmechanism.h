@@ -34,7 +34,6 @@ namespace buzz {
 
 class XmlElement;
 
-
 // Defines a mechnanism to do SASL authentication.
 // Subclass instances should have a self-contained way to present
 // credentials.

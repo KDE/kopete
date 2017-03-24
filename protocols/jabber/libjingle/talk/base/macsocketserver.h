@@ -1,6 +1,5 @@
 // Copyright 2007, Google Inc.
 
-
 #ifndef TALK_BASE_MACSOCKETSERVER_H__
 #define TALK_BASE_MACSOCKETSERVER_H__
 

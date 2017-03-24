@@ -477,4 +477,3 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(Oscar::Capabilities)
 
 #endif
 
-//kate: tab-width 4; indent-mode csands;

@@ -20,7 +20,7 @@
 #include <QVBoxLayout>
 #include <QGridLayout>
 
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 
 #include "jabberformlineedit.h"
 
@@ -53,7 +53,7 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 	XMPP::Form::const_iterator formEnd = form.end ();
 	for (XMPP::Form::const_iterator it = form.begin (); it != formEnd; ++it, ++row)
 	{
-		kDebug (14130) << "[JabberFormTranslator] Adding field realName()==" <<
+        qCDebug(JABBER_PROTOCOL_LOG) << "[JabberFormTranslator] Adding field realName()==" <<
 			(*it).realName () << ", fieldName()==" << (*it).fieldName () << " to the dialog" << endl;
 
 		label = new QLabel ((*it).fieldName (), this);

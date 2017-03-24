@@ -73,7 +73,6 @@ ClientStream::ClientStream( QSslSocket *socket, QObject *parent )
 	connect(d->socket, SIGNAL(readyRead()), SLOT(socketReadyRead()));
 	connect(d->socket, SIGNAL(bytesWritten(qint64)), SLOT(socketBytesWritten(qint64)));
 
-
 	connect( &d->client, SIGNAL(outgoingData(QByteArray)),
 	         SLOT (cp_outgoingData(QByteArray)) );
 	connect( &d->client, SIGNAL(incomingData()),
@@ -277,7 +276,6 @@ void ClientStream::cp_incomingData()
 			d->client.state() << endl;
 }
 
-
 void ClientStream::socketConnected()
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
@@ -366,5 +364,3 @@ void ClientStream::doNoop()
 	write( t );
 }
 
-
-//kate: tab-width 4; indent-mode csands;

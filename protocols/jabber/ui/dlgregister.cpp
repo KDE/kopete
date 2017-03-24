@@ -21,7 +21,7 @@
 #include <QLabel>
 #include <KMessageBox>
 #include <KLocale>
-#include <KDebug>
+#include "jabber_protocol_debug.h"
 
 #include "jabberaccount.h"
 #include "jabberprotocol.h"
@@ -82,7 +82,7 @@ void dlgRegister::slotGotForm()
 		XMPP::XData form;
 		form.fromXml(e);
 		mXDataWidget = new JabberXDataWidget(form, mMainWidget);
-		//qDebug() << "COUNT " << mMainWidget->layout()->count();
+		//qCDebug(JABBER_PROTOCOL_LOG) << "COUNT " << mMainWidget->layout()->count();
 		mMainWidget->layout()->addWidget(mXDataWidget);
 		mXDataWidget->show();
 	}

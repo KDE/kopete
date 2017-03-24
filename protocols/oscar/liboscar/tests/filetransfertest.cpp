@@ -38,4 +38,3 @@ void FileTransferTest::testRRequest()
     delete b;*/
 }
 
-

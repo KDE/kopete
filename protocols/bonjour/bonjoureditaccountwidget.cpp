@@ -106,7 +106,8 @@ BonjourEditAccountWidget::~BonjourEditAccountWidget()
 Kopete::Account *BonjourEditAccountWidget::apply()
 {
     if (!account()) {
-        setAccount(new BonjourAccount(BonjourProtocol::protocol(), m_preferencesWidget->kcfg_username->text()));
+        setAccount(new BonjourAccount(BonjourProtocol::protocol(),
+                                      m_preferencesWidget->kcfg_username->text()));
         group = account()->configGroup();
     }
 

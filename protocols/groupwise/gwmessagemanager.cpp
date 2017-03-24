@@ -312,7 +312,6 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 
 	m_actionInvite->menu()->clear();
 
-
 	foreach( Kopete::Contact * contact, account()->contacts() )
 	{
 		if( !members().contains( contact ) && contact->isOnline() )

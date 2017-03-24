@@ -13,7 +13,6 @@
     *************************************************************************
 */
 
-
 using namespace KIrc;
 
 HandlerPlugin::HandlerPlugin()

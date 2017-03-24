@@ -85,7 +85,6 @@ private:
   scoped_ptr<const CryptStringImpl> impl_;
 };
 
-
 // Used for constructing strings where a password is involved and we
 // need to ensure that we zero memory afterwards
 class FormatCryptString {
@@ -122,7 +121,6 @@ public:
   const char * GetData() {
     return storage_;
   }
-
 
   // Ensures storage of at least n bytes
   void EnsureStorage(size_t n) {

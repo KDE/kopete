@@ -115,7 +115,6 @@ QVariant StatusModel::data( const QModelIndex &index, int role ) const
 	return QVariant();
 }
 
-
 QVariant StatusModel::headerData( int section, Qt::Orientation orientation, int role ) const
 {
 	if ( orientation == Qt::Vertical && role == Qt::DisplayRole )

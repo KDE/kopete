@@ -43,7 +43,6 @@
 
 #include <kdebug.h>
 
-
 class ChannelListItem : public K3ListViewItem
 {
 	public:
@@ -131,8 +130,6 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 						opt );
 		}
 
-
-
 		if ( isSelected() &&
 		(column == 0 || lv->allColumnsShowFocus()) ) {
 			p->fillRect( r - marg, 0, width - r + marg, height(),
@@ -159,7 +156,6 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 		}
 	}
 	// END OF PASTE
-
 
 	//do you see a better way to tell the TextComponent we are selected ?  - Olivier 2004-09-02
 	if ( isSelected() )

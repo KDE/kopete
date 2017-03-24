@@ -30,7 +30,6 @@ ResponseProtocol::ResponseProtocol(QObject* parent)
 {
 }
 
-
 ResponseProtocol::~ResponseProtocol()
 {
 }

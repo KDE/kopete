@@ -29,7 +29,8 @@ GWContactList::GWContactList(QObject *parent)
 {
 }
 
-GWFolder *GWContactList::addFolder(unsigned int id, unsigned int sequence, const QString &displayName)
+GWFolder *GWContactList::addFolder(unsigned int id, unsigned int sequence,
+                                   const QString &displayName)
 {
     if (rootFolder) {
         return new GWFolder(rootFolder, id, sequence, displayName);
@@ -38,7 +39,9 @@ GWFolder *GWContactList::addFolder(unsigned int id, unsigned int sequence, const
     }
 }
 
-GWContactInstance *GWContactList::addContactInstance(unsigned int id, unsigned int parent, unsigned int sequence, const QString &displayName, const QString &dn)
+GWContactInstance *GWContactList::addContactInstance(unsigned int id, unsigned int parent,
+                                                     unsigned int sequence,
+                                                     const QString &displayName, const QString &dn)
 {
     GWContactInstance *contact = 0;
     foreach (GWFolder *folder, findChildren<GWFolder *>()) {
@@ -128,7 +131,8 @@ void GWContactList::clear()
     }
 }
 
-GWContactListItem::GWContactListItem(QObject *parent, unsigned int theId, unsigned int theSequence, const QString &theDisplayName)
+GWContactListItem::GWContactListItem(QObject *parent, unsigned int theId, unsigned int theSequence,
+                                     const QString &theDisplayName)
     : QObject(parent)
     , id(theId)
     , sequence(theSequence)
@@ -136,7 +140,8 @@ GWContactListItem::GWContactListItem(QObject *parent, unsigned int theId, unsign
 {
 }
 
-GWFolder::GWFolder(QObject *parent, unsigned int theId, unsigned int theSequence, const QString &theDisplayName)
+GWFolder::GWFolder(QObject *parent, unsigned int theId, unsigned int theSequence,
+                   const QString &theDisplayName)
     : GWContactListItem(parent, theId, theSequence, theDisplayName)
 {
 }
@@ -159,7 +164,8 @@ void GWFolder::dump(unsigned int depth)
     }
 }
 
-GWContactInstance::GWContactInstance(QObject *parent, unsigned int theId, unsigned int theSequence, const QString &theDisplayName, const QString &theDn)
+GWContactInstance::GWContactInstance(QObject *parent, unsigned int theId, unsigned int theSequence,
+                                     const QString &theDisplayName, const QString &theDn)
     : GWContactListItem(parent, theId, theSequence, theDisplayName)
     , dn(theDn)
 {

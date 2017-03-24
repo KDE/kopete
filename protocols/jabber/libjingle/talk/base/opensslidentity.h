@@ -144,7 +144,6 @@ class OpenSSLIdentity : public SSLIdentity {
   DISALLOW_EVIL_CONSTRUCTORS(OpenSSLIdentity);
 };
 
-
 }  // namespace talk_base
 
 #endif  // TALK_BASE_OPENSSLIDENTITY_H__

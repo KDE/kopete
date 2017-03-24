@@ -96,7 +96,6 @@ Kopete::ChatSession* TestbedContact::manager( CanCreateFlags canCreateFlags )
 	}
 }
 
-
 //QList<QAction *> *TestbedContact::customContextMenuActions() //OBSOLETE
 //{
 	//FIXME!!!  this function is obsolete, we should use XMLGUI instead
@@ -147,7 +146,4 @@ void TestbedContact::slotChatSessionDestroyed()
 	//FIXME: the chat window was closed?  Take appropriate steps.
 	m_msgManager = 0L;
 }
-
-
-// vim: set noet ts=4 sts=4 sw=4:
 

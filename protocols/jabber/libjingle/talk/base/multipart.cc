@@ -23,7 +23,6 @@
 // OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 #include "talk/base/common.h"
 #include "talk/base/httpcommon.h"
 #include "talk/base/multipart.h"

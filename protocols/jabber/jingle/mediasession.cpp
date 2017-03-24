@@ -20,7 +20,7 @@
 #include "abstractio.h"
 #include "speexio.h"
 
-#include <KDebug>
+#include "jabber_protocol_debug.h"
 #include <QTime>
 
 class MediaSession::Private
@@ -47,7 +47,7 @@ MediaSession::MediaSession(MediaManager *mm, const QString &codecName)
 
     d->ts = 0;
 
-    qDebug() << "Created Media Session for codec" << codecName;
+    qCDebug(JABBER_PROTOCOL_LOG) << "Created Media Session for codec" << codecName;
 }
 
 MediaSession::~MediaSession()
@@ -55,7 +55,7 @@ MediaSession::~MediaSession()
     d->mediaManager->removeSession(this);
     delete d->plugin;
     delete d;
-    qDebug() << "Deleted Media Session";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Deleted Media Session";
 }
 
 void MediaSession::setSamplingRate(int sr)
@@ -85,13 +85,13 @@ bool MediaSession::start()
 void MediaSession::write(const QByteArray &sData)
 {
     //decoding speex data.
-    //kDebug() << "Receiving ! (" << sData.size() << "bytes)";
+    //qCDebug(JABBER_PROTOCOL_LOG) << "Receiving ! (" << sData.size() << "bytes)";
     d->plugin->decode(sData);
 }
 
 void MediaSession::slotReadyRead()
 {
-    //qDebug() << "Ready read";
+    //qCDebug(JABBER_PROTOCOL_LOG) << "Ready read";
     d->plugin->encode(d->mediaManager->read());
 }
 
@@ -110,15 +110,15 @@ QByteArray MediaSession::read() const
 
 void MediaSession::slotDecoded()
 {
-    //kDebug() << "Decoded !";
+    //qCDebug(JABBER_PROTOCOL_LOG) << "Decoded !";
 
     QByteArray rawData = d->plugin->decodedData(); //FIXME:what about this QByteArray lifetime ?
     if (rawData.isNull()) {
-        qDebug() << "rawData is NULL !";
+        qCDebug(JABBER_PROTOCOL_LOG) << "rawData is NULL !";
         return;
     }
 
-    //qDebug() << "rawData =" << rawData.toBase64() << "(" << rawData.size() << "bytes)";
+    //qCDebug(JABBER_PROTOCOL_LOG) << "rawData =" << rawData.toBase64() << "(" << rawData.size() << "bytes)";
 
     //FIXME: write should become writeAudio, a write Video should be created.
     d->mediaManager->write(rawData);
@@ -127,6 +127,6 @@ void MediaSession::slotDecoded()
 int MediaSession::timeStamp()
 {
     int ret = d->startTime.msecsTo(QTime::currentTime());
-    //kDebug() << "Return value :" << ret;
+    //qCDebug(JABBER_PROTOCOL_LOG) << "Return value :" << ret;
     return ret;
 }

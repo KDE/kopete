@@ -33,7 +33,6 @@ PollSearchResultsTask::PollSearchResultsTask(Task* parent): RequestTask(parent)
 {
 }
 
-
 PollSearchResultsTask::~PollSearchResultsTask()
 {
 }

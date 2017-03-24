@@ -77,7 +77,6 @@
 #define NM_PROTOCOL_VERSION				5
 #define NMFIELD_MAX_STR_LENGTH			32768
 
-
 /* Attribute Names (field tags) */
 namespace Field {
 	extern LIBGROUPWISE_EXPORT QByteArray NM_A_IP_ADDRESS;
@@ -157,7 +156,6 @@ namespace Field {
 	extern LIBGROUPWISE_EXPORT QByteArray KOPETE_NM_USER_DETAILS_SURNAME;
 	extern LIBGROUPWISE_EXPORT QByteArray KOPETE_NM_USER_DETAILS_ARCHIVE_FLAG;
 	extern LIBGROUPWISE_EXPORT QByteArray KOPETE_NM_USER_DETAILS_FULL_NAME;
-
 
 /**
  * Fields are typed units of information interchanged between the groupwise server and its clients.

@@ -605,7 +605,6 @@ void FileTransferTask::doCancel()
 	setSuccess( true );
 }
 
-
 void FileTransferTask::doAccept( const QString &localDirecotry )
 {
 	kDebug(OSCAR_RAW_DEBUG) << "directory: " << localDirecotry;
@@ -897,6 +896,4 @@ QString FileTransferTask::parseDescription( const QByteArray &description ) cons
 	else
 		return QString::fromUtf8( description );
 }
-
-//kate: space-indent off; tab-width 4; indent-mode csands;
 

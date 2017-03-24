@@ -26,7 +26,6 @@
 #include "contactmanager.h"
 #include "contact.h"
 
-
 class Buffer;
 
 /**
@@ -157,4 +156,3 @@ private:
 
 #endif
 
-//kate: tab-width 4; indent-mode csands

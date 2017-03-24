@@ -37,7 +37,6 @@ void __cdecl std::_Throw(const std::exception &) {}
 std::_Prhand std::_Raise_handler =0;
 #endif
 
-
 void SetConsoleEcho(bool on) {
 #ifdef WIN32
   HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);

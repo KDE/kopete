@@ -93,7 +93,6 @@ namespace Eva {
 	static const uchar Away = 30;
 	static const uchar Invisible = 40;
 
-
 	// IM operation( sending )
 	static const ushort IMText = 0x000b;
 	static const ushort IMNotifyIP = 0x003b;
@@ -182,7 +181,6 @@ namespace Eva {
 		GroupInfo( uint q, uchar t, uchar g ) : qqId(q), type (t), groupId(g) {}
 	};
 
-
 	// Customized max to get rid of stl dependence
 	template<class T> T max( T a, T b) { return (a>b) ? a : b; }
 	template<class T> T min( T a, T b) { return (a<b) ? a : b; }
@@ -200,7 +198,6 @@ namespace Eva {
         explicit ByteArray( const char* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
                                        m_size(size), m_data((uchar*)p)
 		{ }
-        
 
         ~ByteArray() { if( m_itsOwn ) free(m_data); }
         
@@ -274,7 +271,6 @@ namespace Eva {
 		{
 			return duplicate( (const uchar*)d, s );
 		}
-
 
         int size() const { return m_size; }
 		void setSize( int size ) { if( size<= m_capacity ) m_size = size; }
@@ -460,7 +456,6 @@ namespace Eva {
 		ByteArray m_body;
 	};
 
-	
 	// Packet operation
 	
 	/**
@@ -487,7 +482,6 @@ namespace Eva {
 	ByteArray messageReply(uint id, ushort sequence, const ByteArray& key, const ByteArray& text );
 	ByteArray heartbeat(uint id, ushort sequence, const ByteArray& key );
 	ByteArray onlineContacts(uint id, ushort sequence, const ByteArray& key, uchar pos );
-
 
 		// Misc
 

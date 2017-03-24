@@ -75,7 +75,6 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const QUrl & url) co
 	KConfig file(url.toLocalFile(), KConfig::SimpleConfig);
 	QString group_name;
 
-
 	if (file.hasGroup("ICQ User"))
 		group_name= "ICQ User";
 	else if (file.hasGroup("ICQ Message User"))
@@ -860,4 +859,3 @@ OscarStatusManager *ICQProtocol::statusManager() const
 
 #include "icqprotocol.moc"
 // kate: indent-mode csands;
-// vim: set noet ts=4 sts=4 sw=4:

@@ -29,11 +29,9 @@ PRMParamsTask::PRMParamsTask( Task* parent )
 {
 }
 
-
 PRMParamsTask::~PRMParamsTask()
 {
 }
-
 
 bool PRMParamsTask::forMe( const Transfer* transfer ) const
 {
@@ -69,4 +67,3 @@ void PRMParamsTask::onGo()
 	send( t );
 }
 
-// kate: tab-width 4; indent-mode csands;

@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include "transfer.h"
 
-
 using namespace Oscar;
 
 SnacProtocol::SnacProtocol(QObject *parent)
@@ -101,5 +100,4 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 	bytes = f.length + 6;
 	return st;
 }
-
 

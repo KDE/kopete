@@ -25,14 +25,12 @@
 
 #include "oscartypes.h"
 
-
 class QString;
 class Buffer;
 class Connection;
 class Transfer;
 
 using namespace Oscar;
-
 
 class Task : public QObject
 {

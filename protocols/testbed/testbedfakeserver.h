@@ -20,7 +20,6 @@
 #include <QList>
 #include <QObject>
 
-
 class TestbedIncomingMessage;
 
 /**

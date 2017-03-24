@@ -758,7 +758,6 @@ namespace sigslot {
 			}
 		}
 
-
 	protected:
 		connections_list m_connected_slots;   
 	};
@@ -1738,7 +1737,6 @@ namespace sigslot {
 		connections_list m_connected_slots;   
 	};
 
-
 	template<class dest_type, class mt_policy>
 	class _connection0 : public _connection_base0<mt_policy>
 	{
@@ -2586,7 +2584,6 @@ namespace sigslot {
 			}
 		}
 	};
-
 
 	template<class arg1_type, class arg2_type, class arg3_type, class arg4_type,
 	class arg5_type, class arg6_type, class mt_policy = SIGSLOT_DEFAULT_MT_POLICY>

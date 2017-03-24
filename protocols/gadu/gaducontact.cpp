@@ -1,4 +1,3 @@
-// -*- Mode: c++; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
 // Copyright (C)    2002-2003	 Zack Rusin     <zack@kde.org>
@@ -120,7 +119,9 @@ GaduContact::changedStatus(KGaduNotify *newstatus)
 
     setFileCapable(newstatus->fileCap);
 
-    kDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: " <<  remote_ip.toIPv4Address() << " image size: " << image_size << "  version: "  << version;
+    kDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: "
+                  <<  remote_ip.toIPv4Address() << " image size: " << image_size
+                  << "  version: "  << version;
 }
 
 QHostAddress &
@@ -141,8 +142,8 @@ GaduContact::manager(Kopete::Contact::CanCreateFlags canCreate)
     if (!msgManager_ && canCreate) {
         msgManager_ = Kopete::ChatSessionManager::self()->create(account_->myself(), thisContact_,
                                                                  GaduProtocol::protocol());
-        connect(msgManager_, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession *)),
-                this, SLOT(messageSend(Kopete::Message&,Kopete::ChatSession *)));
+        connect(msgManager_, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
+                this, SLOT(messageSend(Kopete::Message&,Kopete::ChatSession*)));
         connect(msgManager_, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
     }
     kDebug(14100) << "GaduContact::manager returning:  " << msgManager_;
@@ -187,13 +188,16 @@ GaduContact::customContextMenuActions()
 {
     QList<QAction *> *fakeCollection = new QList<QAction *>();
     //show profile
-    QAction *actionShowProfile = new QAction(QIcon::fromTheme(QStringLiteral("help-about")), i18n("Show Profile"), this);
+    QAction *actionShowProfile
+        = new QAction(QIcon::fromTheme(QStringLiteral("help-about")), i18n("Show Profile"), this);
     //, "actionShowPublicProfile" );
     connect(actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowPublicProfile()));
 
     fakeCollection->append(actionShowProfile);
 
-    QAction *actionEditContact = new QAction(QIcon::fromTheme(QStringLiteral("document-properties")), i18n("Edit..."), this);
+    QAction *actionEditContact = new QAction(QIcon::fromTheme(QStringLiteral(
+                                                                  "document-properties")),
+                                             i18n("Edit..."), this);
     //, "actionEditContact" );
     connect(actionEditContact, SIGNAL(triggered(bool)), this, SLOT(slotEditContact()));
 
@@ -205,7 +209,8 @@ GaduContact::customContextMenuActions()
 void
 GaduContact::slotEditContact()
 {
-    new GaduEditContact(static_cast<GaduAccount *>(account()), this, Kopete::UI::Global::mainWidget());
+    new GaduEditContact(static_cast<GaduAccount *>(account()), this,
+                        Kopete::UI::Global::mainWidget());
 }
 
 void
@@ -237,7 +242,8 @@ GaduContact::deleteContact()
         deleteLater();
     } else {
         KMessageBox::error(Kopete::UI::Global::mainWidget(),
-                           i18n("<qt>You need to go online to remove a contact from your contact list.</qt>"),
+                           i18n(
+                               "<qt>You need to go online to remove a contact from your contact list.</qt>"),
                            i18n("Gadu-Gadu Plugin"));
     }
 }
@@ -246,9 +252,12 @@ void
 GaduContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &)
 {
     serializedData[ "email" ] = property(GaduProtocol::protocol()->propEmail).value().toString();
-    serializedData[ "FirstName"  ] = property(GaduProtocol::protocol()->propFirstName).value().toString();
-    serializedData[ "SecondName" ] = property(GaduProtocol::protocol()->propLastName).value().toString();
-    serializedData[ "telephone" ] = property(GaduProtocol::protocol()->propPhoneNr).value().toString();
+    serializedData[ "FirstName"  ]
+        = property(GaduProtocol::protocol()->propFirstName).value().toString();
+    serializedData[ "SecondName" ]
+        = property(GaduProtocol::protocol()->propLastName).value().toString();
+    serializedData[ "telephone" ]
+        = property(GaduProtocol::protocol()->propPhoneNr).value().toString();
     serializedData[ "ignored" ] = ignored_ ? "true" : "false";
 }
 

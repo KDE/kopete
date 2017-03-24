@@ -26,7 +26,6 @@
 #include "oscarutils.h"
 #include "transfer.h"
 
-
 using namespace Oscar;
 
 ServerVersionsTask::ServerVersionsTask( Task* parent )
@@ -35,11 +34,9 @@ ServerVersionsTask::ServerVersionsTask( Task* parent )
     m_family = 0;
 }
 
-
 ServerVersionsTask::~ServerVersionsTask()
 {
 }
-
 
 bool ServerVersionsTask::forMe( const Transfer* transfer ) const
 {

@@ -49,4 +49,3 @@ class PlatformSoundSystemFactory : public SoundSystemFactory {
 
 #endif  // TALK_SOUND_PLATFORMSOUNDSYSTEMFACTORY_H_
 
-

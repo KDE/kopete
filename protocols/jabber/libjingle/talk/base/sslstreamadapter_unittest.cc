@@ -26,7 +26,6 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include <string>
 #include <set>
 
@@ -219,7 +218,6 @@ class SSLStreamAdapterTestBase : public testing::Test,
                                                digest_len);
     ASSERT_TRUE(rv);
 
-
     rv = client_identity_->certificate().ComputeDigest(talk_base::DIGEST_SHA_1,
                                                       digest, 20, &digest_len);
     ASSERT_TRUE(rv);
@@ -368,7 +366,6 @@ class SSLStreamAdapterTestBase : public testing::Test,
   bool identities_set_;
 };
 
-
 class SSLStreamAdapterTestTLS : public SSLStreamAdapterTestBase {
  public:
   SSLStreamAdapterTestTLS() :
@@ -471,7 +468,6 @@ class SSLStreamAdapterTestTLS : public SSLStreamAdapterTestBase {
   talk_base::MemoryStream recv_stream_;
 };
 
-
 class SSLStreamAdapterTestDTLS : public SSLStreamAdapterTestBase {
  public:
   SSLStreamAdapterTestDTLS() :
@@ -560,7 +556,6 @@ class SSLStreamAdapterTestDTLS : public SSLStreamAdapterTestBase {
   std::set<int> received_;
 };
 
-
 talk_base::StreamResult SSLDummyStream::Write(const void* data, size_t data_len,
                                               size_t* written, int* error) {
   *written = data_len;
@@ -579,7 +574,6 @@ talk_base::StreamResult SSLDummyStream::Write(const void* data, size_t data_len,
 
   return talk_base::SR_SUCCESS;
 };
-
 
 // Basic tests: TLS
 // Test that we can make a handshake work
@@ -694,7 +688,6 @@ TEST_F(SSLStreamAdapterTestDTLS, TestDTLSSrtpLow) {
   ASSERT_EQ(client_cipher, server_cipher);
   ASSERT_EQ(client_cipher, kAES_CM_HMAC_SHA1_32);
 };
-
 
 // Test DTLS-SRTP with a mismatch -- should not converge
 TEST_F(SSLStreamAdapterTestDTLS, TestDTLSSrtpHighLow) {

@@ -105,7 +105,6 @@ class OpenSSLStreamAdapter : public SSLStreamAdapter {
                                     uint8* result,
                                     size_t result_len);
 
-
   // DTLS-SRTP interface
   virtual bool SetDtlsSrtpCiphers(const std::vector<std::string>& ciphers);
   virtual bool GetDtlsSrtpCipher(std::string* cipher);
@@ -172,7 +171,6 @@ class OpenSSLStreamAdapter : public SSLStreamAdapter {
   // the C style: zero means verification failure, non-zero means
   // passed.
   static int SSLVerifyCallback(int ok, X509_STORE_CTX* store);
-
 
   SSLState state_;
   SSLRole role_;

@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "jabbereditaccountwidget.h"
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
@@ -127,36 +127,35 @@ JabberEditAccountWidget::~JabberEditAccountWidget ()
 {
 }
 
-
 #ifdef JINGLE_SUPPORT
 void JabberEditAccountWidget::checkAudioDevices()
 {
-	qDebug() << "Start.";
+	qCDebug(JABBER_PROTOCOL_LOG) << "Start.";
 	/*Solid::DeviceNotifier *notifier = Solid::DeviceNotifier::instance();
 	foreach (const Solid::Device &device, Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface, QString()))
 	//foreach (const Solid::Device &device, Solid::Device::allDevices())
 	{
-		qDebug() << "Found :";
-		qDebug() << device.udi().toLatin1().constData();
+		qCDebug(JABBER_PROTOCOL_LOG) << "Found :";
+		qCDebug(JABBER_PROTOCOL_LOG) << device.udi().toLatin1().constData();
 	}*/
 	QList<Item> devices = getAlsaItems();
 	for (int i = 0; i < devices.count(); i++)
 	{
 		if (devices.at(i).dir == Item::Input)
 		{
-			qDebug() << "Microphone :" << devices.at(i).name << "(" << devices.at(i).id << ")";
+			qCDebug(JABBER_PROTOCOL_LOG) << "Microphone :" << devices.at(i).name << "(" << devices.at(i).id << ")";
 			audioInputsCombo->addItem(devices.at(i).name);
 			inputDevices << devices.at(i);
 		}
 		else if (devices.at(i).dir == Item::Output)
 		{
-			qDebug() << "Audio output :" << devices.at(i).name << "(" << devices.at(i).id << ")";
+			qCDebug(JABBER_PROTOCOL_LOG) << "Audio output :" << devices.at(i).name << "(" << devices.at(i).id << ")";
 			audioOutputsCombo->addItem(devices.at(i).name);
 			outputDevices << devices.at(i);
 		}
 
 	}
-	qDebug() << "End.";
+	qCDebug(JABBER_PROTOCOL_LOG) << "End.";
 
 }
 #endif
@@ -217,7 +216,7 @@ void JabberEditAccountWidget::reopen ()
 	cbAllowPlainTextPassword->setChecked (account()->configGroup()->readEntry("AllowPlainTextPassword", true));
 	cbUseXOAuth2->setChecked (account()->configGroup()->readEntry("UseXOAuth2", false));
 
-	KConfigGroup config = KGlobal::config()->group("Jabber");
+	KConfigGroup config = KSharedConfig::openConfig()->group("Jabber");
 	leLocalIP->setText (config.readEntry("LocalIP", QString()));
 	sbLocalPort->setValue (config.readEntry("LocalPort", 8010));
 
@@ -268,7 +267,7 @@ void JabberEditAccountWidget::reopen ()
 
 Kopete::Account *JabberEditAccountWidget::apply ()
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << "JabberEditAccount::apply()";
+	qCDebug(JABBER_PROTOCOL_LOG) << "JabberEditAccount::apply()";
 
 	if (!account())
 	{
@@ -288,7 +287,6 @@ Kopete::Account *JabberEditAccountWidget::apply ()
 
 	return account();
 }
-
 
 void JabberEditAccountWidget::writeConfig ()
 {
@@ -330,7 +328,7 @@ void JabberEditAccountWidget::writeConfig ()
 
 	account()->setExcludeConnect(cbAutoConnect->isChecked());
 
-	KConfigGroup config = KGlobal::config()->group("Jabber");
+	KConfigGroup config = KSharedConfig::openConfig()->group("Jabber");
 	
 	config.writeEntry("LocalIP", leLocalIP->text());
 	config.writeEntry("LocalPort", sbLocalPort->value());
@@ -461,5 +459,3 @@ void JabberEditAccountWidget::slotPrivacyListsClicked()
 	dialog->show();
 }
 
-
-// vim: set noet ts=4 sts=4 sw=4:

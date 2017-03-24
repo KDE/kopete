@@ -1,5 +1,3 @@
-// vim: set noet ts=4 sts=4 sw=4 :
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003-2004	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
 // Copyright (C) 2002	    Zack Rusin <zack@kde.org>
@@ -184,7 +182,8 @@ GaduSession::login(KGaduLoginParams *loginp)
         }
     }
 
-    kDebug(14100)<<"gadusession::login, server ( " << loginp->server << " ), tls(" << loginp->useTls << ") ";
+    kDebug(14100)<<"gadusession::login, server ( " << loginp->server << " ), tls("
+                 << loginp->useTls << ") ";
     login(&params_);
 }
 
@@ -253,7 +252,9 @@ GaduSession::sendMessage(uin_t recipient, const Kopete::Message &msg, int msgCla
             const void *data = (const void *)gadumessage->rtf.data();
             cpMsg = textcodec->fromUnicode(gadumessage->message);
             int o;
-            o = gg_send_message_richtext(session_, msgClass, recipient, (const unsigned char *)cpMsg.data(), (const unsigned char *)data, gadumessage->rtf.size());
+            o = gg_send_message_richtext(session_, msgClass, recipient,
+                                         (const unsigned char *)cpMsg.data(), (const unsigned char *)data,
+                                         gadumessage->rtf.size());
             gadumessage->rtf.resize(0);
             delete gadumessage;
             return o;
@@ -262,7 +263,8 @@ GaduSession::sendMessage(uin_t recipient, const Kopete::Message &msg, int msgCla
             sendMsg.replace(QLatin1Char('\n'), QString::fromAscii("\r\n"));
             cpMsg = textcodec->fromUnicode(sendMsg);
 
-            return gg_send_message(session_, msgClass, recipient, (const unsigned char *)cpMsg.data());
+            return gg_send_message(session_, msgClass, recipient,
+                                   (const unsigned char *)cpMsg.data());
         }
     } else {
         emit error(i18n("Not Connected"), i18n("You are not connected to the server."));
@@ -278,7 +280,8 @@ GaduSession::changeStatus(int status, bool forFriends)
     if (isConnected()) {
         return gg_change_status(session_, status | (forFriends ? GG_STATUS_FRIENDS_MASK : 0));
     } else {
-        emit error(i18n("Not Connected"), i18n("You have to be connected to the server to change your status."));
+        emit error(i18n("Not Connected"), i18n(
+                       "You have to be connected to the server to change your status."));
     }
 
     return 1;
@@ -293,9 +296,11 @@ GaduSession::changeStatusDescription(int status, const QString &descr, bool forF
 
     if (isConnected()) {
         return gg_change_status_descr(session_,
-                                      status | (forFriends ? GG_STATUS_FRIENDS_MASK : 0), ndescr.data());
+                                      status | (forFriends ? GG_STATUS_FRIENDS_MASK : 0),
+                                      ndescr.data());
     } else {
-        emit error(i18n("Not Connected"), i18n("You have to be connected to the server to change your status."));
+        emit error(i18n("Not Connected"), i18n(
+                       "You have to be connected to the server to change your status."));
     }
 
     return 1;
@@ -475,14 +480,17 @@ GaduSession::sendResult(gg_pubdir50_t result)
 
     for (i = 0; i < count; i++) {
         resultLine.uin = QString(gg_pubdir50_get(result, i, GG_PUBDIR50_UIN)).toInt();
-        resultLine.firstname = textcodec->toUnicode(gg_pubdir50_get(result, i, GG_PUBDIR50_FIRSTNAME));
+        resultLine.firstname = textcodec->toUnicode(gg_pubdir50_get(result, i,
+                                                                    GG_PUBDIR50_FIRSTNAME));
         resultLine.surname = textcodec->toUnicode(gg_pubdir50_get(result, i, GG_PUBDIR50_LASTNAME));
-        resultLine.nickname = textcodec->toUnicode(gg_pubdir50_get(result, i, GG_PUBDIR50_NICKNAME));
+        resultLine.nickname
+            = textcodec->toUnicode(gg_pubdir50_get(result, i, GG_PUBDIR50_NICKNAME));
         resultLine.age = textcodec->toUnicode(gg_pubdir50_get(result, i, GG_PUBDIR50_BIRTHYEAR));
         resultLine.city = textcodec->toUnicode(gg_pubdir50_get(result, i, GG_PUBDIR50_CITY));
         QString stat = textcodec->toUnicode(gg_pubdir50_get(result, i, GG_PUBDIR50_STATUS));
         resultLine.orgin = textcodec->toUnicode(gg_pubdir50_get(result, i, GG_PUBDIR50_FAMILYCITY));
-        resultLine.meiden = textcodec->toUnicode(gg_pubdir50_get(result, i, GG_PUBDIR50_FAMILYNAME));
+        resultLine.meiden
+            = textcodec->toUnicode(gg_pubdir50_get(result, i, GG_PUBDIR50_FAMILYNAME));
         resultLine.gender = textcodec->toUnicode(gg_pubdir50_get(result, i, GG_PUBDIR50_GENDER));
 
         resultLine.status = stat.toInt();
@@ -658,7 +666,8 @@ GaduSession::failureDescription(gg_failure_t f)
     case GG_FAILURE_404:
         return QString::fromAscii("404.");
     case GG_FAILURE_TLS:
-        return i18n("Unable to connect over an encrypted channel.\nTry to turn off encryption support in the Gadu account settings, then reconnect.");
+        return i18n(
+            "Unable to connect over an encrypted channel.\nTry to turn off encryption support in the Gadu account settings, then reconnect.");
     default:
         return i18n("Unknown error number %1.", f);
     }
@@ -727,12 +736,15 @@ GaduSession::checkDescriptor()
             emit incomingCtcp(event->event.msg.sender);
         }
 
-        if ((event->event.msg.msgclass & GG_CLASS_MSG) || (event->event.msg.msgclass & GG_CLASS_CHAT)) {
+        if ((event->event.msg.msgclass & GG_CLASS_MSG)
+            || (event->event.msg.msgclass & GG_CLASS_CHAT)) {
             gaduMessage.message
                 = textcodec->toUnicode((const char *)event->event.msg.message);
             gaduMessage.sender_id = event->event.msg.sender;
             gaduMessage.sendTime.setTime_t(event->event.msg.time);
-            gaduMessage.message = rtf->convertToHtml(gaduMessage.message, event->event.msg.formats_length, event->event.msg.formats);
+            gaduMessage.message = rtf->convertToHtml(gaduMessage.message,
+                                                     event->event.msg.formats_length,
+                                                     event->event.msg.formats);
             emit messageReceived(&gaduMessage);
         }
         break;

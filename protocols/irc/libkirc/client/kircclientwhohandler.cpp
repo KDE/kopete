@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-
 #include "kircclientsocket.h"
 
 #include "kirccontext.h"
@@ -58,7 +57,6 @@ ClientWhoHandler::~ClientWhoHandler()
 	delete d_ptr;
 }
 
-
 /* WHO [ <mask> [ "o" ] ]
  * List all the visible users to the user.
  */
@@ -79,7 +77,6 @@ void ClientWhoHandler::WHOIS(KIrc::Context *context, const KIrc::Message &messag
 void ClientWhoHandler::WHOWAS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 }
-
 
 /* IMPORTANT NOTE:
  * Numeric replies always have the current nick or * as first argmuent.

@@ -33,7 +33,6 @@ GetChatSearchResultsTask::GetChatSearchResultsTask(Task* parent): RequestTask(pa
 {
 }
 
-
 GetChatSearchResultsTask::~GetChatSearchResultsTask()
 {
 }

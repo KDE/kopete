@@ -29,16 +29,13 @@
 #include "userdetails.h"
 #include "oscarmessageplugin.h"
 
-
 MessageReceiverTask::MessageReceiverTask( Task* parent ) : Task( parent )
 {
 }
 
-
 MessageReceiverTask::~MessageReceiverTask()
 {
 }
-
 
 bool MessageReceiverTask::forMe( const Transfer* transfer ) const
 {

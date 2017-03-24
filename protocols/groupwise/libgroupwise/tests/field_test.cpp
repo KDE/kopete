@@ -123,8 +123,7 @@ void buildFakeContactList()
 			contactlist.append( mf );
 		}
 	}
-	
-	
+
 	MultiField * cl = new MultiField( Field::NM_A_FA_CONTACT_LIST, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, contactlist );
 	fl.append( cl );
 }

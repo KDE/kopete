@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C)    2004	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
 //
@@ -48,8 +47,9 @@ public:
     ~GaduContactsList();
     QString asString();
     void addContact(ContactLine &cl);
-    void addContact(QString &displayname, QString &group, QString &uin, QString &firstname, QString &surname, QString &nickname, QString &phonenr, QString &email, bool ignored, bool offlineTo,
-                    QString &landline);
+    void addContact(QString &displayname, QString &group, QString &uin, QString &firstname,
+                    QString &surname, QString &nickname, QString &phonenr, QString &email,
+                    bool ignored, bool offlineTo, QString &landline);
     unsigned int size();
     const GaduContactsList::ContactLine &operator[](unsigned int i);
 private:

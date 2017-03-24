@@ -116,7 +116,6 @@ bool SkypeWindow::isCallDialog(const QString &user, WId wid) {
 		kDebug(SKYPE_DEBUG_GLOBAL) <<  "pid" << pid << "is not skype call dialog for name" << user;
 	}
 
-
 	return false;
 }
 

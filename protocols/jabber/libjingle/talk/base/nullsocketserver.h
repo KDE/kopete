@@ -68,7 +68,6 @@ class NullSocketServer : public talk_base::SocketServer {
     return NULL;
   }
 
-
  private:
   talk_base::Event event_;
 };

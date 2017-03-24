@@ -30,7 +30,6 @@ InputProtocolBase::InputProtocolBase(QObject *parent)
 {
 }
 
-
 InputProtocolBase::~InputProtocolBase()
 {
 }
@@ -58,7 +57,6 @@ bool InputProtocolBase::readString( QString &message )
 	message = QString::fromUtf8( rawData.data(), len - 1 );
 	return true;
 }
-
 
 bool InputProtocolBase::okToProceed()
 {

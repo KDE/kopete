@@ -401,7 +401,6 @@ class VirtualSocketServerTest : public testing::Test {
     EXPECT_EQ(a->GetLocalAddress().ipaddr().family(),
               initial_addr.ipaddr().family());
 
-
     AsyncSocket* b = ss_->CreateAsyncSocket(SOCK_STREAM);
     sink.Monitor(b);
     b->Bind(initial_addr);

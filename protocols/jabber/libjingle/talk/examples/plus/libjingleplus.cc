@@ -153,9 +153,6 @@ class LibjinglePlusWorker : public talk_base::MessageHandler,
       delete msg->pdata;
       break;
 
-
-
-
     case MSG_STATUS_UPDATE:
       OnStatusUpdateW(static_cast<SendPresenceData*>(msg->pdata)->s_);
       delete msg->pdata;
@@ -612,7 +609,6 @@ class LibjinglePlusWorker : public talk_base::MessageHandler,
     pot->Send(s);
     pot->Start();
   }
-
 
   void SendDirectedMUCPresenceW(const buzz::Jid & j, const buzz::Status & s, 
 			       const std::string &user_nick, const std::string &api_capability,

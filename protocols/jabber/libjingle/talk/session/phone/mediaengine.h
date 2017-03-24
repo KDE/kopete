@@ -152,7 +152,6 @@ class MediaEngineInterface {
       SignalVideoCaptureResult;
 };
 
-
 class MediaEngineFactory {
  public:
   static MediaEngineInterface* Create();

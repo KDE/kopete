@@ -472,7 +472,6 @@ void IRCNetworkConfigWidget::slotMoveServerDown()
 	}
 }
 
-
 void IRCNetworkConfigWidget::slotSaveNetworkConfig()
 {
 	//HACK: remove the empty entry
@@ -483,5 +482,4 @@ void IRCNetworkConfigWidget::slotSaveNetworkConfig()
 	IRC::Networks::self()->setNetworks(networks);
 	IRC::Networks::self()->slotSaveNetworkConfig();
 }
-
 

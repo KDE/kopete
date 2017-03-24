@@ -62,6 +62,4 @@ private:
 	QList<int> m_rateGroups;
 };
 
-//kate: tab-width 4; indent-mode csands;
-
 #endif

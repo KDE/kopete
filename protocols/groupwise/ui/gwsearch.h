@@ -23,7 +23,6 @@
 #include "ui_gwcontactsearch.h"
 #include "gwaccount.h"
 
-
 class GroupWiseContactSearchModel;
 class GroupWiseContactSearchSortProxyModel;
 class GroupWiseAccount;

@@ -34,13 +34,10 @@ namespace Eva {
 		0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
 		0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 };
 
-
-
 	const uchar* Packet::getInitKey() 
 	{
 		return init_key;
 	}
-
 
 	ByteArray header( uint id, short const command, ushort sequence )
 	{
@@ -131,7 +128,6 @@ namespace Eva {
 		data.append( packet.data()+2, length );
 		return data;
 	}
-
 
 	ByteArray encrypt( const ByteArray& text, const ByteArray& key );
 	ByteArray Packet::create( uint id, ushort command, ushort sequence, const ByteArray& key, const ByteArray& text )

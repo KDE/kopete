@@ -134,7 +134,6 @@ public:
 	QList<GroupChat> groupChatList;
 };
 
-
 Client::Client(QObject *par)
 :QObject(par)
 {

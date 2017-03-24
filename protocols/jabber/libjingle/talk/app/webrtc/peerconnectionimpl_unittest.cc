@@ -65,7 +65,6 @@ using webrtc::RoapMessageBase;
 using webrtc::RoapOffer;
 using webrtc::SessionDescriptionInterface;
 
-
 // Create ROAP message for shutdown.
 static std::string CreateShutdownMessage() {
   webrtc::RoapShutdown shutdown("dummy_session", "", "", 1);
@@ -265,7 +264,6 @@ class PeerConnectionImplTest : public testing::Test {
     EXPECT_EQ_WAIT(RoapMessageBase::kOffer, observer_.last_message_.type(),
                    kTimeout);
   }
-
 
   scoped_refptr<FakePortAllocatorFactory> port_allocator_factory_;
   scoped_refptr<webrtc::PeerConnectionFactoryInterface> pc_factory_;

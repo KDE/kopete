@@ -33,7 +33,6 @@ struct MeanwhileClientID {
     const char *name;
 };
 
-
 /**
  * A class to handle libmeanwhile session management.
  */

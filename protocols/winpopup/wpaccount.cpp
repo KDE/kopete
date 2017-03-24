@@ -36,7 +36,6 @@
 // Kopete Includes
 #include <QMenu>
 
-
 WPAccount::WPAccount(WPProtocol *parent, const QString &accountID)
 	: Kopete::Account(parent, accountID)
 {
@@ -224,5 +223,3 @@ void WPAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 		setAway( true, statusMessage.message() );
 }
 
-// vim: set noet ts=4 sts=4 sw=4:
-// kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

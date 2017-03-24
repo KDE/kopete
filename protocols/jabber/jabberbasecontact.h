@@ -153,8 +153,7 @@ public slots:
 	 * Retrieve a vCard for the contact
 	 */
 	void slotUserInfo () Q_DECL_OVERRIDE;
-	
-	
+
 	/**
 	 * Re-evaluate online status. Gets called
 	 * whenever a resource is added, removed, or
@@ -185,4 +184,3 @@ private:
 
 #endif
 
-// vim: set noet ts=4 sts=4 sw=4:

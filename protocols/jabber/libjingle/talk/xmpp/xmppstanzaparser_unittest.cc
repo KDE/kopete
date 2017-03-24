@@ -1,6 +1,5 @@
 // Copyright 2004 Google Inc. All Rights Reserved
 
-
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -42,7 +41,6 @@ class XmppStanzaParserTestHandler : public XmppStanzaParseHandler {
  private:
   std::stringstream ss_;
 };
-
 
 TEST(XmppStanzaParserTest, TestTrivial) {
   XmppStanzaParserTestHandler handler;

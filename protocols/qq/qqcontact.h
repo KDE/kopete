@@ -9,7 +9,6 @@
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
-
     *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
@@ -114,7 +113,6 @@ public:
 	 */
 	Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate ) Q_DECL_OVERRIDE;
 
-
 	/**
 	 * Because blocked contact have a small auto-modified status
 	 */
@@ -141,7 +139,6 @@ public slots:
 	 * Every time the kopete's contact list is modified, we sync the serverlist with it
 	 */
 	void sync( unsigned int cvhanged= 0xff) Q_DECL_OVERRIDE;
-
 
 	void setDisplayPicture(KTemporaryFile *f) ;
 
@@ -175,7 +172,6 @@ private:
 	QString m_phoneWork;
 	QString m_phoneMobile;
 
-
     QAction *actionBlock;
     QAction *actionShowProfile;
     QAction *actionSendMail;
@@ -184,7 +180,6 @@ private:
 
 	QString m_obj; //the QQObject
 	QMap<const char*, QByteArray> m_contactDetail;
-	
 
 	/**
 	 * keep the current status here.  (it's normally already in Kopete::Contact::d->onlineStatus)
@@ -197,6 +192,4 @@ private:
 };
 
 #endif
-
-// vim: set noet ts=4 sts=4 sw=4:
 

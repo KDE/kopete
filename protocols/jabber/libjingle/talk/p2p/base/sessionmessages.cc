@@ -121,7 +121,6 @@ std::string ToGingleString(ActionType type) {
   }
 }
 
-
 bool IsJingleMessage(const buzz::XmlElement* stanza) {
   const buzz::XmlElement* jingle = stanza->FirstNamed(QN_JINGLE);
   if (jingle == NULL)
@@ -242,7 +241,6 @@ void WriteSessionMessage(const SessionMessage& msg,
     stanza->AddElement(WriteJingleAction(msg, action_elems));
   }
 }
-
 
 TransportParser* GetTransportParser(const TransportParserMap& trans_parsers,
                                     const std::string& name) {
@@ -811,7 +809,6 @@ bool ParseSessionInitiate(SignalingProtocol protocol,
                              content_parsers, trans_parsers,
                              init, error);
 }
-
 
 bool WriteSessionInitiate(SignalingProtocol protocol,
                           const ContentInfos& contents,

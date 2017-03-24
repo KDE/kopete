@@ -87,7 +87,6 @@ class StunTest : public ::testing::Test {
   }
 };
 
-
 // Sample STUN packets with various attributes
 // Gathered by wiresharking pjproject's pjnath test programs
 // pjproject available at www.pjsip.org
@@ -1214,7 +1213,6 @@ TEST_F(StunTest, TestAddMessageIntegrity) {
   EXPECT_TRUE(msg.ValidateMessageIntegrity(
         reinterpret_cast<const char*>(buf1.Data()), buf1.Length(),
         kRfc5769SampleMsgPassword));
-
 
   StunMessage msg2;
   talk_base::ByteBuffer buf2(

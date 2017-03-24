@@ -60,7 +60,6 @@ ServiceSetupTask::ServiceSetupTask( Task* parent )
 	QObject::connect( m_ssiActivateTask, SIGNAL(finished()), this, SLOT(childTaskFinished()) );
 }
 
-
 ServiceSetupTask::~ServiceSetupTask()
 {
 	delete m_locRightsTask;
@@ -71,7 +70,6 @@ ServiceSetupTask::~ServiceSetupTask()
 	//delete m_ssiParamTask;
 	delete m_ssiListTask;
 }
-
 
 bool ServiceSetupTask::forMe( const Transfer* transfer ) const
 {
@@ -121,7 +119,6 @@ void ServiceSetupTask::childTaskFinished()
 	}
 }
 
-
 void ServiceSetupTask::onGo()
 {
 	m_locRightsTask->go();
@@ -132,6 +129,4 @@ void ServiceSetupTask::onGo()
 	m_ssiParamTask->go( Task::AutoDelete );
 	m_ssiListTask->go();
 }
-
-//kate: tab-width 4; indent-mode csands;
 

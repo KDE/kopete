@@ -24,7 +24,6 @@
 
 class Transfer;
 
-
 class OftProtocol : public InputProtocolBase
 {
 Q_OBJECT

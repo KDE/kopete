@@ -16,7 +16,6 @@
 */
 #include "aimcontactbase.h"
 
-
 #include "kopetechatsession.h"
 
 #include "oscaraccount.h"
@@ -82,4 +81,3 @@ void AIMContactBase::sendAutoResponse(Kopete::Message& msg)
 	}
 }
 
-//kate: tab-width 4; indent-mode csands;

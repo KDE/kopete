@@ -46,7 +46,6 @@ ConferenceTask::ConferenceTask( Task* parent )
 		SLOT(slotReceiveUserDetails(GroupWise::ContactDetails)) );
 }
 
-
 ConferenceTask::~ConferenceTask()
 {
 }
@@ -209,7 +208,6 @@ void ConferenceTask::slotReceiveUserDetails( const GroupWise::ContactDetails & d
         }
 	}
 }
-
 
 bool ConferenceTask::queueWhileAwaitingData( const ConferenceEvent & event )
 {

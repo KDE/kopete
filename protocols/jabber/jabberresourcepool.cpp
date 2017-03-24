@@ -18,7 +18,7 @@
 
 #include "jabberresourcepool.h"
 
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 
 #include "jabberresource.h"
 #include "jabbercontactpool.h"
@@ -65,7 +65,7 @@ JabberResourcePool::~JabberResourcePool ()
 
 void JabberResourcePool::slotResourceDestroyed(QObject *sender)
 {
-    kDebug(JABBER_DEBUG_GLOBAL) << "Resource has been destroyed, collecting the pieces.";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Resource has been destroyed, collecting the pieces.";
 
     JabberResource *oldResource = static_cast<JabberResource *>(sender);
 
@@ -83,7 +83,7 @@ void JabberResourcePool::slotResourceUpdated(JabberResource *resource)
 
     // Update capabilities
     if (!resource->resource().status().caps().node().isEmpty()) {
-        kDebug(JABBER_DEBUG_GLOBAL) << "Updating capabilities for JID: " << resource->jid().full();
+        qCDebug(JABBER_PROTOCOL_LOG) << "Updating capabilities for JID: " << resource->jid().full();
         d->account->protocol()->capabilitiesManager()->updateCapabilities(d->account, resource->jid(), resource->resource().status());
     }
 }
@@ -102,7 +102,7 @@ void JabberResourcePool::addResource(const XMPP::Jid &jid, const XMPP::Resource 
     // see if the resource already exists
     foreach (JabberResource *mResource, d->pool) {
         if ((mResource->jid().bare().toLower() == jid.bare().toLower()) && (mResource->resource().name().toLower() == resource.name().toLower())) {
-            kDebug(JABBER_DEBUG_GLOBAL) << "Updating existing resource " << resource.name() << " for " << jid.bare();
+            qCDebug(JABBER_PROTOCOL_LOG) << "Updating existing resource " << resource.name() << " for " << jid.bare();
 
             // It exists, update it. Don't do a "lazy" update by deleting
             // it here and readding it with new parameters later on,
@@ -117,19 +117,19 @@ void JabberResourcePool::addResource(const XMPP::Jid &jid, const XMPP::Resource 
         }
     }
 
-    kDebug(JABBER_DEBUG_GLOBAL) << "Adding new resource " << resource.name() << " for " << jid.bare();
+    qCDebug(JABBER_PROTOCOL_LOG) << "Adding new resource " << resource.name() << " for " << jid.bare();
 
     // Update initial capabilities if available.
     // Called before creating JabberResource so JabberResource wouldn't ask for disco information.
     if (!resource.status().caps().node().isEmpty()) {
-        kDebug(JABBER_DEBUG_GLOBAL) << "Initial update of capabilities for JID: " << jid.full();
+        qCDebug(JABBER_PROTOCOL_LOG) << "Initial update of capabilities for JID: " << jid.full();
         d->account->protocol()->capabilitiesManager()->updateCapabilities(d->account, jid, resource.status());
     }
 
     // create new resource instance and add it to the dictionary
     JabberResource *newResource = new JabberResource(d->account, jid, resource);
-    connect(newResource, SIGNAL(destroyed(QObject *)), this, SLOT(slotResourceDestroyed(QObject *)));
-    connect(newResource, SIGNAL(updated(JabberResource *)), this, SLOT(slotResourceUpdated(JabberResource *)));
+    connect(newResource, SIGNAL(destroyed(QObject*)), this, SLOT(slotResourceDestroyed(QObject*)));
+    connect(newResource, SIGNAL(updated(JabberResource*)), this, SLOT(slotResourceUpdated(JabberResource*)));
     d->pool.append(newResource);
 
     // send notifications out to the relevant contacts that
@@ -139,7 +139,7 @@ void JabberResourcePool::addResource(const XMPP::Jid &jid, const XMPP::Resource 
 
 void JabberResourcePool::removeResource(const XMPP::Jid &jid, const XMPP::Resource &resource)
 {
-    kDebug(JABBER_DEBUG_GLOBAL) << "Removing resource " << resource.name() << " from " << jid.bare();
+    qCDebug(JABBER_PROTOCOL_LOG) << "Removing resource " << resource.name() << " from " << jid.bare();
 
     foreach (JabberResource *mResource, d->pool) {
         if ((mResource->jid().bare().toLower() == jid.bare().toLower()) && (mResource->resource().name().toLower() == resource.name().toLower())) {
@@ -151,18 +151,18 @@ void JabberResourcePool::removeResource(const XMPP::Jid &jid, const XMPP::Resour
         }
     }
 
-    kDebug(JABBER_DEBUG_GLOBAL) << "WARNING: No match found!";
+    qCDebug(JABBER_PROTOCOL_LOG) << "WARNING: No match found!";
 }
 
 void JabberResourcePool::removeAllResources(const XMPP::Jid &jid)
 {
-    kDebug(JABBER_DEBUG_GLOBAL) << "Removing all resources for " << jid.bare();
+    qCDebug(JABBER_PROTOCOL_LOG) << "Removing all resources for " << jid.bare();
 
     foreach (JabberResource *mResource, d->pool) {
         if (mResource->jid().bare().toLower() == jid.bare().toLower()) {
             // only remove preselected resource in case there is one
             if (jid.resource().isEmpty() || (jid.resource().toLower() == mResource->resource().name().toLower())) {
-                kDebug(JABBER_DEBUG_GLOBAL) << "Removing resource " << jid.bare() << "/" << mResource->resource().name();
+                qCDebug(JABBER_PROTOCOL_LOG) << "Removing resource " << jid.bare() << "/" << mResource->resource().name();
                 JabberResource *deletedResource = d->pool.takeAt(d->pool.indexOf(mResource));
                 delete deletedResource;
             }
@@ -172,7 +172,7 @@ void JabberResourcePool::removeAllResources(const XMPP::Jid &jid)
 
 void JabberResourcePool::clear()
 {
-    kDebug(JABBER_DEBUG_GLOBAL) << "Clearing the resource pool.";
+    qCDebug(JABBER_PROTOCOL_LOG) << "Clearing the resource pool.";
 
     /*
      * Since many contacts can have multiple resources, we can't simply delete
@@ -205,7 +205,7 @@ void JabberResourcePool::clear()
 
 void JabberResourcePool::lockToResource(const XMPP::Jid &jid, const XMPP::Resource &resource)
 {
-    kDebug(JABBER_DEBUG_GLOBAL) << "Locking " << jid.bare() << " to " << resource.name();
+    qCDebug(JABBER_PROTOCOL_LOG) << "Locking " << jid.bare() << " to " << resource.name();
 
     // remove all existing locks first
     removeLock(jid);
@@ -218,12 +218,12 @@ void JabberResourcePool::lockToResource(const XMPP::Jid &jid, const XMPP::Resour
         }
     }
 
-    kDebug(JABBER_DEBUG_GLOBAL) << "WARNING: No match found!";
+    qCDebug(JABBER_PROTOCOL_LOG) << "WARNING: No match found!";
 }
 
 void JabberResourcePool::removeLock(const XMPP::Jid &jid)
 {
-    kDebug(JABBER_DEBUG_GLOBAL) << "Removing resource lock for " << jid.bare();
+    qCDebug(JABBER_PROTOCOL_LOG) << "Removing resource lock for " << jid.bare();
 
     // find the resource in our dictionary that matches
     foreach (JabberResource *mResource, d->pool) {
@@ -232,7 +232,7 @@ void JabberResourcePool::removeLock(const XMPP::Jid &jid)
         }
     }
 
-    kDebug(JABBER_DEBUG_GLOBAL) << "No locks found.";
+    qCDebug(JABBER_PROTOCOL_LOG) << "No locks found.";
 }
 
 JabberResource *JabberResourcePool::lockedJabberResource(const XMPP::Jid &jid)
@@ -246,7 +246,7 @@ JabberResource *JabberResourcePool::lockedJabberResource(const XMPP::Jid &jid)
             }
         }
 
-        kDebug(JABBER_DEBUG_GLOBAL) << "WARNING: No resource found in pool, returning as offline.";
+        qCDebug(JABBER_PROTOCOL_LOG) << "WARNING: No resource found in pool, returning as offline.";
 
         return 0L;
     }
@@ -254,12 +254,12 @@ JabberResource *JabberResourcePool::lockedJabberResource(const XMPP::Jid &jid)
     // see if we have a locked resource
     foreach (JabberResource *mResource, d->lockList) {
         if (mResource->jid().bare().toLower() == jid.bare().toLower()) {
-            kDebug(JABBER_DEBUG_GLOBAL) << "Current lock for " << jid.bare() << " is '" << mResource->resource().name() << "'";
+            qCDebug(JABBER_PROTOCOL_LOG) << "Current lock for " << jid.bare() << " is '" << mResource->resource().name() << "'";
             return mResource;
         }
     }
 
-    kDebug(JABBER_DEBUG_GLOBAL) << "No lock available for " << jid.bare();
+    qCDebug(JABBER_PROTOCOL_LOG) << "No lock available for " << jid.bare();
 
     // there's no locked resource, return an empty resource
     return 0L;
@@ -273,13 +273,13 @@ const XMPP::Resource &JabberResourcePool::lockedResource(const XMPP::Jid &jid)
 
 JabberResource *JabberResourcePool::bestJabberResource(const XMPP::Jid &jid, bool honourLock)
 {
-    kDebug(JABBER_DEBUG_GLOBAL) << "Determining best resource for " << jid.full();
+    qCDebug(JABBER_PROTOCOL_LOG) << "Determining best resource for " << jid.full();
 
     if (honourLock) {
         // if we are locked to a certain resource, always return that one
         JabberResource *mResource = lockedJabberResource(jid);
         if (mResource) {
-            kDebug(JABBER_DEBUG_GLOBAL) << "We have a locked resource '" << mResource->resource().name() << "' for " << jid.full();
+            qCDebug(JABBER_PROTOCOL_LOG) << "We have a locked resource '" << mResource->resource().name() << "' for " << jid.full();
             return mResource;
         }
     }
@@ -295,21 +295,21 @@ JabberResource *JabberResourcePool::bestJabberResource(const XMPP::Jid &jid, boo
 
         // take first resource if no resource has been chosen yet
         if (!bestResource) {
-            kDebug(JABBER_DEBUG_GLOBAL) << "Taking '" << currentResource->resource().name() << "' as first available resource.";
+            qCDebug(JABBER_PROTOCOL_LOG) << "Taking '" << currentResource->resource().name() << "' as first available resource.";
 
             bestResource = currentResource;
             continue;
         }
 
         if (currentResource->resource().priority() > bestResource->resource().priority()) {
-            kDebug(JABBER_DEBUG_GLOBAL) << "Using '" << currentResource->resource().name() << "' due to better priority.";
+            qCDebug(JABBER_PROTOCOL_LOG) << "Using '" << currentResource->resource().name() << "' due to better priority.";
 
             // got a better match by priority
             bestResource = currentResource;
         } else {
             if (currentResource->resource().priority() == bestResource->resource().priority()) {
                 if (currentResource->resource().status().timeStamp() > bestResource->resource().status().timeStamp()) {
-                    kDebug(JABBER_DEBUG_GLOBAL) << "Using '" << currentResource->resource().name() << "' due to better timestamp.";
+                    qCDebug(JABBER_PROTOCOL_LOG) << "Using '" << currentResource->resource().name() << "' due to better timestamp.";
 
                     // got a better match by timestamp (priorities are equal)
                     bestResource = currentResource;

@@ -31,7 +31,6 @@
 #include "talk/xmllite/xmlparser.h"
 #include "talk/xmllite/xmlbuilder.h"
 
-
 namespace buzz {
 
 class XmlElement;
@@ -90,7 +89,6 @@ private:
   XmlBuilder builder_;
 
  };
-
 
 }
 

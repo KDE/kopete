@@ -22,7 +22,7 @@
 #include <qtimer.h>
 
 // KDE includes
-#include <kdebug.h>
+#include "jabber_protocol_debug.h"
 
 // libiris includes
 #include <im.h>
@@ -149,7 +149,7 @@ void JabberResource::slotGetTimedClientVersion ()
 {
 	if ( d->account->isConnected () )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << "Requesting client version for " << d->jid.full ();
+		qCDebug(JABBER_PROTOCOL_LOG) << "Requesting client version for " << d->jid.full ();
 
 		// request client version
 		XMPP::JT_ClientVersion *task = new XMPP::JT_ClientVersion ( d->account->client()->rootTask () );
@@ -178,7 +178,7 @@ void JabberResource:: slotGetDiscoCapabilties ()
 {
 	if ( d->account->isConnected () )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << "Requesting Client Features for " << d->jid.full ();
+		qCDebug(JABBER_PROTOCOL_LOG) << "Requesting Client Features for " << d->jid.full ();
 
 		XMPP:: JT_DiscoInfo *task = new XMPP::JT_DiscoInfo ( d->account->client()->rootTask () );
 		// Retrive features when service discovery is done.

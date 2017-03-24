@@ -20,8 +20,6 @@
 #include <kopeteprotocol.h>
 #include <QVariant>
 
-
-
 /**
  * Encapsulates the generic actions associated with this protocol
  * @author Will Stephenson

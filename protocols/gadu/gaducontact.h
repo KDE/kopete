@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
 // Copyright (C)    2002-2003	 Zack Rusin     <zack@kde.org>
@@ -86,10 +85,12 @@ public slots:
     void messageAck();
     void slotShowPublicProfile();
     void slotEditContact();
-    virtual void sendFile(const KUrl &sourceURL = KUrl(), const QString &fileName = QString(), uint fileSize = 0L);
+    virtual void sendFile(const KUrl &sourceURL = KUrl(),
+                          const QString &fileName = QString(), uint fileSize = 0L);
 
 protected:
-    virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate);
+    virtual Kopete::ChatSession *manager(
+        Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate);
     void initActions();
 
 private:

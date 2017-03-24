@@ -1,7 +1,6 @@
 #ifndef LIBGROUPWISE_EXPORT_H
 #define LIBGROUPWISE_EXPORT_H
 
-
 #include <kdemacros.h>
 
 #if defined Q_OS_WIN

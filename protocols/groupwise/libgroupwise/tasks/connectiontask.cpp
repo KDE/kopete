@@ -27,7 +27,6 @@ ConnectionTask::ConnectionTask(Task* parent): EventTask(parent)
 	registerEvent( GroupWise::ServerDisconnect );
 }
 
-
 ConnectionTask::~ConnectionTask()
 {
 }

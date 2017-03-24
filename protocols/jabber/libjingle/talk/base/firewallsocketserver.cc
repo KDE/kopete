@@ -151,7 +151,6 @@ void FirewallSocketServer::AddRule(bool allow, FirewallProtocol p,
   AddRule(allow, p, src, dst);
 }
 
-
 void FirewallSocketServer::AddRule(bool allow, FirewallProtocol p,
                                    const SocketAddress& src,
                                    const SocketAddress& dst) {

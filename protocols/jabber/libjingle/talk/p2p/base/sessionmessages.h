@@ -161,7 +161,6 @@ struct SessionRedirect {
   std::string target;
 };
 
-
 bool IsSessionMessage(const buzz::XmlElement* stanza);
 bool ParseSessionMessage(const buzz::XmlElement* stanza,
                          SessionMessage* msg,

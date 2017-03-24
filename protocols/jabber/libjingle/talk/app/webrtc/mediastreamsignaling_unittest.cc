@@ -25,7 +25,6 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include <string>
 
 #include "talk/app/webrtc/audiotrack.h"

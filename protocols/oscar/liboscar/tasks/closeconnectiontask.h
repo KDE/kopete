@@ -44,4 +44,3 @@ protected:
 
 #endif
 
-//kate: indent-mode csands; space-indent off; tab-width 4; replace-tabs off;

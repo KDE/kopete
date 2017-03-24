@@ -19,7 +19,6 @@
 
 #include <QColor>
 
-
 /*
  * Helper class to parse IRC color/style codes and convert them to
  * richtext. The parser maintains an internal stack of the styles
@@ -39,5 +38,4 @@ namespace KSParser
 };
 
 #endif
-
 

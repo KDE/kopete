@@ -21,7 +21,6 @@
 #ifndef WPACCOUNT_H
 #define WPACCOUNT_H
 
-
 // QT Includes
 #include <qpixmap.h>
 
@@ -108,5 +107,3 @@ private:
 
 #endif
 
-// vim: set noet ts=4 sts=4 sw=4:
-// kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

@@ -50,7 +50,6 @@
 #include "oscarsettings.h"
 #include "oscarstatusmanager.h"
 
-
 const Oscar::DWORD AIM_ONLINE = 0x0;
 const Oscar::DWORD AIM_AWAY = 0x1;
 
@@ -212,7 +211,6 @@ void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSessio
 	//session->appendMessage( message );
 	session->messageSucceeded();
 }
-
 
 AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 	: OscarAccount(parent, accountID, false)
@@ -631,7 +629,6 @@ void AIMAccount::userLeftChat( Oscar::WORD exchange, const QString& room, const 
 	}
 }
 
-
 void AIMAccount::connectWithPassword( const QString &password )
 {
 	if ( password.isNull() )
@@ -709,4 +706,3 @@ void AIMAccount::setPrivacySettings( int privacy )
 	engine()->setPrivacyTLVs( privacyByte, userClasses );
 }
 
-//kate: tab-width 4; indent-mode csands;

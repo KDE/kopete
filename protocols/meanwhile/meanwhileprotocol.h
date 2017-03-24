@@ -31,7 +31,6 @@
 #define HERE kDebug(MEANWHILE_DEBUG) << endl
 #define mwDebug() kDebug(MEANWHILE_DEBUG)
 
-
 class MeanwhileProtocol : public Kopete::Protocol
 {
     Q_OBJECT

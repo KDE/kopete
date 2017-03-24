@@ -23,7 +23,6 @@
 #include "client.h"
 #include "response.h"
 
-
 CreateConferenceTask::CreateConferenceTask(Task* parent): RequestTask(parent), m_confId( 0 ), m_guid( BLANK_GUID )
 {
 

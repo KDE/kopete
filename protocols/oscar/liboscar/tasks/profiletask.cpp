@@ -35,11 +35,9 @@ ProfileTask::ProfileTask( Task* parent )
 	m_xtrazStatus = -1;
 }
 
-
 ProfileTask::~ProfileTask()
 {
 }
-
 
 bool ProfileTask::forMe( const Transfer* transfer ) const
 {
@@ -138,4 +136,3 @@ void ProfileTask::sendProfileUpdate()
 	kDebug(OSCAR_RAW_DEBUG) << "done.";
 }
 
-//kate: tab-width 4; indent-mode csands;

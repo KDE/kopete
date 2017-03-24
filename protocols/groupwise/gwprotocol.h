@@ -103,8 +103,7 @@ public:
 	const Kopete::PropertyTmpl propPhoneWork;
 	const Kopete::PropertyTmpl propPhoneMobile;
 	const Kopete::PropertyTmpl propEmail;
-	
-	
+
 protected:
 	static GroupWiseProtocol *s_protocol;
 };

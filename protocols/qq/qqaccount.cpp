@@ -14,7 +14,6 @@
     *************************************************************************
 */
 
-
 #include "qqaccount.h"
 
 #include <QTextCodec>
@@ -36,7 +35,6 @@
 #include "qqnotifysocket.h"
 #include "qqprotocol.h"
 #include "qqchatsession.h"
-
 
 QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 : Kopete::PasswordedAccount ( parent, accountID )
@@ -162,7 +160,6 @@ void QQAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 	setOnlineStatus( myself()->onlineStatus(), statusMessage, Kopete::Account::KeepSpecialFlags );
 }
 
-
 bool QQAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
 {
 	kDebug( 14140 ) ;
@@ -185,7 +182,6 @@ QQChatSession * QQAccount::findChatSessionByGuid( const QString& guid )
 	}
 	return chatSession;
 }
-
 
 QQChatSession * QQAccount::chatSession( Kopete::ContactPtrList others, const QString& guid, Kopete::Contact::CanCreateFlags canCreate )
 {
@@ -237,7 +233,6 @@ QQChatSession * QQAccount::chatSession( Kopete::ContactPtrList others, const QSt
 	return chatSession;
 }
 
-
 void QQAccount::sendMessage(const QString& guid, Kopete::Message& message )
 {
 	kDebug(14140) << "Sending the message to " << guid;
@@ -273,7 +268,6 @@ void QQAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
 		// Fetch the ContactList from the server.
 		// m_notifySocket->sendContactList();
 		// Fetch the relation of contact <--> group
-
 
 	}
 }
@@ -316,7 +310,6 @@ void QQAccount::slotShowVideo ()
 	}
 	updateContactStatus();
 }
-
 
 void QQAccount::slotNewContactList()
 {
@@ -389,7 +382,6 @@ void QQAccount::slotContactListed( const Eva::ContactInfo& ci )
 	return ;
 }
 
-
 void QQAccount::slotContactStatusChanged(const Eva::ContactStatus& cs)
 {
 	kDebug(14210) << "qqId = " << cs.qqId << " from " << cs.ip << ":" << cs.port << " status = " << cs.status;
@@ -399,7 +391,6 @@ void QQAccount::slotContactStatusChanged(const Eva::ContactStatus& cs)
 	if (c)
 		c->setOnlineStatus( fromEvaStatus(cs.status) );
 }
-
 
 Kopete::OnlineStatus QQAccount::fromEvaStatus( char es )
 {
@@ -457,7 +448,6 @@ void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva
 
 	sess->appendMessage( newMessage );
 }
-
 
 void QQAccount::slotContactDetailReceived( const QString& id, const QMap<const char*, QByteArray>& map)
 {

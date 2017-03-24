@@ -103,7 +103,9 @@ void BonjourAccount::setAway(bool away, const QString & /* reason */)
     }
 }
 
-void BonjourAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions & /*options*/)
+void BonjourAccount::setOnlineStatus(const Kopete::OnlineStatus &status,
+                                     const Kopete::StatusMessage &reason,
+                                     const OnlineStatusOptions & /*options*/)
 {
     if (status.status() == Kopete::OnlineStatus::Online
         && myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline) {
@@ -201,7 +203,8 @@ void BonjourAccount::published(bool success)
         qDebug()<<"Publish Failed";
         disconnect();
         KMessageBox::error(Kopete::UI::Global::mainWidget(),
-                           i18n("Unable to publish Bonjour service. Currently the Bonjour plugin only works with Avahi."));
+                           i18n(
+                               "Unable to publish Bonjour service. Currently the Bonjour plugin only works with Avahi."));
     }
 }
 
@@ -213,7 +216,8 @@ void BonjourAccount::connect(const Kopete::OnlineStatus & /* initialStatus */)
 
     if (KDNSSD::ServiceBrowser::isAvailable() != KDNSSD::ServiceBrowser::Working) {
         KMessageBox::error(Kopete::UI::Global::mainWidget(),
-                           i18n("Unable to connect to the local mDNS server. Please ensure the Avahi daemon is running."));
+                           i18n(
+                               "Unable to connect to the local mDNS server. Please ensure the Avahi daemon is running."));
         return;
     }
 
@@ -449,10 +453,10 @@ void BonjourAccount::newIncomingConnection()
     QTcpSocket *sock = localServer->nextPendingConnection();
 
     BonjourContactConnection *bcc = new BonjourContactConnection(sock);
-    QObject::connect(bcc, SIGNAL(discoveredUserName(BonjourContactConnection *,QString)),
-                     this, SLOT(discoveredUserName(BonjourContactConnection *,QString)));
-    QObject::connect(bcc, SIGNAL(usernameNotInStream(BonjourContactConnection *)),
-                     this, SLOT(usernameNotInStream(BonjourContactConnection *)));
+    QObject::connect(bcc, SIGNAL(discoveredUserName(BonjourContactConnection*,QString)),
+                     this, SLOT(discoveredUserName(BonjourContactConnection*,QString)));
+    QObject::connect(bcc, SIGNAL(usernameNotInStream(BonjourContactConnection*)),
+                     this, SLOT(usernameNotInStream(BonjourContactConnection*)));
 
     unknownConnections << bcc;
 }

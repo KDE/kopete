@@ -82,7 +82,6 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent )
 	m_infoWidget = NULL;
 }
 
-
 ICQSearchDialog::~ICQSearchDialog()
 {
 	delete m_searchUI;
@@ -345,6 +344,4 @@ void ICQSearchDialog::slotButtonClicked( int button )
 		KDialog::slotButtonClicked( button );
 	}
 }
-
-//kate: indent-mode csands; space-indent off; replace-tabs off; tab-width 4;
 

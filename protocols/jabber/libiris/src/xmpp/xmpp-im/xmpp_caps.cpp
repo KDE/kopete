@@ -39,7 +39,6 @@
 
 namespace XMPP {
 
-
 QDomElement CapsInfo::toXml(QDomDocument *doc) const
 {
 	QDomElement caps = doc->createElement(QStringLiteral("info"));
@@ -57,7 +56,6 @@ CapsInfo CapsInfo::fromXml(const QDomElement &caps)
 	}
 	return CapsInfo(item, lastSeen);
 }
-
 
 // -----------------------------------------------------------------------------
 
@@ -198,7 +196,6 @@ DiscoItem CapsRegistry::disco(const QString &spec) const
 	return ci.disco();
 }
 
-
 /*--------------------------------------------------------------
   _____                __  __
  / ____|              |  \/  |
@@ -227,7 +224,6 @@ CapsManager::CapsManager(Client *client) :
 
 CapsManager::~CapsManager()
 {}
-
 
 /**
  * \brief Checks whether the caps manager is enabled (and does lookups).
@@ -361,7 +357,6 @@ bool CapsManager::capsEnabled(const Jid& jid) const
 {
 	return capsSpecs_.contains(jid.full());
 }
-
 
 /**
  * \brief Requests the list of features of a given JID.

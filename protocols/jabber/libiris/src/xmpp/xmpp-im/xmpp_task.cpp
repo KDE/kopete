@@ -273,7 +273,6 @@ void Task::debug(const QString &str)
 	client()->debug(QStringLiteral("%1: ").arg(metaObject()->className()) + str);
 }
 
-
 /**
  * \brief verifiys a stanza is a IQ reply for this task
  *

@@ -38,7 +38,6 @@
 
 namespace buzz {
 
-
 static void
 StartElementCallback(void * userData, const char *name, const char **atts) {
   (static_cast<XmlParser *>(userData))->ExpatStartElement(name, atts);

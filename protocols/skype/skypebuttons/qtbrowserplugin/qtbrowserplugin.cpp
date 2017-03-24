@@ -89,7 +89,6 @@ void NPN_Version(int* plugin_major, int* plugin_minor, int* netscape_major, int*
     Q_ASSERT(qNetscapeFuncs); \
     Q_ASSERT(qNetscapeFuncs->x); \
 
-
 const char *NPN_UserAgent(NPP instance)
 {
     NPN_Prolog(uagent);
@@ -279,7 +278,6 @@ void NPN_SetException(NPObject *obj, const char *message)
     QtNPInstance *This = npobj->_class->qtnp; \
     if (!This->qt.object) return false; \
     QObject *qobject = This->qt.object \
-
 
 static NPObject *NPAllocate(NPP npp, NPClass *aClass)
 {
@@ -762,7 +760,6 @@ int QtSignalForwarder::qt_metacall(QMetaObject::Call call, int index, void **arg
 
     return index;
 }
-
 
 // Plugin functions
 extern "C" NPError
@@ -1283,7 +1280,6 @@ extern "C" NPError WINAPI NP_Shutdown()
     return NPERR_NO_ERROR;
 }
 
-
 /*!
     \class QtNPBindable qtnetscape.h
     \brief The QtNPBindable class provides an interface between a widget and the web browser.
@@ -1579,11 +1575,9 @@ void QtNPBindable::transferComplete(const QString &url, int id, Reason reason)
     Q_UNUSED(reason)
 }
 
-
 /******************************************************************************
  * The plugin itself - only one ever exists, created by QtNPFactory::create()
  *****************************************************************************/
-
 
 /*!
     \class QtNPFactory qtbrowserplugin.h
@@ -1639,7 +1633,6 @@ QtNPFactory::QtNPFactory()
 QtNPFactory::~QtNPFactory()
 {
 }
-
 
 /*!
     \fn QStringList QtNPFactory::mimeTypes() const

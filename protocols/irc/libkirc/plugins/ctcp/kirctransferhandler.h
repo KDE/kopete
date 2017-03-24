@@ -23,8 +23,6 @@
 #include "kirctransfer.h"
 #include "kirctransferserver.h"
 
-
-
 namespace KIrc
 {
 

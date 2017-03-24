@@ -46,7 +46,6 @@ public slots:
 	void fetchShortInfo();
 };
 
-
 class ICQAccount : public OscarAccount
 {
 Q_OBJECT
@@ -75,7 +74,6 @@ protected:
 protected slots:
 	void loginActions() Q_DECL_OVERRIDE;
 	void disconnected( DisconnectReason reason ) Q_DECL_OVERRIDE;
-
 
 private:
 	Oscar::Presence presence();

@@ -44,7 +44,6 @@ namespace buzz {
 class XmlElement;
 class XmlParseContext;
 
-
 class XmlBuilder : public XmlParseHandler {
 public:
   XmlBuilder();

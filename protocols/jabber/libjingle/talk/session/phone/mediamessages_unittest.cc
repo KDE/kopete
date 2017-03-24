@@ -100,7 +100,6 @@ class MediaMessagesTest : public testing::Test {
            "</streams>";
   }
 
-
   static std::string StreamXml(const std::string& nick,
                                const std::string& name,
                                const std::string& ssrc1,
@@ -222,7 +221,6 @@ TEST_F(MediaMessagesTest, ParseBadViewXml) {
   ASSERT_FALSE(cricket::ParseJingleViewRequest(
       action_elem.get(), &view_request, &parse_error));
 }
-
 
 // Test serializing/deserializing typical streams xml.
 TEST_F(MediaMessagesTest, StreamsToFromXml) {

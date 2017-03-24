@@ -26,7 +26,6 @@ XAwayService::XAwayService()
 {
 }
 
-
 void XAwayService::setSenderId( const QString& uni )
 {
 	m_senderId = uni;
@@ -86,7 +85,6 @@ void XAwayService::createRequest( QDomDocument& doc, QDomElement &e ) const
 	eSenderId.appendChild( doc.createTextNode( m_senderId ) );
 	e.appendChild( eSenderId );
 }
-
 
 void XAwayService::createResponse( QDomDocument& doc, QDomElement &e ) const
 {

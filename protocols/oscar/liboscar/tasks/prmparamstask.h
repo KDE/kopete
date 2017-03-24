@@ -39,4 +39,3 @@ public:
 
 #endif
 
-// kate: space-indent on; tab-width 4; indent-mode csands;

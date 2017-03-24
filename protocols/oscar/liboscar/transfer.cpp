@@ -118,7 +118,6 @@ void Transfer::populateWireBuffer( int offset, const QByteArray& buffer )
 	}
 }
 
-
 FlapTransfer::FlapTransfer()
 	: Transfer()
 {
@@ -188,18 +187,15 @@ void FlapTransfer::setFlapChannel( Oscar::BYTE channel )
 	}
 }
 
-
 Oscar::BYTE FlapTransfer::flapChannel() const
 {
 	return m_flapChannel;
 }
 
-
 void FlapTransfer::setFlapSequence( Oscar::WORD seq )
 {
 	m_flapSequence = seq;
 }
-
 
 Oscar::WORD FlapTransfer::flapSequence() const
 {
@@ -226,14 +222,11 @@ Transfer::TransferType FlapTransfer::type() const
 	return Transfer::FlapTransfer;
 }
 
-
-
 SnacTransfer::SnacTransfer()
 	: FlapTransfer()
 {
 	m_isSnacValid = false;
 }
-
 
 SnacTransfer::SnacTransfer( Buffer* buffer, Oscar::BYTE chan, Oscar::WORD seq, Oscar::WORD len, Oscar::WORD service,
 				 Oscar::WORD subtype, Oscar::WORD flags, Oscar::DWORD reqId )
@@ -359,5 +352,4 @@ SNAC SnacTransfer::snac() const
 	SNAC s = { m_snacService, m_snacSubtype, m_snacFlags, m_snacReqId };
 	return s;
 }
-
 

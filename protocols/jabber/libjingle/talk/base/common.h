@@ -60,7 +60,6 @@ inline void Unused(const void *) { }
 #define stdmax(x,y) talk_base::_max(x,y)
 #endif
 
-
 #define ARRAY_SIZE(x) (static_cast<int>((sizeof(x)/sizeof(x[0]))))
 
 /////////////////////////////////////////////////////////////////////////////

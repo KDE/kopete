@@ -438,5 +438,4 @@ KopeteUnixSerialPort::~KopeteUnixSerialPort()
 		close(_fd);
 }
 
-
 #endif

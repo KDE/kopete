@@ -128,4 +128,3 @@ void OscarEncodingSelectionDialog::slotCancel()
     emit closing( QDialog::Rejected );
 }
 
-

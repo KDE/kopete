@@ -344,8 +344,6 @@ QString DiscoItem::action2string(Action a)
 	return s;
 }
 
-
-
 bool XMPP::operator<(const DiscoItem::Identity &a, const DiscoItem::Identity &b)
 {
 	int r = a.category.compare(b.category);

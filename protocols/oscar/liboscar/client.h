@@ -19,7 +19,6 @@
 	*************************************************************************
 */
 
-
 #ifndef LIBOSCAR_CLIENT_H
 #define LIBOSCAR_CLIENT_H
 
@@ -657,7 +656,4 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(Oscar::Client::ICQStatus)
 
 #endif
-
-//kate: tab-width 4; indent-mode csands;
-
 

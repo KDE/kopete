@@ -240,6 +240,3 @@ void Task::setId( quint32 id )
 	d->id = id;
 }
 
-
-//kate: tab-width 4; indent-mode csands;
-

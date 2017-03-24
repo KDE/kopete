@@ -124,7 +124,6 @@ enum NPNVariable {
     NPNVPluginElementNPObject = 16
 };
 
-
 enum NPWindowType {
     NPWindowTypeWindow = 1, // Windowed plug-in. The window field holds a platform-specific handle to a window.
     NPWindowTypeDrawable    // Windows: HDC; Mac OS: pointer to NP_Port structure.
@@ -300,7 +299,6 @@ struct NPPluginFuncs {
     FUNCTION_POINTER(NPP_GetValueFP) getvalue;
     FUNCTION_POINTER(NPP_SetValueFP) setvalue;
 } ;
-
 
 // forward declarations
 struct NPObject;

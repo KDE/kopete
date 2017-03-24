@@ -24,7 +24,6 @@ CreateFolderTask::CreateFolderTask(Task* parent): ModifyContactListTask(parent)
 {
 }
 
-
 CreateFolderTask::~CreateFolderTask()
 {
 }

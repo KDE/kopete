@@ -34,7 +34,6 @@
 #include "talk/xmpp/xmppclientsettings.h"
 #include "talk/xmpp/xmppengine.h"
 
-
 class XmppThread:
     public talk_base::Thread, XmppPumpNotify, talk_base::MessageHandler {
 public:

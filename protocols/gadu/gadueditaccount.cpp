@@ -1,4 +1,3 @@
-// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003-2004 Grzegorz Jaskiewicz  <gj at pointblue.com.pl>
 //
@@ -214,7 +213,8 @@ GaduEditAccount::validateData()
     }
 
     if (loginEdit_->text().toInt() < 0 || loginEdit_->text().toInt() == 0) {
-        KMessageBox::sorry(this, i18n("<b>UIN should be a positive number.</b>"), i18n("Gadu-Gadu"));
+        KMessageBox::sorry(this, i18n("<b>UIN should be a positive number.</b>"),
+                           i18n("Gadu-Gadu"));
         return false;
     }
 
@@ -253,7 +253,10 @@ GaduEditAccount::apply()
     account_->setIgnoreAnons(ignoreCheck_->isChecked());
 
     if (account_->setDcc(dccCheck_->isChecked()) == false) {
-        KMessageBox::sorry(this, i18n("<b>Starting DCC listening socket failed; dcc is not working now.</b>"), i18n("Gadu-Gadu"));
+        KMessageBox::sorry(this,
+                           i18n(
+                               "<b>Starting DCC listening socket failed; dcc is not working now.</b>"),
+                           i18n("Gadu-Gadu"));
     }
 
     return account();

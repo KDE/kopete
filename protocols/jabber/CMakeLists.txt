@@ -53,6 +53,8 @@ set(kopete_jabber_ui_SRCS
     ui/dlgjabberxoauth2.cpp
 )
 
+ecm_qt_declare_logging_category(kopete_jabber_ui_SRCS HEADER jabber_protocol_debug.h IDENTIFIER JABBER_PROTOCOL_LOG CATEGORY_NAME org.kde.kopete.jabber)
+
 if(BUILD_LIBJINGLE)
    set(kopete_jabber_ui_SRCS
       ${kopete_jabber_ui_SRCS}

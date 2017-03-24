@@ -111,9 +111,6 @@ void swap(scoped_ptr<T>& a, scoped_ptr<T>& b) {
   a.swap(b);
 }
 
-
-
-
 //  scoped_array extends scoped_ptr to arrays. Deletion of the array pointed to
 //  is guaranteed, either on destruction of the scoped_array or via an explicit
 //  reset(). Use shared_array or std::vector if your needs are more complex.

@@ -119,7 +119,6 @@ m_sessionID(1)
     connect (m_actionNudge, SIGNAL (triggered(bool)), this,
              SLOT (sendNudge()));
 
-
     m_actionInvite =
         new KActionMenu (QIcon::fromTheme(QStringLiteral("system-users")), i18n ("&Invite"), this);
     actionCollection ()->addAction ("wlmInvite", m_actionInvite);
@@ -649,7 +648,6 @@ WlmChatSession::slotActionInviteAboutToShow ()
 
     m_actionInvite->menu ()->clear ();
 
-
     QHash < QString, Kopete::Contact * >contactList = account ()->contacts();
     QHash < QString, Kopete::Contact * >::Iterator it, itEnd =
         contactList.end ();
@@ -692,7 +690,6 @@ WlmChatSession::slotActionInviteAboutToShow ()
 //    m_inviteactions.append( b ) ;
 */
 }
-
 
 void
 WlmChatSession::sendNudge ()

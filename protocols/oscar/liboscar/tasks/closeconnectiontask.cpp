@@ -34,7 +34,6 @@ CloseConnectionTask::CloseConnectionTask( Task* parent )
 {
 }
 
-
 CloseConnectionTask::~CloseConnectionTask()
 {
 }
@@ -97,4 +96,3 @@ void CloseConnectionTask::onGo()
 	setSuccess( 0, QString() );
 }
 
-//kate: tab-width 4; indent-mode csands;

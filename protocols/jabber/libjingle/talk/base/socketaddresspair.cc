@@ -34,7 +34,6 @@ SocketAddressPair::SocketAddressPair(
     : src_(src), dest_(dest) {
 }
 
-
 bool SocketAddressPair::operator ==(const SocketAddressPair& p) const {
   return (src_ == p.src_) && (dest_ == p.dest_);
 }

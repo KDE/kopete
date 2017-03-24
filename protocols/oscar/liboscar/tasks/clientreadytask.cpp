@@ -34,7 +34,6 @@ ClientReadyTask::ClientReadyTask(Task* parent): Task(parent)
 	m_classList = client()->rateManager()->classList();
 }
 
-
 ClientReadyTask::~ClientReadyTask()
 {
 }
@@ -43,7 +42,6 @@ void ClientReadyTask::setFamilies( const QList<int>& families )
 {
 	m_familyList = families;
 }
-
 
 void ClientReadyTask::onGo()
 {
@@ -89,4 +87,3 @@ void ClientReadyTask::onGo()
 
 }
 
-//kate: tab-width 4; indent-mode csands;
