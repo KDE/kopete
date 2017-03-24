@@ -84,8 +84,8 @@ AvatarManager::AvatarManager(QObject *parent)
 {
     // Locate avatar data dir on disk
     const QString avatarPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1String("/avatars");
-    d->createDirectory(QUrl(avatarPath));
-    d->baseDir = QUrl(avatarPath);
+    d->createDirectory(QUrl::fromLocalFile(avatarPath));
+    d->baseDir = QUrl::fromLocalFile(avatarPath);
 }
 
 AvatarManager::~AvatarManager()
@@ -98,7 +98,7 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 {
     Q_ASSERT(!newEntry.name.isEmpty());
 
-    QUrl avatarUrl(d->baseDir);
+    QUrl avatarUrl = d->baseDir;
 
     // First find where to save the file
     switch (newEntry.category) {
@@ -259,7 +259,7 @@ bool AvatarManager::remove(Kopete::AvatarManager::AvatarEntry entryToRemove)
     if (KIO::NetAccess::del(QUrl(entryToRemove.path), 0)) {
         qCDebug(LIBKOPETE_LOG) << "Removing avatar from config.";
 
-        QUrl configUrl(d->baseDir);
+        QUrl configUrl = d->baseDir;
         configUrl = configUrl.adjusted(QUrl::StripTrailingSlash);
         configUrl.setPath(configUrl.path() + '/' + (UserDir));
         configUrl = configUrl.adjusted(QUrl::StripTrailingSlash);
@@ -287,7 +287,7 @@ bool AvatarManager::exists(Kopete::AvatarManager::AvatarEntry entryToCheck)
 
 bool AvatarManager::exists(const QString &avatarName)
 {
-    QUrl configUrl(d->baseDir);
+    QUrl configUrl = d->baseDir;
     configUrl = configUrl.adjusted(QUrl::StripTrailingSlash);
     configUrl.setPath(configUrl.path() + '/' + (UserDir));
     configUrl = configUrl.adjusted(QUrl::StripTrailingSlash);
@@ -382,7 +382,7 @@ void AvatarQueryJob::setQueryFilter(Kopete::AvatarManager::AvatarCategory catego
 
 void AvatarQueryJob::start()
 {
-    d->baseDir = QUrl(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1String("/avatars"));
+    d->baseDir = QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1String("/avatars"));
 
     if (d->category & Kopete::AvatarManager::User) {
         d->listAvatarDirectory(UserDir);
