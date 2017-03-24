@@ -401,21 +401,21 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="KPushButton" name="addAcl" >
+      <widget class="QPushButton" name="addAcl" >
        <property name="toolTip" >
         <string>Add a new ACL entry</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" name="editAcl" >
+      <widget class="QPushButton" name="editAcl" >
        <property name="toolTip" >
         <string>Edit an existing ACL entry</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" name="deleteAcl" >
+      <widget class="QPushButton" name="deleteAcl" >
        <property name="toolTip" >
         <string>Delete an ACL entry</string>
        </property>
@@ -425,14 +425,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>topic</tabstop>
   <tabstop>disclaimer</tabstop>
