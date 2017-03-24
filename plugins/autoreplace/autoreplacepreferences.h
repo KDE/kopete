@@ -20,43 +20,44 @@
 
 #include <kcmodule.h>
 
-namespace Ui { class AutoReplacePrefsUI; }
+namespace Ui {
+class AutoReplacePrefsUI;
+}
 class AutoReplaceConfig;
 
-	// TODO
-	// add button enabled only when k and v are present
-	// remove button enabled only when a QListViewItem is selected
-	// signal/slot when map changes (needed?)
-	// capital letter not just at the beginning but always after ". ", "! "...
+// TODO
+// add button enabled only when k and v are present
+// remove button enabled only when a QListViewItem is selected
+// signal/slot when map changes (needed?)
+// capital letter not just at the beginning but always after ". ", "! "...
 
 class AutoReplacePreferences : public KCModule
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit AutoReplacePreferences( QWidget *parent = nullptr, const QVariantList &args = QVariantList() );
-	virtual~AutoReplacePreferences();
+    explicit AutoReplacePreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
+    virtual ~AutoReplacePreferences();
 
-	void save() Q_DECL_OVERRIDE;
-	void load() Q_DECL_OVERRIDE;
-	void defaults() Q_DECL_OVERRIDE;
+    void save() Q_DECL_OVERRIDE;
+    void load() Q_DECL_OVERRIDE;
+    void defaults() Q_DECL_OVERRIDE;
 
 private slots:
-	//void slotSettingsDirty();
-	void slotAddCouple();
-	void slotEditCouple();
-	void slotRemoveCouple();
-	void slotEnableAddEdit( const QString & );
-	void slotSelectionChanged();
+    //void slotSettingsDirty();
+    void slotAddCouple();
+    void slotEditCouple();
+    void slotRemoveCouple();
+    void slotEnableAddEdit(const QString &);
+    void slotSelectionChanged();
 
 protected slots:
-	virtual void slotWidgetModified();
+    virtual void slotWidgetModified();
 private:
-	Ui::AutoReplacePrefsUI * preferencesDialog;
-	AutoReplaceConfig *m_config;
+    Ui::AutoReplacePrefsUI *preferencesDialog;
+    AutoReplaceConfig *m_config;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

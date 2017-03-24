@@ -21,10 +21,10 @@
 
 class StatusMessage_Test : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 private slots:
-	void testNormalStatus();
-	void testMusicMetaData();
-	void testAppendHash();
+    void testNormalStatus();
+    void testMusicMetaData();
+    void testAppendHash();
 };
 #endif

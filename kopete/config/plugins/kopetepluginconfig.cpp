@@ -34,56 +34,56 @@
 // Kopete includes
 #include "kopetepluginmanager.h"
 
-K_PLUGIN_FACTORY( KopetePluginConfigFactory, registerPlugin<KopetePluginConfig>(); )
+K_PLUGIN_FACTORY(KopetePluginConfigFactory, registerPlugin<KopetePluginConfig>();
+                 )
 
-KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QVariantList &args )
-: KCModule( parent, args)
+KopetePluginConfig::KopetePluginConfig(QWidget *parent, const QVariantList &args)
+    : KCModule(parent, args)
 {
-	m_pluginSelector = new KPluginSelector( this );
-	
-	QVBoxLayout *mainLayout = new QVBoxLayout(this);
-	mainLayout->setMargin(0);
-	mainLayout->addWidget( m_pluginSelector );
+    m_pluginSelector = new KPluginSelector(this);
 
-	connect( m_pluginSelector, SIGNAL(changed(bool)), this, SLOT(changed()) );
-	connect( m_pluginSelector, SIGNAL(configCommitted(QByteArray)),
-		this, SLOT(reparseConfiguration(QByteArray)) );
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setMargin(0);
+    mainLayout->addWidget(m_pluginSelector);
 
-	m_pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( QStringLiteral("Plugins") ),
-	                               KPluginSelector::ReadConfigFile, i18n( "General Plugins" ), QStringLiteral("Plugins") );
-	m_pluginSelector->load();
+    connect(m_pluginSelector, SIGNAL(changed(bool)), this, SLOT(changed()));
+    connect(m_pluginSelector, SIGNAL(configCommitted(QByteArray)),
+            this, SLOT(reparseConfiguration(QByteArray)));
+
+    m_pluginSelector->addPlugins(Kopete::PluginManager::self()->availablePlugins(QStringLiteral("Plugins")),
+                                 KPluginSelector::ReadConfigFile, i18n("General Plugins"), QStringLiteral("Plugins"));
+    m_pluginSelector->load();
 }
 
 KopetePluginConfig::~KopetePluginConfig()
 {
 }
 
-void KopetePluginConfig::reparseConfiguration(const QByteArray&conf)
+void KopetePluginConfig::reparseConfiguration(const QByteArray &conf)
 {
-	KSettings::Dispatcher::reparseConfiguration(conf);
+    KSettings::Dispatcher::reparseConfiguration(conf);
 }
 
 void KopetePluginConfig::load()
 {
-	m_pluginSelector->load();
-	
-	KCModule::load();
+    m_pluginSelector->load();
+
+    KCModule::load();
 }
 
 void KopetePluginConfig::defaults()
 {
-	m_pluginSelector->defaults();
+    m_pluginSelector->defaults();
 }
 
 void KopetePluginConfig::save()
 {
-	m_pluginSelector->save();
-	Kopete::PluginManager::self()->loadAllPlugins();
+    m_pluginSelector->save();
+    Kopete::PluginManager::self()->loadAllPlugins();
 
-	KCModule::save();
+    KCModule::save();
 }
 
 #include "kopetepluginconfig.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-

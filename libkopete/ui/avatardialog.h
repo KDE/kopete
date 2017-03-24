@@ -24,12 +24,8 @@
 // Kopete includes
 #include <kopete_export.h>
 
-namespace Kopete
-{
-
-namespace UI
-{
-
+namespace Kopete {
+namespace UI {
 /**
  * @brief Dialog to manage and select user avatar
  *
@@ -88,7 +84,7 @@ public:
      * @return The path of the selected avatar, or QString() if no avatar
      * was chosen or if the Cancel button was pressed.
      */
-    static QString getAvatar(QWidget *parent = nullptr, const QString &currentAvatar = QString(), bool * ok = 0 );
+    static QString getAvatar(QWidget *parent = nullptr, const QString &currentAvatar = QString(), bool *ok = 0);
 
 Q_SIGNALS:
     /**
@@ -102,11 +98,9 @@ private Q_SLOTS:
 
 private:
     class Private;
-    Private * const d;
+    Private *const d;
 };
-
 } // namespace UI
-
 } // namespace Kopete
 
 #endif

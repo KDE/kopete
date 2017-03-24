@@ -21,8 +21,12 @@
 
 #include <kdialog.h>
 
-namespace Kopete { class MetaContact; }
-namespace Kleo { class EncryptionKeyRequester; }
+namespace Kopete {
+class MetaContact;
+}
+namespace Kleo {
+class EncryptionKeyRequester;
+}
 
 /**
   *@author Olivier Goffart
@@ -31,17 +35,16 @@ namespace Kleo { class EncryptionKeyRequester; }
 
 class CryptographySelectUserKey : public KDialog
 {
-		Q_OBJECT
-	public:
-		CryptographySelectUserKey ( const QString &key, Kopete::MetaContact *mc );
-		~CryptographySelectUserKey();
+    Q_OBJECT
+public:
+    CryptographySelectUserKey (const QString &key, Kopete::MetaContact *mc);
+    ~CryptographySelectUserKey();
 
-		QString publicKey() const;
+    QString publicKey() const;
 
-	private:
-		Kleo::EncryptionKeyRequester *m_KeyEdit;
-		Kopete::MetaContact *m_metaContact;
-
+private:
+    Kleo::EncryptionKeyRequester *m_KeyEdit;
+    Kopete::MetaContact *m_metaContact;
 };
 
 #endif

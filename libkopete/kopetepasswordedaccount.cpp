@@ -25,78 +25,79 @@
 
 struct Kopete::PasswordedAccount::Private
 {
-	Private( const QString &group, bool allowBlankPassword ) :
-		password( group, allowBlankPassword ) {}
-	Kopete::Password password;
-	Kopete::OnlineStatus initialStatus;
+    Private(const QString &group, bool allowBlankPassword)
+        : password(group, allowBlankPassword)
+    {
+    }
+
+    Kopete::Password password;
+    Kopete::OnlineStatus initialStatus;
 };
 
-Kopete::PasswordedAccount::PasswordedAccount( Kopete::Protocol *parent, const QString &acctId, bool allowBlankPassword )
- : Kopete::Account( parent, acctId ), d( new Private( QLatin1String("Account_")+ parent->pluginId() + QLatin1String("_") + acctId , allowBlankPassword  ) )
+Kopete::PasswordedAccount::PasswordedAccount(Kopete::Protocol *parent, const QString &acctId, bool allowBlankPassword)
+    : Kopete::Account(parent, acctId)
+    , d(new Private(QLatin1String("Account_")+ parent->pluginId() + QLatin1String("_") + acctId, allowBlankPassword))
 {
 }
 
 Kopete::PasswordedAccount::~PasswordedAccount()
 {
-	delete d;
+    delete d;
 }
 
 Kopete::Password &Kopete::PasswordedAccount::password()
 {
-	return d->password;
+    return d->password;
 }
 
-void Kopete::PasswordedAccount::connect( )
+void Kopete::PasswordedAccount::connect()
 {
-	Kopete::OnlineStatus s(Kopete::OnlineStatus::Online);
-	connect( s );
+    Kopete::OnlineStatus s(Kopete::OnlineStatus::Online);
+    connect(s);
 }
 
-void Kopete::PasswordedAccount::connect( const Kopete::OnlineStatus& initialStatus )
+void Kopete::PasswordedAccount::connect(const Kopete::OnlineStatus &initialStatus)
 {
-	// warn user somewhere
-	d->initialStatus = initialStatus;
-	QString cached = password().cachedValue();
-	if( !cached.isNull() || d->password.allowBlankPassword() )
-	{
-		connectWithPassword( cached );
-		return;
-	}
+    // warn user somewhere
+    d->initialStatus = initialStatus;
+    QString cached = password().cachedValue();
+    if (!cached.isNull() || d->password.allowBlankPassword()) {
+        connectWithPassword(cached);
+        return;
+    }
 
-	QString prompt = passwordPrompt();
-	Kopete::Password::PasswordSource src = password().isWrong() ? Kopete::Password::FromUser : Kopete::Password::FromConfigOrUser;
+    QString prompt = passwordPrompt();
+    Kopete::Password::PasswordSource src = password().isWrong() ? Kopete::Password::FromUser : Kopete::Password::FromConfigOrUser;
 
-	password().request( this, SLOT(connectWithPassword(QString)), accountIcon( Kopete::Password::preferredImageSize() ), prompt, src );
+    password().request(this, SLOT(connectWithPassword(QString)), accountIcon(Kopete::Password::preferredImageSize()), prompt, src);
 }
 
 QString Kopete::PasswordedAccount::passwordPrompt()
 {
-	if ( password().isWrong() )
-		return i18n( "<qt><b>The password was wrong.</b> Please re-enter your password for %1 account <b>%2</b></qt>", protocol()->displayName(), accountId() );
-	else
-		return i18n( "<qt>Please enter your password for %1 account <b>%2</b></qt>", protocol()->displayName(), accountId() );
+    if (password().isWrong()) {
+        return i18n("<qt><b>The password was wrong.</b> Please re-enter your password for %1 account <b>%2</b></qt>", protocol()->displayName(), accountId());
+    } else {
+        return i18n("<qt>Please enter your password for %1 account <b>%2</b></qt>", protocol()->displayName(), accountId());
+    }
 }
 
 Kopete::OnlineStatus Kopete::PasswordedAccount::initialStatus()
 {
-	return d->initialStatus;
+    return d->initialStatus;
 }
 
 bool Kopete::PasswordedAccount::removeAccount()
 {
-	password().set(QString());
-	return Kopete::Account::removeAccount();
+    password().set(QString());
+    return Kopete::Account::removeAccount();
 }
 
-void Kopete::PasswordedAccount::disconnected( Kopete::Account::DisconnectReason reason )
+void Kopete::PasswordedAccount::disconnected(Kopete::Account::DisconnectReason reason)
 {
-	if(reason==Kopete::Account::BadPassword || reason==Kopete::Account::BadUserName)
-	{
-		password().setWrong(true);
-	}
-	Kopete::Account::disconnected(reason);
+    if (reason == Kopete::Account::BadPassword || reason == Kopete::Account::BadUserName) {
+        password().setWrong(true);
+    }
+    Kopete::Account::disconnected(reason);
 }
-
-
 
 // vim: set noet ts=4 sts=4 sw=4:

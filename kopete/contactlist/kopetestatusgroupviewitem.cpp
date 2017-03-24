@@ -20,32 +20,30 @@
 #include "kopetestatusgroupviewitem.h"
 #include <kdebug.h>
 
-KopeteStatusGroupViewItem::KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , QTreeWidget *parent)
-		: QTreeWidgetItem(parent)
+KopeteStatusGroupViewItem::KopeteStatusGroupViewItem(Kopete::OnlineStatus::StatusType status_, QTreeWidget *parent)
+    : QTreeWidgetItem(parent)
 {
-	m_status = status_;
+    m_status = status_;
 }
 
 KopeteStatusGroupViewItem::~KopeteStatusGroupViewItem()
 {
 }
 
-QString KopeteStatusGroupViewItem::key( int, bool ) const
+QString KopeteStatusGroupViewItem::key(int, bool) const
 {
-	switch (m_status)
-	{
-		case Kopete::OnlineStatus::Online :
-		return "A";
-		break;
-		case Kopete::OnlineStatus::Away :
-		return "B";
-		break;
-		case Kopete::OnlineStatus::Offline :
-		return "C";
-		break;
-		case Kopete::OnlineStatus::Unknown :
-		default:
-		return "D";
-	}
+    switch (m_status) {
+    case Kopete::OnlineStatus::Online:
+        return "A";
+        break;
+    case Kopete::OnlineStatus::Away:
+        return "B";
+        break;
+    case Kopete::OnlineStatus::Offline:
+        return "C";
+        break;
+    case Kopete::OnlineStatus::Unknown:
+    default:
+        return "D";
+    }
 }
-

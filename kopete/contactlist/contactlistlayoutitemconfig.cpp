@@ -21,43 +21,41 @@
 #include "contactlistlayoutitemconfig.h"
 
 namespace ContactList {
-
-LayoutItemConfigRowElement::LayoutItemConfigRowElement( int value, qreal size, bool bold, bool italic, bool small, bool optimalSize,
-                                                        Qt::Alignment alignment, const QString &prefix, const QString &suffix )
-	: m_value( value )
-	, m_size( size )
-	, m_bold( bold )
-	, m_italic( italic )
-	, m_small( small )
-	, m_optimalSize( optimalSize )
-	, m_alignment( alignment )
-	, m_prefix( prefix )
-	, m_suffix( suffix )
+LayoutItemConfigRowElement::LayoutItemConfigRowElement(int value, qreal size, bool bold, bool italic, bool small, bool optimalSize, Qt::Alignment alignment, const QString &prefix,
+                                                       const QString &suffix)
+    : m_value(value)
+    , m_size(size)
+    , m_bold(bold)
+    , m_italic(italic)
+    , m_small(small)
+    , m_optimalSize(optimalSize)
+    , m_alignment(alignment)
+    , m_prefix(prefix)
+    , m_suffix(suffix)
 {
 }
 
 //////////////////////////////////////////////
 
-void LayoutItemConfigRow::addElement( LayoutItemConfigRowElement element )
+void LayoutItemConfigRow::addElement(LayoutItemConfigRowElement element)
 {
-	m_elements.append( element );
+    m_elements.append(element);
 }
 
 int LayoutItemConfigRow::count() const
 {
-	return m_elements.count();
+    return m_elements.count();
 }
 
-LayoutItemConfigRowElement LayoutItemConfigRow::element( int at ) const
+LayoutItemConfigRowElement LayoutItemConfigRow::element(int at) const
 {
-	return m_elements.at( at );
+    return m_elements.at(at);
 }
-
 
 //////////////////////////////////////////////
 
 LayoutItemConfig::LayoutItemConfig()
-	: m_showIcon( false )
+    : m_showIcon(false)
 {
 }
 
@@ -67,51 +65,48 @@ LayoutItemConfig::~LayoutItemConfig()
 
 int LayoutItemConfig::rows() const
 {
-	return m_rows.size();
+    return m_rows.size();
 }
 
-
-LayoutItemConfigRow ContactList::LayoutItemConfig::row( int at ) const
+LayoutItemConfigRow ContactList::LayoutItemConfig::row(int at) const
 {
-	return m_rows.at( at );
+    return m_rows.at(at);
 }
 
-void ContactList::LayoutItemConfig::addRow( LayoutItemConfigRow row )
+void ContactList::LayoutItemConfig::addRow(LayoutItemConfigRow row)
 {
-	m_rows.append( row );
+    m_rows.append(row);
 }
 
 bool LayoutItemConfig::showIcon() const
 {
-	return m_showIcon;
+    return m_showIcon;
 }
 
-void ContactList::LayoutItemConfig::setShowIcon( bool showIcon )
+void ContactList::LayoutItemConfig::setShowIcon(bool showIcon)
 {
-	m_showIcon = showIcon;
+    m_showIcon = showIcon;
 }
 
 //////////////////////////////////////////////
 
-
 LayoutItemConfig ContactListLayout::layout() const
 {
-	return m_layout;
+    return m_layout;
 }
 
-void ContactListLayout::setLayout( LayoutItemConfig layout )
+void ContactListLayout::setLayout(LayoutItemConfig layout)
 {
-	m_layout = layout;
+    m_layout = layout;
 }
 
 bool ContactListLayout::isEditable() const
 {
-	return m_isEditable;
+    return m_isEditable;
 }
 
-void ContactListLayout::setIsEditable( bool editable )
+void ContactListLayout::setIsEditable(bool editable)
 {
-	m_isEditable = editable;
+    m_isEditable = editable;
 }
-
 }

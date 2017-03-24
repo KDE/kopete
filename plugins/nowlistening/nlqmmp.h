@@ -9,9 +9,9 @@
 
     Kopete    (c) 2002,2003,2004 by the Kopete developers  <kopete-devel@kde.org>
 
-	Purpose:
-	This class abstracts the interface to qmmp by
-	implementing NLMediaPlayer
+    Purpose:
+    This class abstracts the interface to qmmp by
+    implementing NLMediaPlayer
 
     *************************************************************************
     *                                                                       *
@@ -30,12 +30,12 @@ class QDBusInterface;
 
 class NLqmmp : public NLMediaPlayer
 {
-	public:
-		NLqmmp();
-		virtual ~NLqmmp();
-		virtual void update();
-	private:
-		QDBusInterface *m_client;
+public:
+    NLqmmp();
+    virtual ~NLqmmp();
+    virtual void update();
+private:
+    QDBusInterface *m_client;
 };
 
 #endif

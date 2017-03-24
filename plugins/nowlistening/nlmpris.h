@@ -1,5 +1,5 @@
 /*
-	nlmpris.h
+    nlmpris.h
 
     Kopete Now Listening To plugin
 
@@ -8,9 +8,9 @@
 
     Kopete    (c) 2002,2003,2004 by the Kopete developers  <kopete-devel@kde.org>
 
-	Purpose:
-	This class abstracts the interface to audacious by
-	implementing NLMediaPlayer
+    Purpose:
+    This class abstracts the interface to audacious by
+    implementing NLMediaPlayer
 
     *************************************************************************
     *                                                                       *
@@ -32,12 +32,12 @@ class QDBusInterface;
 
 class NLmpris : public NLMediaPlayer
 {
-	public:
-		NLmpris();
-		virtual ~NLmpris();
-		virtual void update();
-	private:
-		QDBusInterface *m_client;
+public:
+    NLmpris();
+    virtual ~NLmpris();
+    virtual void update();
+private:
+    QDBusInterface *m_client;
 };
 
 #endif

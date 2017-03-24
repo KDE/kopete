@@ -25,30 +25,33 @@
 
 class QLabel;
 class QTextEdit;
-namespace Kopete { class MetaContact; }
+namespace Kopete {
+class MetaContact;
+}
 class ContactNotesPlugin;
 
 /**
   *@author Olivier Goffart
   */
-  
-class ContactNotesEdit : public KDialog  {
-   Q_OBJECT
-public: 
-	explicit ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p=0);
-	~ContactNotesEdit();
+
+class ContactNotesEdit : public KDialog
+{
+    Q_OBJECT
+public:
+    explicit ContactNotesEdit(Kopete::MetaContact *m, ContactNotesPlugin *p = 0);
+    ~ContactNotesEdit();
 
 private:
-	ContactNotesPlugin *m_plugin;
-	Kopete::MetaContact *m_metaContact;
+    ContactNotesPlugin *m_plugin;
+    Kopete::MetaContact *m_metaContact;
 
-	QLabel *m_label;
-	QTextEdit *m_linesEdit;
-	
+    QLabel *m_label;
+    QTextEdit *m_linesEdit;
+
 protected slots: // Protected slots
-	void slotButtonClicked(int buttonCode) Q_DECL_OVERRIDE;
+    void slotButtonClicked(int buttonCode) Q_DECL_OVERRIDE;
 signals: // Signals
-	void notesChanged(const QString&, Kopete::MetaContact*);
+    void notesChanged(const QString &, Kopete::MetaContact *);
 };
 
 #endif

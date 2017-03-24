@@ -1,7 +1,7 @@
 /*
     kopeteaddrbookexport.h - Kopete Online Status
 
-    Logic for exporting data acquired from messaging systems to the 
+    Logic for exporting data acquired from messaging systems to the
     KDE address book
 
     Copyright (c) 2004 by Will Stephenson <wstephenson@kde.org>
@@ -21,7 +21,6 @@
 #ifndef KOPETEADDRBOOKEXPORT_H
 #define KOPETEADDRBOOKEXPORT_H
 
-
 #include <kcontacts/addressee.h>
 
 #include "kopeteproperty.h"
@@ -31,74 +30,70 @@
 
 class KDialog;
 
-namespace Kopete
-{
+namespace Kopete {
 class Contact;
 class MetaContact;
 }
 
 class KopeteAddressBookExport : public QObject, private Ui::AddressBookExportUI
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-	KopeteAddressBookExport( QWidget *parent, Kopete::MetaContact *mc );
-	~KopeteAddressBookExport();
-	
-	/** 
-	 * Display the dialog
-	 * @return a QDialog return code
-	 */
-	int showDialog();
-	/**
-	 * Export the data to KABC if changed, omitting any duplicates
-	 */
-	void exportData();
-	
-protected:
-	/**
-	 * Initialise the GUI labels with labels from KABC
-	 */
-	void initLabels();
-	/**
-	 * Populate the GUI with data from KABC
-	 */
-	void fetchKABCData();
-	/**
-	 * Populate a listbox with a given type of phone number
-	 */
-	void fetchPhoneNumbers( QListWidget * listBox, KContacts::PhoneNumber::Type type, uint& counter );
-	/**
-	 * Populate the GUI with data from IM systems
-	 */
-	void fetchIMData();
-	/**
-	 * Populate a combobox with a contact's IM data
-	 */
-	void populateIM( const Kopete::Contact *contact, const QPixmap &icon, 
-			QComboBox *combo, const Kopete::PropertyTmpl &property );
-	/**
-	 * Populate a listbox with a contact's IM data
-	 */
-	void populateIM( const Kopete::Contact *contact, const QPixmap &icon, 
-			QListWidget *combo, const Kopete::PropertyTmpl &property );
-	
-	/** Check the selected item is not the first (existing KABC) item, or the same as it */
-	bool newValue( QComboBox *combo );
-	QStringList newValues( QListWidget *listBox, int counter );
-	
-	// the GUI
-	QWidget *mParent;
-	KDialog * mDialog;
-	QPixmap mAddrBookIcon;
-	AddressBookExportUI *mUI;
-	Kopete::MetaContact *mMetaContact;
-	//DEPRECATED: KContacts::AddressBook *mAddressBook;
-	KContacts::Addressee mAddressee;
-	
-	// counters tracking the number of KABC values where multiple values are possible in a single key
-	uint numEmails, numHomePhones, numWorkPhones, numMobilePhones;
+    KopeteAddressBookExport(QWidget *parent, Kopete::MetaContact *mc);
+    ~KopeteAddressBookExport();
 
+    /**
+     * Display the dialog
+     * @return a QDialog return code
+     */
+    int showDialog();
+    /**
+     * Export the data to KABC if changed, omitting any duplicates
+     */
+    void exportData();
+
+protected:
+    /**
+     * Initialise the GUI labels with labels from KABC
+     */
+    void initLabels();
+    /**
+     * Populate the GUI with data from KABC
+     */
+    void fetchKABCData();
+    /**
+     * Populate a listbox with a given type of phone number
+     */
+    void fetchPhoneNumbers(QListWidget *listBox, KContacts::PhoneNumber::Type type, uint &counter);
+    /**
+     * Populate the GUI with data from IM systems
+     */
+    void fetchIMData();
+    /**
+     * Populate a combobox with a contact's IM data
+     */
+    void populateIM(const Kopete::Contact *contact, const QPixmap &icon, QComboBox *combo, const Kopete::PropertyTmpl &property);
+    /**
+     * Populate a listbox with a contact's IM data
+     */
+    void populateIM(const Kopete::Contact *contact, const QPixmap &icon, QListWidget *combo, const Kopete::PropertyTmpl &property);
+
+    /** Check the selected item is not the first (existing KABC) item, or the same as it */
+    bool newValue(QComboBox *combo);
+    QStringList newValues(QListWidget *listBox, int counter);
+
+    // the GUI
+    QWidget *mParent;
+    KDialog *mDialog;
+    QPixmap mAddrBookIcon;
+    AddressBookExportUI *mUI;
+    Kopete::MetaContact *mMetaContact;
+    //DEPRECATED: KContacts::AddressBook *mAddressBook;
+    KContacts::Addressee mAddressee;
+
+    // counters tracking the number of KABC values where multiple values are possible in a single key
+    uint numEmails, numHomePhones, numWorkPhones, numMobilePhones;
 };
 
 #endif

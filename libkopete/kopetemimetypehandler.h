@@ -27,9 +27,7 @@ class QStringList;
 #include "kopete_export.h"
 #include "libkopete_debug.h"
 
-namespace Kopete
-{
-
+namespace Kopete {
 /**
  * @brief A handler for some set of mime-types
  * A mime type handler is responsible for handling requests to open files of
@@ -38,81 +36,81 @@ namespace Kopete
 class KOPETE_EXPORT MimeTypeHandler
 {
 protected:
-	MimeTypeHandler( bool canAcceptRemoteFiles = false );
+    MimeTypeHandler(bool canAcceptRemoteFiles = false);
 public:
-	virtual ~MimeTypeHandler();
+    virtual ~MimeTypeHandler();
 
-	/**
-	 * Finds a MimeTypeHandler for a given URL, and tells that handler to handle it
-	 *
-	 * @param url the url to dispatch
-	 *
-	 * @return true if a handler was registered for the mime type, false otherwise
-	 */
-	static bool dispatchURL( const QUrl &url );
+    /**
+     * Finds a MimeTypeHandler for a given URL, and tells that handler to handle it
+     *
+     * @param url the url to dispatch
+     *
+     * @return true if a handler was registered for the mime type, false otherwise
+     */
+    static bool dispatchURL(const QUrl &url);
 
-	/**
-	 * Returns a list of mime types this object is registered to handle
-	 */
-	const QStringList mimeTypes() const;
+    /**
+     * Returns a list of mime types this object is registered to handle
+     */
+    const QStringList mimeTypes() const;
 
-	/**
-	 * Returns a list of protocols this object is registered to handle
-	 */
-	const QStringList protocols() const;
+    /**
+     * Returns a list of protocols this object is registered to handle
+     */
+    const QStringList protocols() const;
 
-	/**
-	 * Returns true if this handler can accept remote files direcltly;
-	 * If false, remote files are downloaded via KIO::NetAccess before
-	 * being passed to handleURL
-	 */
-	bool canAcceptRemoteFiles() const;
+    /**
+     * Returns true if this handler can accept remote files direcltly;
+     * If false, remote files are downloaded via KIO::NetAccess before
+     * being passed to handleURL
+     */
+    bool canAcceptRemoteFiles() const;
 
-	/**
-	 * @deprecated
-	 */
-	virtual KDE_DEPRECATED void handleURL( const QUrl &url ) const;
+    /**
+     * @deprecated
+     */
+    virtual KDE_DEPRECATED void handleURL(const QUrl &url) const;
 
-	/**
-	 * Handles the URL @p url, which has the mime type @p mimeType
-	 *
-	 * @param mimeType The mime type of the URL
-	 * @param url The url to handle
-	 */
-	virtual void handleURL( const QString &mimeType, const QUrl &url ) const;
+    /**
+     * Handles the URL @p url, which has the mime type @p mimeType
+     *
+     * @param mimeType The mime type of the URL
+     * @param url The url to handle
+     */
+    virtual void handleURL(const QString &mimeType, const QUrl &url) const;
 
 protected:
-	/**
-	 * Register this object as the handler of type @p mimeType.
-	 * @param mimeType the mime type to handle
-	 * @return true if registration succeeded, false if another handler is
-	 *         already set for this mime type.
-	 */
-	bool registerAsMimeHandler( const QString &mimeType );
+    /**
+     * Register this object as the handler of type @p mimeType.
+     * @param mimeType the mime type to handle
+     * @return true if registration succeeded, false if another handler is
+     *         already set for this mime type.
+     */
+    bool registerAsMimeHandler(const QString &mimeType);
 
-	/**
-	 * Register this object as the handler of type @p protocol.
-	 * @param protocol the protocol to handle
-	 * @return true if registration succeeded, false if another handler is
-	 *         already set for this protocol.
-	 */
-	bool registerAsProtocolHandler( const QString &protocol );
+    /**
+     * Register this object as the handler of type @p protocol.
+     * @param protocol the protocol to handle
+     * @return true if registration succeeded, false if another handler is
+     *         already set for this protocol.
+     */
+    bool registerAsProtocolHandler(const QString &protocol);
 
 private:
-	/**
-	 * Helper function.
-	 * Attempts to dispatch a given URL to a given handler
-	 *
-	 * @param url The url to dispatch
-	 * @param mimeType The mime type of the url
-	 * @param handler The handler to attempt
-	 *
-	 * @return true if a handler was able to process the URL, false otherwise
-	 */
-	static bool dispatchToHandler( const QUrl &url, const QString &mimeType, MimeTypeHandler *handler );
+    /**
+     * Helper function.
+     * Attempts to dispatch a given URL to a given handler
+     *
+     * @param url The url to dispatch
+     * @param mimeType The mime type of the url
+     * @param handler The handler to attempt
+     *
+     * @return true if a handler was able to process the URL, false otherwise
+     */
+    static bool dispatchToHandler(const QUrl &url, const QString &mimeType, MimeTypeHandler *handler);
 
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
 
 /**
@@ -121,14 +119,13 @@ private:
 class KOPETE_EXPORT EmoticonMimeTypeHandler : public MimeTypeHandler
 {
 public:
-	EmoticonMimeTypeHandler();
+    EmoticonMimeTypeHandler();
 
-	const QStringList mimeTypes() const;
+    const QStringList mimeTypes() const;
 
-	void handleURL( const QString &mimeType, const QUrl &url ) const Q_DECL_OVERRIDE;
-	KDE_DEPRECATED void handleURL( const QUrl &url ) const Q_DECL_OVERRIDE;
+    void handleURL(const QString &mimeType, const QUrl &url) const Q_DECL_OVERRIDE;
+    KDE_DEPRECATED void handleURL(const QUrl &url) const Q_DECL_OVERRIDE;
 };
-
 } // Kopete
 
 #endif

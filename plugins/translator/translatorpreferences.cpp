@@ -30,93 +30,95 @@
 #include "translatorconfig.h"
 #include "ui_translatorprefsbase.h"
 
-K_PLUGIN_FACTORY( TranslatorPreferencesFactory, registerPlugin<TranslatorPreferences>(); )
+K_PLUGIN_FACTORY(TranslatorPreferencesFactory, registerPlugin<TranslatorPreferences>();
+                 )
 
 TranslatorPreferences::TranslatorPreferences(QWidget *parent, const QVariantList &args)
-	: KCModule(parent, args)
+    : KCModule(parent, args)
 {
-	kDebug(14308) << "called.";
+    kDebug(14308) << "called.";
 
-	QVBoxLayout* l = new QVBoxLayout( this );
-	QWidget* w = new QWidget;
+    QVBoxLayout *l = new QVBoxLayout(this);
+    QWidget *w = new QWidget;
 
-	p = new Ui::TranslatorPrefsUI;
-	p->setupUi( w );
-	l->addWidget( w );
+    p = new Ui::TranslatorPrefsUI;
+    p->setupUi(w);
+    l->addWidget(w);
 
-	addConfig(TranslatorConfig::self(), w);
+    addConfig(TranslatorConfig::self(), w);
 
-	m_languages = new TranslatorLanguages();
-	updateLanguageList();
+    m_languages = new TranslatorLanguages();
+    updateLanguageList();
 
-	QMap<QString,QString>::ConstIterator i;
-	QMap<QString,QString> m;
+    QMap<QString, QString>::ConstIterator i;
+    QMap<QString, QString> m;
 
-	m = m_languages->servicesMap();
-	for ( i = m.constBegin(); i != m.constEnd() ; ++i )
-		p->service->insertItem( m_languages->serviceIndex(i.key()), i.value() );
+    m = m_languages->servicesMap();
+    for (i = m.constBegin(); i != m.constEnd(); ++i) {
+        p->service->insertItem(m_languages->serviceIndex(i.key()), i.value());
+    }
 
-	connect(p->defaultLanguage, SIGNAL(activated(int)),
-		this, SLOT(slotModified()));
-	connect(p->service, SIGNAL(activated(int)),
-		this, SLOT(updateLanguageList()));
+    connect(p->defaultLanguage, SIGNAL(activated(int)),
+            this, SLOT(slotModified()));
+    connect(p->service, SIGNAL(activated(int)),
+            this, SLOT(updateLanguageList()));
 
-	if (Kopete::PluginManager::self()->plugin("kopete_translator"))
-		connect( this, SIGNAL(preferencesChanged()),
-			Kopete::PluginManager::self()->plugin("kopete_translator"), SLOT(loadSettings()) );
-
+    if (Kopete::PluginManager::self()->plugin("kopete_translator")) {
+        connect(this, SIGNAL(preferencesChanged()),
+                Kopete::PluginManager::self()->plugin("kopete_translator"), SLOT(loadSettings()));
+    }
 }
 
 TranslatorPreferences::~TranslatorPreferences()
 {
-	kDebug(14308) << "called.";
-	delete p;
+    kDebug(14308) << "called.";
+    delete p;
 }
 
 void TranslatorPreferences::load()
 {
-	kDebug(14308) << "called.";
-	KCModule::load();
-	p->service->setCurrentIndex(m_languages->serviceIndex(TranslatorConfig::service()));
-	updateLanguageList();
-	p->defaultLanguage->setCurrentIndex(m_languages->languageIndex(TranslatorConfig::service(), TranslatorConfig::defaultLanguage()));
+    kDebug(14308) << "called.";
+    KCModule::load();
+    p->service->setCurrentIndex(m_languages->serviceIndex(TranslatorConfig::service()));
+    updateLanguageList();
+    p->defaultLanguage->setCurrentIndex(m_languages->languageIndex(TranslatorConfig::service(), TranslatorConfig::defaultLanguage()));
 }
 
 void TranslatorPreferences::save()
 {
-	kDebug(14308) << "called.";
-	KCModule::save();
-	TranslatorConfig::setService(m_languages->serviceKey(p->service->currentIndex()));
-	TranslatorConfig::setDefaultLanguage(m_languages->languageKey(TranslatorConfig::service(), p->defaultLanguage->currentIndex()));
-	TranslatorConfig::self()->writeConfig();
-	emit preferencesChanged();
+    kDebug(14308) << "called.";
+    KCModule::save();
+    TranslatorConfig::setService(m_languages->serviceKey(p->service->currentIndex()));
+    TranslatorConfig::setDefaultLanguage(m_languages->languageKey(TranslatorConfig::service(), p->defaultLanguage->currentIndex()));
+    TranslatorConfig::self()->writeConfig();
+    emit preferencesChanged();
 }
 
 void TranslatorPreferences::slotModified()
 {
-	kDebug(14308) << "called.";
-	emit KCModule::changed(true);
+    kDebug(14308) << "called.";
+    emit KCModule::changed(true);
 }
 
 void TranslatorPreferences::updateLanguageList()
 {
-	kDebug(14308) << "called.";
-	// Updating default language list
-	QMap<QString,QString>::ConstIterator i;
-	QMap<QString,QString> m;
-	QString service = m_languages->serviceKey( p->service->currentIndex() );
-	m = m_languages->languagesMap( service );
-	p->defaultLanguage->clear();
-	for ( i = m.constBegin(); i != m.constEnd() ; ++i )
-		p->defaultLanguage->insertItem( m_languages->languageIndex(service, i.key()), i.value() );
+    kDebug(14308) << "called.";
+    // Updating default language list
+    QMap<QString, QString>::ConstIterator i;
+    QMap<QString, QString> m;
+    QString service = m_languages->serviceKey(p->service->currentIndex());
+    m = m_languages->languagesMap(service);
+    p->defaultLanguage->clear();
+    for (i = m.constBegin(); i != m.constEnd(); ++i) {
+        p->defaultLanguage->insertItem(m_languages->languageIndex(service, i.key()), i.value());
+    }
 
-	emit KCModule::changed(true);
+    emit KCModule::changed(true);
 }
-
 
 void TranslatorPreferences::slotShowPreviousChanged(bool on)
 {
-	kDebug(14308) << "called.";
-	Q_UNUSED(on);
-	emit KCModule::changed(true);
+    kDebug(14308) << "called.";
+    Q_UNUSED(on);
+    emit KCModule::changed(true);
 }

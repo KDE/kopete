@@ -20,33 +20,25 @@
 
 #include "kopetecontact.h"
 
-namespace Kopete
-{
+namespace Kopete {
 class MetaContact;
 class Account;
 class ChatSession;
 }
 class QString;
 
-namespace Kopete
-{
-namespace Test
-{
-namespace Mock
-{
-
+namespace Kopete {
+namespace Test {
+namespace Mock {
 class Contact : public Kopete::Contact
 {
 public:
-	Contact( Kopete::Account *account, const QString &id, Kopete::MetaContact *parent, const QString &icon = QString() );
-	~Contact();
-	virtual Kopete::ChatSession* manager( CanCreateFlags canCreate = CannotCreate );
+    Contact(Kopete::Account *account, const QString &id, Kopete::MetaContact *parent, const QString &icon = QString());
+    ~Contact();
+    virtual Kopete::ChatSession *manager(CanCreateFlags canCreate = CannotCreate);
 };
-
 } // end ns Kopete::Test::Mock
 } // end ns Kopete::Test
 } // end ns Kopete
 
-
 #endif
-

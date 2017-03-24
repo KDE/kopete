@@ -24,10 +24,10 @@
 
 class BehaviorConfig_Chat : public QWidget, public Ui::BehaviorConfig_Chat
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	BehaviorConfig_Chat(QWidget *parent = nullptr);
+    BehaviorConfig_Chat(QWidget *parent = nullptr);
 };
 
 #endif // BEHAVIORCONFIG_CHAT_H

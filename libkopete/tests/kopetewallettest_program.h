@@ -3,15 +3,17 @@
 
 #include <qobject.h>
 
-namespace KWallet { class Wallet; }
+namespace KWallet {
+class Wallet;
+}
 
 class WalletReciever : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public slots:
-	void timer();
+    void timer();
 private slots:
-	void gotWallet( KWallet::Wallet *w );
+    void gotWallet(KWallet::Wallet *w);
 };
 
 #endif

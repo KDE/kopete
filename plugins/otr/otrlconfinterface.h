@@ -16,7 +16,7 @@
  *                                                                       *
  * You should have received a copy of the GNU General Public License     *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- *************************************************************************/ 
+ *************************************************************************/
 
 #ifndef OTRLCONFINTERFACE_H
 #define OTRLCONFINTERFACE_H
@@ -41,25 +41,25 @@ extern "C" {
 
 class KOPETE_OTR_SHARED_EXPORT OtrlConfInterface : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	~OtrlConfInterface();
-	OtrlConfInterface( QWidget *preferencesDialog );
+    ~OtrlConfInterface();
+    OtrlConfInterface(QWidget *preferencesDialog);
 
-	QString getPrivFingerprint( const QString &accountId, const QString &protocol );
-	void generateNewPrivKey( const QString &accountId, const QString &protocol );
-	QList<QStringList> readAllFingerprints();
-	bool hasPrivFingerprint( const QString &accountId, const QString &protocol);
-	void forgetFingerprint( const QString &strFingerprint );
-	void verifyFingerprint( const QString &strFingerprint, bool trust );
-	bool isVerified( const QString &strFingerprint );
-	bool isEncrypted( const QString &strFingerprint );
+    QString getPrivFingerprint(const QString &accountId, const QString &protocol);
+    void generateNewPrivKey(const QString &accountId, const QString &protocol);
+    QList<QStringList> readAllFingerprints();
+    bool hasPrivFingerprint(const QString &accountId, const QString &protocol);
+    void forgetFingerprint(const QString &strFingerprint);
+    void verifyFingerprint(const QString &strFingerprint, bool trust);
+    bool isVerified(const QString &strFingerprint);
+    bool isEncrypted(const QString &strFingerprint);
 
 private:
-	OtrlUserState userstate;
-	QWidget *preferencesDialog;
+    OtrlUserState userstate;
+    QWidget *preferencesDialog;
 
-	Fingerprint *findFingerprint( const QString &strFingerprint );	
+    Fingerprint *findFingerprint(const QString &strFingerprint);
 };
 
 #endif

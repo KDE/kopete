@@ -21,8 +21,7 @@
 
 #include "kopete_export.h"
 
-namespace Kopete
-{
+namespace Kopete {
 class Account;
 }
 
@@ -55,50 +54,49 @@ class KopeteEditAccountWidgetPrivate;
 class KOPETE_EXPORT KopeteEditAccountWidget
 {
 public:
-	/**
-	 * Constructor.
-	 *
-	 * If 'account' is 0L we are in the 'add account wizard', otherwise
-	 * we are editing an existing account.
-	 */
-	explicit KopeteEditAccountWidget( Kopete::Account *account );
+    /**
+     * Constructor.
+     *
+     * If 'account' is 0L we are in the 'add account wizard', otherwise
+     * we are editing an existing account.
+     */
+    explicit KopeteEditAccountWidget(Kopete::Account *account);
 
-	/**
-	 * Destructor
-	 */
-	virtual ~KopeteEditAccountWidget();
+    /**
+     * Destructor
+     */
+    virtual ~KopeteEditAccountWidget();
 
-	/**
-	 * This method must be reimplemented.
-	 * It does the same as @ref AddContactPage::validateData()
-	 */
-	virtual bool validateData() = 0;
+    /**
+     * This method must be reimplemented.
+     * It does the same as @ref AddContactPage::validateData()
+     */
+    virtual bool validateData() = 0;
 
-	/**
-	 * Create a new account if we are in the 'add account wizard',
-	 * otherwise update the existing account.
-	 */
-	virtual Kopete::Account *apply() = 0;
+    /**
+     * Create a new account if we are in the 'add account wizard',
+     * otherwise update the existing account.
+     */
+    virtual Kopete::Account *apply() = 0;
 
 protected:
-	/**
-	 * Get a pointer to the Kopete::Account passed to the constructor.
-	 * You can modify it any way you like, just don't delete the object.
-	 */
-	Kopete::Account * account() const;
+    /**
+     * Get a pointer to the Kopete::Account passed to the constructor.
+     * You can modify it any way you like, just don't delete the object.
+     */
+    Kopete::Account *account() const;
 
-	/**
-	 * Set the account
-	 */
-	// FIXME: Is it possible to make the API not require this? A const account
-	//        in this widget seems a lot cleaner to me - Martijn
-	void setAccount( Kopete::Account *account );
+    /**
+     * Set the account
+     */
+    // FIXME: Is it possible to make the API not require this? A const account
+    //        in this widget seems a lot cleaner to me - Martijn
+    void setAccount(Kopete::Account *account);
 
 private:
-	KopeteEditAccountWidgetPrivate *d;
+    KopeteEditAccountWidgetPrivate *d;
 };
 
 // vim: set noet ts=4 sts=4 sw=4:
 
 #endif
-

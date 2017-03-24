@@ -2,7 +2,7 @@
     ChatMembersListView
 
     Copyright (c) 2007 by Duncan Mac-Vicar Prett <duncan@kde.org>
-   
+
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -22,8 +22,7 @@
 
 #include <qmap.h>
 
-namespace Kopete
-{
+namespace Kopete {
 class ChatSession;
 class Contact;
 class OnlineStatus;
@@ -35,17 +34,16 @@ class PropertyContainer;
  */
 class ChatMembersListView : public QListView
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	explicit ChatMembersListView( QWidget *parent = nullptr);
-	virtual ~ChatMembersListView();
+    explicit ChatMembersListView(QWidget *parent = nullptr);
+    virtual ~ChatMembersListView();
 
 public slots:
-	void slotContextMenuRequested( const QPoint & pos );
+    void slotContextMenuRequested(const QPoint &pos);
 private:
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

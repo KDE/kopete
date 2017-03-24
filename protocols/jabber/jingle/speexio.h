@@ -5,7 +5,7 @@
  * This class is able to encode and decode speex data. It works as an
  * encoder-decoder expecting to have the same type of data (same bitrate,...)
  * for encoding and decoding.
- * 
+ *
  * Copyright (c) 2008 by Detlev Casanova <detlev.casanova@gmail.com>
  *
  * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
@@ -29,52 +29,51 @@
 class SpeexIO : public AbstractIO
 {
 public:
-	SpeexIO();
-	virtual ~SpeexIO();
+    SpeexIO();
+    virtual ~SpeexIO();
 
-	//void setBitRate();
-	
-	/**
-	 * This sets the speex sampling rate :
-	 * Possible different sampling rates: 8 kHz (8000) and 16 kHz (16000).
-	 * These are respectively referred to as narrowband and wideband.
-	 */
-	void setSamplingRate(int sr);
+    //void setBitRate();
 
-	/**
-	 * Set the encoder-decoder output quality.
-	 * Returns the actual value set for encoding.
-	 * -1 means there was an error setting quality parameter which can either be an error
-	 * on the ctl or 2 different values for the decoder and encoder.
-	 */
-	int setQuality(int q);
+    /**
+     * This sets the speex sampling rate :
+     * Possible different sampling rates: 8 kHz (8000) and 16 kHz (16000).
+     * These are respectively referred to as narrowband and wideband.
+     */
+    void setSamplingRate(int sr);
 
-	/**
-	 * Returns the size of a speex frame (in samples)
-	 */
-	int frameSize();
-	
-	/**
-	 * Returns the size of a speex frame (in bytes)
-	 */
-	virtual int frameSizeBytes();
+    /**
+     * Set the encoder-decoder output quality.
+     * Returns the actual value set for encoding.
+     * -1 means there was an error setting quality parameter which can either be an error
+     * on the ctl or 2 different values for the decoder and encoder.
+     */
+    int setQuality(int q);
 
-	/**
-	 * Return true if it is ready to start, false if not.
-	 */
-	virtual bool start();
-	
-	virtual void encode(const QByteArray& data);
-	virtual void decode(const QByteArray& data);
-	
-	virtual QByteArray encodedData() const;
-	virtual QByteArray decodedData() const;
-	
-	virtual int tsValue();
+    /**
+     * Returns the size of a speex frame (in samples)
+     */
+    int frameSize();
+
+    /**
+     * Returns the size of a speex frame (in bytes)
+     */
+    virtual int frameSizeBytes();
+
+    /**
+     * Return true if it is ready to start, false if not.
+     */
+    virtual bool start();
+
+    virtual void encode(const QByteArray &data);
+    virtual void decode(const QByteArray &data);
+
+    virtual QByteArray encodedData() const;
+    virtual QByteArray decodedData() const;
+
+    virtual int tsValue();
 
 private:
-	class Private;
-	Private * const d;
-
+    class Private;
+    Private *const d;
 };
 #endif

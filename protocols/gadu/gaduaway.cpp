@@ -1,6 +1,6 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
 //
 // gaduaway.cpp
 //
@@ -32,67 +32,63 @@
 #include <qradiobutton.h>
 #include <qlineedit.h>
 
-GaduAway::GaduAway( GaduAccount* account, QWidget* parent )
-: KDialog( parent ), account_( account )
+GaduAway::GaduAway(GaduAccount *account, QWidget *parent)
+    : KDialog(parent)
+    , account_(account)
 {
-	setCaption(  i18n( "Away Dialog" ) );
-	setButtons( KDialog::Ok | KDialog::Cancel );
-	setDefaultButton( KDialog::Ok );
-	showButtonSeparator( true );
+    setCaption(i18n("Away Dialog"));
+    setButtons(KDialog::Ok | KDialog::Cancel);
+    setDefaultButton(KDialog::Ok);
+    showButtonSeparator(true);
 
-	Kopete::OnlineStatus ks;
-	int s;
+    Kopete::OnlineStatus ks;
+    int s;
 
-	QWidget* w = new QWidget( this );
-	ui_ = new Ui::GaduAwayUI;
-	ui_->setupUi( w );
-	setMainWidget( w );
+    QWidget *w = new QWidget(this);
+    ui_ = new Ui::GaduAwayUI;
+    ui_->setupUi(w);
+    setMainWidget(w);
 
-	ui_->buttonGroup_->setId(ui_->onlineButton_, GG_STATUS_AVAIL_DESCR);
-	ui_->buttonGroup_->setId(ui_->awayButton_, GG_STATUS_BUSY_DESCR);
-	ui_->buttonGroup_->setId(ui_->invisibleButton_, GG_STATUS_INVISIBLE_DESCR);
-	ui_->buttonGroup_->setId(ui_->offlineButton_, GG_STATUS_NOT_AVAIL_DESCR);
-	
-	
-	ks = account->myself()->onlineStatus();
-	s  = GaduProtocol::protocol()->statusToWithDescription( ks );
+    ui_->buttonGroup_->setId(ui_->onlineButton_, GG_STATUS_AVAIL_DESCR);
+    ui_->buttonGroup_->setId(ui_->awayButton_, GG_STATUS_BUSY_DESCR);
+    ui_->buttonGroup_->setId(ui_->invisibleButton_, GG_STATUS_INVISIBLE_DESCR);
+    ui_->buttonGroup_->setId(ui_->offlineButton_, GG_STATUS_NOT_AVAIL_DESCR);
 
+    ks = account->myself()->onlineStatus();
+    s = GaduProtocol::protocol()->statusToWithDescription(ks);
 
-	if ( s == GG_STATUS_NOT_AVAIL_DESCR ) {
-		ui_->buttonGroup_->button( GG_STATUS_NOT_AVAIL_DESCR )->setDisabled( true );
-		ui_->buttonGroup_->button( GG_STATUS_AVAIL_DESCR)->setChecked(true);
-	}
-	else {
-		ui_->buttonGroup_->button( s )->setChecked(true);
-	}
+    if (s == GG_STATUS_NOT_AVAIL_DESCR) {
+        ui_->buttonGroup_->button(GG_STATUS_NOT_AVAIL_DESCR)->setDisabled(true);
+        ui_->buttonGroup_->button(GG_STATUS_AVAIL_DESCR)->setChecked(true);
+    } else {
+        ui_->buttonGroup_->button(s)->setChecked(true);
+    }
 
-	ui_->textEdit_->setText( account->myself()->property( "statusMessage" ).value().toString() );
-	connect( this, SIGNAL(applyClicked()), SLOT(slotApply()) );
+    ui_->textEdit_->setText(account->myself()->property("statusMessage").value().toString());
+    connect(this, SIGNAL(applyClicked()), SLOT(slotApply()));
 }
 
 GaduAway::~GaduAway()
 {
-	delete ui_;
+    delete ui_;
 }
 
 int
 GaduAway::status() const
 {
-	return ui_->buttonGroup_->checkedId();
+    return ui_->buttonGroup_->checkedId();
 }
 
 QString
 GaduAway::awayText() const
 {
-	return ui_->textEdit_->text();
+    return ui_->textEdit_->text();
 }
-
 
 void
 GaduAway::slotApply()
 {
-	if ( account_ ) {
-		account_->changeStatus( GaduProtocol::protocol()->convertStatus( status() ),awayText() );
-	}
+    if (account_) {
+        account_->changeStatus(GaduProtocol::protocol()->convertStatus(status()), awayText());
+    }
 }
-

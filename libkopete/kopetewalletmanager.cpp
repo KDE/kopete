@@ -26,167 +26,166 @@
 
 static WId mainWindowID()
 {
-	if ( QWidget *w = Kopete::UI::Global::mainWidget() )
-		return w->winId();
-	return 0;
+    if (QWidget *w = Kopete::UI::Global::mainWidget()) {
+        return w->winId();
+    }
+    return 0;
 }
 
 class Kopete::WalletManager::Private
 {
 public:
-	Private() : wallet(0), signal(0) {}
-	~Private() { delete wallet; delete signal; }
+    Private() : wallet(0)
+        , signal(0)
+    {
+    }
 
-	KWallet::Wallet *wallet;
+    ~Private()
+    {
+        delete wallet;
+        delete signal;
+    }
 
-	// we can't just connect every slot that wants the wallet to the
-	// walletOpened signal - since we disconnect all the slots immediately
-	// after emitting the signal, this would result in everyone who asked
-	// for the wallet again in response to a walletOpened signal to fail
-	// to receive it.
-	// instead, we store a KopeteWalletSignal which we connect to, and create
-	// a new one for each set of requests.
-	KopeteWalletSignal *signal;
+    KWallet::Wallet *wallet;
+
+    // we can't just connect every slot that wants the wallet to the
+    // walletOpened signal - since we disconnect all the slots immediately
+    // after emitting the signal, this would result in everyone who asked
+    // for the wallet again in response to a walletOpened signal to fail
+    // to receive it.
+    // instead, we store a KopeteWalletSignal which we connect to, and create
+    // a new one for each set of requests.
+    KopeteWalletSignal *signal;
 };
 
 Kopete::WalletManager::WalletManager()
- : d( new Private )
+    : d(new Private)
 {
 }
 
 Kopete::WalletManager::~WalletManager()
 {
-	closeWallet();
-	delete d;
+    closeWallet();
+    delete d;
 }
 
 Kopete::WalletManager *Kopete::WalletManager::self()
 {
-	static WalletManager s;
-	return &s;
+    static WalletManager s;
+    return &s;
 }
 
-void Kopete::WalletManager::openWallet( QObject *object, const char *slot )
+void Kopete::WalletManager::openWallet(QObject *object, const char *slot)
 {
-	if ( !d->signal )
-		d->signal = new KopeteWalletSignal;
-	// allow connecting to protected slots  by calling object->connect
-	connect( d->signal, SIGNAL(walletOpened(KWallet::Wallet*)), object, slot );
-	//object->connect( d->signal, SIGNAL(walletOpened(KWallet::Wallet*)), slot );
-	openWalletInner();
+    if (!d->signal) {
+        d->signal = new KopeteWalletSignal;
+    }
+    // allow connecting to protected slots  by calling object->connect
+    connect(d->signal, SIGNAL(walletOpened(KWallet::Wallet *)), object, slot);
+    //object->connect( d->signal, SIGNAL(walletOpened(KWallet::Wallet*)), slot );
+    openWalletInner();
 }
 
 void Kopete::WalletManager::openWalletInner()
 {
-	// do we already have a wallet?
-	if ( d->wallet )
-	{
-		// if the wallet isn't open yet, we're pending a slotWalletChangedStatus
-		// anyway, so we don't set up a single shot.
-		if ( d->wallet->isOpen() )
-		{
-			qCDebug(LIBKOPETE_LOG) << " wallet already open";
-			QTimer::singleShot( 0, this, SLOT(slotGiveExistingWallet()) );
-		}
-		else
-		{
-			qCDebug(LIBKOPETE_LOG) << " still waiting for earlier request";
-		}
-		return;
-	}
-	
-	qCDebug(LIBKOPETE_LOG) << " about to open wallet async";
+    // do we already have a wallet?
+    if (d->wallet) {
+        // if the wallet isn't open yet, we're pending a slotWalletChangedStatus
+        // anyway, so we don't set up a single shot.
+        if (d->wallet->isOpen()) {
+            qCDebug(LIBKOPETE_LOG) << " wallet already open";
+            QTimer::singleShot(0, this, SLOT(slotGiveExistingWallet()));
+        } else {
+            qCDebug(LIBKOPETE_LOG) << " still waiting for earlier request";
+        }
+        return;
+    }
 
-	// we have no wallet: ask for one.
-	d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(),
-	            mainWindowID(), KWallet::Wallet::Asynchronous );
+    qCDebug(LIBKOPETE_LOG) << " about to open wallet async";
 
-	if ( !d->wallet )
-	{
-		emitWalletOpened( 0 );
-		return;
-	}
+    // we have no wallet: ask for one.
+    d->wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(),
+                                            mainWindowID(), KWallet::Wallet::Asynchronous);
 
-	connect( d->wallet, SIGNAL(walletOpened(bool)), SLOT(slotWalletChangedStatus()) );
+    if (!d->wallet) {
+        emitWalletOpened(0);
+        return;
+    }
+
+    connect(d->wallet, SIGNAL(walletOpened(bool)), SLOT(slotWalletChangedStatus()));
 }
 
 void Kopete::WalletManager::slotWalletChangedStatus()
 {
-	qCDebug(LIBKOPETE_LOG) << " isOpen: " << d->wallet->isOpen();
+    qCDebug(LIBKOPETE_LOG) << " isOpen: " << d->wallet->isOpen();
 
-	if( d->wallet->isOpen() )
-	{
-		if ( !d->wallet->hasFolder( QStringLiteral( "Kopete" ) ) )
-			d->wallet->createFolder( QStringLiteral( "Kopete" ) );
+    if (d->wallet->isOpen()) {
+        if (!d->wallet->hasFolder(QStringLiteral("Kopete"))) {
+            d->wallet->createFolder(QStringLiteral("Kopete"));
+        }
 
-		if ( d->wallet->setFolder( QStringLiteral( "Kopete" ) ) )
-		{
-			qCDebug(LIBKOPETE_LOG) << "Successfully opened the wallet !";
-			// success!
-			QObject::connect( d->wallet, SIGNAL(walletClosed()), this, SLOT(closeWallet()) );
-		}
-		else
-		{
-			// opened OK, but we can't use it
-			delete d->wallet;
-			d->wallet = 0;
-		}
-	}
-	else
-	{
-		// failed to open
-		delete d->wallet;
-		d->wallet = 0;
+        if (d->wallet->setFolder(QStringLiteral("Kopete"))) {
+            qCDebug(LIBKOPETE_LOG) << "Successfully opened the wallet !";
+            // success!
+            QObject::connect(d->wallet, SIGNAL(walletClosed()), this, SLOT(closeWallet()));
+        } else {
+            // opened OK, but we can't use it
+            delete d->wallet;
+            d->wallet = 0;
+        }
+    } else {
+        // failed to open
+        delete d->wallet;
+        d->wallet = 0;
 
-		qCWarning(LIBKOPETE_LOG) << "wallet open error";
-	}
+        qCWarning(LIBKOPETE_LOG) << "wallet open error";
+    }
 
-	emitWalletOpened( d->wallet );
+    emitWalletOpened(d->wallet);
 }
 
 void Kopete::WalletManager::slotGiveExistingWallet()
 {
-	qCDebug(LIBKOPETE_LOG) << " with d->wallet " << d->wallet;
+    qCDebug(LIBKOPETE_LOG) << " with d->wallet " << d->wallet;
 
-	if ( d->wallet )
-	{
-		// the wallet was already open
-		if ( d->wallet->isOpen() )
-			emitWalletOpened( d->wallet );
-		// if the wallet was not open, but d->wallet is not 0,
-		// then we're waiting for it to open, and will be told
-		// when it's done: do nothing.
-		else
-			qCDebug(LIBKOPETE_LOG) << " wallet gone, waiting for another wallet";
-	}
-	else
-	{
-		// the wallet was lost between us trying to open it and
-		// getting called back. try to reopen it.
-		openWalletInner();
-	}
+    if (d->wallet) {
+        // the wallet was already open
+        if (d->wallet->isOpen()) {
+            emitWalletOpened(d->wallet);
+        }
+        // if the wallet was not open, but d->wallet is not 0,
+        // then we're waiting for it to open, and will be told
+        // when it's done: do nothing.
+        else {
+            qCDebug(LIBKOPETE_LOG) << " wallet gone, waiting for another wallet";
+        }
+    } else {
+        // the wallet was lost between us trying to open it and
+        // getting called back. try to reopen it.
+        openWalletInner();
+    }
 }
 
 void Kopete::WalletManager::closeWallet()
 {
-	if ( !d->wallet ) return;
+    if (!d->wallet) {
+        return;
+    }
 
-	delete d->wallet;
-	d->wallet = 0L;
+    delete d->wallet;
+    d->wallet = 0L;
 
-	emit walletLost();
+    emit walletLost();
 }
 
-void Kopete::WalletManager::emitWalletOpened( KWallet::Wallet *wallet )
+void Kopete::WalletManager::emitWalletOpened(KWallet::Wallet *wallet)
 {
-	KopeteWalletSignal *signal = d->signal;
-	d->signal = 0;
-	if ( signal )
-		emit signal->walletOpened( wallet );
-	delete signal;
+    KopeteWalletSignal *signal = d->signal;
+    d->signal = 0;
+    if (signal) {
+        emit signal->walletOpened(wallet);
+    }
+    delete signal;
 }
-
-
 
 // vim: set noet ts=4 sts=4 sw=4:
-

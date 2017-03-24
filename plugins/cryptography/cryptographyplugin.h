@@ -26,20 +26,19 @@
 
 class QString;
 
-namespace GpgME
-{
-	class DecryptionResult;
-	class VerificationResult;
+namespace GpgME {
+class DecryptionResult;
+class VerificationResult;
 }
 
-namespace Kleo { class Job; }
+namespace Kleo {
+class Job;
+}
 
-
-namespace Kopete
-{
-	class Message;
-	class MessageEvent;
-	class ChatSession;
+namespace Kopete {
+class Message;
+class MessageEvent;
+class ChatSession;
 }
 
 class CryptographyMessageHandlerFactory;
@@ -78,53 +77,54 @@ class CryptographyMessageHandlerFactory;
 
 class CryptographyPlugin : public Kopete::Plugin
 {
-		Q_OBJECT
+    Q_OBJECT
 
-	public:
-		static CryptographyPlugin  *plugin();
+public:
+    static CryptographyPlugin *plugin();
 
-		static QStringList supportedProtocols() {
-			return QStringList() << "MSNProtocol"
-			       << "MessengerProtocol"
-			       << "WLMProtocol"
-			       << "JabberProtocol"
-			       << "SkypeProtocol"
-			       << "BonjourProtocol"
-			       << "WPProtocol"
-			       << "IRCProtocol"
-			       << "YahooProtocol";
-		}
-		
-		static QStringList getKabcKeys ( QString uid );
-		
-		static QString kabcKeySelector ( QString displayName, QString addresseeName, QStringList keys, QWidget *parent );
+    static QStringList supportedProtocols()
+    {
+        return QStringList() << "MSNProtocol"
+                             << "MessengerProtocol"
+                             << "WLMProtocol"
+                             << "JabberProtocol"
+                             << "SkypeProtocol"
+                             << "BonjourProtocol"
+                             << "WPProtocol"
+                             << "IRCProtocol"
+                             << "YahooProtocol";
+    }
 
-		CryptographyPlugin ( QObject *parent, const QVariantList &args );
-		~CryptographyPlugin();
+    static QStringList getKabcKeys(QString uid);
 
-	private slots:
-		void slotIncomingMessage ( Kopete::MessageEvent *msg );
-		
-		void slotIncomingMessageContinued ( const GpgME::DecryptionResult &decryptionResult, const GpgME::VerificationResult &verificationResult, const QByteArray &plainText );
-		
-		void slotIncomingEncryptedMessageContinued ( const GpgME::DecryptionResult &decryptionResult, const QByteArray &plainText );
-		
-		void slotIncomingSignedMessageContinued ( const GpgME::VerificationResult &verificationResult, const QByteArray &plainText );
-		
-		void finalizeMessage ( Kopete::Message & msg, const QString &intendedBody, const GpgME::VerificationResult & validity, bool encrypted );
+    static QString kabcKeySelector(QString displayName, QString addresseeName, QStringList keys, QWidget *parent);
 
-		void slotOutgoingMessage ( Kopete::Message& msg );
-		
-		void slotExportSelectedMetaContactKeys ();
-		
-		void slotSelectContactKey();
-		
-		void slotNewKMM ( Kopete::ChatSession * );
+    CryptographyPlugin (QObject *parent, const QVariantList &args);
+    ~CryptographyPlugin();
 
-	private:
-		static CryptographyPlugin* mPluginStatic;
-		CryptographyMessageHandlerFactory *mInboundHandler;
-		QHash<Kleo::Job*, Kopete::Message> mCurrentJobs;
+private slots:
+    void slotIncomingMessage(Kopete::MessageEvent *msg);
+
+    void slotIncomingMessageContinued(const GpgME::DecryptionResult &decryptionResult, const GpgME::VerificationResult &verificationResult, const QByteArray &plainText);
+
+    void slotIncomingEncryptedMessageContinued(const GpgME::DecryptionResult &decryptionResult, const QByteArray &plainText);
+
+    void slotIncomingSignedMessageContinued(const GpgME::VerificationResult &verificationResult, const QByteArray &plainText);
+
+    void finalizeMessage(Kopete::Message &msg, const QString &intendedBody, const GpgME::VerificationResult &validity, bool encrypted);
+
+    void slotOutgoingMessage(Kopete::Message &msg);
+
+    void slotExportSelectedMetaContactKeys();
+
+    void slotSelectContactKey();
+
+    void slotNewKMM(Kopete::ChatSession *);
+
+private:
+    static CryptographyPlugin *mPluginStatic;
+    CryptographyMessageHandlerFactory *mInboundHandler;
+    QHash<Kleo::Job *, Kopete::Message> mCurrentJobs;
 };
 
 #endif
@@ -137,4 +137,3 @@ class CryptographyPlugin : public Kopete::Plugin
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
-

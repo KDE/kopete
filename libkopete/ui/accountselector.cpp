@@ -29,146 +29,139 @@
 
 class AccountListViewItem : public QTreeWidgetItem
 {
-	private:
-		Kopete::Account *mAccount;
+private:
+    Kopete::Account *mAccount;
 
-	public:
-		AccountListViewItem(QTreeWidget *parent, Kopete::Account *acc)
-			: QTreeWidgetItem(parent)
-		{
-			if (acc==0)
-				return;
+public:
+    AccountListViewItem(QTreeWidget *parent, Kopete::Account *acc)
+        : QTreeWidgetItem(parent)
+    {
+        if (acc == 0) {
+            return;
+        }
 
-			/*qCDebug(LIBKOPETE_LOG) <<
-				"account name = " << acc->accountId() << endl;*/
-			mAccount = acc;
-			setText(0, mAccount->accountId());
-			setIcon(0, QIcon(mAccount->accountIcon()) );
-		}
+        /*qCDebug(LIBKOPETE_LOG) <<
+            "account name = " << acc->accountId() << endl;*/
+        mAccount = acc;
+        setText(0, mAccount->accountId());
+        setIcon(0, QIcon(mAccount->accountIcon()));
+    }
 
-		Kopete::Account *account()
-		{
-			return mAccount;
-		}
+    Kopete::Account *account()
+    {
+        return mAccount;
+    }
 };
-
 
 // ----------------------------------------------------------------------------
 
 class AccountSelectorPrivate
 {
-	public:
-		QTreeWidget *lv;
-		Kopete::Protocol *proto;
+public:
+    QTreeWidget *lv;
+    Kopete::Protocol *proto;
 };
 
-
 AccountSelector::AccountSelector(QWidget *parent)
-	: QWidget(parent)
+    : QWidget(parent)
 {
-	//qCDebug(LIBKOPETE_LOG) << "for no special protocol";
-	d = new AccountSelectorPrivate;
-	d->proto = 0;
-	initUI();
+    //qCDebug(LIBKOPETE_LOG) << "for no special protocol";
+    d = new AccountSelectorPrivate;
+    d->proto = 0;
+    initUI();
 }
-
 
 AccountSelector::AccountSelector(Kopete::Protocol *proto, QWidget *parent) : QWidget(parent)
 {
-	//qCDebug(LIBKOPETE_LOG) << " for protocol " << proto->pluginId();
-	d = new AccountSelectorPrivate;
-	d->proto = proto;
-	initUI();
+    //qCDebug(LIBKOPETE_LOG) << " for protocol " << proto->pluginId();
+    d = new AccountSelectorPrivate;
+    d->proto = proto;
+    initUI();
 }
-
 
 AccountSelector::~AccountSelector()
 {
-	qCDebug(LIBKOPETE_LOG) ;
-	delete d;
+    qCDebug(LIBKOPETE_LOG);
+    delete d;
 }
-
 
 void AccountSelector::initUI()
 {
-	qCDebug(LIBKOPETE_LOG) ;
-	QVBoxLayout *layout = new QVBoxLayout(this);
-	d->lv = new QTreeWidget(this);
-	d->lv->header()->setResizeMode( QHeaderView::ResizeToContents );
-	d->lv->setHeaderLabel(QStringLiteral(""));
-	d->lv->headerItem()->setHidden(true);
-	layout->addWidget(d->lv);
-	setLayout(layout);
-	qCDebug(LIBKOPETE_LOG) << "creating list of all accounts";
-	foreach(Kopete::Account *account , Kopete::AccountManager::self()->accounts() )
-	{
-		if( !d->proto  ||  account->protocol() == d->proto )
-			new AccountListViewItem(d->lv, account);
-	}
+    qCDebug(LIBKOPETE_LOG);
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    d->lv = new QTreeWidget(this);
+    d->lv->header()->setResizeMode(QHeaderView::ResizeToContents);
+    d->lv->setHeaderLabel(QStringLiteral(""));
+    d->lv->headerItem()->setHidden(true);
+    layout->addWidget(d->lv);
+    setLayout(layout);
+    qCDebug(LIBKOPETE_LOG) << "creating list of all accounts";
+    foreach (Kopete::Account *account, Kopete::AccountManager::self()->accounts()) {
+        if (!d->proto || account->protocol() == d->proto) {
+            new AccountListViewItem(d->lv, account);
+        }
+    }
 
-	connect(d->lv, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
-		this,SLOT(slotSelectionChanged(QTreeWidgetItem*)));
+    connect(d->lv, SIGNAL(currentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *)),
+            this, SLOT(slotSelectionChanged(QTreeWidgetItem *)));
 }
-
 
 void AccountSelector::setSelected(Kopete::Account *account)
 {
-	if (account==0)
-		return;
+    if (account == 0) {
+        return;
+    }
 
-	QTreeWidgetItemIterator it(d->lv);
-	while ( *it )
-	{
-		if(static_cast<AccountListViewItem *>( *it )->account() == account)
-		{
-			(*it)->setSelected(true);
-			return;
-		}
-		++it;
-	}
+    QTreeWidgetItemIterator it(d->lv);
+    while (*it)
+    {
+        if (static_cast<AccountListViewItem *>(*it)->account() == account) {
+            (*it)->setSelected(true);
+            return;
+        }
+        ++it;
+    }
 }
-
 
 bool AccountSelector::isSelected(Kopete::Account *account)
 {
-	if (account==0)
-		return false;
+    if (account == 0) {
+        return false;
+    }
 
-	QTreeWidgetItemIterator it(d->lv);
-	while ( *it )
-	{
-		if(static_cast<AccountListViewItem *>( *it )->account() == account)
-			return true;
-		++it;
-	}
-	return false;
+    QTreeWidgetItemIterator it(d->lv);
+    while (*it)
+    {
+        if (static_cast<AccountListViewItem *>(*it)->account() == account) {
+            return true;
+        }
+        ++it;
+    }
+    return false;
 }
-
 
 Kopete::Account *AccountSelector::selectedItem()
 {
-	//qCDebug(LIBKOPETE_LOG) ;
+    //qCDebug(LIBKOPETE_LOG) ;
 
-	if (d->lv->currentItem())
-		return static_cast<AccountListViewItem *>(d->lv->currentItem())->account();
-	return 0;
+    if (d->lv->currentItem()) {
+        return static_cast<AccountListViewItem *>(d->lv->currentItem())->account();
+    }
+    return 0;
 }
-
 
 void AccountSelector::slotSelectionChanged(QTreeWidgetItem *item)
 {
-	//qCDebug(LIBKOPETE_LOG) ;
-	if (item != 0)
-	{
-		Kopete::Account *account = static_cast<AccountListViewItem *>(item)->account();
-		if (account != 0)
-		{
-			emit selectionChanged(account);
-			return;
-		}
-	}
+    //qCDebug(LIBKOPETE_LOG) ;
+    if (item != 0) {
+        Kopete::Account *account = static_cast<AccountListViewItem *>(item)->account();
+        if (account != 0) {
+            emit selectionChanged(account);
+            return;
+        }
+    }
 
-	emit selectionChanged(0);
+    emit selectionChanged(0);
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

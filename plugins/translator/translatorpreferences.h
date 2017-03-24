@@ -24,33 +24,35 @@
 
 #include "translatorlanguages.h"
 
-namespace Ui { class TranslatorPrefsUI; }
+namespace Ui {
+class TranslatorPrefsUI;
+}
 
 /**
  * @author Igor Poboiko
  */
 class TranslatorPreferences : public KCModule
 {
-	Q_OBJECT
-	public:
-		explicit TranslatorPreferences(QWidget *parent=0, const QVariantList &args = QVariantList());
-		~TranslatorPreferences();
+    Q_OBJECT
+public:
+    explicit TranslatorPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+    ~TranslatorPreferences();
 
-		virtual void save();
-		virtual void load();
+    virtual void save();
+    virtual void load();
 
-	private slots:
-		void updateLanguageList();
-		void slotModified();
-		void slotShowPreviousChanged(bool);
+private slots:
+    void updateLanguageList();
+    void slotModified();
+    void slotShowPreviousChanged(bool);
 
-	signals:
-		void preferencesChanged();
+signals:
+    void preferencesChanged();
 
-	private:
-		Ui::TranslatorPrefsUI *p;
+private:
+    Ui::TranslatorPrefsUI *p;
 
-		TranslatorLanguages *m_languages;
+    TranslatorLanguages *m_languages;
 };
 
 #endif // TRANSLATORPREFERENCES_H

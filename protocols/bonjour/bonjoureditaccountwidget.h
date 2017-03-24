@@ -22,8 +22,12 @@
 #include <ui/editaccountwidget.h>
 #include <KConfigGroup>
 
-namespace Kopete { class Account; }
-namespace Ui { class BonjourAccountPreferences; }
+namespace Kopete {
+class Account;
+}
+namespace Ui {
+class BonjourAccountPreferences;
+}
 
 /**
  * @brief A widget for editing this protocol's accounts
@@ -34,23 +38,23 @@ namespace Ui { class BonjourAccountPreferences; }
 */
 class BonjourEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-    BonjourEditAccountWidget( QWidget* parent, Kopete::Account* account);
+    BonjourEditAccountWidget(QWidget *parent, Kopete::Account *account);
 
     ~BonjourEditAccountWidget();
 
-	/**
-	 * Make an account out of the entered data
-	 */
-	Kopete::Account* apply() Q_DECL_OVERRIDE;
-	/**
-	 * Is the data correct?
-	 */
-	bool validateData() Q_DECL_OVERRIDE;
+    /**
+     * Make an account out of the entered data
+     */
+    Kopete::Account *apply() Q_DECL_OVERRIDE;
+    /**
+     * Is the data correct?
+     */
+    bool validateData() Q_DECL_OVERRIDE;
 protected:
-	Ui::BonjourAccountPreferences *m_preferencesWidget;
-	KConfigGroup *group;
+    Ui::BonjourAccountPreferences *m_preferencesWidget;
+    KConfigGroup *group;
 };
 
 #endif

@@ -24,52 +24,46 @@
 
 #include <QMenu>
 
-KopeteIdentityStatusBarIcon::KopeteIdentityStatusBarIcon( Kopete::Identity *identity, QWidget *parent )
-: QLabel( parent )
+KopeteIdentityStatusBarIcon::KopeteIdentityStatusBarIcon(Kopete::Identity *identity, QWidget *parent)
+    : QLabel(parent)
 {
-	setFixedSize ( 16, 16 );
-	setCursor(QCursor(Qt::PointingHandCursor));
-	show();
+    setFixedSize(16, 16);
+    setCursor(QCursor(Qt::PointingHandCursor));
+    show();
 
-	m_identity = identity;
-
+    m_identity = identity;
 }
 
-void KopeteIdentityStatusBarIcon::mousePressEvent( QMouseEvent *me )
+void KopeteIdentityStatusBarIcon::mousePressEvent(QMouseEvent *me)
 {
-	if( me->button() == Qt::LeftButton )
-	{
-		emit leftClicked( m_identity, me->globalPos() );
-	}
-	else if( me->button() == Qt::RightButton )
-	{
-		// show the context menu for the left click
-		// creates the action menu
-		KActionMenu *statusMenu = new KActionMenu(m_identity->label(), this);
+    if (me->button() == Qt::LeftButton) {
+        emit leftClicked(m_identity, me->globalPos());
+    } else if (me->button() == Qt::RightButton) {
+        // show the context menu for the left click
+        // creates the action menu
+        KActionMenu *statusMenu = new KActionMenu(m_identity->label(), this);
 
-		// add a title to the popup menu before the online action
-		statusMenu->menu()->addSection(m_identity->label());
+        // add a title to the popup menu before the online action
+        statusMenu->menu()->addSection(m_identity->label());
 
-		// Will be automatically deleted when the statusMenu is deleted.
-		Kopete::StatusRootAction* statusAction = new Kopete::StatusRootAction( statusMenu );
+        // Will be automatically deleted when the statusMenu is deleted.
+        Kopete::StatusRootAction *statusAction = new Kopete::StatusRootAction(statusMenu);
 
-		connect( statusAction, SIGNAL(changeStatus(uint,Kopete::StatusMessage)),
-		         m_identity, SLOT(setOnlineStatus(uint,Kopete::StatusMessage)) );
-		connect( statusAction, SIGNAL(updateMessage(Kopete::StatusRootAction*)),
-		         this, SLOT(updateMessage(Kopete::StatusRootAction*)) );
-		connect( statusAction, SIGNAL(changeMessage(Kopete::StatusMessage)),
-		         m_identity, SLOT(setStatusMessage(Kopete::StatusMessage)) );
+        connect(statusAction, SIGNAL(changeStatus(uint,Kopete::StatusMessage)),
+                m_identity, SLOT(setOnlineStatus(uint,Kopete::StatusMessage)));
+        connect(statusAction, SIGNAL(updateMessage(Kopete::StatusRootAction *)),
+                this, SLOT(updateMessage(Kopete::StatusRootAction *)));
+        connect(statusAction, SIGNAL(changeMessage(Kopete::StatusMessage)),
+                m_identity, SLOT(setStatusMessage(Kopete::StatusMessage)));
 
-		connect( statusMenu->menu(), SIGNAL(aboutToHide()), statusMenu, SLOT(deleteLater()) );
-		statusMenu->menu()->popup( me->globalPos() );
-	}
+        connect(statusMenu->menu(), SIGNAL(aboutToHide()), statusMenu, SLOT(deleteLater()));
+        statusMenu->menu()->popup(me->globalPos());
+    }
 }
 
-void KopeteIdentityStatusBarIcon::updateMessage( Kopete::StatusRootAction *statusRootAction )
+void KopeteIdentityStatusBarIcon::updateMessage(Kopete::StatusRootAction *statusRootAction)
 {
-	statusRootAction->setCurrentMessage( m_identity->statusMessage() );
+    statusRootAction->setCurrentMessage(m_identity->statusMessage());
 }
-
 
 // vim: set noet ts=4 sts=4 sw=4:
-

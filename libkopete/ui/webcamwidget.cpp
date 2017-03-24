@@ -21,81 +21,72 @@
 #include <QPaintEvent>
 
 #include <kdebug.h>
-namespace Kopete
+namespace Kopete {
+WebcamWidget::WebcamWidget(QWidget *parent)
+    : QWidget(parent)
 {
-
-WebcamWidget::WebcamWidget(QWidget* parent)
-: QWidget(parent)
-{
-	clear();
+    clear();
 }
 
 WebcamWidget::~WebcamWidget()
 {
-	// don't do anything either
+    // don't do anything either
 }
 
-void WebcamWidget::updatePixmap(const QPixmap& pixmap)
+void WebcamWidget::updatePixmap(const QPixmap &pixmap)
 {
-	mPixmap = pixmap;
-	mText = QLatin1String("");
+    mPixmap = pixmap;
+    mText = QLatin1String("");
 
-	update();
+    update();
 }
 
 void WebcamWidget::clear()
 {
-	mText = QLatin1String("");
-	if (!mPixmap.isNull())
-		mPixmap = QPixmap(0,0);
-	
-	update();
+    mText = QLatin1String("");
+    if (!mPixmap.isNull()) {
+        mPixmap = QPixmap(0, 0);
+    }
+
+    update();
 }
 
-void WebcamWidget::setText(const QString& text)
+void WebcamWidget::setText(const QString &text)
 {
-	mText = text;
+    mText = text;
 
-	// for now redraw everything
-	update();
+    // for now redraw everything
+    update();
 }
 
-void WebcamWidget::paintEvent( QPaintEvent* event )
+void WebcamWidget::paintEvent(QPaintEvent *event)
 {
-	QVector<QRect> rects = event->region().rects();
+    QVector<QRect> rects = event->region().rects();
 
-	QPainter p(this);
-	if (!mPixmap.isNull())
-	{
-		for (int i = 0; i < rects.count(); ++i)
-		{
-			p.drawPixmap(rects[i], mPixmap, rects[i]);
-		}
-	}
-	else
-	{
-		for (int i = 0; i < rects.count(); ++i)
-		{
-			QColor bgColor = palette().color(QPalette::Background);
-			p.fillRect(rects[i], bgColor);
-		}
-	}
+    QPainter p(this);
+    if (!mPixmap.isNull()) {
+        for (int i = 0; i < rects.count(); ++i) {
+            p.drawPixmap(rects[i], mPixmap, rects[i]);
+        }
+    } else {
+        for (int i = 0; i < rects.count(); ++i) {
+            QColor bgColor = palette().color(QPalette::Background);
+            p.fillRect(rects[i], bgColor);
+        }
+    }
 
-	// TODO: draw the text
-	QRect r = p.boundingRect(rect(), Qt::AlignCenter | Qt::TextWordWrap, mText );
-	if ( !mText.isEmpty() && event->rect().intersects(r))
-	{
-		p.setPen(Qt::black);
-		QRect rec = rect();
-		rec.moveTopLeft(QPoint(1,1));
-		p.drawText(rec, Qt::AlignCenter | Qt::TextWordWrap, mText); 
+    // TODO: draw the text
+    QRect r = p.boundingRect(rect(), Qt::AlignCenter | Qt::TextWordWrap, mText);
+    if (!mText.isEmpty() && event->rect().intersects(r)) {
+        p.setPen(Qt::black);
+        QRect rec = rect();
+        rec.moveTopLeft(QPoint(1, 1));
+        p.drawText(rec, Qt::AlignCenter | Qt::TextWordWrap, mText);
 
-		rec.moveTopLeft(QPoint(-1,-1));
-		p.setPen(Qt::white);
-		p.drawText(rec, Qt::AlignCenter | Qt::TextWordWrap, mText); 
-	}
-	p.end();
+        rec.moveTopLeft(QPoint(-1, -1));
+        p.setPen(Qt::white);
+        p.drawText(rec, Qt::AlignCenter | Qt::TextWordWrap, mText);
+    }
+    p.end();
 }
-
 } // end namespace Kopete
-

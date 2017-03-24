@@ -25,41 +25,41 @@
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
- * @todo   i want to be able to have a assync apply. 
+ * @todo   i want to be able to have a assync apply.
  *     (in the case of jabber, i need to translate the legacy id to a JID)
  *     this could also be useful in the case of MLSN to check if no error
  *     (and also jabber)
  */
 class KOPETE_EXPORT AddContactPage : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-	AddContactPage(QWidget *parent=0);
-	virtual ~AddContactPage();
-	//Kopete::Protocol *protocol;
+    AddContactPage(QWidget *parent = 0);
+    virtual ~AddContactPage();
+    //Kopete::Protocol *protocol;
 
-	/**
-	 * Plugin should reimplement this methode.
-	 * return true if the content of the page are valid
-	 *
-	 * This method is called in the add account wizzard when the user press the next button
-	 * and this page is showed. when it return false, it does not go to the nextpage.
-	 * You should popup a dialog to explain WHY the page has not been validate
-	 */
-	virtual bool validateData()=0;
+    /**
+     * Plugin should reimplement this methode.
+     * return true if the content of the page are valid
+     *
+     * This method is called in the add account wizzard when the user press the next button
+     * and this page is showed. when it return false, it does not go to the nextpage.
+     * You should popup a dialog to explain WHY the page has not been validate
+     */
+    virtual bool validateData() = 0;
 
-	/**
-	 * add the contact to the specified meta contact, with the given account
-	 * return false if the contact has not been added
-	 */
-	virtual bool apply(Kopete::Account * , Kopete::MetaContact *) = 0;
+    /**
+     * add the contact to the specified meta contact, with the given account
+     * return false if the contact has not been added
+     */
+    virtual bool apply(Kopete::Account *, Kopete::MetaContact *) = 0;
 
 signals:
-	/**
-	 * New incarnation of validateData, emit it every time you think the current data is valid/invalid
-	 */
-	void dataValid( AddContactPage *, bool);
+    /**
+     * New incarnation of validateData, emit it every time you think the current data is valid/invalid
+     */
+    void dataValid(AddContactPage *, bool);
 };
 
 #endif

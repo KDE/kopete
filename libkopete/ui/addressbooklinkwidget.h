@@ -33,8 +33,7 @@ namespace Kopete {
 class MetaContact;
 
 namespace UI {
-
-/** 
+/**
  * A compact widget for showing and changing which address book item a
  * particular Kopete::MetaContact is related to.
  *
@@ -43,39 +42,42 @@ namespace UI {
  */
 class KOPETE_EXPORT AddressBookLinkWidget : public QWidget, private Ui::AddressBookLinkWidgetBase
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	explicit AddressBookLinkWidget( QWidget * parent = nullptr, const char * name = 0 );
-	~AddressBookLinkWidget() {}
-	/**
-	 * Set the currently selected addressee
-	 */
-	void setAddressee( const KContacts::Addressee& addr );
-	/**
-	 * Set the current metacontact so that the selector dialog may be preselected
-	 */
-	void setMetaContact( const Kopete::MetaContact * );
-	/**
-	 * Return the selected addressbook UID.
-	 */
-	QString uid() const;
+    explicit AddressBookLinkWidget(QWidget *parent = nullptr, const char *name = 0);
+    ~AddressBookLinkWidget()
+    {
+    }
+
+    /**
+     * Set the currently selected addressee
+     */
+    void setAddressee(const KContacts::Addressee &addr);
+    /**
+     * Set the current metacontact so that the selector dialog may be preselected
+     */
+    void setMetaContact(const Kopete::MetaContact *);
+    /**
+     * Return the selected addressbook UID.
+     */
+    QString uid() const;
 signals:
-	/**
-	 * Emitted when the selected addressee changed.  addr is the KContacts::Addressee that was selected. If addr.isEmpty() is empty, the clear button was clicked.
-	 */
-	void addresseeChanged( const KContacts::Addressee& addr );
-	
-	/**
-	 * Provided so you can perform your own actions instead of opening the AddressBookSelectorWidget.
-	 * To do so, QObject::disconnect() btnSelectAddressee and connect your own slot to this signal
-	 */
-	void selectAddresseeClicked();
+    /**
+     * Emitted when the selected addressee changed.  addr is the KContacts::Addressee that was selected. If addr.isEmpty() is empty, the clear button was clicked.
+     */
+    void addresseeChanged(const KContacts::Addressee &addr);
+
+    /**
+     * Provided so you can perform your own actions instead of opening the AddressBookSelectorWidget.
+     * To do so, QObject::disconnect() btnSelectAddressee and connect your own slot to this signal
+     */
+    void selectAddresseeClicked();
 protected slots:
-	void slotClearAddressee();
-	void slotSelectAddressee();
+    void slotClearAddressee();
+    void slotSelectAddressee();
 private:
-	const Kopete::MetaContact * mMetaContact;
-	QString mSelectedUid;
+    const Kopete::MetaContact *mMetaContact;
+    QString mSelectedUid;
 };
 } // end namespace UI
 } // end namespace Kopete

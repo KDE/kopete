@@ -1,7 +1,7 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
-// Copyright (C) 2002-2003 Zack Rusin 	<zack@kde.org>
+// Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
+// Copyright (C) 2002-2003 Zack Rusin   <zack@kde.org>
 //
 // gaduprotocol.cpp
 //
@@ -37,8 +37,12 @@ class QAction;
 class QWidget;
 class QString;
 
-namespace Kopete { class Contact; }
-namespace Kopete { class MetaContact; }
+namespace Kopete {
+class Contact;
+}
+namespace Kopete {
+class MetaContact;
+}
 
 class GaduAccount;
 class GaduPreferences;
@@ -47,59 +51,58 @@ class GaduPreferences;
 
 class GaduProtocol : public Kopete::Protocol
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	GaduProtocol( QObject* parent, const QVariantList& str);
-	~GaduProtocol();
+    GaduProtocol(QObject *parent, const QVariantList &str);
+    ~GaduProtocol();
 
-	static GaduProtocol *protocol();
+    static GaduProtocol *protocol();
 
-	// Plugin reimplementation
-	// {
-	AddContactPage* createAddContactWidget( QWidget* parent, Kopete::Account* account );
-	Kopete::Account* createNewAccount( const QString& accountId );
-	KopeteEditAccountWidget *createEditAccountWidget( Kopete::Account* account, QWidget* parent );
-	bool canSendOffline() const { return true; }
+    // Plugin reimplementation
+    // {
+    AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
+    Kopete::Account *createNewAccount(const QString &accountId);
+    KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
+    bool canSendOffline() const
+    {
+        return true;
+    }
 
-	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact* metaContact,
-						 const QMap<QString, QString>& serializedData,
-						 const QMap<QString, QString>& addressBookData );
-	// }
-	//!Plugin reimplementation
+    virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData);
+    // }
+    //!Plugin reimplementation
 
-	Kopete::OnlineStatus convertStatus( uint ) const;
-	bool statusWithDescription( uint status );
+    Kopete::OnlineStatus convertStatus(uint) const;
+    bool statusWithDescription(uint status);
 
-	uint statusToWithDescription( Kopete::OnlineStatus status );
-	uint statusToWithoutDescription( Kopete::OnlineStatus status );
-	
-	const Kopete::PropertyTmpl propFirstName;
-	const Kopete::PropertyTmpl propLastName;
-	const Kopete::PropertyTmpl propEmail;
-	const Kopete::PropertyTmpl propPhoneNr;
-	//const Kopete::PropertyTmpl propIgnore;
+    uint statusToWithDescription(Kopete::OnlineStatus status);
+    uint statusToWithoutDescription(Kopete::OnlineStatus status);
+
+    const Kopete::PropertyTmpl propFirstName;
+    const Kopete::PropertyTmpl propLastName;
+    const Kopete::PropertyTmpl propEmail;
+    const Kopete::PropertyTmpl propPhoneNr;
+    //const Kopete::PropertyTmpl propIgnore;
 
 private slots:
-	void settingsChanged();
+    void settingsChanged();
 
 private:
-	static GaduProtocol*	protocolStatic_;
-	GaduAccount*		defaultAccount_;
-	//GaduPreferences*	prefs_;
+    static GaduProtocol *protocolStatic_;
+    GaduAccount *defaultAccount_;
+    //GaduPreferences*	prefs_;
 
-	const Kopete::OnlineStatus gaduStatusBlocked_;
-	const Kopete::OnlineStatus gaduStatusOffline_;
-	const Kopete::OnlineStatus gaduStatusOfflineDescr_;
-	const Kopete::OnlineStatus gaduStatusBusy_;
-	const Kopete::OnlineStatus gaduStatusBusyDescr_;
-	const Kopete::OnlineStatus gaduStatusInvisible_;
-	const Kopete::OnlineStatus gaduStatusInvisibleDescr_;
-	const Kopete::OnlineStatus gaduStatusAvail_;
-	const Kopete::OnlineStatus gaduStatusAvailDescr_;
-	const Kopete::OnlineStatus gaduConnecting_;
-
+    const Kopete::OnlineStatus gaduStatusBlocked_;
+    const Kopete::OnlineStatus gaduStatusOffline_;
+    const Kopete::OnlineStatus gaduStatusOfflineDescr_;
+    const Kopete::OnlineStatus gaduStatusBusy_;
+    const Kopete::OnlineStatus gaduStatusBusyDescr_;
+    const Kopete::OnlineStatus gaduStatusInvisible_;
+    const Kopete::OnlineStatus gaduStatusInvisibleDescr_;
+    const Kopete::OnlineStatus gaduStatusAvail_;
+    const Kopete::OnlineStatus gaduStatusAvailDescr_;
+    const Kopete::OnlineStatus gaduConnecting_;
 };
-
 
 #endif

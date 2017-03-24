@@ -33,65 +33,69 @@
 #include <QIconEngineV2>
 #include <QPainter>
 
-namespace Kopete
-{
-
+namespace Kopete {
 class OnlineStatusIconEngine : public QIconEngineV2
 {
 public:
-	OnlineStatusIconEngine( const OnlineStatus &s , const QString& i,
-	                        const QColor &c, bool _idle )
-		: status(s) , icon(i), color(c), idle(_idle) {}
+    OnlineStatusIconEngine(const OnlineStatus &s, const QString &i, const QColor &c, bool _idle)
+        : status(s)
+        , icon(i)
+        , color(c)
+        , idle(_idle)
+    {
+    }
 
-	QIconEngineV2 *clone() const Q_DECL_OVERRIDE
-	{ return new OnlineStatusIconEngine(status,icon,color,idle); }
+    QIconEngineV2 *clone() const Q_DECL_OVERRIDE
+    {
+        return new OnlineStatusIconEngine(status, icon, color, idle);
+    }
 
-	QString key () const Q_DECL_OVERRIDE
-	{ return OnlineStatusManager::self()->fingerprint( status, icon, 0, color, idle ); }
+    QString key() const Q_DECL_OVERRIDE
+    {
+        return OnlineStatusManager::self()->fingerprint(status, icon, 0, color, idle);
+    }
 
-	QPixmap pixmap ( const QSize & size, QIcon::Mode mode, QIcon::State state ) Q_DECL_OVERRIDE
-	{
-		const int iconSize = qMin(size.width(), size.height());
-		QIcon i(OnlineStatusManager::self()->cacheLookupByObject( status, icon, iconSize, color, idle ));
-		return i.pixmap(size, mode, state);
-	}
+    QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE
+    {
+        const int iconSize = qMin(size.width(), size.height());
+        QIcon i(OnlineStatusManager::self()->cacheLookupByObject(status, icon, iconSize, color, idle));
+        return i.pixmap(size, mode, state);
+    }
 
-	void paint( QPainter * painter, const QRect & rect, QIcon::Mode mode, QIcon::State state ) Q_DECL_OVERRIDE
-	{
-		QPixmap pix = pixmap(rect.size() , mode, state);
-		painter->drawPixmap(rect, pix);
-	}
+    void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE
+    {
+        QPixmap pix = pixmap(rect.size(), mode, state);
+        painter->drawPixmap(rect, pix);
+    }
 
 private:
-	OnlineStatus status;
-	QString icon;
-	QColor color;
-	bool idle;
+    OnlineStatus status;
+    QString icon;
+    QColor color;
+    bool idle;
 };
-
 }
 
 using namespace Kopete;
 
-class OnlineStatus::Private
-	: public QSharedData
+class OnlineStatus::Private : public QSharedData
 {
 public:
-	StatusType status;
-	unsigned weight;
-	Protocol *protocol;
-	unsigned internalStatus;
-	QStringList overlayIcons;
-	QString description;
-	QString caption;
-	OnlineStatusManager::Categories categories;
-	OnlineStatusManager::Options options;
-	unsigned refCount;
+    StatusType status;
+    unsigned weight;
+    Protocol *protocol;
+    unsigned internalStatus;
+    QStringList overlayIcons;
+    QString description;
+    QString caption;
+    OnlineStatusManager::Categories categories;
+    OnlineStatusManager::Options options;
+    unsigned refCount;
 
-	QString protocolIcon() const
-	{
-		return protocol ?  protocol->pluginIcon() : QStringLiteral( "unknown" );
-	}
+    QString protocolIcon() const
+    {
+        return protocol ? protocol->pluginIcon() : QStringLiteral("unknown");
+    }
 };
 
 /**
@@ -100,139 +104,137 @@ public:
  */
 static struct
 {
-	OnlineStatus::StatusType status;
-	const char *name;
+    OnlineStatus::StatusType status;
+    const char *name;
 } statusNames[] = {
-	{ OnlineStatus::Unknown, "Unknown" },
-	{ OnlineStatus::Offline, "Offline" },
-	{ OnlineStatus::Connecting, "Connecting" },
-	{ OnlineStatus::Invisible, "Invisible" },
-	{ OnlineStatus::Online, "Online"},
-	{ OnlineStatus::Away, "Away" } ,
-	{ OnlineStatus::Busy, "Busy" } };
+    { OnlineStatus::Unknown, "Unknown" },
+    { OnlineStatus::Offline, "Offline" },
+    { OnlineStatus::Connecting, "Connecting" },
+    { OnlineStatus::Invisible, "Invisible" },
+    { OnlineStatus::Online, "Online"},
+    { OnlineStatus::Away, "Away" },
+    { OnlineStatus::Busy, "Busy" }
+};
 
-OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protocol,
-	unsigned internalStatus, const QStringList &overlayIcons,  const QString &description )
-	 : d( new Private )
+OnlineStatus::OnlineStatus(StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus, const QStringList &overlayIcons, const QString &description)
+    : d(new Private)
 {
-	d->status = status;
-	d->internalStatus = internalStatus;
-	d->weight = weight;
-	d->overlayIcons = overlayIcons;
-	d->protocol = protocol;
-	d->description = description;
-	d->categories = 0x00;
-	d->options = 0x00;
+    d->status = status;
+    d->internalStatus = internalStatus;
+    d->weight = weight;
+    d->overlayIcons = overlayIcons;
+    d->protocol = protocol;
+    d->description = description;
+    d->categories = 0x00;
+    d->options = 0x00;
 }
 
-OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus,
-   const QStringList &overlayIcons, const QString &description, const QString &caption, OnlineStatusManager::Categories categories , OnlineStatusManager::Options options )
-	 : d( new Private )
+OnlineStatus::OnlineStatus(StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus, const QStringList &overlayIcons, const QString &description, const QString &caption,
+                           OnlineStatusManager::Categories categories, OnlineStatusManager::Options options)
+    : d(new Private)
 {
-	d->status = status;
-	d->internalStatus = internalStatus;
-	d->weight = weight;
-	d->overlayIcons = overlayIcons;
-	d->protocol = protocol;
-	d->description = description;
-	d->caption = caption;
-	d->categories = categories;
-	d->options = options;
+    d->status = status;
+    d->internalStatus = internalStatus;
+    d->weight = weight;
+    d->overlayIcons = overlayIcons;
+    d->protocol = protocol;
+    d->description = description;
+    d->caption = caption;
+    d->categories = categories;
+    d->options = options;
 
-	OnlineStatusManager::self()->registerOnlineStatus( *this );
+    OnlineStatusManager::self()->registerOnlineStatus(*this);
 }
 
-OnlineStatus::OnlineStatus( StatusType status )
- : d( new Private )
+OnlineStatus::OnlineStatus(StatusType status)
+    : d(new Private)
 {
-	d->status = status;
-	d->internalStatus = 0;
-	d->weight = 0;
-	d->protocol = 0L;
-	d->categories = 0x00;
-	d->options = 0x00;
+    d->status = status;
+    d->internalStatus = 0;
+    d->weight = 0;
+    d->protocol = 0L;
+    d->categories = 0x00;
+    d->options = 0x00;
 
-	switch( status )
-	{
-	case Online:
-		 d->description = i18n( "Online" );
-		break;
-	case Away:
-		d->description = i18n( "Away" );
-		break;
-	case Connecting:
-		d->description = i18n( "Connecting" );
-		break;
-	case Invisible:
-		d->description = i18n( "Invisible" );
-		break;
-	case Offline:
-		d->description = i18n( "Offline" );
-		break;
-	case Unknown:
-	default:
-		d->description = i18n( "Unknown" );
-		d->overlayIcons = QStringList( QLatin1String("status_unknown") );
-		break;
-
-	}
+    switch (status) {
+    case Online:
+        d->description = i18n("Online");
+        break;
+    case Away:
+        d->description = i18n("Away");
+        break;
+    case Connecting:
+        d->description = i18n("Connecting");
+        break;
+    case Invisible:
+        d->description = i18n("Invisible");
+        break;
+    case Offline:
+        d->description = i18n("Offline");
+        break;
+    case Unknown:
+    default:
+        d->description = i18n("Unknown");
+        d->overlayIcons = QStringList(QLatin1String("status_unknown"));
+        break;
+    }
 }
 
 OnlineStatus::OnlineStatus()
- : d( new Private )
+    : d(new Private)
 {
-	d->status = Unknown;
-	d->internalStatus = 0;
-	d->weight = 0;
-	d->protocol = 0L;
-	d->overlayIcons = QStringList( QLatin1String( "status_unknown" ) );
-	d->categories = 0x00;
-	d->options = 0x00;
+    d->status = Unknown;
+    d->internalStatus = 0;
+    d->weight = 0;
+    d->protocol = 0L;
+    d->overlayIcons = QStringList(QLatin1String("status_unknown"));
+    d->categories = 0x00;
+    d->options = 0x00;
 }
 
-OnlineStatus::OnlineStatus( const OnlineStatus &other )
-	 : d( other.d )
+OnlineStatus::OnlineStatus(const OnlineStatus &other)
+    : d(other.d)
 {
 }
 
-bool OnlineStatus::operator==( const OnlineStatus &other ) const
+bool OnlineStatus::operator==(const OnlineStatus &other) const
 {
-	if ( d->internalStatus == other.d->internalStatus && d->protocol == other.d->protocol &&
-	     d->weight == other.d->weight && d->overlayIcons == other.d->overlayIcons &&
-	     d->description == other.d->description )
-	{
-		return true;
-	}
+    if (d->internalStatus == other.d->internalStatus && d->protocol == other.d->protocol
+        && d->weight == other.d->weight && d->overlayIcons == other.d->overlayIcons
+        && d->description == other.d->description) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
-bool OnlineStatus::operator!=( const OnlineStatus &other ) const
+bool OnlineStatus::operator!=(const OnlineStatus &other) const
 {
-	return !(*this == other);
+    return !(*this == other);
 }
 
-
-bool OnlineStatus::operator>( const OnlineStatus &other ) const
+bool OnlineStatus::operator>(const OnlineStatus &other) const
 {
-	if( d->status == other.d->status )
-		return d->weight > other.d->weight;
-	else
-		return d->status > other.d->status;
+    if (d->status == other.d->status) {
+        return d->weight > other.d->weight;
+    } else {
+        return d->status > other.d->status;
+    }
 }
 
-bool OnlineStatus::operator<( const OnlineStatus &other ) const
+bool OnlineStatus::operator<(const OnlineStatus &other) const
 {
-	if( d->status == other.d->status )
-		return d->weight < other.d->weight;
-	else
-		return d->status < other.d->status;
+    if (d->status == other.d->status) {
+        return d->weight < other.d->weight;
+    } else {
+        return d->status < other.d->status;
+    }
 }
 
-OnlineStatus & OnlineStatus::operator=( const OnlineStatus &other )
+OnlineStatus &OnlineStatus::operator=(const OnlineStatus &other)
 {
-	d = other.d;
-	return *this;
+    d = other.d;
+    return *this;
 }
 
 OnlineStatus::~OnlineStatus()
@@ -241,142 +243,150 @@ OnlineStatus::~OnlineStatus()
 
 OnlineStatus::StatusType OnlineStatus::status() const
 {
-	return d->status;
+    return d->status;
 }
 
 unsigned OnlineStatus::internalStatus() const
 {
-	return d->internalStatus;
+    return d->internalStatus;
 }
 
 unsigned OnlineStatus::weight() const
 {
-	return d->weight;
+    return d->weight;
 }
 
 QStringList OnlineStatus::overlayIcons() const
 {
-	return d->overlayIcons;
+    return d->overlayIcons;
 }
 
 QString OnlineStatus::description() const
 {
-	return d->description;
+    return d->description;
 }
 
-Protocol* OnlineStatus::protocol() const
+Protocol *OnlineStatus::protocol() const
 {
-	return d->protocol;
+    return d->protocol;
 }
 
 QString OnlineStatus::caption() const
 {
-	return d->caption;
+    return d->caption;
 }
 
 OnlineStatusManager::Categories OnlineStatus::categories() const
 {
-	return d->categories;
+    return d->categories;
 }
 
 OnlineStatusManager::Options OnlineStatus::options() const
 {
-	return d->options;
+    return d->options;
 }
 
 bool OnlineStatus::isDefinitelyOnline() const
 {
-	if ( status() == Offline || status() == Connecting || status() == Unknown )
-		return false;
-	return true;
+    if (status() == Offline || status() == Connecting || status() == Unknown) {
+        return false;
+    }
+    return true;
 }
 
-QIcon OnlineStatus::iconFor( const Contact *contact ) const
+QIcon OnlineStatus::iconFor(const Contact *contact) const
 {
-	QString iconName = contact->icon();
-	if ( iconName.isNull() )
-		iconName = contact->account()->customIcon();
-	if ( iconName.isNull() )
-		iconName = d->protocolIcon();
-	return QIcon(new OnlineStatusIconEngine( *this, iconName,
-		     contact->account()->color(), contact->idleTime() >= 10*60));
+    QString iconName = contact->icon();
+    if (iconName.isNull()) {
+        iconName = contact->account()->customIcon();
+    }
+    if (iconName.isNull()) {
+        iconName = d->protocolIcon();
+    }
+    return QIcon(new OnlineStatusIconEngine(*this, iconName,
+                                            contact->account()->color(), contact->idleTime() >= 10*60));
 }
 
-
-QString OnlineStatus::mimeSourceFor( const Contact *contact, int size ) const
+QString OnlineStatus::mimeSourceFor(const Contact *contact, int size) const
 {
-	// figure out what icon we should use for this contact
- 	QString iconName = contact->icon();
-	if ( iconName.isNull() )
-		iconName = contact->account()->customIcon();
-	if ( iconName.isNull() )
-		iconName = d->protocolIcon();
+    // figure out what icon we should use for this contact
+    QString iconName = contact->icon();
+    if (iconName.isNull()) {
+        iconName = contact->account()->customIcon();
+    }
+    if (iconName.isNull()) {
+        iconName = d->protocolIcon();
+    }
 
-
-	return mimeSource( iconName, size, contact->account()->color(),contact->idleTime() >= 10*60 );
+    return mimeSource(iconName, size, contact->account()->color(), contact->idleTime() >= 10*60);
 }
 
-QIcon OnlineStatus::iconFor( const Account *account ) const
+QIcon OnlineStatus::iconFor(const Account *account) const
 {
-	QString iconName = account->customIcon();
-	if ( iconName.isNull() )
-		iconName = d->protocolIcon();
-	return QIcon(new OnlineStatusIconEngine(*this, iconName, account->color(),false));
-
+    QString iconName = account->customIcon();
+    if (iconName.isNull()) {
+        iconName = d->protocolIcon();
+    }
+    return QIcon(new OnlineStatusIconEngine(*this, iconName, account->color(), false));
 }
 
-QString OnlineStatus::mimeSourceFor( const Account *account, int size ) const
+QString OnlineStatus::mimeSourceFor(const Account *account, int size) const
 {
-	QString iconName = account->customIcon();
-	if ( iconName.isNull() )
-		iconName = d->protocolIcon();
+    QString iconName = account->customIcon();
+    if (iconName.isNull()) {
+        iconName = d->protocolIcon();
+    }
 
-	return mimeSource( iconName, size, account->color(), false );
+    return mimeSource(iconName, size, account->color(), false);
 }
 
-QPixmap OnlineStatus::iconFor( const QString &mimeSource ) const
+QPixmap OnlineStatus::iconFor(const QString &mimeSource) const
 {
-	return OnlineStatusManager::self()->cacheLookupByMimeSource( mimeSource );
+    return OnlineStatusManager::self()->cacheLookupByMimeSource(mimeSource);
 }
 
 QPixmap OnlineStatus::protocolIcon(const KIconLoader::StdSizes size) const
 {
-	return OnlineStatusManager::self()->cacheLookupByObject( *this, d->protocolIcon() , size, QColor() );
+    return OnlineStatusManager::self()->cacheLookupByObject(*this, d->protocolIcon(), size, QColor());
 }
 
 QPixmap OnlineStatus::protocolIcon() const
 {
-	return protocolIcon(KIconLoader::SizeSmall);
+    return protocolIcon(KIconLoader::SizeSmall);
 }
 
-QString OnlineStatus::mimeSource( const QString& icon, int size, QColor color, bool idle) const
+QString OnlineStatus::mimeSource(const QString &icon, int size, QColor color, bool idle) const
 {
-	// make sure the item is in the cache
-	OnlineStatusManager::self()->cacheLookupByObject( *this, icon, size, color, idle );
-	// now return the fingerprint instead
-	return OnlineStatusManager::self()->fingerprint( *this, icon, size, color, idle );
+    // make sure the item is in the cache
+    OnlineStatusManager::self()->cacheLookupByObject(*this, icon, size, color, idle);
+    // now return the fingerprint instead
+    return OnlineStatusManager::self()->fingerprint(*this, icon, size, color, idle);
 }
 
 QString OnlineStatus::statusTypeToString(OnlineStatus::StatusType statusType)
 {
-	const int size = sizeof(statusNames) / sizeof(statusNames[0]);
+    const int size = sizeof(statusNames) / sizeof(statusNames[0]);
 
-	for (int i=0; i< size; i++)
-		if (statusNames[i].status == statusType)
-			return QString::fromLatin1(statusNames[i].name);
+    for (int i = 0; i < size; i++) {
+        if (statusNames[i].status == statusType) {
+            return QString::fromLatin1(statusNames[i].name);
+        }
+    }
 
-	return QString::fromLatin1(statusNames[0].name); // Unknown
+    return QString::fromLatin1(statusNames[0].name); // Unknown
 }
 
-OnlineStatus::StatusType OnlineStatus::statusStringToType(const QString& string)
+OnlineStatus::StatusType OnlineStatus::statusStringToType(const QString &string)
 {
-	int size = sizeof(statusNames) / sizeof(statusNames[0]);
+    int size = sizeof(statusNames) / sizeof(statusNames[0]);
 
-	for (int i=0; i< size; i++)
-		if (QString::fromLatin1(statusNames[i].name) == string)
-			return statusNames[i].status;
+    for (int i = 0; i < size; i++) {
+        if (QString::fromLatin1(statusNames[i].name) == string) {
+            return statusNames[i].status;
+        }
+    }
 
-	return OnlineStatus::Unknown;
+    return OnlineStatus::Unknown;
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

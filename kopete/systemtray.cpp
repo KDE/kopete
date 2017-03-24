@@ -39,104 +39,101 @@
 #include "kopetecontact.h"
 #include "kopetewindow.h"
 
-KopeteSystemTray* KopeteSystemTray::s_systemTray = 0;
+KopeteSystemTray *KopeteSystemTray::s_systemTray = 0;
 
-KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent )
+KopeteSystemTray *KopeteSystemTray::systemTray(QWidget *parent)
 {
-	if( !s_systemTray )
-		s_systemTray = new KopeteSystemTray( parent );
+    if (!s_systemTray) {
+        s_systemTray = new KopeteSystemTray(parent);
+    }
 
-	return s_systemTray;
+    return s_systemTray;
 }
 
-KopeteSystemTray::KopeteSystemTray(QWidget* parent)
-	: KStatusNotifierItem(parent)
+KopeteSystemTray::KopeteSystemTray(QWidget *parent)
+    : KStatusNotifierItem(parent)
 {
-	kDebug(14010) ;
+    kDebug(14010);
     setCategory(Communications);
-	setToolTip(QStringLiteral("kopete"), QStringLiteral("Kopete"), KGlobal::mainComponent().aboutData()->shortDescription());
-	setStatus(Passive);
+    setToolTip(QStringLiteral("kopete"), QStringLiteral("Kopete"), KGlobal::mainComponent().aboutData()->shortDescription());
+    setStatus(Passive);
 
-	mIsBlinkIcon = false;
-	mBlinkTimer = new QTimer(this);
-	mBlinkTimer->setObjectName(QStringLiteral("mBlinkTimer"));
+    mIsBlinkIcon = false;
+    mBlinkTimer = new QTimer(this);
+    mBlinkTimer->setObjectName(QStringLiteral("mBlinkTimer"));
 
-	mKopeteIcon = QStringLiteral("kopete");
+    mKopeteIcon = QStringLiteral("kopete");
 
-	connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(slotAboutToShowMenu()));
+    connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(slotAboutToShowMenu()));
 
-	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
-	connect(Kopete::ChatSessionManager::self() , SIGNAL(newEvent(Kopete::MessageEvent*)),
-		this, SLOT(slotNewEvent(Kopete::MessageEvent*)));
-	connect(Kopete::BehaviorSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()));
+    connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
+    connect(Kopete::ChatSessionManager::self(), SIGNAL(newEvent(Kopete::MessageEvent *)),
+            this, SLOT(slotNewEvent(Kopete::MessageEvent *)));
+    connect(Kopete::BehaviorSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()));
 
-	connect(Kopete::AccountManager::self(),
-		SIGNAL(accountOnlineStatusChanged(Kopete::Account *,
-		const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)),
-	this, SLOT(slotReevaluateAccountStates()));
+    connect(Kopete::AccountManager::self(),
+            SIGNAL(accountOnlineStatusChanged(Kopete::Account *,
+                                              const Kopete::OnlineStatus&,const Kopete::OnlineStatus&)),
+            this, SLOT(slotReevaluateAccountStates()));
 
-	// the slot called by default by the quit action, KSystemTray::maybeQuit(),
-	// just closes the parent window, which is hard to distinguish in that window's closeEvent()
-	// from a click on the window's close widget
-	// in the quit case, we want to quit the application
- 	// in the close widget click case, we only want to hide the parent window
-	// so instead, we make it call our general purpose quit slot on the window, which causes a window close and everything else we need
-	// KDE4 - app will have to listen for quitSelected instead
-	QList<QAction *> actionList = actionCollection();
-	KActionCollection *newActionList = new KActionCollection(parent);
-	newActionList->addActions(actionList);
-	QAction *quit = newActionList->action( QStringLiteral("file_quit") );
-	quit->disconnect();
-	KopeteWindow *myParent = static_cast<KopeteWindow *>( parent );
-	connect( quit, SIGNAL(activated()), myParent, SLOT(slotQuit()) );
+    // the slot called by default by the quit action, KSystemTray::maybeQuit(),
+    // just closes the parent window, which is hard to distinguish in that window's closeEvent()
+    // from a click on the window's close widget
+    // in the quit case, we want to quit the application
+    // in the close widget click case, we only want to hide the parent window
+    // so instead, we make it call our general purpose quit slot on the window, which causes a window close and everything else we need
+    // KDE4 - app will have to listen for quitSelected instead
+    QList<QAction *> actionList = actionCollection();
+    KActionCollection *newActionList = new KActionCollection(parent);
+    newActionList->addActions(actionList);
+    QAction *quit = newActionList->action(QStringLiteral("file_quit"));
+    quit->disconnect();
+    KopeteWindow *myParent = static_cast<KopeteWindow *>(parent);
+    connect(quit, SIGNAL(activated()), myParent, SLOT(slotQuit()));
 
-	setIconByName(mKopeteIcon);
-	setAttentionMovieByName( QStringLiteral( "newmessage" ) );
-	slotReevaluateAccountStates();
-	slotConfigChanged();
+    setIconByName(mKopeteIcon);
+    setAttentionMovieByName(QStringLiteral("newmessage"));
+    slotReevaluateAccountStates();
+    slotConfigChanged();
 }
 
 KopeteSystemTray::~KopeteSystemTray()
 {
-	kDebug(14010) ;
+    kDebug(14010);
 //	delete mBlinkTimer;
 }
 
 void KopeteSystemTray::slotAboutToShowMenu()
 {
-	emit aboutToShowMenu(qobject_cast<QMenu *>(contextMenu()));
+    emit aboutToShowMenu(qobject_cast<QMenu *>(contextMenu()));
 }
 
 void KopeteSystemTray::activate(const QPoint &pos)
 {
-	if ( isBlinking() &&  Kopete::BehaviorSettings::self()->trayflashNotifyLeftClickOpensMessage() )
-	{
-		if ( !mEventList.isEmpty() )
-			mEventList.first()->apply();
-	}
-    else
-    {
+    if (isBlinking() && Kopete::BehaviorSettings::self()->trayflashNotifyLeftClickOpensMessage()) {
+        if (!mEventList.isEmpty()) {
+            mEventList.first()->apply();
+        }
+    } else {
         KStatusNotifierItem::activate(pos);
     }
 }
 
 // void KopeteSystemTray::contextMenuAboutToShow( QMenu *me )
 // {
-// 	//kDebug(14010) << "Called.";
-// 	emit aboutToShowMenu( me );
+//  //kDebug(14010) << "Called.";
+//  emit aboutToShowMenu( me );
 // }
 
-
-void KopeteSystemTray::startBlink( const QString &icon )
+void KopeteSystemTray::startBlink(const QString &icon)
 {
-	mBlinkIcon = icon;
-	if ( mBlinkTimer->isActive() )
-	{
-		mBlinkTimer->stop();
-	}
-	mIsBlinkIcon = true;
-	mBlinkTimer->setSingleShot( false );
-	mBlinkTimer->start( 1000 );
+    mBlinkIcon = icon;
+    if (mBlinkTimer->isActive()) {
+        mBlinkTimer->stop();
+    }
+    mIsBlinkIcon = true;
+    mBlinkTimer->setSingleShot(false);
+    mBlinkTimer->start(1000);
 }
 
 void KopeteSystemTray::startBlink()
@@ -148,110 +145,100 @@ void KopeteSystemTray::stopBlink()
 {
     setStatus(Passive);
 
-	if ( mBlinkTimer->isActive() )
-		mBlinkTimer->stop();
+    if (mBlinkTimer->isActive()) {
+        mBlinkTimer->stop();
+    }
 
-	mIsBlinkIcon = false;
-	//setPixmap( mKopeteIcon );
-	slotReevaluateAccountStates();
+    mIsBlinkIcon = false;
+    //setPixmap( mKopeteIcon );
+    slotReevaluateAccountStates();
 }
 
 void KopeteSystemTray::slotBlink()
 {
-	setIconByName( mIsBlinkIcon ? mKopeteIcon : mBlinkIcon );
+    setIconByName(mIsBlinkIcon ? mKopeteIcon : mBlinkIcon);
 
-	mIsBlinkIcon = !mIsBlinkIcon;
+    mIsBlinkIcon = !mIsBlinkIcon;
 }
 
-void KopeteSystemTray::slotNewEvent( Kopete::MessageEvent *event )
+void KopeteSystemTray::slotNewEvent(Kopete::MessageEvent *event)
 {
-	mEventList.append( event );
+    mEventList.append(event);
 
-	connect(event, SIGNAL(done(Kopete::MessageEvent*)),
-		this, SLOT(slotEventDone(Kopete::MessageEvent*)));
+    connect(event, SIGNAL(done(Kopete::MessageEvent *)),
+            this, SLOT(slotEventDone(Kopete::MessageEvent *)));
 
-	// tray animation
-	if ( Kopete::BehaviorSettings::self()->trayflashNotify() )
-		startBlink();
+    // tray animation
+    if (Kopete::BehaviorSettings::self()->trayflashNotify()) {
+        startBlink();
+    }
 }
 
 void KopeteSystemTray::slotEventDone(Kopete::MessageEvent *event)
 {
-	mEventList.removeAll(event);
+    mEventList.removeAll(event);
 
-	if(mEventList.isEmpty())
-		stopBlink();
+    if (mEventList.isEmpty()) {
+        stopBlink();
+    }
 }
 
 void KopeteSystemTray::slotConfigChanged()
 {
 #if 0
 //	kDebug(14010) << "called.";
-	if ( Kopete::BehaviorSettings::self()->showSystemTray() )
-		show();
-	else
-		hide(); // for users without kicker or a similar docking app
+    if (Kopete::BehaviorSettings::self()->showSystemTray()) {
+        show();
+    } else {
+        hide(); // for users without kicker or a similar docking app
+    }
 #endif
 }
 
 void KopeteSystemTray::slotReevaluateAccountStates()
 {
-	// If there is a pending message, we don't need to refresh the system tray now.
-	// This function will even be called when the animation will stop.
-	if ( mBlinkTimer->isActive() )
-		return;
+    // If there is a pending message, we don't need to refresh the system tray now.
+    // This function will even be called when the animation will stop.
+    if (mBlinkTimer->isActive()) {
+        return;
+    }
 
-	Kopete::OnlineStatus highestStatus;
-	foreach ( Kopete::Account *account, Kopete::AccountManager::self()->accounts())
-	{
-		if ( account->myself() && account->myself()->onlineStatus() > highestStatus )
-		{
-			highestStatus = account->myself()->onlineStatus();
-		}
-	}
+    Kopete::OnlineStatus highestStatus;
+    foreach (Kopete::Account *account, Kopete::AccountManager::self()->accounts()) {
+        if (account->myself() && account->myself()->onlineStatus() > highestStatus) {
+            highestStatus = account->myself()->onlineStatus();
+        }
+    }
 
-	switch ( highestStatus.status() )
-	{
-		case Kopete::OnlineStatus::Unknown:
-		case Kopete::OnlineStatus::Offline:
-		case Kopete::OnlineStatus::Connecting:
-		{
-			setIconByName(QStringLiteral("kopete-offline"));
-			setOverlayIconByName(QStringLiteral("user-offline"));
-			break;
-		}
-		case Kopete::OnlineStatus::Invisible:
-		{
-			setIconByName(mKopeteIcon);
-			setOverlayIconByName(QStringLiteral("user-invisible"));
-			break;
-		}
-		case Kopete::OnlineStatus::Away:
-		{
-			setIconByName(mKopeteIcon);
-			setOverlayIconByName(QStringLiteral("user-away"));
-			break;
-		}
-		case Kopete::OnlineStatus::Busy:
-		{
-			setIconByName(mKopeteIcon);
-			setOverlayIconByName(QStringLiteral("user-busy"));
-			break;
-		}
-		case Kopete::OnlineStatus::Online:
-		{
-			setIconByName(mKopeteIcon);
-			setOverlayIconByName(QString());
-			break;
-		}
-	}
+    switch (highestStatus.status()) {
+    case Kopete::OnlineStatus::Unknown:
+    case Kopete::OnlineStatus::Offline:
+    case Kopete::OnlineStatus::Connecting:
+        setIconByName(QStringLiteral("kopete-offline"));
+        setOverlayIconByName(QStringLiteral("user-offline"));
+        break;
+    case Kopete::OnlineStatus::Invisible:
+        setIconByName(mKopeteIcon);
+        setOverlayIconByName(QStringLiteral("user-invisible"));
+        break;
+    case Kopete::OnlineStatus::Away:
+        setIconByName(mKopeteIcon);
+        setOverlayIconByName(QStringLiteral("user-away"));
+        break;
+    case Kopete::OnlineStatus::Busy:
+        setIconByName(mKopeteIcon);
+        setOverlayIconByName(QStringLiteral("user-busy"));
+        break;
+    case Kopete::OnlineStatus::Online:
+        setIconByName(mKopeteIcon);
+        setOverlayIconByName(QString());
+        break;
+    }
 }
-
 
 bool KopeteSystemTray::isBlinking() const
 {
-	return mBlinkTimer->isActive() || (status() == NeedsAttention);
+    return mBlinkTimer->isActive() || (status() == NeedsAttention);
 }
-
 
 // vim: set noet ts=4 sts=4 sw=4:

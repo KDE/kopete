@@ -23,9 +23,7 @@
 
 class KopeteView;
 
-namespace Kopete
-{
-
+namespace Kopete {
 class ChatSession;
 
 /**
@@ -39,24 +37,26 @@ class ChatSession;
  */
 class KOPETE_EXPORT ViewPlugin : public Plugin
 {
-	public:
-		/**
-		 * @brief Create and initialize the plugin
-		 */
-		explicit ViewPlugin( const KAboutData &instance, QObject *parent = 0L );
-		explicit ViewPlugin( QObject *parent = 0L );
+public:
+    /**
+     * @brief Create and initialize the plugin
+     */
+    explicit ViewPlugin(const KAboutData &instance, QObject *parent = 0L);
+    explicit ViewPlugin(QObject *parent = 0L);
 
-		/**
-		 * @brief Creates a view to be associated with the passed in session
-		*/
-		virtual KopeteView *createView( ChatSession * /*session*/ ){ return 0L; }
+    /**
+     * @brief Creates a view to be associated with the passed in session
+    */
+    virtual KopeteView *createView(ChatSession * /*session*/)
+    {
+        return 0L;
+    }
 
-		/**
-		 * @brief Reimplemented from Kopete::Plugin
-		 */
-		void aboutToUnload() Q_DECL_OVERRIDE;
+    /**
+     * @brief Reimplemented from Kopete::Plugin
+     */
+    void aboutToUnload() Q_DECL_OVERRIDE;
 };
-
 }
 
 #endif

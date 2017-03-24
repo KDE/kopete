@@ -24,33 +24,31 @@
 
 using namespace KUnitTest;
 
-KUNITTEST_MODULE( kunittest_kopetecontactlist_test, "KopeteSuite");
-KUNITTEST_MODULE_REGISTER_TESTER( KopeteContactList_Test );
+KUNITTEST_MODULE(kunittest_kopetecontactlist_test, "KopeteSuite");
+KUNITTEST_MODULE_REGISTER_TESTER(KopeteContactList_Test);
 
 void KopeteContactList_Test::allTests()
 {
-	testSomething();
+    testSomething();
 }
 
 void KopeteContactList_Test::testSomething()
 {
-	// change user data dir to avoid messing with user's .kde dir
-	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
+    // change user data dir to avoid messing with user's .kde dir
+    setenv("KDEHOME", QFile::encodeName(QDir::homePath() + "/.kopete-unittest"), true);
 
-	QString filename = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QString::fromLatin1( "contactlist.xml" ) ;
-	if( ! filename.isEmpty() )
-	{
-		// previous test run, delete the previous contact list
-		bool removed = QFile::remove(filename);
-		// if we cant remove the file, abort test
-		if (!removed)
-			return;
-	}
-	
-	int result = 1;
-	int expected = 1;
-	// result should be the expected one
-	CHECK(result, expected);
+    QString filename = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QString::fromLatin1("contactlist.xml");
+    if (!filename.isEmpty()) {
+        // previous test run, delete the previous contact list
+        bool removed = QFile::remove(filename);
+        // if we cant remove the file, abort test
+        if (!removed) {
+            return;
+        }
+    }
+
+    int result = 1;
+    int expected = 1;
+    // result should be the expected one
+    CHECK(result, expected);
 }
-
-

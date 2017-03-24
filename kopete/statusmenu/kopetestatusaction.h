@@ -18,41 +18,38 @@
 
 #include <QAction>
 
-namespace Kopete
-{
-	class StatusRootAction;
-	namespace Status
-	{
-		class Status;
-	}
+namespace Kopete {
+class StatusRootAction;
+namespace Status {
+class Status;
+}
 
 /**
-	@author Roman Jarosz <kedgedev@centrum.cz>
+    @author Roman Jarosz <kedgedev@centrum.cz>
 */
 class StatusAction : public QAction
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	 * StatusAction constructor
-	 * @param status the corresponding Status object
-	 * @param rootAction the StatusRootAction object this status status belongs to
-	 * @param parent the parent object
-	 **/
-	StatusAction( Status::Status *status, StatusRootAction* rootAction, QObject * parent );
+    /**
+     * StatusAction constructor
+     * @param status the corresponding Status object
+     * @param rootAction the StatusRootAction object this status status belongs to
+     * @param parent the parent object
+     **/
+    StatusAction(Status::Status *status, StatusRootAction *rootAction, QObject *parent);
 
 private:
-	void init();
+    void init();
 
 private Q_SLOTS:
-	void triggered();
-	void changed();
+    void triggered();
+    void changed();
 
 private:
-	Status::Status *mStatus;
-	StatusRootAction* mRootAction;
+    Status::Status *mStatus;
+    StatusRootAction *mRootAction;
 };
-
 }
 
 #endif

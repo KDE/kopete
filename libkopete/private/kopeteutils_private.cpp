@@ -26,12 +26,9 @@
 #include "knotification.h"
 #include "kopeteuiglobal.h"
 
-namespace Kopete
-{
-namespace Utils
-{
-
-NotifyHelper* NotifyHelper::s_self = 0L;
+namespace Kopete {
+namespace Utils {
+NotifyHelper *NotifyHelper::s_self = 0L;
 
 NotifyHelper::NotifyHelper() : QObject(qApp)
 {
@@ -39,49 +36,49 @@ NotifyHelper::NotifyHelper() : QObject(qApp)
 
 NotifyHelper::~NotifyHelper()
 {
-	s_self = 0L;
+    s_self = 0L;
 }
 
-NotifyHelper* NotifyHelper::self()
+NotifyHelper *NotifyHelper::self()
 {
-	if (!s_self)
-		s_self = new NotifyHelper();
+    if (!s_self) {
+        s_self = new NotifyHelper();
+    }
 
-	return s_self;
+    return s_self;
 }
 
 void NotifyHelper::slotEventActivated(unsigned int /*action*/)
 {
-	const KNotification *n = dynamic_cast<const KNotification *>(QObject::sender());
-	if (n)
-	{
-		ErrorNotificationInfo info = m_events[n];
-		if ( info.debugInfo.isEmpty() )
-			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, info.explanation, info.caption);
-		else
-			KMessageBox::queuedDetailedError( Kopete::UI::Global::mainWidget(), info.explanation, info.debugInfo, info.caption);
+    const KNotification *n = dynamic_cast<const KNotification *>(QObject::sender());
+    if (n) {
+        ErrorNotificationInfo info = m_events[n];
+        if (info.debugInfo.isEmpty()) {
+            KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Information, info.explanation, info.caption);
+        } else {
+            KMessageBox::queuedDetailedError(Kopete::UI::Global::mainWidget(), info.explanation, info.debugInfo, info.caption);
+        }
 
-		unregisterNotification(n);
-	}
+        unregisterNotification(n);
+    }
 }
 
 void NotifyHelper::slotEventClosed()
 {
-	const KNotification *n = dynamic_cast<const KNotification *>(QObject::sender());
-	if (n)
-		unregisterNotification(n);
+    const KNotification *n = dynamic_cast<const KNotification *>(QObject::sender());
+    if (n) {
+        unregisterNotification(n);
+    }
 }
 
-void NotifyHelper::registerNotification(const KNotification* event, ErrorNotificationInfo error)
+void NotifyHelper::registerNotification(const KNotification *event, ErrorNotificationInfo error)
 {
-	m_events.insert( event, error);
+    m_events.insert(event, error);
 }
 
-void NotifyHelper::unregisterNotification(const KNotification* event)
+void NotifyHelper::unregisterNotification(const KNotification *event)
 {
-	m_events.remove(event);
+    m_events.remove(event);
 }
-
 } // end ns ErrorNotifier
 } // end ns Kopete
-

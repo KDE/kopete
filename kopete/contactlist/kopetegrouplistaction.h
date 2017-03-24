@@ -25,15 +25,14 @@
  */
 class KopeteGroupListAction : public KSelectAction
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	KopeteGroupListAction( const QString &, const QString &, const QKeySequence &,
-                               const QObject *, const char *, QObject* );
-	~KopeteGroupListAction();
+    KopeteGroupListAction(const QString &, const QString &, const QKeySequence &, const QObject *, const char *, QObject *);
+    ~KopeteGroupListAction();
 
 protected slots:
-	void slotUpdateList();
+    void slotUpdateList();
 };
 
 #endif // KOPETEGROUPLISTACTION_H

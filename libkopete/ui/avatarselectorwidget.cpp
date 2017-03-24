@@ -41,317 +41,309 @@
 using namespace Kopete::AV;
 #endif
 
-namespace Kopete
-{
-namespace UI
-{
-
+namespace Kopete {
+namespace UI {
 class AvatarSelectorWidgetItem : public QListWidgetItem
 {
 public:
-	AvatarSelectorWidgetItem(QListWidget *parent)
-	 : QListWidgetItem(parent, QListWidgetItem::UserType)
-	{}
+    AvatarSelectorWidgetItem(QListWidget *parent)
+        : QListWidgetItem(parent, QListWidgetItem::UserType)
+    {
+    }
 
-	void setAvatarEntry(Kopete::AvatarManager::AvatarEntry entry)
-	{
-		m_entry = entry;
-		
-		QSize s(96,96);
+    void setAvatarEntry(Kopete::AvatarManager::AvatarEntry entry)
+    {
+        m_entry = entry;
 
-		if (listWidget())
-		    s = listWidget()->iconSize();
+        QSize s(96, 96);
 
-		QPixmap pix;
-		if (entry.path.isEmpty())
-		{
-			// draw a fake image telling there is no avatar
-			pix = QPixmap(s);
-			QPainter p(&pix);
-			p.fillRect(pix.rect(), Qt::white);
-			p.drawText(pix.rect(), Qt::TextWordWrap | Qt::AlignCenter, i18n("No Avatar"));
-		}
-		else
-		{
-			pix = QPixmap(entry.path).scaled(s);
-		}
+        if (listWidget()) {
+            s = listWidget()->iconSize();
+        }
 
-		// draw a border around the avatar
-		QPainter p(&pix);
-		p.setBrush(Qt::NoBrush);
-		p.drawRect(0,0,pix.width()-1,pix.height()-1);
+        QPixmap pix;
+        if (entry.path.isEmpty()) {
+            // draw a fake image telling there is no avatar
+            pix = QPixmap(s);
+            QPainter p(&pix);
+            p.fillRect(pix.rect(), Qt::white);
+            p.drawText(pix.rect(), Qt::TextWordWrap | Qt::AlignCenter, i18n("No Avatar"));
+        } else {
+            pix = QPixmap(entry.path).scaled(s);
+        }
 
-		setIcon(pix);
-	}
+        // draw a border around the avatar
+        QPainter p(&pix);
+        p.setBrush(Qt::NoBrush);
+        p.drawRect(0, 0, pix.width()-1, pix.height()-1);
 
-	Kopete::AvatarManager::AvatarEntry avatarEntry() const
-	{
-		return m_entry;
-	}
+        setIcon(pix);
+    }
+
+    Kopete::AvatarManager::AvatarEntry avatarEntry() const
+    {
+        return m_entry;
+    }
 
 private:
-	Kopete::AvatarManager::AvatarEntry m_entry;
+    Kopete::AvatarManager::AvatarEntry m_entry;
 };
 
 class AvatarSelectorWidget::Private
 {
 public:
-	Private()
-	 : selectedItem(0), noAvatarItem(0)
-	{}
+    Private()
+        : selectedItem(0)
+        , noAvatarItem(0)
+    {
+    }
 
-	Ui::AvatarSelectorWidget mainWidget;
-	QListWidgetItem *selectedItem;
-	QString currentAvatar;
-	AvatarSelectorWidgetItem * noAvatarItem;
-	AvatarSelectorWidgetItem * addItem(Kopete::AvatarManager::AvatarEntry entry);
+    Ui::AvatarSelectorWidget mainWidget;
+    QListWidgetItem *selectedItem;
+    QString currentAvatar;
+    AvatarSelectorWidgetItem *noAvatarItem;
+    AvatarSelectorWidgetItem *addItem(Kopete::AvatarManager::AvatarEntry entry);
 };
 
 AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
- : QWidget(parent), d(new Private)
+    : QWidget(parent)
+    , d(new Private)
 {
-	d->mainWidget.setupUi(this);
+    d->mainWidget.setupUi(this);
 
-	// use icons on buttons
-	d->mainWidget.buttonAddAvatar->setIcon( QIcon::fromTheme(QStringLiteral("list-add")) );
-	d->mainWidget.buttonRemoveAvatar->setIcon( QIcon::fromTheme(QStringLiteral("edit-delete")) );
-	d->mainWidget.buttonFromWebcam->setIcon( QIcon::fromTheme(QStringLiteral("camera-web")) );
+    // use icons on buttons
+    d->mainWidget.buttonAddAvatar->setIcon(QIcon::fromTheme(QStringLiteral("list-add")));
+    d->mainWidget.buttonRemoveAvatar->setIcon(QIcon::fromTheme(QStringLiteral("edit-delete")));
+    d->mainWidget.buttonFromWebcam->setIcon(QIcon::fromTheme(QStringLiteral("camera-web")));
 
 #ifndef VIDEOSUPPORT_DISABLED
-	VideoDevicePool* devicePool = VideoDevicePool::self();
-	if( devicePool->size() == 0 ){
-		d->mainWidget.buttonFromWebcam->hide();
-	}
+    VideoDevicePool *devicePool = VideoDevicePool::self();
+    if (devicePool->size() == 0) {
+        d->mainWidget.buttonFromWebcam->hide();
+    }
 #else
-	//If windows, just hide it
-	d->mainWidget.buttonFromWebcam->hide();
+    //If windows, just hide it
+    d->mainWidget.buttonFromWebcam->hide();
 #endif
 
-	// Connect signals/slots
-	connect(d->mainWidget.buttonAddAvatar, SIGNAL(clicked()), this, SLOT(buttonAddAvatarClicked()));
-	connect(d->mainWidget.buttonRemoveAvatar, SIGNAL(clicked()), this, SLOT(buttonRemoveAvatarClicked()));
-	connect(d->mainWidget.buttonFromWebcam, SIGNAL(clicked()), this, SLOT(buttonFromWebcamClicked()));
-	connect(d->mainWidget.listUserAvatar, SIGNAL(itemClicked(QListWidgetItem*)),
-	        this, SLOT(listSelectionChanged(QListWidgetItem*)));
-	connect(Kopete::AvatarManager::self(), SIGNAL(avatarAdded(Kopete::AvatarManager::AvatarEntry)),
-	        this, SLOT(avatarAdded(Kopete::AvatarManager::AvatarEntry)));
-	connect(Kopete::AvatarManager::self(), SIGNAL(avatarRemoved(Kopete::AvatarManager::AvatarEntry)),
-	        this, SLOT(avatarRemoved(Kopete::AvatarManager::AvatarEntry)));
+    // Connect signals/slots
+    connect(d->mainWidget.buttonAddAvatar, SIGNAL(clicked()), this, SLOT(buttonAddAvatarClicked()));
+    connect(d->mainWidget.buttonRemoveAvatar, SIGNAL(clicked()), this, SLOT(buttonRemoveAvatarClicked()));
+    connect(d->mainWidget.buttonFromWebcam, SIGNAL(clicked()), this, SLOT(buttonFromWebcamClicked()));
+    connect(d->mainWidget.listUserAvatar, SIGNAL(itemClicked(QListWidgetItem *)),
+            this, SLOT(listSelectionChanged(QListWidgetItem *)));
+    connect(Kopete::AvatarManager::self(), SIGNAL(avatarAdded(Kopete::AvatarManager::AvatarEntry)),
+            this, SLOT(avatarAdded(Kopete::AvatarManager::AvatarEntry)));
+    connect(Kopete::AvatarManager::self(), SIGNAL(avatarRemoved(Kopete::AvatarManager::AvatarEntry)),
+            this, SLOT(avatarRemoved(Kopete::AvatarManager::AvatarEntry)));
 
-	// Add a "No Avatar" option
-	Kopete::AvatarManager::AvatarEntry empty;
-	empty.name = i18n("No Avatar");
-	empty.contact = 0;
-	empty.category = Kopete::AvatarManager::User;
-	d->noAvatarItem = d->addItem(empty);
+    // Add a "No Avatar" option
+    Kopete::AvatarManager::AvatarEntry empty;
+    empty.name = i18n("No Avatar");
+    empty.contact = 0;
+    empty.category = Kopete::AvatarManager::User;
+    d->noAvatarItem = d->addItem(empty);
 
-	// List avatars of User category
-	Kopete::AvatarQueryJob *queryJob = new Kopete::AvatarQueryJob(this);
-	connect(queryJob, SIGNAL(result(KJob*)), this, SLOT(queryJobFinished(KJob*)));
-	queryJob->setQueryFilter( Kopete::AvatarManager::User );
+    // List avatars of User category
+    Kopete::AvatarQueryJob *queryJob = new Kopete::AvatarQueryJob(this);
+    connect(queryJob, SIGNAL(result(KJob *)), this, SLOT(queryJobFinished(KJob *)));
+    queryJob->setQueryFilter(Kopete::AvatarManager::User);
 
-	queryJob->start();
+    queryJob->start();
 }
 
 AvatarSelectorWidget::~AvatarSelectorWidget()
 {
-	delete d;
+    delete d;
 }
 
 Kopete::AvatarManager::AvatarEntry AvatarSelectorWidget::selectedEntry() const
 {
-	Kopete::AvatarManager::AvatarEntry result;
+    Kopete::AvatarManager::AvatarEntry result;
 
-	if( d->selectedItem )
-	{
-		result = static_cast<AvatarSelectorWidgetItem*>(d->selectedItem)->avatarEntry();
-	}
+    if (d->selectedItem) {
+        result = static_cast<AvatarSelectorWidgetItem *>(d->selectedItem)->avatarEntry();
+    }
 
-	return result;
+    return result;
 }
 
 void AvatarSelectorWidget::setCurrentAvatar(const QString &path)
 {
-	d->currentAvatar = path;
+    d->currentAvatar = path;
 
-	//try to find the avatar in the list
-	QList<QListWidgetItem*> itemList = d->mainWidget.listUserAvatar->findItems(QLatin1String(""), Qt::MatchContains);
-	QList<QListWidgetItem*>::iterator it = itemList.begin();
-	
-	while (it != itemList.end())
-	{
-		AvatarSelectorWidgetItem *item = static_cast<AvatarSelectorWidgetItem*>(*it);
-		if (item->avatarEntry().path == path)
-		{
-			item->setSelected(true);
-			listSelectionChanged( item );
-			return;
-		}
-		++it;
-	}
+    //try to find the avatar in the list
+    QList<QListWidgetItem *> itemList = d->mainWidget.listUserAvatar->findItems(QLatin1String(""), Qt::MatchContains);
+    QList<QListWidgetItem *>::iterator it = itemList.begin();
 
+    while (it != itemList.end())
+    {
+        AvatarSelectorWidgetItem *item = static_cast<AvatarSelectorWidgetItem *>(*it);
+        if (item->avatarEntry().path == path) {
+            item->setSelected(true);
+            listSelectionChanged(item);
+            return;
+        }
+        ++it;
+    }
 }
 
 void AvatarSelectorWidget::buttonAddAvatarClicked()
 {
-	QUrl imageUrl = KFileDialog::getImageOpenUrl( QUrl(), this );
-	if( !imageUrl.isEmpty() )
-	{
-		// TODO: Download image
-		if( !imageUrl.isLocalFile() )
-			return;
+    QUrl imageUrl = KFileDialog::getImageOpenUrl(QUrl(), this);
+    if (!imageUrl.isEmpty()) {
+        // TODO: Download image
+        if (!imageUrl.isLocalFile()) {
+            return;
+        }
 
-		QPixmap pixmap( imageUrl.toLocalFile() );
-		if ( pixmap.isNull() )
-			return;
-		QString imageName = imageUrl.fileName();
-		cropAndSaveAvatar(pixmap,imageName);
-	}
+        QPixmap pixmap(imageUrl.toLocalFile());
+        if (pixmap.isNull()) {
+            return;
+        }
+        QString imageName = imageUrl.fileName();
+        cropAndSaveAvatar(pixmap, imageName);
+    }
 }
 
 void AvatarSelectorWidget::buttonRemoveAvatarClicked()
 {
-	// if no item was selected, just exit
-	if ( !d->mainWidget.listUserAvatar->selectedItems().count() )
-		return;
+    // if no item was selected, just exit
+    if (!d->mainWidget.listUserAvatar->selectedItems().count()) {
+        return;
+    }
 
-	AvatarSelectorWidgetItem *selectedItem = dynamic_cast<AvatarSelectorWidgetItem*>( d->mainWidget.listUserAvatar->selectedItems().first() );
-	if( selectedItem )
-	{
-		if ( selectedItem != d->noAvatarItem )
-		{
-			if( !Kopete::AvatarManager::self()->remove( selectedItem->avatarEntry() ) )
-			{
-				qCDebug(LIBKOPETE_LOG) << "Removing of avatar failed for unknown reason.";
-			}
-		}
-	}
+    AvatarSelectorWidgetItem *selectedItem = dynamic_cast<AvatarSelectorWidgetItem *>(d->mainWidget.listUserAvatar->selectedItems().first());
+    if (selectedItem) {
+        if (selectedItem != d->noAvatarItem) {
+            if (!Kopete::AvatarManager::self()->remove(selectedItem->avatarEntry())) {
+                qCDebug(LIBKOPETE_LOG) << "Removing of avatar failed for unknown reason.";
+            }
+        }
+    }
 }
 
-void AvatarSelectorWidget::cropAndSaveAvatar(QPixmap& pixmap, const QString& imageName){
-	// Crop the image
-	QImage avatar = KPixmapRegionSelectorDialog::getSelectedImage( pixmap, 96, 96, this );
+void AvatarSelectorWidget::cropAndSaveAvatar(QPixmap &pixmap, const QString &imageName)
+{
+    // Crop the image
+    QImage avatar = KPixmapRegionSelectorDialog::getSelectedImage(pixmap, 96, 96, this);
 
-	Kopete::AvatarManager::AvatarEntry newEntry;
-	// Remove extension from filename
-	const int extIndex = imageName.lastIndexOf('.');
-	newEntry.name = ( extIndex > 0 ) ? imageName.left( extIndex ) : imageName;
-	newEntry.image = avatar;
-	newEntry.category = Kopete::AvatarManager::User;
+    Kopete::AvatarManager::AvatarEntry newEntry;
+    // Remove extension from filename
+    const int extIndex = imageName.lastIndexOf('.');
+    newEntry.name = (extIndex > 0) ? imageName.left(extIndex) : imageName;
+    newEntry.image = avatar;
+    newEntry.category = Kopete::AvatarManager::User;
 
-	Kopete::AvatarManager::AvatarEntry addedEntry = Kopete::AvatarManager::self()->add( newEntry );
-	if( addedEntry.path.isEmpty() )
-	{
-		//TODO add a real error message
-		//d->mainWidget.labelErrorMessage->setText( i18n("Kopete cannot add this new avatar because it could not save the avatar image in user directory.") );
-		return;
-	}
+    Kopete::AvatarManager::AvatarEntry addedEntry = Kopete::AvatarManager::self()->add(newEntry);
+    if (addedEntry.path.isEmpty()) {
+        //TODO add a real error message
+        //d->mainWidget.labelErrorMessage->setText( i18n("Kopete cannot add this new avatar because it could not save the avatar image in user directory.") );
+        return;
+    }
 
-	// select the added entry and show the user tab
-	QList<QListWidgetItem *> foundItems = d->mainWidget.listUserAvatar->findItems( addedEntry.name, Qt::MatchContains );
-	if( !foundItems.isEmpty() )
-	{
-		AvatarSelectorWidgetItem *item = dynamic_cast<AvatarSelectorWidgetItem*>( foundItems.first() );
-		if ( !item )
-			return;
-		item->setSelected( true );
-	}
+    // select the added entry and show the user tab
+    QList<QListWidgetItem *> foundItems = d->mainWidget.listUserAvatar->findItems(addedEntry.name, Qt::MatchContains);
+    if (!foundItems.isEmpty()) {
+        AvatarSelectorWidgetItem *item = dynamic_cast<AvatarSelectorWidgetItem *>(foundItems.first());
+        if (!item) {
+            return;
+        }
+        item->setSelected(true);
+    }
 }
 
 void AvatarSelectorWidget::buttonFromWebcamClicked()
 {
-	Kopete::UI::AvatarWebcamDialog *dialog = new Kopete::UI::AvatarWebcamDialog();
-	int result = dialog->exec();
-	if(result == QDialog::Accepted){
-		QString avatarName(QStringLiteral("Webcam"));
-		int increment = 1;
-		qCDebug(LIBKOPETE_LOG) << "Trying with: " << avatarName;
-		while((Kopete::AvatarManager::self()->exists(avatarName))) {
-			avatarName = "Webcam_"+QString::number(increment);
-			++increment;
-			qCDebug(LIBKOPETE_LOG) << "Trying with: " << avatarName;
-		}
-		cropAndSaveAvatar(dialog->getLastPixmap(),avatarName);
-	}
-	dialog->close();
-	delete dialog;
+    Kopete::UI::AvatarWebcamDialog *dialog = new Kopete::UI::AvatarWebcamDialog();
+    int result = dialog->exec();
+    if (result == QDialog::Accepted) {
+        QString avatarName(QStringLiteral("Webcam"));
+        int increment = 1;
+        qCDebug(LIBKOPETE_LOG) << "Trying with: " << avatarName;
+        while ((Kopete::AvatarManager::self()->exists(avatarName))) {
+            avatarName = "Webcam_"+QString::number(increment);
+            ++increment;
+            qCDebug(LIBKOPETE_LOG) << "Trying with: " << avatarName;
+        }
+        cropAndSaveAvatar(dialog->getLastPixmap(), avatarName);
+    }
+    dialog->close();
+    delete dialog;
 }
 
 void AvatarSelectorWidget::queryJobFinished(KJob *job)
 {
-	Kopete::AvatarQueryJob *queryJob = static_cast<Kopete::AvatarQueryJob*>(job);
-	if( !queryJob->error() )
-	{
-		QList<Kopete::AvatarManager::AvatarEntry> avatarList = queryJob->avatarList();
-		foreach(const Kopete::AvatarManager::AvatarEntry &entry, avatarList)
-		{
-			d->addItem(entry);
-		}
-	}
-	else
-	{
-		//TODO add a real error message
-		//d->mainWidget.labelErrorMessage->setText( queryJob->errorText() );
-	}
+    Kopete::AvatarQueryJob *queryJob = static_cast<Kopete::AvatarQueryJob *>(job);
+    if (!queryJob->error()) {
+        QList<Kopete::AvatarManager::AvatarEntry> avatarList = queryJob->avatarList();
+        foreach (const Kopete::AvatarManager::AvatarEntry &entry, avatarList) {
+            d->addItem(entry);
+        }
+    } else {
+        //TODO add a real error message
+        //d->mainWidget.labelErrorMessage->setText( queryJob->errorText() );
+    }
 }
 
 void AvatarSelectorWidget::avatarAdded(Kopete::AvatarManager::AvatarEntry newEntry)
 {
-	d->addItem(newEntry);
-	setCurrentAvatar(newEntry.path);
+    d->addItem(newEntry);
+    setCurrentAvatar(newEntry.path);
 }
 
 void AvatarSelectorWidget::avatarRemoved(Kopete::AvatarManager::AvatarEntry entryRemoved)
 {
-	// Same here, avatar can be only removed from listUserAvatar
-	foreach(QListWidgetItem *item, d->mainWidget.listUserAvatar->findItems("",Qt::MatchContains))
-	{
-		// checks if this is the right item
-		AvatarSelectorWidgetItem *avatar = dynamic_cast<AvatarSelectorWidgetItem*>(item);
-		if (!avatar || avatar->avatarEntry().name != entryRemoved.name)
-		    continue;
+    // Same here, avatar can be only removed from listUserAvatar
+    foreach (QListWidgetItem *item, d->mainWidget.listUserAvatar->findItems("", Qt::MatchContains)) {
+        // checks if this is the right item
+        AvatarSelectorWidgetItem *avatar = dynamic_cast<AvatarSelectorWidgetItem *>(item);
+        if (!avatar || avatar->avatarEntry().name != entryRemoved.name) {
+            continue;
+        }
 
-		qCDebug(LIBKOPETE_LOG) << "Removing " << entryRemoved.name << " from list.";
+        qCDebug(LIBKOPETE_LOG) << "Removing " << entryRemoved.name << " from list.";
 
-		int deletedRow = d->mainWidget.listUserAvatar->row( item );
-		QListWidgetItem *removedItem = d->mainWidget.listUserAvatar->takeItem( deletedRow );
-		delete removedItem;
+        int deletedRow = d->mainWidget.listUserAvatar->row(item);
+        QListWidgetItem *removedItem = d->mainWidget.listUserAvatar->takeItem(deletedRow);
+        delete removedItem;
 
-		int newRow = --deletedRow;
-		if( newRow < 0 )
-			newRow = 0;
+        int newRow = --deletedRow;
+        if (newRow < 0) {
+            newRow = 0;
+        }
 
-		// Select the previous avatar in the list, thus selecting a new avatar
-		// and deselecting the avatar being removed.
-		d->mainWidget.listUserAvatar->setCurrentRow( newRow );
-		// Force update
-		listSelectionChanged( d->mainWidget.listUserAvatar->item(newRow) );
-	}
+        // Select the previous avatar in the list, thus selecting a new avatar
+        // and deselecting the avatar being removed.
+        d->mainWidget.listUserAvatar->setCurrentRow(newRow);
+        // Force update
+        listSelectionChanged(d->mainWidget.listUserAvatar->item(newRow));
+    }
 }
 
 void AvatarSelectorWidget::listSelectionChanged(QListWidgetItem *item)
 {
-	d->mainWidget.buttonRemoveAvatar->setEnabled( item != d->noAvatarItem );
-	d->selectedItem = item;
+    d->mainWidget.buttonRemoveAvatar->setEnabled(item != d->noAvatarItem);
+    d->selectedItem = item;
 }
 
-AvatarSelectorWidgetItem * AvatarSelectorWidget::Private::addItem(Kopete::AvatarManager::AvatarEntry entry)
+AvatarSelectorWidgetItem *AvatarSelectorWidget::Private::addItem(Kopete::AvatarManager::AvatarEntry entry)
 {
-	qCDebug(LIBKOPETE_LOG) << "Entry(" << entry.name << "): " << entry.category;
+    qCDebug(LIBKOPETE_LOG) << "Entry(" << entry.name << "): " << entry.category;
 
-	// only use User avatars
-	if( !(entry.category & Kopete::AvatarManager::User) )
-	    return 0;
+    // only use User avatars
+    if (!(entry.category & Kopete::AvatarManager::User)) {
+        return 0;
+    }
 
-	AvatarSelectorWidgetItem *item = new AvatarSelectorWidgetItem(mainWidget.listUserAvatar);
-	item->setAvatarEntry(entry);
-	if (entry.path == currentAvatar)
-		item->setSelected(true);
-	return item;
+    AvatarSelectorWidgetItem *item = new AvatarSelectorWidgetItem(mainWidget.listUserAvatar);
+    item->setAvatarEntry(entry);
+    if (entry.path == currentAvatar) {
+        item->setSelected(true);
+    }
+    return item;
 }
-
 } // Namespace Kopete::UI
-
 } // Namespace Kopete
 
 #endif // LIBKOPETE_UI/AVATARSELECTORWIDGET_CPP

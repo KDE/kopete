@@ -22,16 +22,14 @@ Kopete::IdlePlatform::IdlePlatform() : d(0)
 
 Kopete::IdlePlatform::~IdlePlatform()
 {
-
 }
 
 bool Kopete::IdlePlatform::init()
 {
-	return false;
+    return false;
 }
 
 int Kopete::IdlePlatform::secondsIdle()
 {
-	return 0;
+    return 0;
 }
-

@@ -44,8 +44,7 @@ class KActionMenu;
 
 class KopeteContactListViewPrivate;
 
-namespace Kopete
-{
+namespace Kopete {
 class Contact;
 class MetaContact;
 class Group;
@@ -58,81 +57,80 @@ class Account;
  */
 class KOPETE_CONTACT_LIST_EXPORT KopeteContactListView : public QTreeView
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	KopeteContactListView( QWidget *parent = nullptr );
-	~KopeteContactListView();
+    KopeteContactListView(QWidget *parent = nullptr);
+    ~KopeteContactListView();
 
-	void initActions( KActionCollection *ac );
-	void setModel( QAbstractItemModel *newModel ) Q_DECL_OVERRIDE;
+    void initActions(KActionCollection *ac);
+    void setModel(QAbstractItemModel *newModel) Q_DECL_OVERRIDE;
 
-	int visibleContentHeight() const;
+    int visibleContentHeight() const;
 
-	void keyboardSearch( const QString &search ) Q_DECL_OVERRIDE;
+    void keyboardSearch(const QString &search) Q_DECL_OVERRIDE;
 
 public Q_SLOTS:
-	void reset() Q_DECL_OVERRIDE;
-	void contactActivated( const QModelIndex& index );
+    void reset() Q_DECL_OVERRIDE;
+    void contactActivated(const QModelIndex &index);
 
-	void showItemProperties();
-	void mergeMetaContact();
-	void addGroup();
-	void startChat();
-	void sendFile();
-	void sendMessage();
-	void sendEmail();
-        void rename();
-	void addTemporaryContact();
-	void removeGroupOrMetaContact();
-	void moveToGroup();
-	void copyToGroup();
+    void showItemProperties();
+    void mergeMetaContact();
+    void addGroup();
+    void startChat();
+    void sendFile();
+    void sendMessage();
+    void sendEmail();
+    void rename();
+    void addTemporaryContact();
+    void removeGroupOrMetaContact();
+    void moveToGroup();
+    void copyToGroup();
 
 Q_SIGNALS:
-	void visibleContentHeightChanged();
+    void visibleContentHeightChanged();
 
 protected:
-	void contextMenuEvent( QContextMenuEvent* event ) Q_DECL_OVERRIDE;
-	void mouseReleaseEvent( QMouseEvent *event ) Q_DECL_OVERRIDE;
-	void startDrag( Qt::DropActions supportedActions ) Q_DECL_OVERRIDE;
-	void dragMoveEvent( QDragMoveEvent *event ) Q_DECL_OVERRIDE;
-	void timerEvent( QTimerEvent *event ) Q_DECL_OVERRIDE;
-	bool eventFilter( QObject *object, QEvent *event ) Q_DECL_OVERRIDE;
-	bool viewportEvent( QEvent *event ) Q_DECL_OVERRIDE;
+    void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void startDrag(Qt::DropActions supportedActions) Q_DECL_OVERRIDE;
+    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
+    void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
+    bool viewportEvent(QEvent *event) Q_DECL_OVERRIDE;
 
 protected slots:
-	void rowsInserted( const QModelIndex &parent, int start, int end ) Q_DECL_OVERRIDE;
-	void selectionChanged( const QItemSelection& selected, const QItemSelection& deselected ) Q_DECL_OVERRIDE;
+    void rowsInserted(const QModelIndex &parent, int start, int end) Q_DECL_OVERRIDE;
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) Q_DECL_OVERRIDE;
 
 private slots:
-	void reexpandGroups();
-	void itemExpanded( const QModelIndex& index );
-	void itemCollapsed( const QModelIndex& index );
+    void reexpandGroups();
+    void itemExpanded(const QModelIndex &index);
+    void itemCollapsed(const QModelIndex &index);
 
-	void updateActions();
-	void updateMetaContactActions();
-	void slotSettingsChanged();
-	void addToAddContactMenu( Kopete::Account* account );
-	void removeToAddContactMenu( const Kopete::Account *account );
-	void addContact();
+    void updateActions();
+    void updateMetaContactActions();
+    void slotSettingsChanged();
+    void addToAddContactMenu(Kopete::Account *account);
+    void removeToAddContactMenu(const Kopete::Account *account);
+    void addContact();
 
 private:
-	Kopete::MetaContact* metaContactFromIndex( const QModelIndex& index ) const;
-	Kopete::Group* groupFromIndex( const QModelIndex& index ) const;
+    Kopete::MetaContact *metaContactFromIndex(const QModelIndex &index) const;
+    Kopete::Group *groupFromIndex(const QModelIndex &index) const;
 
-	void groupPopup( Kopete::Group *group, const QPoint& pos );
-	void metaContactPopup( Kopete::MetaContact *metaContact, const QPoint& pos );
-	void miscPopup( QModelIndexList indexes, const QPoint& pos );
-	Kopete::Contact* contactAt( const QPoint& point ) const;
-	
-	void setScrollAutoHide( bool autoHide );
-	void setScrollHide( bool hide );
+    void groupPopup(Kopete::Group *group, const QPoint &pos);
+    void metaContactPopup(Kopete::MetaContact *metaContact, const QPoint &pos);
+    void miscPopup(QModelIndexList indexes, const QPoint &pos);
+    Kopete::Contact *contactAt(const QPoint &point) const;
 
-	int visibleContentHeight( const QModelIndex& parent ) const;
+    void setScrollAutoHide(bool autoHide);
+    void setScrollHide(bool hide);
 
-	KopeteContactListViewPrivate *d;
+    int visibleContentHeight(const QModelIndex &parent) const;
+
+    KopeteContactListViewPrivate *d;
 };
-
 
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

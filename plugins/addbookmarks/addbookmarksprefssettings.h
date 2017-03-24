@@ -1,7 +1,7 @@
 //
 // C++ Interface: %{MODULE}
 //
-// Description: 
+// Description:
 //
 //
 // Author: Roie Kerstein <sf_kersteinroie@bezeqint.net>, (C) 2004
@@ -20,27 +20,43 @@
 */
 class BookmarksPrefsSettings : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	enum UseSubfolders { Always=0, Never=1, SelectedContacts=2, UnselectedContacts=3 };
+    enum UseSubfolders {
+        Always = 0, Never = 1, SelectedContacts = 2, UnselectedContacts = 3
+    };
 
     BookmarksPrefsSettings(QObject *parent = nullptr);
 
     ~BookmarksPrefsSettings();
-    
+
     void load();
     void save();
-    UseSubfolders isFolderForEachContact() {return m_isfolderforeachcontact;}
-    void setFolderForEachContact(UseSubfolders val) {m_isfolderforeachcontact = val;}
-    bool useSubfolderForContact( QString nickname );
-    QStringList getContactsList() {return m_contactslist;}
-    void setContactsList(QStringList list) {m_contactslist = list;}
-    
+    UseSubfolders isFolderForEachContact()
+    {
+        return m_isfolderforeachcontact;
+    }
+
+    void setFolderForEachContact(UseSubfolders val)
+    {
+        m_isfolderforeachcontact = val;
+    }
+
+    bool useSubfolderForContact(QString nickname);
+    QStringList getContactsList()
+    {
+        return m_contactslist;
+    }
+
+    void setContactsList(QStringList list)
+    {
+        m_contactslist = list;
+    }
+
 private:
     bool m_folderPerContact;
     UseSubfolders m_isfolderforeachcontact;
     QStringList m_contactslist;
-
 };
 
 #endif

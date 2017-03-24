@@ -21,10 +21,11 @@
 #include <QAccessible>
 #include <QAccessiblePlugin>
 
-class ChatWindowAccessibleWidgetFactory: public QAccessiblePlugin {
+class ChatWindowAccessibleWidgetFactory : public QAccessiblePlugin
+{
 public:
-    ChatWindowAccessibleWidgetFactory( QObject *parent = nullptr );
-    QAccessibleInterface *create( const QString &key, QObject *object ) Q_DECL_OVERRIDE;
+    ChatWindowAccessibleWidgetFactory(QObject *parent = nullptr);
+    QAccessibleInterface *create(const QString &key, QObject *object) Q_DECL_OVERRIDE;
     virtual QStringList keys() const;
 };
 

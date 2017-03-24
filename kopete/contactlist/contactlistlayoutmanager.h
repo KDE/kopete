@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
- 
+
 #ifndef CONTACTLISTLAYOUTMANAGER_H
 #define CONTACTLISTLAYOUTMANAGER_H
 
@@ -34,78 +34,89 @@ class QDomElement;
 class QDomDocument;
 
 namespace ContactList {
-
-class KOPETE_CONTACT_LIST_EXPORT ContactListTokenConfig {
+class KOPETE_CONTACT_LIST_EXPORT ContactListTokenConfig
+{
 public:
-	ContactListTokenConfig()
-		: mModelRole(-1)
-	{}
-	
-	ContactListTokenConfig(int modelRole, QString configName, QString name, QString iconName)
-		: mModelRole(modelRole), mConfigName(configName), mName(name), mIconName(iconName)
-	{}
-	
-	int mModelRole;
-	QString mConfigName;
-	QString mName;
-	QString mIconName;
+    ContactListTokenConfig()
+        : mModelRole(-1)
+    {
+    }
+
+    ContactListTokenConfig(int modelRole, QString configName, QString name, QString iconName)
+        : mModelRole(modelRole)
+        , mConfigName(configName)
+        , mName(name)
+        , mIconName(iconName)
+    {
+    }
+
+    int mModelRole;
+    QString mConfigName;
+    QString mName;
+    QString mIconName;
 };
 
 class KOPETE_CONTACT_LIST_EXPORT LayoutManager : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	static LayoutManager * instance();
+    static LayoutManager *instance();
 
-	QStringList layouts() const;
-	void setActiveLayout( const QString &layout );
-	void setPreviewLayout( const ContactListLayout &layout );
-	ContactListLayout layout( const QString &layout );
-	ContactListLayout activeLayout();
-	QString activeLayoutName() const;
+    QStringList layouts() const;
+    void setActiveLayout(const QString &layout);
+    void setPreviewLayout(const ContactListLayout &layout);
+    ContactListLayout layout(const QString &layout);
+    ContactListLayout activeLayout();
+    QString activeLayoutName() const;
 
-	bool isDefaultLayout( const QString &layout ) const;
+    bool isDefaultLayout(const QString &layout) const;
 
-	bool addUserLayout( const QString &name, ContactListLayout layout );
-	bool deleteLayout( const QString &layout );
+    bool addUserLayout(const QString &name, ContactListLayout layout);
+    bool deleteLayout(const QString &layout);
 
-	enum TokenTypes {
-		PlaceHolder = 0,
-		DisplayName = 1,
-		StatusTitle = 2,
-		StatusMessage = 3,
-		ContactIcons = 4
-	};
+    enum TokenTypes {
+        PlaceHolder = 0,
+        DisplayName = 1,
+        StatusTitle = 2,
+        StatusMessage = 3,
+        ContactIcons = 4
+    };
 
-	QList<ContactListTokenConfig> tokens() const { return m_tokens; }
-	ContactListTokenConfig token( int tokenType ) const { return m_tokens.value( tokenType ); }
+    QList<ContactListTokenConfig> tokens() const
+    {
+        return m_tokens;
+    }
+
+    ContactListTokenConfig token(int tokenType) const
+    {
+        return m_tokens.value(tokenType);
+    }
 
 signals:
-	void activeLayoutChanged();
-	void layoutListChanged();
+    void activeLayoutChanged();
+    void layoutListChanged();
 
 private:
-	LayoutManager();
-	~LayoutManager();
+    LayoutManager();
+    ~LayoutManager();
 
-	void loadDefaultLayouts();
-	void loadUserLayouts();
+    void loadDefaultLayouts();
+    void loadUserLayouts();
 
-	void loadLayouts( const QString &fileName, bool user );
+    void loadLayouts(const QString &fileName, bool user);
 
-	QDomElement createItemElement( QDomDocument doc, const QString &name,  const LayoutItemConfig &item ) const;
+    QDomElement createItemElement(QDomDocument doc, const QString &name, const LayoutItemConfig &item) const;
 
-	LayoutItemConfig parseItemConfig( const QDomElement &elem );
+    LayoutItemConfig parseItemConfig(const QDomElement &elem);
 
-	static LayoutManager * s_instance;
+    static LayoutManager *s_instance;
 
-	QMap<QString, ContactListLayout> m_layouts;
-	QString m_activeLayout;
-	ContactListLayout m_previewLayout;
-	QList<ContactListTokenConfig> m_tokens;
+    QMap<QString, ContactListLayout> m_layouts;
+    QString m_activeLayout;
+    ContactListLayout m_previewLayout;
+    QList<ContactListTokenConfig> m_tokens;
 };
-
 }
 
 #endif

@@ -28,36 +28,39 @@
 #include <QShowEvent>
 
 class GaduAccount;
-namespace Ui { class GaduAddUI; }
+namespace Ui {
+class GaduAddUI;
+}
 class QLabel;
-namespace Kopete { class MetaContact; }
+namespace Kopete {
+class MetaContact;
+}
 class QString;
 class QShowEvent;
 class GaduAddUI;
 
-
 class GaduAddContactPage : public AddContactPage
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit GaduAddContactPage( GaduAccount*, QWidget* parent = 0 );
-	~GaduAddContactPage();
-	virtual bool validateData();
-	virtual bool apply( Kopete::Account* , Kopete::MetaContact * );
+    explicit GaduAddContactPage(GaduAccount *, QWidget *parent = 0);
+    ~GaduAddContactPage();
+    virtual bool validateData();
+    virtual bool apply(Kopete::Account *, Kopete::MetaContact *);
 
-	protected:
-		void showEvent(QShowEvent *e);
+protected:
+    void showEvent(QShowEvent *e);
 
 public slots:
-	void  slotUinChanged( const QString& );
+    void  slotUinChanged(const QString &);
 
 private:
-	void fillGroups();
-	GaduAccount*	account_;
-	Ui::GaduAddUI*	addUI_;
-	QLabel*		noaddMsg1_;
-	QLabel*		noaddMsg2_;
+    void fillGroups();
+    GaduAccount *account_;
+    Ui::GaduAddUI *addUI_;
+    QLabel *noaddMsg1_;
+    QLabel *noaddMsg2_;
 };
 
 #endif

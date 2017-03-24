@@ -33,87 +33,85 @@ class KActionCollection;
 class KOPETE_EXPORT KopeteStdAction
 {
 public:
-	/**
-	 * Standard action to start a chat
-	 */
-	static QAction *chat( const QObject *recvr, const char *slot, QObject* parent );
-	/**
-	 * Standard action to send a single message
-	 */
-	static QAction *sendMessage(const QObject *recvr, const char *slot, QObject* parent );
-	/**
-	 * Standard action to open a user info dialog
-	 */
-	static QAction *contactInfo(const QObject *recvr, const char *slot, QObject* parent );
-	/**
-	 * Standard action to open a history dialog or something similar
-	 */
-	static QAction *viewHistory(const QObject *recvr, const char *slot, QObject* parent );
-	/**
-	 * Standard action to initiate sending a file to a contact
-	 */
-	static QAction *sendFile(const QObject *recvr, const char *slot, QObject* parent );
-	/**
-	 * Standard action to toggle is the contact is visible even when offline
-	 */
-	static QAction *toggleAlwaysVisible(const QObject *recvr, const char *slot, QObject* parent );
-	/**
-	 * Standard action to change a contacts @ref Kopete::MetaContact
-	 */
-	static QAction *changeMetaContact(const QObject *recvr, const char *slot, QObject* parent );
-	/**
-	 * Standard action to add a group
-	 */
-	static QAction *addGroup(const QObject *recvr, const char *slot, QObject* parent );
-	/**
-	 * Standard action to delete a contact
-	 */
-	static QAction *deleteContact(const QObject *recvr, const char *slot, QObject* parent );
-	/**
-	 * Standard action to change a contact alias/nickname in your contact list
-	 */
-	static QAction *changeAlias(const QObject *recvr, const char *slot, QObject* parent );
-	/**
-	 * Standard action to block a contact
-	 */
-	static QAction *blockContact(const QObject *recvr, const char *slot, QObject* parent );
-	/**
-	 * Standard action to unblock a contact
-	 */
-	static QAction *unblockContact(const QObject *recvr, const char *slot, QObject* parent );
+    /**
+     * Standard action to start a chat
+     */
+    static QAction *chat(const QObject *recvr, const char *slot, QObject *parent);
+    /**
+     * Standard action to send a single message
+     */
+    static QAction *sendMessage(const QObject *recvr, const char *slot, QObject *parent);
+    /**
+     * Standard action to open a user info dialog
+     */
+    static QAction *contactInfo(const QObject *recvr, const char *slot, QObject *parent);
+    /**
+     * Standard action to open a history dialog or something similar
+     */
+    static QAction *viewHistory(const QObject *recvr, const char *slot, QObject *parent);
+    /**
+     * Standard action to initiate sending a file to a contact
+     */
+    static QAction *sendFile(const QObject *recvr, const char *slot, QObject *parent);
+    /**
+     * Standard action to toggle is the contact is visible even when offline
+     */
+    static QAction *toggleAlwaysVisible(const QObject *recvr, const char *slot, QObject *parent);
+    /**
+     * Standard action to change a contacts @ref Kopete::MetaContact
+     */
+    static QAction *changeMetaContact(const QObject *recvr, const char *slot, QObject *parent);
+    /**
+     * Standard action to add a group
+     */
+    static QAction *addGroup(const QObject *recvr, const char *slot, QObject *parent);
+    /**
+     * Standard action to delete a contact
+     */
+    static QAction *deleteContact(const QObject *recvr, const char *slot, QObject *parent);
+    /**
+     * Standard action to change a contact alias/nickname in your contact list
+     */
+    static QAction *changeAlias(const QObject *recvr, const char *slot, QObject *parent);
+    /**
+     * Standard action to block a contact
+     */
+    static QAction *blockContact(const QObject *recvr, const char *slot, QObject *parent);
+    /**
+     * Standard action to unblock a contact
+     */
+    static QAction *unblockContact(const QObject *recvr, const char *slot, QObject *parent);
 
-	/**
-	 * Return an action to change the Kopete preferences.
-	 *
-	 * The object has no signal/slot, the prefs are automatically shown
-	 */
-	static QAction *preferences(KActionCollection *parent, const char *name = 0);
+    /**
+     * Return an action to change the Kopete preferences.
+     *
+     * The object has no signal/slot, the prefs are automatically shown
+     */
+    static QAction *preferences(KActionCollection *parent, const char *name = 0);
 private:
-	/**
-	 * @internal
-	 * Helper method to create a action
-	 */
-	static QAction *createAction(const QString &text, const QIcon &icon, const QObject *receiver, const char *slot, QObject* parent);
+    /**
+     * @internal
+     * Helper method to create a action
+     */
+    static QAction *createAction(const QString &text, const QIcon &icon, const QObject *receiver, const char *slot, QObject *parent);
 };
 
-
-namespace KSettings
-{
-	  class Dialog;
+namespace KSettings {
+class Dialog;
 }
 
 class KOPETE_EXPORT KopetePreferencesAction : public QAction
 {
-	  Q_OBJECT
+    Q_OBJECT
 
-	  public:
-			 explicit KopetePreferencesAction( KActionCollection *parent, const char *name = 0 );
-			 ~KopetePreferencesAction();
+public:
+    explicit KopetePreferencesAction(KActionCollection *parent, const char *name = 0);
+    ~KopetePreferencesAction();
 
-	  protected slots:
-			 void slotShowPreferences();
-	  private:
-			 static KSettings::Dialog *s_settingsDialog;
+protected slots:
+    void slotShowPreferences();
+private:
+    static KSettings::Dialog *s_settingsDialog;
 };
 
 #endif

@@ -27,10 +27,9 @@
 class KopeteWindow;
 class QSessionManager;
 
-namespace Kopete
-{
-	class MimeTypeHandler;
-	class FileEngineHandler;
+namespace Kopete {
+class MimeTypeHandler;
+class FileEngineHandler;
 }
 
 /**
@@ -38,53 +37,55 @@ namespace Kopete
  */
 class KopeteApplication : public KUniqueApplication
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	KopeteApplication();
-	~KopeteApplication();
+    KopeteApplication();
+    ~KopeteApplication();
 
-	/**
-	 * Method to return whether or not we're shutting down
-	 * or not at this point.
-	 */
-	bool isShuttingDown() const { return m_isShuttingDown; }
+    /**
+     * Method to return whether or not we're shutting down
+     * or not at this point.
+     */
+    bool isShuttingDown() const
+    {
+        return m_isShuttingDown;
+    }
 
-	int newInstance() Q_DECL_OVERRIDE;
+    int newInstance() Q_DECL_OVERRIDE;
 
 public slots:
-	/**
-	 * Quit Kopete, closing all the windows, which causes application shutdown
-	 * This method marks Kopete as 'shutting down' to avoid
-	 * showing the message box that Kopete will be left running in the
-	 * system tray before calling qApp->quit().
-	 */
-	void quitKopete();
+    /**
+     * Quit Kopete, closing all the windows, which causes application shutdown
+     * This method marks Kopete as 'shutting down' to avoid
+     * showing the message box that Kopete will be left running in the
+     * system tray before calling qApp->quit().
+     */
+    void quitKopete();
 
-	virtual void commitData( QSessionManager &sm );
-	/**
-	 * Load all plugins
-	 */
-	void slotLoadPlugins();
+    virtual void commitData(QSessionManager &sm);
+    /**
+     * Load all plugins
+     */
+    void slotLoadPlugins();
 
 private slots:
-	/**
-	 * auto-connect
-	 */
-	void slotAllPluginsLoaded();
+    /**
+     * auto-connect
+     */
+    void slotAllPluginsLoaded();
 private:
-	// The main window might get deleted behind our back (W_DestructiveClose),
-	// so use a guarded pointer
-	QPointer<KopeteWindow> m_mainWindow;
-	bool m_isShuttingDown;
-	Kopete::MimeTypeHandler *m_emoticonHandler;
-	//NOTE: QAbstractFileEngine and QAbstractFileEngineHandler deprecated in Qt5
-	//Kopete::FileEngineHandler *m_fileEngineHandler;
+    // The main window might get deleted behind our back (W_DestructiveClose),
+    // so use a guarded pointer
+    QPointer<KopeteWindow> m_mainWindow;
+    bool m_isShuttingDown;
+    Kopete::MimeTypeHandler *m_emoticonHandler;
+    //NOTE: QAbstractFileEngine and QAbstractFileEngineHandler deprecated in Qt5
+    //Kopete::FileEngineHandler *m_fileEngineHandler;
 private:
-	void handleURLArgs();
+    void handleURLArgs();
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

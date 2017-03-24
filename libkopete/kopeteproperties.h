@@ -28,9 +28,7 @@
 class QString;
 class QDomElement;
 
-namespace Kopete
-{
-
+namespace Kopete {
 /**
  * Contains the classes forming Kopete's Properties system.
  *
@@ -38,9 +36,7 @@ namespace Kopete
  *
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-namespace Properties
-{
-
+namespace Properties {
 //BEGIN core functionality
 
 /**
@@ -58,18 +54,18 @@ template<class Parent>
 class PropertyBase
 {
 public:
-	/**
-	 * Returns the name of the property. This name should uniquely identify this property
-	 * within the type Parent, and will be used for persistently identifying this property.
-	 *
-	 * For core properties, the chosen name should not contain any slash characters. For
-	 * properties defined in plugins kept in Kopete's CVS, the name should be of the form
-	 * pluginName/propertyName. For third-party plugins, please use a URL with a host which
-	 * you own, such as "http://my-host.com/kopete/properties/groupId".
-	 *
-	 * @return the name of this property.
-	 */
-	virtual const QByteArray &name() const = 0;
+    /**
+     * Returns the name of the property. This name should uniquely identify this property
+     * within the type Parent, and will be used for persistently identifying this property.
+     *
+     * For core properties, the chosen name should not contain any slash characters. For
+     * properties defined in plugins kept in Kopete's CVS, the name should be of the form
+     * pluginName/propertyName. For third-party plugins, please use a URL with a host which
+     * you own, such as "http://my-host.com/kopete/properties/groupId".
+     *
+     * @return the name of this property.
+     */
+    virtual const QByteArray &name() const = 0;
 };
 
 /**
@@ -91,14 +87,14 @@ template<class Parent, typename Type>
 class Property : public PropertyBase<Parent>
 {
 public:
-	/**
-	 * Returns the value of this property in the object @p parent.
-	 */
-	virtual Type get( const Parent *parent ) const = 0;
-	/**
-	 * Sets the value of this property in the object @p parent.
-	 */
-	virtual void set( Parent *, const Type & ) const = 0;
+    /**
+     * Returns the value of this property in the object @p parent.
+     */
+    virtual Type get(const Parent *parent) const = 0;
+    /**
+     * Sets the value of this property in the object @p parent.
+     */
+    virtual void set(Parent *, const Type &) const = 0;
 };
 
 /**
@@ -112,7 +108,9 @@ public:
  */
 struct PropertyData
 {
-	virtual ~PropertyData() {}
+    virtual ~PropertyData()
+    {
+    }
 };
 
 /**
@@ -124,33 +122,42 @@ struct PropertyData
  */
 class PropertyStorage
 {
-	typedef QMultiHash<QByteArray, PropertyData*> PropertyDict;
-	// setCustomPropertyData can be called on a const object, allowing the
-	// guarantee that DataProperty::data() never returns 0.
-	mutable PropertyDict _storage;
+    typedef QMultiHash<QByteArray, PropertyData *> PropertyDict;
+    // setCustomPropertyData can be called on a const object, allowing the
+    // guarantee that DataProperty::data() never returns 0.
+    mutable PropertyDict _storage;
 
 public:
-	PropertyStorage() {}
-	~PropertyStorage()
-	{
-		qDeleteAll(_storage);
-	}
+    PropertyStorage()
+    {
+    }
 
-	/**
-	 * Sets the stored property data with name @p name to be @p data.
-	 *
-	 * @note The @p name argument should usually be the name of the property which the data
-	 * is being stored for. However, if properties wish to share data, they may choose to
-	 * name their custom data differently. Names are bound by the same rules as are laid out
-	 * for naming properties in PropertyBase<Parent>::name.
-	 */
-	void setCustomPropertyData( const QByteArray &name, PropertyData *data ) const { _storage.replace( name, data ); }
+    ~PropertyStorage()
+    {
+        qDeleteAll(_storage);
+    }
 
-	/**
-	 * Gets the stored property data with name @p name. Returns a null
-	 * pointer if no data has been stored for that property.
-	 */
-	PropertyData *getCustomPropertyData( const QByteArray &name ) const { return _storage.value(name); }
+    /**
+     * Sets the stored property data with name @p name to be @p data.
+     *
+     * @note The @p name argument should usually be the name of the property which the data
+     * is being stored for. However, if properties wish to share data, they may choose to
+     * name their custom data differently. Names are bound by the same rules as are laid out
+     * for naming properties in PropertyBase<Parent>::name.
+     */
+    void setCustomPropertyData(const QByteArray &name, PropertyData *data) const
+    {
+        _storage.replace(name, data);
+    }
+
+    /**
+     * Gets the stored property data with name @p name. Returns a null
+     * pointer if no data has been stored for that property.
+     */
+    PropertyData *getCustomPropertyData(const QByteArray &name) const
+    {
+        return _storage.value(name);
+    }
 };
 
 /**
@@ -170,27 +177,34 @@ template<class Parent>
 class WithProperties : public PropertyStorage
 {
 public:
-	/**
-	 * Get the value of property @p prop in this object.
-	 * @param prop the Property object representing the property to get
-	 */
-	template<typename T>
-	T property( Property<Parent,T> const &prop ) { return prop.get( static_cast<Parent*>(this) ); }
-	/**
-	 * Set the value of property @p prop in this object.
-	 * @param prop the Property object representing the property to get
-	 * @param value the value to set the property to
-	 */
-	template<typename T>
-	void setProperty( Property<Parent,T> const &prop, const T &value ) { prop.set( static_cast<Parent*>(this), value ); }
+    /**
+     * Get the value of property @p prop in this object.
+     * @param prop the Property object representing the property to get
+     */
+    template<typename T>
+    T property(Property<Parent, T> const &prop)
+    {
+        return prop.get(static_cast<Parent *>(this));
+    }
 
-	/**
-	 * Called when a property is created; loads the Parent object's data into the property.
-	 *
-	 * @note Derived classes must explicitly specialize this to load the property's data into
-	 *       every object of this type.
-	 */
-	static void propertyCreated( const PropertyBase<Parent> &property );
+    /**
+     * Set the value of property @p prop in this object.
+     * @param prop the Property object representing the property to get
+     * @param value the value to set the property to
+     */
+    template<typename T>
+    void setProperty(Property<Parent, T> const &prop, const T &value)
+    {
+        prop.set(static_cast<Parent *>(this), value);
+    }
+
+    /**
+     * Called when a property is created; loads the Parent object's data into the property.
+     *
+     * @note Derived classes must explicitly specialize this to load the property's data into
+     *       every object of this type.
+     */
+    static void propertyCreated(const PropertyBase<Parent> &property);
 };
 
 //END core functionality
@@ -204,9 +218,9 @@ public:
 template<class Parent>
 struct UserVisible
 {
-	virtual QString userText( Parent * ) = 0;
-	virtual QString label() = 0;
-	virtual QString icon() = 0;
+    virtual QString userText(Parent *) = 0;
+    virtual QString label() = 0;
+    virtual QString icon() = 0;
 };
 
 /**
@@ -216,8 +230,8 @@ struct UserVisible
 template<class Parent>
 struct XMLSerializable
 {
-	virtual void fromXML( Parent *, const QDomElement & ) = 0;
-	virtual void toXML( const Parent *, QDomElement & ) = 0;
+    virtual void fromXML(Parent *, const QDomElement &) = 0;
+    virtual void toXML(const Parent *, QDomElement &) = 0;
 };
 
 /**
@@ -227,8 +241,8 @@ struct XMLSerializable
 template<class Parent>
 struct StringSerializable
 {
-	virtual void fromString( Parent *, const QString & ) = 0;
-	virtual QString toString( const Parent * ) = 0;
+    virtual void fromString(Parent *, const QString &) = 0;
+    virtual QString toString(const Parent *) = 0;
 };
 
 //END interfaces
@@ -238,7 +252,7 @@ struct StringSerializable
 /**
  * @internal Display a warning message when the wrong type of property data is found
  */
-void customPropertyDataIncorrectType( const char *name, const std::type_info &found, const std::type_info &expected );
+void customPropertyDataIncorrectType(const char *name, const std::type_info &found, const std::type_info &expected);
 
 /**
  * @brief Convenience implementation of a Property that stores PropertyData
@@ -247,22 +261,22 @@ void customPropertyDataIncorrectType( const char *name, const std::type_info &fo
  * @p Data must be derived from @ref PropertyBase, or your code will not compile.
  */
 template<class Parent, typename Type, class Data>
-class DataProperty : public Property<Parent,Type>
+class DataProperty : public Property<Parent, Type>
 {
 public:
-	Data *data( const Parent *c ) const
-	{
-		PropertyData *pd = c->getCustomPropertyData( this->name() );
-		Data *data = dynamic_cast<Data*>(pd);
-		if ( !data )
-		{
-			if ( pd )
-				customPropertyDataIncorrectType( this->name(), typeid(*pd), typeid(Data) );
-			data = new Data;
-			c->setCustomPropertyData( this->name(), data );
-		}
-		return data;
-	}
+    Data *data(const Parent *c) const
+    {
+        PropertyData *pd = c->getCustomPropertyData(this->name());
+        Data *data = dynamic_cast<Data *>(pd);
+        if (!data) {
+            if (pd) {
+                customPropertyDataIncorrectType(this->name(), typeid(*pd), typeid(Data));
+            }
+            data = new Data;
+            c->setCustomPropertyData(this->name(), data);
+        }
+        return data;
+    }
 };
 
 /**
@@ -276,8 +290,11 @@ public:
 template<typename T>
 struct SimplePropertyData : public PropertyData
 {
-	SimplePropertyData() : value() {}
-	T value;
+    SimplePropertyData() : value()
+    {
+    }
+
+    T value;
 };
 
 /**
@@ -291,11 +308,18 @@ struct SimplePropertyData : public PropertyData
  * still pure virtual.
  */
 template<class Parent, typename Type>
-class SimpleDataProperty : public DataProperty<Parent,Type,SimplePropertyData<Type> >
+class SimpleDataProperty : public DataProperty<Parent, Type, SimplePropertyData<Type> >
 {
 public:
-	Type get( const Parent *p ) const { return data(p)->value; }
-	void set( Parent *p, const Type &v ) const { data(p)->value = v; }
+    Type get(const Parent *p) const
+    {
+        return data(p)->value;
+    }
+
+    void set(Parent *p, const Type &v) const
+    {
+        data(p)->value = v;
+    }
 };
 
 /**
@@ -308,7 +332,7 @@ public:
  */
 template<class T> T variantTo(QVariant);
 
-QVariant variantFromXML(const QDomElement&);
+QVariant variantFromXML(const QDomElement &);
 void variantToXML(QVariant v, QDomElement &);
 
 /**
@@ -338,20 +362,19 @@ template<class Derived, class Parent, typename Type>
 class XMLProperty : public XMLSerializable<Parent>
 {
 public:
-	void fromXML( Parent *t, const QDomElement &e )
-	{
-		static_cast<Derived*>(this)->set(t, variantTo<Type>(variantFromXML(e)));
-	}
-	void toXML( const Parent *t, QDomElement &e )
-	{
-		variantToXML(QVariant(static_cast<Derived*>(this)->get(t)),e);
-	}
+    void fromXML(Parent *t, const QDomElement &e)
+    {
+        static_cast<Derived *>(this)->set(t, variantTo<Type>(variantFromXML(e)));
+    }
+
+    void toXML(const Parent *t, QDomElement &e)
+    {
+        variantToXML(QVariant(static_cast<Derived *>(this)->get(t)), e);
+    }
 };
 
 //END convenience classes
-
 } // namespace Properties
-
 } // namespace Kopete
 
 #endif

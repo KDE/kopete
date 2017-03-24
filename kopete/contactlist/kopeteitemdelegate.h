@@ -29,50 +29,49 @@
 class QPainter;
 class QAbstractItemView;
 
-namespace Kopete { class Contact; }
+namespace Kopete {
+class Contact;
+}
 
 class KOPETE_CONTACT_LIST_EXPORT KopeteItemDelegate : public QStyledItemDelegate
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	KopeteItemDelegate( QAbstractItemView* parent = nullptr );
-	~KopeteItemDelegate();
+    KopeteItemDelegate(QAbstractItemView *parent = nullptr);
+    ~KopeteItemDelegate();
 
-	static QFont normalFont( const QFont& naturalFont );
-	static QFont smallFont( const QFont& naturalFont );
+    static QFont normalFont(const QFont &naturalFont);
+    static QFont smallFont(const QFont &naturalFont);
 
-	void paint ( QPainter * painter, 
-	                     const QStyleOptionViewItem & option,
-	                     const QModelIndex & index ) const Q_DECL_OVERRIDE;
-	QSize sizeHint ( const QStyleOptionViewItem & option,
-	                         const QModelIndex & index ) const Q_DECL_OVERRIDE;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
 
-	Kopete::Contact* contactAt( const QStyleOptionViewItem& option, const QModelIndex& index, const QPoint& point ) const;
+    Kopete::Contact *contactAt(const QStyleOptionViewItem &option, const QModelIndex &index, const QPoint &point) const;
 
 public slots:
-	bool helpEvent( QHelpEvent* event, QAbstractItemView* view, const QStyleOptionViewItem& option, const QModelIndex& index ) Q_DECL_OVERRIDE;
+    bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) Q_DECL_OVERRIDE;
 
 private:
-	void paintItem( ContactList::LayoutItemConfig config, QPainter* painter,
-	                const QStyleOptionViewItem& option, const QModelIndex& index,
-	                QList<QPair<QRect, Kopete::Contact*> >* contactPositionList ) const;
+    void paintItem(ContactList::LayoutItemConfig config, QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index,
+                   QList<QPair<QRect, Kopete::Contact *> > *contactPositionList) const;
 
-	QPointF centerImage( const QImage& image, const QRectF& rect ) const;
-	QPointF centerImage( const QPixmap& pixmap, const QRectF& rect ) const;
-	qreal calculateRowHeight( const ContactList::LayoutItemConfigRow &row, const QFont &normal, const QFont &small ) const;
-	QList<Kopete::Contact*> filterContacts( const QList<Kopete::Contact*> contacts ) const;
+    QPointF centerImage(const QImage &image, const QRectF &rect) const;
+    QPointF centerImage(const QPixmap &pixmap, const QRectF &rect) const;
+    qreal calculateRowHeight(const ContactList::LayoutItemConfigRow &row, const QFont &normal, const QFont &small) const;
+    QList<Kopete::Contact *> filterContacts(const QList<Kopete::Contact *> contacts) const;
 
-	enum LayoutType { LayoutAuto = 0, LayoutNormal, LayoutFixed };
-	struct DynamicLayoutItem {
-		bool dirty;
-		LayoutType type;
-		qreal width;
+    enum LayoutType {
+        LayoutAuto = 0, LayoutNormal, LayoutFixed
+    };
+    struct DynamicLayoutItem {
+        bool dirty;
+        LayoutType type;
+        qreal width;
 
-		// Caching
-		QString text;
-		QFont font;
-	};
+        // Caching
+        QString text;
+        QFont font;
+    };
 };
 
 #endif
-

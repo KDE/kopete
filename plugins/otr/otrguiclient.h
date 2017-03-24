@@ -16,7 +16,7 @@
  *                                                                       *
  * You should have received a copy of the GNU General Public License     *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- *************************************************************************/ 
+ *************************************************************************/
 
 #ifndef OTRGUICLIENT_H
 #define OTRGUICLIENT_H
@@ -31,47 +31,42 @@
 #include <kopetemessage.h>
 #include <kopeteplugin.h>
 
-
 class KActionMenu;
 class KAction;
 
-namespace Kopete { class ChatSession; }
+namespace Kopete {
+class ChatSession;
+}
 
 /**
   * @author Frank Scheffold
   */
 
-
-
-
-class OtrGUIClient : public QObject , public KXMLGUIClient
+class OtrGUIClient : public QObject, public KXMLGUIClient
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
 
-	OtrGUIClient( Kopete::ChatSession *parent);
-	~OtrGUIClient();
-
+    OtrGUIClient(Kopete::ChatSession *parent);
+    ~OtrGUIClient();
 
 private:
-	Kopete::ChatSession *m_manager;
-	KActionMenu *otrActionMenu;
-	KAction *actionEnableOtr;
-	KAction *actionDisableOtr;
-	KAction *actionVerifyFingerprint;
+    Kopete::ChatSession *m_manager;
+    KActionMenu *otrActionMenu;
+    KAction *actionEnableOtr;
+    KAction *actionDisableOtr;
+    KAction *actionVerifyFingerprint;
 
 private slots:
-	void slotEnableOtr();
-	void slotDisableOtr();
-        void encryptionEnabled( Kopete::ChatSession* session, int state );
-	void slotVerifyFingerprint();
-	
+    void slotEnableOtr();
+    void slotDisableOtr();
+    void encryptionEnabled(Kopete::ChatSession *session, int state);
+    void slotVerifyFingerprint();
+
 signals:
-	void signalOtrChatsession( Kopete::ChatSession* session, bool enable );
-	void signalVerifyFingerprint( Kopete::ChatSession *session );
-
-
+    void signalOtrChatsession(Kopete::ChatSession *session, bool enable);
+    void signalVerifyFingerprint(Kopete::ChatSession *session);
 };
 
 #endif

@@ -18,7 +18,6 @@
 #ifndef FILTER_H
 #define FILTER_H
 
-
 #include <qstring.h>
 #include <qcolor.h>
 #include <QVariant>
@@ -32,25 +31,25 @@ public:
     Filter();
     ~Filter();
 
-	QString displayName;
-	QString search;
-	bool caseSensitive;
-	bool isRegExp;
-	
-	bool setImportance;
-	unsigned int importance;
-	
-	bool setFG;
-	QColor FG;
-	
-	bool setBG;
-	QColor BG;
-	
-	bool raiseView;
-	
-	QString className() const;
+    QString displayName;
+    QString search;
+    bool caseSensitive;
+    bool isRegExp;
+
+    bool setImportance;
+    unsigned int importance;
+
+    bool setFG;
+    QColor FG;
+
+    bool setBG;
+    QColor BG;
+
+    bool raiseView;
+
+    QString className() const;
 };
 
-Q_DECLARE_METATYPE(Filter*)
+Q_DECLARE_METATYPE(Filter *)
 
 #endif

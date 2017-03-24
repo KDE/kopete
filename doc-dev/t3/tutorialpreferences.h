@@ -26,7 +26,7 @@
 
 class TutorialPreferences : public KCModule
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit TutorialPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
     ~TutorialPreferences();

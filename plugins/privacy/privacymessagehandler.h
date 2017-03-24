@@ -25,29 +25,28 @@ class KOPETEPRIVACY_EXPORT PrivacyMessageHandlerFactory : public MessageHandlerF
 {
 public:
 
-	PrivacyMessageHandlerFactory( Message::MessageDirection direction, int position,
-	                             QObject *target, const char *slot );
-	~PrivacyMessageHandlerFactory();
-	
-	MessageHandler *create( ChatSession *manager, Message::MessageDirection direction ) Q_DECL_OVERRIDE;
-	int filterPosition( ChatSession *manager, Message::MessageDirection direction ) Q_DECL_OVERRIDE;
-	
+    PrivacyMessageHandlerFactory(Message::MessageDirection direction, int position, QObject *target, const char *slot);
+    ~PrivacyMessageHandlerFactory();
+
+    MessageHandler *create(ChatSession *manager, Message::MessageDirection direction) Q_DECL_OVERRIDE;
+    int filterPosition(ChatSession *manager, Message::MessageDirection direction) Q_DECL_OVERRIDE;
+
 private:
-	class Private;
-	Private *d;
+    class Private;
+    Private *d;
 };
 
 class PrivacyMessageHandler : public MessageHandler
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	PrivacyMessageHandler();
-	~PrivacyMessageHandler();
-	
-	void handleMessage( MessageEvent *event ) Q_DECL_OVERRIDE;
-	
+    PrivacyMessageHandler();
+    ~PrivacyMessageHandler();
+
+    void handleMessage(MessageEvent *event) Q_DECL_OVERRIDE;
+
 Q_SIGNALS:
-	void handle( Kopete::MessageEvent *event );
+    void handle(Kopete::MessageEvent *event);
 
 private:
 };

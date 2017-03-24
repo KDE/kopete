@@ -26,13 +26,18 @@
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
 
-
 class QStringList;
 class QString;
 
-namespace Kopete { class Message; }
-namespace Kopete { class MetaContact; }
-namespace Kopete { class ChatSession; }
+namespace Kopete {
+class Message;
+}
+namespace Kopete {
+class MetaContact;
+}
+namespace Kopete {
+class ChatSession;
+}
 class TextEffectConfig;
 
 /**
@@ -41,22 +46,22 @@ class TextEffectConfig;
 
 class TextEffectPlugin : public Kopete::Plugin
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	static TextEffectPlugin  *plugin();
+    static TextEffectPlugin *plugin();
 
-	TextEffectPlugin( QObject *parent, const QVariantList &args );
-	~TextEffectPlugin();
+    TextEffectPlugin(QObject *parent, const QVariantList &args);
+    ~TextEffectPlugin();
 
 public slots:
-	void slotOutgoingMessage( Kopete::Message& msg );
-	void slotSettingsChanged();
+    void slotOutgoingMessage(Kopete::Message &msg);
+    void slotSettingsChanged();
 
 private:
-	static TextEffectPlugin* pluginStatic_;
-	int last_color;
-	TextEffectConfig *m_config;
+    static TextEffectPlugin *pluginStatic_;
+    int last_color;
+    TextEffectConfig *m_config;
 };
 
 #endif
@@ -69,4 +74,3 @@ private:
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
-

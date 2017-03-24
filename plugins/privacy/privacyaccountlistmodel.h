@@ -21,32 +21,34 @@
 #include <kopete_export.h>
 
 class QStringList;
-namespace Kopete { class Protocol; }
+namespace Kopete {
+class Protocol;
+}
 
 typedef QPair< QString, Kopete::Protocol *> AccountListEntry;
 
 class KOPETEPRIVACY_EXPORT PrivacyAccountListModel : public QAbstractTableModel
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     PrivacyAccountListModel(QObject *parent = nullptr);
-	~PrivacyAccountListModel();
+    ~PrivacyAccountListModel();
 
-	void loadAccounts( const QStringList &accounts );
-	void addAccount(const QString &accountId, Kopete::Protocol *protocol);
-	void addAccount(const AccountListEntry &entry);
+    void loadAccounts(const QStringList &accounts);
+    void addAccount(const QString &accountId, Kopete::Protocol *protocol);
+    void addAccount(const AccountListEntry &entry);
 
-	int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-	int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-	QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
-	bool removeRow(int position, const QModelIndex &index = QModelIndex());
-	bool removeRows(int position, int rows, const QModelIndex &index = QModelIndex()) Q_DECL_OVERRIDE;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
+    bool removeRow(int position, const QModelIndex &index = QModelIndex());
+    bool removeRows(int position, int rows, const QModelIndex &index = QModelIndex()) Q_DECL_OVERRIDE;
 
-	QStringList toStringList() const;
+    QStringList toStringList() const;
 
 private:
-	QList< AccountListEntry > m_list;
+    QList< AccountListEntry > m_list;
 };
 
 #endif

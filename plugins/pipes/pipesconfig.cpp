@@ -20,65 +20,67 @@
 #include <ksharedconfig.h>
 #include <kglobal.h>
 
-PipesConfig * PipesConfig::mSelf = 0;
+PipesConfig *PipesConfig::mSelf = 0;
 
-PipesConfig * PipesConfig::self ()
+PipesConfig *PipesConfig::self()
 {
-	if (!mSelf)
-		mSelf = new PipesConfig();
-	return mSelf;
+    if (!mSelf) {
+        mSelf = new PipesConfig();
+    }
+    return mSelf;
 }
 
-PipesPlugin::PipeOptionsList PipesConfig::pipes ()
+PipesPlugin::PipeOptionsList PipesConfig::pipes()
 {
-	if (!mSelf)
-		mSelf = new PipesConfig();
-	return mSelf->mPipesList;
+    if (!mSelf) {
+        mSelf = new PipesConfig();
+    }
+    return mSelf->mPipesList;
 }
 
-void PipesConfig::setPipes ( PipesPlugin::PipeOptionsList pipes )
+void PipesConfig::setPipes(PipesPlugin::PipeOptionsList pipes)
 {
-	if (!mSelf)
-		mSelf = new PipesConfig();
-	mSelf->mPipesList = pipes;
+    if (!mSelf) {
+        mSelf = new PipesConfig();
+    }
+    mSelf->mPipesList = pipes;
 }
 
-void PipesConfig::save ()
+void PipesConfig::save()
 {
-	KConfigGroup config (KGlobal::config(), "PipesPlugin_Pipes");
-	config.deleteGroup();
-	
-	QStringList uids;
-	foreach (PipesPlugin::PipeOptions pipe, mPipesList){
-		config.writeEntry ( QString(pipe.uid.toString()) + "enabled", pipe.enabled );
-		config.writeEntry ( QString(pipe.uid.toString()) + "path", pipe.path );
-		config.writeEntry ( QString(pipe.uid.toString()) + "direction", (int) pipe.direction );
-		config.writeEntry ( QString(pipe.uid.toString()) + "pipeContents", (int) pipe.pipeContents);
-		uids.append (pipe.uid.toString());
-	}
-	config.writeEntry ( "Pipes", uids);
+    KConfigGroup config(KGlobal::config(), "PipesPlugin_Pipes");
+    config.deleteGroup();
+
+    QStringList uids;
+    foreach (PipesPlugin::PipeOptions pipe, mPipesList) {
+        config.writeEntry(QString(pipe.uid.toString()) + "enabled", pipe.enabled);
+        config.writeEntry(QString(pipe.uid.toString()) + "path", pipe.path);
+        config.writeEntry(QString(pipe.uid.toString()) + "direction", (int)pipe.direction);
+        config.writeEntry(QString(pipe.uid.toString()) + "pipeContents", (int)pipe.pipeContents);
+        uids.append(pipe.uid.toString());
+    }
+    config.writeEntry("Pipes", uids);
 }
 
-void PipesConfig::load ()
+void PipesConfig::load()
 {
-	KConfigGroup config (KGlobal::config(), "PipesPlugin_Pipes");
-	const QStringList uidList = config.readEntry ("Pipes", QStringList());
-	
-	PipesPlugin::PipeOptions pipeOptions;
-	PipesPlugin::PipeOptionsList pipesList;
-	mPipesList.clear();
-	foreach (const QString& uid, uidList){
-		pipeOptions.uid = uid;
-		pipeOptions.enabled = config.readEntry ( uid + "enabled", true );
-		pipeOptions.path = config.readEntry ( uid + "path", QString() );
-		pipeOptions.direction = (PipesPlugin::PipeDirection)config.readEntry ( uid + "direction", 0 );
-		pipeOptions.pipeContents = (PipesPlugin::PipeContents)config.readEntry ( uid + "pipeContents", 0 );
-		mPipesList.append (pipeOptions);
-	}
+    KConfigGroup config(KGlobal::config(), "PipesPlugin_Pipes");
+    const QStringList uidList = config.readEntry("Pipes", QStringList());
+
+    PipesPlugin::PipeOptions pipeOptions;
+    PipesPlugin::PipeOptionsList pipesList;
+    mPipesList.clear();
+    foreach (const QString &uid, uidList) {
+        pipeOptions.uid = uid;
+        pipeOptions.enabled = config.readEntry(uid + "enabled", true);
+        pipeOptions.path = config.readEntry(uid + "path", QString());
+        pipeOptions.direction = (PipesPlugin::PipeDirection)config.readEntry(uid + "direction", 0);
+        pipeOptions.pipeContents = (PipesPlugin::PipeContents)config.readEntry(uid + "pipeContents", 0);
+        mPipesList.append(pipeOptions);
+    }
 }
 
 PipesConfig::PipesConfig()
 {
-	load();
+    load();
 }
-

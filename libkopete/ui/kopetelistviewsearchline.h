@@ -24,38 +24,36 @@
 namespace Kopete {
 namespace UI {
 namespace ListView {
-
 class ListView;
 
 class KOPETE_EXPORT SearchLine : public KTreeWidgetSearchLine
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	 * Constructs a SearchLine with \a listView being the
-	 * ListView to be filtered.
-	 *
-	 * If \a listView is null then the widget will be disabled until a listview
-	 * is set with setListView().
-	 */
-    explicit SearchLine( QWidget *parent = nullptr, ListView *listView = 0 );
-	/**
-	 * Destroys the SearchLine.
-	 */
-	~SearchLine();
-	
-	void updateSearch( const QString &s ) Q_DECL_OVERRIDE;
-	
-protected:
-	virtual void checkItemParentsNotVisible();
-	virtual bool checkItemParentsVisible( QTreeWidgetItem *it );
-	virtual void setItemVisible( QTreeWidgetItem *it, bool visible );
-	
-private:
-	QString search;
-	bool searchEmpty;
-};
+    /**
+     * Constructs a SearchLine with \a listView being the
+     * ListView to be filtered.
+     *
+     * If \a listView is null then the widget will be disabled until a listview
+     * is set with setListView().
+     */
+    explicit SearchLine(QWidget *parent = nullptr, ListView *listView = 0);
+    /**
+     * Destroys the SearchLine.
+     */
+    ~SearchLine();
 
+    void updateSearch(const QString &s) Q_DECL_OVERRIDE;
+
+protected:
+    virtual void checkItemParentsNotVisible();
+    virtual bool checkItemParentsVisible(QTreeWidgetItem *it);
+    virtual void setItemVisible(QTreeWidgetItem *it, bool visible);
+
+private:
+    QString search;
+    bool searchEmpty;
+};
 } // end namespace ListView
 } // end namespace UI
 } // end namespace Kopete

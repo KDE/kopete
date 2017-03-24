@@ -27,26 +27,23 @@
 #include "bonjoureditaccountwidget.h"
 
 typedef KGenericFactory<BonjourProtocol> BonjourProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_bonjour, BonjourProtocolFactory( "kopete_bonjour" )  )
+K_EXPORT_COMPONENT_FACTORY(kopete_bonjour, BonjourProtocolFactory("kopete_bonjour"))
 
 BonjourProtocol *BonjourProtocol::s_protocol = 0L;
 
-BonjourProtocol::BonjourProtocol( QObject* parent, const QStringList &/*args*/ )
-	: Kopete::Protocol( parent ),
-	  bonjourOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString()),  
-			  i18n( "Online" ),   i18n( "O&nline" ), Kopete::OnlineStatusManager::Online ),
-	  bonjourAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QStringLiteral("msn_away")),  
-			  i18nc( "This Means the User is Away", "Away" ),   i18nc("This Means the User is Away", "&Away" ), 
-			  Kopete::OnlineStatusManager::Away ),
-	  bonjourOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QStringList(QString()), 
-			  i18n( "Offline" ),   i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline )
-
-
+BonjourProtocol::BonjourProtocol(QObject *parent, const QStringList & /*args*/)
+    : Kopete::Protocol(parent)
+    , bonjourOnline(Kopete::OnlineStatus::Online, 25, this, 0, QStringList(QString()),
+                    i18n("Online"), i18n("O&nline"), Kopete::OnlineStatusManager::Online)
+    , bonjourAway(Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QStringLiteral("msn_away")),
+                  i18nc("This Means the User is Away", "Away"), i18nc("This Means the User is Away", "&Away"),
+                  Kopete::OnlineStatusManager::Away)
+    , bonjourOffline(Kopete::OnlineStatus::Offline, 25, this, 2, QStringList(QString()),
+                     i18n("Offline"), i18n("O&ffline"), Kopete::OnlineStatusManager::Offline)
 {
-	qDebug()<<"Protocol Icon is: "<<pluginIcon();
+    qDebug()<<"Protocol Icon is: "<<pluginIcon();
 
-	s_protocol = this;
-
+    s_protocol = this;
 }
 
 BonjourProtocol::~BonjourProtocol()
@@ -54,53 +51,48 @@ BonjourProtocol::~BonjourProtocol()
 }
 
 Kopete::Contact *BonjourProtocol::deserializeContact(
-	Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData,
-	const QMap<QString, QString> &/* addressBookData */)
+    Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> & /* addressBookData */)
 {
-	QString contactId = serializedData[ QStringLiteral("contactId") ];
-	QString accountId = serializedData[ QStringLiteral("accountId") ];
-	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ QStringLiteral("preferredNameType") ]);
+    QString contactId = serializedData[ QStringLiteral("contactId") ];
+    QString accountId = serializedData[ QStringLiteral("accountId") ];
+    Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ QStringLiteral("preferredNameType") ]);
 
-	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( this );
-	Kopete::Account* account = 0;
-	foreach( Kopete::Account* acct, accounts )
-	{
-		if ( acct->accountId() == accountId )
-			account = acct;
-	}
+    QList<Kopete::Account *> accounts = Kopete::AccountManager::self()->accounts(this);
+    Kopete::Account *account = 0;
+    foreach (Kopete::Account *acct, accounts) {
+        if (acct->accountId() == accountId) {
+            account = acct;
+        }
+    }
 
-	if ( !account )
-	{
-		qDebug() << "Account doesn't exist, skipping";
-		return 0;
-	}
+    if (!account) {
+        qDebug() << "Account doesn't exist, skipping";
+        return 0;
+    }
 
-	BonjourContact * contact = new BonjourContact(account, contactId, metaContact);
-	contact->setPreferredNameType(nameType);
-	return contact;
+    BonjourContact *contact = new BonjourContact(account, contactId, metaContact);
+    contact->setPreferredNameType(nameType);
+    return contact;
 }
 
-AddContactPage * BonjourProtocol::createAddContactWidget( QWidget *parent, Kopete::Account * /* account */ )
+AddContactPage *BonjourProtocol::createAddContactWidget(QWidget *parent, Kopete::Account * /* account */)
 {
-	qDebug()<< "Creating Add Contact Page";
-	return new BonjourAddContactPage( parent );
+    qDebug()<< "Creating Add Contact Page";
+    return new BonjourAddContactPage(parent);
 }
 
-KopeteEditAccountWidget * BonjourProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
+KopeteEditAccountWidget *BonjourProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
-	qDebug() << "Creating Edit Account Page";
-	return new BonjourEditAccountWidget( parent, account );
+    qDebug() << "Creating Edit Account Page";
+    return new BonjourEditAccountWidget(parent, account);
 }
 
-Kopete::Account *BonjourProtocol::createNewAccount( const QString &accountId )
+Kopete::Account *BonjourProtocol::createNewAccount(const QString &accountId)
 {
-	return new BonjourAccount( this, accountId );
+    return new BonjourAccount(this, accountId);
 }
 
 BonjourProtocol *BonjourProtocol::protocol()
 {
-	return s_protocol;
+    return s_protocol;
 }
-
-
-

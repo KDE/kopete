@@ -19,56 +19,49 @@
 #include "kopetemetacontact.h"
 #include "kopetestatusmessage.h"
 
-namespace Kopete
+namespace Kopete {
+namespace Test {
+namespace Mock {
+Account::Account(Kopete::Protocol *parent, const QString &accountID)
+    : Kopete::Account(parent, accountID)
 {
-namespace Test
-{
-namespace Mock
-{
-
-Account::Account(Kopete::Protocol *parent, const QString &accountID) 
-  : Kopete::Account(parent, accountID)
-{
-
 }
 
 Account::~Account()
 {
-
 }
 
-bool Account::createContact( const QString &contactId, Kopete::MetaContact *parentContact )
+bool Account::createContact(const QString &contactId, Kopete::MetaContact *parentContact)
 {
-	Q_UNUSED( contactId )
-	Q_UNUSED( parentContact )
-	return true;
+    Q_UNUSED(contactId)
+    Q_UNUSED(parentContact)
+    return true;
 }
 
-void Account::connect( const Kopete::OnlineStatus& initialStatus)
+void Account::connect(const Kopete::OnlineStatus &initialStatus)
 {
-	Q_UNUSED( initialStatus )
-	// do nothing
+    Q_UNUSED(initialStatus)
+    // do nothing
 }
 
 void Account::disconnect()
 {
-	// do nothing
+    // do nothing
 }
 
-void Account::setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &statusMessage, const OnlineStatusOptions& options )
+void Account::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &statusMessage, const OnlineStatusOptions &options)
 {
-	Q_UNUSED( status )
-	Q_UNUSED( statusMessage )
-	Q_UNUSED( options )
-	// do nothing
+    Q_UNUSED(status)
+    Q_UNUSED(statusMessage)
+    Q_UNUSED(options)
+    // do nothing
 }
 
-void Account::setStatusMessage( const Kopete::StatusMessage& statusMessage )
+void Account::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
-	Q_UNUSED( statusMessage )
-	// do nothing
+    Q_UNUSED(statusMessage)
+    // do nothing
 }
-
 } // end ns Kopete::Test::Mock
 } // end ns Kopete::Test
 } // end ns Kopete

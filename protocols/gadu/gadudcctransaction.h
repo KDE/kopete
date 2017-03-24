@@ -19,7 +19,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
-
 #ifndef GADUDCCTRANS_H
 #define GADUDCCTRANS_H
 
@@ -29,21 +28,26 @@
 class QSocketNotifier;
 class gg_dcc;
 class GaduContact;
-namespace Kopete { class Transfer; }
-namespace Kopete { class FileTransferInfo; }
+namespace Kopete {
+class Transfer;
+}
+namespace Kopete {
+class FileTransferInfo;
+}
 class GaduDCC;
 
-class GaduDCCTransaction: QObject {
-	Q_OBJECT
+class GaduDCCTransaction : QObject
+{
+    Q_OBJECT
 public:
-	explicit GaduDCCTransaction( GaduDCC* );
-	~GaduDCCTransaction();
+    explicit GaduDCCTransaction(GaduDCC *);
+    ~GaduDCCTransaction();
 
-	bool setupIncoming( const unsigned int, GaduContact* );
-	bool setupIncoming( gg_dcc* );
-	bool setupOutgoing( GaduContact*, QString& );
-	unsigned int recvUIN();
-	unsigned int peerUIN();
+    bool setupIncoming(const unsigned int, GaduContact *);
+    bool setupIncoming(gg_dcc *);
+    bool setupOutgoing(GaduContact *, QString &);
+    unsigned int recvUIN();
+    unsigned int peerUIN();
 
 public slots:
 
@@ -54,33 +58,33 @@ protected:
 protected slots:
 
 private slots:
-	void watcher();
-	void slotIncomingTransferAccepted ( Kopete::Transfer*, const QString& );
-	void slotTransferRefused ( const Kopete::FileTransferInfo& );
-	void slotTransferResult();
+    void watcher();
+    void slotIncomingTransferAccepted(Kopete::Transfer *, const QString &);
+    void slotTransferRefused(const Kopete::FileTransferInfo &);
+    void slotTransferResult();
 
 private:
-	void enableNotifiers( int );
-	void disableNotifiers();
-	void checkDescriptor();
-	void closeDCC();
-	void destroyNotifiers();
-	void createNotifiers( bool );
-	void askIncommingTransfer();
+    void enableNotifiers(int);
+    void disableNotifiers();
+    void checkDescriptor();
+    void closeDCC();
+    void destroyNotifiers();
+    void createNotifiers(bool);
+    void askIncommingTransfer();
 
-	gg_dcc* dccSock_;
+    gg_dcc *dccSock_;
 
-	QSocketNotifier* read_;
-	QSocketNotifier* write_;
+    QSocketNotifier *read_;
+    QSocketNotifier *write_;
 
-	GaduContact* contact;
+    GaduContact *contact;
 
-	Kopete::Transfer* transfer_;
-	long transferId_;
-	QFile localFile_;
-	int peer;
-	unsigned int incoming;
-	GaduDCC* gaduDCC_;
+    Kopete::Transfer *transfer_;
+    long transferId_;
+    QFile localFile_;
+    int peer;
+    unsigned int incoming;
+    GaduDCC *gaduDCC_;
 };
 
 #endif

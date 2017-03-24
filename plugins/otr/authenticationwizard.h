@@ -16,7 +16,7 @@
  *                                                                       *
  * You should have received a copy of the GNU General Public License     *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- *************************************************************************/ 
+ *************************************************************************/
 
 #ifndef AUTHENTICATIONWIZARD_H
 #define AUTHENTICATIONWIZARD_H
@@ -25,7 +25,7 @@
   * @author Michael Zanetti
   */
 
-extern "C"{
+extern "C" {
 #include "libotr/proto.h"
 }
 
@@ -40,69 +40,77 @@ extern "C"{
 #include <QWizard>
 #include <QRadioButton>
 
-class AuthenticationWizard: public QWizard
+class AuthenticationWizard : public QWizard
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	explicit AuthenticationWizard(QWidget *parent = 0, ConnContext *context = 0, Kopete::ChatSession *session = 0, bool initiate = true, const QString &question = QString() );
-	~AuthenticationWizard();
+    explicit AuthenticationWizard(QWidget *parent = 0, ConnContext *context = 0, Kopete::ChatSession *session = 0, bool initiate = true, const QString &question = QString());
+    ~AuthenticationWizard();
 
-	static AuthenticationWizard *findWizard(Kopete::ChatSession *session);
-	void nextState();
-	void finished(bool success, bool trust);
-	void aborted();
-	
+    static AuthenticationWizard *findWizard(Kopete::ChatSession *session);
+    void nextState();
+    void finished(bool success, bool trust);
+    void aborted();
+
 protected:
 
-	int nextId() const Q_DECL_OVERRIDE;
-	bool validateCurrentPage() Q_DECL_OVERRIDE;
+    int nextId() const Q_DECL_OVERRIDE;
+    bool validateCurrentPage() Q_DECL_OVERRIDE;
 
 private:
-	enum { Page_SelectMethod, Page_QuestionAnswer, Page_SharedSecret, Page_ManualVerification, Page_Wait1, Page_Wait2, Page_Final };
-	
-	ConnContext *context;
-	Kopete::ChatSession *session;
-	QString question;
-	bool initiate;
+    enum {
+        Page_SelectMethod, Page_QuestionAnswer, Page_SharedSecret, Page_ManualVerification, Page_Wait1, Page_Wait2, Page_Final
+    };
 
-	QLabel *lQuestion;
-	QLabel *lAnswer;
-	QLabel *lSecret;
-	QLabel *infoLabel;
-	QLabel *lFinal;
+    ConnContext *context;
+    Kopete::ChatSession *session;
+    QString question;
+    bool initiate;
 
-	QLineEdit *leQuestion;
-	QLineEdit *leAnswer;
-	QLineEdit *leSecret;
+    QLabel *lQuestion;
+    QLabel *lAnswer;
+    QLabel *lSecret;
+    QLabel *infoLabel;
+    QLabel *lFinal;
 
-	QRadioButton *rbQA;
-	QRadioButton *rbSS;
-	QRadioButton *rbMV;
+    QLineEdit *leQuestion;
+    QLineEdit *leAnswer;
+    QLineEdit *leSecret;
 
-	QComboBox *cbManualAuth;
+    QRadioButton *rbQA;
+    QRadioButton *rbSS;
+    QRadioButton *rbMV;
 
-	QWizardPage *createIntroPage();
-	QWizardPage *createQAPage();
-	QWizardPage *createSSPage();
-	QWizardPage *createMVPage();
-	QWizardPage *createFinalPage();
+    QComboBox *cbManualAuth;
+
+    QWizardPage *createIntroPage();
+    QWizardPage *createQAPage();
+    QWizardPage *createSSPage();
+    QWizardPage *createMVPage();
+    QWizardPage *createFinalPage();
 
 private slots:
-	void cancelVerification();
-	void updateInfoBox();
-	void notificationActivated( unsigned int );
+    void cancelVerification();
+    void updateInfoBox();
+    void notificationActivated(unsigned int);
 };
 
-
-class WaitPage: public QWizardPage
+class WaitPage : public QWizardPage
 {
 private:
-	bool canContinue;
+    bool canContinue;
 public:
-	WaitPage(const QString &text);
-	void ready(){canContinue = true;};
+    WaitPage(const QString &text);
+    void ready()
+    {
+        canContinue = true;
+    }
+
 protected:
-	bool isComplete() const Q_DECL_OVERRIDE {return canContinue;};
+    bool isComplete() const Q_DECL_OVERRIDE
+    {
+        return canContinue;
+    }
 };
 
 #endif //AUTHENTICATIONWIZARD_H

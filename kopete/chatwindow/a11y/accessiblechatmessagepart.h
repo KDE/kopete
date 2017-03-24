@@ -26,34 +26,34 @@ class KHTMLPart;
 class KHTMLView;
 
 namespace MessageViewer {
-    class MailWebView;
+class MailWebView;
 }
 
-class AccessibleChatMessagePart:public QAccessibleWidget
+class AccessibleChatMessagePart : public QAccessibleWidget
 {
 public:
-    AccessibleChatMessagePart( KHTMLView* widget );
+    AccessibleChatMessagePart(KHTMLView *widget);
 
     virtual int characterCount();
 
     virtual int selectionCount();
-    virtual void addSelection( int startOffset, int endOffset );
-    virtual void removeSelection( int selectionIndex );
-    virtual void setSelection( int selectionIndex, int startOffset, int endOffset );
-    virtual void setCursorPosition( int );
+    virtual void addSelection(int startOffset, int endOffset);
+    virtual void removeSelection(int selectionIndex);
+    virtual void setSelection(int selectionIndex, int startOffset, int endOffset);
+    virtual void setCursorPosition(int);
 
-    virtual QString text( int startOffset, int endOffset );
+    virtual QString text(int startOffset, int endOffset);
 
-    virtual QString attributes( int offset, int* startOffset, int* endOffset );
+    virtual QString attributes(int offset, int *startOffset, int *endOffset);
 
     int childCount() const Q_DECL_OVERRIDE;
     //DEPRECATED: virtual int navigate(QAccessible::RelationFlag rel, int entry, QAccessibleInterface** target) const;
 
-    virtual void selection( int selectionIndex, int* startOffset, int* endOffset );
-    virtual QRect characterRect( int offset);
-    virtual int offsetAtPoint( const QPoint& point);
+    virtual void selection(int selectionIndex, int *startOffset, int *endOffset);
+    virtual QRect characterRect(int offset);
+    virtual int offsetAtPoint(const QPoint &point);
     virtual int cursorPosition();
-    virtual void scrollToSubstring( int startIndex, int endIndex );
+    virtual void scrollToSubstring(int startIndex, int endIndex);
     //virtual QString textAfterOffset( int offset, QAccessible::TextBoundaryType boundaryType, int* startOffset, int* endOffset );
     //virtual QString textBeforeOffset( int offset, QAccessible::TextBoundaryType boundaryType, int* startOffset, int* endOffset );
     //virtual QString textAtOffset( int offset, QAccessible::TextBoundaryType boundaryType, int* startOffset, int* endOffset );

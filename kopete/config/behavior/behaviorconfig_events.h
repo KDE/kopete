@@ -22,10 +22,10 @@
 
 class BehaviorConfig_Events : public QWidget, public Ui::BehaviorConfig_Events
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	BehaviorConfig_Events(QWidget *parent = nullptr);
+    BehaviorConfig_Events(QWidget *parent = nullptr);
 };
 
 #endif // BEHAVIORCONFIG_EVENTS_H

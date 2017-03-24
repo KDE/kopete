@@ -20,7 +20,9 @@
 
 #include <kcmodule.h>
 
-namespace Ui { class TextEffectPrefs; }
+namespace Ui {
+class TextEffectPrefs;
+}
 class TextEffectConfig;
 class QStringList;
 
@@ -28,31 +30,30 @@ class QStringList;
   *@author Olivier Goffart
   */
 
-class TextEffectPreferences : public KCModule  {
-   Q_OBJECT
+class TextEffectPreferences : public KCModule
+{
+    Q_OBJECT
 public:
 
-	explicit TextEffectPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
-	~TextEffectPreferences();
+    explicit TextEffectPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
+    ~TextEffectPreferences();
 
-	// Overloaded from parent
-	void save() Q_DECL_OVERRIDE;
-	void load() Q_DECL_OVERRIDE;
+    // Overloaded from parent
+    void save() Q_DECL_OVERRIDE;
+    void load() Q_DECL_OVERRIDE;
     void defaults() Q_DECL_OVERRIDE;
 
 private:
-	QStringList colors();
-	Ui::TextEffectPrefs *preferencesDialog;
-	TextEffectConfig *config;
+    QStringList colors();
+    Ui::TextEffectPrefs *preferencesDialog;
+    TextEffectConfig *config;
 
 private slots: // Public slots
-	void slotAddPressed();
-	void slotRemovePressed();
-	void slotUpPressed();
-	void slotDownPressed();
-	void slotSettingChanged();
-
+    void slotAddPressed();
+    void slotRemovePressed();
+    void slotUpPressed();
+    void slotDownPressed();
+    void slotSettingChanged();
 };
 
 #endif
-

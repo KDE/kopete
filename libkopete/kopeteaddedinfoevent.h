@@ -19,7 +19,6 @@
 #include "kopeteinfoevent.h"
 
 namespace Kopete {
-
 class MetaContact;
 class Account;
 /**
@@ -37,123 +36,122 @@ class Account;
  *
  * example of usage
  * @code
-	Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent( contactId, account );
-	QObject::connect( event, SIGNAL(actionActivated(uint)), this, SLOT(addedInfoEventActionActivated(uint)) );
-	event->sendEvent();
+    Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent( contactId, account );
+    QObject::connect( event, SIGNAL(actionActivated(uint)), this, SLOT(addedInfoEventActionActivated(uint)) );
+    event->sendEvent();
  * @endcode
  *
  * and in your addedInfoEventActionActivated slot
  * @code
-	Kopete::AddedInfoEvent *event = dynamic_cast<Kopete::AddedInfoEvent *>(sender());
-	if ( !event )
-		return;
-	
-	switch ( actionId )
-	{
-	case Kopete::AddedInfoEvent::AddContactAction:
-		event->addContact();
-		break;
-	case Kopete::AddedInfoEvent::AuthorizeAction:
-		socket->authorize( event->contactId() );
-		break;
-	case Kopete::AddedInfoEvent::InfoAction:
-		showInfo();
-		break;
-	}
+    Kopete::AddedInfoEvent *event = dynamic_cast<Kopete::AddedInfoEvent *>(sender());
+    if ( !event )
+        return;
+
+    switch ( actionId )
+    {
+    case Kopete::AddedInfoEvent::AddContactAction:
+        event->addContact();
+        break;
+    case Kopete::AddedInfoEvent::AuthorizeAction:
+        socket->authorize( event->contactId() );
+        break;
+    case Kopete::AddedInfoEvent::InfoAction:
+        showInfo();
+        break;
+    }
  * @endcode
  *
  * @author Roman Jarosz <kedgedev@centrum.cz>
  */
 class KOPETE_EXPORT AddedInfoEvent : public InfoEvent
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	 * All actions that may be shown and emitted.
-	 */
-	enum ShowAction
-	{
-		AddAction = 0x001, /** Add action was activated. The default implementation shows
-		                       ContactAddedNotifyDialog if activate(uint) isn't replaced */
-		AuthorizeAction = 0x002, /** You should authorize the contact */
-		BlockAction = 0x004, /** You should block this and future requests */
-		InfoAction = 0x008, /** You should show info about contact */
+    /**
+     * All actions that may be shown and emitted.
+     */
+    enum ShowAction
+    {
+        AddAction = 0x001, /** Add action was activated. The default implementation shows
+                               ContactAddedNotifyDialog if activate(uint) isn't replaced */
+        AuthorizeAction = 0x002, /** You should authorize the contact */
+        BlockAction = 0x004, /** You should block this and future requests */
+        InfoAction = 0x008, /** You should show info about contact */
 
-		AddContactAction = 0x100, /** You should add contact to Kopete contact list with @p addContact()
-		                              this is only emitted if activate(uint) isn't replaced */
-		AllActions = 0x00F
-	};
-	Q_DECLARE_FLAGS(ShowActionOptions, ShowAction)
+        AddContactAction = 0x100, /** You should add contact to Kopete contact list with @p addContact()
+                                      this is only emitted if activate(uint) isn't replaced */
+        AllActions = 0x00F
+    };
+    Q_DECLARE_FLAGS(ShowActionOptions, ShowAction)
 
-	/**
-	 * @brief Constructor
-	 *
-	 * @param contactId the contactId of the contact which has added you
-	 * @param account the account which has generated this event
-	 */
-	AddedInfoEvent( const QString& contactId, Kopete::Account *account );
+    /**
+     * @brief Constructor
+     *
+     * @param contactId the contactId of the contact which has added you
+     * @param account the account which has generated this event
+     */
+    AddedInfoEvent(const QString &contactId, Kopete::Account *account);
 
-	~AddedInfoEvent();
+    ~AddedInfoEvent();
 
-	/**
-	 * Return the contactId of a contact which has added you.
-	 */
-	QString contactId() const;
+    /**
+     * Return the contactId of a contact which has added you.
+     */
+    QString contactId() const;
 
-	/**
-	 * Return the account that has generated this event.
-	 */
-	Kopete::Account* account() const;
+    /**
+     * Return the account that has generated this event.
+     */
+    Kopete::Account *account() const;
 
-	/**
-	 * Set which actions should be shown.
-	 *
-	 * @param actions a bitmask of ShowAction used to show specific actions.
-	 * @note by default everything is shown.
-	 */
-	void showActions( ShowActionOptions actions );
+    /**
+     * Set which actions should be shown.
+     *
+     * @param actions a bitmask of ShowAction used to show specific actions.
+     * @note by default everything is shown.
+     */
+    void showActions(ShowActionOptions actions);
 
-	/**
-	 * Set contact nickname
-	 *
-	 * @param nickname the nickname of the contact.
-	 */
-	void setContactNickname( const QString& nickname );
+    /**
+     * Set contact nickname
+     *
+     * @param nickname the nickname of the contact.
+     */
+    void setContactNickname(const QString &nickname);
 
-	/**
-	 * @brief create a metacontact.
-	 *
-	 * This function only works if the AddContactAction action was activated, otherwise
-	 * it will return 0L.
-	 *
-	 * it uses the Account::addContact function to add the contact
-	 *
-	 * @return the new metacontact created, or 0L if the operation failed.
-	 */
-	MetaContact* addContact() const;
+    /**
+     * @brief create a metacontact.
+     *
+     * This function only works if the AddContactAction action was activated, otherwise
+     * it will return 0L.
+     *
+     * it uses the Account::addContact function to add the contact
+     *
+     * @return the new metacontact created, or 0L if the operation failed.
+     */
+    MetaContact *addContact() const;
 
 public Q_SLOTS:
-	/**
-	 * Activate the action specified action
-	 */
-	void activate( uint actionId ) Q_DECL_OVERRIDE;
+    /**
+     * Activate the action specified action
+     */
+    void activate(uint actionId) Q_DECL_OVERRIDE;
 
-	/**
-	 * Emit the event.
-	 */
-	void sendEvent() Q_DECL_OVERRIDE;
+    /**
+     * Emit the event.
+     */
+    void sendEvent() Q_DECL_OVERRIDE;
 
 private Q_SLOTS:
-	void addDialogOk();
-	void addDialogInfo();
-	void addDialogFinished();
+    void addDialogOk();
+    void addDialogInfo();
+    void addDialogFinished();
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-Q_DECLARE_OPERATORS_FOR_FLAGS( AddedInfoEvent::ShowActionOptions )
-
+Q_DECLARE_OPERATORS_FOR_FLAGS(AddedInfoEvent::ShowActionOptions)
 }
 
 #endif

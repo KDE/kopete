@@ -25,12 +25,9 @@
 class KopetePropertiesTest : public KUnitTest::Tester
 {
 public:
-	void allTests();
+    void allTests();
 public slots:
 private:
-	
 };
 
 #endif
-
-

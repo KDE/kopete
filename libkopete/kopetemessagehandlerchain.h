@@ -26,9 +26,7 @@
 #include "kopetetask.h"
 #include "libkopete_debug.h"
 
-namespace Kopete
-{
-
+namespace Kopete {
 class MessageEvent;
 class MessageHandler;
 class ProcessMessageTask;
@@ -41,32 +39,32 @@ class ProcessMessageTask;
  * This class is the client of the chain of responsibility formed by the
  * MessageHandlers, and acts as a facade for that chain, presenting a
  * more convenient interface.
- * 
+ *
  * @author Richard Smith       <kde@metafoo.co.uk>
  */
 class MessageHandlerChain : public QObject, private QSharedData
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	friend class QExplicitlySharedDataPointer<MessageHandlerChain>;
-	typedef QExplicitlySharedDataPointer<MessageHandlerChain> Ptr;
-	
-	/**
-	 * Create a new MessageHandlerChain object with the appropriate handlers for
-	 * processing messages entering @p manager in direction @p direction.
-	 */
-	static Ptr create( ChatSession *manager, Message::MessageDirection direction );
+    friend class QExplicitlySharedDataPointer<MessageHandlerChain>;
+    typedef QExplicitlySharedDataPointer<MessageHandlerChain> Ptr;
 
-	ProcessMessageTask *processMessage( const Message &message );
-	int capabilities();
-	
+    /**
+     * Create a new MessageHandlerChain object with the appropriate handlers for
+     * processing messages entering @p manager in direction @p direction.
+     */
+    static Ptr create(ChatSession *manager, Message::MessageDirection direction);
+
+    ProcessMessageTask *processMessage(const Message &message);
+    int capabilities();
+
 private:
-	MessageHandlerChain();
-	~MessageHandlerChain();
-	
-	friend class ProcessMessageTask;
-	class Private;
-	Private * const d;
+    MessageHandlerChain();
+    ~MessageHandlerChain();
+
+    friend class ProcessMessageTask;
+    class Private;
+    Private *const d;
 };
 
 /**
@@ -75,27 +73,26 @@ private:
  */
 class ProcessMessageTask : public Task
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	MessageEvent *event();
-	
-public slots:
-	void start() Q_DECL_OVERRIDE;
-	void slotDone();
-	void kill( bool );
-	
-protected:
-	// Avoid compiler warning about QObject::event
-	using Task::event;
-private:
-	ProcessMessageTask(MessageHandlerChain::Ptr, MessageEvent *event);
-	~ProcessMessageTask();
-	
-	friend class MessageHandlerChain;
-	class Private;
-	Private * const d;
-};
+    MessageEvent *event();
 
+public slots:
+    void start() Q_DECL_OVERRIDE;
+    void slotDone();
+    void kill(bool);
+
+protected:
+    // Avoid compiler warning about QObject::event
+    using Task::event;
+private:
+    ProcessMessageTask(MessageHandlerChain::Ptr, MessageEvent *event);
+    ~ProcessMessageTask();
+
+    friend class MessageHandlerChain;
+    class Private;
+    Private *const d;
+};
 }
 
 #endif // KOPETEMESSAGEHANDLERCHAIN_H

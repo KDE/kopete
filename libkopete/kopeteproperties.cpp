@@ -24,28 +24,30 @@
 
 namespace Kopete {
 namespace Properties {
-
 // Keep as much type-independent code out of the templated stuff as we can
 // FIXME: shouldn't be inline
-void customPropertyDataIncorrectType( const char *name, const std::type_info &found, const std::type_info &expected )
+void customPropertyDataIncorrectType(const char *name, const std::type_info &found, const std::type_info &expected)
 {
-	qCWarning(LIBKOPETE_LOG) << "data time mismatch for property data name " << name
-		<< ". found: " << found.name() << ", expected: " << expected.name() << endl;
+    qCWarning(LIBKOPETE_LOG) << "data time mismatch for property data name " << name
+                             << ". found: " << found.name() << ", expected: " << expected.name() << endl;
 }
 
 template<>
-int variantTo<int>(QVariant) { return 0; }
+int variantTo<int>(QVariant)
+{
+    return 0;
+}
+
 //...
 
-QVariant variantFromXML(const QDomElement&)
+QVariant variantFromXML(const QDomElement &)
 {
-	return QVariant();
+    return QVariant();
 }
 
 void variantToXML(QVariant v, QDomElement &)
 {
-	Q_UNUSED(v);
+    Q_UNUSED(v);
 }
-
 } // namespace Properties
 } // namespace Kopete

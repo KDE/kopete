@@ -25,7 +25,9 @@
 #include "kopetemessagehandler.h"
 
 class KopeteView;
-namespace Kopete { class ChatSession; }
+namespace Kopete {
+class ChatSession;
+}
 
 class History2GUIClient;
 class History2Plugin;
@@ -35,27 +37,35 @@ class History2Plugin;
  */
 class History2MessageLogger : public Kopete::MessageHandler
 {
-	QPointer<History2Plugin> history2;
+    QPointer<History2Plugin> history2;
 public:
-	History2MessageLogger( History2Plugin *history2 ) : history2(history2) {}
-	void handleMessage( Kopete::MessageEvent *event );
+    History2MessageLogger(History2Plugin *history2) : history2(history2)
+    {
+    }
+
+    void handleMessage(Kopete::MessageEvent *event);
 };
 
 class History2MessageLoggerFactory : public Kopete::MessageHandlerFactory
 {
-	History2Plugin *history2;
+    History2Plugin *history2;
 public:
-	explicit History2MessageLoggerFactory( History2Plugin *history2 ) : history2(history2) {}
-	Kopete::MessageHandler *create( Kopete::ChatSession * /*manager*/, Kopete::Message::MessageDirection direction )
-	{
-		if( direction != Kopete::Message::Inbound )
-			return 0;
-		return new History2MessageLogger(history2);
-	}
-	int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection )
-	{
-		return Kopete::MessageHandlerFactory::InStageToSent+5;
-	}
+    explicit History2MessageLoggerFactory(History2Plugin *history2) : history2(history2)
+    {
+    }
+
+    Kopete::MessageHandler *create(Kopete::ChatSession * /*manager*/, Kopete::Message::MessageDirection direction)
+    {
+        if (direction != Kopete::Message::Inbound) {
+            return 0;
+        }
+        return new History2MessageLogger(history2);
+    }
+
+    int filterPosition(Kopete::ChatSession *, Kopete::Message::MessageDirection)
+    {
+        return Kopete::MessageHandlerFactory::InStageToSent+5;
+    }
 };
 
 /**
@@ -63,25 +73,23 @@ public:
   */
 class History2Plugin : public Kopete::Plugin
 {
-	Q_OBJECT
-	public:
-		History2Plugin( QObject *parent, const QStringList &args );
-		~History2Plugin();
+    Q_OBJECT
+public:
+    History2Plugin(QObject *parent, const QStringList &args);
+    ~History2Plugin();
 
-		void messageDisplayed(const Kopete::Message &msg);
-		
-	private slots:
-		void slotViewCreated( KopeteView* );
-		void slotViewHistory();
-		void slotKMMClosed( Kopete::ChatSession* );
-		void slotSettingsChanged();
+    void messageDisplayed(const Kopete::Message &msg);
 
-	private:
-		History2MessageLoggerFactory m_loggerFactory;
-		QMap<Kopete::ChatSession*,History2GUIClient*> m_loggers;
-		Kopete::Message m_lastmessage;
+private slots:
+    void slotViewCreated(KopeteView *);
+    void slotViewHistory();
+    void slotKMMClosed(Kopete::ChatSession *);
+    void slotSettingsChanged();
+
+private:
+    History2MessageLoggerFactory m_loggerFactory;
+    QMap<Kopete::ChatSession *, History2GUIClient *> m_loggers;
+    Kopete::Message m_lastmessage;
 };
 
 #endif
-
-

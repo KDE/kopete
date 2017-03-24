@@ -21,12 +21,10 @@
 #include <QPointer>
 
 namespace Kopete {
-
 class Group;
 class MetaContact;
 
 namespace UI {
-
 class MetaContactModelItem;
 class GroupModelItem;
 class ContactListModelItem;
@@ -34,138 +32,145 @@ class ContactListModelItem;
 class ContactListModelItem
 {
 public:
-	ContactListModelItem() : mParent( 0 ) {}
-	virtual ~ContactListModelItem() {}
+    ContactListModelItem() : mParent(0)
+    {
+    }
 
-	virtual bool isGroup() const
-	{
-		return false;
-	}
+    virtual ~ContactListModelItem()
+    {
+    }
 
-	virtual int count() const
-	{
-		return 0;
-	}
+    virtual bool isGroup() const
+    {
+        return false;
+    }
 
-	virtual int metaContactCount() const
-	{
-		return 0;
-	}
+    virtual int count() const
+    {
+        return 0;
+    }
 
-	virtual bool hasChildren() const
-	{
-		return false;
-	}
+    virtual int metaContactCount() const
+    {
+        return 0;
+    }
 
-	inline GroupModelItem* parent() const
-	{
-		return mParent;
-	}
+    virtual bool hasChildren() const
+    {
+        return false;
+    }
 
-	int index() const;
+    inline GroupModelItem *parent() const
+    {
+        return mParent;
+    }
 
-	bool remove();
+    int index() const;
 
-	virtual void sort( bool (*lessThan)(const ContactListModelItem*, const ContactListModelItem*) )
-	{
-		Q_UNUSED( lessThan );
-	}
+    bool remove();
+
+    virtual void sort(bool (*lessThan)(const ContactListModelItem *, const ContactListModelItem *))
+    {
+        Q_UNUSED(lessThan);
+    }
 
 protected:
-	friend class GroupModelItem;
-	GroupModelItem* mParent;
+    friend class GroupModelItem;
+    GroupModelItem *mParent;
 };
 
 class MetaContactModelItem : public ContactListModelItem
 {
 public:
-	MetaContactModelItem( Kopete::MetaContact* metaContact )
-		: ContactListModelItem(), mMetaContact( metaContact )
-	{}
+    MetaContactModelItem(Kopete::MetaContact *metaContact)
+        : ContactListModelItem()
+        , mMetaContact(metaContact)
+    {
+    }
 
-	inline Kopete::MetaContact* metaContact() const
-	{
-		return mMetaContact;
-	}
+    inline Kopete::MetaContact *metaContact() const
+    {
+        return mMetaContact;
+    }
 
 private:
-	QPointer <Kopete::MetaContact> mMetaContact;
+    QPointer <Kopete::MetaContact> mMetaContact;
 };
 
 class GroupModelItem : public ContactListModelItem
 {
 public:
-	GroupModelItem( Kopete::Group* group )
-		: ContactListModelItem(), mGroup( group )
-	{}
+    GroupModelItem(Kopete::Group *group)
+        : ContactListModelItem()
+        , mGroup(group)
+    {
+    }
 
-	virtual ~GroupModelItem()
-	{
-		qDeleteAll( mItems );
-	}
+    virtual ~GroupModelItem()
+    {
+        qDeleteAll(mItems);
+    }
 
-	bool isGroup() const Q_DECL_OVERRIDE
-	{
-		return true;
-	}
+    bool isGroup() const Q_DECL_OVERRIDE
+    {
+        return true;
+    }
 
-	int count() const Q_DECL_OVERRIDE
-	{
-		return mItems.count();
-	}
+    int count() const Q_DECL_OVERRIDE
+    {
+        return mItems.count();
+    }
 
-	int metaContactCount() const Q_DECL_OVERRIDE;
+    int metaContactCount() const Q_DECL_OVERRIDE;
 
-	bool hasChildren() const Q_DECL_OVERRIDE
-	{
-		return !mItems.isEmpty();
-	}
+    bool hasChildren() const Q_DECL_OVERRIDE
+    {
+        return !mItems.isEmpty();
+    }
 
-	inline Kopete::Group* group() const
-	{
-		return mGroup;
-	}
+    inline Kopete::Group *group() const
+    {
+        return mGroup;
+    }
 
-	inline void append( ContactListModelItem* item )
-	{
-		item->mParent = this;
-		mItems.append( item );
-	}
+    inline void append(ContactListModelItem *item)
+    {
+        item->mParent = this;
+        mItems.append(item);
+    }
 
-	inline void insert( int i, ContactListModelItem* item )
-	{
-		item->mParent = this;
-		mItems.insert( i, item );
-	}
+    inline void insert(int i, ContactListModelItem *item)
+    {
+        item->mParent = this;
+        mItems.insert(i, item);
+    }
 
-	inline ContactListModelItem* at( int i ) const
-	{
-		return mItems.at( i );
-	}
+    inline ContactListModelItem *at(int i) const
+    {
+        return mItems.at(i);
+    }
 
-	inline QList<ContactListModelItem*> items() const
-	{
-		return mItems;
-	}
+    inline QList<ContactListModelItem *> items() const
+    {
+        return mItems;
+    }
 
-	void sort( bool (*lessThan)(const ContactListModelItem*, const ContactListModelItem*) ) Q_DECL_OVERRIDE;
+    void sort(bool (*lessThan)(const ContactListModelItem *, const ContactListModelItem *)) Q_DECL_OVERRIDE;
 
 protected:
-	friend class ContactListModelItem;
-	int indexOf( const ContactListModelItem* item ) const;
+    friend class ContactListModelItem;
+    int indexOf(const ContactListModelItem *item) const;
 
-	inline void removeAt( int i )
-	{
-		mItems.removeAt( i );
-	}
+    inline void removeAt(int i)
+    {
+        mItems.removeAt(i);
+    }
 
 private:
-	QPointer <Kopete::Group> mGroup;
-	QList<ContactListModelItem*> mItems;
+    QPointer <Kopete::Group> mGroup;
+    QList<ContactListModelItem *> mItems;
 };
-
 }
-
 }
 
 #endif

@@ -23,38 +23,51 @@
 
 class AccountTreeWidget : public QTreeWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	AccountTreeWidget( QWidget *parent = nullptr );
+    AccountTreeWidget(QWidget *parent = nullptr);
 
 signals:
-	void itemPositionChanged();
+    void itemPositionChanged();
 
 protected:
-	void dragEnterEvent( QDragEnterEvent *event ) Q_DECL_OVERRIDE;
-	void dropEvent( QDropEvent *event ) Q_DECL_OVERRIDE;
-
+    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
+    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 };
 
 class KopeteAccountLVI : public QTreeWidgetItem
 {
 public:
-	KopeteAccountLVI( Kopete::Account *a, QTreeWidgetItem* parent) : QTreeWidgetItem(parent) , m_account(a) { }
-	Kopete::Account *account() { return m_account; }
-	
+    KopeteAccountLVI(Kopete::Account *a, QTreeWidgetItem *parent) : QTreeWidgetItem(parent)
+        , m_account(a)
+    {
+    }
+
+    Kopete::Account *account()
+    {
+        return m_account;
+    }
+
 private:
-	//need to be guarded because some accounts may be linked (that's the case of jabber transports)
-	QPointer<Kopete::Account> m_account;
+    //need to be guarded because some accounts may be linked (that's the case of jabber transports)
+    QPointer<Kopete::Account> m_account;
 };
 
 class KopeteIdentityLVI : public QTreeWidgetItem
 {
 public:
-	KopeteIdentityLVI( Kopete::Identity *i, QTreeWidget* parent) : QTreeWidgetItem(parent), m_identity (i) { }
-	Kopete::Identity *identity() { return m_identity; }
-	
+    KopeteIdentityLVI(Kopete::Identity *i, QTreeWidget *parent) : QTreeWidgetItem(parent)
+        , m_identity(i)
+    {
+    }
+
+    Kopete::Identity *identity()
+    {
+        return m_identity;
+    }
+
 private:
-	Kopete::Identity *m_identity;
+    Kopete::Identity *m_identity;
 };
 
 #endif

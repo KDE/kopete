@@ -23,13 +23,11 @@
 
 #include <QImage>
 
-namespace KContacts
-{
-	class Picture;
+namespace KContacts {
+class Picture;
 }
 
-namespace Kopete
-{
+namespace Kopete {
 /**
  * @brief Represent a picture in Kopete context
  *
@@ -50,7 +48,7 @@ namespace Kopete
  * Kopete::Picture picture;
  * picture.setPicture(QImage());
  * picture.setPicture(QString("/tmp/image.png"));
- * 
+ *
  * QString base64 = picture.base64();
  * QString path = picture.path();
  * QImage image = picture.image();
@@ -58,92 +56,91 @@ namespace Kopete
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
-class KOPETE_EXPORT Picture	
+class KOPETE_EXPORT Picture
 {
 public:
-	/**
-	 * Create a empty Kopete::Picture
-	 */
-	Picture();
-	/**
-	 * Create a picture from a local path.
-	 */
-	explicit Picture(const QString &path);
-	/**
-	 * Create a picture from a QImage.
-	 */
-	explicit Picture(const QImage &image);
-	/**
-	 * Create a picture from a KContacts::Picture.
-	 */
-	explicit Picture(const KContacts::Picture &picture);
-	/**
-	 * Copy a picture. It doesn't create a full copy, it just make a reference.
-	 */
-	Picture(const Picture &other);
-	/**
-	 * Delete the Kopete::Picture
-	 */
-	~Picture();
-	/**
-	 * Assignment operator.
-	 * Like the copy constructor, it just make a reference.
-	 */
-	Picture &operator=(const Picture &other);
+    /**
+     * Create a empty Kopete::Picture
+     */
+    Picture();
+    /**
+     * Create a picture from a local path.
+     */
+    explicit Picture(const QString &path);
+    /**
+     * Create a picture from a QImage.
+     */
+    explicit Picture(const QImage &image);
+    /**
+     * Create a picture from a KContacts::Picture.
+     */
+    explicit Picture(const KContacts::Picture &picture);
+    /**
+     * Copy a picture. It doesn't create a full copy, it just make a reference.
+     */
+    Picture(const Picture &other);
+    /**
+     * Delete the Kopete::Picture
+     */
+    ~Picture();
+    /**
+     * Assignment operator.
+     * Like the copy constructor, it just make a reference.
+     */
+    Picture &operator=(const Picture &other);
 
-	/**
-	 * Return the current picture as QImage.
-	 * QImage can used to draw the image on a context.
-	 * 
-	 * @return the QImage cache of current picture.
-	 */
-	QImage image();
-	/**
-	 * Return the current picture as a base64 string.
-	 * The base64 is used to include the picture into a XML/XHTML context.
-	 */
-	QString base64();
-	/**
-	 * Return the local path of the current picture.
-	 */
-	QString path();
+    /**
+     * Return the current picture as QImage.
+     * QImage can used to draw the image on a context.
+     *
+     * @return the QImage cache of current picture.
+     */
+    QImage image();
+    /**
+     * Return the current picture as a base64 string.
+     * The base64 is used to include the picture into a XML/XHTML context.
+     */
+    QString base64();
+    /**
+     * Return the local path of the current picture.
+     */
+    QString path();
 
-	/**
-	 * Check if the picture is null.
- 	 */
-	bool isNull();
-	/**
-	 * Reset the picture.
-	 */
-	void clear();
+    /**
+     * Check if the picture is null.
+     */
+    bool isNull();
+    /**
+     * Reset the picture.
+     */
+    void clear();
 
-	/**
-	 * Set the picture content.
-	 * @param image the picture as a QImage.
-	 */
-	void setPicture(const QImage &image);
-	/**
-	 * Set the picture content.
-	 * @param path the path to the picture.
-	 */
-	void setPicture(const QString &path);
-	/**
-	 * Set the picture content.
-	 * @param picture a KABC Picture.
-	 */
-	void setPicture(const KContacts::Picture &picture);
-	
+    /**
+     * Set the picture content.
+     * @param image the picture as a QImage.
+     */
+    void setPicture(const QImage &image);
+    /**
+     * Set the picture content.
+     * @param path the path to the picture.
+     */
+    void setPicture(const QString &path);
+    /**
+     * Set the picture content.
+     * @param picture a KABC Picture.
+     */
+    void setPicture(const KContacts::Picture &picture);
+
 private:
-	/**
-	 * Kopete::Picture is implicitly shared.
-	 * Detach the instance when modifying data.
-	 */
-	void detach();
+    /**
+     * Kopete::Picture is implicitly shared.
+     * Detach the instance when modifying data.
+     */
+    void detach();
 
-	class Private;
-	QExplicitlySharedDataPointer<Private> d;
+    class Private;
+    QExplicitlySharedDataPointer<Private> d;
 };
-
 }//END namespace Kopete
 
 #endif

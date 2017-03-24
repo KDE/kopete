@@ -40,224 +40,225 @@
 
 #define ENCODED_IMAGE_MODE 0
 
+K_PLUGIN_FACTORY(LatexPluginFactory, registerPlugin<LatexPlugin>();
+                 )
 
-K_PLUGIN_FACTORY(LatexPluginFactory, registerPlugin<LatexPlugin>();)
-
-
-LatexPlugin::LatexPlugin( QObject *parent, const QVariantList &/*args*/ )
-: Kopete::Plugin( parent )
+LatexPlugin::LatexPlugin(QObject *parent, const QVariantList & /*args*/)
+    : Kopete::Plugin(parent)
 {
 //	kDebug(14317) ;
-	if( !s_pluginStatic )
-		s_pluginStatic = this;
+    if (!s_pluginStatic) {
+        s_pluginStatic = this;
+    }
 
-	mMagickNotFoundShown = false;
-	connect( Kopete::ChatSessionManager::self(), SIGNAL(aboutToDisplay(Kopete::Message&)), SLOT(slotMessageAboutToShow(Kopete::Message&)) );
-	connect( Kopete::ChatSessionManager::self(), SIGNAL(aboutToSend(Kopete::Message&)), this,  SLOT(slotMessageAboutToSend(Kopete::Message&)) );
-	connect( Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession*)),
-			 this, SLOT(slotNewChatSession(Kopete::ChatSession*)) );
-	
-	m_convScript = KStandardDirs::findExe(QStringLiteral("kopete_latexconvert.sh"));
+    mMagickNotFoundShown = false;
+    connect(Kopete::ChatSessionManager::self(), SIGNAL(aboutToDisplay(Kopete::Message&)), SLOT(slotMessageAboutToShow(Kopete::Message&)));
+    connect(Kopete::ChatSessionManager::self(), SIGNAL(aboutToSend(Kopete::Message&)), this, SLOT(slotMessageAboutToSend(Kopete::Message&)));
+    connect(Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession *)),
+            this, SLOT(slotNewChatSession(Kopete::ChatSession *)));
 
-		//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
-	foreach( Kopete::ChatSession* cs, sessions )
-		slotNewChatSession( cs );
+    m_convScript = KStandardDirs::findExe(QStringLiteral("kopete_latexconvert.sh"));
+
+    //Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
+    QList<Kopete::ChatSession *> sessions = Kopete::ChatSessionManager::self()->sessions();
+    foreach (Kopete::ChatSession *cs, sessions) {
+        slotNewChatSession(cs);
+    }
 }
 
 LatexPlugin::~LatexPlugin()
 {
-	qDeleteAll( m_tempFiles );
-	s_pluginStatic = 0L;
+    qDeleteAll(m_tempFiles);
+    s_pluginStatic = 0L;
 }
 
-LatexPlugin* LatexPlugin::plugin()
+LatexPlugin *LatexPlugin::plugin()
 {
-	return s_pluginStatic ;
+    return s_pluginStatic;
 }
 
-LatexPlugin* LatexPlugin::s_pluginStatic = 0L;
+LatexPlugin *LatexPlugin::s_pluginStatic = 0L;
 
-void LatexPlugin::slotNewChatSession( Kopete::ChatSession *KMM )
+void LatexPlugin::slotNewChatSession(Kopete::ChatSession *KMM)
 {
-	new LatexGUIClient( KMM );
+    new LatexGUIClient(KMM);
 }
 
-void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
+void LatexPlugin::slotMessageAboutToShow(Kopete::Message &msg)
 {
-	QString mMagick = KStandardDirs::findExe(QStringLiteral("convert"));
-	if ( mMagick.isEmpty() )
-	{
-		// show just once
-		if (  !mMagickNotFoundShown )
-		{
-			KMessageBox::queuedMessageBox(
-			    Kopete::UI::Global::mainWidget(),
-			    KMessageBox::Error, i18n("Cannot find the Magick 'convert' program.\nconvert is required to render the LaTeX formulae.\nPlease get the software from www.imagemagick.org or from your distribution's package manager.")
-			);
-			mMagickNotFoundShown = true;
-		}
-		// don't try to parse if convert is not installed
-		return;
-	}
-	
-	QString messageText = msg.plainBody();
-	if( !messageText.contains(QLatin1String("$$")))
-		return;
+    QString mMagick = KStandardDirs::findExe(QStringLiteral("convert"));
+    if (mMagick.isEmpty()) {
+        // show just once
+        if (!mMagickNotFoundShown) {
+            KMessageBox::queuedMessageBox(
+                Kopete::UI::Global::mainWidget(),
+                KMessageBox::Error,
+                i18n(
+                    "Cannot find the Magick 'convert' program.\nconvert is required to render the LaTeX formulae.\nPlease get the software from www.imagemagick.org or from your distribution's package manager.")
+                );
+            mMagickNotFoundShown = true;
+        }
+        // don't try to parse if convert is not installed
+        return;
+    }
 
-	//kDebug(14317) << " Using converter: " << m_convScript;
+    QString messageText = msg.plainBody();
+    if (!messageText.contains(QLatin1String("$$"))) {
+        return;
+    }
 
-	// /\[([^]]).*?\[/$1\]/
-	// \$\$.+?\$\$
-	
-	// this searches for $$formula$$ 
-	QRegExp rg("\\$\\$.+\\$\\$");
-	rg.setMinimal(true);
-	// this searches for [latex]formula[/latex]
-	//QRegExp rg("\\[([^]\]).*?\\[/$1\\]");
-	
-	int pos = 0;
-	
-	QMap<QString, QString> replaceMap;
-	while (pos >= 0 && pos < messageText.length())
-	{
+    //kDebug(14317) << " Using converter: " << m_convScript;
+
+    // /\[([^]]).*?\[/$1\]/
+    // \$\$.+?\$\$
+
+    // this searches for $$formula$$
+    QRegExp rg("\\$\\$.+\\$\\$");
+    rg.setMinimal(true);
+    // this searches for [latex]formula[/latex]
+    //QRegExp rg("\\[([^]\]).*?\\[/$1\\]");
+
+    int pos = 0;
+
+    QMap<QString, QString> replaceMap;
+    while (pos >= 0 && pos < messageText.length())
+    {
 //		kDebug(14317) << " searching pos: " << pos;
-		pos = rg.indexIn(messageText, pos);
-		
-		if (pos >= 0 )
-		{
-			const QString match = rg.cap(0);
-			pos += rg.matchedLength();
+        pos = rg.indexIn(messageText, pos);
 
-			QString formul=match;
-			// first remove the $$ delimiters on start and end
-			formul.remove(QStringLiteral("$$"));
-			// then trim the result, so we can skip totally empty/whitespace-only formulas
-			formul = formul.trimmed();
-			if (formul.isEmpty() || !securityCheck(formul))
-				continue;
-			
-			const QString fileName = handleLatex(formul);
-			
-			// get the image and encode it with base64
-			#if ENCODED_IMAGE_MODE
-			QImage renderedImage( fileName );
-			imagePxWidth = renderedImage.width();
-			imagePxHeight = renderedImage.height();
-			if ( !renderedImage.isNull() )
-			{
-				QByteArray ba;
-				QBuffer buffer( ba );
-				buffer.open( QIODevice::WriteOnly );
-				renderedImage.save( &buffer, "PNG" );
-				QString imageURL = QString::fromLatin1("data:image/png;base64,%1").arg( KCodecs::base64Encode( ba ) );
-				replaceMap[match] = imageURL;
-			}
-			#else
-			replaceMap[match] = fileName;
-			#endif
-		}
-	}
+        if (pos >= 0) {
+            const QString match = rg.cap(0);
+            pos += rg.matchedLength();
 
-	if(replaceMap.isEmpty()) //we haven't found any LaTeX strings
-		return;
+            QString formul = match;
+            // first remove the $$ delimiters on start and end
+            formul.remove(QStringLiteral("$$"));
+            // then trim the result, so we can skip totally empty/whitespace-only formulas
+            formul = formul.trimmed();
+            if (formul.isEmpty() || !securityCheck(formul)) {
+                continue;
+            }
 
-	messageText= msg.escapedBody();
+            const QString fileName = handleLatex(formul);
 
-	int imagePxWidth,imagePxHeight;
-	for (QMap<QString,QString>::ConstIterator it = replaceMap.constBegin(); it != replaceMap.constEnd(); ++it)
-	{
-		QImage theImage(*it);
-		if(theImage.isNull())
-			continue;
-		imagePxWidth = theImage.width();
-		imagePxHeight = theImage.height();
-		QString escapedLATEX=Qt::escape(it.key()).replace('\"',QLatin1String("&quot;"));  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
-		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" align=\"middle\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
-	}
+            // get the image and encode it with base64
+            #if ENCODED_IMAGE_MODE
+            QImage renderedImage(fileName);
+            imagePxWidth = renderedImage.width();
+            imagePxHeight = renderedImage.height();
+            if (!renderedImage.isNull()) {
+                QByteArray ba;
+                QBuffer buffer(ba);
+                buffer.open(QIODevice::WriteOnly);
+                renderedImage.save(&buffer, "PNG");
+                QString imageURL = QString::fromLatin1("data:image/png;base64,%1").arg(KCodecs::base64Encode(ba));
+                replaceMap[match] = imageURL;
+            }
+            #else
+            replaceMap[match] = fileName;
+            #endif
+        }
+    }
 
-	msg.setForcedHtmlBody( messageText );
+    if (replaceMap.isEmpty()) { //we haven't found any LaTeX strings
+        return;
+    }
+
+    messageText = msg.escapedBody();
+
+    int imagePxWidth, imagePxHeight;
+    for (QMap<QString, QString>::ConstIterator it = replaceMap.constBegin(); it != replaceMap.constEnd(); ++it) {
+        QImage theImage(*it);
+        if (theImage.isNull()) {
+            continue;
+        }
+        imagePxWidth = theImage.width();
+        imagePxHeight = theImage.height();
+        QString escapedLATEX = Qt::escape(it.key()).replace('\"', QLatin1String("&quot;"));  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
+        messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(
+                                imagePxHeight) + "\" align=\"middle\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
+    }
+
+    msg.setForcedHtmlBody(messageText);
 }
 
-
-void LatexPlugin::slotMessageAboutToSend( Kopete::Message& msg)
+void LatexPlugin::slotMessageAboutToSend(Kopete::Message &msg)
 {
-	Q_UNUSED(msg)
-	//disabled because to work correctly, we need to find what special has the gif we can send over MSN
+    Q_UNUSED(msg)
+    //disabled because to work correctly, we need to find what special has the gif we can send over MSN
 #if 0
-	KSharedConfig::Ptr config = KGlobal::config();
-	config->setGroup("Latex Plugin");
+    KSharedConfig::Ptr config = KGlobal::config();
+    config->setGroup("Latex Plugin");
 
-	if(!config->readEntry("ParseOutgoing", false))
-		return;
+    if (!config->readEntry("ParseOutgoing", false)) {
+        return;
+    }
 
-	QString messageText = msg.plainBody();
-	if( !messageText.contains("$$"))
-		return;
+    QString messageText = msg.plainBody();
+    if (!messageText.contains("$$")) {
+        return;
+    }
 /*	if( msg.from()->protocol()->pluginId()!="MSNProtocol" )
-	return;*/
+    return;*/
 
-	// this searches for $$formula$$
-	QRegExp rg("^\\s*\\$\\$([^$]+)\\$\\$\\s*$");
+    // this searches for $$formula$$
+    QRegExp rg("^\\s*\\$\\$([^$]+)\\$\\$\\s*$");
 
-	if( rg.search(messageText) != -1 )
-	{
-		QString latexFormula = rg.cap(1);
-		if(!securityCheck( latexFormula ))
-			return;
+    if (rg.search(messageText) != -1) {
+        QString latexFormula = rg.cap(1);
+        if (!securityCheck(latexFormula)) {
+            return;
+        }
 
-		QString url = handleLatex(latexFormula);
+        QString url = handleLatex(latexFormula);
 
-
-		if(!url.isNull())
-		{
-			QString escapedLATEX= Qt::escape(messageText).replace('\"',"&quot;");
-			QString messageText="<img src=\"" + url + "\" alt=\"" + escapedLATEX + "\" title=\"" + escapedLATEX +"\"  />";
-			msg.setBody( messageText, Kopete::Message::RichText );
-		}
-	}
+        if (!url.isNull()) {
+            QString escapedLATEX = Qt::escape(messageText).replace('\"', "&quot;");
+            QString messageText = "<img src=\"" + url + "\" alt=\"" + escapedLATEX + "\" title=\"" + escapedLATEX +"\"  />";
+            msg.setBody(messageText, Kopete::Message::RichText);
+        }
+    }
 #endif
 }
 
 QString LatexPlugin::handleLatex(const QString &latexFormula)
 {
-	KTemporaryFile *tempFile=new KTemporaryFile();
-	tempFile->setPrefix(QStringLiteral("kopetelatex-"));
-	tempFile->setSuffix(QStringLiteral(".png"));
-	tempFile->open();
-	m_tempFiles.append(tempFile);
-	QString fileName = tempFile->fileName();
+    KTemporaryFile *tempFile = new KTemporaryFile();
+    tempFile->setPrefix(QStringLiteral("kopetelatex-"));
+    tempFile->setSuffix(QStringLiteral(".png"));
+    tempFile->open();
+    m_tempFiles.append(tempFile);
+    QString fileName = tempFile->fileName();
 
-	KProcess p;
-	
-	QString argumentRes = QStringLiteral("-r %1x%2").arg(LatexConfig::horizontalDPI()).arg(LatexConfig::verticalDPI());
-	QString argumentOut = QStringLiteral("-o %1").arg(fileName);
-	QString argumentInclude (QStringLiteral("-x %1"));
-	//QString argumentFormat = "-fgif";  //we uses gif format because MSN only handle gif
-	LatexConfig::self()->readConfig();
-	QString includePath = LatexConfig::latexIncludeFile();
-	if (!includePath.isNull())
-		p << m_convScript <<  argumentRes << argumentOut /*<< argumentFormat*/ << argumentInclude.arg(includePath) << latexFormula;
-	else
-		p << m_convScript <<  argumentRes << argumentOut /*<< argumentFormat*/ << latexFormula;
-	
-	kDebug(14317) << "Rendering" << m_convScript << argumentRes << argumentOut << argumentInclude << latexFormula ;
-	
-	// FIXME our sucky sync filter API limitations :-)
-	p.execute();
-	return fileName;
+    KProcess p;
+
+    QString argumentRes = QStringLiteral("-r %1x%2").arg(LatexConfig::horizontalDPI()).arg(LatexConfig::verticalDPI());
+    QString argumentOut = QStringLiteral("-o %1").arg(fileName);
+    QString argumentInclude(QStringLiteral("-x %1"));
+    //QString argumentFormat = "-fgif";  //we uses gif format because MSN only handle gif
+    LatexConfig::self()->readConfig();
+    QString includePath = LatexConfig::latexIncludeFile();
+    if (!includePath.isNull()) {
+        p << m_convScript <<  argumentRes << argumentOut /*<< argumentFormat*/ << argumentInclude.arg(includePath) << latexFormula;
+    } else {
+        p << m_convScript <<  argumentRes << argumentOut /*<< argumentFormat*/ << latexFormula;
+    }
+
+    kDebug(14317) << "Rendering" << m_convScript << argumentRes << argumentOut << argumentInclude << latexFormula;
+
+    // FIXME our sucky sync filter API limitations :-)
+    p.execute();
+    return fileName;
 }
 
 bool LatexPlugin::securityCheck(const QString &latexFormula)
 {
-	return !latexFormula.contains(QRegExp("\\\\(def|let|futurelet|newcommand|renewcomment|else|fi|write|input|include"
-			"|chardef|catcode|makeatletter|noexpand|toksdef|every|errhelp|errorstopmode|scrollmode|nonstopmode|batchmode"
-			"|read|csname|newhelp|relax|afterground|afterassignment|expandafter|noexpand|special|command|loop|repeat|toks"
-			"|output|line|mathcode|name|item|section|mbox|DeclareRobustCommand)[^a-zA-Z]"));
-
+    return !latexFormula.contains(QRegExp("\\\\(def|let|futurelet|newcommand|renewcomment|else|fi|write|input|include"
+                                          "|chardef|catcode|makeatletter|noexpand|toksdef|every|errhelp|errorstopmode|scrollmode|nonstopmode|batchmode"
+                                          "|read|csname|newhelp|relax|afterground|afterassignment|expandafter|noexpand|special|command|loop|repeat|toks"
+                                          "|output|line|mathcode|name|item|section|mbox|DeclareRobustCommand)[^a-zA-Z]"));
 }
 
 #include "latexplugin.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-

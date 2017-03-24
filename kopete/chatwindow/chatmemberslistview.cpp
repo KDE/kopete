@@ -2,7 +2,7 @@
     ChatMembersListView
 
     Copyright (c) 2007 by Duncan Mac-Vicar Prett <duncan@kde.org>
-   
+
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -29,38 +29,35 @@
 
 using namespace Kopete;
 
-ChatMembersListView::ChatMembersListView( QWidget *parent )
-	 : QListView( parent )
+ChatMembersListView::ChatMembersListView(QWidget *parent)
+    : QListView(parent)
 {
-	setContextMenuPolicy (Qt::CustomContextMenu);
+    setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &QWidget::customContextMenuRequested, this, &ChatMembersListView::slotContextMenuRequested);
 }
 
-void ChatMembersListView::slotContextMenuRequested( const QPoint & pos )
+void ChatMembersListView::slotContextMenuRequested(const QPoint &pos)
 {
-	qDebug() << "context menu requested";
-	QModelIndex index = indexAt(pos);
-	if ( model() )
-	{
-		ChatSessionMembersListModel *membermodel = dynamic_cast<ChatSessionMembersListModel *>(model());
-		if ( membermodel )
-		{
-			Kopete::Contact *c = membermodel->contactAt(index);
-			
-			if (!c)
-				return;
-	
-			QMenu *p = c->popupMenu();
-			connect( p, SIGNAL(aboutToHide()), p, SLOT(deleteLater()) );
-			p->popup( mapToGlobal(pos) );
-		}
-	}
+    qDebug() << "context menu requested";
+    QModelIndex index = indexAt(pos);
+    if (model()) {
+        ChatSessionMembersListModel *membermodel = dynamic_cast<ChatSessionMembersListModel *>(model());
+        if (membermodel) {
+            Kopete::Contact *c = membermodel->contactAt(index);
+
+            if (!c) {
+                return;
+            }
+
+            QMenu *p = c->popupMenu();
+            connect(p, SIGNAL(aboutToHide()), p, SLOT(deleteLater()));
+            p->popup(mapToGlobal(pos));
+        }
+    }
 }
 
 ChatMembersListView::~ChatMembersListView()
 {
 }
 
-
 // vim: set noet ts=4 sts=4 sw=4:
-

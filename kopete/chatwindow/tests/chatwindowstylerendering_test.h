@@ -28,19 +28,19 @@
 class ChatWindowStyleRendering_Test : public KUnitTest::Tester
 {
 public:
-	ChatWindowStyleRendering_Test();
-	~ChatWindowStyleRendering_Test();
+    ChatWindowStyleRendering_Test();
+    ~ChatWindowStyleRendering_Test();
 
-	void allTests();
+    void allTests();
 public slots:
-	void testHeaderRendering();
-	void testMessageRendering();
-	void testStatusRendering();
-	void testFullRendering();
+    void testHeaderRendering();
+    void testMessageRendering();
+    void testStatusRendering();
+    void testFullRendering();
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 
-	ChatMessagePart *chatPart;
+    ChatMessagePart *chatPart;
 };
 #endif

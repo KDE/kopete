@@ -5,12 +5,12 @@
 
 class PasswordRetriever : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	QString password;
+    QString password;
 public slots:
-	void timer();
-	void gotPassword( const QString & );
+    void timer();
+    void gotPassword(const QString &);
 };
 
 #endif

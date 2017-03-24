@@ -20,9 +20,15 @@
 #include <ui/addcontactpage.h>
 #include "ui_bonjouraddui.h"
 
-namespace Kopete { class Account; }
-namespace Kopete { class MetaContact; }
-namespace Ui { class BonjourAddUI; }
+namespace Kopete {
+class Account;
+}
+namespace Kopete {
+class MetaContact;
+}
+namespace Ui {
+class BonjourAddUI;
+}
 
 /**
  * @brief A Dummy Widget that Shows a Message
@@ -33,23 +39,23 @@ namespace Ui { class BonjourAddUI; }
 */
 class BonjourAddContactPage : public AddContactPage
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-    BonjourAddContactPage( QWidget* parent = nullptr );
-	~BonjourAddContactPage();
+    BonjourAddContactPage(QWidget *parent = nullptr);
+    ~BonjourAddContactPage();
 
-    	/**
-	 * Make a contact out of the entered data
-	 */
-	bool apply(Kopete::Account* a, Kopete::MetaContact* m) Q_DECL_OVERRIDE;
+    /**
+ * Make a contact out of the entered data
+ */
+    bool apply(Kopete::Account *a, Kopete::MetaContact *m) Q_DECL_OVERRIDE;
 
-	/**
-	 * Is the data correct?
-	 */
-	bool validateData() Q_DECL_OVERRIDE;
+    /**
+     * Is the data correct?
+     */
+    bool validateData() Q_DECL_OVERRIDE;
 
 protected:
-	Ui::BonjourAddUI m_bonjourAddUI;
+    Ui::BonjourAddUI m_bonjourAddUI;
 };
 
 #endif

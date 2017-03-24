@@ -16,7 +16,7 @@
  *                                                                       *
  * You should have received a copy of the GNU General Public License     *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- *************************************************************************/ 
+ *************************************************************************/
 
 #ifndef OTRPREFERENCES_H
 #define OTRPREFERENCES_H
@@ -31,26 +31,26 @@
  * @author Michael Zanetti
  */
 
-class OTRPreferences : public KCModule  {
-   Q_OBJECT
+class OTRPreferences : public KCModule
+{
+    Q_OBJECT
 
 public:
-	explicit OTRPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
-	~OTRPreferences();
+    explicit OTRPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+    ~OTRPreferences();
 
 private:
-	Ui::OTRPrefsUI *preferencesDialog;
-	OtrlConfInterface *otrlConfInterface;
-	QMap<int, int> privKeys;
+    Ui::OTRPrefsUI *preferencesDialog;
+    OtrlConfInterface *otrlConfInterface;
+    QMap<int, int> privKeys;
 
 private slots: // Public slots
-	void generateFingerprint();
-	void showPrivFingerprint(int accountnr);
-	void verifyFingerprint();
-	void fillFingerprints();
-	void updateButtons(int row, int col, int prevRow, int prevCol);
-	void forgetFingerprint();
-
+    void generateFingerprint();
+    void showPrivFingerprint(int accountnr);
+    void verifyFingerprint();
+    void fillFingerprints();
+    void updateButtons(int row, int col, int prevRow, int prevCol);
+    void forgetFingerprint();
 };
 
 #endif

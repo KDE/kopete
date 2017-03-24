@@ -25,76 +25,71 @@
 #include <kopeteaccount.h>
 #include <kopetecontact.h>
 
-namespace Kopete
-{
-
+namespace Kopete {
 class DeleteContactTask::Private
 {
 public:
 };
 
 DeleteContactTask::DeleteContactTask(QObject *parent)
- : Kopete::ContactTaskBase(parent), d(new Private)
+    : Kopete::ContactTaskBase(parent)
+    , d(new Private)
 {
 }
 
 DeleteContactTask::DeleteContactTask(Kopete::Contact *contact)
- : Kopete::ContactTaskBase(contact), d(new Private)
+    : Kopete::ContactTaskBase(contact)
+    , d(new Private)
 {
-	setContact(contact);
+    setContact(contact);
 }
 
 DeleteContactTask::~DeleteContactTask()
 {
-	delete d;
+    delete d;
 }
 
 void DeleteContactTask::start()
 {
-	Q_ASSERT( contact() );
+    Q_ASSERT(contact());
 
-	if( contact()->account() && !contact()->account()->isConnected() )
-	{
-		qCDebug(LIBKOPETE_LOG) << "ERROR: Network is unavailable";
+    if (contact()->account() && !contact()->account()->isConnected()) {
+        qCDebug(LIBKOPETE_LOG) << "ERROR: Network is unavailable";
 
-		setError( DeleteContactTask::NetworkUnavailableError );
-		emitResult();
+        setError(DeleteContactTask::NetworkUnavailableError);
+        emitResult();
 
-		return;
-	}
+        return;
+    }
 
-	if( subjobs().empty() )
-	{
-		qCDebug(LIBKOPETE_LOG) << "WARNING: This task does not contain protocol delete children task. Using default behavior, calling obsolete deleteContact()";
+    if (subjobs().empty()) {
+        qCDebug(LIBKOPETE_LOG) << "WARNING: This task does not contain protocol delete children task. Using default behavior, calling obsolete deleteContact()";
 
-		contact()->deleteContact();
-		emitResult();
+        contact()->deleteContact();
+        emitResult();
 
-		return;
-	}
+        return;
+    }
 
-	// Call default implemention which execute sub jobs
-	Kopete::Task::start();
+    // Call default implemention which execute sub jobs
+    Kopete::Task::start();
 }
 
 void DeleteContactTask::slotResult(KJob *job)
 {
-	KCompositeJob::slotResult(job);
-	// We executed all subjobs, delete the contact from memory.
-	// This is the default behavior from Kopete::Contact old deleteContact()
-	// method.
-	if( !job->error() && subjobs().empty() )
-	{
-		qCDebug(LIBKOPETE_LOG) << "Deleting Kopete::Contact from memory";
-		contact()->deleteLater();
-		emitResult();
-	}
+    KCompositeJob::slotResult(job);
+    // We executed all subjobs, delete the contact from memory.
+    // This is the default behavior from Kopete::Contact old deleteContact()
+    // method.
+    if (!job->error() && subjobs().empty()) {
+        qCDebug(LIBKOPETE_LOG) << "Deleting Kopete::Contact from memory";
+        contact()->deleteLater();
+        emitResult();
+    }
 }
 
 QString DeleteContactTask::taskType() const
 {
-	return QStringLiteral("DeleteContactTask");
+    return QStringLiteral("DeleteContactTask");
 }
-
 } // namespace Kopete
-

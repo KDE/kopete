@@ -35,23 +35,22 @@
 #include "kopeteuiglobal.h"
 #include "kopetestatusmanager.h"
 
-namespace Kopete
-{
-namespace Utils
-{
-
+namespace Kopete {
+namespace Utils {
 struct DefaultStrings
 {
-    DefaultStrings() :
-        notifyConnectionLost_DefaultMessage(i18n("You have been disconnected.")),
-        notifyConnectionLost_DefaultCaption(i18n("Connection Lost.")),
-        notifyConnectionLost_DefaultExplanation(i18n("Kopete lost the channel used to talk to the instant messaging system.\nThis can be because either your internet access went down, the service is experiencing problems, or the service disconnected you because you tried to connect with the same account from another location. Try connecting again later.")),
-
-        notifyCannotConnect_DefaultMessage(i18n("Cannot connect with the instant messaging server or peers.")),
-        notifyCannotConnect_DefaultCaption(i18n("Cannot connect.")),
-        notifyCannotConnect_DefaultExplanation(i18n("This means Kopete cannot reach the instant messaging server or peers.\nThis can be because either your internet access is down or the server is experiencing problems. Try connecting again later."))
+    DefaultStrings()
+        : notifyConnectionLost_DefaultMessage(i18n("You have been disconnected."))
+        , notifyConnectionLost_DefaultCaption(i18n("Connection Lost."))
+        , notifyConnectionLost_DefaultExplanation(i18n(
+                                                      "Kopete lost the channel used to talk to the instant messaging system.\nThis can be because either your internet access went down, the service is experiencing problems, or the service disconnected you because you tried to connect with the same account from another location. Try connecting again later."))
+        , notifyCannotConnect_DefaultMessage(i18n("Cannot connect with the instant messaging server or peers."))
+        , notifyCannotConnect_DefaultCaption(i18n("Cannot connect."))
+        , notifyCannotConnect_DefaultExplanation(i18n(
+                                                     "This means Kopete cannot reach the instant messaging server or peers.\nThis can be because either your internet access is down or the server is experiencing problems. Try connecting again later."))
     {
     }
+
     const QString notifyConnectionLost_DefaultMessage;
     const QString notifyConnectionLost_DefaultCaption;
     const QString notifyConnectionLost_DefaultExplanation;
@@ -62,50 +61,56 @@ struct DefaultStrings
 };
 Q_GLOBAL_STATIC(DefaultStrings, defaultStrings)
 
-void notify( QPixmap pic, const QString &eventid, const QString &caption, const QString &message, const QString explanation, const QString debugInfo)
+void notify(QPixmap pic, const QString &eventid, const QString &caption, const QString &message, const QString explanation, const QString debugInfo)
 {
-	Q_UNUSED(caption);
+    Q_UNUSED(caption);
 
-	if ( Kopete::StatusManager::self()->globalStatusCategory() == Kopete::OnlineStatusManager::Busy )
-		return;
+    if (Kopete::StatusManager::self()->globalStatusCategory() == Kopete::OnlineStatusManager::Busy) {
+        return;
+    }
 
-	QStringList actions;
-		if ( !explanation.isEmpty() )
-			actions  << i18n( "More Information..." );
-		qCDebug(LIBKOPETE_LOG) ;
-		KNotification *n = new KNotification( eventid , 0l );
-		n->setActions( actions );
-		n->setText( message );
-		n->setPixmap( pic );
-		ErrorNotificationInfo info;
-		info.explanation = explanation;
-		info.debugInfo = debugInfo;
+    QStringList actions;
+    if (!explanation.isEmpty()) {
+        actions << i18n("More Information...");
+    }
+    qCDebug(LIBKOPETE_LOG);
+    KNotification *n = new KNotification(eventid, 0l);
+    n->setActions(actions);
+    n->setText(message);
+    n->setPixmap(pic);
+    ErrorNotificationInfo info;
+    info.explanation = explanation;
+    info.debugInfo = debugInfo;
 
-		NotifyHelper::self()->registerNotification(n, info);
-		QObject::connect( n, SIGNAL(activated(uint)) , NotifyHelper::self() , SLOT(slotEventActivated(uint)) );
-		QObject::connect( n, SIGNAL(closed()) , NotifyHelper::self() , SLOT(slotEventClosed()) );
-		
-		n->sendEvent();
+    NotifyHelper::self()->registerNotification(n, info);
+    QObject::connect(n, SIGNAL(activated(uint)), NotifyHelper::self(), SLOT(slotEventActivated(uint)));
+    QObject::connect(n, SIGNAL(closed()), NotifyHelper::self(), SLOT(slotEventClosed()));
+
+    n->sendEvent();
 }
 
-void notifyConnectionLost( const Account *account, const QString caption, const QString message, const QString explanation, const QString debugInfo)
+void notifyConnectionLost(const Account *account, const QString caption, const QString message, const QString explanation, const QString debugInfo)
 {
-	if (!account)
-		return;
+    if (!account) {
+        return;
+    }
 
-	notify( account->accountIcon(KIconLoader::SizeMedium), QStringLiteral("connection_lost"), caption.isEmpty() ? defaultStrings->notifyConnectionLost_DefaultCaption : caption, message.isEmpty() ? defaultStrings->notifyConnectionLost_DefaultMessage : message, explanation.isEmpty() ? defaultStrings->notifyConnectionLost_DefaultExplanation : explanation, debugInfo);
+    notify(account->accountIcon(KIconLoader::SizeMedium), QStringLiteral("connection_lost"), caption.isEmpty() ? defaultStrings->notifyConnectionLost_DefaultCaption : caption,
+           message.isEmpty() ? defaultStrings->notifyConnectionLost_DefaultMessage : message,
+           explanation.isEmpty() ? defaultStrings->notifyConnectionLost_DefaultExplanation : explanation, debugInfo);
 }
 
-void notifyCannotConnect( const Account *account, const QString explanation, const QString debugInfo)
+void notifyCannotConnect(const Account *account, const QString explanation, const QString debugInfo)
 {
-	Q_UNUSED(explanation);
+    Q_UNUSED(explanation);
 
-	if (!account)
-		return;
+    if (!account) {
+        return;
+    }
 
-	notify( account->accountIcon(KIconLoader::SizeMedium), QStringLiteral("cannot_connect"), defaultStrings->notifyCannotConnect_DefaultCaption, defaultStrings->notifyCannotConnect_DefaultMessage, defaultStrings->notifyCannotConnect_DefaultExplanation, debugInfo);
+    notify(account->accountIcon(KIconLoader::SizeMedium), QStringLiteral(
+               "cannot_connect"), defaultStrings->notifyCannotConnect_DefaultCaption, defaultStrings->notifyCannotConnect_DefaultMessage, defaultStrings->notifyCannotConnect_DefaultExplanation,
+           debugInfo);
 }
-
 } // end ns ErrorNotifier
 } // end ns Kopete
-

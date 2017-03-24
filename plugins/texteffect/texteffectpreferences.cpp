@@ -30,193 +30,187 @@
 #include <kgenericfactory.h>
 #include <kdebug.h>
 
-
-
 #include "ui_texteffectprefs.h"
 #include "texteffectconfig.h"
 
-K_PLUGIN_FACTORY(TextEffectPreferencesFactory, registerPlugin<TextEffectPreferences>();)
+K_PLUGIN_FACTORY(TextEffectPreferencesFactory, registerPlugin<TextEffectPreferences>();
+                 )
 
-TextEffectPreferences::TextEffectPreferences(QWidget *parent,
-                                             const QVariantList &args)
-	: KCModule(parent, args)
+TextEffectPreferences::TextEffectPreferences(QWidget *parent, const QVariantList &args)
+    : KCModule(parent, args)
 {
-	QVBoxLayout* l = new QVBoxLayout( this );
-	QWidget *w = new QWidget;
-	kDebug( 14310 ) << "Creating preferences dialog";
-	preferencesDialog = new Ui::TextEffectPrefs;
-	preferencesDialog->setupUi( w );
-	l->addWidget( w );
+    QVBoxLayout *l = new QVBoxLayout(this);
+    QWidget *w = new QWidget;
+    kDebug(14310) << "Creating preferences dialog";
+    preferencesDialog = new Ui::TextEffectPrefs;
+    preferencesDialog->setupUi(w);
+    l->addWidget(w);
 
-	kDebug( 14310 ) << "Creating config object";
+    kDebug(14310) << "Creating config object";
 
-	config = new TextEffectConfig;
+    config = new TextEffectConfig;
 
-	kDebug( 14310 ) << "Setting up connections";
+    kDebug(14310) << "Setting up connections";
 
-	connect(preferencesDialog->mColorsAdd , SIGNAL(pressed()) ,
-			this , SLOT(slotAddPressed()));
+    connect(preferencesDialog->mColorsAdd, SIGNAL(pressed()),
+            this, SLOT(slotAddPressed()));
 
-	connect(preferencesDialog->mColorsRemove , SIGNAL(pressed()) ,
-			this , SLOT(slotRemovePressed()));
+    connect(preferencesDialog->mColorsRemove, SIGNAL(pressed()),
+            this, SLOT(slotRemovePressed()));
 
-	connect(preferencesDialog->mColorsUp , SIGNAL(pressed()) ,
-			this , SLOT(slotUpPressed()));
+    connect(preferencesDialog->mColorsUp, SIGNAL(pressed()),
+            this, SLOT(slotUpPressed()));
 
-	connect(preferencesDialog->mColorsDown , SIGNAL(pressed()) ,
-			this , SLOT(slotDownPressed()));
+    connect(preferencesDialog->mColorsDown, SIGNAL(pressed()),
+            this, SLOT(slotDownPressed()));
 
-	// Connect up all the check boxes
-	connect( preferencesDialog->m_lamer, SIGNAL(clicked()),
-			 this, SLOT(slotSettingChanged()) );
-	connect( preferencesDialog->m_casewaves, SIGNAL(clicked()),
-			 this, SLOT(slotSettingChanged()) );
+    // Connect up all the check boxes
+    connect(preferencesDialog->m_lamer, SIGNAL(clicked()),
+            this, SLOT(slotSettingChanged()));
+    connect(preferencesDialog->m_casewaves, SIGNAL(clicked()),
+            this, SLOT(slotSettingChanged()));
 
-	connect( preferencesDialog->m_colorRandom, SIGNAL(clicked()),
-			 this, SLOT(slotSettingChanged()) );
-	connect( preferencesDialog->m_fg, SIGNAL(clicked()),
-			 this, SLOT(slotSettingChanged()) );
-	connect( preferencesDialog->m_char, SIGNAL(clicked()),
-			 this, SLOT(slotSettingChanged()) );
-	connect( preferencesDialog->m_words, SIGNAL(clicked()),
-			 this, SLOT(slotSettingChanged()) );
+    connect(preferencesDialog->m_colorRandom, SIGNAL(clicked()),
+            this, SLOT(slotSettingChanged()));
+    connect(preferencesDialog->m_fg, SIGNAL(clicked()),
+            this, SLOT(slotSettingChanged()));
+    connect(preferencesDialog->m_char, SIGNAL(clicked()),
+            this, SLOT(slotSettingChanged()));
+    connect(preferencesDialog->m_words, SIGNAL(clicked()),
+            this, SLOT(slotSettingChanged()));
 
-	//setMainWidget( preferencesDialog, "Text Effect Plugin" );
+    //setMainWidget( preferencesDialog, "Text Effect Plugin" );
 }
 
 TextEffectPreferences::~TextEffectPreferences()
 {
-	delete preferencesDialog;
-	delete config;
+    delete preferencesDialog;
+    delete config;
 }
-
 
 void TextEffectPreferences::load()
 {
-	kDebug( 14310 ) << "ENTER";
+    kDebug(14310) << "ENTER";
 
-	config->load();
+    config->load();
 
-	preferencesDialog->mColorsListBox->addItems(config->colors());
-	preferencesDialog->m_fg->setChecked(config->colorLines());
-	preferencesDialog->m_words->setChecked(config->colorWords());
-	preferencesDialog->m_char->setChecked(config->colorChar());
-	preferencesDialog->m_lamer->setChecked(config->lamer());
-	preferencesDialog->m_casewaves->setChecked(config->waves());
+    preferencesDialog->mColorsListBox->addItems(config->colors());
+    preferencesDialog->m_fg->setChecked(config->colorLines());
+    preferencesDialog->m_words->setChecked(config->colorWords());
+    preferencesDialog->m_char->setChecked(config->colorChar());
+    preferencesDialog->m_lamer->setChecked(config->lamer());
+    preferencesDialog->m_casewaves->setChecked(config->waves());
 
+    // Call parent's save method
+    KCModule::load();
 
-	// Call parent's save method
-	KCModule::load();
+    // Indicate that we have not changed ^_^
+    emit changed(false);
 
-	// Indicate that we have not changed ^_^
-	emit changed( false );
-
-	kDebug( 14310 ) << "EXIT";
-
+    kDebug(14310) << "EXIT";
 }
 
 void TextEffectPreferences::save()
 {
-	qDebug() << "ENTER";
-	// Save the settings
-	config->setColors(colors());
-	config->setColorRandom(preferencesDialog->m_colorRandom->isChecked());
-	config->setColorLines(preferencesDialog->m_fg->isChecked());
-	config->setColorWords(preferencesDialog->m_words->isChecked());
-	config->setColorChar(preferencesDialog->m_char->isChecked());
+    qDebug() << "ENTER";
+    // Save the settings
+    config->setColors(colors());
+    config->setColorRandom(preferencesDialog->m_colorRandom->isChecked());
+    config->setColorLines(preferencesDialog->m_fg->isChecked());
+    config->setColorWords(preferencesDialog->m_words->isChecked());
+    config->setColorChar(preferencesDialog->m_char->isChecked());
 
-	config->setLamer(preferencesDialog->m_lamer->isChecked());
-	config->setWaves(preferencesDialog->m_casewaves->isChecked());
+    config->setLamer(preferencesDialog->m_lamer->isChecked());
+    config->setWaves(preferencesDialog->m_casewaves->isChecked());
 
-	config->save();
+    config->save();
 
-	// Notify the plugin that the settings have changed
-	//TextEffectPlugin::plugin()->slotSettingsChanged();
+    // Notify the plugin that the settings have changed
+    //TextEffectPlugin::plugin()->slotSettingsChanged();
 
-	// Call parent's save method
-	KCModule::save();
+    // Call parent's save method
+    KCModule::save();
 
-	// Indicate that we have not changed ^_^
-	emit changed( false );
-	qDebug() << "EXIT";
+    // Indicate that we have not changed ^_^
+    emit changed(false);
+    qDebug() << "EXIT";
 }
 
 QStringList TextEffectPreferences::colors()
 {
-	QStringList ret;
-	for(int f=0; f < preferencesDialog->mColorsListBox->count() ; ++f)
-	{
-		ret.append(preferencesDialog->mColorsListBox->item(f)->text());
-	}
-	return ret;
+    QStringList ret;
+    for (int f = 0; f < preferencesDialog->mColorsListBox->count(); ++f) {
+        ret.append(preferencesDialog->mColorsListBox->item(f)->text());
+    }
+    return ret;
 }
 
 void TextEffectPreferences::slotAddPressed()
 {
-	QColor myColor;
+    QColor myColor;
     myColor = QColorDialog::getColor();
-    if ( myColor.isValid() )
-	{
-		preferencesDialog->mColorsListBox->addItem(myColor.name());
-	}
+    if (myColor.isValid()) {
+        preferencesDialog->mColorsListBox->addItem(myColor.name());
+    }
 
-	// Indicate that something has changed
-	slotSettingChanged();
-
+    // Indicate that something has changed
+    slotSettingChanged();
 }
+
 void TextEffectPreferences::slotRemovePressed()
 {
-	delete preferencesDialog->mColorsListBox->currentItem();
+    delete preferencesDialog->mColorsListBox->currentItem();
 
-	// Indicate that something has changed
-	slotSettingChanged();
+    // Indicate that something has changed
+    slotSettingChanged();
 }
-
 
 void TextEffectPreferences::slotUpPressed()
 {
-	int p=preferencesDialog->mColorsListBox->currentRow();
-	if(p <= 0 )
-		return;
+    int p = preferencesDialog->mColorsListBox->currentRow();
+    if (p <= 0) {
+        return;
+    }
 
-	QListWidgetItem *i = preferencesDialog->mColorsListBox->currentItem();
-	if(!i)
-		return;
-	i->setSelected(false);
-	preferencesDialog->mColorsListBox->removeItemWidget(i);
-	preferencesDialog->mColorsListBox->insertItem(p-1, i);
-	i->setSelected(true);
+    QListWidgetItem *i = preferencesDialog->mColorsListBox->currentItem();
+    if (!i) {
+        return;
+    }
+    i->setSelected(false);
+    preferencesDialog->mColorsListBox->removeItemWidget(i);
+    preferencesDialog->mColorsListBox->insertItem(p-1, i);
+    i->setSelected(true);
 
-	// Indicate that something has changed
-	slotSettingChanged();
-
+    // Indicate that something has changed
+    slotSettingChanged();
 }
+
 void TextEffectPreferences::slotDownPressed()
 {
-	int p=preferencesDialog->mColorsListBox->currentRow();
-	if(p < 0 )
-		return;
+    int p = preferencesDialog->mColorsListBox->currentRow();
+    if (p < 0) {
+        return;
+    }
 
-	QListWidgetItem *i = preferencesDialog->mColorsListBox->currentItem();
-	if(!i)
-		return;
-	i->setSelected(false);
-	preferencesDialog->mColorsListBox->takeItem(p);
-	preferencesDialog->mColorsListBox->insertItem(p+1, i);
-	i->setSelected(true);
+    QListWidgetItem *i = preferencesDialog->mColorsListBox->currentItem();
+    if (!i) {
+        return;
+    }
+    i->setSelected(false);
+    preferencesDialog->mColorsListBox->takeItem(p);
+    preferencesDialog->mColorsListBox->insertItem(p+1, i);
+    i->setSelected(true);
 
-	// Indicate that something has changed
-	slotSettingChanged();
+    // Indicate that something has changed
+    slotSettingChanged();
 }
-
-
 
 void TextEffectPreferences::slotSettingChanged()
 {
-	qDebug() << "Called"
-			  << endl;
-	// Indicate that our settings have changed
-    emit changed( true );
+    qDebug() << "Called"
+             << endl;
+    // Indicate that our settings have changed
+    emit changed(true);
 }
 
 void TextEffectPreferences::defaults()
@@ -228,8 +222,8 @@ void TextEffectPreferences::defaults()
     preferencesDialog->m_char->setChecked(false);
     preferencesDialog->m_lamer->setChecked(false);
     preferencesDialog->m_casewaves->setChecked(false);
-    preferencesDialog->m_colorRandom->setChecked( false );
-    emit changed( true );
+    preferencesDialog->m_colorRandom->setChecked(false);
+    emit changed(true);
 }
 
 #include "texteffectpreferences.moc"

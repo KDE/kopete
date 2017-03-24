@@ -20,22 +20,14 @@
 
 #include "kopetemetacontact.h"
 
-namespace Kopete
-{
-namespace Test
-{
-namespace Mock
-{
-
+namespace Kopete {
+namespace Test {
+namespace Mock {
 class MetaContact : public Kopete::MetaContact
 {
-
 };
-
 } // end ns Kopete::Test::Mock
 } // end ns Kopete::Test
 } // end ns Kopete
 
-
 #endif
-

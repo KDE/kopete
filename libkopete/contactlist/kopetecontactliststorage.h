@@ -22,9 +22,7 @@
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include <kopete_export.h>
-namespace Kopete
-{
-
+namespace Kopete {
 /**
  * @brief Provide a storage for Kopete Contact List.
  *
@@ -34,7 +32,7 @@ namespace Kopete
 class KOPETE_EXPORT ContactListStorage
 {
 public:
-    ContactListStorage( );
+    ContactListStorage();
     virtual ~ContactListStorage();
 
     /**
@@ -45,7 +43,7 @@ public:
     Group::List groups() const;
     /**
      * @brief Get the MetaContact list for this storage.
-     * 
+     *
      * @return MetaContact list.
      */
     MetaContact::List contacts() const;
@@ -56,31 +54,31 @@ public:
      *
      * Call this method to verify if the loading of the storage
      * went without problems.
-     * 
+     *
      * @code
      * Kopete::ContactListStorage *storage = new Kopete::XmlContactStorage;
      * storage->load();
-     * 
+     *
      * if( !storage->isValid() )
      * {
      *     qDebug() << "Contact list storage failed. Reason: " << storage->errorMessage();
      * }
      * @endcode
-     * 
+     *
      * Derived ContactListStorage must implement this method.
-     * 
+     *
      * @return true if this ContactListStorage is valid.
      */
     virtual bool isValid() const = 0;
-    
+
     /**
      * @brief Get a nice error message
-     * 
+     *
      * Use this method to find out why an operation of the ContactListStorage
      * failed. The resulting error message is already translated.
-     * 
+     *
      * Derived ContactListStorage must implement this method.
-     * 
+     *
      * @return Translated error message
      */
     virtual QString errorMessage() const = 0;
@@ -96,14 +94,14 @@ public:
 
     /**
      * @brief Load the contact list
-     * 
+     *
      * Derived ContactListStorage must implement this method.
      */
     virtual void load() = 0;
 
     /**
      * @brief Save the contact list
-     * 
+     *
      * Derived ContactListStorage must implement this method.
      */
     virtual void save() = 0;
@@ -111,20 +109,20 @@ public:
 protected:
     /**
      * @brief Add a MetaContact to internal list.
-     * 
+     *
      * Derived ContactListStorage use this method to add new
      * MetaContact.
-     * 
+     *
      * @param metaContact MetaContact to add.
      */
     void addMetaContact(Kopete::MetaContact *metaContact);
 
     /**
      * @brief Add a Group to internal list
-     * 
+     *
      * Derived ContactListStorage use this method to add new
      * Group.
-     * 
+     *
      * @param group Group to add.
      */
     void addGroup(Kopete::Group *group);
@@ -135,7 +133,7 @@ protected:
      * @param groupId The unique id to search.
      * @return Group or 0L if nothing is found.
      */
-    Kopete::Group * group( unsigned int groupId ) const;
+    Kopete::Group *group(unsigned int groupId) const;
 
     /**
      * @brief Find a group with his displayName
@@ -146,13 +144,12 @@ protected:
      * @param type is the Group::GroupType to search, the default value is Group::Normal
      * @return always a valid Group
      */
-    Kopete::Group * findGroup( const QString &displayName, int type = Kopete::Group::Normal );
+    Kopete::Group *findGroup(const QString &displayName, int type = Kopete::Group::Normal);
 
 private:
     class Private;
-    Private * const d;
+    Private *const d;
 };
-
 }
 
 #endif

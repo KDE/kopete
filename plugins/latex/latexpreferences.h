@@ -21,7 +21,9 @@
 #include <kcmodule.h>
 #include <qstring.h>
 
-namespace Ui { class LatexPrefsUI; }
+namespace Ui {
+class LatexPrefsUI;
+}
 
 /**
   *@author Duncan Mac-Vicar Prett
@@ -29,20 +31,20 @@ namespace Ui { class LatexPrefsUI; }
 
 class LatexPreferences : public KCModule
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
 
-	explicit LatexPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
-	~LatexPreferences();
+    explicit LatexPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
+    ~LatexPreferences();
 
-	void save() Q_DECL_OVERRIDE;
-	void load() Q_DECL_OVERRIDE;
-	void defaults() Q_DECL_OVERRIDE;
+    void save() Q_DECL_OVERRIDE;
+    void load() Q_DECL_OVERRIDE;
+    void defaults() Q_DECL_OVERRIDE;
 
 private:
-	Ui::LatexPrefsUI *m_preferencesDialog;
+    Ui::LatexPrefsUI *m_preferencesDialog;
 private slots:
-	void slotModified();
+    void slotModified();
 };
 
 #endif

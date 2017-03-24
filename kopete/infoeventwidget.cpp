@@ -32,253 +32,247 @@
 class InfoEventWidget::Private
 {
 public:
-	QPointer<Kopete::InfoEvent> currentEvent;
-	int currentEventIndex;
-	QTimeLine *timeline;
-	Ui::InfoEventBase ui;
-	bool enableUpdates;
-	QHash<KNotification*, QPointer<Kopete::InfoEvent> > notifyEventHash;
+    QPointer<Kopete::InfoEvent> currentEvent;
+    int currentEventIndex;
+    QTimeLine *timeline;
+    Ui::InfoEventBase ui;
+    bool enableUpdates;
+    QHash<KNotification *, QPointer<Kopete::InfoEvent> > notifyEventHash;
 };
 
 InfoEventWidget::InfoEventWidget(QWidget *parent)
-: QWidget(parent), d( new Private() )
+    : QWidget(parent)
+    , d(new Private())
 {
-	d->timeline = new QTimeLine( 150, this );
-	d->timeline->setCurveShape( QTimeLine::EaseInOutCurve );
-	connect( d->timeline, SIGNAL(valueChanged(qreal)),
-	         this, SLOT(slotAnimate(qreal)) );
+    d->timeline = new QTimeLine(150, this);
+    d->timeline->setCurveShape(QTimeLine::EaseInOutCurve);
+    connect(d->timeline, SIGNAL(valueChanged(qreal)),
+            this, SLOT(slotAnimate(qreal)));
 
-	d->ui.setupUi(this);
-	static_cast<KSqueezedTextLabel*>(d->ui.lblTitle)->setTextElideMode( Qt::ElideRight );
-	d->ui.buttonPrev->setIcon( QIcon::fromTheme( QStringLiteral("arrow-left") ) );
-	d->ui.buttonNext->setIcon( QIcon::fromTheme( QStringLiteral("arrow-right") ) );
-	d->ui.buttonClose->setIcon( QIcon::fromTheme( QStringLiteral("window-close") ) );
-	d->ui.lblInfo->setTextInteractionFlags(Qt::TextSelectableByMouse);
-	QWidget::setVisible( false );
+    d->ui.setupUi(this);
+    static_cast<KSqueezedTextLabel *>(d->ui.lblTitle)->setTextElideMode(Qt::ElideRight);
+    d->ui.buttonPrev->setIcon(QIcon::fromTheme(QStringLiteral("arrow-left")));
+    d->ui.buttonNext->setIcon(QIcon::fromTheme(QStringLiteral("arrow-right")));
+    d->ui.buttonClose->setIcon(QIcon::fromTheme(QStringLiteral("window-close")));
+    d->ui.lblInfo->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    QWidget::setVisible(false);
 
-	d->currentEventIndex = 0;
-	d->enableUpdates = false;
-	connect( Kopete::InfoEventManager::self(), SIGNAL(changed()), this, SLOT(updateInfo()) );
-	connect( Kopete::InfoEventManager::self(), SIGNAL(eventAdded(Kopete::InfoEvent*)), this, SLOT(eventAdded(Kopete::InfoEvent*)) );
-	connect( d->ui.lblActions, SIGNAL(linkActivated(QString)), this, SLOT(linkClicked(QString)) );
-	connect( d->ui.buttonPrev, SIGNAL(clicked(bool)), this, SLOT(prevInfoEvent()) );
-	connect( d->ui.buttonNext, SIGNAL(clicked(bool)), this, SLOT(nextInfoEvent()) );
-	connect( d->ui.buttonClose, SIGNAL(clicked(bool)), this, SLOT(closeInfoEvent()) );
+    d->currentEventIndex = 0;
+    d->enableUpdates = false;
+    connect(Kopete::InfoEventManager::self(), SIGNAL(changed()), this, SLOT(updateInfo()));
+    connect(Kopete::InfoEventManager::self(), SIGNAL(eventAdded(Kopete::InfoEvent *)), this, SLOT(eventAdded(Kopete::InfoEvent *)));
+    connect(d->ui.lblActions, SIGNAL(linkActivated(QString)), this, SLOT(linkClicked(QString)));
+    connect(d->ui.buttonPrev, SIGNAL(clicked(bool)), this, SLOT(prevInfoEvent()));
+    connect(d->ui.buttonNext, SIGNAL(clicked(bool)), this, SLOT(nextInfoEvent()));
+    connect(d->ui.buttonClose, SIGNAL(clicked(bool)), this, SLOT(closeInfoEvent()));
 }
-
 
 InfoEventWidget::~InfoEventWidget()
 {
-	delete d;
+    delete d;
 }
 
-void InfoEventWidget::setVisible( bool visible )
+void InfoEventWidget::setVisible(bool visible)
 {
-	if ( visible == isVisible() )
-		return;
+    if (visible == isVisible()) {
+        return;
+    }
 
-	d->enableUpdates = visible;
-	if ( visible )
-		updateInfo();
+    d->enableUpdates = visible;
+    if (visible) {
+        updateInfo();
+    }
 
-	// animate the widget disappearing
-	d->timeline->setDirection( visible ?  QTimeLine::Forward
-	                           : QTimeLine::Backward );
-	d->timeline->start();
+    // animate the widget disappearing
+    d->timeline->setDirection(visible ? QTimeLine::Forward
+                              : QTimeLine::Backward);
+    d->timeline->start();
 }
 
 void InfoEventWidget::prevInfoEvent()
 {
-	if ( d->currentEventIndex > 0 )
-	{
-		d->currentEventIndex--;
-		updateInfo();
-	}
+    if (d->currentEventIndex > 0) {
+        d->currentEventIndex--;
+        updateInfo();
+    }
 }
 
 void InfoEventWidget::nextInfoEvent()
 {
-	if ( d->currentEventIndex + 1 < Kopete::InfoEventManager::self()->eventCount() )
-	{
-		d->currentEventIndex++;
-		updateInfo();
-	}
+    if (d->currentEventIndex + 1 < Kopete::InfoEventManager::self()->eventCount()) {
+        d->currentEventIndex++;
+        updateInfo();
+    }
 }
 
 void InfoEventWidget::closeInfoEvent()
 {
-	Kopete::InfoEventManager* ie = Kopete::InfoEventManager::self();
-	if ( ie->eventCount() > 0 )
-	{
-		Kopete::InfoEvent* event = ie->event( d->currentEventIndex );
+    Kopete::InfoEventManager *ie = Kopete::InfoEventManager::self();
+    if (ie->eventCount() > 0) {
+        Kopete::InfoEvent *event = ie->event(d->currentEventIndex);
 
-		Q_ASSERT( event );
-		event->close();
-	}
+        Q_ASSERT(event);
+        event->close();
+    }
 
-	if ( ie->eventCount() == 0 )
-		setVisible( false );
+    if (ie->eventCount() == 0) {
+        setVisible(false);
+    }
 }
 
-void InfoEventWidget::slotAnimate( qreal amount )
+void InfoEventWidget::slotAnimate(qreal amount)
 {
-	if ( amount == 0 )
-	{
-		QWidget::setVisible( false );
-		return;
-	}
-	
-	if ( amount == 1.0 )
-	{
-		layout()->setSizeConstraint( QLayout::SetDefaultConstraint );
-		setFixedHeight( sizeHintHeight() );
-		return;
-	}
-	
-	setFixedHeight( sizeHintHeight() * amount );
-	
-	if ( !isVisible() )
-		QWidget::setVisible( true );
+    if (amount == 0) {
+        QWidget::setVisible(false);
+        return;
+    }
+
+    if (amount == 1.0) {
+        layout()->setSizeConstraint(QLayout::SetDefaultConstraint);
+        setFixedHeight(sizeHintHeight());
+        return;
+    }
+
+    setFixedHeight(sizeHintHeight() * amount);
+
+    if (!isVisible()) {
+        QWidget::setVisible(true);
+    }
 }
 
-void InfoEventWidget::linkClicked( const QString& link )
+void InfoEventWidget::linkClicked(const QString &link)
 {
-	Kopete::InfoEvent* event = Kopete::InfoEventManager::self()->event( d->currentEventIndex );
-	Q_ASSERT( event );
+    Kopete::InfoEvent *event = Kopete::InfoEventManager::self()->event(d->currentEventIndex);
+    Q_ASSERT(event);
 
-	event->activate( link.toInt() );
+    event->activate(link.toInt());
 }
 
 void InfoEventWidget::updateInfo()
 {
-	if ( !d->enableUpdates )
-		return;
+    if (!d->enableUpdates) {
+        return;
+    }
 
-	Kopete::InfoEventManager* ie = Kopete::InfoEventManager::self();
+    Kopete::InfoEventManager *ie = Kopete::InfoEventManager::self();
 
-	if ( ie->eventCount() == 0 )
-	{
-		d->currentEventIndex = 0;
-		d->ui.lblInfo->clear();
-		d->ui.lblActions->clear();
-		// Can't use clear
-		static_cast<KSqueezedTextLabel*>(d->ui.lblTitle)->setText(QString());
-		d->ui.lblEvent->setText( QStringLiteral("0/0") );
-		d->ui.buttonPrev->setEnabled( false );
-		d->ui.buttonNext->setEnabled( false );
-		return;
-	}
+    if (ie->eventCount() == 0) {
+        d->currentEventIndex = 0;
+        d->ui.lblInfo->clear();
+        d->ui.lblActions->clear();
+        // Can't use clear
+        static_cast<KSqueezedTextLabel *>(d->ui.lblTitle)->setText(QString());
+        d->ui.lblEvent->setText(QStringLiteral("0/0"));
+        d->ui.buttonPrev->setEnabled(false);
+        d->ui.buttonNext->setEnabled(false);
+        return;
+    }
 
-	if ( d->currentEventIndex >= ie->eventCount() )
-		d->currentEventIndex = ie->eventCount() - 1;
+    if (d->currentEventIndex >= ie->eventCount()) {
+        d->currentEventIndex = ie->eventCount() - 1;
+    }
 
-	d->ui.buttonPrev->setEnabled( (d->currentEventIndex > 0) );
-	d->ui.buttonNext->setEnabled( (d->currentEventIndex + 1 < ie->eventCount()) );
+    d->ui.buttonPrev->setEnabled((d->currentEventIndex > 0));
+    d->ui.buttonNext->setEnabled((d->currentEventIndex + 1 < ie->eventCount()));
 
-	Kopete::InfoEvent* event = ie->event( d->currentEventIndex );
-	Q_ASSERT( event );
+    Kopete::InfoEvent *event = ie->event(d->currentEventIndex);
+    Q_ASSERT(event);
 
-	if ( d->currentEvent != event )
-	{
-		if ( !d->currentEvent )
-			disconnect( d->currentEvent, SIGNAL(changed()), this , SLOT(updateInfo()) );
+    if (d->currentEvent != event) {
+        if (!d->currentEvent) {
+            disconnect(d->currentEvent, SIGNAL(changed()), this, SLOT(updateInfo()));
+        }
 
-		d->currentEvent = event;
-		connect( d->currentEvent, SIGNAL(changed()), this , SLOT(updateInfo()) );
-	}
+        d->currentEvent = event;
+        connect(d->currentEvent, SIGNAL(changed()), this, SLOT(updateInfo()));
+    }
 
-	static_cast<KSqueezedTextLabel*>(d->ui.lblTitle)->setText( Qt::escape( event->title() ) );
-	d->ui.lblEvent->setText( QStringLiteral("%1/%2").arg( d->currentEventIndex + 1 ).arg( ie->eventCount() ) );
+    static_cast<KSqueezedTextLabel *>(d->ui.lblTitle)->setText(Qt::escape(event->title()));
+    d->ui.lblEvent->setText(QStringLiteral("%1/%2").arg(d->currentEventIndex + 1).arg(ie->eventCount()));
 
-	d->ui.lblInfo->setVisible( !event->text().isEmpty() );
-	if ( !event->text().isEmpty() )
-	{
-		QString text = QStringLiteral( "<p>%1</p>" ).arg( event->text() );
-		if ( !event->additionalText().isEmpty() )
-			text += QStringLiteral( "<p>%1</p>" ).arg( event->additionalText() );
+    d->ui.lblInfo->setVisible(!event->text().isEmpty());
+    if (!event->text().isEmpty()) {
+        QString text = QStringLiteral("<p>%1</p>").arg(event->text());
+        if (!event->additionalText().isEmpty()) {
+            text += QStringLiteral("<p>%1</p>").arg(event->additionalText());
+        }
 
-		d->ui.lblInfo->setText( text );
-	}
-	else
-	{
-		d->ui.lblInfo->clear();
-	}
+        d->ui.lblInfo->setText(text);
+    } else {
+        d->ui.lblInfo->clear();
+    }
 
-	d->ui.lblActions->setVisible( !event->actions().isEmpty() );
-	if ( !event->actions().isEmpty() )
-	{
-		QString linkCode = QStringLiteral( "<p align=\"right\">" );
+    d->ui.lblActions->setVisible(!event->actions().isEmpty());
+    if (!event->actions().isEmpty()) {
+        QString linkCode = QStringLiteral("<p align=\"right\">");
 
-		QMap<uint, QString> actions = event->actions();
-		QMapIterator<uint, QString> it(actions);
-		while ( it.hasNext() )
-		{
-			it.next();
-			linkCode += QStringLiteral( "<a href=\"%1\">%2</a> " ).arg( it.key() ).arg( Qt::escape(it.value()) );
-		}
+        QMap<uint, QString> actions = event->actions();
+        QMapIterator<uint, QString> it(actions);
+        while (it.hasNext())
+        {
+            it.next();
+            linkCode += QStringLiteral("<a href=\"%1\">%2</a> ").arg(it.key()).arg(Qt::escape(it.value()));
+        }
 
-		d->ui.lblActions->setText( linkCode );
-	}
+        d->ui.lblActions->setText(linkCode);
+    }
 
-	// Redo the layout otherwise sizeHint() won't be correct.
-	layout()->activate();
-	if ( sizeHintHeight() > height() )
-		setFixedHeight( sizeHintHeight() );
+    // Redo the layout otherwise sizeHint() won't be correct.
+    layout()->activate();
+    if (sizeHintHeight() > height()) {
+        setFixedHeight(sizeHintHeight());
+    }
 }
 
-void InfoEventWidget::eventAdded( Kopete::InfoEvent* event )
+void InfoEventWidget::eventAdded(Kopete::InfoEvent *event)
 {
-	if ( Kopete::StatusManager::self()->globalStatusCategory() != Kopete::OnlineStatusManager::Busy )
-	{
-		KNotification *notify = new KNotification( QStringLiteral("kopete_info_event") , 0l );
-		notify->setActions( QStringList( i18n( "View" ) ) );
-		notify->setText( event->text() );
+    if (Kopete::StatusManager::self()->globalStatusCategory() != Kopete::OnlineStatusManager::Busy) {
+        KNotification *notify = new KNotification(QStringLiteral("kopete_info_event"), 0l);
+        notify->setActions(QStringList(i18n("View")));
+        notify->setText(event->text());
 
-		d->notifyEventHash.insert( notify, event );
+        d->notifyEventHash.insert(notify, event);
 
-		connect( notify, SIGNAL(activated(uint)), this, SLOT(notificationActivated()) );
-		connect( notify, SIGNAL(closed()), this, SLOT(notificationClosed()) );
+        connect(notify, SIGNAL(activated(uint)), this, SLOT(notificationActivated()));
+        connect(notify, SIGNAL(closed()), this, SLOT(notificationClosed()));
 
-		notify->sendEvent();
-	}
+        notify->sendEvent();
+    }
 
-	if ( event->showOnSend() )
-	{
-		int index = Kopete::InfoEventManager::self()->events().indexOf( event );
-		if ( index != -1 )
-		{
-			d->currentEventIndex = index;
-			updateInfo();
-		}
-		emit showRequest();
-	}
+    if (event->showOnSend()) {
+        int index = Kopete::InfoEventManager::self()->events().indexOf(event);
+        if (index != -1) {
+            d->currentEventIndex = index;
+            updateInfo();
+        }
+        emit showRequest();
+    }
 }
 
 void InfoEventWidget::notificationActivated()
 {
-	KNotification *notify = dynamic_cast<KNotification *>(sender());
+    KNotification *notify = dynamic_cast<KNotification *>(sender());
 
-	Kopete::InfoEvent* event = d->notifyEventHash.value( notify, 0 );
-	if ( !event )
-		return;
+    Kopete::InfoEvent *event = d->notifyEventHash.value(notify, 0);
+    if (!event) {
+        return;
+    }
 
-	int index = Kopete::InfoEventManager::self()->events().indexOf( event );
-	if ( index != -1 )
-	{
-		d->currentEventIndex = index;
-		updateInfo();
-	}
-	emit showRequest();
+    int index = Kopete::InfoEventManager::self()->events().indexOf(event);
+    if (index != -1) {
+        d->currentEventIndex = index;
+        updateInfo();
+    }
+    emit showRequest();
 }
 
 void InfoEventWidget::notificationClosed()
 {
-	KNotification *notify = dynamic_cast<KNotification *>(sender());
-	d->notifyEventHash.remove( notify );
+    KNotification *notify = dynamic_cast<KNotification *>(sender());
+    d->notifyEventHash.remove(notify);
 }
 
 int InfoEventWidget::sizeHintHeight() const
 {
-	return qMin( sizeHint().height(), 250 );
+    return qMin(sizeHint().height(), 250);
 }
-

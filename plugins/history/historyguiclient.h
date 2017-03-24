@@ -23,39 +23,44 @@
 
 class QAction;
 
-namespace Kopete { class ChatSession; }
+namespace Kopete {
+class ChatSession;
+}
 
 class HistoryLogger;
 
 /**
  *@author Olivier Goffart
  */
-class HistoryGUIClient : public QObject , public KXMLGUIClient
+class HistoryGUIClient : public QObject, public KXMLGUIClient
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	HistoryGUIClient(Kopete::ChatSession *parent = 0);
-	~HistoryGUIClient();
+    HistoryGUIClient(Kopete::ChatSession *parent = 0);
+    ~HistoryGUIClient();
 
-	HistoryLogger *logger() const { return m_logger; }
+    HistoryLogger *logger() const
+    {
+        return m_logger;
+    }
 
 private slots:
-	void slotPrevious();
-	void slotLast();
-	void slotNext();
-	void slotQuote();
-	void slotViewHistory();
+    void slotPrevious();
+    void slotLast();
+    void slotNext();
+    void slotQuote();
+    void slotViewHistory();
 
 private:
-	HistoryLogger *m_logger;
-	Kopete::ChatSession *m_manager;
-	//bool m_autoChatWindow;
-	//int m_nbAutoChatWindow;
-	//unsigned int m_nbChatWindow;
+    HistoryLogger *m_logger;
+    Kopete::ChatSession *m_manager;
+    //bool m_autoChatWindow;
+    //int m_nbAutoChatWindow;
+    //unsigned int m_nbChatWindow;
 
-	QAction *actionPrev;
-	QAction *actionNext;
-	QAction *actionLast;
+    QAction *actionPrev;
+    QAction *actionNext;
+    QAction *actionLast;
 };
 
 #endif

@@ -21,23 +21,21 @@
 
 class KNotification;
 
-namespace Kopete 
-{
-
+namespace Kopete {
 class ActiveNotification;
 
 typedef QHash<QString, ActiveNotification *> ActiveNotifications;
 
-class ActiveNotification : public QObject 
+class ActiveNotification : public QObject
 {
     Q_OBJECT
 
-  public:
+public:
     /**
      * Construct an active notification and add to the specified hash.
      * notification becomes the parent object
      */
-    ActiveNotification( KNotification *notification, const QString& id_, ActiveNotifications& notifications_, const QString& title_, const QString& body_ );
+    ActiveNotification(KNotification *notification, const QString &id_, ActiveNotifications &notifications_, const QString &title_, const QString &body_);
 
     /**
      * Remove active notification from queue
@@ -54,23 +52,22 @@ class ActiveNotification : public QObject
      */
     void incrementMessages();
 
-  private:
-    QString              id;
-    ActiveNotifications& notifications;
-    int                  nEventsSinceNotified;
+private:
+    QString id;
+    ActiveNotifications &notifications;
+    int nEventsSinceNotified;
 
     /**
      * This is text of title (like "Incoming message from ...")
      */
-    QString              title;
+    QString title;
 
     /**
      * This is the text of the body minus the <qt> and </qt> around it
      * and without the "n more messages" part
      */
-    QString              body;
+    QString body;
 };
-
 }
 
 #endif

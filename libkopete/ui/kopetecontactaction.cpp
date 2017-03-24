@@ -24,31 +24,27 @@
 
 #include <kactioncollection.h>
 
-Q_DECLARE_METATYPE(Kopete::Contact*)
+Q_DECLARE_METATYPE(Kopete::Contact *)
 
-namespace Kopete
+namespace Kopete {
+namespace UI {
+ContactAction::ContactAction(Kopete::Contact *contact, KActionCollection *parent)
+    : QAction(contact->onlineStatus().iconFor(contact),
+              contact->metaContact()->displayName(), parent)
 {
-namespace UI
-{
-
-ContactAction::ContactAction( Kopete::Contact *contact, KActionCollection* parent )
-: QAction( contact->onlineStatus().iconFor( contact ),
-           contact->metaContact()->displayName(), parent )
-{
-	setData( QVariant::fromValue( contact ) );
-	connect( this, SIGNAL(triggered(bool)),
-	         this, SLOT(slotTriggered(bool)) );
-        parent->addAction( contact->contactId(), this );
+    setData(QVariant::fromValue(contact));
+    connect(this, SIGNAL(triggered(bool)),
+            this, SLOT(slotTriggered(bool)));
+    parent->addAction(contact->contactId(), this);
 }
 
-void ContactAction::slotTriggered( bool checked )
+void ContactAction::slotTriggered(bool checked)
 {
-	Kopete::Contact* contact = data().value<Kopete::Contact*>();
-	const QString &id = contact->contactId();
-	emit triggered( contact, checked );
-	emit triggered( id, checked );
+    Kopete::Contact *contact = data().value<Kopete::Contact *>();
+    const QString &id = contact->contactId();
+    emit triggered(contact, checked);
+    emit triggered(id, checked);
 }
-
 }
 }
 

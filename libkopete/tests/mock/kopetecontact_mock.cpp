@@ -17,29 +17,22 @@
 
 #include "kopetecontact_mock.h"
 
-namespace Kopete
+namespace Kopete {
+namespace Test {
+namespace Mock {
+Contact::Contact(Kopete::Account *account, const QString &id, Kopete::MetaContact *parent, const QString &icon) : Kopete::Contact(account, id, parent, icon)
 {
-namespace Test
-{
-namespace Mock
-{
-
-Contact::Contact( Kopete::Account *account, const QString &id, Kopete::MetaContact *parent, const QString &icon) : Kopete::Contact( account, id, parent, icon)
-{
-
 }
 
 Contact::~Contact()
 {
-
 }
 
-Kopete::ChatSession* Contact::manager( CanCreateFlags canCreate)
+Kopete::ChatSession *Contact::manager(CanCreateFlags canCreate)
 {
-	Q_UNUSED( canCreate )
-	return 0L;
+    Q_UNUSED(canCreate)
+    return 0L;
 }
-
 } // end ns Kopete::Test::Mock
 } // end ns Kopete::Test
 } // end ns Kopete

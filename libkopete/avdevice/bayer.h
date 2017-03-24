@@ -26,5 +26,4 @@
  * SUCH DAMAGE.
  */
 
-
-void bayer2rgb24 (unsigned char *dst, unsigned char *src, long int WIDTH, long int HEIGHT);
+void bayer2rgb24(unsigned char *dst, unsigned char *src, long int WIDTH, long int HEIGHT);

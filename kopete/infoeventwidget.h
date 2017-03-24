@@ -18,7 +18,9 @@
 
 #include <QWidget>
 
-namespace Kopete { class InfoEvent; }
+namespace Kopete {
+class InfoEvent;
+}
 /**
  * @author Roman Jarosz <kedgedev@centrum.cz>
  *
@@ -26,58 +28,58 @@ namespace Kopete { class InfoEvent; }
  */
 class InfoEventWidget : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	 * Info event widget constructor
-	 */
-	InfoEventWidget( QWidget *parent = nullptr );
+    /**
+     * Info event widget constructor
+     */
+    InfoEventWidget(QWidget *parent = nullptr);
 
-	~InfoEventWidget();
+    ~InfoEventWidget();
 
-	void setVisible( bool visible ) Q_DECL_OVERRIDE;
+    void setVisible(bool visible) Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
-	void showRequest();
+    void showRequest();
 
 public Q_SLOTS:
-	/**
-	 * Show previous info event from info event list
-	 */
-	void prevInfoEvent();
+    /**
+     * Show previous info event from info event list
+     */
+    void prevInfoEvent();
 
-	/**
-	 * Show next info event from info event list
-	 */
-	void nextInfoEvent();
+    /**
+     * Show next info event from info event list
+     */
+    void nextInfoEvent();
 
-	/**
-	 * Close current info event from info event list
-	 * @note Info Event object will be destroyed.
-	 */
-	void closeInfoEvent();
+    /**
+     * Close current info event from info event list
+     * @note Info Event object will be destroyed.
+     */
+    void closeInfoEvent();
 
 private Q_SLOTS:
-	void slotAnimate( qreal amount );
+    void slotAnimate(qreal amount);
 
-	void linkClicked( const QString& link );
+    void linkClicked(const QString &link);
 
-	/**
-	 * Update widget's buttons and text.
-	 */
-	void updateInfo();
+    /**
+     * Update widget's buttons and text.
+     */
+    void updateInfo();
 
-	void eventAdded( Kopete::InfoEvent* event );
+    void eventAdded(Kopete::InfoEvent *event);
 
-	void notificationActivated();
+    void notificationActivated();
 
-	void notificationClosed();
+    void notificationClosed();
 
 private:
-	int sizeHintHeight() const;
+    int sizeHintHeight() const;
 
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
 
 #endif

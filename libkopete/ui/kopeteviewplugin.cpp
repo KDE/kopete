@@ -16,19 +16,16 @@
 
 #include "kopeteviewplugin.h"
 
-Kopete::ViewPlugin::ViewPlugin( const KAboutData &instance, QObject *parent ) :
-	Kopete::Plugin( instance, parent )
+Kopete::ViewPlugin::ViewPlugin(const KAboutData &instance, QObject *parent)
+    : Kopete::Plugin(instance, parent)
 {
-
 }
 
-Kopete::ViewPlugin::ViewPlugin( QObject* parent ): Plugin( parent )
+Kopete::ViewPlugin::ViewPlugin(QObject *parent) : Plugin(parent)
 {
-
 }
-
 
 void Kopete::ViewPlugin::aboutToUnload()
 {
-	emit readyForUnload();
+    emit readyForUnload();
 }

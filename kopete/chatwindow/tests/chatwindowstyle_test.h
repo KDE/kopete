@@ -24,15 +24,15 @@ class ChatWindowStyle;
 class ChatWindowStyle_Test : public KUnitTest::Tester
 {
 public:
-	void allTests();
+    void allTests();
 
 public slots:
-	void testPaths();
-	void testHtml();
-	void testVariants();
-	
+    void testPaths();
+    void testHtml();
+    void testVariants();
+
 private:
-	ChatWindowStyle *testStyle;
+    ChatWindowStyle *testStyle;
 };
 
 #endif

@@ -20,28 +20,27 @@
 #include <klocale.h>
 #include <ktextedit.h>
 
-
 TranslatorDialog::TranslatorDialog(const QString &text, QWidget *parent)
-	: KDialog(parent)
+    : KDialog(parent)
 {
-	setCaption( i18n("Translator Plugin") );
-	setButtons( KDialog::Ok );
+    setCaption(i18n("Translator Plugin"));
+    setButtons(KDialog::Ok);
 
-	m_textEdit=new KTextEdit(this);
-	setMainWidget(m_textEdit);
-	m_textEdit->setText(text);
+    m_textEdit = new KTextEdit(this);
+    setMainWidget(m_textEdit);
+    m_textEdit->setText(text);
 }
+
 TranslatorDialog::~TranslatorDialog()
 {
 }
 
 QString TranslatorDialog::translatedText()
 {
-	return m_textEdit->toPlainText();
+    return m_textEdit->toPlainText();
 }
+
 /*void TranslatorDialog::slotFinished()
 {
-	emit finished(m_textEdit->text());
+    emit finished(m_textEdit->text());
 }  */
-
-

@@ -22,22 +22,22 @@
 
 Q_PLUGIN_METADATA(ChatWindowAccessibleWidgetFactory)
 
-QAccessibleInterface *ChatWindowAccessibleWidgetFactory::create( const QString &key, QObject *object )
+QAccessibleInterface *ChatWindowAccessibleWidgetFactory::create(const QString &key, QObject *object)
 {
-    if ( key == QLatin1String( "KHTMLView" ) ) {
-        return new AccessibleChatMessagePart( reinterpret_cast< KHTMLView* >( object ) );
+    if (key == QLatin1String("KHTMLView")) {
+        return new AccessibleChatMessagePart(reinterpret_cast< KHTMLView * >(object));
     }
     return 0;
 }
 
-ChatWindowAccessibleWidgetFactory::ChatWindowAccessibleWidgetFactory( QObject *parent ):
-    QAccessiblePlugin( parent )
+ChatWindowAccessibleWidgetFactory::ChatWindowAccessibleWidgetFactory(QObject *parent)
+    : QAccessiblePlugin(parent)
 {
 }
 
 QStringList ChatWindowAccessibleWidgetFactory::keys() const
 {
     QStringList l;
-    l.append( QStringLiteral( "KHTMLView" ) );
+    l.append(QStringLiteral("KHTMLView"));
     return l;
 }

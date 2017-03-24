@@ -22,7 +22,7 @@
 #include <kgenericfactory.h>
 
 typedef KGenericFactory<TutorialPreferences> TutorialPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_tutorialplugin, TutorialPreferencesFactory( "kcm_kopete_tutorialplugin" ))
+K_EXPORT_COMPONENT_FACTORY(kcm_kopete_tutorialplugin, TutorialPreferencesFactory("kcm_kopete_tutorialplugin"))
 
 TutorialPreferences::TutorialPreferences(QWidget *parent, const QStringList &args)
     : KCModule(TutorialPreferencesFactory::componentData(), parent, args)
@@ -32,15 +32,12 @@ TutorialPreferences::TutorialPreferences(QWidget *parent, const QStringList &arg
 
 TutorialPreferences::~TutorialPreferences()
 {
-
 }
 
 void TutorialPreferences::save()
 {
-
 }
 
 void TutorialPreferences::load()
 {
 }
-

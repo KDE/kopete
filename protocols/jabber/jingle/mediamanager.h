@@ -24,25 +24,25 @@ class AlsaIO;
 class MediaSession;
 class MediaManager : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	MediaManager(QString, QString);
-	~MediaManager();
-	AlsaIO *alsaIn() const;
-	AlsaIO *alsaOut() const;
+    MediaManager(QString, QString);
+    ~MediaManager();
+    AlsaIO *alsaIn() const;
+    AlsaIO *alsaOut() const;
 
-	bool start();
-	void stop();
+    bool start();
+    void stop();
 
-	QByteArray read();
-	void write(const QByteArray& data);
+    QByteArray read();
+    void write(const QByteArray &data);
 
-	bool addSession(MediaSession*);
-	void removeSession(MediaSession*);
+    bool addSession(MediaSession *);
+    void removeSession(MediaSession *);
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
 
 #endif

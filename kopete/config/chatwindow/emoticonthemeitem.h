@@ -25,12 +25,12 @@ class QLabel;
 class EmoticonThemeItem : public QListWidgetItem
 {
 public:
-	enum DataRole
-	{
-		EmoticonList = 32,
-		EmoticonPixmaps = 33
-	};
-	EmoticonThemeItem(const QString &theme);
+    enum DataRole
+    {
+        EmoticonList = 32,
+        EmoticonPixmaps = 33
+    };
+    EmoticonThemeItem(const QString &theme);
 };
 
 #endif

@@ -19,7 +19,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
-
 #ifndef GADURICHTEXTFORMAT_H
 #define GADURICHTEXTFORMAT_H
 
@@ -28,29 +27,31 @@
 #include <QtGui/QColor>
 class QString;
 
-namespace Kopete { class Message; }
+namespace Kopete {
+class Message;
+}
 class KGaduMessage;
 
-class GaduRichTextFormat {
+class GaduRichTextFormat
+{
 public:
-	GaduRichTextFormat();
-	~GaduRichTextFormat();
-	QString convertToHtml( const QString&, unsigned int, void* );
-	KGaduMessage* convertToGaduMessage( const Kopete::Message& );
+    GaduRichTextFormat();
+    ~GaduRichTextFormat();
+    QString convertToHtml(const QString &, unsigned int, void *);
+    KGaduMessage *convertToGaduMessage(const Kopete::Message &);
 
 private:
-	QString formatOpeningTag( const QString& , const QString& = QString() );
-	QString formatClosingTag( const QString& );
-	bool insertRtf( uint );
-	QString unescapeGaduMessage( QString& );
-	void parseAttributes( const QString, const QString );
-	QString escapeBody( QString& );
-	QColor color;
-	gg_msg_richtext_format	rtfs;
-	gg_msg_richtext_color	rtcs;
-	gg_msg_richtext*	header;
-	QByteArray		rtf;
-
+    QString formatOpeningTag(const QString &, const QString & = QString());
+    QString formatClosingTag(const QString &);
+    bool insertRtf(uint);
+    QString unescapeGaduMessage(QString &);
+    void parseAttributes(const QString, const QString);
+    QString escapeBody(QString &);
+    QColor color;
+    gg_msg_richtext_format rtfs;
+    gg_msg_richtext_color rtcs;
+    gg_msg_richtext *header;
+    QByteArray rtf;
 };
 
 #endif // GADURICHTEXTFORMAT_H

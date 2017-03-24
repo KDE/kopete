@@ -28,28 +28,28 @@ class BehaviorConfig_Away;
 
 class BehaviorConfig : public KCModule
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-		BehaviorConfig(QWidget *parent, const QVariantList &args) ;
+public:
+    BehaviorConfig(QWidget *parent, const QVariantList &args);
 
-		void save() Q_DECL_OVERRIDE;
-		void load() Q_DECL_OVERRIDE;
+    void save() Q_DECL_OVERRIDE;
+    void load() Q_DECL_OVERRIDE;
 
-	private slots:
-		void slotSettingsChanged(bool);
-		void slotValueChanged(int);
-		void slotTextChanged();
+private slots:
+    void slotSettingsChanged(bool);
+    void slotValueChanged(int);
+    void slotTextChanged();
 
-	private:
-		QTabWidget* mBehaviorTabCtl;
+private:
+    QTabWidget *mBehaviorTabCtl;
 
-		BehaviorConfig_General *mPrfsGeneral;
-		BehaviorConfig_Events *mPrfsEvents;
-		BehaviorConfig_Chat *mPrfsChat;
-		BehaviorConfig_Away *mPrfsAway;
+    BehaviorConfig_General *mPrfsGeneral;
+    BehaviorConfig_Events *mPrfsEvents;
+    BehaviorConfig_Chat *mPrfsChat;
+    BehaviorConfig_Away *mPrfsAway;
 
-		QList<KPluginInfo> viewPlugins;
+    QList<KPluginInfo> viewPlugins;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

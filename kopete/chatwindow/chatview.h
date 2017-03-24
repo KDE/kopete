@@ -19,7 +19,6 @@
 #ifndef CHATVIEW_H
 #define CHATVIEW_H
 
-
 #include "kopeteview.h"
 #include "kopeteviewplugin.h"
 #include <ktextedit.h> // for covariant return type of editWidget
@@ -40,337 +39,347 @@ class KopeteChatWindow;
 class KopeteChatViewPrivate;
 class ChatWindowPlugin;
 
-namespace KParts
-{
-    class Part;
+namespace KParts {
+class Part;
 }
 
-namespace Kopete
-{
-	class Contact;
-	class ChatSession;
-	class OnlineStatus;
-	class PropertyContainer;
+namespace Kopete {
+class Contact;
+class ChatSession;
+class OnlineStatus;
+class PropertyContainer;
 }
 
-typedef QMap<const Kopete::Contact*,QTimer*> TypingMap;
+typedef QMap<const Kopete::Contact *, QTimer *> TypingMap;
 
 /**
  * @author Olivier Goffart
  */
 class ChatView : public KVBox, public KopeteView
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	ChatView( Kopete::ChatSession *manager, ChatWindowPlugin *parent );
-	~ChatView();
+    ChatView(Kopete::ChatSession *manager, ChatWindowPlugin *parent);
+    ~ChatView();
 
-	/** the state of our chat */
-	enum KopeteTabState { Normal, Highlighted, Changed, Typing, Message, Undefined };
+    /** the state of our chat */
+    enum KopeteTabState {
+        Normal, Highlighted, Changed, Typing, Message, Undefined
+    };
 
-	ChatMessagePart *messagePart() const { return m_messagePart; }
-	ChatTextEditPart *editPart() const { return m_editPart; }
+    ChatMessagePart *messagePart() const
+    {
+        return m_messagePart;
+    }
 
-	/**
-	 * Adds text into the edit area. Used when you select an emoticon
-	 * @param text The text to be inserted
-	 */
-	void addText( const QString &text );
+    ChatTextEditPart *editPart() const
+    {
+        return m_editPart;
+    }
 
-	/**
-	 * Saves window settings such as splitter positions
-	 */
-	void saveOptions();
+    /**
+     * Adds text into the edit area. Used when you select an emoticon
+     * @param text The text to be inserted
+     */
+    void addText(const QString &text);
 
-	/**
-	 * Tells this view it is the active view
-	 */
-	void setActive( bool value );
+    /**
+     * Saves window settings such as splitter positions
+     */
+    void saveOptions();
 
-	/**
-	 * save the chat settings (rich text, auto spelling)
-	 */
-	void saveChatSettings();
+    /**
+     * Tells this view it is the active view
+     */
+    void setActive(bool value);
 
-	/**
-	 * read the chat settings (rich text, auto spelling)
-	 */
-	void loadChatSettings();
+    /**
+     * save the chat settings (rich text, auto spelling)
+     */
+    void saveChatSettings();
 
-	/**
-	 * Clears the chat buffer
-	 *
-	 * Reimplemented from KopeteView
-	 */
-	void clear() Q_DECL_OVERRIDE;
+    /**
+     * read the chat settings (rich text, auto spelling)
+     */
+    void loadChatSettings();
 
-	/**
-	 * Sets the text to be displayed on tab label and window caption
-	 */
-	void setCaption( const QString &text, bool modified );
+    /**
+     * Clears the chat buffer
+     *
+     * Reimplemented from KopeteView
+     */
+    void clear() Q_DECL_OVERRIDE;
 
-	/**
-	 * Changes the pointer to the chat window. Used to re-parent the view
-	 * @param parent The new chat window
-	 */
-	void setMainWindow( KopeteChatWindow* parent );
+    /**
+     * Sets the text to be displayed on tab label and window caption
+     */
+    void setCaption(const QString &text, bool modified);
 
-	/**
-	 * Returns the message currently in the edit area
-	 * @return The Kopete::Message object for the message
-	 *
-	 * Reimplemented from KopeteView
-	 */
-	Kopete::Message currentMessage() Q_DECL_OVERRIDE;
+    /**
+     * Changes the pointer to the chat window. Used to re-parent the view
+     * @param parent The new chat window
+     */
+    void setMainWindow(KopeteChatWindow *parent);
 
-	/**
-	 * Sets the current message in the chat window
-	 * @param parent The new chat window
-	 *
-	 * Reimplemented from KopeteView
-	 */
-	void setCurrentMessage( const Kopete::Message &newMessage ) Q_DECL_OVERRIDE;
+    /**
+     * Returns the message currently in the edit area
+     * @return The Kopete::Message object for the message
+     *
+     * Reimplemented from KopeteView
+     */
+    Kopete::Message currentMessage() Q_DECL_OVERRIDE;
 
-	/**
-	 * Returns the chat window this view is in
-	 * @return The chat window
-	 */
-	KopeteChatWindow *mainWindow() const { return m_mainWindow; }
+    /**
+     * Sets the current message in the chat window
+     * @param parent The new chat window
+     *
+     * Reimplemented from KopeteView
+     */
+    void setCurrentMessage(const Kopete::Message &newMessage) Q_DECL_OVERRIDE;
 
-	const QString &statusText();
+    /**
+     * Returns the chat window this view is in
+     * @return The chat window
+     */
+    KopeteChatWindow *mainWindow() const
+    {
+        return m_mainWindow;
+    }
 
-	QString &caption() const;
+    const QString &statusText();
 
-	bool sendInProgress() const;
+    QString &caption() const;
 
-	/** Reimplemented from KopeteView **/
-	void raise( bool activate=false ) Q_DECL_OVERRIDE;
+    bool sendInProgress() const;
 
-	/** Reimplemented from KopeteView **/
-	void makeVisible() Q_DECL_OVERRIDE;
+    /** Reimplemented from KopeteView **/
+    void raise(bool activate = false) Q_DECL_OVERRIDE;
 
-	/** Reimplemented from KopeteView **/
-	bool isVisible() Q_DECL_OVERRIDE;
+    /** Reimplemented from KopeteView **/
+    void makeVisible() Q_DECL_OVERRIDE;
 
-	/** Reimplemented from KopeteView **/
-	QWidget *mainWidget() Q_DECL_OVERRIDE;
+    /** Reimplemented from KopeteView **/
+    bool isVisible() Q_DECL_OVERRIDE;
 
-	KTextEdit *editWidget();
+    /** Reimplemented from KopeteView **/
+    QWidget *mainWidget() Q_DECL_OVERRIDE;
 
-	bool canSend() const;
-	bool canSendFile() const;
-	
-	/** Reimplemented from KopeteView **/
-	void registerContextMenuHandler( QObject *target, const char* slot ) Q_DECL_OVERRIDE;
+    KTextEdit *editWidget();
 
-	/** Reimplemented from KopeteView **/
-	void registerTooltipHandler( QObject *target, const char* slot ) Q_DECL_OVERRIDE;
+    bool canSend() const;
+    bool canSendFile() const;
+
+    /** Reimplemented from KopeteView **/
+    void registerContextMenuHandler(QObject *target, const char *slot) Q_DECL_OVERRIDE;
+
+    /** Reimplemented from KopeteView **/
+    void registerTooltipHandler(QObject *target, const char *slot) Q_DECL_OVERRIDE;
 
 public slots:
-	/**
-	 * Initiates a cut action on the edit area of the chat view
-	 */
-	void cut();
+    /**
+     * Initiates a cut action on the edit area of the chat view
+     */
+    void cut();
 
-	/**
-	 * Initiates a copy action
-	 * If there is text selected in the HTML view, that text is copied
-	 * Otherwise, the entire edit area is copied.
-	 */
-	void copy();
+    /**
+     * Initiates a copy action
+     * If there is text selected in the HTML view, that text is copied
+     * Otherwise, the entire edit area is copied.
+     */
+    void copy();
 
-	/**
-	 * Initiates a paste action into the edit area of the chat view
-	 */
-	void paste();
+    /**
+     * Initiates a paste action into the edit area of the chat view
+     */
+    void paste();
 
-	void nickComplete();
+    void nickComplete();
 
-	/**
-	 * Reset font and color of the edit area and outgoing messages.
-	 */
-	void resetFontAndColor();
+    /**
+     * Reset font and color of the edit area and outgoing messages.
+     */
+    void resetFontAndColor();
 
-	/**
-	 * Sends the text currently entered into the edit area
-	 */
-	virtual void sendMessage();
+    /**
+     * Sends the text currently entered into the edit area
+     */
+    virtual void sendMessage();
 
-	/**
-	 * Called when a message is received from someone
-	 * @param message The message received
-	 */
-	void appendMessage( Kopete::Message &message ) Q_DECL_OVERRIDE;
+    /**
+     * Called when a message is received from someone
+     * @param message The message received
+     */
+    void appendMessage(Kopete::Message &message) Q_DECL_OVERRIDE;
 
-	/**
-	 * Send file (opens file dialog)
-	 */
-	void sendFile();
+    /**
+     * Send file (opens file dialog)
+     */
+    void sendFile();
 
-	/**
-	 * Called when a typing event is received from a contact
-	 * Updates the typing map and outputs the typing message into the status area
-	 * @param contact The contact who is / isn't typing
-	 * @param typing If the contact is typing now
-	 */
-	void remoteTyping( const Kopete::Contact *contact, bool typing );
+    /**
+     * Called when a typing event is received from a contact
+     * Updates the typing map and outputs the typing message into the status area
+     * @param contact The contact who is / isn't typing
+     * @param typing If the contact is typing now
+     */
+    void remoteTyping(const Kopete::Contact *contact, bool typing);
 
-	/**
-	 * Sets the text to be displayed on the status label
-	 * @param text The text to be displayed
-	 */
-	void setStatusText( const QString &text );
+    /**
+     * Sets the text to be displayed on the status label
+     * @param text The text to be displayed
+     */
+    void setStatusText(const QString &text);
 
-	/**
-	 * Triggers text edit's size recalculation.
-	 * Used for auto-sizing.
-	 */
-	void slotRecalculateSize(int difference);
+    /**
+     * Triggers text edit's size recalculation.
+     * Used for auto-sizing.
+     */
+    void slotRecalculateSize(int difference);
 
-	/** Reimplemented from KopeteView **/
-	void messageSentSuccessfully() Q_DECL_OVERRIDE;
+    /** Reimplemented from KopeteView **/
+    void messageSentSuccessfully() Q_DECL_OVERRIDE;
 
-	bool closeView( bool force = false ) Q_DECL_OVERRIDE;
-	
-	void dropEvent ( QDropEvent * ) Q_DECL_OVERRIDE;
-	bool isDragEventAccepted( const QDragMoveEvent * ) const;
+    bool closeView(bool force = false) Q_DECL_OVERRIDE;
 
-	/** Retrieves the tab state. */
-	KopeteTabState tabState() const;
+    void dropEvent(QDropEvent *) Q_DECL_OVERRIDE;
+    bool isDragEventAccepted(const QDragMoveEvent *) const;
+
+    /** Retrieves the tab state. */
+    KopeteTabState tabState() const;
 
 signals:
-	/**
-	 * Emitted when a message is sent
-	 * @param message The message sent
-	 */
-	void messageSent( Kopete::Message & );
+    /**
+     * Emitted when a message is sent
+     * @param message The message sent
+     */
+    void messageSent(Kopete::Message &);
 
-	void messageSuccess( ChatView* );
+    void messageSuccess(ChatView *);
 
-	/**
-	 * Emits when the chat view is shown
-	 */
-	void shown();
+    /**
+     * Emits when the chat view is shown
+     */
+    void shown();
 
-	void closing( KopeteView* );
+    void closing(KopeteView *);
 
-	void activated( KopeteView* );
+    void activated(KopeteView *);
 
-	void captionChanged( bool active );
+    void captionChanged(bool active);
 
-	void updateStatusIcon( ChatView* );
+    void updateStatusIcon(ChatView *);
 
-	/** Emitted when a possible tab tooltip needs updating */
-	void updateChatTooltip( ChatView*, const QString& );
+    /** Emitted when a possible tab tooltip needs updating */
+    void updateChatTooltip(ChatView *, const QString &);
 
-	/** Emitted when the state of the chat changes */
-	void updateChatState( ChatView*, int );
+    /** Emitted when the state of the chat changes */
+    void updateChatState(ChatView *, int);
 
-	/** Emitted when a possible tab label needs updating */
-	void updateChatLabel( ChatView*, const QString& );
+    /** Emitted when a possible tab label needs updating */
+    void updateChatLabel(ChatView *, const QString &);
 
-	/**
-	 * Our send-button-enabled flag has changed
-	 */
-	void canSendChanged(bool);
+    /**
+     * Our send-button-enabled flag has changed
+     */
+    void canSendChanged(bool);
 
-	void canAcceptFilesChanged();
+    void canAcceptFilesChanged();
 
-	/**
-	 * Emitted when we re-parent ourselves with a new window
-	 */
-	void windowCreated();
+    /**
+     * Emitted when we re-parent ourselves with a new window
+     */
+    void windowCreated();
 
-	/**
-	 * Emitted when the state of RTF has changed
-	 */
-	void rtfEnabled( ChatView*, bool );
+    /**
+     * Emitted when the state of RTF has changed
+     */
+    void rtfEnabled(ChatView *, bool);
 
-	void autoSpellCheckEnabled( ChatView*, bool );
+    void autoSpellCheckEnabled(ChatView *, bool);
 
 private slots:
-	void slotRemoteTypingTimeout();
+    void slotRemoteTypingTimeout();
 
-	/**
-	 * Called when a contact is added to the chat session.
-	 * Adds this contact to the typingMap and the contact list view
-	 * @param c The contact that joined the chat
-	 * @param suppress mean that no notifications are showed
-	 */
-	void slotContactAdded( const Kopete::Contact *c, bool suppress );
+    /**
+     * Called when a contact is added to the chat session.
+     * Adds this contact to the typingMap and the contact list view
+     * @param c The contact that joined the chat
+     * @param suppress mean that no notifications are showed
+     */
+    void slotContactAdded(const Kopete::Contact *c, bool suppress);
 
-	/**
-	 * Called when a contact is removed from the chat session. Updates the tab state and status icon,
-	 * displays a notification message and performs some cleanup.
-	 * @param c The contact left the chat
-	 * @param reason is the reason the contact left
-	 * @param format The format of the reason message
-	 * @param suppressNotification mean that no notifications are showed
-	 */
-	void slotContactRemoved( const Kopete::Contact *c, const QString& reason, Qt::TextFormat format, bool suppressNotification=false );
+    /**
+     * Called when a contact is removed from the chat session. Updates the tab state and status icon,
+     * displays a notification message and performs some cleanup.
+     * @param c The contact left the chat
+     * @param reason is the reason the contact left
+     * @param format The format of the reason message
+     * @param suppressNotification mean that no notifications are showed
+     */
+    void slotContactRemoved(const Kopete::Contact *c, const QString &reason, Qt::TextFormat format, bool suppressNotification = false);
 
-	/**
-	 * Called when a contact changes status, updates the display name, status icon and tab bar state.
-	 * If the user isn't changing to/from an Unknown status, will also display a message in the chatwindow.
-	 * @param contact The contact who changed status
-	 * @param status The new status of the contact
-	 * @param oldstatus The former status of the contact
-	 */
-	void slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldstatus );
+    /**
+     * Called when a contact changes status, updates the display name, status icon and tab bar state.
+     * If the user isn't changing to/from an Unknown status, will also display a message in the chatwindow.
+     * @param contact The contact who changed status
+     * @param status The new status of the contact
+     * @param oldstatus The former status of the contact
+     */
+    void slotContactStatusChanged(Kopete::Contact *contact, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldstatus);
 
-	/**
-	 * Called when a contact changes status message.
-	 * @param contact The contact who changed status
-	 */
-	void slotStatusMessageChanged( Kopete::Contact *contact );
+    /**
+     * Called when a contact changes status message.
+     * @param contact The contact who changed status
+     */
+    void slotStatusMessageChanged(Kopete::Contact *contact);
 
-	/**
-	 * Called when the chat's display name is changed
-	 */
-	void slotChatDisplayNameChanged();
+    /**
+     * Called when the chat's display name is changed
+     */
+    void slotChatDisplayNameChanged();
 
-	void slotMarkMessageRead();
+    void slotMarkMessageRead();
 
-	void slotToggleRtfToolbar( bool enabled );
+    void slotToggleRtfToolbar(bool enabled);
 
-	/**
-	 * Show that a (meta)contact change his display name.
-	 */
-	void slotDisplayNameChanged(const QString &oldValue, const QString &newValue);
+    /**
+     * Show that a (meta)contact change his display name.
+     */
+    void slotDisplayNameChanged(const QString &oldValue, const QString &newValue);
 
 protected:
-	void dragEnterEvent ( QDragEnterEvent * ) Q_DECL_OVERRIDE;
-	void dragMoveEvent ( QDragMoveEvent * ) Q_DECL_OVERRIDE;
+    void dragEnterEvent(QDragEnterEvent *) Q_DECL_OVERRIDE;
+    void dragMoveEvent(QDragMoveEvent *) Q_DECL_OVERRIDE;
 
 private:
-	// widget stuff
-	KopeteChatWindow *m_mainWindow;
+    // widget stuff
+    KopeteChatWindow *m_mainWindow;
 
 //	K3DockWidget *viewDock;
-	ChatMessagePart *m_messagePart;
+    ChatMessagePart *m_messagePart;
 
 //	K3DockWidget *editDock;
-	ChatTextEditPart *m_editPart;
+    ChatTextEditPart *m_editPart;
 
-	KopeteTabState m_tabState;
+    KopeteTabState m_tabState;
 
-	// miscellany
-	TypingMap m_remoteTypingMap;
-	QString unreadMessageFrom;
-	QString m_status;
+    // miscellany
+    TypingMap m_remoteTypingMap;
+    QString unreadMessageFrom;
+    QString m_status;
 
-	void updateChatState( KopeteTabState state = Undefined );
+    void updateChatState(KopeteTabState state = Undefined);
 
-	/**
-	 * Read in saved options, such as splitter positions
-	 */
-	void readOptions();
+    /**
+     * Read in saved options, such as splitter positions
+     */
+    void readOptions();
 
-	void sendInternalMessage( const QString &msg, Qt::TextFormat format = Qt::PlainText );
-	
-	KopeteTabState currentState() const;
+    void sendInternalMessage(const QString &msg, Qt::TextFormat format = Qt::PlainText);
 
-	KopeteChatViewPrivate *d;
+    KopeteTabState currentState() const;
+
+    KopeteChatViewPrivate *d;
 };
 
 /**
@@ -378,12 +387,11 @@ private:
  */
 class ChatWindowPlugin : public Kopete::ViewPlugin
 {
-	public:
-		ChatWindowPlugin(QObject *parent, const QVariantList &args);
-		KopeteView* createView( Kopete::ChatSession *manager ) Q_DECL_OVERRIDE;
+public:
+    ChatWindowPlugin(QObject *parent, const QVariantList &args);
+    KopeteView *createView(Kopete::ChatSession *manager) Q_DECL_OVERRIDE;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -1,4 +1,4 @@
- /*
+/*
 
     Copyright (c) 2013 by Pali Rohár <pali.rohar@gmail.com>
 
@@ -20,16 +20,16 @@
 
 class JabberBoBCache : public XMPP::BoBCache
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	JabberBoBCache(QObject *parent = NULL);
+    JabberBoBCache(QObject *parent = NULL);
 
-	void put(const XMPP::BoBData &data) Q_DECL_OVERRIDE;
-	XMPP::BoBData get(const QString &cid) Q_DECL_OVERRIDE;
+    void put(const XMPP::BoBData &data) Q_DECL_OVERRIDE;
+    XMPP::BoBData get(const QString &cid) Q_DECL_OVERRIDE;
 
 private:
-	QHash <QString, XMPP::BoBData> mem;
+    QHash <QString, XMPP::BoBData> mem;
 };
 
 #endif

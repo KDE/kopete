@@ -25,7 +25,9 @@
 #include "kopetemessagehandler.h"
 
 class KopeteView;
-namespace Kopete { class ChatSession; }
+namespace Kopete {
+class ChatSession;
+}
 
 class HistoryGUIClient;
 class HistoryPlugin;
@@ -35,27 +37,35 @@ class HistoryPlugin;
  */
 class HistoryMessageLogger : public Kopete::MessageHandler
 {
-	QPointer<HistoryPlugin> history;
+    QPointer<HistoryPlugin> history;
 public:
-	HistoryMessageLogger( HistoryPlugin *history ) : history(history) {}
-	void handleMessage( Kopete::MessageEvent *event );
+    HistoryMessageLogger(HistoryPlugin *history) : history(history)
+    {
+    }
+
+    void handleMessage(Kopete::MessageEvent *event);
 };
 
 class HistoryMessageLoggerFactory : public Kopete::MessageHandlerFactory
 {
-	HistoryPlugin *history;
+    HistoryPlugin *history;
 public:
-	explicit HistoryMessageLoggerFactory( HistoryPlugin *history ) : history(history) {}
-	Kopete::MessageHandler *create( Kopete::ChatSession * /*manager*/, Kopete::Message::MessageDirection direction )
-	{
-		if( direction != Kopete::Message::Inbound )
-			return 0;
-		return new HistoryMessageLogger(history);
-	}
-	int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection )
-	{
-		return Kopete::MessageHandlerFactory::InStageToSent+5;
-	}
+    explicit HistoryMessageLoggerFactory(HistoryPlugin *history) : history(history)
+    {
+    }
+
+    Kopete::MessageHandler *create(Kopete::ChatSession * /*manager*/, Kopete::Message::MessageDirection direction)
+    {
+        if (direction != Kopete::Message::Inbound) {
+            return 0;
+        }
+        return new HistoryMessageLogger(history);
+    }
+
+    int filterPosition(Kopete::ChatSession *, Kopete::Message::MessageDirection)
+    {
+        return Kopete::MessageHandlerFactory::InStageToSent+5;
+    }
 };
 
 /**
@@ -63,34 +73,32 @@ public:
   */
 class HistoryPlugin : public Kopete::Plugin
 {
-	Q_OBJECT
-	public:
-		HistoryPlugin( QObject *parent, const QVariantList &args );
-		~HistoryPlugin();
+    Q_OBJECT
+public:
+    HistoryPlugin(QObject *parent, const QVariantList &args);
+    ~HistoryPlugin();
 
-		/**
-		 * convert the Kopete 0.6 / 0.5 history to the new format
-		 */
-		static void convertOldHistory();
-		/**
-		 * return true if an old history has been detected, and no new ones
-		 */
-		static bool detectOldHistory();
-		
-		void messageDisplayed(const Kopete::Message &msg);
-		
-	private slots:
-		void slotViewCreated( KopeteView* );
-		void slotViewHistory();
-		void slotKMMClosed( Kopete::ChatSession* );
-		void slotSettingsChanged();
+    /**
+     * convert the Kopete 0.6 / 0.5 history to the new format
+     */
+    static void convertOldHistory();
+    /**
+     * return true if an old history has been detected, and no new ones
+     */
+    static bool detectOldHistory();
 
-	private:
-		HistoryMessageLoggerFactory m_loggerFactory;
-		QMap<Kopete::ChatSession*,HistoryGUIClient*> m_loggers;
-		Kopete::Message m_lastmessage;
+    void messageDisplayed(const Kopete::Message &msg);
+
+private slots:
+    void slotViewCreated(KopeteView *);
+    void slotViewHistory();
+    void slotKMMClosed(Kopete::ChatSession *);
+    void slotSettingsChanged();
+
+private:
+    HistoryMessageLoggerFactory m_loggerFactory;
+    QMap<Kopete::ChatSession *, HistoryGUIClient *> m_loggers;
+    Kopete::Message m_lastmessage;
 };
 
 #endif
-
-

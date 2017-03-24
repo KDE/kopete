@@ -27,27 +27,20 @@ class KopeteEditAccountWidget;
 class AddContactPage;
 class KopeteEditAccountWidget;
 
-namespace Kopete
-{
-namespace Test
-{
-namespace Mock
-{
-
+namespace Kopete {
+namespace Test {
+namespace Mock {
 class Protocol : public Kopete::Protocol
 {
 public:
-	Protocol( const KComponentData &instance, QObject *parent);
-	// pure virtual functions implemented
-	virtual Account *createNewAccount( const QString &accountId );
-	virtual AddContactPage *createAddContactWidget( QWidget *parent, Kopete::Account *account );
-	virtual KopeteEditAccountWidget * createEditAccountWidget( Kopete::Account *account, QWidget *parent );
+    Protocol(const KComponentData &instance, QObject *parent);
+    // pure virtual functions implemented
+    virtual Account *createNewAccount(const QString &accountId);
+    virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
+    virtual KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
 };
-
 } // end ns Kopete::Test::Mock
 } // end ns Kopete::Test
 } // end ns Kopete
 
-
 #endif
-

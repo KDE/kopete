@@ -34,20 +34,21 @@
 #include "latexplugin.h"
 #include <kactioncollection.h>
 
-LatexGUIClient::LatexGUIClient( Kopete::ChatSession *parent )
-: QObject( parent), KXMLGUIClient( parent )
+LatexGUIClient::LatexGUIClient(Kopete::ChatSession *parent)
+    : QObject(parent)
+    , KXMLGUIClient(parent)
 {
-	//setComponentData( LatexPlugin::plugin()->componentData() );
-	connect( LatexPlugin::plugin(), SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()) );
+    //setComponentData( LatexPlugin::plugin()->componentData() );
+    connect(LatexPlugin::plugin(), SIGNAL(destroyed(QObject *)), this, SLOT(deleteLater()));
 
-	m_manager = parent;
+    m_manager = parent;
 
-	QAction *previewAction = new QAction( KIcon(QStringLiteral("latex")), i18n( "Preview Latex Images" ), this );
-        actionCollection()->addAction( QStringLiteral("latexPreview"), previewAction );
-    previewAction->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_L) );
-	connect(previewAction, SIGNAL(triggered(bool)), this, SLOT(slotPreview()) );
+    QAction *previewAction = new QAction(KIcon(QStringLiteral("latex")), i18n("Preview Latex Images"), this);
+    actionCollection()->addAction(QStringLiteral("latexPreview"), previewAction);
+    previewAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
+    connect(previewAction, SIGNAL(triggered(bool)), this, SLOT(slotPreview()));
 
-	setXMLFile( QStringLiteral("latexchatui.rc") );
+    setXMLFile(QStringLiteral("latexchatui.rc"));
 }
 
 LatexGUIClient::~LatexGUIClient()
@@ -56,26 +57,24 @@ LatexGUIClient::~LatexGUIClient()
 
 void LatexGUIClient::slotPreview()
 {
-	if ( !m_manager->view() )
-		return;
+    if (!m_manager->view()) {
+        return;
+    }
 
-	Kopete::Message msg = m_manager->view()->currentMessage();
-	const QString messageText = msg.plainBody();
-	if(!messageText.contains(QLatin1String("$$"))) //we haven't found any latex strings
-	{
-		KMessageBox::sorry(m_manager->view()->mainWidget() , i18n("The message you are typing does not contain any LaTeX.  A LaTeX formula must be enclosed within two pairs of dollar signs: $$formula$$ "), i18n("No LaTeX Formula") );
-		return;
-	}
+    Kopete::Message msg = m_manager->view()->currentMessage();
+    const QString messageText = msg.plainBody();
+    if (!messageText.contains(QLatin1String("$$"))) { //we haven't found any latex strings
+        KMessageBox::sorry(m_manager->view()->mainWidget(),
+                           i18n("The message you are typing does not contain any LaTeX.  A LaTeX formula must be enclosed within two pairs of dollar signs: $$formula$$ "), i18n("No LaTeX Formula"));
+        return;
+    }
 
-	const QString oldBody = msg.escapedBody();
-	msg=Kopete::Message( msg.from() , msg.to() );
-	msg.setHtmlBody( i18n("<b>Preview of the LaTeX message :</b> <br />%1", oldBody) );
-	msg.setDirection( Kopete::Message::Internal );
+    const QString oldBody = msg.escapedBody();
+    msg = Kopete::Message(msg.from(), msg.to());
+    msg.setHtmlBody(i18n("<b>Preview of the LaTeX message :</b> <br />%1", oldBody));
+    msg.setDirection(Kopete::Message::Internal);
 
-	m_manager->appendMessage(msg) ;
+    m_manager->appendMessage(msg);
 }
 
-
-
 // vim: set noet ts=4 sts=4 sw=4:
-

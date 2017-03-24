@@ -1,7 +1,7 @@
 //
 // C++ Interface: %{MODULE}
 //
-// Description: 
+// Description:
 //
 //
 // Author: Roie Kerstein <sf_kersteinroie@bezeqint.net>, (C) 2004
@@ -18,34 +18,35 @@
 class QButtonGroup;
 class QStringListModel;
 
-namespace Ui { class BookmarksPrefsUI; }
+namespace Ui {
+class BookmarksPrefsUI;
+}
 
 /**
 @author Roie Kerstein <sf_kersteinroie@bezeqint.net>
 */
 class BookmarksPreferences : public KCModule
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit BookmarksPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
 
     ~BookmarksPreferences();
-    
+
     void load() Q_DECL_OVERRIDE;
     void save() Q_DECL_OVERRIDE;
-    
+
 signals:
     void PreferencesChanged();
-    
+
 private:
     Ui::BookmarksPrefsUI *p_dialog;
-    QButtonGroup* p_buttonGroup;
+    QButtonGroup *p_buttonGroup;
     QStringListModel *p_contactsListModel;
     BookmarksPrefsSettings m_settings;
 
 private slots:
     void slotSetStatusChanged();
-           
 };
 
 #endif

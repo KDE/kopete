@@ -16,7 +16,7 @@
  *                                                                       *
  * You should have received a copy of the GNU General Public License     *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- *************************************************************************/ 
+ *************************************************************************/
 
 #include "otrguiclient.h"
 #include "otrplugin.h"
@@ -39,56 +39,52 @@
   * @author Michael Zanetti
   */
 
-
-OtrGUIClient::OtrGUIClient( Kopete::ChatSession *parent )
-: QObject( parent ), KXMLGUIClient( parent )
+OtrGUIClient::OtrGUIClient(Kopete::ChatSession *parent)
+    : QObject(parent)
+    , KXMLGUIClient(parent)
 {
+    connect(OTRPlugin::plugin(),
+            SIGNAL(destroyed(QObject *)), this,
+            SLOT(deleteLater())
 
-	connect( OTRPlugin::plugin(),
-		SIGNAL(destroyed(QObject*)), this,
-		SLOT(deleteLater())
+            );
 
-	);
+    connect(this, SIGNAL(signalOtrChatsession(Kopete::ChatSession *,bool)), OTRPlugin::plugin(), SLOT(slotEnableOtr(Kopete::ChatSession *,bool)));
 
-	connect(this, SIGNAL(signalOtrChatsession(Kopete::ChatSession*,bool)), OTRPlugin::plugin(), SLOT(slotEnableOtr(Kopete::ChatSession*,bool)));
+    connect(OtrlChatInterface::self(), SIGNAL(goneSecure(Kopete::ChatSession *,int)),
+            this, SLOT(encryptionEnabled(Kopete::ChatSession *,int)));
 
-	connect( OtrlChatInterface::self(), SIGNAL(goneSecure(Kopete::ChatSession*,int)),
-	this, SLOT(encryptionEnabled(Kopete::ChatSession*,int)) );
+    connect(this, SIGNAL(signalVerifyFingerprint(Kopete::ChatSession *)), OTRPlugin::plugin(), SLOT(slotVerifyFingerprint(Kopete::ChatSession *)));
 
-	connect( this, SIGNAL(signalVerifyFingerprint(Kopete::ChatSession*)), OTRPlugin::plugin(), SLOT(slotVerifyFingerprint(Kopete::ChatSession*)) );
+    m_manager = parent;
 
-	m_manager = parent;
+    otrActionMenu = new KActionMenu(KIcon(QStringLiteral("document-decrypt")), i18n("OTR Encryption"), actionCollection());
+    otrActionMenu->setDelayed(false);
+    actionCollection()->addAction(QStringLiteral("otr_settings"), otrActionMenu);
 
-	otrActionMenu = new KActionMenu(KIcon(QStringLiteral("document-decrypt")), i18n("OTR Encryption"), actionCollection() );
-	otrActionMenu->setDelayed( false );
-	actionCollection()->addAction(QStringLiteral("otr_settings"), otrActionMenu);
+    actionEnableOtr = new KAction(KIcon(QStringLiteral("object-locked")), i18n("Start OTR Session"), this);
+    actionCollection()->addAction(QStringLiteral("enableOtr"), actionEnableOtr);
+    connect(actionEnableOtr, SIGNAL(triggered(bool)), this, SLOT(slotEnableOtr()));
 
+    actionDisableOtr = new KAction(KIcon(QStringLiteral("object-unlocked")), i18n("End OTR Session"), this);
+    actionCollection()->addAction(QStringLiteral("disableOtr"), actionDisableOtr);
+    connect(actionDisableOtr, SIGNAL(triggered(bool)), this, SLOT(slotDisableOtr()));
 
-	actionEnableOtr = new KAction( KIcon(QStringLiteral("object-locked")), i18n( "Start OTR Session" ), this);
-	actionCollection()->addAction( QStringLiteral("enableOtr"), actionEnableOtr );
-	connect(actionEnableOtr, SIGNAL(triggered(bool)), this, SLOT(slotEnableOtr()));
+    actionVerifyFingerprint = new KAction(KIcon(QStringLiteral("application-pgp-signature")), i18n("Authenticate Contact"), this);
+    actionCollection()->addAction(QStringLiteral("verifyFingerprint"), actionVerifyFingerprint);
+    connect(actionVerifyFingerprint, SIGNAL(triggered(bool)), this, SLOT(slotVerifyFingerprint()));
 
-	actionDisableOtr = new KAction( KIcon(QStringLiteral("object-unlocked")), i18n( "End OTR Session" ), this);
-	actionCollection()->addAction( QStringLiteral("disableOtr"), actionDisableOtr );
-	connect(actionDisableOtr, SIGNAL(triggered(bool)), this, SLOT(slotDisableOtr()));
+    // jpetso says: please request an icon named "document-verify" or something like that, the "sign" icon is not really appropriate for this purpose imho
+    // mzanetti says: the "document-sign" icon is the same as kgpg uses to sign fingerprints. Anyways I will discuss that on #kopete. Re-using "document-sign for now.
 
-	actionVerifyFingerprint = new KAction( KIcon( QStringLiteral("application-pgp-signature") ),  i18n("Authenticate Contact"), this);
-	actionCollection()->addAction( QStringLiteral("verifyFingerprint"), actionVerifyFingerprint );
-	connect(actionVerifyFingerprint, SIGNAL(triggered(bool)), this,SLOT(slotVerifyFingerprint()));
+    otrActionMenu->addAction(actionEnableOtr);
+    otrActionMenu->addAction(actionDisableOtr);
+    otrActionMenu->addAction(actionVerifyFingerprint);
 
-	 // jpetso says: please request an icon named "document-verify" or something like that, the "sign" icon is not really appropriate for this purpose imho
-	// mzanetti says: the "document-sign" icon is the same as kgpg uses to sign fingerprints. Anyways I will discuss that on #kopete. Re-using "document-sign for now.
-
-	otrActionMenu->addAction(actionEnableOtr);
-	otrActionMenu->addAction(actionDisableOtr);
-	otrActionMenu->addAction(actionVerifyFingerprint);
-
-	setXMLFile(QStringLiteral("otrchatui.rc"));
+    setXMLFile(QStringLiteral("otrchatui.rc"));
 //	setupGUI();
 
-	encryptionEnabled( parent, OtrlChatInterface::self()->privState(parent) );
-    
-
+    encryptionEnabled(parent, OtrlChatInterface::self()->privState(parent));
 }
 
 OtrGUIClient::~OtrGUIClient()
@@ -97,48 +93,50 @@ OtrGUIClient::~OtrGUIClient()
 
 void OtrGUIClient::slotEnableOtr()
 {
-	emit signalOtrChatsession( m_manager, true );
+    emit signalOtrChatsession(m_manager, true);
 }
+
 void OtrGUIClient::slotDisableOtr()
 {
- 	emit signalOtrChatsession( m_manager, false );
+    emit signalOtrChatsession(m_manager, false);
 }
 
-void OtrGUIClient::slotVerifyFingerprint(){
-	emit signalVerifyFingerprint( m_manager );
+void OtrGUIClient::slotVerifyFingerprint()
+{
+    emit signalVerifyFingerprint(m_manager);
 }
 
-void OtrGUIClient::encryptionEnabled(Kopete::ChatSession *session, int state){
-	kDebug(14318) << "OTRGUIClient switched security state to: " << state;
-	if( session == m_manager ){
-		switch(state){
-			case 0:
-				otrActionMenu->setIcon(KIcon(QStringLiteral("object-unlocked")));
-				actionEnableOtr->setText( i18n("Start OTR Session") );
-				actionDisableOtr->setEnabled(false);
-				actionVerifyFingerprint->setEnabled(false);
-				break;
-			case 1:
-				otrActionMenu->setIcon(KIcon(QStringLiteral("object-locked-unverified")));
-				actionEnableOtr->setText( i18n("Refresh OTR Session") );
-				actionDisableOtr->setEnabled(true);
-				actionVerifyFingerprint->setEnabled(true);
-				break;
-			case 2:
-				otrActionMenu->setIcon(KIcon(QStringLiteral("object-locked-verified")));
-				actionEnableOtr->setText( i18n("Refresh OTR Session") );
-				actionDisableOtr->setEnabled(true);
-				actionVerifyFingerprint->setEnabled(true);
-				break;
-			case 3:
-				otrActionMenu->setIcon(KIcon(QStringLiteral("object-locked-finished")));
-				actionEnableOtr->setText( i18n("Start OTR Session") );
-				actionDisableOtr->setEnabled(true);
-				actionVerifyFingerprint->setEnabled(false);
-				break;
-		}
-	}
+void OtrGUIClient::encryptionEnabled(Kopete::ChatSession *session, int state)
+{
+    kDebug(14318) << "OTRGUIClient switched security state to: " << state;
+    if (session == m_manager) {
+        switch (state) {
+        case 0:
+            otrActionMenu->setIcon(KIcon(QStringLiteral("object-unlocked")));
+            actionEnableOtr->setText(i18n("Start OTR Session"));
+            actionDisableOtr->setEnabled(false);
+            actionVerifyFingerprint->setEnabled(false);
+            break;
+        case 1:
+            otrActionMenu->setIcon(KIcon(QStringLiteral("object-locked-unverified")));
+            actionEnableOtr->setText(i18n("Refresh OTR Session"));
+            actionDisableOtr->setEnabled(true);
+            actionVerifyFingerprint->setEnabled(true);
+            break;
+        case 2:
+            otrActionMenu->setIcon(KIcon(QStringLiteral("object-locked-verified")));
+            actionEnableOtr->setText(i18n("Refresh OTR Session"));
+            actionDisableOtr->setEnabled(true);
+            actionVerifyFingerprint->setEnabled(true);
+            break;
+        case 3:
+            otrActionMenu->setIcon(KIcon(QStringLiteral("object-locked-finished")));
+            actionEnableOtr->setText(i18n("Start OTR Session"));
+            actionDisableOtr->setEnabled(true);
+            actionVerifyFingerprint->setEnabled(false);
+            break;
+        }
+    }
 }
-
 
 // vim: set noet ts=4 sts=4 sw=4:

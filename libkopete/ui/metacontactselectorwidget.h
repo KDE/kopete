@@ -23,13 +23,10 @@
 #include "kopetelistviewitem.h"
 #include "kopete_export.h"
 
-namespace Kopete
-{
+namespace Kopete {
 class MetaContact;
 
-namespace UI
-{
-
+namespace UI {
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * This class provides a widget which allows easy selection
@@ -37,40 +34,40 @@ namespace UI
  */
 class KOPETE_EXPORT MetaContactSelectorWidget : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	explicit MetaContactSelectorWidget( QWidget *parent = nullptr, const char *name  = 0 );
-	~MetaContactSelectorWidget();
-	Kopete::MetaContact* metaContact();
-	/**
-	 * sets the widget label message
-	 * example: Please select a contact
-	 * or, Choose a contact to delete
-	 */
-	void setLabelMessage( const QString &msg );
-	/**
-	 * pre-selects a contact
-	 */
-	void selectMetaContact( Kopete::MetaContact *mc );
-	/**
-	 * excludes a metacontact from being shown in the list
-	* if the metacontact is already excluded, do nothing
-	 */
-	void excludeMetaContact( Kopete::MetaContact *mc );
-	/**
-	 * @return true if there is a contact selected
-	 */
-	bool metaContactSelected();
+    explicit MetaContactSelectorWidget(QWidget *parent = nullptr, const char *name = 0);
+    ~MetaContactSelectorWidget();
+    Kopete::MetaContact *metaContact();
+    /**
+     * sets the widget label message
+     * example: Please select a contact
+     * or, Choose a contact to delete
+     */
+    void setLabelMessage(const QString &msg);
+    /**
+     * pre-selects a contact
+     */
+    void selectMetaContact(Kopete::MetaContact *mc);
+    /**
+     * excludes a metacontact from being shown in the list
+    * if the metacontact is already excluded, do nothing
+     */
+    void excludeMetaContact(Kopete::MetaContact *mc);
+    /**
+     * @return true if there is a contact selected
+     */
+    bool metaContactSelected();
 protected slots:
-	/**
-	 * Utility function, populates the metacontact list
-	 */
-	void slotLoadMetaContacts();
+    /**
+     * Utility function, populates the metacontact list
+     */
+    void slotLoadMetaContacts();
 signals:
-	void metaContactListClicked( QTreeWidgetItem *mc );
+    void metaContactListClicked(QTreeWidgetItem *mc);
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
 
 /**
@@ -79,26 +76,24 @@ private:
 
 class MetaContactSelectorWidgetLVI : public Kopete::UI::ListView::Item
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	MetaContactSelectorWidgetLVI(Kopete::MetaContact *mc, QTreeWidget *parent, QObject *owner = 0 );
-	virtual ~MetaContactSelectorWidgetLVI();
-	Kopete::MetaContact* metaContact();
-	virtual QString text ( int column ) const;
+    MetaContactSelectorWidgetLVI(Kopete::MetaContact *mc, QTreeWidget *parent, QObject *owner = 0);
+    virtual ~MetaContactSelectorWidgetLVI();
+    Kopete::MetaContact *metaContact();
+    virtual QString text(int column) const;
 protected slots:
-	void slotPhotoChanged();
-	void slotDisplayNameChanged();
-	void buildVisualComponents();
-	void slotUpdateContactBox();
+    void slotPhotoChanged();
+    void slotDisplayNameChanged();
+    void buildVisualComponents();
+    void slotUpdateContactBox();
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
 } // namespace UI
 } // namespace Kopete
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

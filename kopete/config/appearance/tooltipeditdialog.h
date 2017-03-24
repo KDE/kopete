@@ -27,28 +27,28 @@ class QStandardItemModel;
 
 class TooltipEditDialog : public KDialog, private Ui::TooltipEditWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-		TooltipEditDialog(QWidget *parent=0);
+public:
+    TooltipEditDialog(QWidget *parent = 0);
 
-	private slots:
-		void slotUnusedSelected(const QItemSelection&);
-		void slotUsedSelected(const QItemSelection&);
-		void slotUpButton();
-		void slotDownButton();
-		void slotAddButton();
-		void slotRemoveButton();
-		void slotOkClicked();
+private slots:
+    void slotUnusedSelected(const QItemSelection &);
+    void slotUsedSelected(const QItemSelection &);
+    void slotUpButton();
+    void slotDownButton();
+    void slotAddButton();
+    void slotRemoveButton();
+    void slotOkClicked();
 
-	signals:
-		void changed(bool);
+signals:
+    void changed(bool);
 
-	private:
-		QWidget *mMainWidget;
+private:
+    QWidget *mMainWidget;
 
-		QStandardItemModel *mUnusedEntries;
-		QStandardItemModel *mUsedEntries;
+    QStandardItemModel *mUnusedEntries;
+    QStandardItemModel *mUsedEntries;
 };
 
 #endif

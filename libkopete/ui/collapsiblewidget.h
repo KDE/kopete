@@ -34,29 +34,32 @@ class QScrollArea;
 
 class ClickableLabel : public QLabel
 {
-  Q_OBJECT
-  public:
-    ClickableLabel( QWidget* parent = nullptr );
+    Q_OBJECT
+public:
+    ClickableLabel(QWidget *parent = nullptr);
     ~ClickableLabel();
 
-    void mouseReleaseEvent( QMouseEvent *e ) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
 
-  signals:
+signals:
     void clicked();
 };
 
 class ArrowButton : public QAbstractButton
 {
-  public:
+public:
     ArrowButton(QWidget *parent = nullptr);
     ~ArrowButton();
 
-    QSize sizeHint() const Q_DECL_OVERRIDE { return QSize(16, 16); }
+    QSize sizeHint() const Q_DECL_OVERRIDE
+    {
+        return QSize(16, 16);
+    }
 
-  protected:
-    void paintEvent( QPaintEvent* ) Q_DECL_OVERRIDE;
+protected:
+    void paintEvent(QPaintEvent *) Q_DECL_OVERRIDE;
 
-  private:
+private:
 };
 
 /**
@@ -66,36 +69,32 @@ class ArrowButton : public QAbstractButton
 class KOPETE_EXPORT CollapsibleWidget : public QWidget
 {
     Q_OBJECT
-  public:
+public:
     CollapsibleWidget(QWidget *parent = nullptr);
-    explicit CollapsibleWidget(const QString& caption, QWidget *parent = nullptr);
+    explicit CollapsibleWidget(const QString &caption, QWidget *parent = nullptr);
     ~CollapsibleWidget();
-    
+
     QString caption() const;
     bool isExpanded() const;
 
-    QWidget* innerWidget() const;
-    void setInnerWidget( QWidget *w);
+    QWidget *innerWidget() const;
+    void setInnerWidget(QWidget *w);
 
-  public slots:
+public slots:
     void setExpanded(bool collapsed);
-    void setWindowTitle(const QString& caption);
+    void setWindowTitle(const QString &caption);
 
-
-  protected:
+protected:
     void init();
 
-  private slots:
+private slots:
     void animateCollapse(qreal);
 
-  private:
-    Q_DISABLE_COPY( CollapsibleWidget )
+private:
+    Q_DISABLE_COPY(CollapsibleWidget)
     class Private;
-    Private * const d;
-
-
+    Private *const d;
 };
-
 
 /**
   @short A scrollable container that contains groups of settings,
@@ -104,22 +103,21 @@ class KOPETE_EXPORT CollapsibleWidget : public QWidget
  */
 class KOPETE_EXPORT SettingsContainer : public QScrollArea
 {
-    Q_ENUMS( CollapseState )
+    Q_ENUMS(CollapseState)
     Q_OBJECT
-  public:
-    enum CollapseState { Collapsed, Uncollapsed };
-    SettingsContainer( QWidget *parent = nullptr );
+public:
+    enum CollapseState {
+        Collapsed, Uncollapsed
+    };
+    SettingsContainer(QWidget *parent = nullptr);
     ~SettingsContainer();
 
-    CollapsibleWidget* insertWidget( QWidget* w, const QString& name );
+    CollapsibleWidget *insertWidget(QWidget *w, const QString &name);
 
- private:
-    Q_DISABLE_COPY( SettingsContainer )
+private:
+    Q_DISABLE_COPY(SettingsContainer)
     class Private;
-    Private * const d;
+    Private *const d;
 };
 
-
-
 #endif // COLLAPSIBLEWIDGET_H
-

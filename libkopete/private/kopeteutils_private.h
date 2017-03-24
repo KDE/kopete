@@ -25,36 +25,31 @@
 
 class KNotification;
 
-namespace Kopete
-{
-
-namespace Utils
-{
-
+namespace Kopete {
+namespace Utils {
 typedef struct
 {
-	QString caption;
-	QString explanation;
-	QString debugInfo;
+    QString caption;
+    QString explanation;
+    QString debugInfo;
 } ErrorNotificationInfo;
 
 class NotifyHelper : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	static NotifyHelper* self();
-	void registerNotification(const KNotification* event, ErrorNotificationInfo error);
-	void unregisterNotification(const KNotification* event);
+    static NotifyHelper *self();
+    void registerNotification(const KNotification *event, ErrorNotificationInfo error);
+    void unregisterNotification(const KNotification *event);
 public slots:
-	void slotEventActivated(unsigned int action);
-	void slotEventClosed();
+    void slotEventActivated(unsigned int action);
+    void slotEventClosed();
 private:
-	NotifyHelper();
-	~NotifyHelper();
-	QMap<const KNotification*, ErrorNotificationInfo> m_events;
-	static NotifyHelper *s_self;
+    NotifyHelper();
+    ~NotifyHelper();
+    QMap<const KNotification *, ErrorNotificationInfo> m_events;
+    static NotifyHelper *s_self;
 };
-
 } // end ns Utils
 } // end ns Kopete
 

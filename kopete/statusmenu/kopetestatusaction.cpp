@@ -20,43 +20,37 @@
 
 #include "kopetestatusrootaction.h"
 
-
 namespace Kopete {
-
-StatusAction::StatusAction( Status::Status *status, StatusRootAction* rootAction, QObject * parent )
-	: QAction( parent ), mStatus(status), mRootAction(rootAction)
+StatusAction::StatusAction(Status::Status *status, StatusRootAction *rootAction, QObject *parent)
+    : QAction(parent)
+    , mStatus(status)
+    , mRootAction(rootAction)
 {
-	connect( this, SIGNAL(triggered(bool)), this, SLOT(triggered()) );
-	connect( mStatus, SIGNAL(changed()), this, SLOT(changed()) );
-	init();
+    connect(this, SIGNAL(triggered(bool)), this, SLOT(triggered()));
+    connect(mStatus, SIGNAL(changed()), this, SLOT(changed()));
+    init();
 }
 
 void StatusAction::init()
 {
-	if ( mRootAction->filter() == StatusRootAction::UseCategory )
-	{
-		this->setIcon( Kopete::OnlineStatusManager::pixmapForCategory( mStatus->category() ) );
-		this->setText( mStatus->title() );
-	}
-	else
-	{
-		this->setIcon( mRootAction->onlineStatus().iconFor( mRootAction->account() ) );
-		this->setText( mStatus->title() );
-	}
-	
-	this->setData( mStatus->uid() );
-	this->setToolTip( mStatus->message() );
+    if (mRootAction->filter() == StatusRootAction::UseCategory) {
+        this->setIcon(Kopete::OnlineStatusManager::pixmapForCategory(mStatus->category()));
+        this->setText(mStatus->title());
+    } else {
+        this->setIcon(mRootAction->onlineStatus().iconFor(mRootAction->account()));
+        this->setText(mStatus->title());
+    }
+
+    this->setData(mStatus->uid());
+    this->setToolTip(mStatus->message());
 }
 
 void StatusAction::triggered()
 {
-	mRootAction->changeStatus( mStatus );
+    mRootAction->changeStatus(mStatus);
 }
 
 void StatusAction::changed()
 {
-
 }
-
 }
-

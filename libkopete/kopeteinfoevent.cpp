@@ -21,114 +21,112 @@
 #include <kdebug.h>
 
 namespace Kopete {
-
 class InfoEvent::Private
 {
 public:
-	QMap<uint, QString> actions;
-	QString title;
-	QString text;
-	QString additionalText;
-	bool showOnSend;
-	bool closed;
+    QMap<uint, QString> actions;
+    QString title;
+    QString text;
+    QString additionalText;
+    bool showOnSend;
+    bool closed;
 };
 
-InfoEvent::InfoEvent( QObject *parent )
- : QObject( parent ), d( new Private )
+InfoEvent::InfoEvent(QObject *parent)
+    : QObject(parent)
+    , d(new Private)
 {
-	d->showOnSend = false;
-	d->closed = false;
+    d->showOnSend = false;
+    d->closed = false;
 }
 
 InfoEvent::~InfoEvent()
 {
-	if ( !d->closed )
-		emit eventClosed( this );
+    if (!d->closed) {
+        emit eventClosed(this);
+    }
 
-	delete d;
+    delete d;
 }
 
 void InfoEvent::sendEvent()
 {
-	InfoEventManager::self()->addEvent( this );
+    InfoEventManager::self()->addEvent(this);
 }
 
 QString InfoEvent::title() const
 {
-	return d->title;
+    return d->title;
 }
 
-void InfoEvent::setTitle( const QString& title )
+void InfoEvent::setTitle(const QString &title)
 {
-	d->title = title;
-	emit changed();
+    d->title = title;
+    emit changed();
 }
 
 QString InfoEvent::text() const
 {
-	return d->text;
+    return d->text;
 }
 
-void InfoEvent::setText( const QString& text )
+void InfoEvent::setText(const QString &text)
 {
-	d->text = text;
-	emit changed();
+    d->text = text;
+    emit changed();
 }
 
 QString InfoEvent::additionalText() const
 {
-	return d->additionalText;
+    return d->additionalText;
 }
 
-void InfoEvent::setAdditionalText( const QString& text )
+void InfoEvent::setAdditionalText(const QString &text)
 {
-	d->additionalText = text;
-	emit changed();
+    d->additionalText = text;
+    emit changed();
 }
 
 QMap<uint, QString> InfoEvent::actions() const
 {
-	return d->actions;
+    return d->actions;
 }
 
-void InfoEvent::addAction( uint actionId, const QString& actionText )
+void InfoEvent::addAction(uint actionId, const QString &actionText)
 {
-	d->actions[actionId] = actionText;
-	emit changed();
+    d->actions[actionId] = actionText;
+    emit changed();
 }
 
 bool InfoEvent::showOnSend() const
 {
-	return d->showOnSend;
+    return d->showOnSend;
 }
 
-void InfoEvent::setShowOnSend( bool showOnSend )
+void InfoEvent::setShowOnSend(bool showOnSend)
 {
-	d->showOnSend = showOnSend;
+    d->showOnSend = showOnSend;
 }
 
-void InfoEvent::activate( uint actionId )
+void InfoEvent::activate(uint actionId)
 {
-	emit actionActivated( actionId );
+    emit actionActivated(actionId);
 }
 
 bool InfoEvent::isClosed() const
 {
-	return d->closed;
+    return d->closed;
 }
 
 void InfoEvent::close()
 {
-	if ( d->closed )
-	{
-		qCDebug(LIBKOPETE_LOG) << "Closing more the once!!!";
-		return;
-	}
+    if (d->closed) {
+        qCDebug(LIBKOPETE_LOG) << "Closing more the once!!!";
+        return;
+    }
 
-	d->closed = true;
-	emit eventClosed( this );
-	deleteLater();
+    d->closed = true;
+    emit eventClosed(this);
+    deleteLater();
 }
-
 }
-

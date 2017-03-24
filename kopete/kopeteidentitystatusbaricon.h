@@ -1,7 +1,7 @@
 /*
     kopeteidentitystatusbaricon.h  -  Kopete Identity StatusBar Dock Icon
 
-	Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2001-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Kopete    (c) 2002-2007      by the Kopete developers  <kopete-devel@kde.org>
@@ -24,8 +24,7 @@
 #include <QPoint>
 #include <QMouseEvent>
 
-namespace Kopete
-{
+namespace Kopete {
 class Identity;
 class StatusRootAction;
 }
@@ -35,28 +34,27 @@ class StatusRootAction;
  */
 class KopeteIdentityStatusBarIcon : public QLabel
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	/**
-	 * Create a statusbar icon.
-	 */
-	KopeteIdentityStatusBarIcon( Kopete::Identity *identity, QWidget *parent );
+    /**
+     * Create a statusbar icon.
+     */
+    KopeteIdentityStatusBarIcon(Kopete::Identity *identity, QWidget *parent);
 
 signals:
-	void leftClicked( Kopete::Identity *identity, const QPoint &p );
+    void leftClicked(Kopete::Identity *identity, const QPoint &p);
 
 protected:
-	void mousePressEvent( QMouseEvent *me ) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *me) Q_DECL_OVERRIDE;
 
 private slots:
-	void updateMessage( Kopete::StatusRootAction *statusRootAction );
+    void updateMessage(Kopete::StatusRootAction *statusRootAction);
 
 private:
-	Kopete::Identity *m_identity;
+    Kopete::Identity *m_identity;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

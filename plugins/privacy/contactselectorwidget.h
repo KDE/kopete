@@ -14,7 +14,6 @@
     *************************************************************************
 */
 
-
 #ifndef CONTACT_SELECTOR_WIDGET_H
 #define CONTACT_SELECTOR_WIDGET_H
 
@@ -26,12 +25,12 @@ class Ui_ContactSelectorWidget_Base;
 class ContactSelectorWidget : public QWidget
 {
 public:
-	ContactSelectorWidget( QWidget *parent = nullptr);
-	~ContactSelectorWidget();
+    ContactSelectorWidget(QWidget *parent = nullptr);
+    ~ContactSelectorWidget();
 
-	QList<AccountListEntry> contacts();
+    QList<AccountListEntry> contacts();
 private:
-	Ui_ContactSelectorWidget_Base *mUi;
+    Ui_ContactSelectorWidget_Base *mUi;
 };
 
 #endif

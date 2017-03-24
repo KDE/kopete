@@ -21,10 +21,10 @@
 
 class StatusConfig_General : public QWidget, public Ui::StatusConfig_General
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	StatusConfig_General(QWidget *parent = nullptr);
+    StatusConfig_General(QWidget *parent = nullptr);
 };
 
 #endif // STATUSCONFIG_GENERAL_H

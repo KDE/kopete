@@ -17,39 +17,33 @@
 
 #include "kopeteprotocol_mock.h"
 
-namespace Kopete
+namespace Kopete {
+namespace Test {
+namespace Mock {
+Protocol::Protocol(const KComponentData &instance, QObject *parent)
+    : Kopete::Protocol(instance, parent)
 {
-namespace Test
-{
-namespace Mock
-{
-
-Protocol::Protocol( const KComponentData &instance, QObject *parent )
-  : Kopete::Protocol(instance, parent)
-{
-	
 }
 
-Account* Protocol::createNewAccount( const QString &accountId )
+Account *Protocol::createNewAccount(const QString &accountId)
 {
-	Q_UNUSED( accountId )
-	return 0L;
+    Q_UNUSED(accountId)
+    return 0L;
 }
 
-AddContactPage* Protocol::createAddContactWidget( QWidget *parent, Kopete::Account *account )
+AddContactPage *Protocol::createAddContactWidget(QWidget *parent, Kopete::Account *account)
 {
-	Q_UNUSED( parent )
-	Q_UNUSED( account )
-	return 0L;
+    Q_UNUSED(parent)
+    Q_UNUSED(account)
+    return 0L;
 }
 
-KopeteEditAccountWidget* Protocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
+KopeteEditAccountWidget *Protocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
-	Q_UNUSED( account )
-	Q_UNUSED( parent )
-	return 0L;
+    Q_UNUSED(account)
+    Q_UNUSED(parent)
+    return 0L;
 }
-
 } // end ns mock
 } // end ns test
 } // end ns kopete

@@ -22,14 +22,12 @@
 #include <KGenericFactory>
 
 typedef KGenericFactory<TutorialPlugin> TutorialPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_tutorialplugin, TutorialPluginFactory( "kopete_tutorialplugin" )  )
+K_EXPORT_COMPONENT_FACTORY(kopete_tutorialplugin, TutorialPluginFactory("kopete_tutorialplugin"))
 
-TutorialPlugin::TutorialPlugin( QObject * parent, const QStringList & ) : Kopete::Plugin( TutorialPluginFactory::componentData(), parent )
+TutorialPlugin::TutorialPlugin(QObject *parent, const QStringList &) : Kopete::Plugin(TutorialPluginFactory::componentData(), parent)
 {
 }
 
 TutorialPlugin::~TutorialPlugin()
 {
-
 }
-

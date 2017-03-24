@@ -25,102 +25,102 @@
 #include <QButtonGroup>
 #include <QStringListModel>
 
-K_PLUGIN_FACTORY( BookmarksPreferencesFactory, registerPlugin<BookmarksPreferences>(); )
+K_PLUGIN_FACTORY(BookmarksPreferencesFactory, registerPlugin<BookmarksPreferences>();
+                 )
 
 BookmarksPreferences::BookmarksPreferences(QWidget *parent, const QVariantList &args)
- : KCModule(parent, args)
+    : KCModule(parent, args)
 {
-	QVBoxLayout* l = new QVBoxLayout( this );
-	QWidget* w = new QWidget();
-	p_dialog = new Ui::BookmarksPrefsUI();
-	p_dialog->setupUi( w );
-	l->addWidget( w );
+    QVBoxLayout *l = new QVBoxLayout(this);
+    QWidget *w = new QWidget();
+    p_dialog = new Ui::BookmarksPrefsUI();
+    p_dialog->setupUi(w);
+    l->addWidget(w);
 
-	p_buttonGroup = new QButtonGroup( this );
-	p_buttonGroup->addButton( p_dialog->yesButton, BookmarksPrefsSettings::Always );
-	p_buttonGroup->addButton( p_dialog->noButton, BookmarksPrefsSettings::Never );
-	p_buttonGroup->addButton( p_dialog->onlySelectedButton, BookmarksPrefsSettings::SelectedContacts );
-	p_buttonGroup->addButton( p_dialog->onlyNotSelectedButton, BookmarksPrefsSettings::UnselectedContacts );
+    p_buttonGroup = new QButtonGroup(this);
+    p_buttonGroup->addButton(p_dialog->yesButton, BookmarksPrefsSettings::Always);
+    p_buttonGroup->addButton(p_dialog->noButton, BookmarksPrefsSettings::Never);
+    p_buttonGroup->addButton(p_dialog->onlySelectedButton, BookmarksPrefsSettings::SelectedContacts);
+    p_buttonGroup->addButton(p_dialog->onlyNotSelectedButton, BookmarksPrefsSettings::UnselectedContacts);
 
-	p_contactsListModel = new QStringListModel();
-	p_dialog->contactList->setModel( p_contactsListModel );
+    p_contactsListModel = new QStringListModel();
+    p_dialog->contactList->setModel(p_contactsListModel);
 
-	connect( p_buttonGroup, SIGNAL(buttonClicked(int)), this, SLOT(slotSetStatusChanged()));
-	connect( p_dialog->contactList, SIGNAL(activated(QModelIndex)),
-	         this, SLOT(slotSetStatusChanged()));
-	if(Kopete::PluginManager::self()->plugin(QStringLiteral("kopete_addbookmarks")))
-           connect( this, SIGNAL(PreferencesChanged()), Kopete::PluginManager::self()->plugin(QStringLiteral("kopete_addbookmarks")) , SLOT(slotReloadSettings()));
+    connect(p_buttonGroup, SIGNAL(buttonClicked(int)), this, SLOT(slotSetStatusChanged()));
+    connect(p_dialog->contactList, SIGNAL(activated(QModelIndex)),
+            this, SLOT(slotSetStatusChanged()));
+    if (Kopete::PluginManager::self()->plugin(QStringLiteral("kopete_addbookmarks"))) {
+        connect(this, SIGNAL(PreferencesChanged()), Kopete::PluginManager::self()->plugin(QStringLiteral("kopete_addbookmarks")), SLOT(slotReloadSettings()));
+    }
 }
-
 
 BookmarksPreferences::~BookmarksPreferences()
 {
-	delete p_dialog;
-	delete p_contactsListModel;
+    delete p_dialog;
+    delete p_contactsListModel;
 }
 
 void BookmarksPreferences::save()
 {
-	m_settings.setFolderForEachContact( (BookmarksPrefsSettings::UseSubfolders)p_buttonGroup->checkedId() );
-	if ( m_settings.isFolderForEachContact() == BookmarksPrefsSettings::SelectedContacts ||
-		 m_settings.isFolderForEachContact() == BookmarksPrefsSettings::UnselectedContacts )
-	{
-		QStringList list;
-		QModelIndexList indexList = p_dialog->contactList->selectionModel()->selectedIndexes();
-		foreach( const QModelIndex &index, indexList )
-			list += p_contactsListModel->data( index, Qt::DisplayRole ).toString();
+    m_settings.setFolderForEachContact((BookmarksPrefsSettings::UseSubfolders)p_buttonGroup->checkedId());
+    if (m_settings.isFolderForEachContact() == BookmarksPrefsSettings::SelectedContacts
+        || m_settings.isFolderForEachContact() == BookmarksPrefsSettings::UnselectedContacts) {
+        QStringList list;
+        QModelIndexList indexList = p_dialog->contactList->selectionModel()->selectedIndexes();
+        foreach (const QModelIndex &index, indexList) {
+            list += p_contactsListModel->data(index, Qt::DisplayRole).toString();
+        }
 
-		m_settings.setContactsList( list );
-	}
-	m_settings.save();
-	emit PreferencesChanged();
-	emit KCModule::changed(false);
+        m_settings.setContactsList(list);
+    }
+    m_settings.save();
+    emit PreferencesChanged();
+    emit KCModule::changed(false);
 }
 
 void BookmarksPreferences::slotSetStatusChanged()
 {
-	if ( p_buttonGroup->checkedId() == BookmarksPrefsSettings::Always ||
-	     p_buttonGroup->checkedId() == BookmarksPrefsSettings::Never )
-		p_dialog->contactList->setEnabled(false);
-	else
-		p_dialog->contactList->setEnabled(true);
+    if (p_buttonGroup->checkedId() == BookmarksPrefsSettings::Always
+        || p_buttonGroup->checkedId() == BookmarksPrefsSettings::Never) {
+        p_dialog->contactList->setEnabled(false);
+    } else {
+        p_dialog->contactList->setEnabled(true);
+    }
 
-	emit KCModule::changed(true);
+    emit KCModule::changed(true);
 }
 
 void BookmarksPreferences::load()
 {
-	m_settings.load();
-	QAbstractButton *button = p_buttonGroup->button( m_settings.isFolderForEachContact() );
-	if ( button )
-		button->setChecked( true );
+    m_settings.load();
+    QAbstractButton *button = p_buttonGroup->button(m_settings.isFolderForEachContact());
+    if (button) {
+        button->setChecked(true);
+    }
 
-	QStringList contactsList;
-	foreach(Kopete::MetaContact *contact, Kopete::ContactList::self()->metaContacts())
-	{
-		contactsList << contact->displayName();
-	}
+    QStringList contactsList;
+    foreach (Kopete::MetaContact *contact, Kopete::ContactList::self()->metaContacts()) {
+        contactsList << contact->displayName();
+    }
 
-	contactsList.sort();
-	p_contactsListModel->setStringList( contactsList );
+    contactsList.sort();
+    p_contactsListModel->setStringList(contactsList);
 
-	p_dialog->contactList->setEnabled( m_settings.isFolderForEachContact() == BookmarksPrefsSettings::SelectedContacts ||
-	                                   m_settings.isFolderForEachContact() == BookmarksPrefsSettings::UnselectedContacts );
+    p_dialog->contactList->setEnabled(m_settings.isFolderForEachContact() == BookmarksPrefsSettings::SelectedContacts
+                                      || m_settings.isFolderForEachContact() == BookmarksPrefsSettings::UnselectedContacts);
 
-	QItemSelectionModel *selectionModel = p_dialog->contactList->selectionModel();
-	selectionModel->clearSelection();
+    QItemSelectionModel *selectionModel = p_dialog->contactList->selectionModel();
+    selectionModel->clearSelection();
 
-	const QStringList selectedContactsList = m_settings.getContactsList();
-	foreach( const QString &contact, selectedContactsList )
-	{
-		const int row = contactsList.indexOf( contact );
-		if ( row != -1 )
-		{
-			QModelIndex index = p_contactsListModel->index( row, 0, QModelIndex() );
-			selectionModel->select( index, QItemSelectionModel::Select );
-		}
-	}
-	emit KCModule::changed(false);
+    const QStringList selectedContactsList = m_settings.getContactsList();
+    foreach (const QString &contact, selectedContactsList) {
+        const int row = contactsList.indexOf(contact);
+        if (row != -1) {
+            QModelIndex index = p_contactsListModel->index(row, 0, QModelIndex());
+            selectionModel->select(index, QItemSelectionModel::Select);
+        }
+    }
+    emit KCModule::changed(false);
 }
 
 #include "addbookmarkspreferences.moc"

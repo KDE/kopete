@@ -21,13 +21,13 @@
 #include <kemoticons.h>
 
 EmoticonThemeItem::EmoticonThemeItem(const QString &theme)
-: QListWidgetItem(theme, 0, UserType)
+    : QListWidgetItem(theme, 0, UserType)
 {
-	// list the theme
-	KEmoticonsTheme emoticons = Kopete::Emoticons::self()->theme( theme );
-	setData(EmoticonList, QStringList(emoticons.emoticonsMap().keys()));
+    // list the theme
+    KEmoticonsTheme emoticons = Kopete::Emoticons::self()->theme(theme);
+    setData(EmoticonList, QStringList(emoticons.emoticonsMap().keys()));
 
-	// set the emoticon pixmap list as an empty list: pixmaps will be added to 
-	// the list as they are rendered by the delegator
-	setData(EmoticonPixmaps, QList<QVariant>());
+    // set the emoticon pixmap list as an empty list: pixmaps will be added to
+    // the list as they are rendered by the delegator
+    setData(EmoticonPixmaps, QList<QVariant>());
 }

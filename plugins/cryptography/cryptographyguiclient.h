@@ -22,8 +22,9 @@
 #include <kxmlguiclient.h>
 #include <ktoggleaction.h>
 
-namespace Kopete { class ChatSession; }
-
+namespace Kopete {
+class ChatSession;
+}
 
 /**
  *@author Olivier Goffart
@@ -31,24 +32,29 @@ namespace Kopete { class ChatSession; }
  */
 class CryptographyGUIClient : public QObject, public KXMLGUIClient
 {
-		Q_OBJECT
-	public:
-		explicit CryptographyGUIClient ( Kopete::ChatSession *parent = 0 );
-		~CryptographyGUIClient();
+    Q_OBJECT
+public:
+    explicit CryptographyGUIClient (Kopete::ChatSession *parent = 0);
+    ~CryptographyGUIClient();
 
-		bool signing() { return m_signAction->isChecked(); }
-		bool encrypting() { return m_encAction->isChecked(); }
+    bool signing()
+    {
+        return m_signAction->isChecked();
+    }
 
-		KToggleAction *m_encAction;
-		KToggleAction *m_signAction;
-		KAction *m_exportAction;
+    bool encrypting()
+    {
+        return m_encAction->isChecked();
+    }
 
+    KToggleAction *m_encAction;
+    KToggleAction *m_signAction;
+    KAction *m_exportAction;
 
-	private slots:
-		void slotEncryptToggled();
-		void slotSignToggled();
-		void slotExport();
-
+private slots:
+    void slotEncryptToggled();
+    void slotSignToggled();
+    void slotExport();
 };
 
 #endif // CRYPTOGRAPHYGUICLIENT_H

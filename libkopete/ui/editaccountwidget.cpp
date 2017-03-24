@@ -21,29 +21,28 @@
 class KopeteEditAccountWidgetPrivate
 {
 public:
-	Kopete::Account *account;
+    Kopete::Account *account;
 };
 
-KopeteEditAccountWidget::KopeteEditAccountWidget( Kopete::Account *account )
+KopeteEditAccountWidget::KopeteEditAccountWidget(Kopete::Account *account)
 {
-	d = new KopeteEditAccountWidgetPrivate;
-	d->account = account;
+    d = new KopeteEditAccountWidgetPrivate;
+    d->account = account;
 }
 
 KopeteEditAccountWidget::~KopeteEditAccountWidget()
 {
-	delete d;
+    delete d;
 }
 
-Kopete::Account * KopeteEditAccountWidget::account() const
+Kopete::Account *KopeteEditAccountWidget::account() const
 {
-	return d->account;
+    return d->account;
 }
 
-void KopeteEditAccountWidget::setAccount( Kopete::Account *account )
+void KopeteEditAccountWidget::setAccount(Kopete::Account *account)
 {
-	d->account = account;
+    d->account = account;
 }
 
 // vim: set noet ts=4 sts=4 sw=4:
-

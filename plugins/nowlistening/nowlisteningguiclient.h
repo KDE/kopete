@@ -28,24 +28,26 @@ class KAction;
 class NowListeningPlugin;
 
 namespace Kopete {
-	class ChatSession;
+class ChatSession;
 }
 
 class NowListeningGUIClient : public QObject, public KXMLGUIClient
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	NowListeningGUIClient( Kopete::ChatSession* parent, NowListeningPlugin* plugin );
-	virtual ~NowListeningGUIClient() {}
+    NowListeningGUIClient(Kopete::ChatSession *parent, NowListeningPlugin *plugin);
+    virtual ~NowListeningGUIClient()
+    {
+    }
 
 protected slots:
-	void slotAdvertToCurrentChat();
-	void slotPluginUnloaded();
+    void slotAdvertToCurrentChat();
+    void slotPluginUnloaded();
 
 private:
-	Kopete::ChatSession* m_msgManager;
-	KAction* m_action;
+    Kopete::ChatSession *m_msgManager;
+    KAction *m_action;
 };
 
 #endif

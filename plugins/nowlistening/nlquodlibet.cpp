@@ -36,97 +36,95 @@
 
 NLQuodLibet::NLQuodLibet() : NLMediaPlayer()
 {
-	m_name = "Quod Libet";
-	m_playing = false;
-	m_watch = new KDirWatch( this );
-	connect( m_watch, SIGNAL(created(QString)),
-			 SLOT(fileChanged(QString)) );
-	connect( m_watch, SIGNAL(deleted(QString)),
-			 SLOT(fileChanged(QString)) );
-	connect( m_watch, SIGNAL(created(QString)),
-			 SLOT(fileChanged(QString)) );
-	m_watch->addFile( currentTrackPath() );
+    m_name = "Quod Libet";
+    m_playing = false;
+    m_watch = new KDirWatch(this);
+    connect(m_watch, SIGNAL(created(QString)),
+            SLOT(fileChanged(QString)));
+    connect(m_watch, SIGNAL(deleted(QString)),
+            SLOT(fileChanged(QString)));
+    connect(m_watch, SIGNAL(created(QString)),
+            SLOT(fileChanged(QString)));
+    m_watch->addFile(currentTrackPath());
 }
 
 NLQuodLibet::~NLQuodLibet()
 {
-
 }
 
 void NLQuodLibet::update()
 {
-	//look for running QL
-	// see if the ~/.quodlibet/current exists
-	//   if yes
+    //look for running QL
+    // see if the ~/.quodlibet/current exists
+    //   if yes
     //   parse for artist, album, title
-	//   m_playing = true;
+    //   m_playing = true;
     // else
     //   m_playing = false;
 
-	// assume we have no data
-	m_artist = i18n( "Unknown artist" );
-	m_album = i18n( "Unknown album" );
-	m_track = i18n( "Unknown track" );
+    // assume we have no data
+    m_artist = i18n("Unknown artist");
+    m_album = i18n("Unknown album");
+    m_track = i18n("Unknown track");
 
-	QString path = currentTrackPath();
-	QFile currentTrackFile( path );
-	if ( currentTrackFile.exists() )
-	{
-		m_playing = true;
-		QFileInfo info( currentTrackFile );
-		m_newTrack = ( info.lastModified() > m_timestamp );
-		if ( m_newTrack )
-			m_timestamp = info.lastModified();
+    QString path = currentTrackPath();
+    QFile currentTrackFile(path);
+    if (currentTrackFile.exists()) {
+        m_playing = true;
+        QFileInfo info(currentTrackFile);
+        m_newTrack = (info.lastModified() > m_timestamp);
+        if (m_newTrack) {
+            m_timestamp = info.lastModified();
+        }
 
-		parseFile( currentTrackFile );
-	}
-	else
-		m_playing = false;
+        parseFile(currentTrackFile);
+    } else {
+        m_playing = false;
+    }
 }
 
 QString NLQuodLibet::currentTrackPath() const
 {
-	return QDir::homePath() + QLatin1String( "/.quodlibet/current" );
+    return QDir::homePath() + QLatin1String("/.quodlibet/current");
 }
 
-void NLQuodLibet::parseFile( QFile & file )
+void NLQuodLibet::parseFile(QFile &file)
 {
-	if ( file.open( QIODevice::ReadOnly ) ) {
-		QTextStream stream( &file );
-		QString line;
-		while ( !stream.atEnd() ) {
-			line = stream.readLine(); // line of text excluding '\n'
-			parseLine( line );
-		}
-		file.close();
-	}
+    if (file.open(QIODevice::ReadOnly)) {
+        QTextStream stream(&file);
+        QString line;
+        while (!stream.atEnd()) {
+            line = stream.readLine(); // line of text excluding '\n'
+            parseLine(line);
+        }
+        file.close();
+    }
 }
 
-void NLQuodLibet::parseLine( const QString & line )
+void NLQuodLibet::parseLine(const QString &line)
 {
-	QStringList parts = line.split( '=', QString::KeepEmptyParts );
-	if ( parts.count() == 2 )
-	{
-		if ( parts[0] == "album" ) {
-			kDebug() << "found QL album: " << parts[1];
-			m_album = parts[1];
-		}
-		if ( parts[0] == "artist" ) {
-			kDebug() << "found QL artist: " << parts[1];
-			m_artist = parts[1];
-		}
-		if ( parts[0] == "title" ) {
-			kDebug() << "found QL track: " << parts[1];
-			m_track = parts[1];
-		}
-	}
+    QStringList parts = line.split('=', QString::KeepEmptyParts);
+    if (parts.count() == 2) {
+        if (parts[0] == "album") {
+            kDebug() << "found QL album: " << parts[1];
+            m_album = parts[1];
+        }
+        if (parts[0] == "artist") {
+            kDebug() << "found QL artist: " << parts[1];
+            m_artist = parts[1];
+        }
+        if (parts[0] == "title") {
+            kDebug() << "found QL track: " << parts[1];
+            m_track = parts[1];
+        }
+    }
 }
 
-void NLQuodLibet::fileChanged( const QString & file )
+void NLQuodLibet::fileChanged(const QString &file)
 {
-	if ( file == currentTrackPath() )
-		update();
+    if (file == currentTrackPath()) {
+        update();
+    }
 }
-
 
 // vim: set noet ts=4 sts=4 sw=4:

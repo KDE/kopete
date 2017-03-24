@@ -30,81 +30,82 @@
 #include "pipesplugin.h"
 #include "pipesconfig.h"
 
-K_PLUGIN_FACTORY ( PipesPreferencesFactory, registerPlugin<PipesPreferences>(); )
+K_PLUGIN_FACTORY(PipesPreferencesFactory, registerPlugin<PipesPreferences>();
+                 )
 
-PipesPreferences::PipesPreferences ( QWidget *parent, const QVariantList &args )
-	: KCModule ( parent, args )
+PipesPreferences::PipesPreferences (QWidget *parent, const QVariantList &args)
+    : KCModule(parent, args)
 {
-	mPrefs = new Ui::PipesPrefsUI;
-	mPrefs->setupUi (this);
+    mPrefs = new Ui::PipesPrefsUI;
+    mPrefs->setupUi(this);
 
-	mPrefs->pipesList->setSortingEnabled (false);
+    mPrefs->pipesList->setSortingEnabled(false);
 
-	mModel = new PipesModel (this);
-	PipesDelegate * delegate = new PipesDelegate (this);
+    mModel = new PipesModel(this);
+    PipesDelegate *delegate = new PipesDelegate(this);
 
-	mPrefs->pipesList->setModel (mModel);
-	mPrefs->pipesList->setItemDelegate (delegate);
+    mPrefs->pipesList->setModel(mModel);
+    mPrefs->pipesList->setItemDelegate(delegate);
 
-	mPrefs->pipesList->horizontalHeader()->setStretchLastSection (true);
-	mPrefs->pipesList->verticalHeader()->hide();
+    mPrefs->pipesList->horizontalHeader()->setStretchLastSection(true);
+    mPrefs->pipesList->verticalHeader()->hide();
 
-	connect (mPrefs->addButton, SIGNAL (clicked()), this, SLOT(slotAdd()));
-	connect (mPrefs->removeButton, SIGNAL (clicked()), this, SLOT(slotRemove()));
-	connect (mModel, SIGNAL (dataChanged(QModelIndex,QModelIndex)), this, SLOT(slotListChanged()));
-	connect (mModel, SIGNAL (modelReset()), this, SLOT (slotListChanged()));
-	
-	slotListChanged();
+    connect(mPrefs->addButton, SIGNAL(clicked()), this, SLOT(slotAdd()));
+    connect(mPrefs->removeButton, SIGNAL(clicked()), this, SLOT(slotRemove()));
+    connect(mModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(slotListChanged()));
+    connect(mModel, SIGNAL(modelReset()), this, SLOT(slotListChanged()));
+
+    slotListChanged();
 }
 
 PipesPreferences::~PipesPreferences()
 {
-	delete mPrefs;
+    delete mPrefs;
 }
 
 void PipesPreferences::load()
 {
-	PipesConfig::self()->load();
-	mModel->setPipes (PipesConfig::pipes());
+    PipesConfig::self()->load();
+    mModel->setPipes(PipesConfig::pipes());
 
-	emit KCModule::changed(false);
+    emit KCModule::changed(false);
 }
 
 void PipesPreferences::save()
 {
-	PipesConfig::setPipes (mModel->pipes());
-	PipesConfig::self()->save();
+    PipesConfig::setPipes(mModel->pipes());
+    PipesConfig::self()->save();
 
-	emit KCModule::changed(false);
+    emit KCModule::changed(false);
 }
 
 // We get a filename, then fill out a PipeOptions class with some default data,
 // then pass it to the file.
 void PipesPreferences::slotAdd()
 {
-	const QString filePath = KFileDialog::getOpenFileName( KUrl ("kfiledialog:///pipesplugin"), QString(), this, i18n ("Select Program or Script to Pipe Messages Through"));
-	if (filePath.isEmpty())
-		return;
-	PipesPlugin::PipeOptions pipe;
-	pipe.uid = QUuid::createUuid();
-	pipe.path = filePath;
-	pipe.direction = PipesPlugin::BothDirections;
-	pipe.pipeContents = PipesPlugin::HtmlBody;
-	pipe.enabled = true;
-	mModel->addPipe (pipe);
+    const QString filePath = KFileDialog::getOpenFileName(KUrl("kfiledialog:///pipesplugin"), QString(), this, i18n("Select Program or Script to Pipe Messages Through"));
+    if (filePath.isEmpty()) {
+        return;
+    }
+    PipesPlugin::PipeOptions pipe;
+    pipe.uid = QUuid::createUuid();
+    pipe.path = filePath;
+    pipe.direction = PipesPlugin::BothDirections;
+    pipe.pipeContents = PipesPlugin::HtmlBody;
+    pipe.enabled = true;
+    mModel->addPipe(pipe);
 }
 
 void PipesPreferences::slotRemove()
 {
-	mModel->removeRow( mPrefs->pipesList->currentIndex().row(), QModelIndex() );
+    mModel->removeRow(mPrefs->pipesList->currentIndex().row(), QModelIndex());
 }
 
 // when the data changes, we tell the view to resize itself
 void PipesPreferences::slotListChanged()
 {
-	mPrefs->pipesList->resizeColumnToContents(PipesDelegate::EnabledColumn);
-	mPrefs->pipesList->resizeColumnToContents(PipesDelegate::DirectionColumn);
-	mPrefs->pipesList->resizeColumnToContents(PipesDelegate::ContentsColumn);
-	changed();
+    mPrefs->pipesList->resizeColumnToContents(PipesDelegate::EnabledColumn);
+    mPrefs->pipesList->resizeColumnToContents(PipesDelegate::DirectionColumn);
+    mPrefs->pipesList->resizeColumnToContents(PipesDelegate::ContentsColumn);
+    changed();
 }
-

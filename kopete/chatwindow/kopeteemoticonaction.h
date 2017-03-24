@@ -28,22 +28,20 @@
 
 class KOPETECHATWINDOW_SHARED_EXPORT KopeteEmoticonAction : public KActionMenu
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	KopeteEmoticonAction( QObject *parent );
-	virtual ~KopeteEmoticonAction();
-	
+    KopeteEmoticonAction(QObject *parent);
+    virtual ~KopeteEmoticonAction();
+
 signals:
-	void activated( const QString &item );
+    void activated(const QString &item);
 
 private:
-	class KopeteEmoticonActionPrivate;
-	KopeteEmoticonActionPrivate *d;
-
+    class KopeteEmoticonActionPrivate;
+    KopeteEmoticonActionPrivate *d;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -1,4 +1,4 @@
- /*
+/*
   * jabberformlineedit.h
   *
   * Copyright (c) 2002-2003 by Till Gerken <till@tantalo.net>
@@ -27,19 +27,17 @@
   *@author Till Gerken <till@tantalo.net>
   */
 
-class JabberFormLineEdit:public QLineEdit
+class JabberFormLineEdit : public QLineEdit
 {
+    Q_OBJECT public:
+    JabberFormLineEdit (const int type, const QString &realName, const QString &value, QWidget *parent = nullptr);
+    ~JabberFormLineEdit ();
 
-  Q_OBJECT public:
-	  JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent = nullptr);
-	 ~JabberFormLineEdit ();
+public slots: void slotGatherData(XMPP::Form &form);
 
-	public slots:void slotGatherData (XMPP::Form & form);
-
-  private:
-	int fieldType;
-	QString fieldName;
-
+private:
+    int fieldType;
+    QString fieldName;
 };
 
 #endif

@@ -1,4 +1,4 @@
- /*
+/*
   * jinglecontentdialog.h - A dialog which asks the user to accept contents.
   *
   * This class is a dialog asking what contents the user accepts for an
@@ -29,21 +29,21 @@
 
 class JingleContentDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	JingleContentDialog(QWidget* parent = 0);
-	~JingleContentDialog();
-	void setContents(QList<XMPP::JingleContent*> c);
-	void setSession(XMPP::JingleSession *s);
-	XMPP::JingleSession *session();
-	QStringList checked();
-	QStringList unChecked();
+    JingleContentDialog(QWidget *parent = 0);
+    ~JingleContentDialog();
+    void setContents(QList<XMPP::JingleContent *> c);
+    void setSession(XMPP::JingleSession *s);
+    XMPP::JingleSession *session();
+    QStringList checked();
+    QStringList unChecked();
 
 private:
-	Ui::jingleContentDialog ui;
-	XMPP::JingleSession *m_session;
-	QList<QCheckBox*> m_checkBoxes;
-	QStringList m_contentNames;
+    Ui::jingleContentDialog ui;
+    XMPP::JingleSession *m_session;
+    QList<QCheckBox *> m_checkBoxes;
+    QStringList m_contentNames;
 };
 
 #endif

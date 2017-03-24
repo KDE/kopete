@@ -31,14 +31,16 @@
 */
 class AddresseeItem : public QTreeWidgetItem
 {
-  public:
+public:
 
     /**
       Type of column
       @li @p Name -  Name in Addressee
       @li @p Email - Email in Addressee
     */
-    enum columns { Photo =0, Name = 1, Email = 2 };
+    enum columns {
+        Photo = 0, Name = 1, Email = 2
+    };
 
     /**
       Constructor.
@@ -46,20 +48,23 @@ class AddresseeItem : public QTreeWidgetItem
       @param parent    The parent listview.
       @param addressee The associated addressee.
     */
-	AddresseeItem(QTreeWidget *parent, const KContacts::Addressee &addressee );
-   
+    AddresseeItem(QTreeWidget *parent, const KContacts::Addressee &addressee);
+
     /**
       Returns the addressee.
     */
-	KContacts::Addressee addressee() const { return mAddressee; }
+    KContacts::Addressee addressee() const
+    {
+        return mAddressee;
+    }
 
     /**
       Method used by QListView to sort the items.
     */
-    virtual QString key( int column, bool ascending ) const;
+    virtual QString key(int column, bool ascending) const;
 
-  private:
-	KContacts::Addressee mAddressee;
+private:
+    KContacts::Addressee mAddressee;
 };
 
 #endif // ADDRESSEEITEM_H

@@ -27,8 +27,7 @@
 #include "kopeteonlinestatus.h"
 #include "ui_kopeteaccountconfigbase.h"
 
-namespace Kopete
-{
+namespace Kopete {
 class Account;
 class Contact;
 class Identity;
@@ -44,64 +43,63 @@ class QAction;
  */
 class KopeteAccountConfig : public KCModule, private Ui::KopeteAccountConfigBase
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	KopeteAccountConfig(QWidget *parent, const QVariantList &args );
+    KopeteAccountConfig(QWidget *parent, const QVariantList &args);
 
 protected:
-	bool eventFilter( QObject *obj, QEvent *event ) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
 
 public slots:
-	void save() Q_DECL_OVERRIDE;
-	void load() Q_DECL_OVERRIDE;
+    void save() Q_DECL_OVERRIDE;
+    void load() Q_DECL_OVERRIDE;
 
 private:
-	KopeteAccountLVI* selectedAccount();
-	KopeteIdentityLVI* selectedIdentity();
-	Kopete::OnlineStatus mStatus;
-	
-	void configureActions();
-	void configureMenus();
+    KopeteAccountLVI *selectedAccount();
+    KopeteIdentityLVI *selectedIdentity();
+    Kopete::OnlineStatus mStatus;
 
-	void modifyAccount(Kopete::Account *);
-	void modifyIdentity(Kopete::Identity *);
-	bool m_protected;
-	QMenu *m_identityContextMenu;
-	QMenu *m_accountContextMenu;
+    void configureActions();
+    void configureMenus();
 
-	QAction *m_actionAccountAdd;
-	QAction *m_actionAccountModify;
-	QAction *m_actionAccountRemove;
-	QAction *m_actionAccountSwitchIdentity;
-	QAction *m_actionAccountSetColor;
+    void modifyAccount(Kopete::Account *);
+    void modifyIdentity(Kopete::Identity *);
+    bool m_protected;
+    QMenu *m_identityContextMenu;
+    QMenu *m_accountContextMenu;
 
-	QAction *m_actionIdentityAdd;
-	QAction *m_actionIdentityCopy;
-	QAction *m_actionIdentityModify;
-	QAction *m_actionIdentityRemove;
-	QAction *m_actionIdentitySetDefault;
+    QAction *m_actionAccountAdd;
+    QAction *m_actionAccountModify;
+    QAction *m_actionAccountRemove;
+    QAction *m_actionAccountSwitchIdentity;
+    QAction *m_actionAccountSetColor;
+
+    QAction *m_actionIdentityAdd;
+    QAction *m_actionIdentityCopy;
+    QAction *m_actionIdentityModify;
+    QAction *m_actionIdentityRemove;
+    QAction *m_actionIdentitySetDefault;
 
 private slots:
-	void slotModify();
+    void slotModify();
 
-	void slotAddAccount();
-	void removeAccount();
-	void slotAccountSwitchIdentity();
-	void slotAccountSetColor();
+    void slotAddAccount();
+    void removeAccount();
+    void slotAccountSwitchIdentity();
+    void slotAccountSetColor();
 
-	void slotAddIdentity();
-	void removeIdentity();
-	void slotSetDefaultIdentity();
+    void slotAddIdentity();
+    void removeIdentity();
+    void slotSetDefaultIdentity();
 
-	void slotCopyIdentity();
-	void slotAccountAdded(Kopete::Account *);
-	void slotAccountRemoved(const Kopete::Account *);
-	void slotItemSelected();
-	void slotOnlineStatusChanged( Kopete::Contact *contact,
-			                      const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
-	void slotItemChanged(QTreeWidgetItem*);
-	void slotItemClicked ( QTreeWidgetItem * item, int column );
+    void slotCopyIdentity();
+    void slotAccountAdded(Kopete::Account *);
+    void slotAccountRemoved(const Kopete::Account *);
+    void slotItemSelected();
+    void slotOnlineStatusChanged(Kopete::Contact *contact, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus);
+    void slotItemChanged(QTreeWidgetItem *);
+    void slotItemClicked(QTreeWidgetItem *item, int column);
 };
 #endif
 

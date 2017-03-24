@@ -26,9 +26,7 @@
 #include "kopetemessage.h"
 #include "kopete_export.h"
 
-namespace Kopete
-{
-
+namespace Kopete {
 /**
  * @author Olivier Goffart <ogoffart@kde.org>
  * @author Richard Smith   <richard@metafoo.co.uk>
@@ -40,89 +38,89 @@ namespace Kopete
  **/
 class KOPETE_EXPORT MessageEvent : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit MessageEvent(const Kopete::Message& , QObject* parent=0L ); /* implicit */
-	~MessageEvent();
+    explicit MessageEvent(const Kopete::Message &, QObject *parent = 0L); /* implicit */
+    ~MessageEvent();
 
-	/**
-	 * @return A copy of the message
-	 */
-	Kopete::Message message();
-	
-	/**
-	 * Sets the message contained in this event.
-	 * @param message The new value for the message
-	 */
-	void setMessage( const Kopete::Message &message );
+    /**
+     * @return A copy of the message
+     */
+    Kopete::Message message();
 
-	/**
-	 * The state of the event.
-	 * - @c Nothing means that the event has not been accepted or ignored
-	 * - @c Applied if the event has been applied
-	 * - @c Ignored if the event has been ignored
-	 */
-	enum EventState { Nothing , Applied , Ignored };
+    /**
+     * Sets the message contained in this event.
+     * @param message The new value for the message
+     */
+    void setMessage(const Kopete::Message &message);
 
-	EventState state();
+    /**
+     * The state of the event.
+     * - @c Nothing means that the event has not been accepted or ignored
+     * - @c Applied if the event has been applied
+     * - @c Ignored if the event has been ignored
+     */
+    enum EventState {
+        Nothing, Applied, Ignored
+    };
+
+    EventState state();
 
 public slots:
-	/**
-	 * @deprecated Use accept() instead to continue the processing of this event once the caller has moved to using MessageHandlers
-	 * 
-	 * execute the event
-	 */
-	void apply();
-	
-	/**
-	 * @deprecated Use discard() instead to destroy this event once the caller has moved to using MessageHandlers
-	 * 
-	 * ignore the event
-	 */
-	void ignore();
-	
-	/**
-	 * @brief Passes the event to the next handler
-	 * 
-	 * Call this when you've finished processing this event
-	 */
-	void accept();
-	
-	/**
-	 * @brief Discards the event
-	 *
-	 * If this event should not be processed any further, this function
-	 * should be called to discard it.
-	 */
-	void discard();
-	
+    /**
+     * @deprecated Use accept() instead to continue the processing of this event once the caller has moved to using MessageHandlers
+     *
+     * execute the event
+     */
+    void apply();
+
+    /**
+     * @deprecated Use discard() instead to destroy this event once the caller has moved to using MessageHandlers
+     *
+     * ignore the event
+     */
+    void ignore();
+
+    /**
+     * @brief Passes the event to the next handler
+     *
+     * Call this when you've finished processing this event
+     */
+    void accept();
+
+    /**
+     * @brief Discards the event
+     *
+     * If this event should not be processed any further, this function
+     * should be called to discard it.
+     */
+    void discard();
+
 signals:
-	/**
-	 * The event has been processed
-	 */
-	void done(Kopete::MessageEvent *);
-	
-	/**
-	 * The event has been discarded.
-	 * @param event The event sending the signal.
-	 */
-	void discarded(Kopete::MessageEvent *event);
-	
-	/**
-	 * The event has been accepted by its current handler.
-	 * @param event The event sending the signal.
-	 */
-	void accepted(Kopete::MessageEvent *event);
+    /**
+     * The event has been processed
+     */
+    void done(Kopete::MessageEvent *);
+
+    /**
+     * The event has been discarded.
+     * @param event The event sending the signal.
+     */
+    void discarded(Kopete::MessageEvent *event);
+
+    /**
+     * The event has been accepted by its current handler.
+     * @param event The event sending the signal.
+     */
+    void accepted(Kopete::MessageEvent *event);
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
 }
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

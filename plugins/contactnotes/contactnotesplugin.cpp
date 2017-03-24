@@ -29,60 +29,60 @@
 
 #include <kactioncollection.h>
 
-K_PLUGIN_FACTORY(ContactNotesPluginFactory, registerPlugin<ContactNotesPlugin>();)
+K_PLUGIN_FACTORY(ContactNotesPluginFactory, registerPlugin<ContactNotesPlugin>();
+                 )
 
-ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const QVariantList & /* args */ )
-: Kopete::Plugin( parent )
+ContactNotesPlugin::ContactNotesPlugin(QObject *parent, const QVariantList & /* args */)
+    : Kopete::Plugin(parent)
 {
-	if ( pluginStatic_ )
-		kDebug(14302)<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized";
-	else
-		pluginStatic_ = this;
+    if (pluginStatic_) {
+        kDebug(14302)<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized";
+    } else {
+        pluginStatic_ = this;
+    }
 
-	QAction *m_actionEdit=new QAction( KIcon(QStringLiteral("user-identity")), i18n("&Notes"), this );
-        actionCollection()->addAction( QStringLiteral("editContactNotes"), m_actionEdit );
-	connect(m_actionEdit, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()));
+    QAction *m_actionEdit = new QAction(KIcon(QStringLiteral("user-identity")), i18n("&Notes"), this);
+    actionCollection()->addAction(QStringLiteral("editContactNotes"), m_actionEdit);
+    connect(m_actionEdit, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()));
 
-	connect ( Kopete::ContactList::self() , SIGNAL(metaContactSelected(bool)) , m_actionEdit , SLOT(setEnabled(bool)));
-	m_actionEdit->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count()==1 );
+    connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), m_actionEdit, SLOT(setEnabled(bool)));
+    m_actionEdit->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count() == 1);
 
-	setXMLFile(QStringLiteral("contactnotesui.rc"));
+    setXMLFile(QStringLiteral("contactnotesui.rc"));
 }
 
 ContactNotesPlugin::~ContactNotesPlugin()
 {
-	pluginStatic_ = 0L;
+    pluginStatic_ = 0L;
 }
 
-ContactNotesPlugin* ContactNotesPlugin::plugin()
+ContactNotesPlugin *ContactNotesPlugin::plugin()
 {
-	return pluginStatic_ ;
+    return pluginStatic_;
 }
 
-ContactNotesPlugin* ContactNotesPlugin::pluginStatic_ = 0L;
-
+ContactNotesPlugin *ContactNotesPlugin::pluginStatic_ = 0L;
 
 void ContactNotesPlugin::slotEditInfo()
 {
-	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
-	if(!m)
-		return;
-	ContactNotesEdit *e=new ContactNotesEdit(m,this);
-	connect( e, SIGNAL(notesChanged(QString,Kopete::MetaContact*)),this,
-			SLOT(setNotes(QString,Kopete::MetaContact*)) );
-	e->show();
+    Kopete::MetaContact *m = Kopete::ContactList::self()->selectedMetaContacts().first();
+    if (!m) {
+        return;
+    }
+    ContactNotesEdit *e = new ContactNotesEdit(m, this);
+    connect(e, SIGNAL(notesChanged(QString,Kopete::MetaContact *)), this,
+            SLOT(setNotes(QString,Kopete::MetaContact *)));
+    e->show();
 }
-
 
 QString ContactNotesPlugin::notes(Kopete::MetaContact *m)
 {
-	return m->pluginData( this, QStringLiteral("notes") );
+    return m->pluginData(this, QStringLiteral("notes"));
 }
 
-void ContactNotesPlugin::setNotes( const QString &n, Kopete::MetaContact *m )
+void ContactNotesPlugin::setNotes(const QString &n, Kopete::MetaContact *m)
 {
-	m->setPluginData( this, QStringLiteral("notes"), n );
+    m->setPluginData(this, QStringLiteral("notes"), n);
 }
 
 #include "contactnotesplugin.moc"
-

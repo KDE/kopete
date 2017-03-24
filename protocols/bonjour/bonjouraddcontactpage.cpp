@@ -28,28 +28,26 @@
 
 #include "bonjourcontact.h"
 
-BonjourAddContactPage::BonjourAddContactPage( QWidget* parent )
-		: AddContactPage(parent)
+BonjourAddContactPage::BonjourAddContactPage(QWidget *parent)
+    : AddContactPage(parent)
 {
-	qDebug() ;
-	QVBoxLayout* l = new QVBoxLayout( this );
-	QWidget* w = new QWidget();
-	m_bonjourAddUI.setupUi( w );
-	l->addWidget( w );
+    qDebug();
+    QVBoxLayout *l = new QVBoxLayout(this);
+    QWidget *w = new QWidget();
+    m_bonjourAddUI.setupUi(w);
+    l->addWidget(w);
 }
 
 BonjourAddContactPage::~BonjourAddContactPage()
 {
 }
 
-bool BonjourAddContactPage::apply( Kopete::Account*, Kopete::MetaContact* )
+bool BonjourAddContactPage::apply(Kopete::Account *, Kopete::MetaContact *)
 {
-	return false;
+    return false;
 }
 
 bool BonjourAddContactPage::validateData()
 {
-	return true;
+    return true;
 }
-
-

@@ -1,5 +1,5 @@
 /*
-	nlmpris.cpp
+    nlmpris.cpp
 
     Kopete Now Listening To plugin
 
@@ -7,9 +7,9 @@
 
     Kopete (c) 2002,2003 by the Kopete developers  <kopete-devel@kde.org>
 
-	Purpose:
-	This class abstracts the interface to mpris by
-	implementing NLMediaPlayer
+    Purpose:
+    This class abstracts the interface to mpris by
+    implementing NLMediaPlayer
 
     *************************************************************************
     *                                                                       *
@@ -25,7 +25,6 @@
 
 #include <kdebug.h>
 
-
 #include <QtDBus/QtDBus>
 
 struct mprisPlayerStatus
@@ -36,9 +35,9 @@ struct mprisPlayerStatus
     int repeatPlayList; // 0 = Stop playing once the last element has been played, 1 = Never give up playing
 };
 
-Q_DECLARE_METATYPE( mprisPlayerStatus )
+Q_DECLARE_METATYPE(mprisPlayerStatus)
 
-QDBusArgument &operator << ( QDBusArgument &arg, const mprisPlayerStatus &status )
+QDBusArgument &operator <<(QDBusArgument &arg, const mprisPlayerStatus &status)
 {
     arg.beginStructure();
     arg << status.state;
@@ -49,7 +48,7 @@ QDBusArgument &operator << ( QDBusArgument &arg, const mprisPlayerStatus &status
     return arg;
 }
 
-const QDBusArgument &operator >> ( const QDBusArgument &arg, mprisPlayerStatus &status )
+const QDBusArgument &operator >>(const QDBusArgument &arg, mprisPlayerStatus &status)
 {
     arg.beginStructure();
     arg >> status.state;
@@ -62,102 +61,87 @@ const QDBusArgument &operator >> ( const QDBusArgument &arg, mprisPlayerStatus &
 
 NLmpris::NLmpris() : NLMediaPlayer()
 {
-	m_type = Audio;
-	m_name = "MPRIS compatible player";
-	m_client = 0;
-	qDBusRegisterMetaType<mprisPlayerStatus>();
+    m_type = Audio;
+    m_name = "MPRIS compatible player";
+    m_client = 0;
+    qDBusRegisterMetaType<mprisPlayerStatus>();
 }
 
 NLmpris::~NLmpris()
 {
-	delete m_client;
+    delete m_client;
 }
 
 void NLmpris::update()
 {
-	m_playing = false;
+    m_playing = false;
 
-	if( m_client == 0 || !m_client->isValid() ) {
+    if (m_client == 0 || !m_client->isValid()) {
+        QStringList services;
+        const QDBusConnection &sessionConn(QDBusConnection::sessionBus());
 
-		QStringList services;
-		const QDBusConnection& sessionConn( QDBusConnection::sessionBus() );
+        // Check if the connection is successful
+        if (sessionConn.isConnected()) {
+            const QDBusConnectionInterface *bus = sessionConn.interface();
+            const QDBusReply<QStringList> &reply(bus->registeredServiceNames());
 
-		// Check if the connection is successful
-		if( sessionConn.isConnected() )
-		{
-			const QDBusConnectionInterface* bus = sessionConn.interface();
-			const QDBusReply<QStringList>& reply( bus->registeredServiceNames() );
+            if (reply.isValid()) {
+                // Search for "org.mpris" string
+                services = reply.value().filter("org.mpris.");
+            }
+        }
 
-			if( reply.isValid() )
-			{
-				// Search for "org.mpris" string
-				services = reply.value().filter( "org.mpris." );
-			}
-		}
+        // If no service was found then return false and unlock the mutex
+        if (services.isEmpty()) {
+            return;
+        }
 
-		// If no service was found then return false and unlock the mutex
-		if( services.isEmpty() )
-		{
-			return;
-		}
+        // Start the d-bus interface, needed to check the application status and make calls to it
+        if (m_client != 0) {
+            delete m_client;
+            m_client = 0;
+        }
+        m_client = new QDBusInterface(services.at(0), "/Player", "org.freedesktop.MediaPlayer");
+        QDBusInterface dbusMprisRoot(services.at(0), "/", "org.freedesktop.MediaPlayer");
 
-		// Start the d-bus interface, needed to check the application status and make calls to it
-		if (m_client != 0){
-			delete m_client;
-			m_client = 0;
-		}
-		m_client = new QDBusInterface( services.at(0), "/Player", "org.freedesktop.MediaPlayer" );
-		QDBusInterface dbusMprisRoot  ( services.at(0), "/", "org.freedesktop.MediaPlayer" );
+        // See if the application is registered.
+        if (!m_client->isValid()) {
+            return;
+        }
 
-		// See if the application is registered.
-		if( ! m_client->isValid() )
-		{
-			return;
-		}
+        if (!dbusMprisRoot.isValid()) {
+            m_name = QString("MPRIS compatible player");
+        } else {
+            // Identity is part of /, not /Player.
+            QDBusReply<QString> playerName = dbusMprisRoot.call("Identity");
+            m_name = playerName.value();
+        }
+    }
 
+    // see if it's playing
+    QDBusReply <mprisPlayerStatus> mprisStatus = m_client->call("GetStatus");
+    if (mprisStatus.value().state == 0) {
+        m_playing = true;
+    }
 
-		if (! dbusMprisRoot.isValid() )
-		{
-			m_name = QString( "MPRIS compatible player" );
-		}
-		else
-		{
-			// Identity is part of /, not /Player.
-			QDBusReply<QString> playerName = dbusMprisRoot.call("Identity");
-			m_name = playerName.value();
+    QDBusReply<QVariantMap> metaDataReply = m_client->call("GetMetadata");
+    if (!metaDataReply.isValid()) {
+        return;
+    }
 
-		}
+    const QVariantMap &metaData = metaDataReply.value();
 
-	}
+    // Fetch title
+    const QString newTrack = metaData["title"].toString();
 
-	// see if it's playing
-	QDBusReply <mprisPlayerStatus> mprisStatus = m_client->call ( "GetStatus" );
-	if ( mprisStatus.value().state == 0 )
-	{
-		m_playing = true;
-	}
+    if (newTrack != m_track) {
+        m_newTrack = true;
+        m_track = newTrack;
+    }
 
-	QDBusReply<QVariantMap> metaDataReply = m_client->call ( "GetMetadata" );
-	if ( !metaDataReply.isValid() )
-	{
-		return;
-	}
+    // Fetch album
+    m_album = metaData["album"].toString();
 
-	const QVariantMap &metaData = metaDataReply.value();
-
-	// Fetch title
-	const QString newTrack = metaData["title"].toString();
-
-	if ( newTrack != m_track )
-	{
-		m_newTrack = true;
-		m_track = newTrack;
-	}
-
-	// Fetch album
-	m_album = metaData["album"].toString();
-
-	// Fetch artist
-	m_artist = metaData["artist"].toString();
-
+    // Fetch artist
+    m_artist = metaData["artist"].toString();
 }

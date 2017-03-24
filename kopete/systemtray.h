@@ -35,51 +35,50 @@ class QMenu;
  */
 class KopeteSystemTray : public KStatusNotifierItem
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	/**
-	 * Retrieve the system tray instance
-	 */
-	static KopeteSystemTray* systemTray( QWidget* parent = nullptr);
+    /**
+     * Retrieve the system tray instance
+     */
+    static KopeteSystemTray *systemTray(QWidget *parent = nullptr);
 
-	virtual ~KopeteSystemTray();
+    virtual ~KopeteSystemTray();
 
-	// One method, multiple interfaces :-)
-	void startBlink( const QString &icon );
-	void startBlink();
+    // One method, multiple interfaces :-)
+    void startBlink(const QString &icon);
+    void startBlink();
 
-	void stopBlink();
-	bool isBlinking() const;
+    void stopBlink();
+    bool isBlinking() const;
 
 Q_SIGNALS:
-	void aboutToShowMenu(QMenu *am);
+    void aboutToShowMenu(QMenu *am);
 
 private Q_SLOTS:
-	void slotAboutToShowMenu();
-	void activate(const QPoint &pos=QPoint()) Q_DECL_OVERRIDE;
+    void slotAboutToShowMenu();
+    void activate(const QPoint &pos = QPoint()) Q_DECL_OVERRIDE;
 
-	void slotBlink();
-	void slotNewEvent(Kopete::MessageEvent*);
-	void slotEventDone(Kopete::MessageEvent *);
-	void slotConfigChanged();
-	void slotReevaluateAccountStates();
+    void slotBlink();
+    void slotNewEvent(Kopete::MessageEvent *);
+    void slotEventDone(Kopete::MessageEvent *);
+    void slotConfigChanged();
+    void slotReevaluateAccountStates();
 
 private:
-	KopeteSystemTray( QWidget* parent );
+    KopeteSystemTray(QWidget *parent);
 
-	QTimer *mBlinkTimer;
-	QString mKopeteIcon;
-	QString mBlinkIcon;
+    QTimer *mBlinkTimer;
+    QString mKopeteIcon;
+    QString mBlinkIcon;
 
-	bool mIsBlinkIcon;
+    bool mIsBlinkIcon;
 
-	static KopeteSystemTray* s_systemTray;
+    static KopeteSystemTray *s_systemTray;
 
-	QList<Kopete::MessageEvent*> mEventList;
+    QList<Kopete::MessageEvent *> mEventList;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

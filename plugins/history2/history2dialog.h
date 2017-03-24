@@ -31,25 +31,59 @@ class QTreeWidgetItem;
 class KAction;
 class KHTMLView;
 class KHTMLPart;
-namespace KParts { class BrowserArguments; class OpenUrlArguments; class Part; }
+namespace KParts {
+class BrowserArguments;
+class OpenUrlArguments;
+class Part;
+}
 
-namespace Kopete { class MetaContact; }
-namespace Kopete { class Contact; }
-namespace Kopete { class XSLT; }
+namespace Kopete {
+class MetaContact;
+}
+namespace Kopete {
+class Contact;
+}
+namespace Kopete {
+class XSLT;
+}
 
-namespace Ui { class History2Viewer; }
+namespace Ui {
+class History2Viewer;
+}
 
 class DMPair
 {
-	public:
-		DMPair() {md = QDate(0, 0, 0); mc = 0; }
-		DMPair(QDate d, Kopete::MetaContact *c) { md = d; mc =c; }
-		QDate date() const { return md; }
-		Kopete::MetaContact* metaContact() const { return mc; }
-		bool operator==(const DMPair p1) const { return p1.date() == this->date() && p1.metaContact() == this->metaContact(); }
-	private:
-		QDate md;
-		Kopete::MetaContact *mc;
+public:
+    DMPair()
+    {
+        md = QDate(0, 0, 0);
+        mc = 0;
+    }
+
+    DMPair(QDate d, Kopete::MetaContact *c)
+    {
+        md = d;
+        mc = c;
+    }
+
+    QDate date() const
+    {
+        return md;
+    }
+
+    Kopete::MetaContact *metaContact() const
+    {
+        return mc;
+    }
+
+    bool operator==(const DMPair p1) const
+    {
+        return p1.date() == this->date() && p1.metaContact() == this->metaContact();
+    }
+
+private:
+    QDate md;
+    Kopete::MetaContact *mc;
 };
 
 /**
@@ -58,81 +92,82 @@ class DMPair
  */
 class History2Dialog : public KDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-		explicit History2Dialog(Kopete::MetaContact *mc, QWidget* parent=0);
-		~History2Dialog();
+public:
+    explicit History2Dialog(Kopete::MetaContact *mc, QWidget *parent = 0);
+    ~History2Dialog();
 
-		/**
-		 * Calls init(Kopete::Contact *c) for each subcontact of the metacontact
-		 */
+    /**
+     * Calls init(Kopete::Contact *c) for each subcontact of the metacontact
+     */
 
+signals:
+    void closing();
 
-	signals:
-		void closing();
+private slots:
+    void slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &);
 
-	private slots:
-		void slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &);
+    // Called when a date is selected in the treeview
+    void dateSelected(QTreeWidgetItem *);
 
-		// Called when a date is selected in the treeview
-		void dateSelected(QTreeWidgetItem *);
+    void slotSearch();
+    void searchFinished();
 
-		void slotSearch();
-		void searchFinished();
+    void slotSearchTextChanged(const QString &txt);     // To enable/disable search button
+    void slotContactChanged(int index);
+    void slotFilterChanged(int index);
 
-		void slotSearchTextChanged(const QString& txt); // To enable/disable search button
-		void slotContactChanged(int index);
-		void slotFilterChanged(int index);
+    void init(QString s);
 
-		void init(QString s);
+    void slotRightClick(const QString &url, const QPoint &point);
+    void slotCopy();
+    void slotCopyURL();
 
-		void slotRightClick(const QString &url, const QPoint &point);
-		void slotCopy();
-		void slotCopyURL();
+    void slotImportHistory2();
 
-		void slotImportHistory2();
+private:
+    enum Disabled {
+        Prev = 1, Next = 2
+    };
+    void refreshEnabled(/*Disabled*/ uint disabled);
 
-	private:
-		enum Disabled { Prev=1, Next=2 };
-		void refreshEnabled( /*Disabled*/ uint disabled );
+    void initProgressBar(const QString &text, int nbSteps);
+    void doneProgressBar();
 
-		void initProgressBar(const QString& text, int nbSteps);
-		void doneProgressBar();
+    /**
+     * Show the messages in the HTML View
+     */
+    void setMessages(QList<Kopete::Message> m);
 
-		/**
-		 * Show the messages in the HTML View
-		 */
-		void setMessages(QList<Kopete::Message> m);
+    void treeWidgetHideElements(bool s);
 
-		void treeWidgetHideElements(bool s);
+    QString highlight(const QString &htmlText, const QString &highlight) const;
+    QString escapeXMLText(const QString &text) const;
 
-		QString highlight(const QString &htmlText, const QString &highlight) const;
-		QString escapeXMLText(const QString& text) const;
+    /**
+     * We show history2 dialog to look at the log for a metacontact. Here is this metacontact.
+     */
+    Kopete::MetaContact *mMetaContact;
 
-		/**
-		 * We show history2 dialog to look at the log for a metacontact. Here is this metacontact.
-		 */
-		Kopete::MetaContact *mMetaContact;
+    QList<Kopete::MetaContact *> mMetaContactList;
 
-		QList<Kopete::MetaContact*> mMetaContactList;
+    // History2 View
+    KHTMLView *mHtmlView;
+    KHTMLPart *mHtmlPart;
+    Ui::History2Viewer *mMainWidget;
+    Kopete::XSLT *mXsltParser;
 
-		// History2 View
-		KHTMLView *mHtmlView;
-		KHTMLPart *mHtmlPart;
-		Ui::History2Viewer *mMainWidget;
-		Kopete::XSLT *mXsltParser;
+    struct Init
+    {
+        QList<DMPair> dateMCList;     // mc for MetaContact
+    } mInit;
 
-		struct Init
-		{
-			QList<DMPair> dateMCList; // mc for MetaContact
-		} mInit;
+    bool mSearching;
 
-		bool mSearching;
-
-		KAction *mCopyAct;
-		KAction *mCopyURLAct;
-		QString mURL;
+    KAction *mCopyAct;
+    KAction *mCopyURLAct;
+    QString mURL;
 };
 
 #endif

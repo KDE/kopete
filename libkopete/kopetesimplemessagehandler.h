@@ -20,9 +20,7 @@
 #include "kopete_export.h"
 #include "kopetemessagehandler.h"
 
-namespace Kopete
-{
-
+namespace Kopete {
 /**
  * @brief A MessageHandlerFactory that creates synchronous MessageHandlers that just call a slot
  *
@@ -37,30 +35,29 @@ namespace Kopete
 class KOPETE_EXPORT SimpleMessageHandlerFactory : public MessageHandlerFactory
 {
 public:
-	/**
-	 * @param direction The direction this factory should create message handlers for
-	 * @param position Where in the chain the handler should be installed
-	 * @param target The object to call back to when handling a message
-	 * @param slot The slot on @p target to call when handling a message
-	 * @see Kopete::MessageHandlerFactory::filterPosition
-	 */
-	SimpleMessageHandlerFactory( Message::MessageDirection direction, int position,
-	                             QObject *target, const char *slot );
-	~SimpleMessageHandlerFactory();
-	
-	/**
-	 * Creates and returns a SimpleMessageHandler object.
-	 */
-	MessageHandler *create( ChatSession *manager, Message::MessageDirection direction ) Q_DECL_OVERRIDE;
-	/**
-	 * Returns the filter position passed to the constructor if @p direction matches the
-	 * direction passed to the constructor, otherwise returns @c StageDoNotCreate.
-	 */
-	int filterPosition( ChatSession *manager, Message::MessageDirection direction ) Q_DECL_OVERRIDE;
-	
+    /**
+     * @param direction The direction this factory should create message handlers for
+     * @param position Where in the chain the handler should be installed
+     * @param target The object to call back to when handling a message
+     * @param slot The slot on @p target to call when handling a message
+     * @see Kopete::MessageHandlerFactory::filterPosition
+     */
+    SimpleMessageHandlerFactory(Message::MessageDirection direction, int position, QObject *target, const char *slot);
+    ~SimpleMessageHandlerFactory();
+
+    /**
+     * Creates and returns a SimpleMessageHandler object.
+     */
+    MessageHandler *create(ChatSession *manager, Message::MessageDirection direction) Q_DECL_OVERRIDE;
+    /**
+     * Returns the filter position passed to the constructor if @p direction matches the
+     * direction passed to the constructor, otherwise returns @c StageDoNotCreate.
+     */
+    int filterPosition(ChatSession *manager, Message::MessageDirection direction) Q_DECL_OVERRIDE;
+
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
 
 /**
@@ -68,21 +65,20 @@ private:
  */
 class SimpleMessageHandler : public MessageHandler
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	SimpleMessageHandler();
-	~SimpleMessageHandler();
-	
-	void handleMessage( MessageEvent *event ) Q_DECL_OVERRIDE;
-	
-signals:
-	void handle( Kopete::Message &message );
-	
-private:
-	class Private;
-	Private * const d;
-};
+    SimpleMessageHandler();
+    ~SimpleMessageHandler();
 
+    void handleMessage(MessageEvent *event) Q_DECL_OVERRIDE;
+
+signals:
+    void handle(Kopete::Message &message);
+
+private:
+    class Private;
+    Private *const d;
+};
 }
 
 #endif

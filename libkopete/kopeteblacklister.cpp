@@ -24,84 +24,77 @@
 #include <qstringlist.h>
 #include <KSharedConfig>
 
-namespace Kopete
-{
-
+namespace Kopete {
 class BlackLister::Private
 {
 public:
-	QStringList blacklist;
-	QString owner;
-	QString protocol;
+    QStringList blacklist;
+    QString owner;
+    QString protocol;
 };
 
-
 BlackLister::BlackLister(const QString &protocolId, const QString &accountId, QObject *parent)
- : QObject(parent), d( new Private )
+    : QObject(parent)
+    , d(new Private)
 {
-	KConfigGroup config = KSharedConfig::openConfig()->group("BlackLister");
-	
-	d->owner = accountId;
-	d->protocol = protocolId;
-	d->blacklist = config.readEntry( d->protocol + QLatin1String("_") + d->owner, QStringList() );
+    KConfigGroup config = KSharedConfig::openConfig()->group("BlackLister");
+
+    d->owner = accountId;
+    d->protocol = protocolId;
+    d->blacklist = config.readEntry(d->protocol + QLatin1String("_") + d->owner, QStringList());
 }
 
 BlackLister::~BlackLister()
 {
-	delete d;
+    delete d;
 }
-
 
 bool BlackLister::isBlocked(const QString &contactId)
 {
-	return (d->blacklist.indexOf( contactId ) != -1 );
+    return d->blacklist.indexOf(contactId) != -1;
 }
 
 bool BlackLister::isBlocked(Contact *contact)
 {
-	return isBlocked(contact->contactId());
+    return isBlocked(contact->contactId());
 }
 
 void BlackLister::addContact(const QString &contactId)
 {
-	if( !isBlocked(contactId) )
-	{
-		d->blacklist += contactId;
-		saveToDisk();
-		emit contactAdded( contactId );
-	}
+    if (!isBlocked(contactId)) {
+        d->blacklist += contactId;
+        saveToDisk();
+        emit contactAdded(contactId);
+    }
 }
 
 void BlackLister::addContact(Contact *contact)
 {
-	QString temp = contact->contactId();
-	
-	addContact( temp );
+    QString temp = contact->contactId();
+
+    addContact(temp);
 }
 
 void BlackLister::removeContact(Contact *contact)
 {
-	QString temp = contact->contactId();
-	
-	removeContact( temp );
+    QString temp = contact->contactId();
+
+    removeContact(temp);
 }
 
 void BlackLister::saveToDisk()
 {
-	KConfigGroup config = KSharedConfig::openConfig()->group("BlackLister");
-	config.writeEntry( d->protocol + QLatin1String("_") + d->owner, d->blacklist );
-	config.sync();
+    KConfigGroup config = KSharedConfig::openConfig()->group("BlackLister");
+    config.writeEntry(d->protocol + QLatin1String("_") + d->owner, d->blacklist);
+    config.sync();
 }
 
 void BlackLister::removeContact(const QString &contactId)
 {
-	if( isBlocked(contactId) )
-	{
-		d->blacklist.removeAll( contactId );
-		saveToDisk();
-		emit contactRemoved( contactId );
-	}
+    if (isBlocked(contactId)) {
+        d->blacklist.removeAll(contactId);
+        saveToDisk();
+        emit contactRemoved(contactId);
+    }
 }
-
 }
-

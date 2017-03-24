@@ -1,4 +1,4 @@
- /*
+/*
 
     Copyright (c) 2013 by Pali Rohár <pali.rohar@gmail.com>
 
@@ -21,11 +21,10 @@ JabberBoBCache::JabberBoBCache(QObject *parent) : BoBCache(parent)
 
 void JabberBoBCache::put(const XMPP::BoBData &data)
 {
-	mem.insert(data.cid(), data);
+    mem.insert(data.cid(), data);
 }
 
 XMPP::BoBData JabberBoBCache::get(const QString &cid)
 {
-	return mem.value(cid);
+    return mem.value(cid);
 }
-

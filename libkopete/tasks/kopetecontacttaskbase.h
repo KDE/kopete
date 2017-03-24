@@ -20,9 +20,7 @@
 #include <kopetetask.h>
 #include <kopete_export.h>
 
-namespace Kopete
-{
-
+namespace Kopete {
 class Contact;
 /**
  * @brief Base tasks for all contact related tasks
@@ -37,47 +35,46 @@ class Contact;
  */
 class KOPETE_EXPORT ContactTaskBase : public Kopete::Task
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	 * @brief Default constructor
-	 *
-	 / You must set the contact with setContact()
-	 */
-	explicit ContactTaskBase(QObject *parent = nullptr);
-	/**
-	 * destructor
-	 */
-	virtual ~ContactTaskBase();
+    /**
+     * @brief Default constructor
+     *
+     / You must set the contact with setContact()
+     */
+    explicit ContactTaskBase(QObject *parent = nullptr);
+    /**
+     * destructor
+     */
+    virtual ~ContactTaskBase();
 
-	/**
-	 * @brief Set the contact
-	 *
-	 * This method also add children tasks for
-	 * the specific protocol. You don't need
-	 * to do it yourself.
-	 */
-	void setContact(Kopete::Contact *contact);
+    /**
+     * @brief Set the contact
+     *
+     * This method also add children tasks for
+     * the specific protocol. You don't need
+     * to do it yourself.
+     */
+    void setContact(Kopete::Contact *contact);
 
 protected:
-	/**
-	 * @brief Get access to Kopete::Contact
-	 * @return a Kopete::Contact pointer.
-	 */
-	Kopete::Contact *contact();
+    /**
+     * @brief Get access to Kopete::Contact
+     * @return a Kopete::Contact pointer.
+     */
+    Kopete::Contact *contact();
 
-	/**
-	 * @brief Get the taskType
-	 *
-	 * This is the type of task from the devired class.
-	 * Used by setContact()
-	 */
-	virtual QString taskType() const = 0;
+    /**
+     * @brief Get the taskType
+     *
+     * This is the type of task from the devired class.
+     * Used by setContact()
+     */
+    virtual QString taskType() const = 0;
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
 }
 #endif

@@ -21,7 +21,7 @@
 #include <windows.h>
 
 Kopete::IdlePlatform::IdlePlatform()
- : d(0)
+    : d(0)
 {
 }
 
@@ -39,9 +39,10 @@ int Kopete::IdlePlatform::secondsIdle()
 {
     LASTINPUTINFO li;
     li.cbSize = sizeof(LASTINPUTINFO);
-    BOOL ok = GetLastInputInfo( &li );
-    if ( !ok )
+    BOOL ok = GetLastInputInfo(&li);
+    if (!ok) {
         return 0;
+    }
 
-	return (GetTickCount() - li.dwTime) / 1000;
+    return (GetTickCount() - li.dwTime) / 1000;
 }

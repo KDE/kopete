@@ -29,18 +29,18 @@
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
 
-KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString &pix, const QKeySequence &cut, const QObject *receiver,
-                                              const char *slot, QObject* parent )
-: KSelectAction( QIcon::fromTheme(pix), text, parent )
+KopeteGroupListAction::KopeteGroupListAction(const QString &text, const QString &pix, const QKeySequence &cut, const QObject *receiver, const char *slot, QObject *parent)
+    : KSelectAction(QIcon::fromTheme(pix), text, parent)
 {
-	setShortcut(cut);
-	if( receiver && slot )
-		connect( this, SIGNAL(triggered(int)), receiver, slot );
+    setShortcut(cut);
+    if (receiver && slot) {
+        connect(this, SIGNAL(triggered(int)), receiver, slot);
+    }
 
-	connect( Kopete::ContactList::self(), SIGNAL(groupAdded(Kopete::Group*)), this, SLOT(slotUpdateList()) );
-	connect( Kopete::ContactList::self(), SIGNAL(groupRemoved(Kopete::Group*)), this, SLOT(slotUpdateList()) );
-	connect( Kopete::ContactList::self(), SIGNAL(groupRenamed(Kopete::Group*,QString)), this, SLOT(slotUpdateList()) );
-	slotUpdateList();
+    connect(Kopete::ContactList::self(), SIGNAL(groupAdded(Kopete::Group *)), this, SLOT(slotUpdateList()));
+    connect(Kopete::ContactList::self(), SIGNAL(groupRemoved(Kopete::Group *)), this, SLOT(slotUpdateList()));
+    connect(Kopete::ContactList::self(), SIGNAL(groupRenamed(Kopete::Group *,QString)), this, SLOT(slotUpdateList()));
+    slotUpdateList();
 }
 
 KopeteGroupListAction::~KopeteGroupListAction()
@@ -49,30 +49,29 @@ KopeteGroupListAction::~KopeteGroupListAction()
 
 void KopeteGroupListAction::slotUpdateList()
 {
-	QMap<QString, uint> groupMap;
+    QMap<QString, uint> groupMap;
 
-	// Add groups to our map
-	foreach ( const Kopete::Group* group, Kopete::ContactList::self()->groups() )
-	{
-		if( group->type() == Kopete::Group::Normal )
-			groupMap.insertMulti( group->displayName(), group->groupId() ); // Use insertMulti to be safer
-	}
+    // Add groups to our map
+    foreach (const Kopete::Group *group, Kopete::ContactList::self()->groups()) {
+        if (group->type() == Kopete::Group::Normal) {
+            groupMap.insertMulti(group->displayName(), group->groupId());   // Use insertMulti to be safer
+        }
+    }
 
-	clear();
+    clear();
 
-	QAction * topLevelAction = addAction( Kopete::Group::topLevel()->displayName() );
-	topLevelAction->setData( Kopete::Group::topLevel()->groupId() );
+    QAction *topLevelAction = addAction(Kopete::Group::topLevel()->displayName());
+    topLevelAction->setData(Kopete::Group::topLevel()->groupId());
 
-	QAction* separator = new QAction( this );
-	separator->setSeparator( true );
-	addAction( separator );
+    QAction *separator = new QAction(this);
+    separator->setSeparator(true);
+    addAction(separator);
 
-	QMapIterator<QString, uint> it( groupMap );
-	while ( it.hasNext() )
-	{
-		it.next();
-		QAction* action = addAction( it.key() );
-		action->setData( it.value() );
-	}
+    QMapIterator<QString, uint> it(groupMap);
+    while (it.hasNext())
+    {
+        it.next();
+        QAction *action = addAction(it.key());
+        action->setData(it.value());
+    }
 }
-

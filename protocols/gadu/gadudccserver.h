@@ -19,7 +19,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
-
 #ifndef GADUDCCSERVER_H
 #define GADUDCCSERVER_H
 
@@ -29,35 +28,36 @@
 class QSocketNotifier;
 class gg_dcc;
 
-class GaduDCCServer: public QObject {
-	Q_OBJECT
+class GaduDCCServer : public QObject
+{
+    Q_OBJECT
 public:
-	explicit GaduDCCServer( QHostAddress* dccIp = NULL, unsigned int port = 1550 );
-	~GaduDCCServer();
-	unsigned int listeingPort();
+    explicit GaduDCCServer(QHostAddress *dccIp = NULL, unsigned int port = 1550);
+    ~GaduDCCServer();
+    unsigned int listeingPort();
 
 signals:
-	void incoming( gg_dcc*, bool& );
+    void incoming(gg_dcc *, bool &);
 
 private slots:
-	void watcher();
+    void watcher();
 
 private:
-	void enableNotifiers( int );
-	void disableNotifiers();
-	void checkDescriptor();
+    void enableNotifiers(int);
+    void disableNotifiers();
+    void checkDescriptor();
 
-	void destroyNotifiers();
-	void createNotifiers( bool );
-	void closeDCC();
+    void destroyNotifiers();
+    void createNotifiers(bool);
+    void closeDCC();
 
-	QHostAddress config_dccip;
-	QHostAddress config_extip;
+    QHostAddress config_dccip;
+    QHostAddress config_extip;
 
-	gg_dcc* dccSock;
+    gg_dcc *dccSock;
 
-	QSocketNotifier* read_;
-	QSocketNotifier* write_;
+    QSocketNotifier *read_;
+    QSocketNotifier *write_;
 };
 
 #endif

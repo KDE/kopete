@@ -1,6 +1,6 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 	2004	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
+// Copyright (C)    2004	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
 //
 // gaducontactlist.cpp
 //
@@ -29,38 +29,32 @@
 class GaduContactsList
 {
 public:
-	struct ContactLine {
+    struct ContactLine {
+        QString displayname;
+        QString group;
+        QString uin;
+        QString firstname;
+        QString surname;
+        QString nickname;
+        QString phonenr;
+        QString email;
+        bool ignored;
+        bool offlineTo;
+        QString landline;
+    };
 
-		QString displayname;
-		QString group;
-		QString uin;
-		QString firstname;
-		QString surname;
-		QString nickname;
-		QString phonenr;
-		QString email;
-		bool 	ignored;
-		bool 	offlineTo;
-		QString landline;
-	};
-
-	GaduContactsList();
-	GaduContactsList( QString );
-	~GaduContactsList();
-	QString asString();
-	void addContact( ContactLine &cl );
-	void addContact(	QString& displayname, QString& group,
-				QString& uin, QString& firstname,
-				QString& surname, QString& nickname,
-				QString& phonenr, QString& email,
-				bool 	ignored, bool offlineTo,
-				QString& landline
-	);
-	unsigned int size();
-	const GaduContactsList::ContactLine& operator[]( unsigned int i );
+    GaduContactsList();
+    GaduContactsList(QString);
+    ~GaduContactsList();
+    QString asString();
+    void addContact(ContactLine &cl);
+    void addContact(QString &displayname, QString &group, QString &uin, QString &firstname, QString &surname, QString &nickname, QString &phonenr, QString &email, bool ignored, bool offlineTo,
+                    QString &landline);
+    unsigned int size();
+    const GaduContactsList::ContactLine &operator[](unsigned int i);
 private:
-	typedef QList<ContactLine> CList;
-	CList cList;
-	CList::iterator	it;
+    typedef QList<ContactLine> CList;
+    CList cList;
+    CList::iterator it;
 };
 #endif

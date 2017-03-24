@@ -21,35 +21,32 @@
 #include <kopeteinfodialog.h>
 #include <kopete_export.h>
 
-namespace Kopete
-{
+namespace Kopete {
 class Identity;
 }
 
 class KOPETE_IDENTITY_EXPORT IdentityDialog : public Kopete::UI::InfoDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	explicit IdentityDialog(Kopete::Identity *identity, QWidget *parent = nullptr);
-	~IdentityDialog();
+    explicit IdentityDialog(Kopete::Identity *identity, QWidget *parent = nullptr);
+    ~IdentityDialog();
 
 protected slots:
-	void load();
-	void slotSave() Q_DECL_OVERRIDE;
+    void load();
+    void slotSave() Q_DECL_OVERRIDE;
 
 private slots:
-	void slotSelectPhoto();
-	void slotClearPhoto();
+    void slotSelectPhoto();
+    void slotClearPhoto();
 
 protected:
-	void setPhoto(QString path);
+    void setPhoto(QString path);
 
 private:
-	class Private;
-	Private * const d;
-
+    class Private;
+    Private *const d;
 };
-
 
 #endif
 

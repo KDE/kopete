@@ -16,7 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
- 
+
 #ifndef TOKENWITHLAYOUT_H
 #define TOKENWITHLAYOUT_H
 
@@ -27,47 +27,62 @@ class QMenu;
 class TokenWithLayoutFactory : public TokenFactory
 {
 public:
-    Token * createToken( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr ) Q_DECL_OVERRIDE;
+    Token *createToken(const QString &text, const QString &iconName, int value, QWidget *parent = nullptr) Q_DECL_OVERRIDE;
 };
 
 /**
 An extended Token with controls for layouting the token and getting layout values for use outside the Token.
 
-	@author Nikolaj Hald Nielsen <nhnFreespirit@gmail.com>
+    @author Nikolaj Hald Nielsen <nhnFreespirit@gmail.com>
 */
 class TokenWithLayout : public Token
 {
     Q_OBJECT
 public:
-    TokenWithLayout( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr );
+    TokenWithLayout(const QString &text, const QString &iconName, int value, QWidget *parent = nullptr);
     ~TokenWithLayout();
 
     Qt::Alignment alignment();
-    void setAlignment( Qt::Alignment alignment );
+    void setAlignment(Qt::Alignment alignment);
 
     bool bold() const;
     bool italic() const;
-    inline qreal size() const { return width(); }
+    inline qreal size() const
+    {
+        return width();
+    }
+
     qreal width() const;
-    inline bool widthForced() const { return m_widthForced; }
-    inline QString prefix() const { return m_prefix; }
-    inline QString suffix() const { return m_suffix; }
+    inline bool widthForced() const
+    {
+        return m_widthForced;
+    }
+
+    inline QString prefix() const
+    {
+        return m_prefix;
+    }
+
+    inline QString suffix() const
+    {
+        return m_suffix;
+    }
 
 public slots:
-    void setAlignLeft( bool );
-    void setAlignCenter( bool );
-    void setAlignRight( bool );
-    void setBold( bool bold );
-    void setItalic( bool italic );
-    void setPrefix( const QString& );
-    void setSuffix( const QString& );
-    void setWidth( int width );
-    void setWidthForced( bool );
+    void setAlignLeft(bool);
+    void setAlignCenter(bool);
+    void setAlignRight(bool);
+    void setBold(bool bold);
+    void setItalic(bool italic);
+    void setPrefix(const QString &);
+    void setSuffix(const QString &);
+    void setWidth(int width);
+    void setWidthForced(bool);
 
 protected:
-    virtual void fillMenu( QMenu * menu );
-    virtual void menuExecuted( const QAction* action );
-    void contextMenuEvent( QContextMenuEvent * event ) Q_DECL_OVERRIDE;
+    virtual void fillMenu(QMenu *menu);
+    virtual void menuExecuted(const QAction *action);
+    void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
 
 private:
 
@@ -77,7 +92,6 @@ private:
     bool m_widthForced;
     qreal m_width;
     QString m_prefix, m_suffix;
-
 };
 
 #endif

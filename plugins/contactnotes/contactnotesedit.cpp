@@ -20,7 +20,6 @@
 #include <qlabel.h>
 #include <QTextEdit>
 
-
 #include <KLocalizedString>
 #include <kvbox.h>
 
@@ -28,26 +27,26 @@
 
 #include "contactnotesplugin.h"
 
-ContactNotesEdit::ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p) 
- : KDialog()
+ContactNotesEdit::ContactNotesEdit(Kopete::MetaContact *m, ContactNotesPlugin *p)
+    : KDialog()
 {
-	setCaption( i18n("Contact Notes") );
-	setButtons( KDialog::Ok | KDialog::Cancel );
-	setDefaultButton( KDialog::Ok );
+    setCaption(i18n("Contact Notes"));
+    setButtons(KDialog::Ok | KDialog::Cancel);
+    setDefaultButton(KDialog::Ok);
 
-	m_plugin=p;
-	m_metaContact=m;
+    m_plugin = p;
+    m_metaContact = m;
 
-	KVBox *w=new KVBox(this);
-	w->setSpacing(KDialog::spacingHint());
-	m_label = new QLabel(i18n("Notes about %1:", m->displayName()) , w );
-	m_label->setObjectName( QStringLiteral("m_label") );
-	m_linesEdit= new QTextEdit ( w );
+    KVBox *w = new KVBox(this);
+    w->setSpacing(KDialog::spacingHint());
+    m_label = new QLabel(i18n("Notes about %1:", m->displayName()), w);
+    m_label->setObjectName(QStringLiteral("m_label"));
+    m_linesEdit = new QTextEdit(w);
 
-	m_linesEdit->setText(p->notes(m));
+    m_linesEdit->setText(p->notes(m));
 
-	showButtonSeparator(true);
-	setMainWidget(w);
+    showButtonSeparator(true);
+    setMainWidget(w);
 }
 
 ContactNotesEdit::~ContactNotesEdit()
@@ -56,8 +55,8 @@ ContactNotesEdit::~ContactNotesEdit()
 
 void ContactNotesEdit::slotButtonClicked(int buttonCode)
 {
-	KDialog::slotButtonClicked(buttonCode);
-	if( buttonCode == KDialog::Ok )
-		emit notesChanged(m_linesEdit->toPlainText(),m_metaContact) ;
+    KDialog::slotButtonClicked(buttonCode);
+    if (buttonCode == KDialog::Ok) {
+        emit notesChanged(m_linesEdit->toPlainText(), m_metaContact);
+    }
 }
-

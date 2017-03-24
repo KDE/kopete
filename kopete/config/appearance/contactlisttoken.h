@@ -19,32 +19,31 @@
 
 #include <TokenWithLayout.h>
 
-
 class ContactListTokenFactory : public TokenFactory
 {
 public:
-	Token * createToken( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr ) Q_DECL_OVERRIDE;
+    Token *createToken(const QString &text, const QString &iconName, int value, QWidget *parent = nullptr) Q_DECL_OVERRIDE;
 };
 
 class ContactListToken : public TokenWithLayout
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	ContactListToken( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr );
+    ContactListToken(const QString &text, const QString &iconName, int value, QWidget *parent = nullptr);
 
-	bool small() const;
-	void setSmall( bool small );
+    bool small() const;
+    void setSmall(bool small);
 
-	bool optimalSize() const;
-	void setOptimalSize( bool optimalSize );
+    bool optimalSize() const;
+    void setOptimalSize(bool optimalSize);
 
 protected:
-	void fillMenu( QMenu * menu ) Q_DECL_OVERRIDE;
-	void menuExecuted( const QAction* action ) Q_DECL_OVERRIDE;
+    void fillMenu(QMenu *menu) Q_DECL_OVERRIDE;
+    void menuExecuted(const QAction *action) Q_DECL_OVERRIDE;
 
 private:
-	bool m_small;
-	bool m_optimalSize;
+    bool m_small;
+    bool m_optimalSize;
 };
 
 #endif

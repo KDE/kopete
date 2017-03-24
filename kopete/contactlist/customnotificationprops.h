@@ -26,23 +26,25 @@
 class KNotifyConfigWidget;
 class QBoxLayout;
 
-
 class CustomNotificationProps : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	CustomNotificationProps( QWidget *parent, const QPair<QString,QString> &context,  const char * name = 0 );
-	~CustomNotificationProps() {}
-	void dumpData();
-	void resetEventWidgets();
-	void storeCurrentCustoms();
-	QWidget* widget();
+    CustomNotificationProps(QWidget *parent, const QPair<QString, QString> &context, const char *name = 0);
+    ~CustomNotificationProps()
+    {
+    }
+
+    void dumpData();
+    void resetEventWidgets();
+    void storeCurrentCustoms();
+    QWidget *widget();
 
 private:
-	KNotifyConfigWidget* m_notifyWidget;
-	const QPair<QString,QString> m_item;
-	QStringList m_eventList;
-	QString m_event;
+    KNotifyConfigWidget *m_notifyWidget;
+    const QPair<QString, QString> m_item;
+    QStringList m_eventList;
+    QString m_event;
 };
 
 #endif

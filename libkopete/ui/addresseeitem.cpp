@@ -28,37 +28,36 @@
 #include <KLocalizedString>
 #include <kdebug.h>
 
-AddresseeItem::AddresseeItem( QTreeWidget *parent, const KContacts::Addressee &addressee) :
-  QTreeWidgetItem( parent ),
-  mAddressee( addressee )
+AddresseeItem::AddresseeItem(QTreeWidget *parent, const KContacts::Addressee &addressee)
+    : QTreeWidgetItem(parent)
+    , mAddressee(addressee)
 {
-  //We can't save showphoto because we don't have a d pointer
-  KContacts::Picture pic = mAddressee.photo();
-  if(!pic.isIntern())
-	pic = mAddressee.logo();
-  if(pic.isIntern())
-  {
-    QPixmap qpixmap = QPixmap::fromImage( pic.data().scaledToWidth(60) ); //60 pixels seems okay.. kmail uses 60 btw
-	setIcon(Photo, QIcon(qpixmap));
-  }
+    //We can't save showphoto because we don't have a d pointer
+    KContacts::Picture pic = mAddressee.photo();
+    if (!pic.isIntern()) {
+        pic = mAddressee.logo();
+    }
+    if (pic.isIntern()) {
+        QPixmap qpixmap = QPixmap::fromImage(pic.data().scaledToWidth(60)); //60 pixels seems okay.. kmail uses 60 btw
+        setIcon(Photo, QIcon(qpixmap));
+    }
 
-  setText( Name, addressee.realName() );
-  setText( Email, addressee.preferredEmail() );
+    setText(Name, addressee.realName());
+    setText(Email, addressee.preferredEmail());
 }
 
-QString AddresseeItem::key( int column, bool ) const
+QString AddresseeItem::key(int column, bool) const
 {
-  if (column == Email) {
-    QString value = text(Email);
-    QRegExp emailRe(QLatin1String("<\\S*>"));
-    int match = emailRe.indexIn(value);
-    if (match > -1)
-      value = value.mid(match + 1, emailRe.matchedLength() - 2);
+    if (column == Email) {
+        QString value = text(Email);
+        QRegExp emailRe(QLatin1String("<\\S*>"));
+        int match = emailRe.indexIn(value);
+        if (match > -1) {
+            value = value.mid(match + 1, emailRe.matchedLength() - 2);
+        }
 
-    return value.toLower();
-  }
+        return value.toLower();
+    }
 
-  return text(column).toLower();
+    return text(column).toLower();
 }
-
-

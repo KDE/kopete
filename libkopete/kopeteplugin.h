@@ -33,9 +33,7 @@
 
 class KPluginInfo;
 
-namespace Kopete
-{
-
+namespace Kopete {
 class MetaContact;
 
 /**
@@ -66,15 +64,15 @@ Comment=Plugin that do some nice stuff
  * The constructor of your plugin should looks like this:
  *
  * \code
-	typedef KGenericFactory<MyPlugin> MyPluginFactory;
-	static const KAboutData aboutdata("kopete_myplugin", 0, ki18n("MyPlugin") , "1.0" );
-	K_EXPORT_COMPONENT_FACTORY( kopete_myplugin, MyPluginFactory( &aboutdata )  )
+    typedef KGenericFactory<MyPlugin> MyPluginFactory;
+    static const KAboutData aboutdata("kopete_myplugin", 0, ki18n("MyPlugin") , "1.0" );
+    K_EXPORT_COMPONENT_FACTORY( kopete_myplugin, MyPluginFactory( &aboutdata )  )
 
-	MyPlugin::MyPlugin( QObject *parent, const char *name, const QStringList &  args  )
-		: Kopete::Plugin( MyPluginFactory::componentData(), parent, name )
-	{
-		//...
-	}
+    MyPlugin::MyPlugin( QObject *parent, const char *name, const QStringList &  args  )
+        : Kopete::Plugin( MyPluginFactory::componentData(), parent, name )
+    {
+        //...
+    }
  \endcode
  *
  * Kopete::Plugin inherits from KXMLGUIClient.  That client is added
@@ -88,154 +86,153 @@ Comment=Plugin that do some nice stuff
  */
 class KOPETE_EXPORT Plugin : public QObject, public KXMLGUIClient
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	Plugin( const KAboutData &instance, QObject *parent );
-	Plugin( QObject *parent );
-	virtual ~Plugin();
+    Plugin(const KAboutData &instance, QObject *parent);
+    Plugin(QObject *parent);
+    virtual ~Plugin();
 
-	/**
-	 * Returns the KPluginInfo object associated with this plugin
-	 */
-	KPluginInfo pluginInfo() const;
+    /**
+     * Returns the KPluginInfo object associated with this plugin
+     */
+    KPluginInfo pluginInfo() const;
 
-	/**
-	 * Get the name of the icon for this plugin. The icon name is taken from the
-	 * .desktop file.
-	 *
-	 * May return an empty string if the .desktop file for this plugin specifies
-	 * no icon name to use.
-	 *
-	 * This is a convenience method that simply calls @ref pluginInfo()->icon().
-	 */
-	QString pluginIcon() const;
+    /**
+     * Get the name of the icon for this plugin. The icon name is taken from the
+     * .desktop file.
+     *
+     * May return an empty string if the .desktop file for this plugin specifies
+     * no icon name to use.
+     *
+     * This is a convenience method that simply calls @ref pluginInfo()->icon().
+     */
+    QString pluginIcon() const;
 
-	/**
-	 * Returns the display name of this plugin.
-	 *
-	 * This is a convenience method that simply calls @ref pluginInfo()->name().
-	 */
-	QString displayName() const;
+    /**
+     * Returns the display name of this plugin.
+     *
+     * This is a convenience method that simply calls @ref pluginInfo()->name().
+     */
+    QString displayName() const;
 
-	/**
-	 * @brief Get the plugin id
-	 * @return the plugin's id which is gotten by calling QObject::metaObject()->className().
-	 */
-	QString pluginId() const;
+    /**
+     * @brief Get the plugin id
+     * @return the plugin's id which is gotten by calling QObject::metaObject()->className().
+     */
+    QString pluginId() const;
 
-	/**
-	 * Return the list of all keys from the address book in which the plugin
-	 * is interested. Those keys are monitored for changes upon load and
-	 * during runtime. When the key actually changes, the plugin's
-	 * addressBookKeyChanged( Kopete::MetaContact *mc, const QString &key )
-	 * is called.
-	 * You can add fields to the list using @ref addAddressBookField()
-	 */
-	QStringList addressBookFields() const;
+    /**
+     * Return the list of all keys from the address book in which the plugin
+     * is interested. Those keys are monitored for changes upon load and
+     * during runtime. When the key actually changes, the plugin's
+     * addressBookKeyChanged( Kopete::MetaContact *mc, const QString &key )
+     * is called.
+     * You can add fields to the list using @ref addAddressBookField()
+     */
+    QStringList addressBookFields() const;
 
-	/**
-	 * Return the index field as set by @ref addAddressBookField()
-	 */
-	QString addressBookIndexField() const;
+    /**
+     * Return the index field as set by @ref addAddressBookField()
+     */
+    QString addressBookIndexField() const;
 
-	/**
-	 * Mode for an address book field as used by @ref addAddressBookField()
-	 */
-	enum AddressBookFieldAddMode { AddOnly, MakeIndexField };
+    /**
+     * Mode for an address book field as used by @ref addAddressBookField()
+     */
+    enum AddressBookFieldAddMode {
+        AddOnly, MakeIndexField
+    };
 
-	/**
-	 * Add a field to the list of address book fields. See also @ref addressBookFields()
-	 * for a description of the fields.
-	 *
-	 * Set mode to MakeIndexField to make this the index field. Index fields
-	 * are currently used by Kopete::Contact::serialize to autoset the index
-	 * when possible.
-	 *
-	 * Only one field can be index field. Calling this method multiple times
-	 * as index field will reset the value of index field!
-	 */
-	void addAddressBookField( const QString &field, AddressBookFieldAddMode mode = AddOnly );
+    /**
+     * Add a field to the list of address book fields. See also @ref addressBookFields()
+     * for a description of the fields.
+     *
+     * Set mode to MakeIndexField to make this the index field. Index fields
+     * are currently used by Kopete::Contact::serialize to autoset the index
+     * when possible.
+     *
+     * Only one field can be index field. Calling this method multiple times
+     * as index field will reset the value of index field!
+     */
+    void addAddressBookField(const QString &field, AddressBookFieldAddMode mode = AddOnly);
 
-	/**
-	 * @brief Prepare for unloading a plugin
-	 *
-	 * When unloading a plugin the plugin manager first calls aboutToUnload()
-	 * to indicate the pending unload. Some plugins need time to shutdown
-	 * asynchronously and thus can't be simply deleted in the destructor.
-	 *
-	 * The default implementation immediately emits the @ref readyForUnload() signal,
-	 * which basically makes the shutdown immediate and synchronous. If you need
-	 * more time you can reimplement this method and fire the signal whenever
-	 * you're ready. (you have 3 seconds)
-	 *
-	 * @ref Kopete::Protocol reimplement it.
-	 */
-	virtual void aboutToUnload();
+    /**
+     * @brief Prepare for unloading a plugin
+     *
+     * When unloading a plugin the plugin manager first calls aboutToUnload()
+     * to indicate the pending unload. Some plugins need time to shutdown
+     * asynchronously and thus can't be simply deleted in the destructor.
+     *
+     * The default implementation immediately emits the @ref readyForUnload() signal,
+     * which basically makes the shutdown immediate and synchronous. If you need
+     * more time you can reimplement this method and fire the signal whenever
+     * you're ready. (you have 3 seconds)
+     *
+     * @ref Kopete::Protocol reimplement it.
+     */
+    virtual void aboutToUnload();
 
-	/**
-	 * Called when user is about to close the main-window.  If your plugin is
-	 * going to return false to shouldExitOnclose(), then you can show a
-	 * message here.
-	 *
-	 * Default implementation returns false.
-	 *
-	 * @return true if a message was shown (so that the user is not spammed
-	 * with further messages), false otherwise
-	 *
-	 * Not implemented as a virtual method to keep binary compatibility. You
-	 * *must* mark the method as Q_INVOKABLE for it to be called.
-	 */
-	Q_INVOKABLE bool showCloseWindowMessage();
+    /**
+     * Called when user is about to close the main-window.  If your plugin is
+     * going to return false to shouldExitOnclose(), then you can show a
+     * message here.
+     *
+     * Default implementation returns false.
+     *
+     * @return true if a message was shown (so that the user is not spammed
+     * with further messages), false otherwise
+     *
+     * Not implemented as a virtual method to keep binary compatibility. You
+     * *must* mark the method as Q_INVOKABLE for it to be called.
+     */
+    Q_INVOKABLE bool showCloseWindowMessage();
 
-	/**
-	 * Called when the application is about to exit.
-	 * Return false if you want to prevent exit. If you do so you may want to
-	 * display an explanation message by reimplementing
-	 * showCloseWindowMessage().
-	 *
-	 * Default implementation returns true.
-	 *
-	 * Not implemented as a virtual method to keep binary compatibility. You
-	 * *must* mark the method as Q_INVOKABLE for it to be called.
-	 */
-	Q_INVOKABLE bool shouldExitOnclose();
+    /**
+     * Called when the application is about to exit.
+     * Return false if you want to prevent exit. If you do so you may want to
+     * display an explanation message by reimplementing
+     * showCloseWindowMessage().
+     *
+     * Default implementation returns true.
+     *
+     * Not implemented as a virtual method to keep binary compatibility. You
+     * *must* mark the method as Q_INVOKABLE for it to be called.
+     */
+    Q_INVOKABLE bool shouldExitOnclose();
 
 signals:
-	/**
-	 * Notify that the settings of a plugin were changed.
-	 * These changes are passed on from the new KCDialog code in kdelibs/kutils.
-	 */
-	void settingsChanged();
+    /**
+     * Notify that the settings of a plugin were changed.
+     * These changes are passed on from the new KCDialog code in kdelibs/kutils.
+     */
+    void settingsChanged();
 
-	/**
-	 * Indicate when we're ready for unload.
-	 * @see aboutToUnload()
-	 */
-	void readyForUnload();
+    /**
+     * Indicate when we're ready for unload.
+     * @see aboutToUnload()
+     */
+    void readyForUnload();
 
 public slots:
 
-	/**
-	 * deserialize() and tell the plugin
-	 * to apply the previously stored data again.
-	 * This method is also responsible for retrieving the settings from the
-	 * address book. Settings that were registered can be retrieved with
-	 * @ref Kopete::MetaContact::addressBookField().
-	 *
-	 * The default implementation does nothing.
-	 *
-	 * @todo we probably should think to another way to save the contacltist.
-	 */
-	virtual void deserialize( MetaContact *metaContact, const QMap<QString, QString> &data );
+    /**
+     * deserialize() and tell the plugin
+     * to apply the previously stored data again.
+     * This method is also responsible for retrieving the settings from the
+     * address book. Settings that were registered can be retrieved with
+     * @ref Kopete::MetaContact::addressBookField().
+     *
+     * The default implementation does nothing.
+     *
+     * @todo we probably should think to another way to save the contacltist.
+     */
+    virtual void deserialize(MetaContact *metaContact, const QMap<QString, QString> &data);
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
-
 } //END namespace Kopete
-
 
 #endif

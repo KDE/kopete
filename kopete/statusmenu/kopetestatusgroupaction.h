@@ -18,55 +18,52 @@
 
 #include <KActionMenu>
 #include "kopete_export.h"
-namespace Kopete
-{
-	class StatusRootAction;
+namespace Kopete {
+class StatusRootAction;
 
-	namespace Status
-	{
-		class StatusGroup;
-		class StatusItem;
-		class Status;
-	}
+namespace Status {
+class StatusGroup;
+class StatusItem;
+class Status;
+}
 
 /**
-	@author Roman Jarosz <kedgedev@centrum.cz>
+    @author Roman Jarosz <kedgedev@centrum.cz>
 */
 
 class KOPETE_STATUSMENU_EXPORT StatusGroupAction : public KActionMenu
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	 * StatusGroupAction constructor
-	 * @param group the corresponding StatusGroup object
-	 * @param rootAction the StatusRootAction object this status status belongs to
-	 * @param parent the parent object
-	 **/
-	StatusGroupAction( Status::StatusGroup *group, StatusRootAction* rootAction, QObject * parent );
+    /**
+     * StatusGroupAction constructor
+     * @param group the corresponding StatusGroup object
+     * @param rootAction the StatusRootAction object this status status belongs to
+     * @param parent the parent object
+     **/
+    StatusGroupAction(Status::StatusGroup *group, StatusRootAction *rootAction, QObject *parent);
 
-	/**
-	 * Returns number of StatusActions and StatusGroupActions for this menu
-	 **/
-	int childCount() const;
+    /**
+     * Returns number of StatusActions and StatusGroupActions for this menu
+     **/
+    int childCount() const;
 
 private:
-	void init();
+    void init();
 
 private Q_SLOTS:
-	void changed();
+    void changed();
 
-	void childInserted( int i, Kopete::Status::StatusItem* child );
-	void childRemoved( Kopete::Status::StatusItem* child );
+    void childInserted(int i, Kopete::Status::StatusItem *child);
+    void childRemoved(Kopete::Status::StatusItem *child);
 
 private:
-	void insertChild( QAction * before, Status::StatusItem* child );
-		
-	Status::StatusGroup *mStatusGroup;
-	StatusRootAction* mRootAction;
-	QMap<Status::StatusItem *, QAction* > mChildMap;
-};
+    void insertChild(QAction *before, Status::StatusItem *child);
 
+    Status::StatusGroup *mStatusGroup;
+    StatusRootAction *mRootAction;
+    QMap<Status::StatusItem *, QAction * > mChildMap;
+};
 }
 
 #endif

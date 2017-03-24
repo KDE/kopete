@@ -26,27 +26,29 @@
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
 
-namespace Kopete { class ChatSession; }
+namespace Kopete {
+class ChatSession;
+}
 
 /**
   * @author Olivier Goffart <ogoffart@kde.org>
   */
 
-class LatexGUIClient : public QObject , public KXMLGUIClient
+class LatexGUIClient : public QObject, public KXMLGUIClient
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit LatexGUIClient( Kopete::ChatSession *parent );
-	~LatexGUIClient();
+    explicit LatexGUIClient(Kopete::ChatSession *parent);
+    ~LatexGUIClient();
 
 private slots:
-	 void slotPreview();
+    void slotPreview();
 
 private:
-	Q_DISABLE_COPY(LatexGUIClient)
+    Q_DISABLE_COPY(LatexGUIClient)
 
-	Kopete::ChatSession *m_manager;
+    Kopete::ChatSession *m_manager;
 };
 
 #endif // LATEXGUICLIENT_H

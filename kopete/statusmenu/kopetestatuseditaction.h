@@ -25,105 +25,101 @@
 class KDialogButtonBox;
 
 namespace Ui {
-	class KopeteStatusEditWidget;
+class KopeteStatusEditWidget;
 }
 
-namespace Kopete
+namespace Kopete {
+class StatusMessage;
+
+namespace UI {
+class StatusEditWidget : public QWidget
 {
-	class StatusMessage;
+    Q_OBJECT
+public:
+    StatusEditWidget(QWidget *parent = nullptr);
+    ~StatusEditWidget();
 
-	namespace UI
-	{
+    KDialogButtonBox *buttonBox() const;
 
-		class StatusEditWidget : public QWidget
-		{
-		Q_OBJECT
-		public:
-			StatusEditWidget( QWidget *parent = nullptr );
-			~StatusEditWidget();
+    /**
+     * Returns Kopete::StatusMessage
+     **/
+    Kopete::StatusMessage statusMessage() const;
 
-			KDialogButtonBox *buttonBox() const;
+    /**
+     * Set status message to @p statusMessage
+     **/
+    void setStatusMessage(const Kopete::StatusMessage &statusMessage);
 
-			/**
-			 * Returns Kopete::StatusMessage
-			 **/
-			Kopete::StatusMessage statusMessage() const;
+Q_SIGNALS:
+    /**
+     * This signal emitted after status message was changed
+     **/
+    void statusChanged(const Kopete::StatusMessage &statusMessage);
 
-			/**
-			 * Set status message to @p statusMessage
-			 **/
-			void setStatusMessage( const Kopete::StatusMessage& statusMessage );
+protected:
+    void mouseReleaseEvent(QMouseEvent *) Q_DECL_OVERRIDE;
+    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
-		Q_SIGNALS:
-			/**
-			 * This signal emitted after status message was changed
-			 **/
-			void statusChanged( const Kopete::StatusMessage& statusMessage );
+private Q_SLOTS:
+    void changeClicked();
+    void clearClicked();
 
-		protected:
-			void mouseReleaseEvent( QMouseEvent * ) Q_DECL_OVERRIDE;
-			void keyPressEvent( QKeyEvent* event ) Q_DECL_OVERRIDE;
+private:
+    Ui::KopeteStatusEditWidget *ui;
+};
 
-		private Q_SLOTS:
-			void changeClicked();
-			void clearClicked();
+class KOPETE_STATUSMENU_EXPORT StatusEditAction : public QWidgetAction
+{
+    Q_OBJECT
+public:
+    /**
+     * StatusEditAction constructor
+     * Action for changing status title and message
+     **/
+    StatusEditAction(QObject *parent);
 
-		private:
-			Ui::KopeteStatusEditWidget* ui;
-		};
+    /**
+     * Returns Kopete::StatusMessage
+     **/
+    Kopete::StatusMessage statusMessage() const;
 
-		class KOPETE_STATUSMENU_EXPORT StatusEditAction: public QWidgetAction
-		{
-			Q_OBJECT
-		public:
-			/**
-			 * StatusEditAction constructor
-			 * Action for changing status title and message
-			 **/
-			StatusEditAction( QObject *parent );
+    /**
+     * Set status message to @p statusMessage
+     **/
+    void setStatusMessage(const Kopete::StatusMessage &statusMessage);
 
-			/**
-			 * Returns Kopete::StatusMessage
-			 **/
-			Kopete::StatusMessage statusMessage() const;
+Q_SIGNALS:
+    /**
+     * This signal emitted after status message was changed
+     **/
+    void statusChanged(const Kopete::StatusMessage &statusMessage);
 
-			/**
-			 * Set status message to @p statusMessage
-			 **/
-			void setStatusMessage( const Kopete::StatusMessage& statusMessage );
+private Q_SLOTS:
+    void hideMenu();
 
-		Q_SIGNALS:
-			/**
-			 * This signal emitted after status message was changed
-			 **/
-			void statusChanged( const Kopete::StatusMessage& statusMessage );
+private:
+    StatusEditWidget *mStatusEditWidget;
+};
 
-		private Q_SLOTS:
-			void hideMenu();
+class StatusEditDialog : public KDialog
+{
+public:
+    StatusEditDialog(QWidget *parent = nullptr);
 
-		private:
-			StatusEditWidget *mStatusEditWidget;
-		};
+    /**
+     * Returns Kopete::StatusMessage
+     **/
+    Kopete::StatusMessage statusMessage() const;
 
-		class StatusEditDialog : public KDialog
-		{
-		public:
-			StatusEditDialog( QWidget *parent = nullptr );
+    /**
+     * Set status message to @p statusMessage
+     **/
+    void setStatusMessage(const Kopete::StatusMessage &statusMessage);
 
-			/**
-			 * Returns Kopete::StatusMessage
-			 **/
-			Kopete::StatusMessage statusMessage() const;
-
-			/**
-			 * Set status message to @p statusMessage
-			 **/
-			void setStatusMessage( const Kopete::StatusMessage& statusMessage );
-
-		private:
-			StatusEditWidget *mStatusEditWidget;
-		};
-	}
-
+private:
+    StatusEditWidget *mStatusEditWidget;
+};
+}
 }
 #endif

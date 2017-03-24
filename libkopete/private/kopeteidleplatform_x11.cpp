@@ -28,103 +28,106 @@
 #include <X11/extensions/scrnsaver.h>
 
 static XErrorHandler old_handler = 0;
-extern "C" int xerrhandler( Display* dpy, XErrorEvent* err )
+extern "C" int xerrhandler(Display *dpy, XErrorEvent *err)
 {
-	if ( err->error_code == BadDrawable )
-		return 0;
+    if (err->error_code == BadDrawable) {
+        return 0;
+    }
 
-	return (*old_handler)(dpy, err);
+    return (*old_handler)(dpy, err);
 }
-
 
 class Kopete::IdlePlatform::Private : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	Private() {}
+    Private()
+    {
+    }
 
-	XScreenSaverInfo *ss_info;
-	QDateTime screenSaverIdleSince;
+    XScreenSaverInfo *ss_info;
+    QDateTime screenSaverIdleSince;
 private slots:
-	void activeChanged( bool active )
-	{
-		if ( active )
-		{
-			if ( ss_info && XScreenSaverQueryInfo( QX11Info::display(), QX11Info::appRootWindow(), ss_info ) )
-				screenSaverIdleSince = QDateTime::currentDateTime().addMSecs(-ss_info->idle);
-			else
-				screenSaverIdleSince = QDateTime::currentDateTime();
-		}
-		else
-		{
-			screenSaverIdleSince = QDateTime();
-		}
-	}
+    void activeChanged(bool active)
+    {
+        if (active) {
+            if (ss_info && XScreenSaverQueryInfo(QX11Info::display(), QX11Info::appRootWindow(), ss_info)) {
+                screenSaverIdleSince = QDateTime::currentDateTime().addMSecs(-ss_info->idle);
+            } else {
+                screenSaverIdleSince = QDateTime::currentDateTime();
+            }
+        } else {
+            screenSaverIdleSince = QDateTime();
+        }
+    }
 };
 
 Kopete::IdlePlatform::IdlePlatform()
-: d( new Private() )
+    : d(new Private())
 {
-	d->ss_info = 0;
+    d->ss_info = 0;
 }
 
 Kopete::IdlePlatform::~IdlePlatform()
 {
-	if ( d->ss_info )
-		XFree(d->ss_info);
+    if (d->ss_info) {
+        XFree(d->ss_info);
+    }
 
-	if ( old_handler )
-	{
-		XSetErrorHandler( old_handler );
-		old_handler = 0;
-	}
+    if (old_handler) {
+        XSetErrorHandler(old_handler);
+        old_handler = 0;
+    }
 
-	delete d;
+    delete d;
 }
 
 bool Kopete::IdlePlatform::init()
 {
-	if ( d->ss_info )
-		return true;
+    if (d->ss_info) {
+        return true;
+    }
 
-	old_handler = XSetErrorHandler( xerrhandler );
+    old_handler = XSetErrorHandler(xerrhandler);
 
-	int event_base, error_base;
-	if ( XScreenSaverQueryExtension( QX11Info::display(), &event_base, &error_base ) )
-	{
-		d->ss_info = XScreenSaverAllocInfo();
+    int event_base, error_base;
+    if (XScreenSaverQueryExtension(QX11Info::display(), &event_base, &error_base)) {
+        d->ss_info = XScreenSaverAllocInfo();
 
-		// Init ScreenSaver so we can detect screen lock and screen saver.
-		QDBusConnection::sessionBus().connect("org.freedesktop.ScreenSaver", "/ScreenSaver",
-		                                      "org.freedesktop.ScreenSaver", "ActiveChanged",
-		                                      d, SLOT(activeChanged(bool)));
+        // Init ScreenSaver so we can detect screen lock and screen saver.
+        QDBusConnection::sessionBus().connect("org.freedesktop.ScreenSaver", "/ScreenSaver",
+                                              "org.freedesktop.ScreenSaver", "ActiveChanged",
+                                              d, SLOT(activeChanged(bool)));
 
-		// If screen saver is already active set the screenSaverIdleSince
-		QDBusInterface screenSaver("org.freedesktop.ScreenSaver", "/ScreenSaver", "org.freedesktop.ScreenSaver");
-		QDBusReply<bool> reply = screenSaver.call("GetActive");
-		if ( reply.isValid() && reply.value() )
-			d->screenSaverIdleSince = QDateTime::currentDateTime();
+        // If screen saver is already active set the screenSaverIdleSince
+        QDBusInterface screenSaver("org.freedesktop.ScreenSaver", "/ScreenSaver", "org.freedesktop.ScreenSaver");
+        QDBusReply<bool> reply = screenSaver.call("GetActive");
+        if (reply.isValid() && reply.value()) {
+            d->screenSaverIdleSince = QDateTime::currentDateTime();
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 int Kopete::IdlePlatform::secondsIdle()
 {
-	if ( !d->ss_info )
-		return 0;
+    if (!d->ss_info) {
+        return 0;
+    }
 
-	// Take idle from screenSaverIdleSince if screen saver/lock is enabled.
-	if ( d->screenSaverIdleSince.isValid() ) {
-		return d->screenSaverIdleSince.secsTo(QDateTime::currentDateTime());
-	}
+    // Take idle from screenSaverIdleSince if screen saver/lock is enabled.
+    if (d->screenSaverIdleSince.isValid()) {
+        return d->screenSaverIdleSince.secsTo(QDateTime::currentDateTime());
+    }
 
-	if ( !XScreenSaverQueryInfo( QX11Info::display(), QX11Info::appRootWindow(), d->ss_info ) )
-		return 0;
+    if (!XScreenSaverQueryInfo(QX11Info::display(), QX11Info::appRootWindow(), d->ss_info)) {
+        return 0;
+    }
 
-	return d->ss_info->idle / 1000;
+    return d->ss_info->idle / 1000;
 }
 
 #include "kopeteidleplatform_x11.moc"

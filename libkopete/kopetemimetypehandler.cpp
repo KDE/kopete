@@ -30,185 +30,170 @@
 #include <kemoticons.h>
 #include <kopeteemoticons.h>
 
-namespace Kopete
-{
-
-namespace
-{
-	static QHash<QString, Kopete::MimeTypeHandler*> g_mimeHandlers;
-	static QHash<QString, Kopete::MimeTypeHandler*> g_protocolHandlers;
+namespace Kopete {
+namespace {
+static QHash<QString, Kopete::MimeTypeHandler *> g_mimeHandlers;
+static QHash<QString, Kopete::MimeTypeHandler *> g_protocolHandlers;
 }
 
 class MimeTypeHandler::Private
 {
 public:
-	Private( bool carf ) : canAcceptRemoteFiles( carf ) {}
-	bool canAcceptRemoteFiles;
-	QStringList mimeTypes;
-	QStringList protocols;
+    Private(bool carf) : canAcceptRemoteFiles(carf)
+    {
+    }
+
+    bool canAcceptRemoteFiles;
+    QStringList mimeTypes;
+    QStringList protocols;
 };
 
-MimeTypeHandler::MimeTypeHandler( bool canAcceptRemoteFiles )
- : d( new Private( canAcceptRemoteFiles ) )
+MimeTypeHandler::MimeTypeHandler(bool canAcceptRemoteFiles)
+    : d(new Private(canAcceptRemoteFiles))
 {
 }
 
 MimeTypeHandler::~MimeTypeHandler()
 {
-	for( QStringList::iterator it = d->mimeTypes.begin(); it != d->mimeTypes.end(); ++it )
-		g_mimeHandlers.remove( *it );
+    for (QStringList::iterator it = d->mimeTypes.begin(); it != d->mimeTypes.end(); ++it) {
+        g_mimeHandlers.remove(*it);
+    }
 
-	for( QStringList::iterator it = d->protocols.begin(); it != d->protocols.end(); ++it )
-		g_protocolHandlers.remove( *it );
+    for (QStringList::iterator it = d->protocols.begin(); it != d->protocols.end(); ++it) {
+        g_protocolHandlers.remove(*it);
+    }
 
-	delete d;
+    delete d;
 }
 
-bool MimeTypeHandler::registerAsMimeHandler( const QString &mimeType )
+bool MimeTypeHandler::registerAsMimeHandler(const QString &mimeType)
 {
-	if( g_mimeHandlers[ mimeType ] )
-	{
-		qCWarning(LIBKOPETE_LOG) << "Warning: Two mime type handlers attempting"
-			" to handle " << mimeType << endl;
-		return false;
-	}
+    if (g_mimeHandlers[ mimeType ]) {
+        qCWarning(LIBKOPETE_LOG) << "Warning: Two mime type handlers attempting"
+                                    " to handle " << mimeType << endl;
+        return false;
+    }
 
-	g_mimeHandlers.insert( mimeType, this );
-	d->mimeTypes.append( mimeType );
+    g_mimeHandlers.insert(mimeType, this);
+    d->mimeTypes.append(mimeType);
 //	qCDebug(LIBKOPETE_LOG) << "Mime type " << mimeType << " registered";
-	return true;
+    return true;
 }
 
-bool MimeTypeHandler::registerAsProtocolHandler( const QString &protocol )
+bool MimeTypeHandler::registerAsProtocolHandler(const QString &protocol)
 {
-	if( g_protocolHandlers[ protocol ] )
-	{
-		qCWarning(LIBKOPETE_LOG) << "Warning: Two protocol handlers attempting"
-			" to handle " << protocol << endl;
-		return false;
-	}
+    if (g_protocolHandlers[ protocol ]) {
+        qCWarning(LIBKOPETE_LOG) << "Warning: Two protocol handlers attempting"
+                                    " to handle " << protocol << endl;
+        return false;
+    }
 
-	g_protocolHandlers.insert( protocol, this );
-	d->protocols.append( protocol );
-	qCDebug(LIBKOPETE_LOG) << "Mime type " << protocol << " registered";
-	return true;
+    g_protocolHandlers.insert(protocol, this);
+    d->protocols.append(protocol);
+    qCDebug(LIBKOPETE_LOG) << "Mime type " << protocol << " registered";
+    return true;
 }
 
 const QStringList MimeTypeHandler::mimeTypes() const
 {
-	return d->mimeTypes;
+    return d->mimeTypes;
 }
 
 const QStringList MimeTypeHandler::protocols() const
 {
-	return d->protocols;
+    return d->protocols;
 }
 
 bool MimeTypeHandler::canAcceptRemoteFiles() const
 {
-	return d->canAcceptRemoteFiles;
+    return d->canAcceptRemoteFiles;
 }
 
-bool MimeTypeHandler::dispatchURL( const QUrl &url )
+bool MimeTypeHandler::dispatchURL(const QUrl &url)
 {
-	if( url.isEmpty() )
-		return false;
+    if (url.isEmpty()) {
+        return false;
+    }
 
-	QString type = KMimeType::findByUrl( url )->name();
+    QString type = KMimeType::findByUrl(url)->name();
 
-	MimeTypeHandler *mimeHandler = g_mimeHandlers[ type ];
+    MimeTypeHandler *mimeHandler = g_mimeHandlers[ type ];
 
-	if( mimeHandler )
-	{
-		return dispatchToHandler( url, type, mimeHandler );
-	}
-	else
-	{
-		mimeHandler = g_protocolHandlers[ url.scheme() ];
+    if (mimeHandler) {
+        return dispatchToHandler(url, type, mimeHandler);
+    } else {
+        mimeHandler = g_protocolHandlers[ url.scheme() ];
 
-		if( mimeHandler )
-		{
-			mimeHandler->handleURL( QString(), url );
-			return true;
-		}
-		else
-		{
-			qCDebug(LIBKOPETE_LOG) << "No mime type handler can handle this URL: " << url.toDisplayString();
-			return false;
-		}
-	}
+        if (mimeHandler) {
+            mimeHandler->handleURL(QString(), url);
+            return true;
+        } else {
+            qCDebug(LIBKOPETE_LOG) << "No mime type handler can handle this URL: " << url.toDisplayString();
+            return false;
+        }
+    }
 }
 
-bool MimeTypeHandler::dispatchToHandler( const QUrl &url, const QString &mimeType, MimeTypeHandler *handler )
+bool MimeTypeHandler::dispatchToHandler(const QUrl &url, const QString &mimeType, MimeTypeHandler *handler)
 {
-	if( !handler->canAcceptRemoteFiles() )
-	{
-		QString file;
-		if( !KIO::NetAccess::download( url, file, Kopete::UI::Global::mainWidget() ) )
-		{
-			QString sorryText;
-			if ( url.isLocalFile() )
-			{
-				sorryText = i18n( "Unable to find the file %1.", url.toDisplayString() );
-			}
-			else
-			{
-				sorryText = i18n( "<qt>Unable to download the requested file;<br />"
-				                  "please check that address %1 is correct.</qt>",
-				                  url.toDisplayString() );
-			}
+    if (!handler->canAcceptRemoteFiles()) {
+        QString file;
+        if (!KIO::NetAccess::download(url, file, Kopete::UI::Global::mainWidget())) {
+            QString sorryText;
+            if (url.isLocalFile()) {
+                sorryText = i18n("Unable to find the file %1.", url.toDisplayString());
+            } else {
+                sorryText = i18n("<qt>Unable to download the requested file;<br />"
+                                 "please check that address %1 is correct.</qt>",
+                                 url.toDisplayString());
+            }
 
-			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), sorryText );
-			return false;
-		}
+            KMessageBox::sorry(Kopete::UI::Global::mainWidget(), sorryText);
+            return false;
+        }
 
-		QUrl dest;
-		dest.setPath( file );
+        QUrl dest;
+        dest.setPath(file);
 
-		handler->handleURL( mimeType, dest );
+        handler->handleURL(mimeType, dest);
 
-		// for now, local-only handlers have to be synchronous
-		KIO::NetAccess::removeTempFile( file );
-	}
-	else
-	{
-		handler->handleURL( mimeType, url );
-	}
+        // for now, local-only handlers have to be synchronous
+        KIO::NetAccess::removeTempFile(file);
+    } else {
+        handler->handleURL(mimeType, url);
+    }
 
-	return true;
+    return true;
 }
 
-void MimeTypeHandler::handleURL( const QString &mimeType, const QUrl &url ) const
+void MimeTypeHandler::handleURL(const QString &mimeType, const QUrl &url) const
 {
-	Q_UNUSED( mimeType );
-	Q_UNUSED( url );
+    Q_UNUSED(mimeType);
+    Q_UNUSED(url);
 }
 
-void MimeTypeHandler::handleURL( const QUrl &url ) const
+void MimeTypeHandler::handleURL(const QUrl &url) const
 {
-	handleURL( QString(), url );
+    handleURL(QString(), url);
 }
-
 
 EmoticonMimeTypeHandler::EmoticonMimeTypeHandler()
- : MimeTypeHandler( false )
+    : MimeTypeHandler(false)
 {
-	registerAsMimeHandler( QStringLiteral("application/x-kopete-emoticons") );
-	registerAsMimeHandler( QStringLiteral("application/x-compressed-tar") );
-	registerAsMimeHandler( QStringLiteral("application/x-bzip-compressed-tar") );
+    registerAsMimeHandler(QStringLiteral("application/x-kopete-emoticons"));
+    registerAsMimeHandler(QStringLiteral("application/x-compressed-tar"));
+    registerAsMimeHandler(QStringLiteral("application/x-bzip-compressed-tar"));
 }
 
-void EmoticonMimeTypeHandler::handleURL( const QString &, const QUrl &url ) const
+void EmoticonMimeTypeHandler::handleURL(const QString &, const QUrl &url) const
 {
-  Emoticons::self()->installTheme( url.toLocalFile() );
+    Emoticons::self()->installTheme(url.toLocalFile());
 }
 
-void EmoticonMimeTypeHandler::handleURL( const QUrl &url ) const
+void EmoticonMimeTypeHandler::handleURL(const QUrl &url) const
 {
-	handleURL( QString(), url );
+    handleURL(QString(), url);
 }
-
-
 } // END namespace Kopete
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -23,8 +23,7 @@
 #include <QListWidgetItem>
 #include <kopete_export.h>
 
-namespace Kopete
-{
+namespace Kopete {
 class Account;
 class Contact;
 class Identity;
@@ -34,65 +33,64 @@ class PropertyContainer;
 /**
  * @author Gustavo Pichorim Boiko <gustavo.boiko@kemail.net>
  *
- * This dialog is used to add a new identity to 
+ * This dialog is used to add a new identity to
  */
 class KOPETE_IDENTITY_EXPORT IdentityStatusWidget : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	/**
-	 * @brief Default constructor for the identity status widget
-	 */
-	explicit IdentityStatusWidget( Kopete::Identity *ident, QWidget *parent = nullptr );
-	~IdentityStatusWidget();
+    /**
+     * @brief Default constructor for the identity status widget
+     */
+    explicit IdentityStatusWidget(Kopete::Identity *ident, QWidget *parent = nullptr);
+    ~IdentityStatusWidget();
 
-	/**
-	 * This method returns the identity currently being managed by this widget
-	 */
-	Kopete::Identity *identity() const;
-	void setIdentity(Kopete::Identity *identity);
+    /**
+     * This method returns the identity currently being managed by this widget
+     */
+    Kopete::Identity *identity() const;
+    void setIdentity(Kopete::Identity *identity);
 
-	void setVisible(bool visible) Q_DECL_OVERRIDE;
+    void setVisible(bool visible) Q_DECL_OVERRIDE;
 
 protected:
-	bool eventFilter( QObject *watched, QEvent *event ) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
 
 private:
-	/**
-	 * Initialise the widget's contents
-	 */
-	void load();
+    /**
+     * Initialise the widget's contents
+     */
+    void load();
 
 private slots:
-	void slotAnimate(qreal amount);
+    void slotAnimate(qreal amount);
 
-	void showAccountContextMenu( const QPoint & );
-	void slotAccountClicked( QListWidgetItem * item );
-	void slotAccountDoubleClicked( QListWidgetItem * item );
-	void slotPhotoClicked();
-	void slotAccountRegistered( Kopete::Account *account );
-	void slotAccountUnregistered( const Kopete::Account *account );
-	void slotAccountStatusIconChanged( Kopete::Contact *contact );
-	/**
-	 * Handle departing identities
-	 */
-	void slotIdentityUnregistered( const Kopete::Identity* identity );
+    void showAccountContextMenu(const QPoint &);
+    void slotAccountClicked(QListWidgetItem *item);
+    void slotAccountDoubleClicked(QListWidgetItem *item);
+    void slotPhotoClicked();
+    void slotAccountRegistered(Kopete::Account *account);
+    void slotAccountUnregistered(const Kopete::Account *account);
+    void slotAccountStatusIconChanged(Kopete::Contact *contact);
+    /**
+     * Handle departing identities
+     */
+    void slotIdentityUnregistered(const Kopete::Identity *identity);
 
-	/**
-	 * Handle property changes in identities
-	 */
-	void slotIdentityPropertyChanged(Kopete::PropertyContainer *container );
-	void slotIdentityChanged(Kopete::Identity *identity);
+    /**
+     * Handle property changes in identities
+     */
+    void slotIdentityPropertyChanged(Kopete::PropertyContainer *container);
+    void slotIdentityChanged(Kopete::Identity *identity);
 
 private:
-	void addAccountItem( Kopete::Account *account );
-	void resizeAccountListWidget();
-	class Private;
-	Private * const d;
+    void addAccountItem(Kopete::Account *account);
+    void resizeAccountListWidget();
+    class Private;
+    Private *const d;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

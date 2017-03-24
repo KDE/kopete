@@ -31,125 +31,128 @@ class QCheckBox;
 class QModelIndex;
 class QFile;
 
-namespace Kopete { class Contact; }
+namespace Kopete {
+class Contact;
+}
 
 /**
  * @author Timo Schluessler <timo@schluessler.org>
  */
 class HistoryImport : public KDialog
 {
-Q_OBJECT
+    Q_OBJECT
 public:
 
-	HistoryImport(QWidget *parent);
-	~HistoryImport();
+    HistoryImport(QWidget *parent);
+    ~HistoryImport();
 
 private:
 
-	/**
-	 * Used for internal storage of a message.
-	 */
-	struct Message {
-		bool incoming;
-		QString text;
-		QDateTime timestamp;
-	};
-		
-	/**
-	 * Holds the messages sent and received between two specified contacts.
-	 */
-	struct Log {
-		Kopete::Contact *me;
-		Kopete::Contact *other;
-		QList<Message> messages;
-		/**
-		 * Comparison between the Message lists is not necessary because we need this operator
-		 * only in displayLog() to get the index of this log in logs.
-		 */
-		bool operator==(const struct Log & cmp) {
-			if (cmp.me == me && cmp.other == other/* && other.messages == messages*/)
-				return true;
-			else
-				return false;
-		}
-	};
-		
-	/**
-	 * Parses @param file and appends the found messages to @param log.
-	 */
-	void parsePidginXml(QFile &file, struct Log *log, QDate date);
+    /**
+     * Used for internal storage of a message.
+     */
+    struct Message {
+        bool incoming;
+        QString text;
+        QDateTime timestamp;
+    };
 
-	/**
-	 * Parses @param file and appends the found messages to @param log.
-	 */
-	void parsePidginTxt(QFile &file, struct Log *log, QDate date);
+    /**
+     * Holds the messages sent and received between two specified contacts.
+     */
+    struct Log {
+        Kopete::Contact *me;
+        Kopete::Contact *other;
+        QList<Message> messages;
+        /**
+         * Comparison between the Message lists is not necessary because we need this operator
+         * only in displayLog() to get the index of this log in logs.
+         */
+        bool operator==(const struct Log &cmp)
+        {
+            if (cmp.me == me && cmp.other == other /* && other.messages == messages*/) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    };
 
+    /**
+     * Parses @param file and appends the found messages to @param log.
+     */
+    void parsePidginXml(QFile &file, struct Log *log, QDate date);
 
-	/**
-	 * Inserts @param log into treeView and prepares to display it when clicking on it.
-	 */
-	void displayLog(struct Log *log);
+    /**
+     * Parses @param file and appends the found messages to @param log.
+     */
+    void parsePidginTxt(QFile &file, struct Log *log, QDate date);
 
-	/**
-	 * Looks up if an item with @param text exists already as child of @param parent.
-	 * If not, it creates one.
-	 */
-	QStandardItem * findItem(const QString &text, QStandardItem *parent);
+    /**
+     * Inserts @param log into treeView and prepares to display it when clicking on it.
+     */
+    void displayLog(struct Log *log);
 
-	/**
-	 * @return the number of files found in @param depth th subdir of @param dir.
-	 */
-	int countLogs(QDir dir, int depth);
+    /**
+     * Looks up if an item with @param text exists already as child of @param parent.
+     * If not, it creates one.
+     */
+    QStandardItem *findItem(const QString &text, QStandardItem *parent);
 
-	/**
-	 * Tries to extract the time from @param string using formats specified in timeFormats.
-	 * @param ref is used when @param string doesn't contain a date or to adjust a found date.
-	 * @param ref is taken from the filename of the log.
-	 */
-	QDateTime extractTime(const QString &string, QDate ref);
+    /**
+     * @return the number of files found in @param depth th subdir of @param dir.
+     */
+    int countLogs(QDir dir, int depth);
 
-	QStringList timeFormats;
+    /**
+     * Tries to extract the time from @param string using formats specified in timeFormats.
+     * @param ref is used when @param string doesn't contain a date or to adjust a found date.
+     * @param ref is taken from the filename of the log.
+     */
+    QDateTime extractTime(const QString &string, QDate ref);
 
-	QTreeView *treeView;
-	QTextEdit *display;
+    QStringList timeFormats;
 
-	/**
-	 * Used for adding details to the details widget.
-	 */
-	QTextCursor detailsCursor;
+    QTreeView *treeView;
+    QTextEdit *display;
 
-	/**
-	 * Enables/disables auto search for log dirs.
-	 */
-	QCheckBox *selectByHand;
+    /**
+     * Used for adding details to the details widget.
+     */
+    QTextCursor detailsCursor;
 
-	/**
-	 * Contains all already parsed logs.
-	 */
-	QList<Log> logs;
+    /**
+     * Enables/disables auto search for log dirs.
+     */
+    QCheckBox *selectByHand;
 
-	/**
-	 * Used for mapping nickname to account. See isNickIncoming().
-	 */
-	QHash<QString, bool> knownNicks;
+    /**
+     * Contains all already parsed logs.
+     */
+    QList<Log> logs;
 
-	/**
-	 * To warn the user when importing logs twice
-	 */
-	bool pidginImported;
+    /**
+     * Used for mapping nickname to account. See isNickIncoming().
+     */
+    QHash<QString, bool> knownNicks;
 
-	int amount;
-	bool cancel;
+    /**
+     * To warn the user when importing logs twice
+     */
+    bool pidginImported;
+
+    int amount;
+    bool cancel;
 
 private slots:
-	/**
-	 * Starts parsing history from pidgin.
-	 * Default path is ~/.purple/logs.
-	 */
-	void importPidgin(void);
+    /**
+     * Starts parsing history from pidgin.
+     * Default path is ~/.purple/logs.
+     */
+    void importPidgin(void);
 
-	void save(void);
-	void itemClicked(const QModelIndex & index);
+    void save(void);
+    void itemClicked(const QModelIndex &index);
 };
 
 #endif

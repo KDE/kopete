@@ -34,59 +34,60 @@
 #include "nowlisteningconfig.h"
 #include "nowlisteningpreferences.moc"
 
-K_PLUGIN_FACTORY( NowListeningPreferencesFactory, registerPlugin<NowListeningPreferences>(); )
+K_PLUGIN_FACTORY(NowListeningPreferencesFactory, registerPlugin<NowListeningPreferences>();
+                 )
 
 NowListeningPreferences::NowListeningPreferences(QWidget *parent, const QVariantList &args)
-	: KCModule( parent, args )
+    : KCModule(parent, args)
 {
-	QVBoxLayout* l = new QVBoxLayout( this );
-	QWidget* w = new QWidget;
-	preferencesDialog = new Ui::NowListeningPrefsUI;
-	preferencesDialog->setupUi( w );
-	l->addWidget( w );
+    QVBoxLayout *l = new QVBoxLayout(this);
+    QWidget *w = new QWidget;
+    preferencesDialog = new Ui::NowListeningPrefsUI;
+    preferencesDialog->setupUi(w);
+    l->addWidget(w);
 
-	//Is this correct?
-	addConfig( NowListeningConfig::self(), w );
+    //Is this correct?
+    addConfig(NowListeningConfig::self(), w);
 
-	// Fill the media player listbox.
-	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Kscd"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Juk"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Amarok"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Kaffeine"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Quod Libet"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("MPRIS compatible player"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("MPRIS2 compatible player"));
+    // Fill the media player listbox.
+    preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Kscd"));
+    preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Juk"));
+    preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Amarok"));
+    preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Kaffeine"));
+    preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Quod Libet"));
+    preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("MPRIS compatible player"));
+    preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("MPRIS2 compatible player"));
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
-	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("XMMS"));
+    preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("XMMS"));
 #endif
 }
 
-NowListeningPreferences::~NowListeningPreferences( )
+NowListeningPreferences::~NowListeningPreferences()
 {
-	delete preferencesDialog;
+    delete preferencesDialog;
 }
 
 void NowListeningPreferences::save()
 {
-	KCModule::save();
+    KCModule::save();
 }
 
 void NowListeningPreferences::load()
 {
-	KCModule::load();
+    KCModule::load();
 }
 
 void NowListeningPreferences::slotSettingsChanged()
 {
-	emit changed( true );
+    emit changed(true);
 }
 
 void NowListeningPreferences::defaults()
 {
-	/*preferencesDialog->m_header->setText( i18n("Now Listening To: "));
-	preferencesDialog->m_perTrack->setText(i18n("%track( by %artist)( on %album)"));
-	preferencesDialog->m_conjunction->setText( i18n(", and "));
-	preferencesDialog->m_autoAdvertising->setChecked( false );*/
+    /*preferencesDialog->m_header->setText( i18n("Now Listening To: "));
+    preferencesDialog->m_perTrack->setText(i18n("%track( by %artist)( on %album)"));
+    preferencesDialog->m_conjunction->setText( i18n(", and "));
+    preferencesDialog->m_autoAdvertising->setChecked( false );*/
 }
 
 /*

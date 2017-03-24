@@ -14,18 +14,16 @@
 
 class AliasPlugin : public Kopete::Plugin
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-		static AliasPlugin *plugin();
-	
-		AliasPlugin( QObject *parent, const QVariantList &args );
-		~AliasPlugin();
-	
-	private:
-		static AliasPlugin * pluginStatic_;
+public:
+    static AliasPlugin *plugin();
+
+    AliasPlugin(QObject *parent, const QVariantList &args);
+    ~AliasPlugin();
+
+private:
+    static AliasPlugin *pluginStatic_;
 };
 
 #endif
-
-

@@ -20,9 +20,7 @@
 #include <kopete_export.h>
 #include <kopetecontacttaskbase.h>
 
-namespace Kopete
-{
-
+namespace Kopete {
 class Contact;
 /**
  * @brief Delete a contact in Kopete
@@ -51,53 +49,52 @@ deleteTask->start();
  */
 class KOPETE_EXPORT DeleteContactTask : public Kopete::ContactTaskBase
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	 * @brief Default constructor
-	 *
-	 * You must set the contact to delete with setContact()
-	 */
-	DeleteContactTask(QObject *parent = nullptr); //implicit
-	
-	/**
-	 * @brief Delete the given contact
-	 * @param contact Kopete contact to delete
-	 */
-	explicit DeleteContactTask(Kopete::Contact *contact);
+    /**
+     * @brief Default constructor
+     *
+     * You must set the contact to delete with setContact()
+     */
+    DeleteContactTask(QObject *parent = nullptr); //implicit
 
-	/**
-	 * @internal
-	 * Destructor
-	 */
-	~DeleteContactTask();
+    /**
+     * @brief Delete the given contact
+     * @param contact Kopete contact to delete
+     */
+    explicit DeleteContactTask(Kopete::Contact *contact);
 
-	/**
-	 * @brief Begin the task.
-	 * Inherited from Kopete::Task::start()
-	 */
-	void start() Q_DECL_OVERRIDE;
+    /**
+     * @internal
+     * Destructor
+     */
+    ~DeleteContactTask();
+
+    /**
+     * @brief Begin the task.
+     * Inherited from Kopete::Task::start()
+     */
+    void start() Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
-	/**
-	 * @brief Execute the next sub job
-	 *
-	 * This slot is called when a subjob has finished.
-	 * @param subJob sub job that has been finished.
-	 */
-	void slotResult(KJob *subJob) Q_DECL_OVERRIDE;
+    /**
+     * @brief Execute the next sub job
+     *
+     * This slot is called when a subjob has finished.
+     * @param subJob sub job that has been finished.
+     */
+    void slotResult(KJob *subJob) Q_DECL_OVERRIDE;
 
 protected:
-	/**
-	 * @brief Return Task Type
-	 * @return DeleteContactTask
-	 */
-	QString taskType() const Q_DECL_OVERRIDE;
+    /**
+     * @brief Return Task Type
+     * @return DeleteContactTask
+     */
+    QString taskType() const Q_DECL_OVERRIDE;
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
 }
 
 #endif

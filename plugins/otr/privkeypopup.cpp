@@ -16,7 +16,7 @@
  *                                                                       *
  * You should have received a copy of the GNU General Public License     *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- *************************************************************************/ 
+ *************************************************************************/
 
 /**
   * @author Michael Zanetti
@@ -27,30 +27,32 @@
 #include <kwindowsystem.h>
 #include <KIcon>
 
-PrivKeyPopup::PrivKeyPopup( QWidget *parent ):KDialog( parent ){
-	QWidget *widget = new QWidget( this );
-	//KWindowSystem::setState(widget->winId(), NET::StaysOnTop );
-	ui.setupUi( widget );
-	setMainWidget( widget );
-	setCaption( i18n( "Please wait" ) );
-	setButtons( KDialog::None );
+PrivKeyPopup::PrivKeyPopup(QWidget *parent) : KDialog(parent)
+{
+    QWidget *widget = new QWidget(this);
+    //KWindowSystem::setState(widget->winId(), NET::StaysOnTop );
+    ui.setupUi(widget);
+    setMainWidget(widget);
+    setCaption(i18n("Please wait"));
+    setButtons(KDialog::None);
 
-	ui.lIcon->setPixmap( KIcon( QStringLiteral("dialog-password") ).pixmap( 48, 48 ) );
+    ui.lIcon->setPixmap(KIcon(QStringLiteral("dialog-password")).pixmap(48, 48));
 }
 
-PrivKeyPopup::~PrivKeyPopup(){
+PrivKeyPopup::~PrivKeyPopup()
+{
 }
 
-
-void PrivKeyPopup::setCloseLock( bool locked ){
-	closeLock = locked;
+void PrivKeyPopup::setCloseLock(bool locked)
+{
+    closeLock = locked;
 }
 
-void PrivKeyPopup::closeEvent( QCloseEvent *e ){
-	if( closeLock ){
-		e->ignore();
-	} else {
-		e->accept();
-	}
+void PrivKeyPopup::closeEvent(QCloseEvent *e)
+{
+    if (closeLock) {
+        e->ignore();
+    } else {
+        e->accept();
+    }
 }
-

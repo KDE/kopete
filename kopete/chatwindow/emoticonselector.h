@@ -36,49 +36,49 @@ class QShowEvent;
 class EmoticonItem : public QListWidgetItem
 {
 public:
-	EmoticonItem(const QString &emoticonText, const QString &pixmapPath, QListWidget *parent=0);
+    EmoticonItem(const QString &emoticonText, const QString &pixmapPath, QListWidget *parent = 0);
 //	~EmoticonLabel();
 
-	QString text() const;
-	QString pixmapPath() const;
+    QString text() const;
+    QString pixmapPath() const;
 
 private:
-	QString m_text;
-	QString m_pixmapPath;
+    QString m_text;
+    QString m_pixmapPath;
 };
 
 class EmoticonSelector : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
 
-	EmoticonSelector ( QWidget *parent = nullptr );
+    EmoticonSelector (QWidget *parent = nullptr);
 //	~EmoticonSelector();
 
 signals:
-	/**
-	* gets emitted when an emoticon has been selected from the list
-	* the QString holds the emoticon as a string or is 0L if nothing was selected
-	**/
-	void itemSelected(const QString &);
+    /**
+    * gets emitted when an emoticon has been selected from the list
+    * the QString holds the emoticon as a string or is 0L if nothing was selected
+    **/
+    void itemSelected(const QString &);
 
 public slots:
-	void prepareList();
+    void prepareList();
 
 protected:
-	void hideEvent( QHideEvent* ) Q_DECL_OVERRIDE;
-	void showEvent( QShowEvent* ) Q_DECL_OVERRIDE;
+    void hideEvent(QHideEvent *) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent *) Q_DECL_OVERRIDE;
 
 protected slots:
-	void emoticonClicked( QListWidgetItem* );
-	void mouseOverItem( QListWidgetItem* );
-	void currentChanged();
+    void emoticonClicked(QListWidgetItem *);
+    void mouseOverItem(QListWidgetItem *);
+    void currentChanged();
 
 private:
-	QListWidget *m_emoticonList;
-	QLabel *m_currentEmoticon;
-	QMovie *m_currentMovie;
+    QListWidget *m_emoticonList;
+    QLabel *m_currentEmoticon;
+    QMovie *m_currentMovie;
 };
 
 #endif

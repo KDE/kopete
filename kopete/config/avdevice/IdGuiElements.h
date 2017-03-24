@@ -17,7 +17,6 @@
 #ifndef IDGUIELEMENTS_H
 #define IDGUIELEMENTS_H
 
-
 #include <KPushButton>
 #include <KComboBox>
 #include <KIcon>
@@ -25,68 +24,62 @@
 #include <QSlider>
 #include <QCheckBox>
 
-
 class IdPushButton : public KPushButton
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	IdPushButton(unsigned int id, QWidget * parent = nullptr);
-	IdPushButton(unsigned int id, const QString text, QWidget * parent = nullptr);
-	IdPushButton(unsigned int id, const KIcon icon, const QString text, QWidget * parent = nullptr);
-	IdPushButton(unsigned int id, KGuiItem item, QWidget * parent = nullptr);
+    IdPushButton(unsigned int id, QWidget *parent = nullptr);
+    IdPushButton(unsigned int id, const QString text, QWidget *parent = nullptr);
+    IdPushButton(unsigned int id, const KIcon icon, const QString text, QWidget *parent = nullptr);
+    IdPushButton(unsigned int id, KGuiItem item, QWidget *parent = nullptr);
 private:
-	unsigned int _id;
+    unsigned int _id;
 private slots:
-	void emitPressed();
+    void emitPressed();
 signals:
-	void pressed(unsigned int id);
+    void pressed(unsigned int id);
 };
-
 
 class IdComboBox : public KComboBox
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	IdComboBox(unsigned int id, QWidget * parent = nullptr);
-	IdComboBox(unsigned int id, bool rw, QWidget * parent = nullptr);
+    IdComboBox(unsigned int id, QWidget *parent = nullptr);
+    IdComboBox(unsigned int id, bool rw, QWidget *parent = nullptr);
 private:
-	unsigned int _id;
+    unsigned int _id;
 private slots:
-	void emitCurrentIndexChanged(int index);
+    void emitCurrentIndexChanged(int index);
 signals:
-	void currentIndexChanged(unsigned int id, int index);
+    void currentIndexChanged(unsigned int id, int index);
 };
-
 
 class IdCheckBox : public QCheckBox
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	IdCheckBox(unsigned int id, QWidget * parent = nullptr);
-	IdCheckBox(unsigned int id, const QString & text, QWidget * parent = nullptr);
+    IdCheckBox(unsigned int id, QWidget *parent = nullptr);
+    IdCheckBox(unsigned int id, const QString &text, QWidget *parent = nullptr);
 private:
-	unsigned int _id;
+    unsigned int _id;
 private slots:
-	void emitStateChanged(int state);
+    void emitStateChanged(int state);
 signals:
-	void stateChanged(unsigned int id, int state);
+    void stateChanged(unsigned int id, int state);
 };
-
 
 class IdSlider : public QSlider
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	IdSlider(unsigned int id, QWidget * parent = nullptr);
-	IdSlider(unsigned int id, Qt::Orientation orientation, QWidget * parent = nullptr);
+    IdSlider(unsigned int id, QWidget *parent = nullptr);
+    IdSlider(unsigned int id, Qt::Orientation orientation, QWidget *parent = nullptr);
 private:
-	unsigned int _id;
+    unsigned int _id;
 private slots:
-	void emitValueChanged(int value);
+    void emitValueChanged(int value);
 signals:
-	void valueChanged(unsigned int id, int value);
+    void valueChanged(unsigned int id, int value);
 };
 
-
 #endif
-

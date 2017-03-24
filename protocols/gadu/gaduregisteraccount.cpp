@@ -1,6 +1,6 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
 //
 // gaduregisteraccount.cpp
 //
@@ -37,185 +37,175 @@
 #include "ui_gaduregisteraccountui.h"
 #include "gaducommands.h"
 
-GaduRegisterAccount::GaduRegisterAccount( QWidget* parent )
-: KDialog( parent )
+GaduRegisterAccount::GaduRegisterAccount(QWidget *parent)
+    : KDialog(parent)
 {
-	setCaption( i18n( "Register New Account" ) );
-	setButtons( KDialog::User1 | KDialog::Ok );
-	setDefaultButton( KDialog::User1 );
-	showButtonSeparator( true );
+    setCaption(i18n("Register New Account"));
+    setButtons(KDialog::User1 | KDialog::Ok);
+    setDefaultButton(KDialog::User1);
+    showButtonSeparator(true);
 
-	QWidget* w = new QWidget( this );
-	ui = new Ui::GaduRegisterAccountUI;
-	ui->setupUi( w );
-	setMainWidget( w );
+    QWidget *w = new QWidget(this);
+    ui = new Ui::GaduRegisterAccountUI;
+    ui->setupUi(w);
+    setMainWidget(w);
 
-	ui->valueVerificationSequence->setDisabled( true );
-	setButtonText( User1, i18n( "&Register" ) );
-	setButtonText( Ok, i18n( "&Cancel" ) );
-	enableButton( User1, false );
+    ui->valueVerificationSequence->setDisabled(true);
+    setButtonText(User1, i18n("&Register"));
+    setButtonText(Ok, i18n("&Cancel"));
+    enableButton(User1, false);
 
-	cRegister = new RegisterCommand( this );
+    cRegister = new RegisterCommand(this);
 
-	emailRegexp = new QRegExp(  "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
-	hintPixmap = KIconLoader::global()->loadIcon ( "gadu_protocol", KIconLoader::Small );
+    emailRegexp = new QRegExp("[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}");
+    hintPixmap = KIconLoader::global()->loadIcon("gadu_protocol", KIconLoader::Small);
 
-	connect( this, SIGNAL(user1Clicked()), SLOT(doRegister()) );
-	connect( this, SIGNAL(okClicked()), SLOT(slotClose()) );
+    connect(this, SIGNAL(user1Clicked()), SLOT(doRegister()));
+    connect(this, SIGNAL(okClicked()), SLOT(slotClose()));
 
-	connect( ui->valueEmailAddress, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)) );
-	connect( ui->valuePassword, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)) );
-	connect( ui->valuePasswordVerify, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)) );
-	connect( ui->valueVerificationSequence, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)) );
+    connect(ui->valueEmailAddress, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)));
+    connect(ui->valuePassword, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)));
+    connect(ui->valuePasswordVerify, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)));
+    connect(ui->valueVerificationSequence, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)));
 
-	connect( cRegister, SIGNAL(tokenRecieved(QPixmap,QString)), SLOT(displayToken(QPixmap,QString)) );
-	connect( cRegister, SIGNAL(done(QString,QString)), SLOT(registrationDone(QString,QString)) );
-	connect( cRegister, SIGNAL(error(QString,QString)), SLOT(registrationError(QString,QString)) );
-	connect( cRegister, SIGNAL(operationStatus(QString)), SLOT(updateStatus(QString)) );
+    connect(cRegister, SIGNAL(tokenRecieved(QPixmap,QString)), SLOT(displayToken(QPixmap,QString)));
+    connect(cRegister, SIGNAL(done(QString,QString)), SLOT(registrationDone(QString,QString)));
+    connect(cRegister, SIGNAL(error(QString,QString)), SLOT(registrationError(QString,QString)));
+    connect(cRegister, SIGNAL(operationStatus(QString)), SLOT(updateStatus(QString)));
 
-	updateStatus( i18n( "Retrieving token" ) );
-	cRegister->requestToken();
+    updateStatus(i18n("Retrieving token"));
+    cRegister->requestToken();
 
-	show();
+    show();
 }
 
 void
-GaduRegisterAccount::doRegister( )
+GaduRegisterAccount::doRegister()
 {
-	cRegister->setUserinfo( ui->valueEmailAddress->text(), ui->valuePassword->text(), ui->valueVerificationSequence->text() );
-	cRegister->execute();
-	enableButton( User1, false );
+    cRegister->setUserinfo(ui->valueEmailAddress->text(), ui->valuePassword->text(), ui->valueVerificationSequence->text());
+    cRegister->execute();
+    enableButton(User1, false);
 }
 
 void
 GaduRegisterAccount::validateInput()
 {
-	int valid = true;
-	int passwordHighlight = false;
+    int valid = true;
+    int passwordHighlight = false;
 
-	if ( !emailRegexp->exactMatch( ui->valueEmailAddress->text() ) )
-	{
-		updateStatus( i18n( "Please enter a valid E-Mail Address." ) );
-		ui->pixmapEmailAddress->setPixmap ( hintPixmap );
-		valid = false;
-	}
-	else {
-		ui->pixmapEmailAddress->setText ( "" );
-	}
+    if (!emailRegexp->exactMatch(ui->valueEmailAddress->text())) {
+        updateStatus(i18n("Please enter a valid E-Mail Address."));
+        ui->pixmapEmailAddress->setPixmap(hintPixmap);
+        valid = false;
+    } else {
+        ui->pixmapEmailAddress->setText("");
+    }
 
-	if ( valid && ( ( ui->valuePassword->text().isEmpty() ) || ( ui->valuePasswordVerify->text().isEmpty() ) ) )
-	{
-		updateStatus( i18n( "Please enter the same password twice." ) );
-		valid = false;
-		passwordHighlight = true;
-	}
+    if (valid && ((ui->valuePassword->text().isEmpty()) || (ui->valuePasswordVerify->text().isEmpty()))) {
+        updateStatus(i18n("Please enter the same password twice."));
+        valid = false;
+        passwordHighlight = true;
+    }
 
-	if ( valid && ( ui->valuePassword->text() != ui->valuePasswordVerify->text() ) )
-	{
-		updateStatus( i18n( "Password entries do not match." ) );
-		valid = false;
-		passwordHighlight = true;
-	}
+    if (valid && (ui->valuePassword->text() != ui->valuePasswordVerify->text())) {
+        updateStatus(i18n("Password entries do not match."));
+        valid = false;
+        passwordHighlight = true;
+    }
 
-	if ( valid && ( ui->valueVerificationSequence->text().isEmpty() ) )
-	{
-		updateStatus( i18n( "Please enter the verification sequence." ) );
-		ui->pixmapVerificationSequence->setPixmap ( hintPixmap );
-		valid = false;
-	}
-	else {
-		ui->pixmapVerificationSequence->setText ( "" );
-	}
+    if (valid && (ui->valueVerificationSequence->text().isEmpty())) {
+        updateStatus(i18n("Please enter the verification sequence."));
+        ui->pixmapVerificationSequence->setPixmap(hintPixmap);
+        valid = false;
+    } else {
+        ui->pixmapVerificationSequence->setText("");
+    }
 
-	if ( passwordHighlight == true )
-	{
-		ui->pixmapPassword->setPixmap ( hintPixmap );
-		ui->pixmapPasswordVerify->setPixmap ( hintPixmap );
-	}
-	else {
-		ui->pixmapPassword->setText ( "" );
-		ui->pixmapPasswordVerify->setText ( "" );
-	}
+    if (passwordHighlight == true) {
+        ui->pixmapPassword->setPixmap(hintPixmap);
+        ui->pixmapPasswordVerify->setPixmap(hintPixmap);
+    } else {
+        ui->pixmapPassword->setText("");
+        ui->pixmapPasswordVerify->setText("");
+    }
 
-	if ( valid )
-	{
-		// clear status message if we have valid data
-		updateStatus( QString( ) );
-	}
+    if (valid) {
+        // clear status message if we have valid data
+        updateStatus(QString());
+    }
 
-	enableButton( User1, valid );
+    enableButton(User1, valid);
 }
 
 void
-GaduRegisterAccount::inputChanged( const QString & )
+GaduRegisterAccount::inputChanged(const QString &)
 {
-	validateInput();
+    validateInput();
 }
 
 void
-GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString& /*what */ )
+GaduRegisterAccount::registrationDone(const QString & /*title*/, const QString & /*what */)
 {
-	ui->valueEmailAddress->setDisabled( true );
-	ui->valuePassword->setDisabled( true );
-	ui->valuePasswordVerify->setDisabled( true );
-	ui->valueVerificationSequence->setDisabled( true );
-	ui->labelEmailAddress->setDisabled( true );
-	ui->labelPassword->setDisabled( true );
-	ui->labelPasswordVerify->setDisabled( true );
-	ui->labelVerificationSequence->setDisabled( true );
-	ui->labelInstructions->setDisabled( true );
-	emit registeredNumber( cRegister->newUin(), ui->valuePassword->text() );
-	updateStatus( i18n( "Account created; your new UIN is %1." , cRegister->newUin() ) );
-	enableButton( User1, false );
-	setButtonText( Ok, i18n( "&Close" ) );
+    ui->valueEmailAddress->setDisabled(true);
+    ui->valuePassword->setDisabled(true);
+    ui->valuePasswordVerify->setDisabled(true);
+    ui->valueVerificationSequence->setDisabled(true);
+    ui->labelEmailAddress->setDisabled(true);
+    ui->labelPassword->setDisabled(true);
+    ui->labelPasswordVerify->setDisabled(true);
+    ui->labelVerificationSequence->setDisabled(true);
+    ui->labelInstructions->setDisabled(true);
+    emit registeredNumber(cRegister->newUin(), ui->valuePassword->text());
+    updateStatus(i18n("Account created; your new UIN is %1.", cRegister->newUin()));
+    enableButton(User1, false);
+    setButtonText(Ok, i18n("&Close"));
 }
 
 void
-GaduRegisterAccount::registrationError(  const QString& title,  const QString& what )
+GaduRegisterAccount::registrationError(const QString &title, const QString &what)
 {
-	updateStatus( i18n( "Registration failed: %1", what ) );
-	KMessageBox::sorry( this, i18n("Registration was unsucessful, please try again."), title );
+    updateStatus(i18n("Registration failed: %1", what));
+    KMessageBox::sorry(this, i18n("Registration was unsucessful, please try again."), title);
 
-	disconnect( this, SLOT(displayToken(QPixmap,QString)) );
-	disconnect( this, SLOT(registrationDone(QString,QString)) );
-	disconnect( this, SLOT(registrationError(QString,QString)) );
-	disconnect( this, SLOT(updateStatus(QString)) );
+    disconnect(this, SLOT(displayToken(QPixmap,QString)));
+    disconnect(this, SLOT(registrationDone(QString,QString)));
+    disconnect(this, SLOT(registrationError(QString,QString)));
+    disconnect(this, SLOT(updateStatus(QString)));
 
-	ui->valueVerificationSequence->setDisabled( true );
-	ui->valueVerificationSequence->setText( "" );
-	enableButton( User1, false );
-	updateStatus( "" );
+    ui->valueVerificationSequence->setDisabled(true);
+    ui->valueVerificationSequence->setText("");
+    enableButton(User1, false);
+    updateStatus("");
 
-	// emit UIN 0, to enable 'register new account' button again in dialog below
-	emit registeredNumber( 0, QString( "" ) );
+    // emit UIN 0, to enable 'register new account' button again in dialog below
+    emit registeredNumber(0, QString(""));
 
-	deleteLater();
+    deleteLater();
 }
 
 void
-GaduRegisterAccount::displayToken( QPixmap image, QString /*tokenId */ )
+GaduRegisterAccount::displayToken(QPixmap image, QString /*tokenId */)
 {
-	ui->valueVerificationSequence->setDisabled( false );
-	ui->pixmapToken->setPixmap( image );
-	validateInput();
+    ui->valueVerificationSequence->setDisabled(false);
+    ui->pixmapToken->setPixmap(image);
+    validateInput();
 }
 
 void
-GaduRegisterAccount::updateStatus( const QString status )
+GaduRegisterAccount::updateStatus(const QString status)
 {
-	ui->labelStatusMessage->setAlignment( Qt::AlignCenter );
-	ui->labelStatusMessage->setText( status );
+    ui->labelStatusMessage->setAlignment(Qt::AlignCenter);
+    ui->labelStatusMessage->setText(status);
 }
 
 void
 GaduRegisterAccount::slotClose()
 {
-	deleteLater();
+    deleteLater();
 }
 
-GaduRegisterAccount::~GaduRegisterAccount( )
+GaduRegisterAccount::~GaduRegisterAccount()
 {
-	kDebug( 14100 ) << " register Cancel ";
-	delete ui;
+    kDebug(14100) << " register Cancel ";
+    delete ui;
 }
-

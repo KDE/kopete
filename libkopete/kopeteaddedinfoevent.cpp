@@ -23,149 +23,152 @@
 #include "ui/contactaddednotifydialog.h"
 
 namespace Kopete {
-
 class AddedInfoEvent::Private
 {
 public:
-	QString contactId;
-	Kopete::Account *account;
-	ShowActionOptions actions;
+    QString contactId;
+    Kopete::Account *account;
+    ShowActionOptions actions;
 
-	QString contactNickname;
+    QString contactNickname;
 
-	bool suppressClose;
-	UI::ContactAddedNotifyDialog* addDialog;
+    bool suppressClose;
+    UI::ContactAddedNotifyDialog *addDialog;
 };
 
-AddedInfoEvent::AddedInfoEvent( const QString& contactId, Kopete::Account *account )
-	: InfoEvent(account), d( new Private() )
+AddedInfoEvent::AddedInfoEvent(const QString &contactId, Kopete::Account *account)
+    : InfoEvent(account)
+    , d(new Private())
 {
-	d->suppressClose = false;
-	d->addDialog = 0;
-	d->contactId = contactId;
-	d->account = account;
-	d->actions = AllActions;
+    d->suppressClose = false;
+    d->addDialog = 0;
+    d->contactId = contactId;
+    d->account = account;
+    d->actions = AllActions;
 }
 
 AddedInfoEvent::~AddedInfoEvent()
 {
-	if( d->addDialog )
-		d->addDialog->deleteLater();
+    if (d->addDialog) {
+        d->addDialog->deleteLater();
+    }
 
-	delete d;
+    delete d;
 }
 
 QString AddedInfoEvent::contactId() const
 {
-	return d->contactId;
+    return d->contactId;
 }
 
-Kopete::Account* AddedInfoEvent::account() const
+Kopete::Account *AddedInfoEvent::account() const
 {
-	return d->account;
+    return d->account;
 }
 
-void AddedInfoEvent::showActions( ShowActionOptions actions )
+void AddedInfoEvent::showActions(ShowActionOptions actions)
 {
-	d->actions = actions;
+    d->actions = actions;
 }
 
-void AddedInfoEvent::setContactNickname( const QString& nickname )
+void AddedInfoEvent::setContactNickname(const QString &nickname)
 {
-	d->contactNickname = nickname;
+    d->contactNickname = nickname;
 }
 
-void AddedInfoEvent::activate( uint actionId )
+void AddedInfoEvent::activate(uint actionId)
 {
-	if ( actionId == AddAction )
-	{
-		if ( d->addDialog )
-		{
-			d->addDialog->raise();
-		}
-		else
-		{
-			UI::ContactAddedNotifyDialog::HideWidgetOptions hideFlags = UI::ContactAddedNotifyDialog::DefaultHide;
-			if ( !(d->actions & AuthorizeAction) )
-				hideFlags |= UI::ContactAddedNotifyDialog::AuthorizeCheckBox;
-			if ( !(d->actions & InfoAction) )
-				hideFlags |= UI::ContactAddedNotifyDialog::InfoButton;
+    if (actionId == AddAction) {
+        if (d->addDialog) {
+            d->addDialog->raise();
+        } else {
+            UI::ContactAddedNotifyDialog::HideWidgetOptions hideFlags = UI::ContactAddedNotifyDialog::DefaultHide;
+            if (!(d->actions & AuthorizeAction)) {
+                hideFlags |= UI::ContactAddedNotifyDialog::AuthorizeCheckBox;
+            }
+            if (!(d->actions & InfoAction)) {
+                hideFlags |= UI::ContactAddedNotifyDialog::InfoButton;
+            }
 
-			d->addDialog = new UI::ContactAddedNotifyDialog( d->contactId, d->contactNickname, d->account, hideFlags );
-			d->addDialog->setAttribute( Qt::WA_DeleteOnClose, false );
+            d->addDialog = new UI::ContactAddedNotifyDialog(d->contactId, d->contactNickname, d->account, hideFlags);
+            d->addDialog->setAttribute(Qt::WA_DeleteOnClose, false);
 
-			connect( d->addDialog, SIGNAL(finished()), this, SLOT(addDialogFinished()) );
-			connect( d->addDialog, SIGNAL(applyClicked(QString)), this, SLOT(addDialogOk()) );
-			connect( d->addDialog, SIGNAL(infoClicked(QString)), this, SLOT(addDialogInfo()) );
-			d->addDialog->show();
-		}
-	}
-	else
-	{
-		InfoEvent::activate( actionId );
+            connect(d->addDialog, SIGNAL(finished()), this, SLOT(addDialogFinished()));
+            connect(d->addDialog, SIGNAL(applyClicked(QString)), this, SLOT(addDialogOk()));
+            connect(d->addDialog, SIGNAL(infoClicked(QString)), this, SLOT(addDialogInfo()));
+            d->addDialog->show();
+        }
+    } else {
+        InfoEvent::activate(actionId);
 
-		if ( !d->suppressClose && actionId != InfoAction && d->account->isConnected() )
-			close();
-	}
+        if (!d->suppressClose && actionId != InfoAction && d->account->isConnected()) {
+            close();
+        }
+    }
 }
 
-MetaContact* AddedInfoEvent::addContact() const
+MetaContact *AddedInfoEvent::addContact() const
 {
-	if( !d->addDialog )
-		return 0L;
+    if (!d->addDialog) {
+        return 0L;
+    }
 
-	return d->addDialog->addContact();
+    return d->addDialog->addContact();
 }
 
 void AddedInfoEvent::sendEvent()
 {
-	setTitle( i18n( "You have been added" ) );
+    setTitle(i18n("You have been added"));
 
-	if ( d->actions & AddAction )
-		addAction( AddAction, i18n("Add...") );
-	if ( d->actions & AuthorizeAction )
-		addAction( AuthorizeAction, i18n("Authorize") );
-	if ( d->actions & BlockAction )
-		addAction( BlockAction, i18n("Block") );
-	if ( d->actions & InfoAction )
-		addAction( InfoAction, i18n("Info...") );
+    if (d->actions & AddAction) {
+        addAction(AddAction, i18n("Add..."));
+    }
+    if (d->actions & AuthorizeAction) {
+        addAction(AuthorizeAction, i18n("Authorize"));
+    }
+    if (d->actions & BlockAction) {
+        addAction(BlockAction, i18n("Block"));
+    }
+    if (d->actions & InfoAction) {
+        addAction(InfoAction, i18n("Info..."));
+    }
 
-	setText( i18n( "The contact <b>%1</b> has added you to his/her contact list.",
-	               ( d->contactNickname.isEmpty() ) ? d->contactId : d->contactNickname ) );
+    setText(i18n("The contact <b>%1</b> has added you to his/her contact list.",
+                 (d->contactNickname.isEmpty()) ? d->contactId : d->contactNickname));
 
-	InfoEvent::sendEvent();
+    InfoEvent::sendEvent();
 }
 
 void AddedInfoEvent::addDialogOk()
 {
-	if( !d->addDialog )
-		return;
+    if (!d->addDialog) {
+        return;
+    }
 
-	d->suppressClose = true;
-	if ( d->addDialog->authorized() )
-		activate( AuthorizeAction );
+    d->suppressClose = true;
+    if (d->addDialog->authorized()) {
+        activate(AuthorizeAction);
+    }
 
+    if (d->addDialog->added()) {
+        activate(AddContactAction);
+    }
 
-	if ( d->addDialog->added() )
-		activate( AddContactAction );
-
-	if ( d->account->isConnected() )
-		close();
+    if (d->account->isConnected()) {
+        close();
+    }
 }
 
 void AddedInfoEvent::addDialogInfo()
 {
-	activate( InfoAction );
+    activate(InfoAction);
 }
 
 void AddedInfoEvent::addDialogFinished()
 {
-	if( d->addDialog )
-	{
-		d->addDialog->deleteLater();
-		d->addDialog = 0;
-	}
+    if (d->addDialog) {
+        d->addDialog->deleteLater();
+        d->addDialog = 0;
+    }
 }
-
 }
-

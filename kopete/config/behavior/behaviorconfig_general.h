@@ -22,13 +22,13 @@
 
 class BehaviorConfig_General : public QWidget, public Ui::BehaviorConfig_General
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	BehaviorConfig_General(QWidget *parent = nullptr);
+    BehaviorConfig_General(QWidget *parent = nullptr);
 
 private slots:
-	void queueToggled(bool checked);
+    void queueToggled(bool checked);
 };
 
 #endif // BEHAVIORCONFIG_GENERAL_H

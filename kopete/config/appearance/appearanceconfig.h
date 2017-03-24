@@ -27,26 +27,25 @@
  */
 class AppearanceConfig : public KCModule
 {
-	Q_OBJECT
-
+    Q_OBJECT
 
 public:
-	AppearanceConfig( QWidget *parent, const QVariantList &args );
-	~AppearanceConfig();
+    AppearanceConfig(QWidget *parent, const QVariantList &args);
+    ~AppearanceConfig();
 
-	void save() Q_DECL_OVERRIDE;
-	void load() Q_DECL_OVERRIDE;
+    void save() Q_DECL_OVERRIDE;
+    void load() Q_DECL_OVERRIDE;
 
 private slots:
-	void slotHighlightChanged();
-	void slotChangeFont();
-	void slotEditTooltips();
-	void emitChanged();
+    void slotHighlightChanged();
+    void slotChangeFont();
+    void slotEditTooltips();
+    void emitChanged();
 private:
-	
+
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

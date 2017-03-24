@@ -8,9 +8,9 @@
 
     Kopete (c) 2002,2003 by the Kopete developers  <kopete-devel@kde.org>
 
-	Purpose:
-	This class abstracts the interface to qmmp by
-	implementing NLMediaPlayer
+    Purpose:
+    This class abstracts the interface to qmmp by
+    implementing NLMediaPlayer
 
     *************************************************************************
     *                                                                       *
@@ -26,7 +26,6 @@
 
 #include <kdebug.h>
 
-
 #include <QtDBus/QtDBus>
 
 #include "nlmediaplayer.h"
@@ -39,9 +38,9 @@ struct qmmpPlayerStatus
     int repeatPlayList; // 0 = Stop playing once the last element has been played, 1 = Never give up playing
 };
 
-Q_DECLARE_METATYPE( qmmpPlayerStatus )
+Q_DECLARE_METATYPE(qmmpPlayerStatus)
 
-QDBusArgument &operator << ( QDBusArgument &arg, const qmmpPlayerStatus &status )
+QDBusArgument &operator <<(QDBusArgument &arg, const qmmpPlayerStatus &status)
 {
     arg.beginStructure();
     arg << status.state;
@@ -52,7 +51,7 @@ QDBusArgument &operator << ( QDBusArgument &arg, const qmmpPlayerStatus &status 
     return arg;
 }
 
-const QDBusArgument &operator >> ( const QDBusArgument &arg, qmmpPlayerStatus &status )
+const QDBusArgument &operator >>(const QDBusArgument &arg, qmmpPlayerStatus &status)
 {
     arg.beginStructure();
     arg >> status.state;
@@ -65,59 +64,53 @@ const QDBusArgument &operator >> ( const QDBusArgument &arg, qmmpPlayerStatus &s
 
 NLqmmp::NLqmmp() : NLMediaPlayer()
 {
-	m_type = Audio;
-	m_name = "qmmp";
-	m_client = new QDBusInterface ( "org.mpris.qmmp", "/Player" );
-	qDBusRegisterMetaType<qmmpPlayerStatus>();
+    m_type = Audio;
+    m_name = "qmmp";
+    m_client = new QDBusInterface("org.mpris.qmmp", "/Player");
+    qDBusRegisterMetaType<qmmpPlayerStatus>();
 }
 
 NLqmmp::~NLqmmp()
 {
-	delete m_client;
+    delete m_client;
 }
 
 void NLqmmp::update()
 {
-	m_playing = false;
-	QString newTrack;
-	if ( !m_client->isValid() )
-	{
-		delete m_client;
-		m_client = new QDBusInterface ( "org.mpris.qmmp", "/Player", "org.freedesktop.MediaPlayer" );
-	}
+    m_playing = false;
+    QString newTrack;
+    if (!m_client->isValid()) {
+        delete m_client;
+        m_client = new QDBusInterface("org.mpris.qmmp", "/Player", "org.freedesktop.MediaPlayer");
+    }
 
-	// see if qmmp is registered with DBUS
-	if ( m_client->isValid() )
-	{
-		// see if it's playing
-		QDBusReply <qmmpPlayerStatus> qmmpstatus = m_client->call ( "GetStatus" );
-		if ( qmmpstatus.value().state == 0 )
-		{
-			m_playing = true;
-		}
+    // see if qmmp is registered with DBUS
+    if (m_client->isValid()) {
+        // see if it's playing
+        QDBusReply <qmmpPlayerStatus> qmmpstatus = m_client->call("GetStatus");
+        if (qmmpstatus.value().state == 0) {
+            m_playing = true;
+        }
 
-		QDBusReply<QVariantMap> metaDataReply = m_client->call ( "GetMetadata" );
-		if ( !metaDataReply.isValid() )
-		{
-			return;
-		}
+        QDBusReply<QVariantMap> metaDataReply = m_client->call("GetMetadata");
+        if (!metaDataReply.isValid()) {
+            return;
+        }
 
-		const QVariantMap &metaData = metaDataReply.value();
+        const QVariantMap &metaData = metaDataReply.value();
 
-		// Fetch title
-		newTrack = metaData["title"].toString();
+        // Fetch title
+        newTrack = metaData["title"].toString();
 
-		if ( newTrack != m_track )
-		{
-			m_newTrack = true;
-			m_track = newTrack;
-		}
+        if (newTrack != m_track) {
+            m_newTrack = true;
+            m_track = newTrack;
+        }
 
-		// Fetch album
-		m_album = metaData["album"].toString();
+        // Fetch album
+        m_album = metaData["album"].toString();
 
-		// Fetch artist
-		m_artist = metaData["artist"].toString();
-	}
-
+        // Fetch artist
+        m_artist = metaData["artist"].toString();
+    }
 }

@@ -1,7 +1,7 @@
 //
 // C++ Interface: %{MODULE}
 //
-// Description: 
+// Description:
 //
 //
 // Author: Roie Kerstein <sf_kersteinroie@bezeqint.net>, (C) 2004
@@ -30,34 +30,34 @@
 
 class BookmarksPlugin : public Kopete::Plugin
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     BookmarksPlugin(QObject *parent, const QVariantList &args);
 
     ~BookmarksPlugin();
-    
+
 private:
-    typedef struct S_URLANDNAME{
-		KUrl url;
-		QString sender;
+    typedef struct S_URLANDNAME {
+        KUrl url;
+        QString sender;
     } URLandName;
-    typedef QMap<KIO::TransferJob*,URLandName> JobsToURLsMap;
-    
+    typedef QMap<KIO::TransferJob *, URLandName> JobsToURLsMap;
+
     JobsToURLsMap m_map;
     BookmarksPrefsSettings m_settings;
-    
-    void addKopeteBookmark( const KUrl &url, const QString &sender );
-    KUrl::List* extractURLsFromString( const QString &text );
+
+    void addKopeteBookmark(const KUrl &url, const QString &sender);
+    KUrl::List *extractURLsFromString(const QString &text);
     KBookmarkGroup getKopeteFolder();
-    KBookmarkGroup getFolder( KBookmarkGroup group, QString folder );
-    bool isURLInGroup( const KUrl &url, KBookmarkGroup group );
-    QTextCodec* getPageEncoding( const QByteArray &data );
+    KBookmarkGroup getFolder(KBookmarkGroup group, QString folder);
+    bool isURLInGroup(const KUrl &url, KBookmarkGroup group);
+    QTextCodec *getPageEncoding(const QByteArray &data);
 public slots:
-    void slotBookmarkURLsInMessage(Kopete::Message & msg);
+    void slotBookmarkURLsInMessage(Kopete::Message &msg);
     void slotReloadSettings();
-    
+
 private slots:
-    void slotAddKopeteBookmark( KIO::Job *transfer, const QByteArray &data );
+    void slotAddKopeteBookmark(KIO::Job *transfer, const QByteArray &data);
 };
 
 #endif

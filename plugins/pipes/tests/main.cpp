@@ -31,20 +31,19 @@
 * pipes for the Pipes plugin.
 */
 
-int main (int argc, char ** argv)
+int main(int argc, char **argv)
 {
-	QCoreApplication app (argc, argv);
-	
-	// open standard input
-	QFile input (&app);
-	input.open (stdin, QIODevice::ReadOnly | QIODevice::Text);
-	
-	// do tests
-	QString parsed = KopeteXmlParserTests::test1 ( input.readAll() );
-	
-	// write modified text to standard out
-	QFile output (&app);
-	output.open (stdout, QIODevice::WriteOnly | QIODevice::Text );
-	output.write ( parsed.toLocal8Bit() );
-}
+    QCoreApplication app(argc, argv);
 
+    // open standard input
+    QFile input(&app);
+    input.open(stdin, QIODevice::ReadOnly | QIODevice::Text);
+
+    // do tests
+    QString parsed = KopeteXmlParserTests::test1(input.readAll());
+
+    // write modified text to standard out
+    QFile output(&app);
+    output.open(stdout, QIODevice::WriteOnly | QIODevice::Text);
+    output.write(parsed.toLocal8Bit());
+}

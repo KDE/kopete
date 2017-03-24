@@ -1,4 +1,4 @@
- /*
+/*
     Copyright (c) 2008 by Igor Janssen  <alaves17@gmail.com>
 
     Kopete    (c) 2008 by the Kopete developers <kopete-devel@kde.org>
@@ -24,17 +24,17 @@ class XDataWidgetField;
 
 class JabberXDataWidget : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	explicit JabberXDataWidget(const XMPP::XData &data, QWidget *parent = nullptr);
-	~JabberXDataWidget();
+    explicit JabberXDataWidget(const XMPP::XData &data, QWidget *parent = nullptr);
+    ~JabberXDataWidget();
 
-	XMPP::XData::FieldList fields() const;
+    XMPP::XData::FieldList fields() const;
 
-	bool isValid() const;
+    bool isValid() const;
 
 private:
-	QList<XDataWidgetField *> mFields;
+    QList<XDataWidgetField *> mFields;
 };
 
 #endif

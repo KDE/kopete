@@ -18,15 +18,14 @@
 #include "behaviorconfig_general.h"
 
 BehaviorConfig_General::BehaviorConfig_General(QWidget *parent)
-	: QWidget(parent)
+    : QWidget(parent)
 {
-	setupUi(this);
+    setupUi(this);
 
-	connect(kcfg_useMessageQueue, SIGNAL(toggled(bool)), this, SLOT(queueToggled(bool)));
+    connect(kcfg_useMessageQueue, SIGNAL(toggled(bool)), this, SLOT(queueToggled(bool)));
 }
 
 void BehaviorConfig_General::queueToggled(bool checked)
 {
-	kcfg_queueUnreadMessages->setEnabled(checked);
+    kcfg_queueUnreadMessages->setEnabled(checked);
 }
-

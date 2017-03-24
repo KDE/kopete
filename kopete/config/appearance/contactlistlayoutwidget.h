@@ -24,30 +24,30 @@
 
 class ContactListLayoutWidget : public QWidget, private Ui::ContactListLayoutWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	ContactListLayoutWidget( QWidget *parent = nullptr );
+    ContactListLayoutWidget(QWidget *parent = nullptr);
 
-	void load();
-	bool save();
+    void load();
+    bool save();
 
 signals:
-	void changed();
+    void changed();
 
 private slots:
-	void emitChanged();
-	void setLayout( const QString &layoutName );
-	void reloadLayoutList();
-	void preview();
-	void remove();
+    void emitChanged();
+    void setLayout(const QString &layoutName);
+    void reloadLayoutList();
+    void preview();
+    void remove();
 
 private:
-	bool saveLayoutData( QString& layoutName, bool showPrompt = false );
+    bool saveLayoutData(QString &layoutName, bool showPrompt = false);
 
 private:
-	QString mCurrentLayoutName;
-	bool mChanged;
-	bool mLoading;
+    QString mCurrentLayoutName;
+    bool mChanged;
+    bool mLoading;
 };
 
 #endif

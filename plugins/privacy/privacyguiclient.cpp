@@ -32,72 +32,73 @@
 class PrivacyPlugin;
 
 PrivacyGUIClient::PrivacyGUIClient(Kopete::ChatSession *parent)
- : QObject(parent), KXMLGUIClient(parent)
+    : QObject(parent)
+    , KXMLGUIClient(parent)
 {
-	//setComponentData(PrivacyPlugin::plugin()->componentData());
+    //setComponentData(PrivacyPlugin::plugin()->componentData());
 
-	m_manager = parent;
+    m_manager = parent;
 
-	// Refuse to build this client, it is based on wrong parameters
-	if(!m_manager || m_manager->members().isEmpty())
-		deleteLater();
+    // Refuse to build this client, it is based on wrong parameters
+    if (!m_manager || m_manager->members().isEmpty()) {
+        deleteLater();
+    }
 
-	QList<Kopete::Contact*> mb=m_manager->members();
+    QList<Kopete::Contact *> mb = m_manager->members();
 
-	actionAddToWhiteList = new QAction( KIcon(QStringLiteral("privacy_whitelist")), i18n("Add to WhiteList" ), this );
-        actionCollection()->addAction( QStringLiteral("addToWhiteList"), actionAddToWhiteList );
-	connect( actionAddToWhiteList, SIGNAL(triggered(bool)), this, SLOT(slotAddToWhiteList()) );
-	actionAddToBlackList = new QAction( KIcon(QStringLiteral("privacy_blacklist")), i18n("Add to BlackList" ), this );
-        actionCollection()->addAction( QStringLiteral("addToBlackList"), actionAddToBlackList );
-	connect( actionAddToBlackList, SIGNAL(triggered(bool)), this, SLOT(slotAddToBlackList()) );
-	actionAddToWhiteList->setEnabled(true);
-	actionAddToBlackList->setEnabled(true);
+    actionAddToWhiteList = new QAction(KIcon(QStringLiteral("privacy_whitelist")), i18n("Add to WhiteList"), this);
+    actionCollection()->addAction(QStringLiteral("addToWhiteList"), actionAddToWhiteList);
+    connect(actionAddToWhiteList, SIGNAL(triggered(bool)), this, SLOT(slotAddToWhiteList()));
+    actionAddToBlackList = new QAction(KIcon(QStringLiteral("privacy_blacklist")), i18n("Add to BlackList"), this);
+    actionCollection()->addAction(QStringLiteral("addToBlackList"), actionAddToBlackList);
+    connect(actionAddToBlackList, SIGNAL(triggered(bool)), this, SLOT(slotAddToBlackList()));
+    actionAddToWhiteList->setEnabled(true);
+    actionAddToBlackList->setEnabled(true);
 
-	setXMLFile(QStringLiteral("privacychatui.rc"));
+    setXMLFile(QStringLiteral("privacychatui.rc"));
 }
-
 
 PrivacyGUIClient::~PrivacyGUIClient()
 {
 }
 
-
 void PrivacyGUIClient::slotAddToBlackList()
 {
-	kDebug(14313) ;
-	Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin(QStringLiteral("kopete_privacy"));
-	if( !plugin )
-		return;
-	kDebug(14313) << "Plugin found";
+    kDebug(14313);
+    Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin(QStringLiteral("kopete_privacy"));
+    if (!plugin) {
+        return;
+    }
+    kDebug(14313) << "Plugin found";
 
-	QList<Kopete::Contact*> members = m_manager->members();
+    QList<Kopete::Contact *> members = m_manager->members();
 
-	QList<const Kopete::Contact *> list;
-	foreach( const Kopete::Contact *contact, members )
-	{
-		if( !(contact == m_manager->myself()) )
-			list.append( contact );
-	}
+    QList<const Kopete::Contact *> list;
+    foreach (const Kopete::Contact *contact, members) {
+        if (!(contact == m_manager->myself())) {
+            list.append(contact);
+        }
+    }
 
-	static_cast<PrivacyPlugin *>(plugin)->addContactsToBlackList( list );
+    static_cast<PrivacyPlugin *>(plugin)->addContactsToBlackList(list);
 }
 
 void PrivacyGUIClient::slotAddToWhiteList()
 {
-	kDebug(14313) ;
-	Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin(QStringLiteral("kopete_privacy"));
-	if( !plugin )
-		return;
+    kDebug(14313);
+    Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin(QStringLiteral("kopete_privacy"));
+    if (!plugin) {
+        return;
+    }
 
-	QList<Kopete::Contact*> members = m_manager->members();
+    QList<Kopete::Contact *> members = m_manager->members();
 
-	QList<const Kopete::Contact *> list;
-	foreach( const Kopete::Contact *contact, members )
-	{
-		if( !(contact == m_manager->myself()) )
-			list.append( contact );
-	}
+    QList<const Kopete::Contact *> list;
+    foreach (const Kopete::Contact *contact, members) {
+        if (!(contact == m_manager->myself())) {
+            list.append(contact);
+        }
+    }
 
-	static_cast<PrivacyPlugin *>(plugin)->addContactsToWhiteList( list );
+    static_cast<PrivacyPlugin *>(plugin)->addContactsToWhiteList(list);
 }
-

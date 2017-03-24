@@ -33,27 +33,24 @@
 #include "kopete_export.h"
 
 namespace Kopete {
-
 namespace AV {
-
 /**
 @author Kopete Developers
 */
-class KOPETE_EXPORT VideoInput{
+class KOPETE_EXPORT VideoInput
+{
 public:
-	VideoInput();
-	~VideoInput();
-	QString name;
-	int  hastuner;
-	__u64 m_standards;
-	bool img_softcorr_autobrightnesscontrast;
-	bool img_softcorr_autocolor;
-	bool img_softcorr_vflip;
-	bool img_softcorr_hflip;
+    VideoInput();
+    ~VideoInput();
+    QString name;
+    int hastuner;
+    __u64 m_standards;
+    bool img_softcorr_autobrightnesscontrast;
+    bool img_softcorr_autocolor;
+    bool img_softcorr_vflip;
+    bool img_softcorr_hflip;
 };
-
 }
-
 }
 
 #endif

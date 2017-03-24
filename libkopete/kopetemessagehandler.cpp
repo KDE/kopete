@@ -19,92 +19,92 @@
 
 #include <kglobal.h>
 
-namespace Kopete
-{
-
+namespace Kopete {
 class MessageHandler::Private
 {
 public:
-	Private() : next(0) {}
-	MessageHandler *next;
+    Private() : next(0)
+    {
+    }
+
+    MessageHandler *next;
 };
 
 MessageHandler::MessageHandler()
- : QObject( 0 ), d( new Private )
+    : QObject(0)
+    , d(new Private)
 {
 }
 
 MessageHandler::~MessageHandler()
 {
-	delete d;
+    delete d;
 }
 
 MessageHandler *MessageHandler::next()
 {
-	return d->next;
+    return d->next;
 }
 
-void MessageHandler::setNext( MessageHandler *next )
+void MessageHandler::setNext(MessageHandler *next)
 {
-	d->next = next;
+    d->next = next;
 }
 
 int MessageHandler::capabilities()
 {
-	return d->next->capabilities();
+    return d->next->capabilities();
 }
 
-void MessageHandler::handleMessageInternal( MessageEvent *event )
+void MessageHandler::handleMessageInternal(MessageEvent *event)
 {
-	connect( event, SIGNAL(accepted(Kopete::MessageEvent*)), this, SLOT(messageAccepted(Kopete::MessageEvent*)) );
-	handleMessage( event );
+    connect(event, SIGNAL(accepted(Kopete::MessageEvent *)), this, SLOT(messageAccepted(Kopete::MessageEvent *)));
+    handleMessage(event);
 }
 
-void MessageHandler::handleMessage( MessageEvent *event )
+void MessageHandler::handleMessage(MessageEvent *event)
 {
-	messageAccepted( event );
+    messageAccepted(event);
 }
 
-void MessageHandler::messageAccepted( MessageEvent *event )
+void MessageHandler::messageAccepted(MessageEvent *event)
 {
-	disconnect( event, SIGNAL(accepted(Kopete::MessageEvent*)), this, SLOT(messageAccepted(Kopete::MessageEvent*)) );
-	d->next->handleMessageInternal( event );
+    disconnect(event, SIGNAL(accepted(Kopete::MessageEvent *)), this, SLOT(messageAccepted(Kopete::MessageEvent *)));
+    d->next->handleMessageInternal(event);
 }
-
 
 class MessageHandlerFactory::Private
 {
 public:
-	static FactoryList &factories();
-	FactoryList::Iterator iterator;
+    static FactoryList &factories();
+    FactoryList::Iterator iterator;
 };
 
 K_GLOBAL_STATIC(MessageHandlerFactory::FactoryList, g_list)
 MessageHandlerFactory::FactoryList& MessageHandlerFactory::Private::factories()
 {
-	return *g_list;
+    return *g_list;
 }
 
 MessageHandlerFactory::MessageHandlerFactory()
-	: d( new Private )
+    : d(new Private)
 {
-	d->iterator = Private::factories().insert( Private::factories().end(), (this));
+    d->iterator = Private::factories().insert(Private::factories().end(), (this));
 }
 
 MessageHandlerFactory::~MessageHandlerFactory()
 {
-	if (g_list.isDestroyed())
-		return;
- 	Private::factories().erase( d->iterator );
-	delete d;
+    if (g_list.isDestroyed()) {
+        return;
+    }
+    Private::factories().erase(d->iterator);
+    delete d;
 }
 
 MessageHandlerFactory::FactoryList MessageHandlerFactory::messageHandlerFactories()
 {
-	return Private::factories();
+    return Private::factories();
 }
-
 }
-
 
 // vim: set noet ts=4 sts=4 sw=4:

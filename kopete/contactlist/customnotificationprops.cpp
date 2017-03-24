@@ -34,15 +34,14 @@
 
 #include <QMetaEnum>
 
-CustomNotificationProps::CustomNotificationProps( QWidget *parent, const QPair<QString,QString> &context, const char * name )
-	: QObject( parent ) , m_item(context)
+CustomNotificationProps::CustomNotificationProps(QWidget *parent, const QPair<QString, QString> &context, const char *name)
+    : QObject(parent)
+    , m_item(context)
 {
-	setObjectName( name );
-	m_notifyWidget = new KNotifyConfigWidget( parent );
-	m_notifyWidget->setApplication(QString() , m_item.first , m_item.second);
+    setObjectName(name);
+    m_notifyWidget = new KNotifyConfigWidget(parent);
+    m_notifyWidget->setApplication(QString(), m_item.first, m_item.second);
 }
-
-
 
 void CustomNotificationProps::dumpData()
 {
@@ -54,12 +53,10 @@ void CustomNotificationProps::resetEventWidgets()
 
 void CustomNotificationProps::storeCurrentCustoms()
 {
-	m_notifyWidget->save();
+    m_notifyWidget->save();
 }
 
-
-QWidget* CustomNotificationProps::widget()
+QWidget *CustomNotificationProps::widget()
 {
-	return m_notifyWidget;
+    return m_notifyWidget;
 }
-

@@ -23,42 +23,39 @@
 #include <kopete_export.h>
 
 namespace Kopete {
-
 class Group;
 class Contactlist;
 class MetaContact;
 
 namespace UI {
-
 /**
 @author Aleix Pol <aleixpol@gmail.com>
 */
 class KOPETE_CONTACT_LIST_EXPORT ContactListProxyModel : public QSortFilterProxyModel
 {
-Q_OBJECT
-	public:
-		ContactListProxyModel(QObject* parent = nullptr);
-		~ContactListProxyModel();
-	
-	public slots:
-		void slotConfigChanged();
-	protected:
-		bool lessThan(const QModelIndex &left, const QModelIndex &right) const Q_DECL_OVERRIDE;
-		bool filterAcceptsRow ( int source_row, const QModelIndex & source_parent ) const Q_DECL_OVERRIDE;
-		bool showOffline;
-		bool showEmptyFolders;
-		int rootRowCount;
-		bool sortScheduled;
-	private slots:
-		// Workaround Qt sorting bug
-		void proxyRowsInserted( const QModelIndex& parent, int start, int end );
-		void proxyRowsRemoved( const QModelIndex& parent, int start, int end );
-		void proxyCheckSort();
-		void forceSort();
-	private:
-		bool searchContactInfo( Kopete::MetaContact *mc, QRegExp searchPattern ) const;
-};
+    Q_OBJECT
+public:
+    ContactListProxyModel(QObject *parent = nullptr);
+    ~ContactListProxyModel();
 
+public slots:
+    void slotConfigChanged();
+protected:
+    bool lessThan(const QModelIndex &left, const QModelIndex &right) const Q_DECL_OVERRIDE;
+    bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const Q_DECL_OVERRIDE;
+    bool showOffline;
+    bool showEmptyFolders;
+    int rootRowCount;
+    bool sortScheduled;
+private slots:
+    // Workaround Qt sorting bug
+    void proxyRowsInserted(const QModelIndex &parent, int start, int end);
+    void proxyRowsRemoved(const QModelIndex &parent, int start, int end);
+    void proxyCheckSort();
+    void forceSort();
+private:
+    bool searchContactInfo(Kopete::MetaContact *mc, QRegExp searchPattern) const;
+};
 }
 }
 

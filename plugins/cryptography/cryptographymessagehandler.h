@@ -27,29 +27,28 @@ class KOPETECRYPTOGRAPHY_EXPORT CryptographyMessageHandlerFactory : public Messa
 {
 public:
 
-	CryptographyMessageHandlerFactory( Message::MessageDirection direction, int position,
-	                             QObject *target, const char *slot );
-	~CryptographyMessageHandlerFactory();
-	
-	MessageHandler *create( ChatSession *manager, Message::MessageDirection direction );
-	int filterPosition( ChatSession *manager, Message::MessageDirection direction );
-	
+    CryptographyMessageHandlerFactory(Message::MessageDirection direction, int position, QObject *target, const char *slot);
+    ~CryptographyMessageHandlerFactory();
+
+    MessageHandler *create(ChatSession *manager, Message::MessageDirection direction);
+    int filterPosition(ChatSession *manager, Message::MessageDirection direction);
+
 private:
-	class Private;
-	Private *d;
+    class Private;
+    Private *d;
 };
 
 class CryptographyMessageHandler : public MessageHandler
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	CryptographyMessageHandler();
-	~CryptographyMessageHandler();
-	
-	void handleMessage( MessageEvent *event );
-	
+    CryptographyMessageHandler();
+    ~CryptographyMessageHandler();
+
+    void handleMessage(MessageEvent *event);
+
 Q_SIGNALS:
-	void handle( Kopete::MessageEvent *event );
+    void handle(Kopete::MessageEvent *event);
 
 private:
 };

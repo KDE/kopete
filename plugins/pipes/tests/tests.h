@@ -16,14 +16,12 @@
 */
 #include <QString>
 
-class KopeteXmlParserTests {
-	
-	public:
-		/*
-		* Change body to a fixed string
-		* Change body foreground color to red
-		*/
-		static QString test1 ( const QString & str );
-		
+class KopeteXmlParserTests
+{
+public:
+    /*
+    * Change body to a fixed string
+    * Change body foreground color to red
+    */
+    static QString test1(const QString &str);
 };
-

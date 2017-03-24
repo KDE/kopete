@@ -33,49 +33,50 @@ class GaduAccount;
 class GaduProtocol;
 class GaduContact;
 class GaduAccount;
-namespace Ui { class GaduPublicDirectory; }
+namespace Ui {
+class GaduPublicDirectory;
+}
 class GaduContact;
 
 class GaduPublicDir : public KDialog
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit GaduPublicDir( GaduAccount* , QWidget *parent = 0 );
-	GaduPublicDir( GaduAccount* , int searchFor, QWidget* parent = 0 );
-	~GaduPublicDir();
-	QPixmap iconForStatus( uint status );
+    explicit GaduPublicDir(GaduAccount *, QWidget *parent = 0);
+    GaduPublicDir(GaduAccount *, int searchFor, QWidget *parent = 0);
+    ~GaduPublicDir();
+    QPixmap iconForStatus(uint status);
 
 private slots:
-	void slotSearch();
-	void slotNewSearch();
-	void slotSearchResult( const SearchResult& result, unsigned int seq );
-	void slotAddContact();
-	void inputChanged( const QString& );
-	void inputChanged( bool );
-	void slotListSelected();
-
+    void slotSearch();
+    void slotNewSearch();
+    void slotSearchResult(const SearchResult &result, unsigned int seq);
+    void slotAddContact();
+    void inputChanged(const QString &);
+    void inputChanged(bool);
+    void slotListSelected();
 
 private:
-	void getData();
-	bool validateData();
-	void createWidget();
-	void initConnections();
+    void getData();
+    bool validateData();
+    void createWidget();
+    void initConnections();
 
-	GaduProtocol*		p;
-	GaduAccount*		mAccount;
-	GaduContact*		mContact;
-	Ui::GaduPublicDirectory*	mMainWidget;
+    GaduProtocol *p;
+    GaduAccount *mAccount;
+    GaduContact *mContact;
+    Ui::GaduPublicDirectory *mMainWidget;
 
 // form data
-	QString	fName;
-	QString	fSurname;
-	QString	fNick;
-	QString	fCity;
-	int		fUin;
-	int		fGender;
-	bool		fOnlyOnline;
-	int		fAgeFrom;
-	int		fAgeTo;
+    QString fName;
+    QString fSurname;
+    QString fNick;
+    QString fCity;
+    int fUin;
+    int fGender;
+    bool fOnlyOnline;
+    int fAgeFrom;
+    int fAgeTo;
 };
 #endif

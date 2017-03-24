@@ -21,29 +21,33 @@
 
 #include <kabc/addresseelist.h>
 
-namespace Kopete { 	class MetaContact; }
-namespace Ui { class ExportKeysUI; }
+namespace Kopete {
+class MetaContact;
+}
+namespace Ui {
+class ExportKeysUI;
+}
 
 /**
 Dialog that exports public keys from Kopete to KABC
 
-	@author Charles Connell <charles@connells.org>
+    @author Charles Connell <charles@connells.org>
 */
 class ExportKeys : public KDialog
 {
-		Q_OBJECT
-	public:
-		explicit ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent = 0 );
+    Q_OBJECT
+public:
+    explicit ExportKeys (QList<Kopete::MetaContact *> mcs, QWidget *parent = 0);
 
-		~ExportKeys();
-		
-	protected slots:
-		void accept();
+    ~ExportKeys();
 
-	private:
-		Ui::ExportKeysUI * mUi;
-		KABC::AddresseeList mAddressees;
-		QList<Kopete::MetaContact*> mMetaContacts;
+protected slots:
+    void accept();
+
+private:
+    Ui::ExportKeysUI *mUi;
+    KABC::AddresseeList mAddressees;
+    QList<Kopete::MetaContact *> mMetaContacts;
 };
 
 #endif

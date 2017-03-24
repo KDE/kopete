@@ -19,26 +19,20 @@
 
 #include <qpointer.h>
 
-
-namespace Kopete
-{
-
-
-namespace
-{
-	QPointer<QWidget> g_mainWidget;
+namespace Kopete {
+namespace {
+QPointer<QWidget> g_mainWidget;
 }
 
-void UI::Global::setMainWidget( QWidget *widget )
+void UI::Global::setMainWidget(QWidget *widget)
 {
-	g_mainWidget = widget;
+    g_mainWidget = widget;
 }
 
 QWidget *UI::Global::mainWidget()
 {
-	return g_mainWidget;
+    return g_mainWidget;
 }
 }
 
 // vim: set noet ts=4 sts=4 sw=4:
-

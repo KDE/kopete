@@ -2,7 +2,7 @@
 // 2003 06 26
 
 #include "historyplugin.h" //just needed because we are a member of this class
-                           // we don't use any history function here
+// we don't use any history function here
 
 /**-----------------------------------------------------------
  * CONVERTER from the old kopete history.
@@ -40,304 +40,286 @@
 
 void HistoryPlugin::convertOldHistory()
 {
-	bool deleteFiles=  KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-		i18n( "Would you like to remove the old history files?" ) , i18n( "History Converter" ), KStandardGuiItem::del(), KGuiItem( i18n("Keep") ) ) == KMessageBox::Yes;
+    bool deleteFiles = KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
+                                                  i18n("Would you like to remove the old history files?"), i18n("History Converter"), KStandardGuiItem::del(),
+                                                  KGuiItem(i18n("Keep"))) == KMessageBox::Yes;
 
-	QProgressDialog *progressDlg = new QProgressDialog(Kopete::UI::Global::mainWidget() );
-	progressDlg->setWindowTitle(i18n( "History converter" ));
-	progressDlg->setModal(true); //modal  to  make sure the user will not doing stupid things (we have a qApp->processEvents())
-	progressDlg->setCancelButton(0); //because i am too lazy to allow to cancel
+    QProgressDialog *progressDlg = new QProgressDialog(Kopete::UI::Global::mainWidget());
+    progressDlg->setWindowTitle(i18n("History converter"));
+    progressDlg->setModal(true); //modal  to  make sure the user will not doing stupid things (we have a qApp->processEvents())
+    progressDlg->setCancelButton(0); //because i am too lazy to allow to cancel
 
+    QString kopetedir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString::fromLatin1("kopete");
+    QDir d(kopetedir);   //d should point to ~/.kde/share/apps/kopete/
 
-	QString kopetedir=QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString::fromLatin1( "kopete");
-	QDir d( kopetedir ); //d should point to ~/.kde/share/apps/kopete/
+    d.setFilter(QDir::Dirs);
 
-	d.setFilter( QDir::Dirs  );
+    const QFileInfoList list = d.entryInfoList();
+    foreach (const QFileInfo &fi, list) {
+        QString protocolId;
+        QString accountId;
 
-	const QFileInfoList list = d.entryInfoList();
-	foreach(const QFileInfo &fi, list)
-	{
-		QString protocolId;
-		QString accountId;
+        if (Kopete::Protocol *p = dynamic_cast<Kopete::Protocol *>(Kopete::PluginManager::self()->plugin(fi.fileName()))) {
+            protocolId = p->pluginId();
 
-		if( Kopete::Protocol *p = dynamic_cast<Kopete::Protocol *>( Kopete::PluginManager::self()->plugin( fi.fileName() ) ) )
-		{
-			protocolId=p->pluginId();
-			
-			QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts(p);
-			Kopete::Account *a = accountList.first();
-			if(a)
-				accountId=a->accountId();
-		}
+            QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts(p);
+            Kopete::Account *a = accountList.first();
+            if (a) {
+                accountId = a->accountId();
+            }
+        }
 
-		if(accountId.isNull() || protocolId.isNull())
-		{
-			if(fi.fileName() == "MSNProtocol" || fi.fileName() == "msn_logs" )
-			{
-				protocolId="MSNProtocol";
-				accountId=KSharedConfig::openConfig()->group("MSN").readEntry( "UserID" );
-			}
-			else if(fi.fileName() == "ICQProtocol" || fi.fileName() == "icq_logs" )
-			{
-				protocolId="ICQProtocol";
-				accountId=KSharedConfig::openConfig()->group("ICQ").readEntry( "UIN" );
-			}
-			else if(fi.fileName() == "AIMProtocol" || fi.fileName() == "aim_logs" )
-			{
-				protocolId="AIMProtocol";
-				accountId=KSharedConfig::openConfig()->group("AIM").readEntry( "UserID" );
-			}
-			else if(fi.fileName() == "OscarProtocol" )
-			{
-				protocolId="AIMProtocol";
-				accountId=KSharedConfig::openConfig()->group("OSCAR").readEntry( "UserID" );
-			}
-			else if(fi.fileName() == "JabberProtocol" || fi.fileName() == "jabber_logs")
-			{
-				protocolId="JabberProtocol";
-				accountId=KSharedConfig::openConfig()->group("Jabber").readEntry( "UserID" );
-			}
-			//TODO: gadu, wp
-		}
+        if (accountId.isNull() || protocolId.isNull()) {
+            if (fi.fileName() == "MSNProtocol" || fi.fileName() == "msn_logs") {
+                protocolId = "MSNProtocol";
+                accountId = KSharedConfig::openConfig()->group("MSN").readEntry("UserID");
+            } else if (fi.fileName() == "ICQProtocol" || fi.fileName() == "icq_logs") {
+                protocolId = "ICQProtocol";
+                accountId = KSharedConfig::openConfig()->group("ICQ").readEntry("UIN");
+            } else if (fi.fileName() == "AIMProtocol" || fi.fileName() == "aim_logs") {
+                protocolId = "AIMProtocol";
+                accountId = KSharedConfig::openConfig()->group("AIM").readEntry("UserID");
+            } else if (fi.fileName() == "OscarProtocol") {
+                protocolId = "AIMProtocol";
+                accountId = KSharedConfig::openConfig()->group("OSCAR").readEntry("UserID");
+            } else if (fi.fileName() == "JabberProtocol" || fi.fileName() == "jabber_logs") {
+                protocolId = "JabberProtocol";
+                accountId = KSharedConfig::openConfig()->group("Jabber").readEntry("UserID");
+            }
+            //TODO: gadu, wp
+        }
 
-		if(!protocolId.isEmpty() || !accountId.isEmpty())
-		{
-			QDir d2( fi.absoluteFilePath() );
-			d2.setFilter( QDir::Files  );
-			d2.setNameFilters( QStringList("*.log") );
-			const QFileInfoList list = d2.entryInfoList();;
+        if (!protocolId.isEmpty() || !accountId.isEmpty()) {
+            QDir d2(fi.absoluteFilePath());
+            d2.setFilter(QDir::Files);
+            d2.setNameFilters(QStringList("*.log"));
+            const QFileInfoList list = d2.entryInfoList();
 
-			progressDlg->reset();
-			progressDlg->setMaximum(d2.count());
-			progressDlg->setLabelText(i18n("Parsing the old history in %1", fi.fileName()));
-			progressDlg->show(); //if it was not already showed...
+            progressDlg->reset();
+            progressDlg->setMaximum(d2.count());
+            progressDlg->setLabelText(i18n("Parsing the old history in %1", fi.fileName()));
+            progressDlg->show(); //if it was not already showed...
 
-			foreach(const QFileInfo &fi2, list)
-			{
-				//we assume that all "-" are dots.  (like in hotmail.com)
-				QString contactId=fi2.fileName().remove(".log").replace('-', '.');
+            foreach (const QFileInfo &fi2, list) {
+                //we assume that all "-" are dots.  (like in hotmail.com)
+                QString contactId = fi2.fileName().remove(".log").replace('-', '.');
 
-				if(!contactId.isEmpty() )
-				{
-					progressDlg->setLabelText(i18n("Parsing the old history in %1:\n%2", fi.fileName(), contactId));
-					qApp->processEvents(0); //make sure the text is updated in the progressDlg
+                if (!contactId.isEmpty()) {
+                    progressDlg->setLabelText(i18n("Parsing the old history in %1:\n%2", fi.fileName(), contactId));
+                    qApp->processEvents(0); //make sure the text is updated in the progressDlg
 
-					int month=0;
-					int year=0;
-					QDomDocument doc;
-					QDomElement docElem;
+                    int month = 0;
+                    int year = 0;
+                    QDomDocument doc;
+                    QDomElement docElem;
 
-					QDomElement msgelement;
-					QDomNode node;
-					QDomDocument xmllist;
-					Kopete::Message::MessageDirection dir;
-					QString body, date, nick;
-					QString buffer, msgBlock;
-					char cbuf[CBUFLENGTH]; // buffer for the log file
+                    QDomElement msgelement;
+                    QDomNode node;
+                    QDomDocument xmllist;
+                    Kopete::Message::MessageDirection dir;
+                    QString body, date, nick;
+                    QString buffer, msgBlock;
+                    char cbuf[CBUFLENGTH]; // buffer for the log file
 
-					QString logFileName = fi2.absoluteFilePath();
+                    QString logFileName = fi2.absoluteFilePath();
 
-					// open the file
-					FILE *f = fopen(QFile::encodeName(logFileName), "r");
+                    // open the file
+                    FILE *f = fopen(QFile::encodeName(logFileName), "r");
 
-					// create a new <message> block
-					while ( ! feof( f ) )
-					{
-						if ( ! fgets(cbuf, CBUFLENGTH, f) )
-							break;
-						buffer = QString::fromUtf8(cbuf);
+                    // create a new <message> block
+                    while (!feof(f))
+                    {
+                        if (!fgets(cbuf, CBUFLENGTH, f)) {
+                            break;
+                        }
+                        buffer = QString::fromUtf8(cbuf);
 
-						while ( strchr(cbuf, '\n') == NULL && !feof(f) )
-						{
-							if ( ! fgets( cbuf, CBUFLENGTH, f ) )
-								break;
-							buffer += QString::fromUtf8(cbuf);
-						}
+                        while (strchr(cbuf, '\n') == NULL && !feof(f))
+                        {
+                            if (!fgets(cbuf, CBUFLENGTH, f)) {
+                                break;
+                            }
+                            buffer += QString::fromUtf8(cbuf);
+                        }
 
-						if( buffer.startsWith( QString::fromLatin1( "<message " ) ) )
-						{
-							msgBlock = buffer;
+                        if (buffer.startsWith(QString::fromLatin1("<message "))) {
+                            msgBlock = buffer;
 
-							// find the end of the message block
-							while( !feof( f ) && buffer != QString::fromLatin1( "</message>\n" ) /*strcmp("</message>\n", cbuf )*/ )
-							{
-								if ( ! fgets(cbuf, CBUFLENGTH, f) )
-									break;
-								buffer = QString::fromUtf8(cbuf);
+                            // find the end of the message block
+                            while (!feof(f) && buffer != QString::fromLatin1("</message>\n") /*strcmp("</message>\n", cbuf )*/)
+                            {
+                                if (!fgets(cbuf, CBUFLENGTH, f)) {
+                                    break;
+                                }
+                                buffer = QString::fromUtf8(cbuf);
 
-								while ( strchr(cbuf, '\n') == NULL && !feof(f) )
-								{
-									if ( ! fgets( cbuf, CBUFLENGTH, f ) )
-										break;
-									buffer += QString::fromUtf8(cbuf);
-								}
-								msgBlock.append(buffer);
-							}
+                                while (strchr(cbuf, '\n') == NULL && !feof(f))
+                                {
+                                    if (!fgets(cbuf, CBUFLENGTH, f)) {
+                                        break;
+                                    }
+                                    buffer += QString::fromUtf8(cbuf);
+                                }
+                                msgBlock.append(buffer);
+                            }
 
-							// now let's work on this new block
-							xmllist.setContent(msgBlock, false);
-							msgelement = xmllist.documentElement();
-							node = msgelement.firstChild();
+                            // now let's work on this new block
+                            xmllist.setContent(msgBlock, false);
+                            msgelement = xmllist.documentElement();
+                            node = msgelement.firstChild();
 
-							if( msgelement.attribute( QString::fromLatin1( "direction" ) ) == QString::fromLatin1( "inbound" ) )
-								dir = Kopete::Message::Inbound;
-							else
-								dir = Kopete::Message::Outbound;
+                            if (msgelement.attribute(QString::fromLatin1("direction")) == QString::fromLatin1("inbound")) {
+                                dir = Kopete::Message::Inbound;
+                            } else {
+                                dir = Kopete::Message::Outbound;
+                            }
 
-							// Read all the elements.
-							QString tagname;
-							QDomElement element;
+                            // Read all the elements.
+                            QString tagname;
+                            QDomElement element;
 
-							while ( ! node.isNull() )
-							{
-								if ( node.isElement() )
-								{
-									element = node.toElement();
-									tagname = element.tagName();
+                            while (!node.isNull())
+                            {
+                                if (node.isElement()) {
+                                    element = node.toElement();
+                                    tagname = element.tagName();
 
-									if( tagname == QString::fromLatin1( "srcnick" ) )
-										nick = element.text();
+                                    if (tagname == QString::fromLatin1("srcnick")) {
+                                        nick = element.text();
+                                    } else if (tagname == QString::fromLatin1("date")) {
+                                        date = element.text();
+                                    } else if (tagname == QString::fromLatin1("body")) {
+                                        body = element.text().trimmed();
+                                    }
+                                }
 
-									else if( tagname == QString::fromLatin1( "date" ) )
-										date = element.text();
-									else if( tagname == QString::fromLatin1( "body" ) )
-										body = element.text().trimmed();
-								}
+                                node = node.nextSibling();
+                            }
+                            //FIXME!! The date in logs writed with kopete running with QT 3.0 is Localised.
+                            // so QT can't parse it correctly.
+                            QDateTime dt = QDateTime::fromString(date);
+                            if (dt.date().month() != month || dt.date().year() != year) {
+                                if (!docElem.isNull()) {
+                                    QDate date(year, month, 1);
+                                    QString name = protocolId.replace(QRegExp(QString::fromLatin1("[./~?*]")), QString::fromLatin1("-"))
+                                                   +QString::fromLatin1("/")
+                                                   +contactId.replace(QRegExp(QString::fromLatin1("[./~?*]")), QString::fromLatin1("-"))
+                                                   +date.toString(".yyyyMM");
+                                    QSaveFile file(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString("kopete/logs/"  + name + QString::fromLatin1(
+                                                                                                                                                          ".xml")));
+                                    if (file.open(QIODevice::WriteOnly)) {
+                                        QString buf;
+                                        QTextStream stream(&buf, QIODevice::WriteOnly);
+                                        stream.setCodec("UTF-16");   // QtXML works only with UTF-16
+                                        doc.doctype().save(stream, 1);
+                                        doc.documentElement().save(stream, 1);   // QDomDocument::save() override stream codec to UTF-8
+                                        file.write(buf.toUtf8());
+                                        file.commit();
+                                    }
+                                }
 
-								node = node.nextSibling();
-							}
-							//FIXME!! The date in logs writed with kopete running with QT 3.0 is Localised.
-							// so QT can't parse it correctly.
-							QDateTime dt=QDateTime::fromString(date);
-							if(dt.date().month() != month || dt.date().year() != year)
-							{
-								if(!docElem.isNull())
-								{
-									QDate date(year,month,1);
-									QString name = protocolId.replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
-											QString::fromLatin1( "/" ) +
-											contactId.replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
-											date.toString(".yyyyMM");
-									QSaveFile file(  QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString( "kopete/logs/"  + name + QString::fromLatin1( ".xml" ) )  );
-									if( file.open(QIODevice::WriteOnly) )
-									{
-										QString buf;
-										QTextStream stream( &buf, QIODevice::WriteOnly );
-										stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
-										doc.doctype().save( stream, 1 );
-										doc.documentElement().save( stream, 1 ); // QDomDocument::save() override stream codec to UTF-8
-										file.write( buf.toUtf8() );
-										file.commit();
-									}
-								}
+                                month = dt.date().month();
+                                year = dt.date().year();
+                                docElem = QDomElement();
+                            }
 
+                            if (docElem.isNull()) {
+                                doc = QDomDocument("Kopete-History");
+                                docElem = doc.createElement("kopete-history");
+                                docElem.setAttribute("version", "0.7");
+                                doc.appendChild(docElem);
+                                QDomElement headElem = doc.createElement("head");
+                                docElem.appendChild(headElem);
+                                QDomElement dateElem = doc.createElement("date");
+                                dateElem.setAttribute("year", QString::number(year));
+                                dateElem.setAttribute("month", QString::number(month));
+                                headElem.appendChild(dateElem);
+                                QDomElement myselfElem = doc.createElement("contact");
+                                myselfElem.setAttribute("type", "myself");
+                                myselfElem.setAttribute("contactId", accountId);
+                                headElem.appendChild(myselfElem);
+                                QDomElement contactElem = doc.createElement("contact");
+                                contactElem.setAttribute("contactId", contactId);
+                                headElem.appendChild(contactElem);
+                                QDomElement importElem = doc.createElement("imported");
+                                importElem.setAttribute("from", fi.fileName());
+                                importElem.setAttribute("date", QDateTime::currentDateTime().toString());
+                                headElem.appendChild(importElem);
+                            }
+                            QDomElement msgElem = doc.createElement("msg");
+                            msgElem.setAttribute("in", dir == Kopete::Message::Outbound ? "0" : "1");
+                            msgElem.setAttribute("from", dir == Kopete::Message::Outbound ? accountId : contactId);
+                            msgElem.setAttribute("nick", nick);    //do we have to set this?
+                            msgElem.setAttribute("time", QString::number(dt.date().day()) + ' ' +  QString::number(dt.time().hour()) + ':' + QString::number(dt.time().minute()));
+                            QDomText msgNode = doc.createTextNode(body.trimmed());
+                            docElem.appendChild(msgElem);
+                            msgElem.appendChild(msgNode);
+                        }
+                    }
 
-								month=dt.date().month();
-								year=dt.date().year();
-								docElem=QDomElement();
-							}
+                    fclose(f);
+                    if (deleteFiles) {
+                        d2.remove(fi2.fileName());
+                    }
 
-							if(docElem.isNull())
-							{
-								doc=QDomDocument("Kopete-History");
-								docElem= doc.createElement( "kopete-history" );
-								docElem.setAttribute ( "version" , "0.7" );
-								doc.appendChild( docElem );
-								QDomElement headElem = doc.createElement( "head" );
-								docElem.appendChild( headElem );
-								QDomElement dateElem = doc.createElement( "date" );
-								dateElem.setAttribute( "year",  QString::number(year) );
-								dateElem.setAttribute( "month", QString::number(month) );
-								headElem.appendChild(dateElem);
-								QDomElement myselfElem = doc.createElement( "contact" );
-								myselfElem.setAttribute( "type",  "myself" );
-								myselfElem.setAttribute( "contactId", accountId  );
-								headElem.appendChild(myselfElem);
-								QDomElement contactElem = doc.createElement( "contact" );
-								contactElem.setAttribute( "contactId", contactId );
-								headElem.appendChild(contactElem);
-								QDomElement importElem = doc.createElement( "imported" );
-								importElem.setAttribute( "from",  fi.fileName() );
-								importElem.setAttribute( "date", QDateTime::currentDateTime().toString()  );
-								headElem.appendChild(importElem);
-							}
-							QDomElement msgElem = doc.createElement( "msg" );
-							msgElem.setAttribute( "in",  dir==Kopete::Message::Outbound ? "0" : "1" );
-							msgElem.setAttribute( "from", dir==Kopete::Message::Outbound ? accountId : contactId  );
-							msgElem.setAttribute( "nick",  nick ); //do we have to set this?
-							msgElem.setAttribute( "time",  QString::number(dt.date().day()) + ' ' +  QString::number(dt.time().hour()) + ':' + QString::number(dt.time().minute())  );
-							QDomText msgNode = doc.createTextNode( body.trimmed() );
-							docElem.appendChild( msgElem );
-							msgElem.appendChild( msgNode );
-						}
-					}
-
-					fclose( f );
-					if(deleteFiles)
-						d2.remove(fi2.fileName());
-
-					if(!docElem.isNull())
-					{
-						QDate date(year,month,1);
-						QString name = protocolId.replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
-								QString::fromLatin1( "/" ) +
-								contactId.replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
-								date.toString(".yyyyMM");
-						QSaveFile file( QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString( "kopete/logs/"  + name + QString::fromLatin1( ".xml" ) )  );
-						if( file.open(QIODevice::WriteOnly) )
-						{
-							QString buf;
-							QTextStream stream( &buf, QIODevice::WriteOnly );
-							stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
-							doc.doctype().save( stream, 1 );
-							doc.documentElement().save( stream, 1 ); // QDomDocument::save() override stream codec to UTF-8
-							file.write( buf.toUtf8() );
-							file.commit();
-						}
-					}
-
-				}
-				progressDlg->setValue(progressDlg->value()+1);
-			}
-		}
-	}
-	delete progressDlg;
-
+                    if (!docElem.isNull()) {
+                        QDate date(year, month, 1);
+                        QString name = protocolId.replace(QRegExp(QString::fromLatin1("[./~?*]")), QString::fromLatin1("-"))
+                                       +QString::fromLatin1("/")
+                                       +contactId.replace(QRegExp(QString::fromLatin1("[./~?*]")), QString::fromLatin1("-"))
+                                       +date.toString(".yyyyMM");
+                        QSaveFile file(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString("kopete/logs/"  + name + QString::fromLatin1(".xml")));
+                        if (file.open(QIODevice::WriteOnly)) {
+                            QString buf;
+                            QTextStream stream(&buf, QIODevice::WriteOnly);
+                            stream.setCodec("UTF-16");   // QtXML works only with UTF-16
+                            doc.doctype().save(stream, 1);
+                            doc.documentElement().save(stream, 1);   // QDomDocument::save() override stream codec to UTF-8
+                            file.write(buf.toUtf8());
+                            file.commit();
+                        }
+                    }
+                }
+                progressDlg->setValue(progressDlg->value()+1);
+            }
+        }
+    }
+    delete progressDlg;
 }
-
 
 bool HistoryPlugin::detectOldHistory()
 {
-	QString version=KSharedConfig::openConfig()->group("History Plugin").readEntry( "Version" ,"0.6" );
+    QString version = KSharedConfig::openConfig()->group("History Plugin").readEntry("Version", "0.6");
 
-	if(version != "0.6")
-		return false;
+    if (version != "0.6") {
+        return false;
+    }
 
+    QDir d(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString::fromLatin1("kopete/logs"));
+    d.setFilter(QDir::Dirs);
+    if (d.count() >= 3) { // '.' and '..' are included
+        return false;  //the new history already exists
+    }
+    QDir d2(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString::fromLatin1("kopete"));
+    d2.setFilter(QDir::Dirs);
+    const QFileInfoList list = d2.entryInfoList();
 
-	QDir d( QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString::fromLatin1( "kopete/logs")) ;
-	d.setFilter( QDir::Dirs  );
-	if(d.count() >= 3)  // '.' and '..' are included
-		return false;  //the new history already exists
+    foreach (const QFileInfo &fi, list) {
+        if (dynamic_cast<Kopete::Protocol *>(Kopete::PluginManager::self()->plugin(fi.fileName()))) {
+            return true;
+        }
 
-	QDir d2( QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString::fromLatin1( "kopete")) ;
-	d2.setFilter( QDir::Dirs  );
-	const QFileInfoList list = d2.entryInfoList();
-
-	foreach(const QFileInfo &fi, list)
-	{
-		if( dynamic_cast<Kopete::Protocol *>( Kopete::PluginManager::self()->plugin( fi.fileName() ) ) )
-			return true;
-
-		if(fi.fileName() == "MSNProtocol" || fi.fileName() == "msn_logs" )
-			return true;
-		else if(fi.fileName() == "ICQProtocol" || fi.fileName() == "icq_logs" )
-			return true;
-		else if(fi.fileName() == "AIMProtocol" || fi.fileName() == "aim_logs" )
-			return true;
-		else if(fi.fileName() == "OscarProtocol" )
-			return true;
-		else if(fi.fileName() == "JabberProtocol" || fi.fileName() == "jabber_logs")
-			return true;
-	}
-	return false;
+        if (fi.fileName() == "MSNProtocol" || fi.fileName() == "msn_logs") {
+            return true;
+        } else if (fi.fileName() == "ICQProtocol" || fi.fileName() == "icq_logs") {
+            return true;
+        } else if (fi.fileName() == "AIMProtocol" || fi.fileName() == "aim_logs") {
+            return true;
+        } else if (fi.fileName() == "OscarProtocol") {
+            return true;
+        } else if (fi.fileName() == "JabberProtocol" || fi.fileName() == "jabber_logs") {
+            return true;
+        }
+    }
+    return false;
 }

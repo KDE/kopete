@@ -33,83 +33,95 @@
 #include "bonjourprotocol.h"
 #include "bonjourcontactconnection.h"
 
-
 static const char AvailabilityStatusAvailId[] = "avail";
-static const char AvailabilityStatusAwayId[] =  "away";
+static const char AvailabilityStatusAwayId[] = "away";
 // TODO: add this status to the account
 // static const char AvailabilityStatusDnDId[] =   "dnd";
 
-
-BonjourAccount::BonjourAccount( BonjourProtocol *parent, const QString& accountID )
-: Kopete::Account ( parent, accountID ), username(), firstName(), emailAddress(), lastName(),
-	service(NULL), localServer(NULL), listeningPort(0), bonjourGroup(NULL), browser(NULL), unknownConnections()
+BonjourAccount::BonjourAccount(BonjourProtocol *parent, const QString &accountID)
+    : Kopete::Account(parent, accountID)
+    , username()
+    , firstName()
+    , emailAddress()
+    , lastName()
+    , service(NULL)
+    , localServer(NULL)
+    , listeningPort(0)
+    , bonjourGroup(NULL)
+    , browser(NULL)
+    , unknownConnections()
 {
-	// Init the myself contact
-	setMyself( new BonjourContact( this, accountId(), Kopete::ContactList::self()->myself() ) );
-	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
+    // Init the myself contact
+    setMyself(new BonjourContact(this, accountId(), Kopete::ContactList::self()->myself()));
+    myself()->setOnlineStatus(BonjourProtocol::protocol()->bonjourOffline);
 
-	// All Contacts Go To The Bonjour Group
-	bonjourGroup = Kopete::ContactList::self()->findGroup(QStringLiteral("Bonjour"));
+    // All Contacts Go To The Bonjour Group
+    bonjourGroup = Kopete::ContactList::self()->findGroup(QStringLiteral("Bonjour"));
 
-	// Clean out Contacts from last time when kopete starts up
-	wipeOutAllContacts();
+    // Clean out Contacts from last time when kopete starts up
+    wipeOutAllContacts();
 
-	parseConfig();
+    parseConfig();
 }
 
 void BonjourAccount::parseConfig()
 {
-	username = configGroup()->readEntry("username").toLocal8Bit();
-	firstName = configGroup()->readEntry("firstName").toLocal8Bit();
-	lastName = configGroup()->readEntry("lastName").toLocal8Bit();
-	emailAddress = configGroup()->readEntry("emailAddress").toLocal8Bit();
+    username = configGroup()->readEntry("username").toLocal8Bit();
+    firstName = configGroup()->readEntry("firstName").toLocal8Bit();
+    lastName = configGroup()->readEntry("lastName").toLocal8Bit();
+    emailAddress = configGroup()->readEntry("emailAddress").toLocal8Bit();
 }
 
 BonjourAccount::~BonjourAccount()
 {
-	if (isConnected())
-		disconnect();
+    if (isConnected()) {
+        disconnect();
+    }
 }
+
 #if 0
-KActionMenu* BonjourAccount::actionMenu()
+KActionMenu *BonjourAccount::actionMenu()
 {
-	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
+    KActionMenu *mActionMenu = Kopete::Account::actionMenu();
 
-	return mActionMenu;
+    return mActionMenu;
 }
+
 #endif
-bool BonjourAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
+bool BonjourAccount::createContact(const QString &contactId, Kopete::MetaContact *parentContact)
 {
-	BonjourContact* newContact = new BonjourContact( this, contactId, parentContact );
-	return newContact != 0L;
+    BonjourContact *newContact = new BonjourContact(this, contactId, parentContact);
+    return newContact != 0L;
 }
 
-void BonjourAccount::setAway( bool away, const QString & /* reason */ )
+void BonjourAccount::setAway(bool away, const QString & /* reason */)
 {
-	if ( away )
-		slotGoAway();
-	else
-		slotGoOnline();
+    if (away) {
+        slotGoAway();
+    } else {
+        slotGoOnline();
+    }
 }
 
-void BonjourAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& /*options*/)
+void BonjourAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions & /*options*/)
 {
-	if ( status.status() == Kopete::OnlineStatus::Online &&
-			myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
-		slotGoOnline();
-	else if (status.status() == Kopete::OnlineStatus::Online &&
-			(myself()->onlineStatus().status() == Kopete::OnlineStatus::Away ||
-				myself()->onlineStatus().status() == Kopete::OnlineStatus::Away) )
-		setAway( false, reason.message() );
-	else if ( status.status() == Kopete::OnlineStatus::Offline )
-		slotGoOffline();
-	else if ( status.status() == Kopete::OnlineStatus::Away )
-		slotGoAway( /* reason */ );
+    if (status.status() == Kopete::OnlineStatus::Online
+        && myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline) {
+        slotGoOnline();
+    } else if (status.status() == Kopete::OnlineStatus::Online
+               && (myself()->onlineStatus().status() == Kopete::OnlineStatus::Away
+                   || myself()->onlineStatus().status() == Kopete::OnlineStatus::Away)) {
+        setAway(false, reason.message());
+    } else if (status.status() == Kopete::OnlineStatus::Offline) {
+        slotGoOffline();
+    } else if (status.status() == Kopete::OnlineStatus::Away) {
+        slotGoAway(/* reason */);
+    }
 }
 
-void BonjourAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
+void BonjourAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
-	setOnlineStatus( myself()->onlineStatus(), statusMessage, Kopete::Account::KeepSpecialFlags );
+    setOnlineStatus(myself()->onlineStatus(), statusMessage, Kopete::Account::KeepSpecialFlags);
 }
 
 // This Function Starts a new Local Server
@@ -117,373 +129,383 @@ void BonjourAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage
 // Make Sure IP Tables lets this port through!!
 bool BonjourAccount::startLocalServer()
 {
-        int port = 5298;
+    int port = 5298;
 
-        localServer = new QTcpServer();
+    localServer = new QTcpServer();
 
-        while (port < 5305)             // No of Attempts
-                if (localServer->listen(QHostAddress::Any, port)) {
-			QObject::connect(localServer, SIGNAL(newConnection()),
-					this, SLOT(newIncomingConnection()));
-			listeningPort = port;
-                        break;
-		}
-                else
-                        port++;
+    while (port < 5305) {               // No of Attempts
+        if (localServer->listen(QHostAddress::Any, port)) {
+            QObject::connect(localServer, SIGNAL(newConnection()),
+                             this, SLOT(newIncomingConnection()));
+            listeningPort = port;
+            break;
+        } else {
+            port++;
+        }
+    }
 
-	qDebug()<<"Listening On Port: "<<listeningPort;
+    qDebug()<<"Listening On Port: "<<listeningPort;
 
-        return localServer->isListening();
+    return localServer->isListening();
 }
 
 void BonjourAccount::startBrowse()
 {
-	// Delete All Contacts Before we start looking for new ones
-	wipeOutAllContacts();
+    // Delete All Contacts Before we start looking for new ones
+    wipeOutAllContacts();
 
-	browser = new KDNSSD::ServiceBrowser(QStringLiteral("_presence._tcp"));
-	
-	QObject::connect(browser,SIGNAL(serviceAdded(KDNSSD::RemoteService::Ptr)),
-			this,SLOT(comingOnline(KDNSSD::RemoteService::Ptr)));
-	QObject::connect(browser,SIGNAL(serviceRemoved(KDNSSD::RemoteService::Ptr)),
-			this,SLOT(goingOffline(KDNSSD::RemoteService::Ptr)));
+    browser = new KDNSSD::ServiceBrowser(QStringLiteral("_presence._tcp"));
 
-	qDebug()<<"Starting Browser";
-	browser->startBrowse();
+    QObject::connect(browser, SIGNAL(serviceAdded(KDNSSD::RemoteService::Ptr)),
+                     this, SLOT(comingOnline(KDNSSD::RemoteService::Ptr)));
+    QObject::connect(browser, SIGNAL(serviceRemoved(KDNSSD::RemoteService::Ptr)),
+                     this, SLOT(goingOffline(KDNSSD::RemoteService::Ptr)));
+
+    qDebug()<<"Starting Browser";
+    browser->startBrowse();
 }
 
 void BonjourAccount::startPublish()
 {
-	if (! username.contains('@')) {
-		username.append("@");
-		username.append(KDNSSD::ServiceBrowser::getLocalHostName().toUtf8());
-	}
+    if (!username.contains('@')) {
+        username.append("@");
+        username.append(KDNSSD::ServiceBrowser::getLocalHostName().toUtf8());
+    }
 
-	service = new KDNSSD::PublicService(username, QStringLiteral("_presence._tcp"), listeningPort);
+    service = new KDNSSD::PublicService(username, QStringLiteral("_presence._tcp"), listeningPort);
 
-        QMap <QString, QByteArray> map;
-        map.insert(QStringLiteral("1st"),  firstName);
-        map.insert(QStringLiteral("email"), emailAddress);
-        map.insert(QStringLiteral("last"), lastName);
-        map.insert(QStringLiteral("node"), "kopete");
-        map.insert(QStringLiteral("port.p2pj"), QByteArray::number(listeningPort));	// This Number Actually Ignored
-        map.insert(QStringLiteral("status"), AvailabilityStatusAvailId);
-        map.insert(QStringLiteral("txtvers"), "1");
-        map.insert(QStringLiteral("vc"), "!");
-        map.insert(QStringLiteral("ver"), "0.0.1");
+    QMap <QString, QByteArray> map;
+    map.insert(QStringLiteral("1st"), firstName);
+    map.insert(QStringLiteral("email"), emailAddress);
+    map.insert(QStringLiteral("last"), lastName);
+    map.insert(QStringLiteral("node"), "kopete");
+    map.insert(QStringLiteral("port.p2pj"), QByteArray::number(listeningPort));     // This Number Actually Ignored
+    map.insert(QStringLiteral("status"), AvailabilityStatusAvailId);
+    map.insert(QStringLiteral("txtvers"), "1");
+    map.insert(QStringLiteral("vc"), "!");
+    map.insert(QStringLiteral("ver"), "0.0.1");
 
-        service->setTextData(map);
+    service->setTextData(map);
 
-	qDebug()<<"Starting Publish";
-	QObject::connect(service, SIGNAL(published(bool)), this, SLOT(published(bool)));
-        service->publishAsync();
+    qDebug()<<"Starting Publish";
+    QObject::connect(service, SIGNAL(published(bool)), this, SLOT(published(bool)));
+    service->publishAsync();
 }
 
 void BonjourAccount::published(bool success)
 {
-	// If we have successfully published, great :)
-	if (success) {
-		qDebug()<<"Publish Successful";
-	} else {
-		qDebug()<<"Publish Failed";
-		disconnect();
-		KMessageBox::error(Kopete::UI::Global::mainWidget(),
-		i18n("Unable to publish Bonjour service. Currently the Bonjour plugin only works with Avahi."));
-	}
+    // If we have successfully published, great :)
+    if (success) {
+        qDebug()<<"Publish Successful";
+    } else {
+        qDebug()<<"Publish Failed";
+        disconnect();
+        KMessageBox::error(Kopete::UI::Global::mainWidget(),
+                           i18n("Unable to publish Bonjour service. Currently the Bonjour plugin only works with Avahi."));
+    }
 }
 
-void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
+void BonjourAccount::connect(const Kopete::OnlineStatus & /* initialStatus */)
 {
-	if (username.isEmpty())
-		username = accountId().toUtf8();
+    if (username.isEmpty()) {
+        username = accountId().toUtf8();
+    }
 
-	if (KDNSSD::ServiceBrowser::isAvailable() != KDNSSD::ServiceBrowser::Working) {
-		KMessageBox::error(Kopete::UI::Global::mainWidget(),
-		i18n("Unable to connect to the local mDNS server. Please ensure the Avahi daemon is running."));
-		return;
-	}
+    if (KDNSSD::ServiceBrowser::isAvailable() != KDNSSD::ServiceBrowser::Working) {
+        KMessageBox::error(Kopete::UI::Global::mainWidget(),
+                           i18n("Unable to connect to the local mDNS server. Please ensure the Avahi daemon is running."));
+        return;
+    }
 
-	if (! startLocalServer())
-		return;
+    if (!startLocalServer()) {
+        return;
+    }
 
-	startPublish();
+    startPublish();
 
-	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOnline );
+    myself()->setOnlineStatus(BonjourProtocol::protocol()->bonjourOnline);
 
-	startBrowse();
+    startBrowse();
 }
 
 void BonjourAccount::comingOnline(KDNSSD::RemoteService::Ptr pointer)
 {
-	if (! pointer->resolve()) {
-		qDebug()<<"Unable to Resolve! Dumping Contact";
-	}
+    if (!pointer->resolve()) {
+        qDebug()<<"Unable to Resolve! Dumping Contact";
+    }
 
-	qDebug()<<"Coming Online:"<<pointer->serviceName();
-	
-	if (pointer->serviceName() == username)			// Don't Add Ourselves
-		return;
+    qDebug()<<"Coming Online:"<<pointer->serviceName();
 
-        QMap <QString, QByteArray> map = pointer->textData();
-	QString cfirst = QString::fromLocal8Bit(map[QStringLiteral("1st")]);
-	QString clast = QString::fromLocal8Bit(map[QStringLiteral("last")]);
-	
-	QString display;
-	if (! cfirst.isEmpty() && ! clast.isEmpty())
-		display = cfirst + ' ' + clast;
-	else if (! cfirst.isEmpty())
-		display = cfirst;
-	else if (! clast.isEmpty())
-		display = clast;
-	else
-		display = pointer->serviceName().split('@')[0];
+    if (pointer->serviceName() == username) {       // Don't Add Ourselves
+        return;
+    }
 
-	QString hostName = pointer->hostName();
-	qDebug()<<"Hostname is:"<<hostName;
-	if (! hostName.isEmpty()) {
-		QHostAddress hostAddress = KDNSSD::ServiceBrowser::resolveHostName(hostName);
-		qDebug()<<"Host Address is:"<<hostAddress;
+    QMap <QString, QByteArray> map = pointer->textData();
+    QString cfirst = QString::fromLocal8Bit(map[QStringLiteral("1st")]);
+    QString clast = QString::fromLocal8Bit(map[QStringLiteral("last")]);
 
-		if (hostAddress != QHostAddress() ) {
-			Kopete::MetaContact *mc;
+    QString display;
+    if (!cfirst.isEmpty() && !clast.isEmpty()) {
+        display = cfirst + ' ' + clast;
+    } else if (!cfirst.isEmpty()) {
+        display = cfirst;
+    } else if (!clast.isEmpty()) {
+        display = clast;
+    } else {
+        display = pointer->serviceName().split('@')[0];
+    }
 
-			mc = addContact(pointer->serviceName(), display, bonjourGroup);
+    QString hostName = pointer->hostName();
+    qDebug()<<"Hostname is:"<<hostName;
+    if (!hostName.isEmpty()) {
+        QHostAddress hostAddress = KDNSSD::ServiceBrowser::resolveHostName(hostName);
+        qDebug()<<"Host Address is:"<<hostAddress;
 
-			BonjourContact *c = (BonjourContact *) mc->findContact(
-								protocol()->pluginId(),
-								accountId(),
-								pointer->serviceName());
+        if (hostAddress != QHostAddress()) {
+            Kopete::MetaContact *mc;
 
-			c->setremoteHostName(hostName);
-			c->setremoteAddress(hostAddress);
-			c->setremotePort(pointer->port());
-			c->settextdata(pointer->textData());
-			c->setusername(pointer->serviceName());
-			c->setOnlineStatus(Kopete::OnlineStatus::Online);
-		}
-	}
+            mc = addContact(pointer->serviceName(), display, bonjourGroup);
+
+            BonjourContact *c = (BonjourContact *)mc->findContact(
+                protocol()->pluginId(),
+                accountId(),
+                pointer->serviceName());
+
+            c->setremoteHostName(hostName);
+            c->setremoteAddress(hostAddress);
+            c->setremotePort(pointer->port());
+            c->settextdata(pointer->textData());
+            c->setusername(pointer->serviceName());
+            c->setOnlineStatus(Kopete::OnlineStatus::Online);
+        }
+    }
 }
 
 void BonjourAccount::goingOffline(KDNSSD::RemoteService::Ptr pointer)
 {
-	pointer->resolve();
+    pointer->resolve();
 
-	// In case we have lost connection, this may return NULL
-	Kopete::Contact *c = contacts().value( pointer->serviceName() );
+    // In case we have lost connection, this may return NULL
+    Kopete::Contact *c = contacts().value(pointer->serviceName());
 
-	if (c)
-		c->setOnlineStatus(Kopete::OnlineStatus::Offline);
+    if (c) {
+        c->setOnlineStatus(Kopete::OnlineStatus::Offline);
+    }
 }
 
 void BonjourAccount::wipeOutContact(Kopete::Contact *c)
 {
-	if (c == myself() || c == NULL)
-		return;
+    if (c == myself() || c == NULL) {
+        return;
+    }
 
-	Kopete::MetaContact *mc = c->metaContact();
+    Kopete::MetaContact *mc = c->metaContact();
 
-	c->setOnlineStatus(Kopete::OnlineStatus::Offline);
-	mc->removeContact(c);
+    c->setOnlineStatus(Kopete::OnlineStatus::Offline);
+    mc->removeContact(c);
 
-	// FIXME: DeleteContact task should be extended and used
-	c->deleteLater();
+    // FIXME: DeleteContact task should be extended and used
+    c->deleteLater();
 
-	if (mc->contacts().isEmpty())
-		Kopete::ContactList::self()->removeMetaContact(mc);
+    if (mc->contacts().isEmpty()) {
+        Kopete::ContactList::self()->removeMetaContact(mc);
+    }
 }
 
 void BonjourAccount::wipeOutAllContacts()
 {
-	QList <Kopete::Contact *> list = contacts().values();
+    QList <Kopete::Contact *> list = contacts().values();
 
-	for (QList <Kopete::Contact *>::Iterator i = list.begin(); i != list.end(); i++)
-		wipeOutContact(*i);
+    for (QList <Kopete::Contact *>::Iterator i = list.begin(); i != list.end(); i++) {
+        wipeOutContact(*i);
+    }
 }
 
 void BonjourAccount::disconnect()
 {
-	wipeOutAllContacts();
+    wipeOutAllContacts();
 
-	delete browser;
-	browser = NULL;
+    delete browser;
+    browser = NULL;
 
-	if (localServer) {
-		localServer->close();
-		delete localServer;
-		localServer = NULL;
-	}
+    if (localServer) {
+        localServer->close();
+        delete localServer;
+        localServer = NULL;
+    }
 
-	listeningPort = 0;
+    listeningPort = 0;
 
-	if (service) {
-		service->stop();
-		delete service;
-		service = NULL;
-	}
+    if (service) {
+        service->stop();
+        delete service;
+        service = NULL;
+    }
 
-	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
+    myself()->setOnlineStatus(BonjourProtocol::protocol()->bonjourOffline);
 }
 
-void BonjourAccount::slotGoOnline ()
+void BonjourAccount::slotGoOnline()
 {
-	qDebug();
+    qDebug();
 
-	if (!isConnected())
-		connect();
-	else {
-		if (service) {
-			QMap <QString, QByteArray> map = service->textData();
-			map[QStringLiteral("status")] = AvailabilityStatusAvailId;
-			service->setTextData(map);
-		}
-		myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOnline );
-	}
+    if (!isConnected()) {
+        connect();
+    } else {
+        if (service) {
+            QMap <QString, QByteArray> map = service->textData();
+            map[QStringLiteral("status")] = AvailabilityStatusAvailId;
+            service->setTextData(map);
+        }
+        myself()->setOnlineStatus(BonjourProtocol::protocol()->bonjourOnline);
+    }
 }
 
-void BonjourAccount::slotGoAway ()
+void BonjourAccount::slotGoAway()
 {
-	qDebug();
+    qDebug();
 
-	if (!isConnected ())
-		connect();
+    if (!isConnected()) {
+        connect();
+    }
 
-	if (service) {
-		QMap <QString, QByteArray> map = service->textData();
-		map[QStringLiteral("status")] = AvailabilityStatusAwayId; // "dnd" would be another option here
-		service->setTextData(map);
-	}
+    if (service) {
+        QMap <QString, QByteArray> map = service->textData();
+        map[QStringLiteral("status")] = AvailabilityStatusAwayId; // "dnd" would be another option here
+        service->setTextData(map);
+    }
 
-	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourAway );
+    myself()->setOnlineStatus(BonjourProtocol::protocol()->bonjourAway);
 }
 
-
-void BonjourAccount::slotGoOffline ()
+void BonjourAccount::slotGoOffline()
 {
-	qDebug();
+    qDebug();
 
-	if (isConnected ())
-		disconnect ();
+    if (isConnected()) {
+        disconnect();
+    }
 }
 
 void BonjourAccount::setusername(const QByteArray &n_username)
 {
-	username = n_username;
+    username = n_username;
 }
 
 void BonjourAccount::setfirstName(const QByteArray &n_firstName)
 {
-	firstName = n_firstName;
+    firstName = n_firstName;
 }
 
 void BonjourAccount::setlastName(const QByteArray &n_lastName)
 {
-	lastName = n_lastName;
+    lastName = n_lastName;
 }
 
 void BonjourAccount::setemailAddress(const QByteArray &n_emailAddress)
 {
-	emailAddress = n_emailAddress;
+    emailAddress = n_emailAddress;
 }
 
 const QByteArray BonjourAccount::getusername() const
 {
-	return username;
+    return username;
 }
 
 const QByteArray BonjourAccount::getfirstName() const
 {
-	return firstName;
+    return firstName;
 }
 
 const QByteArray BonjourAccount::getlastName() const
 {
-	return lastName;
+    return lastName;
 }
 
 const QByteArray BonjourAccount::getemailAddress() const
 {
-	return emailAddress;
+    return emailAddress;
 }
 
 QList <BonjourContact *> BonjourAccount::getContactsByAddress(const QHostAddress &addr)
 {
-	QList <BonjourContact *> list;
+    QList <BonjourContact *> list;
 
-	QList <Kopete::Contact *> c = contacts().values();
+    QList <Kopete::Contact *> c = contacts().values();
 
-	for (QList <Kopete::Contact *>::iterator i = c.begin(); i != c.end(); i++) {
-		BonjourContact *c = (BonjourContact *) *i;
-		if (c->isRemoteAddress(addr))
-			list<<c;
-	}
+    for (QList <Kopete::Contact *>::iterator i = c.begin(); i != c.end(); i++) {
+        BonjourContact *c = (BonjourContact *)*i;
+        if (c->isRemoteAddress(addr)) {
+            list<<c;
+        }
+    }
 
-	return list;
+    return list;
 }
 
 void BonjourAccount::newIncomingConnection()
 {
-	// Get Next Connection
-	QTcpSocket *sock = localServer->nextPendingConnection();
+    // Get Next Connection
+    QTcpSocket *sock = localServer->nextPendingConnection();
 
-	BonjourContactConnection *bcc = new BonjourContactConnection(sock);
-	QObject::connect(bcc, SIGNAL(discoveredUserName(BonjourContactConnection*,QString)),
-			this, SLOT(discoveredUserName(BonjourContactConnection*,QString)));;
-	QObject::connect(bcc, SIGNAL(usernameNotInStream(BonjourContactConnection*)),
-			this, SLOT(usernameNotInStream(BonjourContactConnection*)));;
+    BonjourContactConnection *bcc = new BonjourContactConnection(sock);
+    QObject::connect(bcc, SIGNAL(discoveredUserName(BonjourContactConnection *,QString)),
+                     this, SLOT(discoveredUserName(BonjourContactConnection *,QString)));
+    QObject::connect(bcc, SIGNAL(usernameNotInStream(BonjourContactConnection *)),
+                     this, SLOT(usernameNotInStream(BonjourContactConnection *)));
 
-	unknownConnections << bcc;
+    unknownConnections << bcc;
 }
 
 void BonjourAccount::discoveredUserName(BonjourContactConnection *conn, const QString &user)
 {
-	qDebug()<<"User Making Contact (unverified): "<<user;
+    qDebug()<<"User Making Contact (unverified): "<<user;
 
-	BonjourContact *c;
+    BonjourContact *c;
 
-	if (! (c = verifyUser(conn, user))) {
-		qDebug()<<"Ignoring Unverified User: "<<user;
-		return;
-	}
-		
-	qDebug()<<"User Verified: "<<user;
+    if (!(c = verifyUser(conn, user))) {
+        qDebug()<<"Ignoring Unverified User: "<<user;
+        return;
+    }
 
-	unknownConnections.removeAll(conn);
+    qDebug()<<"User Verified: "<<user;
 
-	c->setConnection(conn);
+    unknownConnections.removeAll(conn);
+
+    c->setConnection(conn);
 }
 
 void BonjourAccount::usernameNotInStream(BonjourContactConnection *conn)
 {
-	QList <BonjourContact *> list = getContactsByAddress(conn->getHostAddress());
+    QList <BonjourContact *> list = getContactsByAddress(conn->getHostAddress());
 
-	qDebug()<<"Looking Up Via IP Address"<<conn->getHostAddress()<<list;
+    qDebug()<<"Looking Up Via IP Address"<<conn->getHostAddress()<<list;
 
-	// Set this connection to first user in the list
-	if (list.size()) {
-		BonjourContact *c = list[0];
-	
-		qDebug()<<"Assigned to Contact: "<<c->getusername();
+    // Set this connection to first user in the list
+    if (list.size()) {
+        BonjourContact *c = list[0];
 
-		unknownConnections.removeAll(conn);
+        qDebug()<<"Assigned to Contact: "<<c->getusername();
 
-		conn->setRemoteAndLocal(c->getusername(), username);
-		c->setConnection(conn);
-	}
+        unknownConnections.removeAll(conn);
+
+        conn->setRemoteAndLocal(c->getusername(), username);
+        c->setConnection(conn);
+    }
 }
-
 
 BonjourContact *BonjourAccount::verifyUser(BonjourContactConnection *conn, const QString &user)
 {
-	// First Check the User Exists
-	if (!contacts().value(user))
-		return NULL;
+    // First Check the User Exists
+    if (!contacts().value(user)) {
+        return NULL;
+    }
 
-	BonjourContact *c = (BonjourContact *) contacts().value(user);
+    BonjourContact *c = (BonjourContact *)contacts().value(user);
 
-	if (c->getremoteAddress() != conn->getHostAddress())
-		return NULL;
+    if (c->getremoteAddress() != conn->getHostAddress()) {
+        return NULL;
+    }
 
-	return c;
+    return c;
 }
-	
-

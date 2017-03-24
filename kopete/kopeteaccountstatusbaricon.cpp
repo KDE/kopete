@@ -29,74 +29,71 @@
 #include <kopetecontact.h>
 #include <kopetestatusrootaction.h>
 
-KopeteAccountStatusBarIcon::KopeteAccountStatusBarIcon( Kopete::Account *account, QWidget *parent )
-: QLabel( parent ), mAccount(account), mMovie(0)
+KopeteAccountStatusBarIcon::KopeteAccountStatusBarIcon(Kopete::Account *account, QWidget *parent)
+    : QLabel(parent)
+    , mAccount(account)
+    , mMovie(0)
 {
-	setFixedSize ( 16, 16 );
-	setCursor(QCursor(Qt::PointingHandCursor));
+    setFixedSize(16, 16);
+    setCursor(QCursor(Qt::PointingHandCursor));
 
-	connect( account, SIGNAL(colorChanged(QColor)), this, SLOT(statusIconChanged()) );
-	connect( account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
-	         this, SLOT(statusIconChanged()) );
+    connect(account, SIGNAL(colorChanged(QColor)), this, SLOT(statusIconChanged()));
+    connect(account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+            this, SLOT(statusIconChanged()));
 
-	statusIconChanged();
+    statusIconChanged();
 }
 
 KopeteAccountStatusBarIcon::~KopeteAccountStatusBarIcon()
 {
-	if ( mMovie )
-	{
-		mMovie->stop();
-		delete mMovie;
-	}
+    if (mMovie) {
+        mMovie->stop();
+        delete mMovie;
+    }
 }
 
-void KopeteAccountStatusBarIcon::mousePressEvent( QMouseEvent *event )
+void KopeteAccountStatusBarIcon::mousePressEvent(QMouseEvent *event)
 {
-	KActionMenu *actionMenu = new KActionMenu( mAccount->accountId(), mAccount );
-	if ( !mAccount->hasCustomStatusMenu() )
-		Kopete::StatusRootAction::createAccountStatusActions( mAccount, actionMenu );
+    KActionMenu *actionMenu = new KActionMenu(mAccount->accountId(), mAccount);
+    if (!mAccount->hasCustomStatusMenu()) {
+        Kopete::StatusRootAction::createAccountStatusActions(mAccount, actionMenu);
+    }
 
-	mAccount->fillActionMenu( actionMenu );
+    mAccount->fillActionMenu(actionMenu);
 
-	actionMenu->menu()->exec( QPoint( event->globalX(), event->globalY() ) );
-	delete actionMenu;
+    actionMenu->menu()->exec(QPoint(event->globalX(), event->globalY()));
+    delete actionMenu;
 }
 
 void KopeteAccountStatusBarIcon::statusIconChanged()
 {
-	Kopete::Contact* myself = mAccount->myself();
+    Kopete::Contact *myself = mAccount->myself();
 
-	if ( mMovie )
-	{
-		mMovie->stop();
-		delete mMovie;
-		mMovie = 0;
-	}
+    if (mMovie) {
+        mMovie->stop();
+        delete mMovie;
+        mMovie = 0;
+    }
 
-	if ( myself->onlineStatus().status() == Kopete::OnlineStatus::Connecting && !myself->onlineStatus().overlayIcons().isEmpty() )
-		mMovie = KIconLoader::global()->loadMovie( myself->onlineStatus().overlayIcons().first(), KIconLoader::Small );
+    if (myself->onlineStatus().status() == Kopete::OnlineStatus::Connecting && !myself->onlineStatus().overlayIcons().isEmpty()) {
+        mMovie = KIconLoader::global()->loadMovie(myself->onlineStatus().overlayIcons().first(), KIconLoader::Small);
+    }
 
-	if ( !mMovie )
-	{
-		setPixmap( myself->onlineStatus().iconFor( myself->account() ).pixmap( 16, 16 ) );
-	}
-	else
-	{
-		mMovie->setCacheMode( QMovie::CacheAll );
-		setMovie( mMovie );
-		mMovie->start();
-	}
+    if (!mMovie) {
+        setPixmap(myself->onlineStatus().iconFor(myself->account()).pixmap(16, 16));
+    } else {
+        mMovie->setCacheMode(QMovie::CacheAll);
+        setMovie(mMovie);
+        mMovie->start();
+    }
 }
 
-bool KopeteAccountStatusBarIcon::event( QEvent *event )
+bool KopeteAccountStatusBarIcon::event(QEvent *event)
 {
-	if ( event->type() == QEvent::ToolTip )
-	{
-		QHelpEvent *helpEvent = static_cast<QHelpEvent*>(event);
-		QToolTip::showText( helpEvent->globalPos(), mAccount->myself()->toolTip() );
-	}
+    if (event->type() == QEvent::ToolTip) {
+        QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+        QToolTip::showText(helpEvent->globalPos(), mAccount->myself()->toolTip());
+    }
 
-	return QLabel::event( event );
+    return QLabel::event(event);
 }
-

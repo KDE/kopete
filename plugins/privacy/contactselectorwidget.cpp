@@ -24,56 +24,54 @@
 #include <metacontactselectorwidget.h>
 #include "ui_contactselectorwidget_base.h"
 
-ContactSelectorWidget::ContactSelectorWidget( QWidget *parent )
-	: QWidget(parent)
+ContactSelectorWidget::ContactSelectorWidget(QWidget *parent)
+    : QWidget(parent)
 {
-	mUi = new Ui_ContactSelectorWidget_Base;
+    mUi = new Ui_ContactSelectorWidget_Base;
 
-	QBoxLayout *layout = new QVBoxLayout(this);
-	QWidget *widget = new QWidget(this);
-	mUi->setupUi(widget);
-	layout->addWidget(widget);
+    QBoxLayout *layout = new QVBoxLayout(this);
+    QWidget *widget = new QWidget(this);
+    mUi->setupUi(widget);
+    layout->addWidget(widget);
 
-	QList<KPluginInfo> plugins = Kopete::PluginManager::self()->availablePlugins(QStringLiteral("Protocols"));
-	for( QList<KPluginInfo>::Iterator it = plugins.begin(); it != plugins.end(); ++it )
-	{
-		Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin( it->pluginName() );
-		if( plugin )
-			mUi->comboProtocol->addItem( SmallIcon(plugin->pluginIcon()), plugin->displayName(), plugin->pluginId() );
-	}
-	
-	connect(mUi->radioAddExistingMetaContact, SIGNAL(toggled(bool)), mUi->metaContactSelector, SLOT(setEnabled(bool)));
-	connect(mUi->radioAnotherContact, SIGNAL(toggled(bool)), mUi->editContact, SLOT(setEnabled(bool)));
-	connect(mUi->radioAnotherContact, SIGNAL(toggled(bool)), mUi->comboProtocol, SLOT(setEnabled(bool)));
+    QList<KPluginInfo> plugins = Kopete::PluginManager::self()->availablePlugins(QStringLiteral("Protocols"));
+    for (QList<KPluginInfo>::Iterator it = plugins.begin(); it != plugins.end(); ++it) {
+        Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin(it->pluginName());
+        if (plugin) {
+            mUi->comboProtocol->addItem(SmallIcon(plugin->pluginIcon()), plugin->displayName(), plugin->pluginId());
+        }
+    }
+
+    connect(mUi->radioAddExistingMetaContact, SIGNAL(toggled(bool)), mUi->metaContactSelector, SLOT(setEnabled(bool)));
+    connect(mUi->radioAnotherContact, SIGNAL(toggled(bool)), mUi->editContact, SLOT(setEnabled(bool)));
+    connect(mUi->radioAnotherContact, SIGNAL(toggled(bool)), mUi->comboProtocol, SLOT(setEnabled(bool)));
 }
 
 ContactSelectorWidget::~ContactSelectorWidget()
 {
-       delete mUi;
+    delete mUi;
 }
 
 QList<AccountListEntry> ContactSelectorWidget::contacts()
 {
-	if( mUi->radioAddExistingMetaContact->isChecked() )
-	{
-		QList<AccountListEntry> list;
-		if(!mUi->metaContactSelector->metaContact())
-			return list;
-		foreach( Kopete::Contact *contact, mUi->metaContactSelector->metaContact()->contacts() )
-		{
-			list.append( AccountListEntry( contact->contactId(), contact->protocol() ) );
-		}
-		return list;
-	}
-	else
-	{
-		QList<AccountListEntry> list;
-		Kopete::Protocol *protocol = static_cast<Kopete::Protocol *>( Kopete::PluginManager::self()->plugin( 
-				mUi->comboProtocol->itemData( mUi->comboProtocol->currentIndex() ).toString() ) );
-		
-		if( protocol )
-			list.append( AccountListEntry( mUi->editContact->text(), protocol ) );
-		
-		return list;
-	}
+    if (mUi->radioAddExistingMetaContact->isChecked()) {
+        QList<AccountListEntry> list;
+        if (!mUi->metaContactSelector->metaContact()) {
+            return list;
+        }
+        foreach (Kopete::Contact *contact, mUi->metaContactSelector->metaContact()->contacts()) {
+            list.append(AccountListEntry(contact->contactId(), contact->protocol()));
+        }
+        return list;
+    } else {
+        QList<AccountListEntry> list;
+        Kopete::Protocol *protocol = static_cast<Kopete::Protocol *>(Kopete::PluginManager::self()->plugin(
+                                                                         mUi->comboProtocol->itemData(mUi->comboProtocol->currentIndex()).toString()));
+
+        if (protocol) {
+            list.append(AccountListEntry(mUi->editContact->text(), protocol));
+        }
+
+        return list;
+    }
 }

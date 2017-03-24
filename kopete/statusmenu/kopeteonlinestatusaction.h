@@ -20,32 +20,29 @@
 
 #include <QAction>
 
-namespace Kopete
-{
-	class OnlineStatus;
+namespace Kopete {
+class OnlineStatus;
 
 /**
- * 
+ *
  */
 class OnlineStatusAction : public QAction
 {
-	Q_OBJECT
-  public:
-	OnlineStatusAction ( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent );
-	~OnlineStatusAction();
+    Q_OBJECT
+public:
+    OnlineStatusAction (const OnlineStatus &status, const QString &text, const QIcon &pix, QObject *parent);
+    ~OnlineStatusAction();
 
-  signals:
-	void activated( const Kopete::OnlineStatus& status );
-  private slots:
-	void slotActivated();
-  private:
-	class Private;
-	Private * const d;
+signals:
+    void activated(const Kopete::OnlineStatus &status);
+private slots:
+    void slotActivated();
+private:
+    class Private;
+    Private *const d;
 };
-
 }  //END namespace Kopete
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

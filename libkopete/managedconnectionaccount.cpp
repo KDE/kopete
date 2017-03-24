@@ -20,53 +20,47 @@
 #include "connectionmanager.h"
 #include "kopeteuiglobal.h"
 
-
-namespace Kopete
+namespace Kopete {
+ManagedConnectionAccount::ManagedConnectionAccount(Protocol *parent, const QString &acctId)
+    : PasswordedAccount(parent, acctId)
+    , m_waitingForConnection(false)
 {
-	
-ManagedConnectionAccount::ManagedConnectionAccount( Protocol *parent, const QString &acctId  )
-	: PasswordedAccount( parent, acctId ), m_waitingForConnection( false )
-{
-	QObject::connect( ConnectionManager::self(), SIGNAL(statusChanged(QString,NetworkStatus::EnumStatus)),
-										SLOT(slotConnectionStatusChanged(QString,NetworkStatus::EnumStatus)) );
+    QObject::connect(ConnectionManager::self(), SIGNAL(statusChanged(QString,NetworkStatus::EnumStatus)),
+                     SLOT(slotConnectionStatusChanged(QString,NetworkStatus::EnumStatus)));
 }
 
-void ManagedConnectionAccount::connectWithPassword( const QString &password )
+void ManagedConnectionAccount::connectWithPassword(const QString &password)
 {
-	m_password = password;
-	NetworkStatus::EnumStatus status = ConnectionManager::self()->status( QString() );
-	if ( status == NetworkStatus::NoNetworks )
-		performConnectWithPassword( password );
-	else
-	{
-		m_waitingForConnection = true;
-		// need to adapt libkopete so we know the hostname in this class and whether the connection was user initiated
-		// for now, these are the default parameters to always bring up a connection to "the internet".
-		NetworkStatus::EnumRequestResult response = ConnectionManager::self()->requestConnection( Kopete::UI::Global::mainWidget(), QString(), true );
-		if ( response == NetworkStatus::Connected )
-		{
-			m_waitingForConnection = false;
-			performConnectWithPassword( password );
-		}
-		else if ( response == NetworkStatus::UserRefused || response == NetworkStatus::Unavailable )
-			disconnect();
-	}
+    m_password = password;
+    NetworkStatus::EnumStatus status = ConnectionManager::self()->status(QString());
+    if (status == NetworkStatus::NoNetworks) {
+        performConnectWithPassword(password);
+    } else {
+        m_waitingForConnection = true;
+        // need to adapt libkopete so we know the hostname in this class and whether the connection was user initiated
+        // for now, these are the default parameters to always bring up a connection to "the internet".
+        NetworkStatus::EnumRequestResult response = ConnectionManager::self()->requestConnection(Kopete::UI::Global::mainWidget(), QString(), true);
+        if (response == NetworkStatus::Connected) {
+            m_waitingForConnection = false;
+            performConnectWithPassword(password);
+        } else if (response == NetworkStatus::UserRefused || response == NetworkStatus::Unavailable) {
+            disconnect();
+        }
+    }
 }
 
-void ManagedConnectionAccount::slotConnectionStatusChanged( const QString & host, NetworkStatus::EnumStatus status )
+void ManagedConnectionAccount::slotConnectionStatusChanged(const QString &host, NetworkStatus::EnumStatus status)
 {
-	Q_UNUSED(host); // as above, we didn't register a hostname, so treat any connection as our own.
-	
-	if ( m_waitingForConnection && ( status == NetworkStatus::Online || status == NetworkStatus::NoNetworks ) )
-	{
-		m_waitingForConnection = false;
-		performConnectWithPassword( m_password );
-	}
-	else if ( isConnected() && ( status == NetworkStatus::Offline 
-						 || status == NetworkStatus::ShuttingDown 
-						 || status == NetworkStatus::OfflineDisconnected 
-				 		 || status == NetworkStatus::OfflineFailed ) )
-		disconnect();
+    Q_UNUSED(host); // as above, we didn't register a hostname, so treat any connection as our own.
+
+    if (m_waitingForConnection && (status == NetworkStatus::Online || status == NetworkStatus::NoNetworks)) {
+        m_waitingForConnection = false;
+        performConnectWithPassword(m_password);
+    } else if (isConnected() && (status == NetworkStatus::Offline
+                                 || status == NetworkStatus::ShuttingDown
+                                 || status == NetworkStatus::OfflineDisconnected
+                                 || status == NetworkStatus::OfflineFailed)) {
+        disconnect();
+    }
 }
-		
 } // end namespace Kopete

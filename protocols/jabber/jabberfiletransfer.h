@@ -1,4 +1,4 @@
- /*
+/*
   * jabberfiletransfer.h
   *
   * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
@@ -24,54 +24,56 @@
 
 class QString;
 class JabberAccount;
-namespace Kopete { class Transfer; }
-namespace Kopete { class FileTransferInfo; }
+namespace Kopete {
+class Transfer;
+}
+namespace Kopete {
+class FileTransferInfo;
+}
 class JabberBaseContact;
 
 class JabberFileTransfer : public QObject
 {
-
-Q_OBJECT
+    Q_OBJECT
 
 public:
-	/**
-	 * Constructor for an incoming transfer
-	 */
-	JabberFileTransfer ( JabberAccount *account, XMPP::FileTransfer *incomingTransfer );
+    /**
+     * Constructor for an incoming transfer
+     */
+    JabberFileTransfer (JabberAccount *account, XMPP::FileTransfer *incomingTransfer);
 
-	/**
-	 * Constructor for an outgoing transfer
-	 */
-	JabberFileTransfer ( JabberAccount *account, JabberBaseContact *contact, const QString &file );
+    /**
+     * Constructor for an outgoing transfer
+     */
+    JabberFileTransfer (JabberAccount *account, JabberBaseContact *contact, const QString &file);
 
-	~JabberFileTransfer ();
+    ~JabberFileTransfer ();
 
 private slots:
-	void slotIncomingTransferAccepted ( Kopete::Transfer *transfer, const QString &fileName );
-	void slotTransferRefused ( const Kopete::FileTransferInfo &transfer );
-	void slotTransferResult ();
-	void slotTransferError ( int errorCode );
+    void slotIncomingTransferAccepted(Kopete::Transfer *transfer, const QString &fileName);
+    void slotTransferRefused(const Kopete::FileTransferInfo &transfer);
+    void slotTransferResult();
+    void slotTransferError(int errorCode);
 
-	void slotOutgoingConnected ();
-	void slotOutgoingBytesWritten ( qint64 nrWritten );
+    void slotOutgoingConnected();
+    void slotOutgoingBytesWritten(qint64 nrWritten);
 
-	void slotIncomingDataReady ( const QByteArray &data );
+    void slotIncomingDataReady(const QByteArray &data);
 
-	void slotThumbnailReceived ();
-	void askIncomingTransfer ( const QByteArray &thumbnail = QByteArray() );
+    void slotThumbnailReceived();
+    void askIncomingTransfer(const QByteArray &thumbnail = QByteArray());
 
 private:
-	void initializeVariables ();
+    void initializeVariables();
 
-	JabberAccount *mAccount;
-	JabberBaseContact *mContact;
-	XMPP::FileTransfer *mXMPPTransfer;
-	Kopete::Transfer *mKopeteTransfer;
-	QFile mLocalFile;
-	int mTransferId;
-	qint64 mBytesTransferred;
-	qint64 mBytesToTransfer;
-
+    JabberAccount *mAccount;
+    JabberBaseContact *mContact;
+    XMPP::FileTransfer *mXMPPTransfer;
+    Kopete::Transfer *mKopeteTransfer;
+    QFile mLocalFile;
+    int mTransferId;
+    qint64 mBytesTransferred;
+    qint64 mBytesToTransfer;
 };
 
 #endif

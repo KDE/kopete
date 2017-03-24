@@ -20,22 +20,24 @@
 
 #include <kcmodule.h>
 
-namespace Ui { class WebPresencePrefsUI; }
+namespace Ui {
+class WebPresencePrefsUI;
+}
 
 /**
  * Preference widget for the Now Listening plugin, copied from the Cryptography plugin
  * @author Olivier Goffart
  */
-class WebPresencePreferences : public KCModule  {
-   Q_OBJECT
+class WebPresencePreferences : public KCModule
+{
+    Q_OBJECT
 
 public:
-	explicit WebPresencePreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
-	~WebPresencePreferences();
+    explicit WebPresencePreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
+    ~WebPresencePreferences();
 
 private:
-	Ui::WebPresencePrefsUI *m_preferencesDialog;
-
+    Ui::WebPresencePrefsUI *m_preferencesDialog;
 };
 
 #endif // WEBPRESENCEPREFERENCES_H

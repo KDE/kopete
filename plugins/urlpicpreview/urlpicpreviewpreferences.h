@@ -21,27 +21,28 @@
 #include <kcmodule.h>
 
 class QLayout;
-namespace Ui { class URLPicPreviewPrefsUI; }
+namespace Ui {
+class URLPicPreviewPrefsUI;
+}
 
 class URLPicPreviewPreferences : public KCModule
 {
-		Q_OBJECT
+    Q_OBJECT
 
-		URLPicPreviewPreferences ( const URLPicPreviewPreferences& );
-		URLPicPreviewPreferences& operator= ( const URLPicPreviewPreferences& );
+    URLPicPreviewPreferences (const URLPicPreviewPreferences &);
+    URLPicPreviewPreferences &operator=(const URLPicPreviewPreferences &);
 
-	public:
-		explicit URLPicPreviewPreferences ( QWidget* parent = nullptr, const QVariantList& args = QVariantList() );
+public:
+    explicit URLPicPreviewPreferences (QWidget *parent = nullptr, const QVariantList &args = QVariantList());
 
-		virtual ~URLPicPreviewPreferences();
-		void load() Q_DECL_OVERRIDE;
-		void save() Q_DECL_OVERRIDE;
-		void defaults() Q_DECL_OVERRIDE;
+    virtual ~URLPicPreviewPreferences();
+    void load() Q_DECL_OVERRIDE;
+    void save() Q_DECL_OVERRIDE;
+    void defaults() Q_DECL_OVERRIDE;
 
-	private:
-		QLayout * m_layout;
-		Ui::URLPicPreviewPrefsUI * m_ui;
+private:
+    QLayout *m_layout;
+    Ui::URLPicPreviewPrefsUI *m_ui;
 };
 
 #endif /* URLPICPREVIEWPREFERENCES_H */
-

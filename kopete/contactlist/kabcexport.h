@@ -22,46 +22,44 @@
 
 #include <kopete_export.h>
 
-
 #include "ui_kabcexport_page1.h"
 #include "ui_kabcexport_page2.h"
 
-
 namespace KContacts {
-	class Address;
-	class Addressee;
+class Address;
+class Addressee;
 }
 
 namespace Kopete {
-	class MetaContact;
+class MetaContact;
 }
 
 namespace KRES {
-	class Resource;
+class Resource;
 }
 
 class KOPETE_CONTACT_LIST_EXPORT KabcExportWizard : public KAssistantDialog
 {
-Q_OBJECT
-	public:
-		KabcExportWizard( QWidget *parent = nullptr );
-		~KabcExportWizard();
-	public slots:
-		void accept() Q_DECL_OVERRIDE;
-	protected slots:
-		void slotDeselectAll();
-		void slotSelectAll();
-		void slotResourceSelectionChanged( QListWidgetItem * lbi );
-	protected:
-		void exportDetails( Kopete::MetaContact * mc, KContacts::Addressee & addr );
-	private:
-		//DEPRECATED: KContacts::AddressBook* m_addressBook;
-		//DEPRECATED: QMap<int, KContacts::Resource*> m_resourceMap;
-		QMap<int, Kopete::MetaContact*> m_contactMap;
-		Ui::KabcExportWizardPage1 m_page1;
-		KPageWidgetItem *m_page1WidgetItem;
-		Ui::KabcExportWizardPage2 m_page2;
-		KPageWidgetItem *m_page2WidgetItem;
+    Q_OBJECT
+public:
+    KabcExportWizard(QWidget *parent = nullptr);
+    ~KabcExportWizard();
+public slots:
+    void accept() Q_DECL_OVERRIDE;
+protected slots:
+    void slotDeselectAll();
+    void slotSelectAll();
+    void slotResourceSelectionChanged(QListWidgetItem *lbi);
+protected:
+    void exportDetails(Kopete::MetaContact *mc, KContacts::Addressee &addr);
+private:
+    //DEPRECATED: KContacts::AddressBook* m_addressBook;
+    //DEPRECATED: QMap<int, KContacts::Resource*> m_resourceMap;
+    QMap<int, Kopete::MetaContact *> m_contactMap;
+    Ui::KabcExportWizardPage1 m_page1;
+    KPageWidgetItem *m_page1WidgetItem;
+    Ui::KabcExportWizardPage2 m_page2;
+    KPageWidgetItem *m_page2WidgetItem;
 };
 
 #endif

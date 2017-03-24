@@ -16,7 +16,7 @@
  *                                                                       *
  * You should have received a copy of the GNU General Public License     *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- *************************************************************************/ 
+ *************************************************************************/
 
 #ifndef PRIVKEYPOPUP_H
 #define PRIVKEYPOPUP_H
@@ -30,20 +30,19 @@
 #include "ui_privkeypopup.h"
 #include <KDialog>
 
-class PrivKeyPopup: public KDialog
+class PrivKeyPopup : public KDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	PrivKeyPopup( QWidget *parent = 0 );
-	~PrivKeyPopup();
+    PrivKeyPopup(QWidget *parent = 0);
+    ~PrivKeyPopup();
 
-	void setCloseLock( bool locked );
-	void closeEvent( QCloseEvent *e ) Q_DECL_OVERRIDE;
+    void setCloseLock(bool locked);
+    void closeEvent(QCloseEvent *e) Q_DECL_OVERRIDE;
 
 private:
-	Ui::PrivKeyPopup ui;
-	bool closeLock;
-
+    Ui::PrivKeyPopup ui;
+    bool closeLock;
 };
 
 #endif //PRIVKEYPOPUP_H

@@ -34,7 +34,10 @@ class QString;
 
 class KTemporaryFile;
 
-namespace Kopete { class Message; class ChatSession; }
+namespace Kopete {
+class Message;
+class ChatSession;
+}
 
 /**
   * @author Duncan Mac-Vicar Prett
@@ -42,35 +45,35 @@ namespace Kopete { class Message; class ChatSession; }
 
 class LatexPlugin : public Kopete::Plugin
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	static LatexPlugin  *plugin();
+    static LatexPlugin *plugin();
 
-	LatexPlugin( QObject *parent, const QVariantList &args );
-	~LatexPlugin();
+    LatexPlugin(QObject *parent, const QVariantList &args);
+    ~LatexPlugin();
 
 public slots:
-	void slotMessageAboutToShow( Kopete::Message& msg );
-	void slotMessageAboutToSend( Kopete::Message& msg );
-	void slotNewChatSession( Kopete::ChatSession *KMM);
+    void slotMessageAboutToShow(Kopete::Message &msg);
+    void slotMessageAboutToSend(Kopete::Message &msg);
+    void slotNewChatSession(Kopete::ChatSession *KMM);
 
 public:
-	/**
-	 * gives a LaTeX formula, and return the filename of the file where the LaTeX is stored.
+    /**
+     * gives a LaTeX formula, and return the filename of the file where the LaTeX is stored.
      */
-	QString handleLatex(const QString &latex);
+    QString handleLatex(const QString &latex);
 
-	/**
-	 * return false if the LaTeX formula may contains malicious commands
-	 */
-	bool securityCheck(const QString & formula);
+    /**
+     * return false if the LaTeX formula may contains malicious commands
+     */
+    bool securityCheck(const QString &formula);
 
 private:
-	static LatexPlugin* s_pluginStatic;
-	QString m_convScript;
-	bool mMagickNotFoundShown;
-	QList<KTemporaryFile *> m_tempFiles;
+    static LatexPlugin *s_pluginStatic;
+    QString m_convScript;
+    bool mMagickNotFoundShown;
+    QList<KTemporaryFile *> m_tempFiles;
 };
 
 #endif

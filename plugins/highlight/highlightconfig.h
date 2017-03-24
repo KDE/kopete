@@ -25,19 +25,19 @@ class Filter;
 class HighlightConfig
 {
 public:
-	HighlightConfig();
-	~HighlightConfig();
+    HighlightConfig();
+    ~HighlightConfig();
 
-	void load();
-	void save();
+    void load();
+    void save();
 
-	QList<Filter*> filters() const;
-	void removeFilter (Filter *f);
-	void appendFilter (Filter *f);
-	Filter* newFilter();
+    QList<Filter *> filters() const;
+    void removeFilter(Filter *f);
+    void appendFilter(Filter *f);
+    Filter *newFilter();
 
 private:
-	QList<Filter*> m_filters;
+    QList<Filter *> m_filters;
 };
 
 #endif

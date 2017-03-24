@@ -35,124 +35,125 @@
 #include <kemoticons.h>
 
 EmoticonItem::EmoticonItem(const QString &emoticonText, const QString &pixmapPath, QListWidget *parent)
-	: QListWidgetItem(parent)
+    : QListWidgetItem(parent)
 {
-	m_text = emoticonText;
-	m_pixmapPath = pixmapPath;
-	QPixmap p(m_pixmapPath);
+    m_text = emoticonText;
+    m_pixmapPath = pixmapPath;
+    QPixmap p(m_pixmapPath);
     //
     // Some of the custom icons are rather large
     // so lets limit them to a maximum size for this display panel
     //
-    if (p.width() > 32 || p.height() > 32)
-		p = p.scaled(QSize(32,32), Qt::KeepAspectRatio);
+    if (p.width() > 32 || p.height() > 32) {
+        p = p.scaled(QSize(32, 32), Qt::KeepAspectRatio);
+    }
 
-	setIcon(p);
+    setIcon(p);
 }
 
 QString EmoticonItem::text() const
 {
-	return m_text;
+    return m_text;
 }
 
 QString EmoticonItem::pixmapPath() const
 {
-	return m_pixmapPath;
+    return m_pixmapPath;
 }
 
 EmoticonSelector::EmoticonSelector(QWidget *parent)
-	: QWidget(parent)
+    : QWidget(parent)
 {
-	QHBoxLayout *lay = new QHBoxLayout(this);
-	lay->setSpacing( 0 );
-	lay->setContentsMargins( 0, 0, 0, 0 );
-	m_emoticonList = new QListWidget(this);
-	lay->addWidget(m_emoticonList);
-	m_emoticonList->setViewMode(QListView::IconMode);
-	m_emoticonList->setSelectionMode(QAbstractItemView::SingleSelection);
-	m_emoticonList->setMouseTracking(true);
-	m_emoticonList->setDragEnabled(false);
+    QHBoxLayout *lay = new QHBoxLayout(this);
+    lay->setSpacing(0);
+    lay->setContentsMargins(0, 0, 0, 0);
+    m_emoticonList = new QListWidget(this);
+    lay->addWidget(m_emoticonList);
+    m_emoticonList->setViewMode(QListView::IconMode);
+    m_emoticonList->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_emoticonList->setMouseTracking(true);
+    m_emoticonList->setDragEnabled(false);
 
-	m_currentEmoticon = new QLabel( this );
-	m_currentEmoticon->setFrameShape( QFrame::Box );
-	m_currentEmoticon->setMinimumSize(QSize(128,128));
-	m_currentEmoticon->setAlignment( Qt::AlignCenter );
-	lay->addWidget(m_currentEmoticon);
+    m_currentEmoticon = new QLabel(this);
+    m_currentEmoticon->setFrameShape(QFrame::Box);
+    m_currentEmoticon->setMinimumSize(QSize(128, 128));
+    m_currentEmoticon->setAlignment(Qt::AlignCenter);
+    lay->addWidget(m_currentEmoticon);
 
-	m_currentMovie = new QMovie(this);
-	m_currentEmoticon->setMovie(m_currentMovie);
+    m_currentMovie = new QMovie(this);
+    m_currentEmoticon->setMovie(m_currentMovie);
 
-	connect(m_emoticonList, SIGNAL(itemEntered(QListWidgetItem*)),
-			this, SLOT(mouseOverItem(QListWidgetItem*)));
-	connect(m_emoticonList, SIGNAL(itemSelectionChanged()),
-			this, SLOT(currentChanged()));
-  connect(m_emoticonList, SIGNAL(itemClicked(QListWidgetItem*)),
-			this, SLOT(emoticonClicked(QListWidgetItem*)));
-
+    connect(m_emoticonList, SIGNAL(itemEntered(QListWidgetItem *)),
+            this, SLOT(mouseOverItem(QListWidgetItem *)));
+    connect(m_emoticonList, SIGNAL(itemSelectionChanged()),
+            this, SLOT(currentChanged()));
+    connect(m_emoticonList, SIGNAL(itemClicked(QListWidgetItem *)),
+            this, SLOT(emoticonClicked(QListWidgetItem *)));
 }
 
 void EmoticonSelector::prepareList(void)
 {
-	m_emoticonList->clear();
+    m_emoticonList->clear();
 //	kDebug(14000) << "called.";
-	QHash<QString, QStringList> list = Kopete::Emoticons::self()->theme().emoticonsMap();
+    QHash<QString, QStringList> list = Kopete::Emoticons::self()->theme().emoticonsMap();
 
-	for (QHash<QString, QStringList>::const_iterator it = list.constBegin(); it != list.constEnd(); ++it )
-		(void) new EmoticonItem(it.value().first(), it.key(), m_emoticonList);
+    for (QHash<QString, QStringList>::const_iterator it = list.constBegin(); it != list.constEnd(); ++it) {
+        (void)new EmoticonItem(it.value().first(), it.key(), m_emoticonList);
+    }
 
-	m_emoticonList->setIconSize(QSize(32,32));
+    m_emoticonList->setIconSize(QSize(32, 32));
 }
 
 void EmoticonSelector::emoticonClicked(QListWidgetItem *i)
 {
-	EmoticonItem *item = dynamic_cast<EmoticonItem*>(i);
-	if (!item)
-		return;
+    EmoticonItem *item = dynamic_cast<EmoticonItem *>(i);
+    if (!item) {
+        return;
+    }
 
-	// KDE4/Qt TODO: use qobject_cast instead.
-	emit itemSelected ( item->text() );
-	if ( isVisible() && parentWidget() &&
-		parentWidget()->inherits("QMenu") )
-	{
-		parentWidget()->close();
-	}
+    // KDE4/Qt TODO: use qobject_cast instead.
+    emit itemSelected(item->text());
+    if (isVisible() && parentWidget()
+        && parentWidget()->inherits("QMenu")) {
+        parentWidget()->close();
+    }
 }
 
 void EmoticonSelector::mouseOverItem(QListWidgetItem *item)
 {
-	item->setSelected(true);	
-	if (!m_emoticonList->hasFocus())
-		m_emoticonList->setFocus();
+    item->setSelected(true);
+    if (!m_emoticonList->hasFocus()) {
+        m_emoticonList->setFocus();
+    }
 }
 
 void EmoticonSelector::currentChanged()
 {
+    if (!m_emoticonList->selectedItems().count()) {
+        return;
+    }
 
-	if (!m_emoticonList->selectedItems().count())
-		return;
+    EmoticonItem *item = dynamic_cast<EmoticonItem *>(m_emoticonList->selectedItems().first());
+    if (!item) {
+        return;
+    }
 
-	EmoticonItem *item = dynamic_cast<EmoticonItem*>(m_emoticonList->selectedItems().first());
-	if (!item)
-		return;
-
-	m_currentMovie->stop();
-	m_currentMovie->setFileName(item->pixmapPath());
-	m_currentMovie->start();
-	// schedule a full update of the label, so there are no glitches of the previous emoticon
-	// (Qt bug?)
-	m_currentEmoticon->update();
+    m_currentMovie->stop();
+    m_currentMovie->setFileName(item->pixmapPath());
+    m_currentMovie->start();
+    // schedule a full update of the label, so there are no glitches of the previous emoticon
+    // (Qt bug?)
+    m_currentEmoticon->update();
 }
 
-void EmoticonSelector::hideEvent( QHideEvent* )
+void EmoticonSelector::hideEvent(QHideEvent *)
 {
-	m_currentMovie->stop();
+    m_currentMovie->stop();
 }
 
-void EmoticonSelector::showEvent( QShowEvent* )
+void EmoticonSelector::showEvent(QShowEvent *)
 {
-	m_currentMovie->start();
+    m_currentMovie->start();
 }
-
 
 // vim: set noet ts=4 sts=4 sw=4:
-

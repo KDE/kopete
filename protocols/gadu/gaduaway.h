@@ -1,6 +1,6 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
 // Copyright (C) 2002-2003 Zack Rusin	<zack@kde.org>
 //
 // gaduaway.h
@@ -27,24 +27,26 @@
 #include <qstring.h>
 
 class GaduAccount;
-namespace Ui { class GaduAwayUI; }
+namespace Ui {
+class GaduAwayUI;
+}
 
 class GaduAway : public KDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit GaduAway( GaduAccount*, QWidget* parent = 0 );
-	~GaduAway();
-	int status() const;
-	QString awayText() const;
+    explicit GaduAway(GaduAccount *, QWidget *parent = 0);
+    ~GaduAway();
+    int status() const;
+    QString awayText() const;
 
 protected slots:
-	void slotApply();
+    void slotApply();
 
 private:
-	GaduAccount*	account_;
-	Ui::GaduAwayUI*	ui_;
+    GaduAccount *account_;
+    Ui::GaduAwayUI *ui_;
 };
 
 #endif

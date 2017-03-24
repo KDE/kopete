@@ -24,97 +24,92 @@
 #include <ksettings/dispatcher.h>
 
 namespace Kopete {
-
 class Plugin::Private
 {
 public:
-	QStringList addressBookFields;
-	QString indexField;
+    QStringList addressBookFields;
+    QString indexField;
 };
 
-Plugin::Plugin( const KAboutData &instance, QObject *parent )
-: QObject( parent ), KXMLGUIClient(), d(new Private)
+Plugin::Plugin(const KAboutData &instance, QObject *parent)
+    : QObject(parent)
+    , KXMLGUIClient()
+    , d(new Private)
 {
-	setObjectName( instance.componentName() );
-	KSettings::Dispatcher::registerComponent( instance.componentName(), this, "settingsChanged" );
+    setObjectName(instance.componentName());
+    KSettings::Dispatcher::registerComponent(instance.componentName(), this, "settingsChanged");
 }
 
-Plugin::Plugin( QObject *parent )
-  : QObject( parent ), KXMLGUIClient(), d(new Private)
+Plugin::Plugin(QObject *parent)
+    : QObject(parent)
+    , KXMLGUIClient()
+    , d(new Private)
 {
-	setObjectName(QStringLiteral("kopete_plugin"));
-	KSettings::Dispatcher::registerComponent(QStringLiteral("kopete_plugin"), this, "settingsChanged");
+    setObjectName(QStringLiteral("kopete_plugin"));
+    KSettings::Dispatcher::registerComponent(QStringLiteral("kopete_plugin"), this, "settingsChanged");
 }
 
 Plugin::~Plugin()
 {
-	delete d;
+    delete d;
 }
 
 QString Plugin::pluginId() const
 {
-	return QString::fromLatin1( metaObject()->className() );
+    return QString::fromLatin1(metaObject()->className());
 }
-
 
 QString Plugin::displayName() const
 {
-	return pluginInfo().isValid() ? pluginInfo().name() : QString();
+    return pluginInfo().isValid() ? pluginInfo().name() : QString();
 }
 
 QString Plugin::pluginIcon() const
 {
-	return pluginInfo().isValid() ? pluginInfo().icon() : QString();
+    return pluginInfo().isValid() ? pluginInfo().icon() : QString();
 }
 
-
-KPluginInfo Plugin::pluginInfo() const 
+KPluginInfo Plugin::pluginInfo() const
 {
-	return PluginManager::self()->pluginInfo( this );
+    return PluginManager::self()->pluginInfo(this);
 }
 
 bool Plugin::showCloseWindowMessage()
 {
-	return false;
+    return false;
 }
 
 bool Plugin::shouldExitOnclose()
 {
-	return true;
+    return true;
 }
 
 void Plugin::aboutToUnload()
 {
-	// Just make the unload synchronous by default
-	emit readyForUnload();
+    // Just make the unload synchronous by default
+    emit readyForUnload();
 }
 
-
-void Plugin::deserialize( MetaContact * /* metaContact */,
-	const QMap<QString, QString> & /* stream */ )
+void Plugin::deserialize(MetaContact * /* metaContact */, const QMap<QString, QString> & /* stream */)
 {
-	// Do nothing in default implementation
+    // Do nothing in default implementation
 }
 
-
-
-void Kopete::Plugin::addAddressBookField( const QString &field, AddressBookFieldAddMode mode )
+void Kopete::Plugin::addAddressBookField(const QString &field, AddressBookFieldAddMode mode)
 {
-	d->addressBookFields.append( field );
-	if( mode == MakeIndexField )
-		d->indexField = field;
+    d->addressBookFields.append(field);
+    if (mode == MakeIndexField) {
+        d->indexField = field;
+    }
 }
 
 QStringList Kopete::Plugin::addressBookFields() const
 {
-	return d->addressBookFields;
+    return d->addressBookFields;
 }
 
 QString Kopete::Plugin::addressBookIndexField() const
 {
-	return d->indexField;
+    return d->indexField;
 }
-
 } //END namespace Kopete
-
-

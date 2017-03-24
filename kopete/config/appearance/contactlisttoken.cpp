@@ -25,76 +25,80 @@
 
 #include "kopeteitemdelegate.h"
 
-const QString ActionSmallName = QStringLiteral( "ActionSmall" );
-const QString ActionOptimalSizeName = QStringLiteral( "ActionOptimalSize" );
+const QString ActionSmallName = QStringLiteral("ActionSmall");
+const QString ActionOptimalSizeName = QStringLiteral("ActionOptimalSize");
 
-Token * ContactListTokenFactory::createToken(const QString &text, const QString &iconName, int value, QWidget *parent)
+Token *ContactListTokenFactory::createToken(const QString &text, const QString &iconName, int value, QWidget *parent)
 {
-	return new ContactListToken( text, iconName, value, parent );
+    return new ContactListToken(text, iconName, value, parent);
 }
 
-ContactListToken::ContactListToken( const QString &text, const QString &iconName, int value, QWidget *parent )
-: TokenWithLayout( text, iconName, value, parent ), m_small( false ), m_optimalSize( false )
+ContactListToken::ContactListToken(const QString &text, const QString &iconName, int value, QWidget *parent)
+    : TokenWithLayout(text, iconName, value, parent)
+    , m_small(false)
+    , m_optimalSize(false)
 {
 }
 
-void ContactListToken::fillMenu( QMenu * menu )
+void ContactListToken::fillMenu(QMenu *menu)
 {
-	QAction *optimalSizeAction = new QAction( i18n( "Optimal width" ), menu );
-	optimalSizeAction->setObjectName( ActionOptimalSizeName );
-	optimalSizeAction->setCheckable( true );
-	optimalSizeAction->setChecked( m_optimalSize );
-	menu->addAction( optimalSizeAction );
+    QAction *optimalSizeAction = new QAction(i18n("Optimal width"), menu);
+    optimalSizeAction->setObjectName(ActionOptimalSizeName);
+    optimalSizeAction->setCheckable(true);
+    optimalSizeAction->setChecked(m_optimalSize);
+    menu->addAction(optimalSizeAction);
 
-	menu->addSeparator();
+    menu->addSeparator();
 
-	QAction *smallAction = new QAction( QIcon::fromTheme( QStringLiteral("format-font-size-less")), i18n( "Small" ), menu );
-	smallAction->setObjectName( ActionSmallName );
-	smallAction->setCheckable( true );
-	smallAction->setChecked( m_small );
-	menu->addAction( smallAction );
+    QAction *smallAction = new QAction(QIcon::fromTheme(QStringLiteral("format-font-size-less")), i18n("Small"), menu);
+    smallAction->setObjectName(ActionSmallName);
+    smallAction->setCheckable(true);
+    smallAction->setChecked(m_small);
+    menu->addAction(smallAction);
 
-	TokenWithLayout::fillMenu( menu );
+    TokenWithLayout::fillMenu(menu);
 }
 
-void ContactListToken::menuExecuted( const QAction* action )
+void ContactListToken::menuExecuted(const QAction *action)
 {
-	TokenWithLayout::menuExecuted( action );
-	if( action->objectName() == ActionSmallName )
-		setSmall( action->isChecked() );
-	else if( action->objectName() == ActionOptimalSizeName )
-		setOptimalSize( action->isChecked() );
+    TokenWithLayout::menuExecuted(action);
+    if (action->objectName() == ActionSmallName) {
+        setSmall(action->isChecked());
+    } else if (action->objectName() == ActionOptimalSizeName) {
+        setOptimalSize(action->isChecked());
+    }
 }
 
 bool ContactListToken::small() const
 {
-	return m_small;
+    return m_small;
 }
 
-void ContactListToken::setSmall( bool small )
+void ContactListToken::setSmall(bool small)
 {
-	if ( m_small == small )
-		return;
+    if (m_small == small) {
+        return;
+    }
 
-	m_small = small;
-	QFont font( ( small ) ? KopeteItemDelegate::smallFont( this->font() ) : KopeteItemDelegate::normalFont( this->font() ) );
-	font.setBold( bold() );
-	font.setItalic( italic() );
-	m_label->setFont( font );
+    m_small = small;
+    QFont font((small) ? KopeteItemDelegate::smallFont(this->font()) : KopeteItemDelegate::normalFont(this->font()));
+    font.setBold(bold());
+    font.setItalic(italic());
+    m_label->setFont(font);
     emit changed();
 }
 
 bool ContactListToken::optimalSize() const
 {
-	return m_optimalSize;
+    return m_optimalSize;
 }
 
-void ContactListToken::setOptimalSize( bool optimalSize )
+void ContactListToken::setOptimalSize(bool optimalSize)
 {
-	if ( m_optimalSize == optimalSize )
-		return;
+    if (m_optimalSize == optimalSize) {
+        return;
+    }
 
-	m_optimalSize = optimalSize;
-	emit changed();
+    m_optimalSize = optimalSize;
+    emit changed();
 }
-

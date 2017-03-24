@@ -19,41 +19,38 @@
 
 AbstractIO::AbstractIO()
 {
-
 }
 
 AbstractIO::~AbstractIO()
 {
-
 }
 
-
-void AbstractIO::encode(const QByteArray& data)
+void AbstractIO::encode(const QByteArray &data)
 {
-	Q_UNUSED(data)
+    Q_UNUSED(data)
 }
 
-void AbstractIO::decode(const QByteArray& data)
+void AbstractIO::decode(const QByteArray &data)
 {
-	Q_UNUSED(data)
+    Q_UNUSED(data)
 }
 
 QByteArray AbstractIO::encodedData() const
 {
-	return QByteArray();
+    return QByteArray();
 }
 
 QByteArray AbstractIO::decodedData() const
 {
-	return QByteArray();
+    return QByteArray();
 }
 
 int AbstractIO::tsValue()
 {
-	return 0;
+    return 0;
 }
 
 int AbstractIO::frameSizeBytes()
 {
-	return 0;
+    return 0;
 }

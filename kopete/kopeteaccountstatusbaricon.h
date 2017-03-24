@@ -19,9 +19,8 @@
 
 #include <QLabel>
 
-namespace Kopete
-{
-	class Account;
+namespace Kopete {
+class Account;
 }
 
 class QMouseEvent;
@@ -32,25 +31,25 @@ class QMovie;
  */
 class KopeteAccountStatusBarIcon : public QLabel
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	/**
-	 * Create a statusbar icon.
-	 */
-	KopeteAccountStatusBarIcon( Kopete::Account *account, QWidget *parent );
-	virtual ~KopeteAccountStatusBarIcon();
+    /**
+     * Create a statusbar icon.
+     */
+    KopeteAccountStatusBarIcon(Kopete::Account *account, QWidget *parent);
+    virtual ~KopeteAccountStatusBarIcon();
 
 protected:
-	void mousePressEvent( QMouseEvent *me ) Q_DECL_OVERRIDE;
-	bool event( QEvent *event ) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *me) Q_DECL_OVERRIDE;
+    bool event(QEvent *event) Q_DECL_OVERRIDE;
 
 private slots:
-	void statusIconChanged();
+    void statusIconChanged();
 
 private:
-	Kopete::Account *mAccount;
-	QMovie* mMovie;
+    Kopete::Account *mAccount;
+    QMovie *mMovie;
 };
 
 #endif

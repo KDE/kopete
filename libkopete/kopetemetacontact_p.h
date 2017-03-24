@@ -26,53 +26,58 @@
 #include "kopetepicture.h"
 
 namespace Kopete {
+class MetaContact::Private
+{
+public:
+    Private()
+        : photoSource(MetaContact::SourceCustom)
+        , displayNameSource(MetaContact::SourceCustom)
+        , displayNameSourceContact(0L)
+        , photoSourceContact(0L)
+        , temporary(false)
+        , onlineStatus(Kopete::OnlineStatus::Offline)
+        , photoSyncedWithKABC(false)
+    {
+    }
 
-class  MetaContact::Private
-{ public:
-	Private() :
-		photoSource(MetaContact::SourceCustom), displayNameSource(MetaContact::SourceCustom),
-		displayNameSourceContact(0L),  photoSourceContact(0L), temporary(false),
-		onlineStatus(Kopete::OnlineStatus::Offline), photoSyncedWithKABC(false)
-	{}
+    QList<Contact *> contacts;
+    ~Private()
+    {
+    }
 
-	QList<Contact *> contacts;
-	~Private()
-	{}
+    QUuid metaContactId;
+    // property sources
+    PropertySource photoSource;
+    PropertySource displayNameSource;
 
-	QUuid metaContactId;
-	// property sources
-	PropertySource photoSource;
-	PropertySource displayNameSource;
+    // when source is contact
+    Contact *displayNameSourceContact;
+    Contact *photoSourceContact;
 
-	// when source is contact
-	Contact *displayNameSourceContact;
-	Contact *photoSourceContact;
+    // used when source is kabc
+    QString kabcId;
 
-	// used when source is kabc
-	QString kabcId;
+    // used when source is custom
+    QString displayName;
+    QUrl photoUrl;
 
-	// used when source is custom
-	QString displayName;
-	QUrl photoUrl;
+    QList<Group *> groups;
+    QMap<QString, QMap<QString, QString> > addressBook;
+    bool temporary;
 
-	QList<Group *> groups;
-	QMap<QString, QMap<QString, QString> > addressBook;
-	bool temporary;
+    OnlineStatus::StatusType onlineStatus;
+    bool photoSyncedWithKABC;
+    OnlineStatus notifyOnlineStatus;
 
-	OnlineStatus::StatusType onlineStatus;
-	bool photoSyncedWithKABC;
-	OnlineStatus notifyOnlineStatus;
+    // Used to set contact source at load.
+    QString nameSourcePID, nameSourceAID, nameSourceCID;
+    QString photoSourcePID, photoSourceAID, photoSourceCID;
 
-	// Used to set contact source at load.
-	QString nameSourcePID, nameSourceAID, nameSourceCID;
-	QString photoSourcePID, photoSourceAID, photoSourceCID;
+    // The photo cache. Reduce disk access and CPU usage.
+    Picture customPicture, contactPicture, kabcPicture;
 
-	// The photo cache. Reduce disk access and CPU usage.
-	Picture customPicture, contactPicture, kabcPicture;
-
-	Kopete::StatusMessage statusMessage;
+    Kopete::StatusMessage statusMessage;
 };
-
 } //END namespace Kopete
 
 #endif

@@ -22,79 +22,78 @@
 #include <QApplication>
 
 EmoticonThemeDelegate::EmoticonThemeDelegate(QObject *parent)
-: QStyledItemDelegate(parent)
+    : QStyledItemDelegate(parent)
 {
 }
 
 void EmoticonThemeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	QApplication::style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
+    QApplication::style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
 
-	QString theme = index.data().toString();
+    QString theme = index.data().toString();
 
-	QVariant v = index.data(EmoticonThemeItem::EmoticonPixmaps);
-	QList<QVariant> pixmapList = qvariant_cast<QList<QVariant> >(v);
+    QVariant v = index.data(EmoticonThemeItem::EmoticonPixmaps);
+    QList<QVariant> pixmapList = qvariant_cast<QList<QVariant> >(v);
 
-	painter->save();
-		painter->translate(option.rect.topLeft());
-		if (option.state & QStyle::State_Selected)
-			painter->setPen(option.palette.color(QPalette::Normal, QPalette::HighlightedText));
-		else
-			painter->setPen(option.palette.color(QPalette::Normal, QPalette::Text));
-		QFont f = painter->font();
-		f.setBold(true);
-		painter->setFont(f);
-		painter->drawText(10,20, theme);
+    painter->save();
+    painter->translate(option.rect.topLeft());
+    if (option.state & QStyle::State_Selected) {
+        painter->setPen(option.palette.color(QPalette::Normal, QPalette::HighlightedText));
+    } else {
+        painter->setPen(option.palette.color(QPalette::Normal, QPalette::Text));
+    }
+    QFont f = painter->font();
+    f.setBold(true);
+    painter->setFont(f);
+    painter->drawText(10, 20, theme);
 
-		QSize s = sizeHint(option, index);
+    QSize s = sizeHint(option, index);
 
-		// draw the emoticons themselves
-		QPoint top(10, 22);
-		int maxHeight = s.height() - top.y() - 2;
-		int middle = (maxHeight / 2) + top.y();
-		QStringList emotes = qvariant_cast<QStringList>(index.data(Qt::UserRole));
-		int count = 0;
-		foreach(const QString &emote, emotes)
-		{
-			QPixmap pix;
+    // draw the emoticons themselves
+    QPoint top(10, 22);
+    int maxHeight = s.height() - top.y() - 2;
+    int middle = (maxHeight / 2) + top.y();
+    QStringList emotes = qvariant_cast<QStringList>(index.data(Qt::UserRole));
+    int count = 0;
+    foreach (const QString &emote, emotes) {
+        QPixmap pix;
 
-			// check if we have already loaded the requested pixmap
-			if (count < pixmapList.count())
-			{
-				pix = pixmapList.at(count++).value<QPixmap>();
-			}
-			else
-			{
-				pix.load(emote);
-				pixmapList.append(pix);
-			}
+        // check if we have already loaded the requested pixmap
+        if (count < pixmapList.count()) {
+            pix = pixmapList.at(count++).value<QPixmap>();
+        } else {
+            pix.load(emote);
+            pixmapList.append(pix);
+        }
 
-			if (pix.isNull())
-				continue;
+        if (pix.isNull()) {
+            continue;
+        }
 
-			if (top.x() + pix.width() > option.rect.width() - 10)
-				break;
+        if (top.x() + pix.width() > option.rect.width() - 10) {
+            break;
+        }
 
-			// check if the emoticon height is bigger than the maximum allowed
-			if (pix.height() > maxHeight)
-				pix = pix.scaledToHeight(maxHeight);
-			
-			top.setY(middle - pix.height()/2);
-			painter->drawPixmap(top, pix);
-			top.setX(top.x() + pix.width() + 2);
-		}
-	painter->restore();
+        // check if the emoticon height is bigger than the maximum allowed
+        if (pix.height() > maxHeight) {
+            pix = pix.scaledToHeight(maxHeight);
+        }
 
-	// set the pixmapList as data of the index
-	QAbstractItemModel *model = const_cast<QAbstractItemModel*>(index.model());
-	model->setData(index, pixmapList, EmoticonThemeItem::EmoticonPixmaps);
+        top.setY(middle - pix.height()/2);
+        painter->drawPixmap(top, pix);
+        top.setX(top.x() + pix.width() + 2);
+    }
+    painter->restore();
+
+    // set the pixmapList as data of the index
+    QAbstractItemModel *model = const_cast<QAbstractItemModel *>(index.model());
+    model->setData(index, pixmapList, EmoticonThemeItem::EmoticonPixmaps);
 }
 
 QSize EmoticonThemeDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	Q_UNUSED(option);
-	Q_UNUSED(index);
+    Q_UNUSED(option);
+    Q_UNUSED(index);
 
-    return QSize(100,100);
+    return QSize(100, 100);
 }
-

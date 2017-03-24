@@ -13,27 +13,28 @@
 
 #include "kopetechatsessionmanager.h"
 
-K_PLUGIN_FACTORY( AliasPluginFactory, registerPlugin<AliasPlugin>(); )
-K_EXPORT_PLUGIN( AliasPluginFactory( "kopete_alias" ) )
+K_PLUGIN_FACTORY(AliasPluginFactory, registerPlugin<AliasPlugin>();
+                 )
+K_EXPORT_PLUGIN(AliasPluginFactory("kopete_alias"))
 
 AliasPlugin * AliasPlugin::pluginStatic_ = 0L;
 
-AliasPlugin::AliasPlugin( QObject *parent, const QVariantList & )
-	: Kopete::Plugin( AliasPluginFactory::componentData(), parent )
+AliasPlugin::AliasPlugin(QObject *parent, const QVariantList &)
+    : Kopete::Plugin(AliasPluginFactory::componentData(), parent)
 {
-	if( !pluginStatic_ )
-		pluginStatic_ = this;
-
+    if (!pluginStatic_) {
+        pluginStatic_ = this;
+    }
 }
 
 AliasPlugin::~AliasPlugin()
 {
-	pluginStatic_ = 0L;
+    pluginStatic_ = 0L;
 }
 
-AliasPlugin * AliasPlugin::plugin()
+AliasPlugin *AliasPlugin::plugin()
 {
-	return pluginStatic_ ;
+    return pluginStatic_;
 }
 
 #include "aliasplugin.moc"

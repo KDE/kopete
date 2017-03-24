@@ -32,33 +32,31 @@ class TokenDropTarget;
 class ContactListTokenFactory;
 
 /**
-	A widget to define the layout of a single type of playlist item ( head, body or single )
-	@author Nikolaj Hald Nielsen <nhnFreespirit@gmail.com>
+    A widget to define the layout of a single type of playlist item ( head, body or single )
+    @author Nikolaj Hald Nielsen <nhnFreespirit@gmail.com>
 */
 
 namespace ContactList {
-
 class LayoutEditWidget : public KVBox
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	LayoutEditWidget( QWidget *parent );
-	~LayoutEditWidget();
+    LayoutEditWidget(QWidget *parent);
+    ~LayoutEditWidget();
 
-	void readLayout( ContactList::LayoutItemConfig config );
-	ContactList::LayoutItemConfig config();
+    void readLayout(ContactList::LayoutItemConfig config);
+    ContactList::LayoutItemConfig config();
 
 signals:
-	void focussed( QWidget* );
-	void changed();
+    void focussed(QWidget *);
+    void changed();
 
 private:
-	QCheckBox *m_showIconCheckBox;
-	TokenDropTarget *m_tokenDropTarget;
-	ContactListTokenFactory *m_tokenFactory;
+    QCheckBox *m_showIconCheckBox;
+    TokenDropTarget *m_tokenDropTarget;
+    ContactListTokenFactory *m_tokenFactory;
 };
-
 }
 
 #endif

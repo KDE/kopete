@@ -2,7 +2,7 @@
     ChatSessionMembersListModel
 
     Copyright (c) 2007 by Duncan Mac-Vicar Prett <duncan@kde.org>
-   
+
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -25,77 +25,71 @@
 
 class Private;
 
-namespace Kopete
-{
-
+namespace Kopete {
 class Contact;
 
 class KOPETE_EXPORT ChatSessionMembersListModel : public QAbstractListModel
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	explicit ChatSessionMembersListModel(QObject * parent = nullptr);
+    explicit ChatSessionMembersListModel(QObject *parent = nullptr);
 
-	~ChatSessionMembersListModel();
+    ~ChatSessionMembersListModel();
 
-	// Model methods
-	int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-	QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
-	Kopete::ChatSession *session();
+    // Model methods
+    int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+    Kopete::ChatSession *session();
 
-	Kopete::Contact *contactAt( const QModelIndex &index ) const;
+    Kopete::Contact *contactAt(const QModelIndex &index) const;
 public slots:
-	/**
-	 * Called when the ChatSession change for this list (eg. when the tab in the KopeteChatWindow is changing)
-	 */
-	void setChatSession(Kopete::ChatSession *session);
+    /**
+     * Called when the ChatSession change for this list (eg. when the tab in the KopeteChatWindow is changing)
+     */
+    void setChatSession(Kopete::ChatSession *session);
 
 private slots:
-	/**
-	 * Called when a contact is added to the chat session.
-	 * Adds this contact to the contact list view.
-	 * @param c The contact that joined the chat
-	 */
-	void slotContactAdded( const Kopete::Contact *c );
+    /**
+     * Called when a contact is added to the chat session.
+     * Adds this contact to the contact list view.
+     * @param c The contact that joined the chat
+     */
+    void slotContactAdded(const Kopete::Contact *c);
 
+    /**
+     * Called when a contact is removed from the chat session.
+     * Removes this contact from the contact list view.
+     * @param c The contact that left the chat
+     */
+    void slotContactRemoved(const Kopete::Contact *c);
 
-	/**
-	 * Called when a contact is removed from the chat session.
-	 * Removes this contact from the contact list view.
-	 * @param c The contact that left the chat
-	 */
-	void slotContactRemoved( const Kopete::Contact *c );
+    /** Called when the nickname of a contact changed.
+    * @param contact The contact who changed nickname
+    */
+    void slotContactNickNameChanged(Kopete::Contact *contact);
 
-	 /** Called when the nickname of a contact changed.
-	 * @param contact The contact who changed nickname
-	 */
-	void slotContactNickNameChanged( Kopete::Contact *contact);
+    /**
+     * Called when a contact changes status.
+     * @param contact The contact who changed status
+     * @param status The new status of the contact
+     */
+    void slotContactStatusChanged(Kopete::Contact *contact, const Kopete::OnlineStatus &status);
 
-	/**
-	 * Called when a contact changes status.
-	 * @param contact The contact who changed status
-	 * @param status The new status of the contact
-	 */
-	void slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status );
+    /**
+     * Called when something in the session changed that requires a full
+     * model reset
+     */
+    void slotSessionChanged();
 
-	/**
-	 * Called when something in the session changed that requires a full
-	 * model reset
-	 */
-	void slotSessionChanged();
-
-	/**
-	 * Called when session has been closed
-	 */
-	void slotSessionClosed();
+    /**
+     * Called when session has been closed
+     */
+    void slotSessionClosed();
 
 private:
-	Private *d;
+    Private *d;
 };
-
-
 }
 
 #endif
-

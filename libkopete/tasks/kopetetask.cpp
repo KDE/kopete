@@ -20,38 +20,34 @@
 
 #include <kdebug.h>
 
-namespace Kopete
-{
-
+namespace Kopete {
 class Task::Private
 {
 public:
 };
 
 Task::Task(QObject *parent)
- : KCompositeJob(parent), d( new Private )
+    : KCompositeJob(parent)
+    , d(new Private)
 {
 }
 
 Task::~Task()
 {
-	delete d;
+    delete d;
 }
 
 void Task::addSubTask(KJob *task)
 {
-	addSubjob(task);
+    addSubjob(task);
 }
 
 void Task::start()
 {
-	qCDebug(LIBKOPETE_LOG) << "Executing children tasks for this task.";
-	KJob *subTask = 0;
-	foreach( subTask, subjobs() )
-	{
-		subTask->start();
-	}
+    qCDebug(LIBKOPETE_LOG) << "Executing children tasks for this task.";
+    KJob *subTask = 0;
+    foreach (subTask, subjobs()) {
+        subTask->start();
+    }
 }
-
 }
-

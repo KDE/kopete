@@ -23,148 +23,148 @@
 
 #include <qcheckbox.h>
 
-namespace Kopete
+namespace Kopete {
+namespace UI {
+class PasswordWidget::Private
 {
-	namespace UI
-	{
-		class PasswordWidget::Private
-		{
-			public:
-				Private() : protocol( 0 ) { }
-				Kopete::Protocol * protocol;
-		};
-	} // namespace UI
+public:
+    Private() : protocol(0)
+    {
+    }
+
+    Kopete::Protocol *protocol;
+};
+}     // namespace UI
 } // namespace Kopete
 
-Kopete::UI::PasswordWidget::PasswordWidget( QWidget *parent )
-	    : QWidget( parent ), d( new Private )
+Kopete::UI::PasswordWidget::PasswordWidget(QWidget *parent)
+    : QWidget(parent)
+    , d(new Private)
 {
-	setupUi( this );
+    setupUi(this);
     mPassword->setEchoMode(QLineEdit::Password);
 }
 
-Kopete::UI::PasswordWidget::PasswordWidget( Kopete::Password *from, QWidget *parent )
-	: QWidget( parent ), d( new Private )
+Kopete::UI::PasswordWidget::PasswordWidget(Kopete::Password *from, QWidget *parent)
+    : QWidget(parent)
+    , d(new Private)
 {
-	setupUi( this );
+    setupUi(this);
     mPassword->setEchoMode(QLineEdit::Password);
 
-	load( from );
+    load(from);
 }
 
 Kopete::UI::PasswordWidget::~PasswordWidget()
 {
-	delete d;
+    delete d;
 }
 
-void Kopete::UI::PasswordWidget::setValidationProtocol( Kopete::Protocol * proto )
+void Kopete::UI::PasswordWidget::setValidationProtocol(Kopete::Protocol *proto)
 {
-	d->protocol = proto;
+    d->protocol = proto;
 }
 
-void Kopete::UI::PasswordWidget::load( Kopete::Password *source )
+void Kopete::UI::PasswordWidget::load(Kopete::Password *source)
 {
-	disconnect( mRemembered, SIGNAL(stateChanged(int)), this, SLOT(slotRememberChanged()) );
-	disconnect( mPassword, SIGNAL(textChanged(QString)),
-			this, SLOT(passwordTextChanged()) );
-	disconnect( mRemembered, SIGNAL(stateChanged(int)), this, SIGNAL(changed()) );
+    disconnect(mRemembered, SIGNAL(stateChanged(int)), this, SLOT(slotRememberChanged()));
+    disconnect(mPassword, SIGNAL(textChanged(QString)),
+               this, SLOT(passwordTextChanged()));
+    disconnect(mRemembered, SIGNAL(stateChanged(int)), this, SIGNAL(changed()));
 
-	if ( source && source->remembered() )
-	{
-		mRemembered->setTristate();
-		mRemembered->setCheckState( Qt::PartiallyChecked );
-		mPassword->setEnabled( true );
-		source->requestWithoutPrompt( this, SLOT(receivePassword(QString)) );
-	}
-	else
-	{
-		mRemembered->setTristate( false );
-		mRemembered->setCheckState( Qt::Unchecked );
-		mPassword->setEnabled( false );
-	}
+    if (source && source->remembered()) {
+        mRemembered->setTristate();
+        mRemembered->setCheckState(Qt::PartiallyChecked);
+        mPassword->setEnabled(true);
+        source->requestWithoutPrompt(this, SLOT(receivePassword(QString)));
+    } else {
+        mRemembered->setTristate(false);
+        mRemembered->setCheckState(Qt::Unchecked);
+        mPassword->setEnabled(false);
+    }
 
-	connect( mRemembered, SIGNAL(stateChanged(int)), this, SLOT(slotRememberChanged()) );
-	connect( mPassword, SIGNAL(textChanged(QString)),
-			this, SLOT(passwordTextChanged()) );
-	connect( mRemembered, SIGNAL(stateChanged(int)), this, SIGNAL(changed()) );
+    connect(mRemembered, SIGNAL(stateChanged(int)), this, SLOT(slotRememberChanged()));
+    connect(mPassword, SIGNAL(textChanged(QString)),
+            this, SLOT(passwordTextChanged()));
+    connect(mRemembered, SIGNAL(stateChanged(int)), this, SIGNAL(changed()));
 
-	emit changed();
+    emit changed();
 }
 
 void Kopete::UI::PasswordWidget::slotRememberChanged()
 {
-	mRemembered->setTristate( false );
-	mPassword->setEnabled( mRemembered->isChecked() );
+    mRemembered->setTristate(false);
+    mPassword->setEnabled(mRemembered->isChecked());
 }
 
-void Kopete::UI::PasswordWidget::receivePassword( const QString &pwd )
+void Kopete::UI::PasswordWidget::receivePassword(const QString &pwd)
 {
-	// pwd == null could mean user declined to open wallet
-	// don't uncheck the remembered field in this case.
-	if ( !pwd.isNull() && mRemembered->checkState() == Qt::PartiallyChecked )
-	{
-		mRemembered->setChecked( true );
-		setPassword( pwd );
-	}
+    // pwd == null could mean user declined to open wallet
+    // don't uncheck the remembered field in this case.
+    if (!pwd.isNull() && mRemembered->checkState() == Qt::PartiallyChecked) {
+        mRemembered->setChecked(true);
+        setPassword(pwd);
+    }
 }
 
-void Kopete::UI::PasswordWidget::save( Kopete::Password *target )
+void Kopete::UI::PasswordWidget::save(Kopete::Password *target)
 {
-	if ( !target || mRemembered->checkState() == Qt::PartiallyChecked )
-		return;
+    if (!target || mRemembered->checkState() == Qt::PartiallyChecked) {
+        return;
+    }
 
-	if ( mRemembered->isChecked() )
-		target->set( password() );
-	else
-		target->set();
+    if (mRemembered->isChecked()) {
+        target->set(password());
+    } else {
+        target->set();
+    }
 }
 
 bool Kopete::UI::PasswordWidget::validate()
 {
-	// Unchecked means the password should not be remembered, partially checked 
-	// we're waiting for kwallet. Let it pass in both cases.
-	if ( mRemembered->checkState() != Qt::Checked )
-		return true;
+    // Unchecked means the password should not be remembered, partially checked
+    // we're waiting for kwallet. Let it pass in both cases.
+    if (mRemembered->checkState() != Qt::Checked) {
+        return true;
+    }
 
-	if ( d->protocol ) {
-		return d->protocol->validatePassword( password() );
-	}
-	return true;
+    if (d->protocol) {
+        return d->protocol->validatePassword(password());
+    }
+    return true;
 }
 
 QString Kopete::UI::PasswordWidget::password() const
 {
-	return mPassword->text();
+    return mPassword->text();
 }
 
 bool Kopete::UI::PasswordWidget::remember() const
 {
-	return mRemembered->checkState() == Qt::Checked;
+    return mRemembered->checkState() == Qt::Checked;
 }
 
-void Kopete::UI::PasswordWidget::setPassword( const QString &pass )
+void Kopete::UI::PasswordWidget::setPassword(const QString &pass)
 {
-	// switch out of 'waiting for wallet' mode if we're in it
-	mRemembered->setTristate( false );
+    // switch out of 'waiting for wallet' mode if we're in it
+    mRemembered->setTristate(false);
 
-	// fill in the password text
-	mPassword->clear();
-	mPassword->setText( pass );
-	mPassword->setEnabled( remember() );
+    // fill in the password text
+    mPassword->clear();
+    mPassword->setText(pass);
+    mPassword->setEnabled(remember());
 }
 
 void Kopete::UI::PasswordWidget::passwordTextChanged()
 {
-	if ( mRemembered->checkState() == Qt::PartiallyChecked )
-	{
-		disconnect( mRemembered, SIGNAL(stateChanged(int)), this, SIGNAL(changed()) );
-		// switch out of 'waiting for wallet' mode if we're in it
-		mRemembered->setTristate( false );
-		mRemembered->setChecked(true);
-		connect( mRemembered, SIGNAL(stateChanged(int)), this, SIGNAL(changed()) );
-	}
-	emit changed();
+    if (mRemembered->checkState() == Qt::PartiallyChecked) {
+        disconnect(mRemembered, SIGNAL(stateChanged(int)), this, SIGNAL(changed()));
+        // switch out of 'waiting for wallet' mode if we're in it
+        mRemembered->setTristate(false);
+        mRemembered->setChecked(true);
+        connect(mRemembered, SIGNAL(stateChanged(int)), this, SIGNAL(changed()));
+    }
+    emit changed();
 }
-
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -2,8 +2,8 @@
     AddressBookSelectorWidget
     Copyright (c) 2005 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Based on LinkAddressBookUI whose code was shamelessly stolen from 
-    kopete's add new contact wizard, used in Konversation, and then 
+    Based on LinkAddressBookUI whose code was shamelessly stolen from
+    kopete's add new contact wizard, used in Konversation, and then
     reappropriated by Kopete.
 
     LinkAddressBookUI:
@@ -37,54 +37,50 @@
 #include "ui_addressbookselectorwidget_base.h"
 
 namespace KContacts {
-	class Picture;
-	class Address;
-	class Addressee;
-	class AddresseeList;
+class Picture;
+class Address;
+class Addressee;
+class AddresseeList;
 }
 
-namespace Kopete
-{
-namespace UI
-{
-
+namespace Kopete {
+namespace UI {
 class KOPETE_EXPORT AddressBookSelectorWidget : public QWidget, private Ui::AddressBookSelectorWidget_Base
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	explicit AddressBookSelectorWidget( QWidget *parent = nullptr, const char *name  = 0 );
-	~AddressBookSelectorWidget();
-	KContacts::Addressee addressee();
-	/**
-	 * sets the widget label message
-	 * example: Please select a contact
-	 * or, Choose a contact to delete
-	 */
-	void setLabelMessage( const QString &msg );
-	/**
-	 * pre-selects a contact
-	 */
-	void selectAddressee( const QString &uid );
-	/**
-	 * @return true if there is a contact selected
-	 */
-	bool addresseeSelected();
-	
-private:
-	//KContacts::AddressBook * m_addressBook;
-	KContacts::Addressee m_addressee;
-	
-protected slots:
-	void slotAddAddresseeClicked();
-	/**
-	 * Utility function, populates the addressee list
-	 */
-	void slotLoadAddressees();
-signals:
-	void addresseeListClicked( QTreeWidgetItem *addressee );
-	void addAddresseeClicked();
-};
+    explicit AddressBookSelectorWidget(QWidget *parent = nullptr, const char *name = 0);
+    ~AddressBookSelectorWidget();
+    KContacts::Addressee addressee();
+    /**
+     * sets the widget label message
+     * example: Please select a contact
+     * or, Choose a contact to delete
+     */
+    void setLabelMessage(const QString &msg);
+    /**
+     * pre-selects a contact
+     */
+    void selectAddressee(const QString &uid);
+    /**
+     * @return true if there is a contact selected
+     */
+    bool addresseeSelected();
 
+private:
+    //KContacts::AddressBook * m_addressBook;
+    KContacts::Addressee m_addressee;
+
+protected slots:
+    void slotAddAddresseeClicked();
+    /**
+     * Utility function, populates the addressee list
+     */
+    void slotLoadAddressees();
+signals:
+    void addresseeListClicked(QTreeWidgetItem *addressee);
+    void addAddresseeClicked();
+};
 } // namespace UI
 } // namespace Kopete
 

@@ -25,9 +25,7 @@
 #include "libkopete_debug.h"
 #include "kopete_export.h"
 
-namespace Kopete
-{
-
+namespace Kopete {
 /**
  * @brief Base class for all Kopete task.
  *
@@ -52,59 +50,58 @@ namespace Kopete
  */
 class KOPETE_EXPORT Task : public KCompositeJob
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	 * Common error code for Kopete tasks
-	 */
-	enum KopeteTaskError
-	{
-		/**
-		 * Forgot to add the protocol subtask for deleting the contact
-		 */
-		NoProtocolSubTaskError = KJob::UserDefinedError+1,
-		/**
-		 * The network is unavailable and thus cannot delete the contact
-		 */
-		NetworkUnavailableError
+    /**
+     * Common error code for Kopete tasks
+     */
+    enum KopeteTaskError
+    {
+        /**
+         * Forgot to add the protocol subtask for deleting the contact
+         */
+        NoProtocolSubTaskError = KJob::UserDefinedError+1,
+        /**
+         * The network is unavailable and thus cannot delete the contact
+         */
+        NetworkUnavailableError
     };
 
-	/**
-	 * @brief Create a new task
-	 * @param parent QObject parent
-	 */
-	Task(QObject *parent = nullptr);
-	/**
-	 * Destructor
-	 */
-	virtual ~Task();
+    /**
+     * @brief Create a new task
+     * @param parent QObject parent
+     */
+    Task(QObject *parent = nullptr);
+    /**
+     * Destructor
+     */
+    virtual ~Task();
 
-	/**
-	 * @brief Add a new sub task
-	 * @param task a new task
-	 */
-	void addSubTask(KJob *task);
+    /**
+     * @brief Add a new sub task
+     * @param task a new task
+     */
+    void addSubTask(KJob *task);
 
-	/**
-	 * @brief Execute the task
-	 *
-	 * The default behavior for the start() here
-	 * is to execute all subjobs if they are available.
-	 *
-	 * For definition of classes in libkopete, start()
-	 * should implement the default behavior for the kind
-	 * of task.
-	 *
-	 * For example, for DeleteContactTask, the default behavior
-	 * should call deleteLater() on contact instance.
-	 */
-	void start() Q_DECL_OVERRIDE;
+    /**
+     * @brief Execute the task
+     *
+     * The default behavior for the start() here
+     * is to execute all subjobs if they are available.
+     *
+     * For definition of classes in libkopete, start()
+     * should implement the default behavior for the kind
+     * of task.
+     *
+     * For example, for DeleteContactTask, the default behavior
+     * should call deleteLater() on contact instance.
+     */
+    void start() Q_DECL_OVERRIDE;
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
 }
 
 #endif

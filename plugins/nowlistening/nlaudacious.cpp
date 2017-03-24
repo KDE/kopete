@@ -1,5 +1,5 @@
 /*
-	nlaudacious.cpp
+    nlaudacious.cpp
 
     Kopete Now Listening To plugin
 
@@ -8,9 +8,9 @@
 
     Kopete (c) 2002,2003 by the Kopete developers  <kopete-devel@kde.org>
 
-	Purpose:
-	This class abstracts the interface to audacious by
-	implementing NLMediaPlayer
+    Purpose:
+    This class abstracts the interface to audacious by
+    implementing NLMediaPlayer
 
     *************************************************************************
     *                                                                       *
@@ -26,7 +26,6 @@
 
 #include <kdebug.h>
 
-
 #include <QtDBus/QtDBus>
 
 struct audaciousPlayerStatus
@@ -37,9 +36,9 @@ struct audaciousPlayerStatus
     int repeatPlayList; // 0 = Stop playing once the last element has been played, 1 = Never give up playing
 };
 
-Q_DECLARE_METATYPE( audaciousPlayerStatus )
+Q_DECLARE_METATYPE(audaciousPlayerStatus)
 
-QDBusArgument &operator << ( QDBusArgument &arg, const audaciousPlayerStatus &status )
+QDBusArgument &operator <<(QDBusArgument &arg, const audaciousPlayerStatus &status)
 {
     arg.beginStructure();
     arg << status.state;
@@ -50,7 +49,7 @@ QDBusArgument &operator << ( QDBusArgument &arg, const audaciousPlayerStatus &st
     return arg;
 }
 
-const QDBusArgument &operator >> ( const QDBusArgument &arg, audaciousPlayerStatus &status )
+const QDBusArgument &operator >>(const QDBusArgument &arg, audaciousPlayerStatus &status)
 {
     arg.beginStructure();
     arg >> status.state;
@@ -63,59 +62,53 @@ const QDBusArgument &operator >> ( const QDBusArgument &arg, audaciousPlayerStat
 
 NLaudacious::NLaudacious() : NLMediaPlayer()
 {
-	m_type = Audio;
-	m_name = "audacious";
-	m_client = new QDBusInterface ( "org.mpris.audacious", "/Player" );
-	qDBusRegisterMetaType<audaciousPlayerStatus>();
+    m_type = Audio;
+    m_name = "audacious";
+    m_client = new QDBusInterface("org.mpris.audacious", "/Player");
+    qDBusRegisterMetaType<audaciousPlayerStatus>();
 }
 
 NLaudacious::~NLaudacious()
 {
-	delete m_client;
+    delete m_client;
 }
 
 void NLaudacious::update()
 {
-	m_playing = false;
+    m_playing = false;
 
-	if ( !m_client->isValid() )
-	{
-		delete m_client;
-		m_client = new QDBusInterface ( "org.mpris.audacious", "/Player", "org.freedesktop.MediaPlayer" );
-	}
+    if (!m_client->isValid()) {
+        delete m_client;
+        m_client = new QDBusInterface("org.mpris.audacious", "/Player", "org.freedesktop.MediaPlayer");
+    }
 
-	// see if audacious is registered with DBUS
-	if ( m_client->isValid() )
-	{
-		// see if it's playing
-		QDBusReply <audaciousPlayerStatus> audaciousStatus = m_client->call ( "GetStatus" );
-		if ( audaciousStatus.value().state == 0 )
-		{
-			m_playing = true;
-		}
+    // see if audacious is registered with DBUS
+    if (m_client->isValid()) {
+        // see if it's playing
+        QDBusReply <audaciousPlayerStatus> audaciousStatus = m_client->call("GetStatus");
+        if (audaciousStatus.value().state == 0) {
+            m_playing = true;
+        }
 
-		QDBusReply<QVariantMap> metaDataReply = m_client->call ( "GetMetadata" );
-		if ( !metaDataReply.isValid() )
-		{
-			return;
-		}
+        QDBusReply<QVariantMap> metaDataReply = m_client->call("GetMetadata");
+        if (!metaDataReply.isValid()) {
+            return;
+        }
 
-		const QVariantMap &metaData = metaDataReply.value();
+        const QVariantMap &metaData = metaDataReply.value();
 
-		// Fetch title
-		const QString newTrack = metaData["title"].toString();
+        // Fetch title
+        const QString newTrack = metaData["title"].toString();
 
-		if ( newTrack != m_track )
-		{
-			m_newTrack = true;
-			m_track = newTrack;
-		}
+        if (newTrack != m_track) {
+            m_newTrack = true;
+            m_track = newTrack;
+        }
 
-		// Fetch album
-		m_album = metaData["album"].toString();
+        // Fetch album
+        m_album = metaData["album"].toString();
 
-		// Fetch artist
-		m_artist = metaData["artist"].toString();
-	}
-
+        // Fetch artist
+        m_artist = metaData["artist"].toString();
+    }
 }

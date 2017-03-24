@@ -28,28 +28,32 @@
 #include <kaboutdata.h>
 #include <kglobal.h>
 
-
 using namespace KUnitTest;
 
-KUNITTEST_MODULE( kunittest_kopetepropertiestest, "KopeteSuite");
-KUNITTEST_MODULE_REGISTER_TESTER( KopetePropertiesTest );
+KUNITTEST_MODULE(kunittest_kopetepropertiestest, "KopeteSuite");
+KUNITTEST_MODULE_REGISTER_TESTER(KopetePropertiesTest);
 
 using namespace Kopete::Properties;
 
-static QTextStream _out( stdout, QIODevice::WriteOnly );
+static QTextStream _out(stdout, QIODevice::WriteOnly);
 
-class PropertyHost : public WithProperties<PropertyHost> {};
+class PropertyHost : public WithProperties<PropertyHost>
+{
+};
 
 class FooProperty : public SimpleDataProperty<PropertyHost, QString>
 {
 public:
-	const char *name() const { return "foo"; }
+    const char *name() const
+    {
+        return "foo";
+    }
 } fooProperty;
 
 void KopetePropertiesTest::allTests()
 {
-	PropertyHost myPropertyHost;
-	CHECK( myPropertyHost.property(fooProperty).isNull(), true);
-	myPropertyHost.setProperty( fooProperty, QString::fromLatin1("Foo!") );
-	CHECK( myPropertyHost.property(fooProperty), QString::fromLatin1("Foo!") );
+    PropertyHost myPropertyHost;
+    CHECK(myPropertyHost.property(fooProperty).isNull(), true);
+    myPropertyHost.setProperty(fooProperty, QString::fromLatin1("Foo!"));
+    CHECK(myPropertyHost.property(fooProperty), QString::fromLatin1("Foo!"));
 }

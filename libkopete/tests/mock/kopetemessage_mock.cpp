@@ -16,5 +16,3 @@
 */
 
 #include "kopetemessage_mock.h"
-
-

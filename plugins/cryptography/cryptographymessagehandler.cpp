@@ -25,43 +25,44 @@
 class CryptographyMessageHandlerFactory::Private
 {
 public:
-	Message::MessageDirection direction;
-	int position;
-	QPointer<QObject> target;
-	const char *slot;
+    Message::MessageDirection direction;
+    int position;
+    QPointer<QObject> target;
+    const char *slot;
 };
 
-CryptographyMessageHandlerFactory::CryptographyMessageHandlerFactory( Message::MessageDirection direction,
-	int position, QObject *target, const char *slot )
- : d( new Private )
+CryptographyMessageHandlerFactory::CryptographyMessageHandlerFactory(Message::MessageDirection direction, int position, QObject *target, const char *slot)
+    : d(new Private)
 {
-	d->direction = direction;
-	d->position = position;
-	d->target = target;
-	d->slot = slot;
+    d->direction = direction;
+    d->position = position;
+    d->target = target;
+    d->slot = slot;
 }
 
 CryptographyMessageHandlerFactory::~CryptographyMessageHandlerFactory()
 {
-	delete d;
+    delete d;
 }
 
-MessageHandler *CryptographyMessageHandlerFactory::create( ChatSession *manager, Message::MessageDirection direction )
+MessageHandler *CryptographyMessageHandlerFactory::create(ChatSession *manager, Message::MessageDirection direction)
 {
-	Q_UNUSED( manager )
-	if ( direction != d->direction )
-		return 0;
-	MessageHandler *handler = new CryptographyMessageHandler;
-	QObject::connect( handler, SIGNAL(handle(Kopete::MessageEvent*)), d->target, d->slot );
-	return handler;
+    Q_UNUSED(manager)
+    if (direction != d->direction) {
+        return 0;
+    }
+    MessageHandler *handler = new CryptographyMessageHandler;
+    QObject::connect(handler, SIGNAL(handle(Kopete::MessageEvent *)), d->target, d->slot);
+    return handler;
 }
 
-int CryptographyMessageHandlerFactory::filterPosition( ChatSession *manager, Message::MessageDirection direction )
+int CryptographyMessageHandlerFactory::filterPosition(ChatSession *manager, Message::MessageDirection direction)
 {
-	Q_UNUSED( manager )
-	if ( direction != d->direction )
-		return StageDoNotCreate;
-	return d->position;
+    Q_UNUSED(manager)
+    if (direction != d->direction) {
+        return StageDoNotCreate;
+    }
+    return d->position;
 }
 
 CryptographyMessageHandler::CryptographyMessageHandler()
@@ -72,18 +73,16 @@ CryptographyMessageHandler::~CryptographyMessageHandler()
 {
 }
 
-void CryptographyMessageHandler::handleMessage( MessageEvent *e )
+void CryptographyMessageHandler::handleMessage(MessageEvent *e)
 {
-	QPointer< MessageEvent > event = e;
-	emit handle( e );
-	if( event )
-	{
-		kDebug(14303) << "MessageEvent still there!";
-		MessageHandler::handleMessage( event );
-	}
-	else
-		kDebug(14303) << "MessageEvent destroyed!";
+    QPointer< MessageEvent > event = e;
+    emit handle(e);
+    if (event) {
+        kDebug(14303) << "MessageEvent still there!";
+        MessageHandler::handleMessage(event);
+    } else {
+        kDebug(14303) << "MessageEvent destroyed!";
+    }
 }
-
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -20,8 +20,7 @@
 
 #include "kopeteaccount.h"
 
-namespace Kopete
-{
+namespace Kopete {
 class Protocol;
 class OnlineStatus;
 class StatusMessage;
@@ -29,31 +28,23 @@ class StatusMessage;
 
 class QString;
 
-namespace Kopete
-{
-namespace Test
-{
-namespace Mock
-{
-
+namespace Kopete {
+namespace Test {
+namespace Mock {
 class Account : public Kopete::Account
 {
 public:
-	Account(Kopete::Protocol *parent, const QString &accountID);
-	~Account();
-	// pure virtual functions implementation
-	virtual bool createContact( const QString &contactId, MetaContact *parentContact );
-	virtual void connect( const Kopete::OnlineStatus& initialStatus = OnlineStatus() );
-	virtual void disconnect();
-	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage(),
-	                              const OnlineStatusOptions& options = None );
-	virtual void setStatusMessage( const Kopete::StatusMessage &statusMessage );
+    Account(Kopete::Protocol *parent, const QString &accountID);
+    ~Account();
+    // pure virtual functions implementation
+    virtual bool createContact(const QString &contactId, MetaContact *parentContact);
+    virtual void connect(const Kopete::OnlineStatus &initialStatus = OnlineStatus());
+    virtual void disconnect();
+    virtual void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage(), const OnlineStatusOptions &options = None);
+    virtual void setStatusMessage(const Kopete::StatusMessage &statusMessage);
 };
-
 } // end ns Kopete::Test::Mock
 } // end ns Kopete::Test
 } // end ns Kopete
 
-
 #endif
-

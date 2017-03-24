@@ -24,14 +24,12 @@
 #include <kopete_export.h>
 
 namespace Kopete {
-
 class Group;
 class Contactlist;
 class MetaContact;
 class ContactListElement;
-	
-namespace UI {
 
+namespace UI {
 class MetaContactModelItem;
 class GroupModelItem;
 class ContactListPlainModelItem;
@@ -40,51 +38,48 @@ class ContactListPlainModelItem;
 */
 class KOPETE_CONTACT_LIST_EXPORT ContactListPlainModel : public ContactListModel
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	ContactListPlainModel(QObject* parent = nullptr);
-	~ContactListPlainModel();
+    ContactListPlainModel(QObject *parent = nullptr);
+    ~ContactListPlainModel();
 
-	QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
-	QModelIndex index ( int row, int column, const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
-	QModelIndex parent ( const QModelIndex & index ) const Q_DECL_OVERRIDE;
-	int rowCount ( const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
-	bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+    QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    bool hasChildren(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
-	Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
+    Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
 
-	bool dropMimeData(const QMimeData *data, Qt::DropAction action,
-	                          int row, int column, const QModelIndex &parent) Q_DECL_OVERRIDE;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) Q_DECL_OVERRIDE;
 
 public Q_SLOTS:
-	void addMetaContact( Kopete::MetaContact* ) Q_DECL_OVERRIDE;
-	void removeMetaContact( Kopete::MetaContact* ) Q_DECL_OVERRIDE;
+    void addMetaContact(Kopete::MetaContact *) Q_DECL_OVERRIDE;
+    void removeMetaContact(Kopete::MetaContact *) Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
-	void handleContactDataChange(Kopete::MetaContact*) Q_DECL_OVERRIDE;
-	void appearanceConfigChanged() Q_DECL_OVERRIDE;
-	void loadContactList() Q_DECL_OVERRIDE;
+    void handleContactDataChange(Kopete::MetaContact *) Q_DECL_OVERRIDE;
+    void appearanceConfigChanged() Q_DECL_OVERRIDE;
+    void loadContactList() Q_DECL_OVERRIDE;
 
 protected:
-	void loadModelSettingsImpl( QDomElement& rootElement ) Q_DECL_OVERRIDE;
-	void saveModelSettingsImpl( QDomDocument& doc, QDomElement& rootElement ) Q_DECL_OVERRIDE;
+    void loadModelSettingsImpl(QDomElement &rootElement) Q_DECL_OVERRIDE;
+    void saveModelSettingsImpl(QDomDocument &doc, QDomElement &rootElement) Q_DECL_OVERRIDE;
 
-	bool dropMetaContacts( int row, const QModelIndex &parent, Qt::DropAction action, const QList<GroupMetaContactPair> &items ) Q_DECL_OVERRIDE;
+    bool dropMetaContacts(int row, const QModelIndex &parent, Qt::DropAction action, const QList<GroupMetaContactPair> &items) Q_DECL_OVERRIDE;
 
 private:
-	void addMetaContactImpl( Kopete::MetaContact *mc );
-	QModelIndexList indexListFor( Kopete::ContactListElement* ) const;
+    void addMetaContactImpl(Kopete::MetaContact *mc);
+    QModelIndexList indexListFor(Kopete::ContactListElement *) const;
 
-	void savePositions();
-	void loadPositions();
+    void savePositions();
+    void loadPositions();
 
-	QHash<const Kopete::MetaContact*, int > m_addContactPosition;
-	QList<Kopete::MetaContact*> m_contacts;
+    QHash<const Kopete::MetaContact *, int > m_addContactPosition;
+    QList<Kopete::MetaContact *> m_contacts;
 };
-
 }
-
 }
 
 #endif

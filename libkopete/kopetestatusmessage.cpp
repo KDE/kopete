@@ -18,97 +18,97 @@
 
 #include <QHash>
 
-namespace Kopete
-{
-
+namespace Kopete {
 class StatusMessage::Private : public QSharedData
 {
 public:
-	Private()
-	{}
+    Private()
+    {
+    }
 
-	QString statusTitle;
-	QString statusMessage;
-	QHash<QString, QVariant> metaData;
-};	
+    QString statusTitle;
+    QString statusMessage;
+    QHash<QString, QVariant> metaData;
+};
 
 StatusMessage::StatusMessage()
- : d(new Private)
-{}
+    : d(new Private)
+{
+}
 
 StatusMessage::StatusMessage(const QString &message)
- : d(new Private)
+    : d(new Private)
 {
-	d->statusMessage = message;
+    d->statusMessage = message;
 }
 
 StatusMessage::StatusMessage(const QString &title, const QString &message)
-	: d(new Private)
+    : d(new Private)
 {
-	d->statusTitle = title;
-	d->statusMessage = message;
+    d->statusTitle = title;
+    d->statusMessage = message;
 }
 
 StatusMessage::~StatusMessage()
-{}
+{
+}
 
 StatusMessage::StatusMessage(const StatusMessage &copy)
- : d(copy.d)
-{}
+    : d(copy.d)
+{
+}
 
 StatusMessage &StatusMessage::operator=(const StatusMessage &other)
 {
-	d = other.d;
-	return *this;
+    d = other.d;
+    return *this;
 }
 
 bool StatusMessage::isEmpty() const
 {
-	return d->statusTitle.isEmpty() && d->statusMessage.isEmpty() && d->metaData.isEmpty();
+    return d->statusTitle.isEmpty() && d->statusMessage.isEmpty() && d->metaData.isEmpty();
 }
 
 void StatusMessage::setMessage(const QString &message)
 {
-	d->statusMessage = message;
+    d->statusMessage = message;
 }
 
 QString StatusMessage::message() const
 {
-	return d->statusMessage;
+    return d->statusMessage;
 }
 
 void StatusMessage::addMetaData(const QString &key, const QVariant &value)
 {
-	d->metaData.insert(key, value);	
+    d->metaData.insert(key, value);
 }
 
 void StatusMessage::addMetaData(const QHash<QString, QVariant> &otherHash)
 {
-	QHash<QString, QVariant>::ConstIterator it, itEnd = otherHash.constEnd();
-	for(it = otherHash.begin(); it != itEnd; ++it)
-	{
-		d->metaData.insert(it.key(), it.value());
-	}
+    QHash<QString, QVariant>::ConstIterator it, itEnd = otherHash.constEnd();
+    for (it = otherHash.begin(); it != itEnd; ++it) {
+        d->metaData.insert(it.key(), it.value());
+    }
 }
 
 bool StatusMessage::hasMetaData(const QString &key) const
 {
-	return d->metaData.contains(key);
+    return d->metaData.contains(key);
 }
 
 QVariant StatusMessage::metaData(const QString &key) const
 {
-	return d->metaData[key];
+    return d->metaData[key];
 }
 
 void StatusMessage::setTitle(const QString &title)
 {
-	d->statusTitle = title;
+    d->statusTitle = title;
 }
 
 QString StatusMessage::title() const
 {
-	return d->statusTitle;
+    return d->statusTitle;
 }
-
 }

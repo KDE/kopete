@@ -16,24 +16,20 @@
 #ifndef KOPETEIDLEPLATFORM_P_H
 #define KOPETEIDLEPLATFORM_P_H
 
-namespace Kopete
-{
-
+namespace Kopete {
 class IdlePlatform
 {
 public:
-	IdlePlatform();
-	~IdlePlatform();
+    IdlePlatform();
+    ~IdlePlatform();
 
-	bool init();
-	int secondsIdle();
+    bool init();
+    int secondsIdle();
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
 }
 
 #endif
-

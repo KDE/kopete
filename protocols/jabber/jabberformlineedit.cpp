@@ -1,4 +1,4 @@
- /*
+/*
   * jabberformlineedit.cpp
   *
   * Copyright (c) 2002-2003 by Till Gerken <till@tantalo.net>
@@ -17,22 +17,17 @@
 
 #include "jabberformlineedit.h"
 
-JabberFormLineEdit::JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent) : QLineEdit (value, parent)
+JabberFormLineEdit::JabberFormLineEdit (const int type, const QString &realName, const QString &value, QWidget *parent) : QLineEdit(value, parent)
 {
-
-	fieldType = type;
-	fieldName = realName;
-
+    fieldType = type;
+    fieldName = realName;
 }
 
-void JabberFormLineEdit::slotGatherData (XMPP::Form & form)
+void JabberFormLineEdit::slotGatherData(XMPP::Form &form)
 {
-
-	form += XMPP::FormField (fieldName, text ());
-
+    form += XMPP::FormField(fieldName, text());
 }
 
 JabberFormLineEdit::~JabberFormLineEdit ()
 {
 }
-

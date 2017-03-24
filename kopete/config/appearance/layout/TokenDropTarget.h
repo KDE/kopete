@@ -33,38 +33,50 @@ class TokenDropTarget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TokenDropTarget( const QString &mimeType, QWidget *parent = nullptr);
+    explicit TokenDropTarget(const QString &mimeType, QWidget *parent = nullptr);
 
-    QWidget *childAt( const QPoint &pos ) const;
+    QWidget *childAt(const QPoint &pos) const;
     void clear();
-    virtual inline int count() const { return count( -1 ); }
-    virtual int count ( int row ) const;
-    void insertToken( Token*, int row = -1, int col = -1 ); // -1 -> append to last row
-    int row ( Token* ) const;
+    virtual inline int count() const
+    {
+        return count(-1);
+    }
+
+    virtual int count(int row) const;
+    void insertToken(Token *, int row = -1, int col = -1);  // -1 -> append to last row
+    int row(Token *) const;
     int rows() const;
-    inline uint rowLimit() const { return m_limits[1]; }
-    inline void setRowLimit( uint r ) { m_limits[1] = r; }
-    void setCustomTokenFactory( TokenFactory * factory );
-    QList< Token *> drags( int row = -1 );
+    inline uint rowLimit() const
+    {
+        return m_limits[1];
+    }
+
+    inline void setRowLimit(uint r)
+    {
+        m_limits[1] = r;
+    }
+
+    void setCustomTokenFactory(TokenFactory *factory);
+    QList< Token *> drags(int row = -1);
 
 //     inline uint columnLimit() const { return m_limits[0]; }
 //     inline void setColumnLimit( uint c ) { m_limits[0] = c; }
 signals:
     void changed();
-    void focussed( QWidget* );
+    void focussed(QWidget *);
 
 protected:
-    bool eventFilter( QObject *, QEvent * ) Q_DECL_OVERRIDE;
-    QBoxLayout *rowBox( QWidget *w, QPoint *idx = 0 ) const;
-    QBoxLayout *rowBox( const QPoint &pt ) const;
+    bool eventFilter(QObject *, QEvent *) Q_DECL_OVERRIDE;
+    QBoxLayout *rowBox(QWidget *w, QPoint *idx = 0) const;
+    QBoxLayout *rowBox(const QPoint &pt) const;
 protected:
     friend class TokenDragger;
     void deleteEmptyRows();
 
 private:
-    bool accept( QDropEvent* );
+    bool accept(QDropEvent *);
     QHBoxLayout *appendRow();
-    void drop( Token*, const QPoint &pos = QPoint(0,0) );
+    void drop(Token *, const QPoint &pos = QPoint(0, 0));
 
 private:
     uint m_limits[2];

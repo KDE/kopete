@@ -23,39 +23,41 @@
 class StatusTreeView : public QTreeView
 {
 public:
-	StatusTreeView( QWidget * parent = 0 ) : QTreeView( parent ) {}
-	
+    StatusTreeView(QWidget *parent = 0) : QTreeView(parent)
+    {
+    }
+
 protected:
-	// FIXME: is there an easier way to set default action of QDrag to Qt::MoveAction
-	void startDrag( Qt::DropActions supportedActions ) Q_DECL_OVERRIDE
-	{
-		QModelIndexList indexes = selectedIndexes();
-		if ( indexes.count() > 0 )
-		{
-			QMimeData *data = model()->mimeData( indexes );
-			if ( !data )
-				return;
+    // FIXME: is there an easier way to set default action of QDrag to Qt::MoveAction
+    void startDrag(Qt::DropActions supportedActions) Q_DECL_OVERRIDE
+    {
+        QModelIndexList indexes = selectedIndexes();
+        if (indexes.count() > 0) {
+            QMimeData *data = model()->mimeData(indexes);
+            if (!data) {
+                return;
+            }
 
-			QDrag *drag = new QDrag( this );
-			drag->setMimeData( data );
-			if ( drag->exec( supportedActions, Qt::MoveAction ) == Qt::MoveAction )
-			{
-				const QItemSelection selection = selectionModel()->selection();
-				QList<QItemSelectionRange>::const_iterator it = selection.begin();
+            QDrag *drag = new QDrag(this);
+            drag->setMimeData(data);
+            if (drag->exec(supportedActions, Qt::MoveAction) == Qt::MoveAction) {
+                const QItemSelection selection = selectionModel()->selection();
+                QList<QItemSelectionRange>::const_iterator it = selection.begin();
 
-				for ( ; it != selection.end(); ++it )
-				{
-					QModelIndex parent = (*it).parent();
-					if ( (*it).left() != 0 )
-						continue;
-					if ( (*it).right() != ( model()->columnCount(parent) - 1 ) )
-						continue;
-					int count = (*it).bottom() - (*it).top() + 1;
-					model()->removeRows( (*it).top(), count, parent );
-				}
-			}
-		}
-	}
+                for (; it != selection.end(); ++it) {
+                    QModelIndex parent = (*it).parent();
+                    if ((*it).left() != 0) {
+                        continue;
+                    }
+                    if ((*it).right() != (model()->columnCount(parent) - 1)) {
+                        continue;
+                    }
+                    int count = (*it).bottom() - (*it).top() + 1;
+                    model()->removeRows((*it).top(), count, parent);
+                }
+            }
+        }
+    }
 };
 
 #endif

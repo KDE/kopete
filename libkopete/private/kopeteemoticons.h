@@ -5,7 +5,7 @@
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
     Copyright (c) 2005      by Engin AYDOGAN	      <engin@bzzzt.biz>
 
-	Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -25,21 +25,18 @@
 
 class KEmoticons;
 namespace Kopete {
-
 class KOPETE_EXPORT Emoticons
 {
 public:
-	/**
-	 * The emoticons container-class by default is a singleton object.
-	 * Use this method to retrieve the instance.
-	 */
-	static KEmoticons *self();
+    /**
+     * The emoticons container-class by default is a singleton object.
+     * Use this method to retrieve the instance.
+     */
+    static KEmoticons *self();
 
-	static QString parseEmoticons(const QString &text, KEmoticonsTheme::ParseMode mode = KEmoticonsTheme::DefaultParse, const QStringList &exclude = QStringList());
-	static QList<KEmoticonsTheme::Token> tokenize(const QString &message, KEmoticonsTheme::ParseMode mode = KEmoticonsTheme::DefaultParse);
-
+    static QString parseEmoticons(const QString &text, KEmoticonsTheme::ParseMode mode = KEmoticonsTheme::DefaultParse, const QStringList &exclude = QStringList());
+    static QList<KEmoticonsTheme::Token> tokenize(const QString &message, KEmoticonsTheme::ParseMode mode = KEmoticonsTheme::DefaultParse);
 };
-
 } //END namespace Kopete
 
 #endif

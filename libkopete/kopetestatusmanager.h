@@ -24,13 +24,12 @@
 class QDomElement;
 
 namespace Kopete {
-
 class Account;
 class OnlineStatus;
 
 namespace Status {
-	class StatusGroup;
-	class StatusItem;
+class StatusGroup;
+class StatusItem;
 }
 
 /**
@@ -43,135 +42,134 @@ namespace Status {
  */
 class KOPETE_EXPORT StatusManager : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	 * Get the only instance of StatusManager
-	 * @return StatusManager single instance
-	 */
-	static StatusManager *self();
+    /**
+     * Get the only instance of StatusManager
+     * @return StatusManager single instance
+     */
+    static StatusManager *self();
 
-	~StatusManager();
+    ~StatusManager();
 
-	/**
-	 * Save status data tree into XML file
-	 */
-	void saveXML();
-	
-	/**
-	 * Load status data tree into XML file
-	 */
-	void loadXML();
+    /**
+     * Save status data tree into XML file
+     */
+    void saveXML();
 
-	/**
-	 * Set new status data tree
-	 */
-	void setRootGroup( Status::StatusGroup * rootGroup );
-	
-	/**
-	 * Get current status data tree
-	 */
-	Status::StatusGroup *getRootGroup() const;
+    /**
+     * Load status data tree into XML file
+     */
+    void loadXML();
 
-	/**
-	 * Copy current status data tree
-	 */
-	Status::StatusGroup *copyRootGroup() const;
+    /**
+     * Set new status data tree
+     */
+    void setRootGroup(Status::StatusGroup *rootGroup);
 
-	/**
-	 * Find status item for given uid
-	 */
-	const Status::StatusItem *itemForUid( const QString &uid ) const;
+    /**
+     * Get current status data tree
+     */
+    Status::StatusGroup *getRootGroup() const;
 
-	/**
-	 * Convert status item to XML structure
-	 *
-	 * @note it's public because it's also used for drag&drop
-	 */
-	static QDomElement storeStatusItem( const Status::StatusItem *item );
-	
-	/**
-	 * Restore status item from XML structure
-	 *
-	 * @note it's public because it's also used for drag&drop
-	 */
-	static Status::StatusItem *parseStatusItem( QDomElement element );
+    /**
+     * Copy current status data tree
+     */
+    Status::StatusGroup *copyRootGroup() const;
 
-	/**
-	 * Remember current global status
-	 */
-	void setGlobalStatus( uint category, const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage() );
-	
-	/**
-	 * Remember current global status message
-	 */
-	void setGlobalStatusMessage( const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage() );
+    /**
+     * Find status item for given uid
+     */
+    const Status::StatusItem *itemForUid(const QString &uid) const;
 
-	/**
-	 * Get current global status message
-	 */
-	Kopete::StatusMessage globalStatusMessage() const;
+    /**
+     * Convert status item to XML structure
+     *
+     * @note it's public because it's also used for drag&drop
+     */
+    static QDomElement storeStatusItem(const Status::StatusItem *item);
 
-	/**
-	 * Get current global status category
-	 */
-	uint globalStatusCategory() const;
+    /**
+     * Restore status item from XML structure
+     *
+     * @note it's public because it's also used for drag&drop
+     */
+    static Status::StatusItem *parseStatusItem(QDomElement element);
 
-	/**
-	 * Returns true if auto away status was set
-	 */
-	bool autoAway();
+    /**
+     * Remember current global status
+     */
+    void setGlobalStatus(uint category, const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage());
 
-	/**
-	 * Returns true if global away status was set
-	 */
-	bool globalAway();
+    /**
+     * Remember current global status message
+     */
+    void setGlobalStatusMessage(const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage());
+
+    /**
+     * Get current global status message
+     */
+    Kopete::StatusMessage globalStatusMessage() const;
+
+    /**
+     * Get current global status category
+     */
+    uint globalStatusCategory() const;
+
+    /**
+     * Returns true if auto away status was set
+     */
+    bool autoAway();
+
+    /**
+     * Returns true if global away status was set
+     */
+    bool globalAway();
 
 public Q_SLOTS:
-	/**
-	 * Undo auto away
-	 */
-	void setActive();
+    /**
+     * Undo auto away
+     */
+    void setActive();
 
-	/**
-	 * Confirm with the user, then set auto away
-	 */
-	void askAndSetActive();
-	
-	/**
-	 * Set all online account to auto away status
-	 */
-	void setAutoAway();
+    /**
+     * Confirm with the user, then set auto away
+     */
+    void askAndSetActive();
+
+    /**
+     * Set all online account to auto away status
+     */
+    void setAutoAway();
 
 Q_SIGNALS:
-	/**
-	 * This signal is emitted when root item of status data tree has changed.
-	 */
-	void changed();
+    /**
+     * This signal is emitted when root item of status data tree has changed.
+     */
+    void changed();
 
-	/**
-	 * This signal is emitted when global status has changed.
-	 */
-	void globalStatusChanged();
+    /**
+     * This signal is emitted when global status has changed.
+     */
+    void globalStatusChanged();
 
 private Q_SLOTS:
-	void accountUnregistered( const Kopete::Account *account );
-	void checkIdleTimer();
-	void loadSettings();
-	void loadBehaviorSettings();
-	
+    void accountUnregistered(const Kopete::Account *account);
+    void checkIdleTimer();
+    void loadSettings();
+    void loadBehaviorSettings();
+
 private:
-	StatusManager();
-	void updateUidHash( Status::StatusItem *item );
+    StatusManager();
+    void updateUidHash(Status::StatusItem *item);
 
-	Status::StatusGroup *defaultStatuses() const;
+    Status::StatusGroup *defaultStatuses() const;
 
-	static StatusManager *instance;
+    static StatusManager *instance;
 
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
 }
 
 #endif

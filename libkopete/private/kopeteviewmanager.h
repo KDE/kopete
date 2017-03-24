@@ -22,10 +22,9 @@
 #include "kopetemessage.h"
 #include "kopete_export.h"
 
-namespace Kopete
-{
-    class ChatSession;
-    class MessageEvent;
+namespace Kopete {
+class ChatSession;
+class MessageEvent;
 }
 
 class KopeteView;
@@ -37,7 +36,7 @@ struct KopeteViewManagerPrivate;
 */
 class KOPETE_EXPORT KopeteViewManager : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     /**
     * This is a singleton class.  Call this method to get a pointer to
@@ -54,7 +53,7 @@ public:
     * @param session The Kopete::ChatSession we are viewing.
     * @param requestedPlugin Specifies the view plugin to use.
     */
-    KopeteView *view( Kopete::ChatSession *session, const QString &requestedPlugin = QString() );
+    KopeteView *view(Kopete::ChatSession *session, const QString &requestedPlugin = QString());
 
     /**
     * Provide access to the list of KopeteChatWindow the class maintains.
@@ -65,7 +64,7 @@ public:
      * Returns unread messages for the given contact
      * @param contact Message sender
      */
-    QList<Kopete::MessageEvent*> pendingMessages( Kopete::Contact *contact );
+    QList<Kopete::MessageEvent *> pendingMessages(Kopete::Contact *contact);
 
 public slots:
     /**
@@ -75,7 +74,7 @@ public slots:
     *
     * @todo Document @p activate
     */
-    void readMessages( Kopete::ChatSession* manager, bool isOutboundMessage, bool activate = false );
+    void readMessages(Kopete::ChatSession *manager, bool isOutboundMessage, bool activate = false);
 
     /**
     * Called when a new message has been appended to the given
@@ -84,31 +83,29 @@ public slots:
     * @param msg The new message
     * @param manager The originating Kopete::ChatSession
     */
-    void messageAppended( Kopete::Message &msg, Kopete::ChatSession *manager);
+    void messageAppended(Kopete::Message &msg, Kopete::ChatSession *manager);
 
     void nextEvent();
 
 private slots:
-    void slotViewDestroyed( KopeteView *);
-    void slotChatSessionDestroyed( Kopete::ChatSession * );
+    void slotViewDestroyed(KopeteView *);
+    void slotChatSessionDestroyed(Kopete::ChatSession *);
 
 public slots:
     /**
     * An event has been deleted.
     */
-    void slotEventDeleted( Kopete::MessageEvent * );
+    void slotEventDeleted(Kopete::MessageEvent *);
 
     void slotPrefsChanged();
-    void slotViewActivated( KopeteView * );
+    void slotViewActivated(KopeteView *);
 
 private:
-    void createNotification( Kopete::Message &msg, const QString &unchangedMessage,
-                             Kopete::ChatSession *session, Kopete::MessageEvent *event,
-                             QWidget *viewWidget, bool isActiveWindow, bool isViewOnCurrentDesktop);
+    void createNotification(Kopete::Message &msg, const QString &unchangedMessage, Kopete::ChatSession *session, Kopete::MessageEvent *event, QWidget *viewWidget, bool isActiveWindow,
+                            bool isViewOnCurrentDesktop);
 
     KopeteViewManagerPrivate *d;
     static KopeteViewManager *s_viewManager;
-
 };
 
 #endif

@@ -42,114 +42,114 @@
 
 #include <qtabwidget.h>
 
-K_PLUGIN_FACTORY( KopeteBehaviorConfigFactory, registerPlugin<BehaviorConfig>(); )
+K_PLUGIN_FACTORY(KopeteBehaviorConfigFactory, registerPlugin<BehaviorConfig>();
+                 )
 
-BehaviorConfig::BehaviorConfig(QWidget *parent, const QVariantList &args) :
-		KCModule( parent, args )
+BehaviorConfig::BehaviorConfig(QWidget *parent, const QVariantList &args)
+    : KCModule(parent, args)
 {
-	QVBoxLayout *layout = new QVBoxLayout(this);
-	// since KSetting::Dialog has margins here, we don't need our own.
-	layout->setContentsMargins( 0, 0, 0, 0);
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    // since KSetting::Dialog has margins here, we don't need our own.
+    layout->setContentsMargins(0, 0, 0, 0);
 
-	mBehaviorTabCtl = new QTabWidget(this);
-	mBehaviorTabCtl->setObjectName(QStringLiteral("mBehaviorTabCtl"));
-	layout->addWidget( mBehaviorTabCtl );
+    mBehaviorTabCtl = new QTabWidget(this);
+    mBehaviorTabCtl->setObjectName(QStringLiteral("mBehaviorTabCtl"));
+    layout->addWidget(mBehaviorTabCtl);
 
-	// "General" TAB ============================================================
-	mPrfsGeneral = new BehaviorConfig_General(mBehaviorTabCtl);
-	addConfig( Kopete::BehaviorSettings::self(), mPrfsGeneral );
-	mBehaviorTabCtl->addTab(mPrfsGeneral, i18n("&General"));
+    // "General" TAB ============================================================
+    mPrfsGeneral = new BehaviorConfig_General(mBehaviorTabCtl);
+    addConfig(Kopete::BehaviorSettings::self(), mPrfsGeneral);
+    mBehaviorTabCtl->addTab(mPrfsGeneral, i18n("&General"));
 
-	// "Events" TAB ============================================================
-	mPrfsEvents = new BehaviorConfig_Events(mBehaviorTabCtl);
-	addConfig( Kopete::BehaviorSettings::self(), mPrfsEvents );
-	mBehaviorTabCtl->addTab(mPrfsEvents, i18n("&Events"));
+    // "Events" TAB ============================================================
+    mPrfsEvents = new BehaviorConfig_Events(mBehaviorTabCtl);
+    addConfig(Kopete::BehaviorSettings::self(), mPrfsEvents);
+    mBehaviorTabCtl->addTab(mPrfsEvents, i18n("&Events"));
 
-	// "Away" TAB ===============================================================
-	mPrfsAway = new BehaviorConfig_Away(mBehaviorTabCtl);
-	addConfig( Kopete::BehaviorSettings::self(), mPrfsAway );
-	mBehaviorTabCtl->addTab(mPrfsAway, i18n("A&way Settings"));
+    // "Away" TAB ===============================================================
+    mPrfsAway = new BehaviorConfig_Away(mBehaviorTabCtl);
+    addConfig(Kopete::BehaviorSettings::self(), mPrfsAway);
+    mBehaviorTabCtl->addTab(mPrfsAway, i18n("A&way Settings"));
 
-	// "Chat" TAB ===============================================================
-	mPrfsChat = new BehaviorConfig_Chat(mBehaviorTabCtl);
-	addConfig( Kopete::BehaviorSettings::self(), mPrfsChat );
-	mBehaviorTabCtl->addTab(mPrfsChat, i18n("Cha&t"));
+    // "Chat" TAB ===============================================================
+    mPrfsChat = new BehaviorConfig_Chat(mBehaviorTabCtl);
+    addConfig(Kopete::BehaviorSettings::self(), mPrfsChat);
+    mBehaviorTabCtl->addTab(mPrfsChat, i18n("Cha&t"));
 
-	Kopete::PluginManager *pluginManager = Kopete::PluginManager::self();
-	viewPlugins = pluginManager->availablePlugins(QStringLiteral("Views"));
+    Kopete::PluginManager *pluginManager = Kopete::PluginManager::self();
+    viewPlugins = pluginManager->availablePlugins(QStringLiteral("Views"));
 
-	load();
+    load();
 
-	// "Chat" TAB ===============================================================
-	connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
-		 this, SLOT(slotValueChanged(int)));
+    // "Chat" TAB ===============================================================
+    connect(mPrfsChat->viewPlugin, SIGNAL(activated(int)),
+            this, SLOT(slotValueChanged(int)));
 
-	// "Away" TAB ===============================================================
-	connect( mPrfsAway->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
-		this, SLOT(slotValueChanged(int)));;
-	connect( mPrfsAway->mAutoAwayCustomMessage, SIGNAL(textChanged()),
-	         this, SLOT(slotTextChanged()) );
+    // "Away" TAB ===============================================================
+    connect(mPrfsAway->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
+            this, SLOT(slotValueChanged(int)));
+    connect(mPrfsAway->mAutoAwayCustomMessage, SIGNAL(textChanged()),
+            this, SLOT(slotTextChanged()));
 }
 
 void BehaviorConfig::save()
 {
 //	kDebug(14000);
 
-	KCModule::save();
+    KCModule::save();
 
-	// "Away" TAB ===============================================================
-	Kopete::BehaviorSettings::self()->setAutoAwayTimeout( mPrfsAway->mAutoAwayTimeout->value() * 60 );
-	Kopete::BehaviorSettings::self()->setAutoAwayCustomMessage( mPrfsAway->mAutoAwayCustomMessage->toPlainText() );
+    // "Away" TAB ===============================================================
+    Kopete::BehaviorSettings::self()->setAutoAwayTimeout(mPrfsAway->mAutoAwayTimeout->value() * 60);
+    Kopete::BehaviorSettings::self()->setAutoAwayCustomMessage(mPrfsAway->mAutoAwayCustomMessage->toPlainText());
 
-	// "Chat" TAB ===============================================================
-	if ( viewPlugins.size() > 0 )
-	{
-		Kopete::BehaviorSettings::self()->setViewPlugin(viewPlugins[mPrfsChat->viewPlugin->currentIndex()].pluginName() );
-	}
+    // "Chat" TAB ===============================================================
+    if (viewPlugins.size() > 0) {
+        Kopete::BehaviorSettings::self()->setViewPlugin(viewPlugins[mPrfsChat->viewPlugin->currentIndex()].pluginName());
+    }
 
-	Kopete::BehaviorSettings::self()->writeConfig();
+    Kopete::BehaviorSettings::self()->writeConfig();
 
-	load();
+    load();
 }
 
 void BehaviorConfig::load()
 {
-	KCModule::load();
-	// "General" TAB ===============================================================
-	if(!mPrfsGeneral->kcfg_useMessageQueue->isChecked()) {
-		mPrfsGeneral->mInstantMessageOpeningChk->setChecked(true);
-	}
+    KCModule::load();
+    // "General" TAB ===============================================================
+    if (!mPrfsGeneral->kcfg_useMessageQueue->isChecked()) {
+        mPrfsGeneral->mInstantMessageOpeningChk->setChecked(true);
+    }
 
-	// "Away" TAB ===============================================================
-	mPrfsAway->mAutoAwayTimeout->setValue( Kopete::BehaviorSettings::self()->autoAwayTimeout() / 60 );
-	mPrfsAway->mAutoAwayCustomMessage->setPlainText( Kopete::BehaviorSettings::self()->autoAwayCustomMessage() );
+    // "Away" TAB ===============================================================
+    mPrfsAway->mAutoAwayTimeout->setValue(Kopete::BehaviorSettings::self()->autoAwayTimeout() / 60);
+    mPrfsAway->mAutoAwayCustomMessage->setPlainText(Kopete::BehaviorSettings::self()->autoAwayCustomMessage());
 
-	// "Chat" TAB ===============================================================
-	mPrfsChat->viewPlugin->clear();
-	int selectedIdx = 0, i = 0;
-	for(  QList<KPluginInfo>::iterator it = viewPlugins.begin(); it != viewPlugins.end(); ++it )
-	{
-		if( it->pluginName() == Kopete::BehaviorSettings::self()->viewPlugin() )
-			selectedIdx = i;
-		mPrfsChat->viewPlugin->insertItem( i++, it->name() );
-	}
+    // "Chat" TAB ===============================================================
+    mPrfsChat->viewPlugin->clear();
+    int selectedIdx = 0, i = 0;
+    for (QList<KPluginInfo>::iterator it = viewPlugins.begin(); it != viewPlugins.end(); ++it) {
+        if (it->pluginName() == Kopete::BehaviorSettings::self()->viewPlugin()) {
+            selectedIdx = i;
+        }
+        mPrfsChat->viewPlugin->insertItem(i++, it->name());
+    }
 
-	mPrfsChat->viewPlugin->setCurrentIndex(selectedIdx);
+    mPrfsChat->viewPlugin->setCurrentIndex(selectedIdx);
 }
 
 void BehaviorConfig::slotSettingsChanged(bool)
 {
-	emit changed(true);
+    emit changed(true);
 }
 
 void BehaviorConfig::slotValueChanged(int)
 {
-	emit changed( true );
+    emit changed(true);
 }
 
 void BehaviorConfig::slotTextChanged()
 {
-	emit changed( true );
+    emit changed(true);
 }
 
 #include "behaviorconfig.moc"

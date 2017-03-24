@@ -15,7 +15,6 @@
 */
 #include "kopetestatuseditaction.h"
 
-
 #include <QKeyEvent>
 #include <QMenu>
 
@@ -23,140 +22,131 @@
 
 #include "ui_kopetestatuseditwidget_base.h"
 
-namespace Kopete
+namespace Kopete {
+namespace UI {
+StatusEditWidget::StatusEditWidget(QWidget *parent)
+    : QWidget(parent)
+    , ui(new Ui::KopeteStatusEditWidget)
 {
+    ui->setupUi(this);
 
-namespace UI
-{
+    ui->statusTitle->setClearButtonEnabled(true);
+    ui->buttonBox->addButton(KGuiItem(i18n("C&lear"), QStringLiteral("edit-clear")), QDialogButtonBox::DestructiveRole, this, SLOT(clearClicked()));
 
-StatusEditWidget::StatusEditWidget( QWidget *parent )
-: QWidget( parent )
-, ui( new Ui::KopeteStatusEditWidget )
-{
-	ui->setupUi( this );
+    setFocusPolicy(Qt::StrongFocus);
+    setFocusProxy(ui->statusTitle);
 
-	ui->statusTitle->setClearButtonEnabled( true );
-	ui->buttonBox->addButton( KGuiItem( i18n( "C&lear" ), QStringLiteral("edit-clear") ), QDialogButtonBox::DestructiveRole, this, SLOT(clearClicked()) );
-
-	setFocusPolicy( Qt::StrongFocus );
-	setFocusProxy( ui->statusTitle );
-
-	connect( ui->buttonBox, SIGNAL(accepted()), this, SLOT(changeClicked()) );
+    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(changeClicked()));
 }
 
 StatusEditWidget::~StatusEditWidget()
 {
-	delete ui;
+    delete ui;
 }
 
 KDialogButtonBox *StatusEditWidget::buttonBox() const
 {
-	return ui->buttonBox;
+    return ui->buttonBox;
 }
 
 Kopete::StatusMessage StatusEditWidget::statusMessage() const
 {
-	Kopete::StatusMessage statusMessage;
-	statusMessage.setTitle( ui->statusTitle->text() );
-	statusMessage.setMessage( ui->statusMessage->toPlainText() );
-	return statusMessage;
+    Kopete::StatusMessage statusMessage;
+    statusMessage.setTitle(ui->statusTitle->text());
+    statusMessage.setMessage(ui->statusMessage->toPlainText());
+    return statusMessage;
 }
 
-void StatusEditWidget::setStatusMessage( const Kopete::StatusMessage& statusMessage )
+void StatusEditWidget::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
-	ui->statusTitle->setText( statusMessage.title() );
-	ui->statusMessage->setPlainText( statusMessage.message() );
+    ui->statusTitle->setText(statusMessage.title());
+    ui->statusMessage->setPlainText(statusMessage.message());
 }
 
 void StatusEditWidget::changeClicked()
 {
-	emit statusChanged( statusMessage() );
+    emit statusChanged(statusMessage());
 }
 
 void StatusEditWidget::clearClicked()
 {
-	setStatusMessage( Kopete::StatusMessage() );
-	emit statusChanged( statusMessage() );
+    setStatusMessage(Kopete::StatusMessage());
+    emit statusChanged(statusMessage());
 }
 
 // FIXME: This should probably be in the action, implemented as an event-filter
 // Prevents menu closing on widget click
-void StatusEditWidget::mouseReleaseEvent( QMouseEvent * )
-{}
-
-void StatusEditWidget::keyPressEvent( QKeyEvent* event )
+void StatusEditWidget::mouseReleaseEvent(QMouseEvent *)
 {
-	// Change status on enter key press
-	if ( event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter )
-	{
-		changeClicked();
-		event->accept();
-		return;
-	}
-
-	QWidget::keyPressEvent( event );
 }
 
-StatusEditAction::StatusEditAction( QObject *parent )
-: QWidgetAction( parent )
+void StatusEditWidget::keyPressEvent(QKeyEvent *event)
 {
-	mStatusEditWidget = new StatusEditWidget();
-	setDefaultWidget( mStatusEditWidget );
+    // Change status on enter key press
+    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+        changeClicked();
+        event->accept();
+        return;
+    }
 
-	connect(mStatusEditWidget, SIGNAL(statusChanged(Kopete::StatusMessage)), SLOT(hideMenu()) );
-	connect(mStatusEditWidget, SIGNAL(statusChanged(Kopete::StatusMessage)), SIGNAL(statusChanged(Kopete::StatusMessage)) );
+    QWidget::keyPressEvent(event);
+}
+
+StatusEditAction::StatusEditAction(QObject *parent)
+    : QWidgetAction(parent)
+{
+    mStatusEditWidget = new StatusEditWidget();
+    setDefaultWidget(mStatusEditWidget);
+
+    connect(mStatusEditWidget, SIGNAL(statusChanged(Kopete::StatusMessage)), SLOT(hideMenu()));
+    connect(mStatusEditWidget, SIGNAL(statusChanged(Kopete::StatusMessage)), SIGNAL(statusChanged(Kopete::StatusMessage)));
 }
 
 Kopete::StatusMessage StatusEditAction::statusMessage() const
 {
-	return mStatusEditWidget->statusMessage();
+    return mStatusEditWidget->statusMessage();
 }
 
-void StatusEditAction::setStatusMessage( const Kopete::StatusMessage& statusMessage )
+void StatusEditAction::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
-	mStatusEditWidget->setStatusMessage( statusMessage );
+    mStatusEditWidget->setStatusMessage(statusMessage);
 }
 
 void StatusEditAction::hideMenu()
 {
-	// Hack to hide menu
-	QMenu* menu = qobject_cast<QMenu*>(mStatusEditWidget->parent());
-	if ( menu )
-	{
-		menu->setActiveAction(this);
-		mStatusEditWidget->parent()->event( new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier)  );
-		mStatusEditWidget->parent()->event( new QKeyEvent(QEvent::KeyRelease, Qt::Key_Return, Qt::NoModifier)  );
-	}
+    // Hack to hide menu
+    QMenu *menu = qobject_cast<QMenu *>(mStatusEditWidget->parent());
+    if (menu) {
+        menu->setActiveAction(this);
+        mStatusEditWidget->parent()->event(new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));
+        mStatusEditWidget->parent()->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_Return, Qt::NoModifier));
+    }
 }
 
-StatusEditDialog::StatusEditDialog( QWidget *parent )
-: KDialog(parent)
-, mStatusEditWidget( new StatusEditWidget )
+StatusEditDialog::StatusEditDialog(QWidget *parent)
+    : KDialog(parent)
+    , mStatusEditWidget(new StatusEditWidget)
 {
-	setMainWidget( mStatusEditWidget );
-	setCaption( i18n("Edit Message") );
+    setMainWidget(mStatusEditWidget);
+    setCaption(i18n("Edit Message"));
 
-	// We use the buttonbox from the edit widget
-	setButtons(KDialog::None);
-	KDialogButtonBox *buttonBox = mStatusEditWidget->buttonBox();
-	buttonBox->setStandardButtons( buttonBox->standardButtons() | QDialogButtonBox::Cancel );
-	connect(buttonBox, SIGNAL(rejected()), SLOT(reject()) );
+    // We use the buttonbox from the edit widget
+    setButtons(KDialog::None);
+    KDialogButtonBox *buttonBox = mStatusEditWidget->buttonBox();
+    buttonBox->setStandardButtons(buttonBox->standardButtons() | QDialogButtonBox::Cancel);
+    connect(buttonBox, SIGNAL(rejected()), SLOT(reject()));
 
-	connect(mStatusEditWidget, SIGNAL(statusChanged(Kopete::StatusMessage)), SLOT(accept()) );
+    connect(mStatusEditWidget, SIGNAL(statusChanged(Kopete::StatusMessage)), SLOT(accept()));
 }
 
 Kopete::StatusMessage StatusEditDialog::statusMessage() const
 {
-	return mStatusEditWidget->statusMessage();
+    return mStatusEditWidget->statusMessage();
 }
 
-void StatusEditDialog::setStatusMessage( const Kopete::StatusMessage& statusMessage )
+void StatusEditDialog::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
-	mStatusEditWidget->setStatusMessage( statusMessage );
+    mStatusEditWidget->setStatusMessage(statusMessage);
 }
-
-
 }
-
 }
-

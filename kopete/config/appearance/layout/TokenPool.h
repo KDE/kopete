@@ -29,31 +29,30 @@ class TokenPool : public KListWidget
 {
     Q_OBJECT
     Q_PROPERTY(QString mimeType READ mimeType WRITE setMimeType)
-    
-    public:
-        TokenPool( QWidget *parent = nullptr );
-        void addToken( Token * token );
-    
-        QString mimeType() const;
-        void setMimeType( const QString& mimeType );
-    protected:
-        void mouseDoubleClickEvent( QMouseEvent *event ) Q_DECL_OVERRIDE;
-        void mousePressEvent( QMouseEvent *event ) Q_DECL_OVERRIDE;
-        void mouseMoveEvent( QMouseEvent *event ) Q_DECL_OVERRIDE;
-        void dragEnterEvent( QDragEnterEvent *event ) Q_DECL_OVERRIDE;
-        void dragMoveEvent( QDragMoveEvent *event ) Q_DECL_OVERRIDE;
-        void dropEvent( QDropEvent *event ) Q_DECL_OVERRIDE;
 
-    signals:
-        void onDoubleClick( Token *token );     //connects to TokenLayoutWidget::addToken( QString )
-    
-    private:
-        void performDrag( QMouseEvent *event );
-        QPoint m_startPos;  //needed for starting the drag
-        QString m_mimeType;
+public:
+    TokenPool(QWidget *parent = nullptr);
+    void addToken(Token *token);
 
-        QMap<QListWidgetItem*,Token*> m_itemTokenMap;
+    QString mimeType() const;
+    void setMimeType(const QString &mimeType);
+protected:
+    void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
+    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
+    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
+
+signals:
+    void onDoubleClick(Token *token);           //connects to TokenLayoutWidget::addToken( QString )
+
+private:
+    void performDrag(QMouseEvent *event);
+    QPoint m_startPos;      //needed for starting the drag
+    QString m_mimeType;
+
+    QMap<QListWidgetItem *, Token *> m_itemTokenMap;
 };
 
 #endif
-

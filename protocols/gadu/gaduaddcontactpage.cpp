@@ -1,7 +1,7 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
-// Copyright (C) 2002-2003 Zack Rusin 	<zack@kde.org>
+// Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
+// Copyright (C) 2002-2003 Zack Rusin   <zack@kde.org>
 //
 // gaduaddconectpage.cpp
 //
@@ -45,97 +45,96 @@
 #include <QVBoxLayout>
 #include <krestrictedline.h>
 
-GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent )
-: AddContactPage( parent )
+GaduAddContactPage::GaduAddContactPage(GaduAccount *owner, QWidget *parent)
+    : AddContactPage(parent)
 {
-	account_	= owner;
+    account_ = owner;
 
-	QVBoxLayout* l = new QVBoxLayout( this );
-	QWidget* w = new QWidget;
-	addUI_	= new Ui::GaduAddUI;
-	addUI_->setupUi( w );
-	l->addWidget( w );
+    QVBoxLayout *l = new QVBoxLayout(this);
+    QWidget *w = new QWidget;
+    addUI_ = new Ui::GaduAddUI;
+    addUI_->setupUi(w);
+    l->addWidget(w);
 
-	connect( addUI_->addEdit_, SIGNAL(textChanged(QString)), SLOT(slotUinChanged(QString)) );
-	addUI_->addEdit_->setValidChars( "1234567890" );
-	addUI_->addEdit_->setText( "" );
-	addUI_->groups->setDisabled( true );
-	addUI_->addEdit_->setFocus();
+    connect(addUI_->addEdit_, SIGNAL(textChanged(QString)), SLOT(slotUinChanged(QString)));
+    addUI_->addEdit_->setValidChars("1234567890");
+    addUI_->addEdit_->setText("");
+    addUI_->groups->setDisabled(true);
+    addUI_->addEdit_->setFocus();
 
-	kDebug(14100) << "filling gropus";
+    kDebug(14100) << "filling gropus";
 
-	fillGroups();
+    fillGroups();
 }
 
 GaduAddContactPage::~GaduAddContactPage()
 {
-	delete addUI_;
+    delete addUI_;
 }
 
 void
 GaduAddContactPage::fillGroups()
 {
-  /*
-	Kopete::Group *g;
-	QPtrList<Kopete::Group> gl = Kopete::ContactList::self()->groups();
-	for( g = gl.first(); g; g = gl.next() ) {
-		QCheckListItem* item = new QCheckListItem( addUI_->groups, g->displayName(), QCheckListItem::CheckBox );
-		kDebug(14100) << g->displayName() << " " << g->groupId();
-	}
-  */
+    /*
+      Kopete::Group *g;
+      QPtrList<Kopete::Group> gl = Kopete::ContactList::self()->groups();
+      for( g = gl.first(); g; g = gl.next() ) {
+          QCheckListItem* item = new QCheckListItem( addUI_->groups, g->displayName(), QCheckListItem::CheckBox );
+          kDebug(14100) << g->displayName() << " " << g->groupId();
+      }
+    */
 }
 
 void
-GaduAddContactPage::showEvent( QShowEvent* e )
+GaduAddContactPage::showEvent(QShowEvent *e)
 {
-	slotUinChanged( QString() );
-	AddContactPage::showEvent( e );
+    slotUinChanged(QString());
+    AddContactPage::showEvent(e);
 }
 
 void
-GaduAddContactPage::slotUinChanged( const QString & )
+GaduAddContactPage::slotUinChanged(const QString &)
 {
-	emit dataValid( this, validateData() );
+    emit dataValid(this, validateData());
 }
 
 bool
 GaduAddContactPage::validateData()
 {
-	bool ok;
-	long u;
+    bool ok;
+    long u;
 
-	u = addUI_->addEdit_->text().toULong( &ok );
-	if ( u == 0 ) {
-		return false;
-	}
+    u = addUI_->addEdit_->text().toULong(&ok);
+    if (u == 0) {
+        return false;
+    }
 
-	return ok;
+    return ok;
 }
 
 bool
-GaduAddContactPage::apply( Kopete::Account* a , Kopete::MetaContact* mc )
+GaduAddContactPage::apply(Kopete::Account *a, Kopete::MetaContact *mc)
 {
-	if ( validateData() ) {
-		QString userid	= addUI_->addEdit_->text().trimmed();
-		QString name	= addUI_->nickEdit_->text().trimmed();
-		if ( a != account_ ) {
-			kDebug(14100) << "Problem because accounts differ: " << a->accountId()
-							<< " , " << account_->accountId() << endl;
-		}
-		if ( !a->addContact( userid,  mc, Kopete::Account::ChangeKABC )  ) {
-			return false;
-		}
-		GaduContact *contact = static_cast<GaduContact*>( a->contacts().value( userid ) );
+    if (validateData()) {
+        QString userid = addUI_->addEdit_->text().trimmed();
+        QString name = addUI_->nickEdit_->text().trimmed();
+        if (a != account_) {
+            kDebug(14100) << "Problem because accounts differ: " << a->accountId()
+                          << " , " << account_->accountId() << endl;
+        }
+        if (!a->addContact(userid, mc, Kopete::Account::ChangeKABC)) {
+            return false;
+        }
+        GaduContact *contact = static_cast<GaduContact *>(a->contacts().value(userid));
 
-		contact->setProperty( GaduProtocol::protocol()->propEmail, addUI_->emailEdit_->text().trimmed() );
-		contact->setProperty( GaduProtocol::protocol()->propFirstName, addUI_->fornameEdit_->text().trimmed() );
-		contact->setProperty( GaduProtocol::protocol()->propLastName, addUI_->snameEdit_->text().trimmed() );
-		contact->setProperty( GaduProtocol::protocol()->propPhoneNr, addUI_->telephoneEdit_ ->text().trimmed() );
-		/*
-		contact->setProperty( "ignored", i18n( "ignored" ), "false" );
-		contact->setProperty( "nickName", i18n( "nickname" ), name );
-		*/
-	}
-	return true;
+        contact->setProperty(GaduProtocol::protocol()->propEmail, addUI_->emailEdit_->text().trimmed());
+        contact->setProperty(GaduProtocol::protocol()->propFirstName, addUI_->fornameEdit_->text().trimmed());
+        contact->setProperty(GaduProtocol::protocol()->propLastName, addUI_->snameEdit_->text().trimmed());
+        contact->setProperty(GaduProtocol::protocol()->propPhoneNr, addUI_->telephoneEdit_->text().trimmed());
+        /*
+        contact->setProperty( "ignored", i18n( "ignored" ), "false" );
+        contact->setProperty( "nickName", i18n( "nickname" ), name );
+        */
+    }
+    return true;
 }
-

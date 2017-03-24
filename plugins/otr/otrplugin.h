@@ -16,11 +16,10 @@
  *                                                                       *
  * You should have received a copy of the GNU General Public License     *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- *************************************************************************/ 
+ *************************************************************************/
 
 #ifndef OTRPLUGIN_H
 #define OTRPLUGIN_H
-
 
 #include <kopeteplugin.h>
 #include <kopetemessagehandler.h>
@@ -41,83 +40,89 @@ class KSelectAction;
 class OtrMessageHandler : public Kopete::MessageHandler
 {
 private:
-	QPointer<OTRPlugin> plugin;
+    QPointer<OTRPlugin> plugin;
 public:
-	OtrMessageHandler( OTRPlugin *plugin ) : plugin(plugin) {
+    OtrMessageHandler(OTRPlugin *plugin) : plugin(plugin)
+    {
 //		kdDebug() << "MessageHandler created" << endl;
-	}
-	~OtrMessageHandler(){
+    }
+
+    ~OtrMessageHandler()
+    {
 //		kdDebug() << "MessageHandler destroyed" << endl;
-	}
-	void handleMessage( Kopete::MessageEvent *event ) Q_DECL_OVERRIDE;
+    }
+
+    void handleMessage(Kopete::MessageEvent *event) Q_DECL_OVERRIDE;
 };
 
 class OtrMessageHandlerFactory : public Kopete::MessageHandlerFactory
 {
 private:
-	OTRPlugin *plugin;
-	OtrMessageHandler *messageHandler;
+    OTRPlugin *plugin;
+    OtrMessageHandler *messageHandler;
 public:
-	OtrMessageHandlerFactory( OTRPlugin *plugin ) : plugin(plugin) {}
-	Kopete::MessageHandler *create( Kopete::ChatSession *, Kopete::Message::MessageDirection direction ) Q_DECL_OVERRIDE
-	{
-		Q_UNUSED(direction)
-		return new OtrMessageHandler(plugin);
-	}
-	int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection ) Q_DECL_OVERRIDE
-	{
-		return Kopete::MessageHandlerFactory::InStageToSent+1;
-	}
+    OtrMessageHandlerFactory(OTRPlugin *plugin) : plugin(plugin)
+    {
+    }
+
+    Kopete::MessageHandler *create(Kopete::ChatSession *, Kopete::Message::MessageDirection direction) Q_DECL_OVERRIDE
+    {
+        Q_UNUSED(direction)
+        return new OtrMessageHandler(plugin);
+    }
+
+    int filterPosition(Kopete::ChatSession *, Kopete::Message::MessageDirection) Q_DECL_OVERRIDE
+    {
+        return Kopete::MessageHandlerFactory::InStageToSent+1;
+    }
 };
 
 class OTRPlugin : public Kopete::Plugin
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
 
-	static OTRPlugin  *plugin();
+    static OTRPlugin *plugin();
 
-	OTRPlugin( QObject *parent, const QVariantList &args );
-	~OTRPlugin();
+    OTRPlugin(QObject *parent, const QVariantList &args);
+    ~OTRPlugin();
 
-	void emitGoneSecure( Kopete::ChatSession *session, int status );
-	QMap<QString, QPair<QString, bool> > getMessageCache();
+    void emitGoneSecure(Kopete::ChatSession *session, int status);
+    QMap<QString, QPair<QString, bool> > getMessageCache();
 
 public slots:
 
-	void slotOutgoingMessage( Kopete::Message& msg );
-	void slotEnableOtr( Kopete::ChatSession *session, bool enable );
-	void slotSettingsChanged();
-	void slotVerifyFingerprint( Kopete::ChatSession *session );
+    void slotOutgoingMessage(Kopete::Message &msg);
+    void slotEnableOtr(Kopete::ChatSession *session, bool enable);
+    void slotSettingsChanged();
+    void slotVerifyFingerprint(Kopete::ChatSession *session);
 
 private slots:
-	void slotNewChatSessionWindow(Kopete::ChatSession * );
-	void slotSelectionChanged( bool single );
-	void slotSetPolicy();
-	void slotSecuritySate(Kopete::ChatSession *session, int state);
+    void slotNewChatSessionWindow(Kopete::ChatSession *);
+    void slotSelectionChanged(bool single);
+    void slotSetPolicy();
+    void slotSecuritySate(Kopete::ChatSession *session, int state);
 
 private:
-	static OTRPlugin* pluginStatic_;
-	OtrMessageHandlerFactory *m_inboundHandler;
-	OtrlChatInterface *otrlChatInterface;
-	QMap<QString, QPair<QString, bool> > messageCache;
-	KSelectAction* otrPolicyMenu;
+    static OTRPlugin *pluginStatic_;
+    OtrMessageHandlerFactory *m_inboundHandler;
+    OtrlChatInterface *otrlChatInterface;
+    QMap<QString, QPair<QString, bool> > messageCache;
+    KSelectAction *otrPolicyMenu;
 
 /*	KActionMenu *otrPolicyMenuBar;
-	KActionMenu *otrPolicyPopup;
-	KAction *otrPolicyDefault;
-	KAction *otrPolicyAlways;
-	KAction *otrPolicyOpportunistic;
-	KAction *otrPolicyManual;
-	KAction *otrPolicyNever;
+    KActionMenu *otrPolicyPopup;
+    KAction *otrPolicyDefault;
+    KAction *otrPolicyAlways;
+    KAction *otrPolicyOpportunistic;
+    KAction *otrPolicyManual;
+    KAction *otrPolicyNever;
 //	SessionManager manager
 */
 
 signals:
-	void goneSecure( Kopete::ChatSession *session, int state );
-
-
+    void goneSecure(Kopete::ChatSession *session, int state);
 };
 
 #endif

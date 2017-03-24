@@ -24,7 +24,9 @@
 
 #include <QVariantList>
 
-namespace Ui { class NowListeningPrefsUI; }
+namespace Ui {
+class NowListeningPrefsUI;
+}
 
 /**
   *@author Will Stephenson
@@ -32,20 +34,19 @@ namespace Ui { class NowListeningPrefsUI; }
 
 class NowListeningPreferences : public KCModule
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	explicit NowListeningPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
-	virtual ~NowListeningPreferences();
-	virtual void save();
-	virtual void load();
-	virtual void defaults();
+    explicit NowListeningPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+    virtual ~NowListeningPreferences();
+    virtual void save();
+    virtual void load();
+    virtual void defaults();
 
 private slots:
-	void slotSettingsChanged();
+    void slotSettingsChanged();
 
 private:
-	Ui::NowListeningPrefsUI *preferencesDialog;
-
+    Ui::NowListeningPrefsUI *preferencesDialog;
 };
 
 #endif
@@ -57,4 +58,3 @@ private:
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
-

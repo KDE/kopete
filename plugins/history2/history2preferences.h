@@ -21,28 +21,30 @@
 
 #include <kcmodule.h>
 
-namespace Ui { class History2PrefsUI; }
+namespace Ui {
+class History2PrefsUI;
+}
 
 /**
  * @author Stefan Gehn
  */
 class History2Preferences : public KCModule
 {
-	Q_OBJECT
-	public:
-		explicit History2Preferences(QWidget *parent=0, const QVariantList &args = QVariantList());
-		~History2Preferences();
+    Q_OBJECT
+public:
+    explicit History2Preferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+    ~History2Preferences();
 
-		virtual void save();
-		virtual void load();
+    virtual void save();
+    virtual void load();
 
-	private slots:
-		void slotModified();
-		void slotShowImport();
-		void slotShowPreviousChanged(bool);
+private slots:
+    void slotModified();
+    void slotShowImport();
+    void slotShowPreviousChanged(bool);
 
-	private:
-		Ui::History2PrefsUI *p;
+private:
+    Ui::History2PrefsUI *p;
 };
 
 #endif

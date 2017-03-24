@@ -19,51 +19,50 @@
 
 #include <qpointer.h>
 
-namespace Kopete
-{
-
+namespace Kopete {
 //BEGIN SimpleMessageHandlerFactory
 
 class SimpleMessageHandlerFactory::Private
 {
 public:
-	Message::MessageDirection direction;
-	int position;
-	QPointer<QObject> target;
-	const char *slot;
+    Message::MessageDirection direction;
+    int position;
+    QPointer<QObject> target;
+    const char *slot;
 };
 
-SimpleMessageHandlerFactory::SimpleMessageHandlerFactory( Message::MessageDirection direction,
-	int position, QObject *target, const char *slot )
- : d( new Private )
+SimpleMessageHandlerFactory::SimpleMessageHandlerFactory(Message::MessageDirection direction, int position, QObject *target, const char *slot)
+    : d(new Private)
 {
-	d->direction = direction;
-	d->position = position;
-	d->target = target;
-	d->slot = slot;
+    d->direction = direction;
+    d->position = position;
+    d->target = target;
+    d->slot = slot;
 }
 
 SimpleMessageHandlerFactory::~SimpleMessageHandlerFactory()
 {
-	delete d;
+    delete d;
 }
 
-MessageHandler *SimpleMessageHandlerFactory::create( ChatSession *manager, Message::MessageDirection direction )
+MessageHandler *SimpleMessageHandlerFactory::create(ChatSession *manager, Message::MessageDirection direction)
 {
-	Q_UNUSED( manager )
-	if ( direction != d->direction )
-		return 0;
-	MessageHandler *handler = new SimpleMessageHandler;
-	QObject::connect( handler, SIGNAL(handle(Kopete::Message&)), d->target, d->slot );
-	return handler;
+    Q_UNUSED(manager)
+    if (direction != d->direction) {
+        return 0;
+    }
+    MessageHandler *handler = new SimpleMessageHandler;
+    QObject::connect(handler, SIGNAL(handle(Kopete::Message&)), d->target, d->slot);
+    return handler;
 }
 
-int SimpleMessageHandlerFactory::filterPosition( ChatSession *manager, Message::MessageDirection direction )
+int SimpleMessageHandlerFactory::filterPosition(ChatSession *manager, Message::MessageDirection direction)
 {
-	Q_UNUSED( manager )
-	if ( direction != d->direction )
-		return StageDoNotCreate;
-	return d->position;
+    Q_UNUSED(manager)
+    if (direction != d->direction) {
+        return StageDoNotCreate;
+    }
+    return d->position;
 }
 
 //END SimpleMessageHandlerFactory
@@ -75,26 +74,24 @@ class SimpleMessageHandler::Private
 };
 
 SimpleMessageHandler::SimpleMessageHandler()
-	: d(0)
+    : d(0)
 {
 }
 
 SimpleMessageHandler::~SimpleMessageHandler()
 {
-	delete d;
+    delete d;
 }
 
-void SimpleMessageHandler::handleMessage( MessageEvent *event )
+void SimpleMessageHandler::handleMessage(MessageEvent *event)
 {
-	Message message = event->message();
-	emit handle( message );
-	event->setMessage( message );
-	MessageHandler::handleMessage( event );
+    Message message = event->message();
+    emit handle(message);
+    event->setMessage(message);
+    MessageHandler::handleMessage(event);
 }
 
 //END SimpleMessageHandler
-
 }
-
 
 // vim: set noet ts=4 sts=4 sw=4:

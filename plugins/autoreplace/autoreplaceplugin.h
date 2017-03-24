@@ -28,37 +28,36 @@
 #include "kopeteplugin.h"
 
 namespace Kopete {
-	class Message;
-	class MetaContact;
-	class ChatSession;
-	class SimpleMessageHandlerFactory;
+class Message;
+class MetaContact;
+class ChatSession;
+class SimpleMessageHandlerFactory;
 }
 class AutoReplaceConfig;
 
 class AutoReplacePlugin : public Kopete::Plugin
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	static AutoReplacePlugin *plugin();
+    static AutoReplacePlugin *plugin();
 
-	AutoReplacePlugin( QObject *parent, const QVariantList &args );
-	~AutoReplacePlugin();
+    AutoReplacePlugin(QObject *parent, const QVariantList &args);
+    ~AutoReplacePlugin();
 
 private slots:
-	void slotInterceptMessage( Kopete::Message &msg );
+    void slotInterceptMessage(Kopete::Message &msg);
 
-	void slotSettingsChanged();
+    void slotSettingsChanged();
 
 private:
-	static AutoReplacePlugin * pluginStatic_;
+    static AutoReplacePlugin *pluginStatic_;
 
-	AutoReplaceConfig *m_prefs;
+    AutoReplaceConfig *m_prefs;
 
-	Kopete::SimpleMessageHandlerFactory * mInboundHandler;
+    Kopete::SimpleMessageHandlerFactory *mInboundHandler;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

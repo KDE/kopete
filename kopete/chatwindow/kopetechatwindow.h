@@ -50,210 +50,216 @@ class KopeteEmoticonAction;
 class ChatView;
 class QDockWidget;
 
-namespace Kopete
-{
+namespace Kopete {
 class Message;
 class Contact;
-typedef QList<Contact*>  ContactPtrList;
+typedef QList<Contact *> ContactPtrList;
 }
 
-typedef QList<ChatView*> ChatViewList;
+typedef QList<ChatView *> ChatViewList;
 
 class KopeteChatWindow : public KXmlGuiWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	enum {NEW_WINDOW, GROUP_BY_ACCOUNT, GROUP_ALL, GROUP_BY_GROUP, GROUP_BY_METACONTACT};
+    enum {
+        NEW_WINDOW, GROUP_BY_ACCOUNT, GROUP_ALL, GROUP_BY_GROUP, GROUP_BY_METACONTACT
+    };
 
 public:
-	/**
-	 * Find the appropriate window for a ChatView of the given protocol to
-	 * dock into. If no such window exists, create one.
-	 * @param protocol The protocol we are creating a view for
-	 * @return A KopeteChatWindow suitable for docking a ChatView into. Guaranteed
-	 *  to be a valid pointer.
-	 */
-	static KopeteChatWindow *window( Kopete::ChatSession *manager );
-	~KopeteChatWindow();
+    /**
+     * Find the appropriate window for a ChatView of the given protocol to
+     * dock into. If no such window exists, create one.
+     * @param protocol The protocol we are creating a view for
+     * @return A KopeteChatWindow suitable for docking a ChatView into. Guaranteed
+     *  to be a valid pointer.
+     */
+    static KopeteChatWindow *window(Kopete::ChatSession *manager);
+    ~KopeteChatWindow();
 
-	/**
-	 * Attach an unattached chatview to this window
-	 * @param chat The chat view to attach
-	 */
-	void attachChatView( ChatView *chat );
+    /**
+     * Attach an unattached chatview to this window
+     * @param chat The chat view to attach
+     */
+    void attachChatView(ChatView *chat);
 
-	/**
-	 * Detach a chat view from this window
-	 * @param chat The chat view to detach
-	 */
-	void detachChatView( ChatView *chat );
+    /**
+     * Detach a chat view from this window
+     * @param chat The chat view to detach
+     */
+    void detachChatView(ChatView *chat);
 
-	/**
-	 * Returns the number of chat views attached to this window
-	 */
-	int chatViewCount() { return chatViewList.count(); }
+    /**
+     * Returns the number of chat views attached to this window
+     */
+    int chatViewCount()
+    {
+        return chatViewList.count();
+    }
 
-	/**
-	 * Returns the chatview in the currently active tab, or the only chat view
-	 * if chatViewCount() == 1
-	 */
-	ChatView *activeView();
+    /**
+     * Returns the chatview in the currently active tab, or the only chat view
+     * if chatViewCount() == 1
+     */
+    ChatView *activeView();
 
-	void setStatus( const QString & );
+    void setStatus(const QString &);
 
-	/**
-	 * Reimplemented from KXmlGuiWindow - asks each ChatView in the window if it is ok to close the window
-	 * @return true if no ChatView objects to closing.
-	 */
-	bool queryClose() Q_DECL_OVERRIDE;
-	virtual bool queryExit();
+    /**
+     * Reimplemented from KXmlGuiWindow - asks each ChatView in the window if it is ok to close the window
+     * @return true if no ChatView objects to closing.
+     */
+    bool queryClose() Q_DECL_OVERRIDE;
+    virtual bool queryExit();
 
-	KTemporaryFile *backgroundFile;
-	ChatViewList chatViewList;
+    KTemporaryFile *backgroundFile;
+    ChatViewList chatViewList;
 
 private:
-	// All KopeteChatWindows are created by the window function
-    KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *parent = nullptr );
+    // All KopeteChatWindows are created by the window function
+    KopeteChatWindow(Kopete::ChatSession::Form form, QWidget *parent = nullptr);
 
-	/**
-	 * The window list has changed:
-	 * For each chat window, update it's Move Tab to Window action
-	 */
-	static void windowListChanged();
+    /**
+     * The window list has changed:
+     * For each chat window, update it's Move Tab to Window action
+     */
+    static void windowListChanged();
 
-	void initActions(void);
-	void saveOptions(void);
-	void readOptions(void);
-	void checkDetachEnable();
-	void createTabBar();
-	void deleteTabBar();
-	void addTab( ChatView* );
-	void setPrimaryChatView( ChatView* );
+    void initActions(void);
+    void saveOptions(void);
+    void readOptions(void);
+    void checkDetachEnable();
+    void createTabBar();
+    void deleteTabBar();
+    void addTab(ChatView *);
+    void setPrimaryChatView(ChatView *);
 
-	//why did we ever need this method??
-	//const QString fileContents( const QString &file ) const;
+    //why did we ever need this method??
+    //const QString fileContents( const QString &file ) const;
 
-	QDockWidget *m_participantsWidget;
+    QDockWidget *m_participantsWidget;
 
-	//
-	QPointer<ChatView> m_activeView;
-	ChatView *m_popupView;
-	bool m_alwaysShowTabs;
-	bool updateBg;
-	KTabWidget *m_tabBar;
-	QPushButton *m_button_send;
-	KSqueezedTextLabel *m_status_text;
-	QVBoxLayout *mainLayout;
-	QFrame *mainArea;
-	QLabel *anim;
-	QMovie* animIcon;
-	QPixmap normalIcon;
+    //
+    QPointer<ChatView> m_activeView;
+    ChatView *m_popupView;
+    bool m_alwaysShowTabs;
+    bool updateBg;
+    KTabWidget *m_tabBar;
+    QPushButton *m_button_send;
+    KSqueezedTextLabel *m_status_text;
+    QVBoxLayout *mainLayout;
+    QFrame *mainArea;
+    QLabel *anim;
+    QMovie *animIcon;
+    QPixmap normalIcon;
 
-	QAction *chatSend;
-	QAction *chatSendFile;
-	QAction *historyUp;
-	QAction *historyDown;
-	QAction *nickComplete;
+    QAction *chatSend;
+    QAction *chatSendFile;
+    QAction *historyUp;
+    QAction *historyDown;
+    QAction *nickComplete;
 
-	KToggleAction *mStatusbarAction;
+    KToggleAction *mStatusbarAction;
 
-	QAction *tabActive;
-	QAction *tabLeft;
-	QAction *tabRight;
-	QAction *tabDetach;
-	QAction *tabClose;
-	QAction *tabCloseAllOthers;
+    QAction *tabActive;
+    QAction *tabLeft;
+    QAction *tabRight;
+    QAction *tabDetach;
+    QAction *tabClose;
+    QAction *tabCloseAllOthers;
 
-	QAction *sendMessage;
+    QAction *sendMessage;
 
-	KToggleAction* toggleAutoSpellCheck;
+    KToggleAction *toggleAutoSpellCheck;
 
-	KopeteEmoticonAction *actionSmileyMenu;
-	KActionMenu *actionActionMenu;
-	KActionMenu *actionContactMenu;
-	KActionMenu *actionDetachMenu;
-	KActionMenu *actionTabPlacementMenu;
-	QString statusMsg;
-	Kopete::ChatSession::Form initialForm;
+    KopeteEmoticonAction *actionSmileyMenu;
+    KActionMenu *actionActionMenu;
+    KActionMenu *actionContactMenu;
+    KActionMenu *actionDetachMenu;
+    KActionMenu *actionTabPlacementMenu;
+    QString statusMsg;
+    Kopete::ChatSession::Form initialForm;
 
-	bool m_UpdateChatLabel;
+    bool m_UpdateChatLabel;
 
 signals:
-	void closing( KopeteChatWindow* );
-	void chatSessionChanged( Kopete::ChatSession *newSession);
+    void closing(KopeteChatWindow *);
+    void chatSessionChanged(Kopete::ChatSession *newSession);
 
 public slots:
-	void slotSmileyActivated( const QString & );
-	void setActiveView( QWidget *active );
-	void updateBackground( const QPixmap &pm );
+    void slotSmileyActivated(const QString &);
+    void setActiveView(QWidget *active);
+    void updateBackground(const QPixmap &pm);
 
 private slots:
 //	void slotPrepareSmileyMenu();
-	void testCanDecode(const QDragMoveEvent *, bool &);
-	void receivedDropEvent( QWidget *, QDropEvent * );
-	void slotPrepareContactMenu();
-	void slotPrepareDetachMenu();
-	void slotPreparePlacementMenu();
-	void slotUpdateSendEnabled();
+    void testCanDecode(const QDragMoveEvent *, bool &);
+    void receivedDropEvent(QWidget *, QDropEvent *);
+    void slotPrepareContactMenu();
+    void slotPrepareDetachMenu();
+    void slotPreparePlacementMenu();
+    void slotUpdateSendEnabled();
 
-	void slotCut();
-	void slotCopy();
-	void slotPaste();
+    void slotCut();
+    void slotCopy();
+    void slotPaste();
 
-	void slotResetFontAndColor();
+    void slotResetFontAndColor();
 
-	void slotHistoryUp();
-	void slotHistoryDown();
-	void slotPageUp();
-	void slotPageDown();
+    void slotHistoryUp();
+    void slotHistoryDown();
+    void slotPageUp();
+    void slotPageDown();
 
-	void slotSendMessage();
-	void slotSendFile();
-	void slotChatSave();
-	void slotChatPrint();
+    void slotSendMessage();
+    void slotSendFile();
+    void slotChatSave();
+    void slotChatPrint();
 
-	void slotPreviousTab();
-	void slotNextTab();
-	void slotNextActiveTab();
-	void slotDetachChat(QAction* = 0);
-	void slotPlaceTabs( QAction* );
-	void slotCloseAllOtherTabs();
+    void slotPreviousTab();
+    void slotNextTab();
+    void slotNextActiveTab();
+    void slotDetachChat(QAction * = 0);
+    void slotPlaceTabs(QAction *);
+    void slotCloseAllOtherTabs();
 
-	void slotEnableUpdateBg() { updateBg = true; }
+    void slotEnableUpdateBg()
+    {
+        updateBg = true;
+    }
 
-	void updateChatSendFileAction();
-	void updateSendKeySequence();
+    void updateChatSendFileAction();
+    void updateSendKeySequence();
 
-	void toggleAutoSpellChecking();
-	void slotAutoSpellCheckEnabled( ChatView*, bool );
+    void toggleAutoSpellChecking();
+    void slotAutoSpellCheckEnabled(ChatView *, bool);
 
-	void slotSetCaption( bool );
-	void slotUpdateCaptionIcons( ChatView * );
-	void slotChatClosed();
-	void slotTabContextMenu( QWidget*, const QPoint & );
-	void slotStopAnimation( ChatView* );
-	void slotCloseChat( QWidget* );
+    void slotSetCaption(bool);
+    void slotUpdateCaptionIcons(ChatView *);
+    void slotChatClosed();
+    void slotTabContextMenu(QWidget *, const QPoint &);
+    void slotStopAnimation(ChatView *);
+    void slotCloseChat(QWidget *);
 
-	//slots for tabs from the chatview widget
-	void updateChatState( ChatView* cv, int state );
-	void updateChatTooltip( ChatView* cv );
-	void updateChatLabel();
+    //slots for tabs from the chatview widget
+    void updateChatState(ChatView *cv, int state);
+    void updateChatTooltip(ChatView *cv);
+    void updateChatLabel();
 
-	void enableSpellCheckAction(bool enable);
+    void enableSpellCheckAction(bool enable);
 
-	void updateActions();
+    void updateActions();
 
 private:
-	void updateSpellCheckAction();
+    void updateSpellCheckAction();
 
 protected:
-	void closeEvent( QCloseEvent *e ) Q_DECL_OVERRIDE;
-	void changeEvent( QEvent *e ) Q_DECL_OVERRIDE;
-	void resizeEvent( QResizeEvent *e) Q_DECL_OVERRIDE;
-	bool eventFilter( QObject *obj, QEvent *event ) Q_DECL_OVERRIDE;
+    void closeEvent(QCloseEvent *e) Q_DECL_OVERRIDE;
+    void changeEvent(QEvent *e) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent *e) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

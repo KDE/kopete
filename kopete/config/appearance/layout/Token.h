@@ -28,42 +28,43 @@ class Token;
 
 class TokenFactory
 {
-
 public:
-    virtual ~TokenFactory() {}
-    virtual Token * createToken( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr );
+    virtual ~TokenFactory()
+    {
+    }
+
+    virtual Token *createToken(const QString &text, const QString &iconName, int value, QWidget *parent = nullptr);
 };
 
 //Defines a part of a filename, drag&droppable in the TokenLayoutWidget bar from the TokenPool list.
 class Token : public QWidget
 {
-        Q_OBJECT
+    Q_OBJECT
 
-    public:
+public:
 
-        explicit Token( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr );
+    explicit Token(const QString &text, const QString &iconName, int value, QWidget *parent = nullptr);
 
-        QIcon icon() const;
-        QString iconName() const;
-        QString name() const;
-        int value() const;
+    QIcon icon() const;
+    QString iconName() const;
+    QString name() const;
+    int value() const;
 
-    signals:
-        void changed();
+signals:
+    void changed();
 
-    protected:
-        void paintEvent(QPaintEvent *pe) Q_DECL_OVERRIDE;
+protected:
+    void paintEvent(QPaintEvent *pe) Q_DECL_OVERRIDE;
 
-    protected:
+protected:
 
-        QString     m_name;
-        QIcon       m_icon;
-        QString     m_iconName;
-        int         m_value;
+    QString m_name;
+    QIcon m_icon;
+    QString m_iconName;
+    int m_value;
 
-        QLabel      *m_iconContainer;
-        QLabel      *m_label;
+    QLabel *m_iconContainer;
+    QLabel *m_label;
 };
 
 #endif // AMAROK_TOKEN_H
-

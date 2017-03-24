@@ -19,7 +19,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
-
 #ifndef GADUDCC_H
 #define GADUDCC_H
 
@@ -32,34 +31,35 @@ class GaduDCCTransaction;
 class GaduAccount;
 class GaduDCCServer;
 
-class GaduDCC: public QObject {
-	Q_OBJECT
+class GaduDCC : public QObject
+{
+    Q_OBJECT
 public:
-	GaduDCC(  QObject* parent = 0 );
-	~GaduDCC();
-	bool unregisterAccount();
-	bool registerAccount( GaduAccount* );
-	unsigned int listeingPort();
-	void unset();
-	void execute();
-	GaduAccount* account( unsigned int );
-	
-	QMap<unsigned int,QString> requests;	
+    GaduDCC(QObject *parent = 0);
+    ~GaduDCC();
+    bool unregisterAccount();
+    bool registerAccount(GaduAccount *);
+    unsigned int listeingPort();
+    void unset();
+    void execute();
+    GaduAccount *account(unsigned int);
+
+    QMap<unsigned int, QString> requests;
 signals:
-	void dccConnect( GaduDCCTransaction* dccTransaction );
+    void dccConnect(GaduDCCTransaction *dccTransaction);
 
 private slots:
-	void slotIncoming( gg_dcc*, bool& );
+    void slotIncoming(gg_dcc *, bool &);
 
 private:
-	void closeDCC();
-	bool unregisterAccount( unsigned int );
+    void closeDCC();
+    bool unregisterAccount(unsigned int);
 
-	unsigned int accountId;
+    unsigned int accountId;
 
-	static GaduDCCServer* dccServer;
+    static GaduDCCServer *dccServer;
 
-	static volatile unsigned int referenceCount;
+    static volatile unsigned int referenceCount;
 };
 
 #endif

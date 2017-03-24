@@ -26,38 +26,37 @@
 class AutoReplaceConfig
 {
 public:
-	AutoReplaceConfig();
+    AutoReplaceConfig();
 
-	void save();
-	void load();
+    void save();
+    void load();
 
-	typedef QMap<QString, QString> WordsToReplace;
+    typedef QMap<QString, QString> WordsToReplace;
 
-	WordsToReplace map() const;
-	bool autoReplaceIncoming() const;
-	bool autoReplaceOutgoing() const;
-	bool dotEndSentence() const;
-	bool capitalizeBeginningSentence() const;
+    WordsToReplace map() const;
+    bool autoReplaceIncoming() const;
+    bool autoReplaceOutgoing() const;
+    bool dotEndSentence() const;
+    bool capitalizeBeginningSentence() const;
 
-	void setAutoReplaceIncoming(bool enabled);
-	void setAutoReplaceOutgoing(bool enabled);
-	void setDotEndSentence(bool enabled);
-	void setCapitalizeBeginningSentence(bool enabled);
+    void setAutoReplaceIncoming(bool enabled);
+    void setAutoReplaceOutgoing(bool enabled);
+    void setDotEndSentence(bool enabled);
+    void setCapitalizeBeginningSentence(bool enabled);
 
-	void setMap( const WordsToReplace &w );
+    void setMap(const WordsToReplace &w);
     QStringList defaultAutoReplaceList();
     void loadDefaultAutoReplaceList();
 
 private:
-	WordsToReplace m_map;
+    WordsToReplace m_map;
 
-	bool m_autoreplaceIncoming;
-	bool m_autoreplaceOutgoing;
-	bool m_addDot;
-	bool m_upper;
+    bool m_autoreplaceIncoming;
+    bool m_autoreplaceOutgoing;
+    bool m_addDot;
+    bool m_upper;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

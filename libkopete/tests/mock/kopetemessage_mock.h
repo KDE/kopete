@@ -20,18 +20,12 @@
 
 #include "kopetemessage.h"
 
-namespace Kopete
-{
-namespace Test
-{
-namespace Mock
-{
-
+namespace Kopete {
+namespace Test {
+namespace Mock {
 class Message : public Kopete::Message
 {
-
 };
-
 } // end ns Kopete::Test::Mock
 } // end ns Kopete::Test
 } // end ns Kopete

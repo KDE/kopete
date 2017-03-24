@@ -25,42 +25,41 @@
 #include <kpluginfactory.h>
 #include "kopetestatussettings.h"
 
-K_PLUGIN_FACTORY( KopeteStatusConfigFactory, registerPlugin<StatusConfig>(); )
+K_PLUGIN_FACTORY(KopeteStatusConfigFactory, registerPlugin<StatusConfig>();
+                 )
 
-StatusConfig::StatusConfig( QWidget *parent, const QVariantList &args )
-: KCModule( parent, args )
+StatusConfig::StatusConfig(QWidget *parent, const QVariantList &args)
+    : KCModule(parent, args)
 {
-	QVBoxLayout *layout = new QVBoxLayout(this);
-	// since KSetting::Dialog has margins here, we don't need our own.
-	layout->setContentsMargins( 0, 0, 0, 0);
-	
-	mStatusTabCtl = new QTabWidget(this);
-	mStatusTabCtl->setObjectName(QStringLiteral("mStatusTabCtl"));
-	layout->addWidget( mStatusTabCtl );
-	
-	mPrfsManager = new StatusConfig_Manager( mStatusTabCtl );
-	connect( mPrfsManager, SIGNAL(changed()), this, SLOT(changed()) );
-	mStatusTabCtl->addTab( mPrfsManager, i18n("&Manager") );
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    // since KSetting::Dialog has margins here, we don't need our own.
+    layout->setContentsMargins(0, 0, 0, 0);
 
-	mPrfsGeneral = new StatusConfig_General( mStatusTabCtl );
-	addConfig( Kopete::StatusSettings::self(), mPrfsGeneral );
-	mStatusTabCtl->addTab( mPrfsGeneral, i18n("&General") );
+    mStatusTabCtl = new QTabWidget(this);
+    mStatusTabCtl->setObjectName(QStringLiteral("mStatusTabCtl"));
+    layout->addWidget(mStatusTabCtl);
+
+    mPrfsManager = new StatusConfig_Manager(mStatusTabCtl);
+    connect(mPrfsManager, SIGNAL(changed()), this, SLOT(changed()));
+    mStatusTabCtl->addTab(mPrfsManager, i18n("&Manager"));
+
+    mPrfsGeneral = new StatusConfig_General(mStatusTabCtl);
+    addConfig(Kopete::StatusSettings::self(), mPrfsGeneral);
+    mStatusTabCtl->addTab(mPrfsGeneral, i18n("&General"));
 }
 
 void StatusConfig::load()
 {
-	KCModule::load();
-	
+    KCModule::load();
 }
 
 void StatusConfig::save()
 {
-	KCModule::save();
+    KCModule::save();
 
-	mPrfsManager->save();
+    mPrfsManager->save();
 
-	load();
+    load();
 }
-
 
 #include "statusconfig.moc"

@@ -17,8 +17,7 @@
 #include "statusconfig_general.h"
 
 StatusConfig_General::StatusConfig_General(QWidget *parent)
-	: QWidget(parent)
+    : QWidget(parent)
 {
-	setupUi(this);
+    setupUi(this);
 }
-

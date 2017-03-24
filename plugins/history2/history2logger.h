@@ -43,79 +43,78 @@ class MetaContact;
  *
  * @author Olivier Goffart <ogoffart@kde.org>
  */
-class History2Logger : public QObject {
-	Q_OBJECT
+class History2Logger : public QObject
+{
+    Q_OBJECT
 public:
 
-	static History2Logger* instance() {
-		static QMutex mutex;
-		if (!m_Instance) {
-			mutex.lock();
+    static History2Logger *instance()
+    {
+        static QMutex mutex;
+        if (!m_Instance) {
+            mutex.lock();
 
-			if (!m_Instance)
-				m_Instance = new History2Logger();
+            if (!m_Instance) {
+                m_Instance = new History2Logger();
+            }
 
-			mutex.unlock();
-		}
+            mutex.unlock();
+        }
 
-		return m_Instance;
-	}
+        return m_Instance;
+    }
 
-	static void drop() {
-		static QMutex mutex;
-		mutex.lock();
-		delete m_Instance;
-		m_Instance = 0;
-		mutex.unlock();
-	}
+    static void drop()
+    {
+        static QMutex mutex;
+        mutex.lock();
+        delete m_Instance;
+        m_Instance = 0;
+        mutex.unlock();
+    }
 
-	/**
-	 * @return The list of the days for which there is a log for m_metaContact for month of
-	 * @param date (don't care of the day)
-	 */
-	QList<QDate> getDays(const Kopete::MetaContact *c, QString search = "" );
+    /**
+     * @return The list of the days for which there is a log for m_metaContact for month of
+     * @param date (don't care of the day)
+     */
+    QList<QDate> getDays(const Kopete::MetaContact *c, QString search = "");
 
-	QList<DMPair> getDays(QString search = "");
+    QList<DMPair> getDays(QString search = "");
 
+    /**
+     * log a message
+     * @param c add a presision to the contact to use, if null, autodetect.
+     */
+    void appendMessage(const Kopete::Message &msg, const Kopete::Contact *c = 0L, bool skipDuplicate = false);
 
-	/**
-	 * log a message
-	 * @param c add a presision to the contact to use, if null, autodetect.
-	 */
-	void appendMessage( const Kopete::Message &msg , const Kopete::Contact *c=0L, bool skipDuplicate = false);
+    bool messageExists(const Kopete::Message &msg, const Kopete::Contact *c = 0L);
 
-	bool messageExists( const Kopete::Message &msg , const Kopete::Contact *c=0L);
+    void beginTransaction();
+    void commitTransaction();
 
-	void beginTransaction();
-	void commitTransaction();
+    /**
+     * read @param lines message from the current position
+     * from Kopete::Contact @param c in the given @param sens
+     */
+    QList<Kopete::Message> readMessages(int lines, int offset = 0, const Kopete::MetaContact *c = NULL, bool reverseOrder = true);
 
-	/**
-	 * read @param lines message from the current position
-	 * from Kopete::Contact @param c in the given @param sens
-	 */
-	QList<Kopete::Message> readMessages(int lines,
-	                                    int offset=0, const Kopete::MetaContact *c=NULL, bool reverseOrder=true);
-
-	/**
-	 * Same as the following, but for one date. I did'nt reuse the above function
-	 * because its structure is really different.
-	 * Read all the messages for the given @param date
-	 */
-	QList<Kopete::Message> readMessages(QDate date, const Kopete::MetaContact *c=0);
-
-
+    /**
+     * Same as the following, but for one date. I did'nt reuse the above function
+     * because its structure is really different.
+     * Read all the messages for the given @param date
+     */
+    QList<Kopete::Message> readMessages(QDate date, const Kopete::MetaContact *c = 0);
 
 private:
 
-	History2Logger();
+    History2Logger();
 
-	History2Logger(const History2Logger &); // hide copy constructor
-	History2Logger& operator=(const History2Logger &); // hide assign op
-	~History2Logger();
+    History2Logger(const History2Logger &); // hide copy constructor
+    History2Logger &operator=(const History2Logger &); // hide assign op
+    ~History2Logger();
 
-	static History2Logger* m_Instance;
-	QSqlDatabase m_db;
-
+    static History2Logger *m_Instance;
+    QSqlDatabase m_db;
 };
 
 #endif

@@ -24,12 +24,8 @@
 // Kopete includes
 #include <kopete_export.h>
 
-namespace Kopete
-{
-
-namespace UI
-{
-
+namespace Kopete {
+namespace UI {
 /**
  * @brief Dialog to get a pixmap from the webcam to be set as avatar
  *
@@ -47,43 +43,40 @@ if( result == QDialog::Ok ) {
  */
 class KOPETE_EXPORT AvatarWebcamDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	 * Create a new AvatarFromWebcamDialog
-	 * @param parent Parent widget
-	 */
-	AvatarWebcamDialog(QWidget *parent = nullptr);
-	/**
-	 * Clean-up resource of AvatarFromWebcamDialog
-	 */
-	virtual ~AvatarWebcamDialog();
-	/**
-	 * Return the last captured pixmap
-	 */
-	QPixmap& getLastPixmap();
+    /**
+     * Create a new AvatarFromWebcamDialog
+     * @param parent Parent widget
+     */
+    AvatarWebcamDialog(QWidget *parent = nullptr);
+    /**
+     * Clean-up resource of AvatarFromWebcamDialog
+     */
+    virtual ~AvatarWebcamDialog();
+    /**
+     * Return the last captured pixmap
+     */
+    QPixmap &getLastPixmap();
 
 private Q_SLOTS:
-	/**
-	*Internal use, updates the webcamwidget image
-	*/
-	void updateImage();
+    /**
+    *Internal use, updates the webcamwidget image
+    */
+    void updateImage();
 
 protected Q_SLOTS:
 
-	/**
-	 * @internal
-	 * A button has been clicked. Reimplemented from @ref QDialog::slotButtonClicked()
-	 */
-	virtual void slotButtonClicked(int button);
+    /**
+     * @internal
+     * A button has been clicked. Reimplemented from @ref QDialog::slotButtonClicked()
+     */
+    virtual void slotButtonClicked(int button);
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
 } // namespace UI
-
 } // namespace Kopete
 #endif
-

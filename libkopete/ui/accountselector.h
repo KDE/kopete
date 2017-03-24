@@ -30,62 +30,62 @@ class QTreeWidgetItem;
  */
 class KOPETE_EXPORT AccountSelector : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 
-	public:
-		/**
-		 * Constructor.
-		 *
-		 * The parameter @p parent is handled by
-		 * QTreeWidget.
-		 */
-		AccountSelector(QWidget *parent=0);
+public:
+    /**
+     * Constructor.
+     *
+     * The parameter @p parent is handled by
+     * QTreeWidget.
+     */
+    AccountSelector(QWidget *parent = 0);
 
-		/**
-		 * Constructor for a list of accounts for one protocol only
-		 *
-		 * The parameters @p parent is handled by
-		 * QTreeWidget. @p proto defines the protocol whose accounts are
-		 * shown in the list
-		 */
-		explicit AccountSelector(Kopete::Protocol *proto, QWidget *parent=0);
+    /**
+     * Constructor for a list of accounts for one protocol only
+     *
+     * The parameters @p parent is handled by
+     * QTreeWidget. @p proto defines the protocol whose accounts are
+     * shown in the list
+     */
+    explicit AccountSelector(Kopete::Protocol *proto, QWidget *parent = 0);
 
-		/**
-		 * Destructor.
-		 */
-		~AccountSelector();
+    /**
+     * Destructor.
+     */
+    ~AccountSelector();
 
-		/**
-		 * Select @p account in the list, in case it's part of the list
-		 */
-		void setSelected(Kopete::Account *account);
+    /**
+     * Select @p account in the list, in case it's part of the list
+     */
+    void setSelected(Kopete::Account *account);
 
-		/**
-		 * Returns true in case @p account is in the list and
-		 * the currently selected item, false otherwise
-		 */
-		bool isSelected(Kopete::Account *account);
+    /**
+     * Returns true in case @p account is in the list and
+     * the currently selected item, false otherwise
+     */
+    bool isSelected(Kopete::Account *account);
 
-		/**
-		 * @return the currently selected account.
-		 */
-		Kopete::Account *selectedItem();
+    /**
+     * @return the currently selected account.
+     */
+    Kopete::Account *selectedItem();
 
-	signals:
-		/**
-		 * Emitted whenever the selection changed, @p acc is a pointer to the
-		 * newly selected account
-		 */
-		void selectionChanged(Kopete::Account *acc);
+signals:
+    /**
+     * Emitted whenever the selection changed, @p acc is a pointer to the
+     * newly selected account
+     */
+    void selectionChanged(Kopete::Account *acc);
 
-	private slots:
-		void slotSelectionChanged(QTreeWidgetItem *item);
+private slots:
+    void slotSelectionChanged(QTreeWidgetItem *item);
 
-	private:
-		void initUI();
+private:
+    void initUI();
 
-	private:
-		AccountSelectorPrivate *d;
+private:
+    AccountSelectorPrivate *d;
 };
 
 #endif

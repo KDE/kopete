@@ -28,47 +28,42 @@
 #include "ui_addaccountwizardpage1.h"
 #include "ui_addaccountwizardpage2.h"
 
-
-
-namespace Kopete
-{
+namespace Kopete {
 class Protocol;
 class Identity;
 }
-
 
 /**
  * @author Olivier Goffart <ogoffart@kde.org>
  */
 class KOPETEADDACCOUNTWIZARD_EXPORT AddAccountWizard : public KAssistantDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit AddAccountWizard( QWidget *parent = nullptr, bool firstRun = false );
-	~AddAccountWizard();
+    explicit AddAccountWizard(QWidget *parent = nullptr, bool firstRun = false);
+    ~AddAccountWizard();
 
-	/**
-	 * Set the identity assigned to the account
-	 */
-	void setIdentity( Kopete::Identity *identity );
+    /**
+     * Set the identity assigned to the account
+     */
+    void setIdentity(Kopete::Identity *identity);
 
 private slots:
-	void slotProtocolListClicked();
-	void slotProtocolListDoubleClicked();
+    void slotProtocolListClicked();
+    void slotProtocolListDoubleClicked();
 
 protected slots:
-	void back() Q_DECL_OVERRIDE;
-	void next() Q_DECL_OVERRIDE;
-	void accept() Q_DECL_OVERRIDE;
-	void reject() Q_DECL_OVERRIDE;
+    void back() Q_DECL_OVERRIDE;
+    void next() Q_DECL_OVERRIDE;
+    void accept() Q_DECL_OVERRIDE;
+    void reject() Q_DECL_OVERRIDE;
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

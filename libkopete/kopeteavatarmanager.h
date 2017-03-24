@@ -29,9 +29,7 @@
 
 class QImage;
 
-namespace Kopete
-{
-
+namespace Kopete {
 class Contact;
 /**
  * @brief Manage the avatar storage
@@ -86,14 +84,14 @@ Kopete::AvatarManager::self()->add(newEntry);
  * @code
 if( !resultEntry.path.isEmpty() )
 {
-	// Set avatar on server
+    // Set avatar on server
 }
  * @endcode
  *
  * @subsection avatar_management_delete Removing an avatar
- * To remove an avatar, create a new AvatarEntry struct and pass the avatar path 
+ * To remove an avatar, create a new AvatarEntry struct and pass the avatar path
  * to the struct, it will be used to identify which avatar to remove.
- * 
+ *
  * Then just use the remove() method.
  * @code
 Kopete::AvatarManager::AvatarEntry entryToRemove;
@@ -109,114 +107,114 @@ Kopete::AvatarManager::self()->remove(entryToRemove);
  */
 class KOPETE_EXPORT AvatarManager : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	 * Available avatar category.
-	 */
-	enum AvatarCategoryType
-	{
-		User=1, ///< User defined avatar
-		Contact, ///< Avatar from a contact.
-		All = User | Contact ///< Only used to list all category.
-	};
-	Q_DECLARE_FLAGS(AvatarCategory, AvatarCategoryType)
+    /**
+     * Available avatar category.
+     */
+    enum AvatarCategoryType
+    {
+        User = 1, ///< User defined avatar
+        Contact, ///< Avatar from a contact.
+        All = User | Contact ///< Only used to list all category.
+    };
+    Q_DECLARE_FLAGS(AvatarCategory, AvatarCategoryType)
 
-	/**
-	 * @brief A single entry in AvatarManager.
-	 *
-	 * @author Michaël Larouche <larouche@kde.org>
-	 * @sa Kopete::AvatarManager
-	*/
-	typedef struct AvatarEntry
-	{
-		QString name; ///< name is a friendly name to identity the avatar
-		QString path; ///< path is the full path to the image on disk
-		QImage image; ///< image is used when adding a new avatar, AvatarManager will write the image on disk.
-		QByteArray data; ///< original data used to construct the image
-		QString dataPath; ///< path is the full path to the data on disk
-		Kopete::Contact *contact; ///< contact is used when adding a new contact avatar. AvatarManager use it to create the final url.
-		AvatarManager::AvatarCategory category; ///< category in which the avatar belong
-	} AvatarEntry;
+    /**
+     * @brief A single entry in AvatarManager.
+     *
+     * @author Michaël Larouche <larouche@kde.org>
+     * @sa Kopete::AvatarManager
+    */
+    typedef struct AvatarEntry
+    {
+        QString name; ///< name is a friendly name to identity the avatar
+        QString path; ///< path is the full path to the image on disk
+        QImage image; ///< image is used when adding a new avatar, AvatarManager will write the image on disk.
+        QByteArray data; ///< original data used to construct the image
+        QString dataPath; ///< path is the full path to the data on disk
+        Kopete::Contact *contact; ///< contact is used when adding a new contact avatar. AvatarManager use it to create the final url.
+        AvatarManager::AvatarCategory category; ///< category in which the avatar belong
+    } AvatarEntry;
 
 public:
-	/**
-	 * @internal
-	 * Destructor
-	 */
-	~AvatarManager();
+    /**
+     * @internal
+     * Destructor
+     */
+    ~AvatarManager();
 
-	/**
-	 * Get the only instance of AvatarManager
-	 * @return AvatarManager single instance
-	 */
-	static AvatarManager *self();
+    /**
+     * Get the only instance of AvatarManager
+     * @return AvatarManager single instance
+     */
+    static AvatarManager *self();
 
 Q_SIGNALS:
-	/**
-	 * @brief An avatar was added into the storage
-	 *
-	 * Listen to this signal if you want to get notified of
-	 * new avatar added to the storage. It is used to update
-	 * the AvatarSelectorWidget lists.
-	 *
-	 * @param newEntry new avatar added into the storage.
-	 */
-	void avatarAdded(Kopete::AvatarManager::AvatarEntry newEntry);
+    /**
+     * @brief An avatar was added into the storage
+     *
+     * Listen to this signal if you want to get notified of
+     * new avatar added to the storage. It is used to update
+     * the AvatarSelectorWidget lists.
+     *
+     * @param newEntry new avatar added into the storage.
+     */
+    void avatarAdded(Kopete::AvatarManager::AvatarEntry newEntry);
 
-	/**
-	 * @brief An avatar was removed from storage
-	 *
-	 * Listen to this signal if you want to get notified of
-	 * avatar being removed from storage. It is used to update
-	 * the AvatarSelectorWidget lists.
-	 *
-	 * @param entryRemoved avatar being remove from storage.
-	 */
-	void avatarRemoved(Kopete::AvatarManager::AvatarEntry entryRemoved);
+    /**
+     * @brief An avatar was removed from storage
+     *
+     * Listen to this signal if you want to get notified of
+     * avatar being removed from storage. It is used to update
+     * the AvatarSelectorWidget lists.
+     *
+     * @param entryRemoved avatar being remove from storage.
+     */
+    void avatarRemoved(Kopete::AvatarManager::AvatarEntry entryRemoved);
 
 public Q_SLOTS:
-	/**
-	 * @brief Add an new avatar to the storage
-	 *
-	 * No need to scale the image, add() will do it for you.
-	 *
-	 * @param newEntry New avatar entry
-	 * @return a new AvatarEntry struct. If the adding failed, the path is null.
-	 */
-	Kopete::AvatarManager::AvatarEntry add(Kopete::AvatarManager::AvatarEntry newEntry);
+    /**
+     * @brief Add an new avatar to the storage
+     *
+     * No need to scale the image, add() will do it for you.
+     *
+     * @param newEntry New avatar entry
+     * @return a new AvatarEntry struct. If the adding failed, the path is null.
+     */
+    Kopete::AvatarManager::AvatarEntry add(Kopete::AvatarManager::AvatarEntry newEntry);
 
-	/**
-	 * @brief Remove an avatar from the storage
-	 * @param entryToRemove Avatar entry to remove
-	 */
-	bool remove(Kopete::AvatarManager::AvatarEntry entryToRemove);
+    /**
+     * @brief Remove an avatar from the storage
+     * @param entryToRemove Avatar entry to remove
+     */
+    bool remove(Kopete::AvatarManager::AvatarEntry entryToRemove);
 
-	/**
-	 * @brief Check if an avatar exists
-	 * @param entryToCheck Avatar entry to check
-	 */
-	bool exists(Kopete::AvatarManager::AvatarEntry avatarToCheck);
+    /**
+     * @brief Check if an avatar exists
+     * @param entryToCheck Avatar entry to check
+     */
+    bool exists(Kopete::AvatarManager::AvatarEntry avatarToCheck);
 
-	/**
-	 * @brief Check if an avatar exists by his name
-	 * @param avatarName Avatar entry to check
-	 */
-	bool exists(const QString &avatarName);
-
-private:
-	/**
-	 * @internal
-	 * Constructor is private because the class is a singleton
-	 * @param parent QObject parent, not really used
-	 */
-	AvatarManager(QObject *parent = nullptr);
+    /**
+     * @brief Check if an avatar exists by his name
+     * @param avatarName Avatar entry to check
+     */
+    bool exists(const QString &avatarName);
 
 private:
-	static AvatarManager *s_self;
+    /**
+     * @internal
+     * Constructor is private because the class is a singleton
+     * @param parent QObject parent, not really used
+     */
+    AvatarManager(QObject *parent = nullptr);
 
-	class Private;
-	Private * const d;
+private:
+    static AvatarManager *s_self;
+
+    class Private;
+    Private *const d;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Kopete::AvatarManager::AvatarCategory)
@@ -236,12 +234,12 @@ queryJob->start();
  * @code
 void SwallowAndCoconut::queryResult(KJob* job)
 {
-	Kopete::AvatarQueryJob *queryJob = static_cast<Kopete::AvatarQueryJob*>(job);
-	if(queryJob && !queryJob->error())
-	{
-		QList<Kopete::AvatarManager::AvatarManager> list = queryJob->avatarList();
-		// Iterate over list
-	}
+    Kopete::AvatarQueryJob *queryJob = static_cast<Kopete::AvatarQueryJob*>(job);
+    if(queryJob && !queryJob->error())
+    {
+        QList<Kopete::AvatarManager::AvatarManager> list = queryJob->avatarList();
+        // Iterate over list
+    }
 }
  * @endcode
  *
@@ -251,34 +249,33 @@ void SwallowAndCoconut::queryResult(KJob* job)
 // TODO: Use new Kopete::Task or KCompositeJob
 class KOPETE_EXPORT AvatarQueryJob : public KJob
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	AvatarQueryJob(QObject *parent = nullptr);
-	~AvatarQueryJob();
+    AvatarQueryJob(QObject *parent = nullptr);
+    ~AvatarQueryJob();
 
-	/**
-	 * @brief Set the filter for the avatar job.
-	 *
-	 * This is used to only list the user defined avatars or contact avatar.
-	 */
-	void setQueryFilter(Kopete::AvatarManager::AvatarCategory category);
+    /**
+     * @brief Set the filter for the avatar job.
+     *
+     * This is used to only list the user defined avatars or contact avatar.
+     */
+    void setQueryFilter(Kopete::AvatarManager::AvatarCategory category);
 
-	/**
-	 * @copydoc KJob::start()
-	 */
-	void start() Q_DECL_OVERRIDE;
+    /**
+     * @copydoc KJob::start()
+     */
+    void start() Q_DECL_OVERRIDE;
 
-	/**
-	 * @brief Get the avatar list based on the query
-	 * @return List of AvatarManager::AvatarEntry
-	 */
-	QList<Kopete::AvatarManager::AvatarEntry> avatarList() const;
+    /**
+     * @brief Get the avatar list based on the query
+     * @return List of AvatarManager::AvatarEntry
+     */
+    QList<Kopete::AvatarManager::AvatarEntry> avatarList() const;
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
 }
 
 #endif

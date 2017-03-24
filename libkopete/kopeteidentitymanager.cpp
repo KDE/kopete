@@ -27,231 +27,227 @@
 #include <KSharedConfigPtr>
 #include <KLocale>
 
-
 namespace Kopete {
-
 class IdentityManager::Private
 {
 public:
-	Private()
-	{
-		defaultIdentity = 0;
-	}
-	Identity::List identities;
-	Identity * defaultIdentity;
+    Private()
+    {
+        defaultIdentity = 0;
+    }
+
+    Identity::List identities;
+    Identity *defaultIdentity;
 };
 
-IdentityManager * IdentityManager::s_self = 0L;
+IdentityManager *IdentityManager::s_self = 0L;
 
-IdentityManager * IdentityManager::self()
+IdentityManager *IdentityManager::self()
 {
-	if ( !s_self )
-		s_self = new IdentityManager;
+    if (!s_self) {
+        s_self = new IdentityManager;
+    }
 
-	return s_self;
+    return s_self;
 }
-
 
 IdentityManager::IdentityManager()
-: QObject( qApp ), d(new Private())
+    : QObject(qApp)
+    , d(new Private())
 {
-	setObjectName( QStringLiteral("KopeteIdentityManager") );
+    setObjectName(QStringLiteral("KopeteIdentityManager"));
 }
-
 
 IdentityManager::~IdentityManager()
 {
-	s_self = 0L;
+    s_self = 0L;
 
-	delete d;
+    delete d;
 }
 
-void IdentityManager::setOnlineStatus( uint category , const Kopete::StatusMessage &statusMessage, uint flags )
+void IdentityManager::setOnlineStatus(uint category, const Kopete::StatusMessage &statusMessage, uint flags)
 {
-	Q_UNUSED(flags);
-	foreach( Identity *identity ,  d->identities )
-	{
-		if ( !identity->excludeConnect() )
-			identity->setOnlineStatus( category , statusMessage );
-	}
+    Q_UNUSED(flags);
+    foreach (Identity *identity, d->identities) {
+        if (!identity->excludeConnect()) {
+            identity->setOnlineStatus(category, statusMessage);
+        }
+    }
 }
 
-Identity* IdentityManager::registerIdentity( Identity *identity )
+Identity *IdentityManager::registerIdentity(Identity *identity)
 {
-	if( !identity || d->identities.contains( identity ) )
-		return identity;
+    if (!identity || d->identities.contains(identity)) {
+        return identity;
+    }
 
-	// If this identity already exists, do nothing
-	foreach( Identity *currident,  d->identities )
-	{
-		if ( identity->id() == currident->id() )
-		{
-			identity->deleteLater();
-			return 0L;
-		}
-	}
+    // If this identity already exists, do nothing
+    foreach (Identity *currident, d->identities) {
+        if (identity->id() == currident->id()) {
+            identity->deleteLater();
+            return 0L;
+        }
+    }
 
-	d->identities.append( identity );
+    d->identities.append(identity);
 
-	// Connect to the identity's status changed signal
-	connect(identity, SIGNAL(onlineStatusChanged(Kopete::Identity*)),
-		this, SLOT(slotIdentityOnlineStatusChanged(Kopete::Identity*)));
+    // Connect to the identity's status changed signal
+    connect(identity, SIGNAL(onlineStatusChanged(Kopete::Identity *)),
+            this, SLOT(slotIdentityOnlineStatusChanged(Kopete::Identity *)));
 
-	connect(identity, SIGNAL(identityDestroyed(const Kopete::Identity*)) , this, SLOT(unregisterIdentity(const Kopete::Identity*)));
+    connect(identity, SIGNAL(identityDestroyed(const Kopete::Identity *)), this, SLOT(unregisterIdentity(const Kopete::Identity *)));
 
-	emit identityRegistered( identity );
+    emit identityRegistered(identity);
 
-	return identity;
+    return identity;
 }
 
-void IdentityManager::unregisterIdentity( const Identity *identity )
+void IdentityManager::unregisterIdentity(const Identity *identity)
 {
-	qCDebug(LIBKOPETE_LOG) << "Unregistering identity " << identity->id();
-	d->identities.removeAll( const_cast<Identity*>(identity) );
+    qCDebug(LIBKOPETE_LOG) << "Unregistering identity " << identity->id();
+    d->identities.removeAll(const_cast<Identity *>(identity));
 
-	emit identityUnregistered( identity );
+    emit identityUnregistered(identity);
 }
 
-const Identity::List& IdentityManager::identities() const
+const Identity::List &IdentityManager::identities() const
 {
-	return d->identities;
+    return d->identities;
 }
 
-Identity *IdentityManager::findIdentity( const QString &id )
+Identity *IdentityManager::findIdentity(const QString &id)
 {
-	foreach( Identity *identity , d->identities )	
-	{
-		if ( identity->id() == id )
-			return identity;
-	}
-	return 0L;
+    foreach (Identity *identity, d->identities) {
+        if (identity->id() == id) {
+            return identity;
+        }
+    }
+    return 0L;
 }
 
 Identity *IdentityManager::defaultIdentity()
 {
-	Identity *ident = 0;
+    Identity *ident = 0;
 
-	if (d->defaultIdentity)
-		ident = findIdentity(d->defaultIdentity->id());
+    if (d->defaultIdentity) {
+        ident = findIdentity(d->defaultIdentity->id());
+    }
 
-	if (ident)
-		return ident;
+    if (ident) {
+        return ident;
+    }
 
-	// if the identity set as the default identity does not exist, try using another one
-	
-	// if there is no identity registered, create a default identity
-	if (!d->defaultIdentity)
-	{
-		ident = new Identity(i18nc("Label for the default identity, used by users to group their instant messaging accounts", "Default Identity"));
-		ident = registerIdentity(ident);
-		emit defaultIdentityChanged( ident );
-		setDefaultIdentity( ident );
-		if (ident)
-			return ident;
-	}
-	else
-	{
-		// use any identity available
-		ident = d->identities.first();
-		setDefaultIdentity( ident );
-		return ident;
-	}
-	return 0;
+    // if the identity set as the default identity does not exist, try using another one
+
+    // if there is no identity registered, create a default identity
+    if (!d->defaultIdentity) {
+        ident = new Identity(i18nc("Label for the default identity, used by users to group their instant messaging accounts", "Default Identity"));
+        ident = registerIdentity(ident);
+        emit defaultIdentityChanged(ident);
+        setDefaultIdentity(ident);
+        if (ident) {
+            return ident;
+        }
+    } else {
+        // use any identity available
+        ident = d->identities.first();
+        setDefaultIdentity(ident);
+        return ident;
+    }
+    return 0;
 }
 
-void IdentityManager::setDefaultIdentity( Identity *identity )
+void IdentityManager::setDefaultIdentity(Identity *identity)
 {
-	Q_ASSERT(identity);
+    Q_ASSERT(identity);
 
-	// if the default identity didn't change, just return
-	if (identity == d->defaultIdentity)
-		return;
+    // if the default identity didn't change, just return
+    if (identity == d->defaultIdentity) {
+        return;
+    }
 
-	// if the given identity is not registered, does nothing
-	if (d->identities.indexOf( identity ) == -1)
-		return;
+    // if the given identity is not registered, does nothing
+    if (d->identities.indexOf(identity) == -1) {
+        return;
+    }
 
-	d->defaultIdentity = identity;
-	save();
-	emit defaultIdentityChanged( identity );
+    d->defaultIdentity = identity;
+    save();
+    emit defaultIdentityChanged(identity);
 }
 
-void IdentityManager::removeIdentity( Identity *identity )
+void IdentityManager::removeIdentity(Identity *identity)
 {
-	KConfigGroup *configgroup = identity->configGroup();
+    KConfigGroup *configgroup = identity->configGroup();
 
-	// Clean up the identity list
-	d->identities.removeAll( identity );
+    // Clean up the identity list
+    d->identities.removeAll(identity);
 
-	// Clean up configuration
-	configgroup->deleteGroup();
-	configgroup->sync();
-	if (d->defaultIdentity == identity) {
-		d->defaultIdentity = 0;
-	}
-	delete identity;
+    // Clean up configuration
+    configgroup->deleteGroup();
+    configgroup->sync();
+    if (d->defaultIdentity == identity) {
+        d->defaultIdentity = 0;
+    }
+    delete identity;
 }
 
 void IdentityManager::save()
 {
-	// save the default identity
-	KConfigGroup group = KSharedConfig::openConfig()->group("IdentityManager");
-	group.writeEntry("DefaultIdentity", d->defaultIdentity->id());
+    // save the default identity
+    KConfigGroup group = KSharedConfig::openConfig()->group("IdentityManager");
+    group.writeEntry("DefaultIdentity", d->defaultIdentity->id());
 
-	//qCDebug(LIBKOPETE_LOG);
-	foreach( Identity *identity, d->identities )
-	{
-		KConfigGroup *config = identity->configGroup();
+    //qCDebug(LIBKOPETE_LOG);
+    foreach (Identity *identity, d->identities) {
+        KConfigGroup *config = identity->configGroup();
 
-		config->writeEntry( "Id", identity->id() );
-		config->writeEntry( "Label", identity->label() );
-		identity->save();
-	}
+        config->writeEntry("Id", identity->id());
+        config->writeEntry("Label", identity->label());
+        identity->save();
+    }
 
-	KSharedConfig::openConfig()->sync();
+    KSharedConfig::openConfig()->sync();
 }
 
 void IdentityManager::load()
 {
-	// Iterate over all groups that start with "Identity_" as those are identities.
-	KSharedConfig::Ptr config = KSharedConfig::openConfig();
+    // Iterate over all groups that start with "Identity_" as those are identities.
+    KSharedConfig::Ptr config = KSharedConfig::openConfig();
 
-	QStringList identityGroups = config->groupList().filter( QRegExp( QLatin1String( "^Identity_" ) ) );
-	for ( QStringList::Iterator it = identityGroups.begin(); it != identityGroups.end(); ++it )
-	{
-		KConfigGroup cg( config, *it );
-		
-		QString identityId = cg.readEntry( "Id" );
-		QString label = cg.readEntry( "Label" );
+    QStringList identityGroups = config->groupList().filter(QRegExp(QLatin1String("^Identity_")));
+    for (QStringList::Iterator it = identityGroups.begin(); it != identityGroups.end(); ++it) {
+        KConfigGroup cg(config, *it);
 
-		Identity *identity = registerIdentity( new Identity( identityId, label ) );
-		if ( !identity )
-		{
-			qCWarning(LIBKOPETE_LOG) <<
-								 "Failed to create identity for '" << identityId << "'" << endl;
-			continue;
-		}
-		qDebug() << "Created identity " << identityId;
-	}
+        QString identityId = cg.readEntry("Id");
+        QString label = cg.readEntry("Label");
 
-	// get the default identity
-	KConfigGroup group = config->group("IdentityManager");
-	Identity * storedDefault = findIdentity( group.readEntry("DefaultIdentity", QString()) );
-	if ( storedDefault ) {
-		d->defaultIdentity = storedDefault;
-	}
+        Identity *identity = registerIdentity(new Identity(identityId, label));
+        if (!identity) {
+            qCWarning(LIBKOPETE_LOG)
+                <<"Failed to create identity for '" << identityId << "'" << endl;
+            continue;
+        }
+        qDebug() << "Created identity " << identityId;
+    }
 
-	// just to make sure the default identity gets created when there is no identity registered
-	defaultIdentity();
+    // get the default identity
+    KConfigGroup group = config->group("IdentityManager");
+    Identity *storedDefault = findIdentity(group.readEntry("DefaultIdentity", QString()));
+    if (storedDefault) {
+        d->defaultIdentity = storedDefault;
+    }
+
+    // just to make sure the default identity gets created when there is no identity registered
+    defaultIdentity();
 }
 
 void IdentityManager::slotIdentityOnlineStatusChanged(Identity *i)
 {
-	//TODO: check if we need to do something more on status changes
-	//qCDebug(LIBKOPETE_LOG);
-	emit identityOnlineStatusChanged(i);
+    //TODO: check if we need to do something more on status changes
+    //qCDebug(LIBKOPETE_LOG);
+    emit identityOnlineStatusChanged(i);
 }
-
 } //END namespace Kopete
 
 // vim: set noet ts=4 sts=4 sw=4:

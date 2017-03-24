@@ -22,33 +22,25 @@
 
 #include "kopete_export.h"
 
-namespace Kopete
-{
-
-namespace UI
-{
-
+namespace Kopete {
+namespace UI {
 /**
  * This namespace contains the Kopete user interface's global settings
  */
-namespace Global
-{
-	/**
-	 * Set the main widget to widget
-	 */
-	KOPETE_EXPORT void setMainWidget( QWidget *widget );
-	/**
-	 * Returns the main widget - this is the widget that message boxes
-	 * and KNotify stuff should use as a parent.
-	 */
-	KOPETE_EXPORT QWidget *mainWidget();
+namespace Global {
+/**
+ * Set the main widget to widget
+ */
+KOPETE_EXPORT void setMainWidget(QWidget *widget);
+/**
+ * Returns the main widget - this is the widget that message boxes
+ * and KNotify stuff should use as a parent.
+ */
+KOPETE_EXPORT QWidget *mainWidget();
 } //Global::UI
-
 } //UI
-
 }
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

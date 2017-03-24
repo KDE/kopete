@@ -32,22 +32,22 @@
 
 class KDirWatch;
 
-class NLQuodLibet :  public QObject, public NLMediaPlayer
+class NLQuodLibet : public QObject, public NLMediaPlayer
 {
-Q_OBJECT
-	public:
-		NLQuodLibet();
-		virtual ~NLQuodLibet();
-		virtual void update();
-	protected:
-		QString currentTrackPath() const;
-		void parseFile( QFile & );
-		void parseLine( const QString & );
-	protected Q_SLOTS:
-		void fileChanged( const QString & path );
-	private:
-		QDateTime m_timestamp;
-		KDirWatch * m_watch;
+    Q_OBJECT
+public:
+    NLQuodLibet();
+    virtual ~NLQuodLibet();
+    virtual void update();
+protected:
+    QString currentTrackPath() const;
+    void parseFile(QFile &);
+    void parseLine(const QString &);
+protected Q_SLOTS:
+    void fileChanged(const QString &path);
+private:
+    QDateTime m_timestamp;
+    KDirWatch *m_watch;
 };
 
 #endif

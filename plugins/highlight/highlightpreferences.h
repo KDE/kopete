@@ -23,39 +23,42 @@
 #include "highlightconfig.h"
 #include "ui_highlightprefsbase.h"
 
-namespace Ui { class HighlightPrefsUI; }
+namespace Ui {
+class HighlightPrefsUI;
+}
 class Filter;
 
 /**
   *@author Olivier Goffart
   */
 
-class HighlightPreferences : public KCModule  {
-   Q_OBJECT
+class HighlightPreferences : public KCModule
+{
+    Q_OBJECT
 public:
 
-	explicit HighlightPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
-	~HighlightPreferences();
+    explicit HighlightPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
+    ~HighlightPreferences();
 
-	void save() Q_DECL_OVERRIDE;
-	void load() Q_DECL_OVERRIDE;
+    void save() Q_DECL_OVERRIDE;
+    void load() Q_DECL_OVERRIDE;
 
 private:
-	Ui::HighlightPrefsUI preferencesDialog;
-	HighlightConfig *m_config;
-	
-	Filter *selectedItem();
+    Ui::HighlightPrefsUI preferencesDialog;
+    HighlightConfig *m_config;
 
-	bool donttouch;
+    Filter *selectedItem();
+
+    bool donttouch;
 
 private slots:
-	void slotCurrentFilterChanged();
-	void slotAddFilter();
-	void slotRemoveFilter();
-	void slotRenameFilter();
-	void slotSomethingHasChanged();
-	void slotEditRegExp();
-	void slotConfigureNotifications();
+    void slotCurrentFilterChanged();
+    void slotAddFilter();
+    void slotRemoveFilter();
+    void slotRenameFilter();
+    void slotSomethingHasChanged();
+    void slotEditRegExp();
+    void slotConfigureNotifications();
 };
 
 #endif

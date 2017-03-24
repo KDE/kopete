@@ -42,162 +42,152 @@
 #include "historyguiclient.h"
 #include "historyconfig.h"
 
-K_PLUGIN_FACTORY(HistoryPluginFactory, registerPlugin<HistoryPlugin>();)
+K_PLUGIN_FACTORY(HistoryPluginFactory, registerPlugin<HistoryPlugin>();
+                 )
 
-HistoryPlugin::HistoryPlugin( QObject *parent, const QVariantList & /* args */ )
-: Kopete::Plugin( parent ), m_loggerFactory( this )
+HistoryPlugin::HistoryPlugin(QObject *parent, const QVariantList & /* args */)
+    : Kopete::Plugin(parent)
+    , m_loggerFactory(this)
 {
-	QAction *viewMetaContactHistory = new QAction( QIcon::fromTheme(QStringLiteral("view-history")), i18n("View &History" ), this );
-	actionCollection()->addAction( "viewMetaContactHistory", viewMetaContactHistory );
-	viewMetaContactHistory->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_H));
-	connect(viewMetaContactHistory, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory()));
-	viewMetaContactHistory->setEnabled(
-		Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
+    QAction *viewMetaContactHistory = new QAction(QIcon::fromTheme(QStringLiteral("view-history")), i18n("View &History"), this);
+    actionCollection()->addAction("viewMetaContactHistory", viewMetaContactHistory);
+    viewMetaContactHistory->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_H));
+    connect(viewMetaContactHistory, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory()));
+    viewMetaContactHistory->setEnabled(
+        Kopete::ContactList::self()->selectedMetaContacts().count() == 1);
 
-	connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)),
-		viewMetaContactHistory, SLOT(setEnabled(bool)));
+    connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)),
+            viewMetaContactHistory, SLOT(setEnabled(bool)));
 
-	connect(Kopete::ChatSessionManager::self(), SIGNAL(viewCreated(KopeteView*)),
-		this, SLOT(slotViewCreated(KopeteView*)));
+    connect(Kopete::ChatSessionManager::self(), SIGNAL(viewCreated(KopeteView *)),
+            this, SLOT(slotViewCreated(KopeteView *)));
 
-	connect(this, SIGNAL(settingsChanged()), this, SLOT(slotSettingsChanged()));
+    connect(this, SIGNAL(settingsChanged()), this, SLOT(slotSettingsChanged()));
 
-	setXMLFile("historyui.rc");
-	if(detectOldHistory())
-	{
-		if(
-			KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
-				i18n( "Old history files from Kopete 0.6.x or older has been detected.\n"
-				"Do you want to import and convert them to the new history format?" ),
-				i18n( "History Plugin" ), KGuiItem( i18n("Import && Convert") ), KGuiItem( i18n("Do Not Import") ) ) == KMessageBox::Yes )
-		{
-			convertOldHistory();
-		}
-	}
+    setXMLFile("historyui.rc");
+    if (detectOldHistory()) {
+        if (
+            KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
+                                       i18n("Old history files from Kopete 0.6.x or older has been detected.\n"
+                                            "Do you want to import and convert them to the new history format?"),
+                                       i18n("History Plugin"), KGuiItem(i18n("Import && Convert")), KGuiItem(i18n("Do Not Import"))) == KMessageBox::Yes) {
+            convertOldHistory();
+        }
+    }
 
-	// Add GUI action to all existing kmm objects
-	// (Needed if the plugin is enabled while kopete is already running)
-	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
-	for (QList<Kopete::ChatSession*>::Iterator it= sessions.begin(); it!=sessions.end() ; ++it)
-	{
-	  if(!m_loggers.contains(*it))
-		{
-			m_loggers.insert(*it, new HistoryGUIClient( *it ) );
-			connect( *it, SIGNAL(closing(Kopete::ChatSession*)),
-				this, SLOT(slotKMMClosed(Kopete::ChatSession*)));
-		}
-	}
+    // Add GUI action to all existing kmm objects
+    // (Needed if the plugin is enabled while kopete is already running)
+    QList<Kopete::ChatSession *> sessions = Kopete::ChatSessionManager::self()->sessions();
+    for (QList<Kopete::ChatSession *>::Iterator it = sessions.begin(); it != sessions.end(); ++it) {
+        if (!m_loggers.contains(*it)) {
+            m_loggers.insert(*it, new HistoryGUIClient(*it));
+            connect(*it, SIGNAL(closing(Kopete::ChatSession *)),
+                    this, SLOT(slotKMMClosed(Kopete::ChatSession *)));
+        }
+    }
 }
-
 
 HistoryPlugin::~HistoryPlugin()
 {
 }
 
-
-void HistoryMessageLogger::handleMessage( Kopete::MessageEvent *event )
+void HistoryMessageLogger::handleMessage(Kopete::MessageEvent *event)
 {
-	if (history)
-		history->messageDisplayed( event->message() );
+    if (history) {
+        history->messageDisplayed(event->message());
+    }
 
-	MessageHandler::handleMessage( event );
+    MessageHandler::handleMessage(event);
 }
 
 void HistoryPlugin::messageDisplayed(const Kopete::Message &m)
 {
-	if(m.direction()==Kopete::Message::Internal || !m.manager() ||
-	   (m.type() == Kopete::Message::TypeFileTransferRequest && m.plainBody().isEmpty()) )
-		return;
+    if (m.direction() == Kopete::Message::Internal || !m.manager()
+        || (m.type() == Kopete::Message::TypeFileTransferRequest && m.plainBody().isEmpty())) {
+        return;
+    }
 
-	if(!m_loggers.contains(m.manager()))
-	{
-		m_loggers.insert(m.manager() , new HistoryGUIClient( m.manager() ) );
-		connect(m.manager(), SIGNAL(closing(Kopete::ChatSession*)),
-			this, SLOT(slotKMMClosed(Kopete::ChatSession*)));
-	}
+    if (!m_loggers.contains(m.manager())) {
+        m_loggers.insert(m.manager(), new HistoryGUIClient(m.manager()));
+        connect(m.manager(), SIGNAL(closing(Kopete::ChatSession *)),
+                this, SLOT(slotKMMClosed(Kopete::ChatSession *)));
+    }
 
-	HistoryLogger *l=m_loggers[m.manager()]->logger();
-	if(l)
-	{
+    HistoryLogger *l = m_loggers[m.manager()]->logger();
+    if (l) {
+        QList<Kopete::Contact *> mb = m.manager()->members();
+        l->appendMessage(m, mb.first());
+    }
 
-		QList<Kopete::Contact*> mb=m.manager()->members();
-		l->appendMessage(m,mb.first());
-	}
-
-	m_lastmessage=m;
+    m_lastmessage = m;
 }
-
 
 void HistoryPlugin::slotViewHistory()
 {
-	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
-	if(m)
-	{
-		//int lines = HistoryConfig::number_ChatWindow();
+    Kopete::MetaContact *m = Kopete::ContactList::self()->selectedMetaContacts().first();
+    if (m) {
+        //int lines = HistoryConfig::number_ChatWindow();
 
-		// TODO: Keep track of open dialogs and raise instead of
-		// opening a new (duplicated) one
-		HistoryDialog* dialog = new HistoryDialog(m);
-		dialog->setObjectName( QLatin1String("HistoryDialog") );
-	}
+        // TODO: Keep track of open dialogs and raise instead of
+        // opening a new (duplicated) one
+        HistoryDialog *dialog = new HistoryDialog(m);
+        dialog->setObjectName(QLatin1String("HistoryDialog"));
+    }
 }
 
-
-void HistoryPlugin::slotViewCreated( KopeteView* v )
+void HistoryPlugin::slotViewCreated(KopeteView *v)
 {
-	if(v->plugin()->pluginInfo().pluginName() != QString::fromLatin1("kopete_chatwindow") )
-		return;  //Email chat windows are not supported.
+    if (v->plugin()->pluginInfo().pluginName() != QString::fromLatin1("kopete_chatwindow")) {
+        return;  //Email chat windows are not supported.
+    }
+    bool autoChatWindow = HistoryConfig::auto_chatwindow();
+    int nbAutoChatWindow = HistoryConfig::number_Auto_chatwindow();
 
-	bool autoChatWindow = HistoryConfig::auto_chatwindow();
-	int nbAutoChatWindow = HistoryConfig::number_Auto_chatwindow();
+    KopeteView *m_currentView = v;
+    Kopete::ChatSession *m_currentChatSession = v->msgManager();
 
-	KopeteView *m_currentView = v;
-	Kopete::ChatSession *m_currentChatSession = v->msgManager();
+    if (!m_currentChatSession) {
+        return; //i am sorry
+    }
+    const Kopete::ContactPtrList &mb = m_currentChatSession->members();
 
-	if(!m_currentChatSession)
-		return; //i am sorry
+    if (!m_loggers.contains(m_currentChatSession)) {
+        m_loggers.insert(m_currentChatSession, new HistoryGUIClient(m_currentChatSession));
+        connect(m_currentChatSession, SIGNAL(closing(Kopete::ChatSession *)),
+                this, SLOT(slotKMMClosed(Kopete::ChatSession *)));
+    }
 
-	const Kopete::ContactPtrList& mb = m_currentChatSession->members();
+    if (!autoChatWindow || nbAutoChatWindow == 0) {
+        return;
+    }
 
-	if(!m_loggers.contains(m_currentChatSession))
-	{
-		m_loggers.insert(m_currentChatSession , new HistoryGUIClient( m_currentChatSession ) );
-		connect( m_currentChatSession, SIGNAL(closing(Kopete::ChatSession*)),
-			this , SLOT(slotKMMClosed(Kopete::ChatSession*)));
-	}
+    HistoryLogger *logger = m_loggers[m_currentChatSession]->logger();
 
-	if(!autoChatWindow || nbAutoChatWindow == 0)
-		return;
+    logger->setPositionToLast();
 
-	HistoryLogger *logger = m_loggers[m_currentChatSession]->logger();
+    QList<Kopete::Message> msgs = logger->readMessages(nbAutoChatWindow,
+                                                       mb.first(), HistoryLogger::AntiChronological, true, true);
 
-	logger->setPositionToLast();
+    // make sure the last message is not the one which will be appened right
+    // after the view is created (and which has just been logged in)
+    if (!msgs.isEmpty() && (msgs.last().plainBody() == m_lastmessage.plainBody())
+        && (m_lastmessage.manager() == m_currentChatSession)) {
+        msgs.takeLast();
+    }
 
-	QList<Kopete::Message> msgs = logger->readMessages(nbAutoChatWindow,
-			mb.first(), HistoryLogger::AntiChronological, true, true);
-
-	// make sure the last message is not the one which will be appened right
-	// after the view is created (and which has just been logged in)
-	if(!msgs.isEmpty() && (msgs.last().plainBody() == m_lastmessage.plainBody()) &&
-		(m_lastmessage.manager() == m_currentChatSession))
-	{
-		msgs.takeLast();
-	}
-
-	m_currentView->appendMessages( msgs );
+    m_currentView->appendMessages(msgs);
 }
 
-
-void HistoryPlugin::slotKMMClosed( Kopete::ChatSession* kmm)
+void HistoryPlugin::slotKMMClosed(Kopete::ChatSession *kmm)
 {
-	m_loggers[kmm]->deleteLater();
-	m_loggers.remove(kmm);
+    m_loggers[kmm]->deleteLater();
+    m_loggers.remove(kmm);
 }
 
 void HistoryPlugin::slotSettingsChanged()
 {
-	kDebug(14310) << "RELOADING CONFIG";
-	HistoryConfig::self()->readConfig();
+    kDebug(14310) << "RELOADING CONFIG";
+    HistoryConfig::self()->readConfig();
 }
 
 #include "historyplugin.moc"

@@ -18,25 +18,20 @@
 #include "videoinput.h"
 
 namespace Kopete {
-
 namespace AV {
-
 VideoInput::VideoInput()
 {
-	qDebug() << "Executing Video Input's constructor!!!";
-	img_softcorr_autobrightnesscontrast = false;
-	img_softcorr_autocolor = false;
-	img_softcorr_vflip = false;
-	img_softcorr_hflip = false;
-	hastuner = 0;
-	m_standards = 0;
+    qDebug() << "Executing Video Input's constructor!!!";
+    img_softcorr_autobrightnesscontrast = false;
+    img_softcorr_autocolor = false;
+    img_softcorr_vflip = false;
+    img_softcorr_hflip = false;
+    hastuner = 0;
+    m_standards = 0;
 }
-
 
 VideoInput::~VideoInput()
 {
 }
-
 }
-
 }

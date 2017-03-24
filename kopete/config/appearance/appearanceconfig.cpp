@@ -33,8 +33,6 @@
 #include <QPixmap>
 #include <QVBoxLayout>
 
-
-
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
 #include <kdebug.h>
@@ -61,8 +59,9 @@
 
 //class AppearanceConfig;
 
-K_PLUGIN_FACTORY( KopeteAppearanceConfigFactory,
-		registerPlugin<AppearanceConfig>(); )
+K_PLUGIN_FACTORY(KopeteAppearanceConfigFactory,
+                 registerPlugin<AppearanceConfig>();
+                 )
 
 class FakeProtocol;
 class FakeAccount;
@@ -71,93 +70,94 @@ class FakeContact;
 class AppearanceConfig::Private
 {
 public:
-	Private()
-	 : mAppearanceTabCtl(0L)
-	{}
+    Private()
+        : mAppearanceTabCtl(0L)
+    {
+    }
 
-	QTabWidget *mAppearanceTabCtl;
+    QTabWidget *mAppearanceTabCtl;
 
-	Ui::AppearanceConfig_Colors mPrfsColors;
-	Ui::AppearanceConfig_ContactList mPrfsContactList;
-	Ui::AppearanceConfig_Advanced mPrfsAdvanced;
-	ContactListLayoutWidget *contactListLayoutWidget;
+    Ui::AppearanceConfig_Colors mPrfsColors;
+    Ui::AppearanceConfig_ContactList mPrfsContactList;
+    Ui::AppearanceConfig_Advanced mPrfsAdvanced;
+    ContactListLayoutWidget *contactListLayoutWidget;
 };
 
-
-AppearanceConfig::AppearanceConfig(QWidget *parent, const QVariantList &args )
-: KCModule( parent, args ), d(new Private())
+AppearanceConfig::AppearanceConfig(QWidget *parent, const QVariantList &args)
+    : KCModule(parent, args)
+    , d(new Private())
 {
-	QVBoxLayout *layout = new QVBoxLayout(this);
-	// since the tab widget is already within a layout with margins in the KSettings::Dialog
-	// it needs no margins of its own.
-	layout->setContentsMargins( 0, 0, 0, 0 );
-	d->mAppearanceTabCtl = new QTabWidget(this);
-	d->mAppearanceTabCtl->setObjectName(QStringLiteral("mAppearanceTabCtl"));
-	layout->addWidget( d->mAppearanceTabCtl );
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    // since the tab widget is already within a layout with margins in the KSettings::Dialog
+    // it needs no margins of its own.
+    layout->setContentsMargins(0, 0, 0, 0);
+    d->mAppearanceTabCtl = new QTabWidget(this);
+    d->mAppearanceTabCtl->setObjectName(QStringLiteral("mAppearanceTabCtl"));
+    layout->addWidget(d->mAppearanceTabCtl);
 
-	KConfigGroup config(KSharedConfig::openConfig(), "ChatWindowSettings");
+    KConfigGroup config(KSharedConfig::openConfig(), "ChatWindowSettings");
 
-	// "Contact List" TAB =======================================================
-	QWidget *contactListWidget = new QWidget(d->mAppearanceTabCtl);
-	d->mPrfsContactList.setupUi(contactListWidget);
-	addConfig( Kopete::AppearanceSettings::self(), contactListWidget );
+    // "Contact List" TAB =======================================================
+    QWidget *contactListWidget = new QWidget(d->mAppearanceTabCtl);
+    d->mPrfsContactList.setupUi(contactListWidget);
+    addConfig(Kopete::AppearanceSettings::self(), contactListWidget);
 
-	connect(d->mPrfsContactList.mEditTooltips, SIGNAL(clicked()),
-		this, SLOT(slotEditTooltips()));
+    connect(d->mPrfsContactList.mEditTooltips, SIGNAL(clicked()),
+            this, SLOT(slotEditTooltips()));
 
-	d->mAppearanceTabCtl->addTab(contactListWidget, i18n("Contact List"));
+    d->mAppearanceTabCtl->addTab(contactListWidget, i18n("Contact List"));
 
-	// "Colors and Fonts" TAB ===================================================
-	QWidget *colorsWidget = new QWidget(d->mAppearanceTabCtl);
-	d->mPrfsColors.setupUi(colorsWidget);
-	addConfig( Kopete::AppearanceSettings::self(), colorsWidget );
+    // "Colors and Fonts" TAB ===================================================
+    QWidget *colorsWidget = new QWidget(d->mAppearanceTabCtl);
+    d->mPrfsColors.setupUi(colorsWidget);
+    addConfig(Kopete::AppearanceSettings::self(), colorsWidget);
 
-	d->mAppearanceTabCtl->addTab(colorsWidget, i18n("Colors && Fonts"));
+    d->mAppearanceTabCtl->addTab(colorsWidget, i18n("Colors && Fonts"));
 
-	// "Advanced" TAB ===========================================================
-	QWidget *advancedWidget = new QWidget(d->mAppearanceTabCtl);
-	d->mPrfsAdvanced.setupUi(advancedWidget);
-	addConfig( Kopete::AppearanceSettings::self(), advancedWidget );
-	connect ( d->mPrfsAdvanced.kcfg_contactListResizeAnchor, SIGNAL (toggled(bool)), this, SLOT (emitChanged()));
+    // "Advanced" TAB ===========================================================
+    QWidget *advancedWidget = new QWidget(d->mAppearanceTabCtl);
+    d->mPrfsAdvanced.setupUi(advancedWidget);
+    addConfig(Kopete::AppearanceSettings::self(), advancedWidget);
+    connect(d->mPrfsAdvanced.kcfg_contactListResizeAnchor, SIGNAL(toggled(bool)), this, SLOT(emitChanged()));
 
-	d->mAppearanceTabCtl->addTab(advancedWidget, i18n("Advanced"));
+    d->mAppearanceTabCtl->addTab(advancedWidget, i18n("Advanced"));
 
-	
-	d->contactListLayoutWidget = new ContactListLayoutWidget( d->mAppearanceTabCtl );
-	connect( d->contactListLayoutWidget, SIGNAL(changed()), this, SLOT (emitChanged()) );
-	d->mAppearanceTabCtl->addTab( d->contactListLayoutWidget, i18n("Layout") );
+    d->contactListLayoutWidget = new ContactListLayoutWidget(d->mAppearanceTabCtl);
+    connect(d->contactListLayoutWidget, SIGNAL(changed()), this, SLOT(emitChanged()));
+    d->mAppearanceTabCtl->addTab(d->contactListLayoutWidget, i18n("Layout"));
 
-	// ==========================================================================
+    // ==========================================================================
 
-	load();
+    load();
 }
 
 AppearanceConfig::~AppearanceConfig()
 {
-	delete d;
+    delete d;
 }
 
 void AppearanceConfig::save()
 {
-	KCModule::save();
+    KCModule::save();
 //	kDebug(14000) << "called.";
 
-	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
-	settings->setContactListAutoResize (d->mPrfsAdvanced.kcfg_contactListResizeAnchor->isChecked());
-	settings->writeConfig();
+    Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
+    settings->setContactListAutoResize(d->mPrfsAdvanced.kcfg_contactListResizeAnchor->isChecked());
+    settings->writeConfig();
 
-	if ( d->contactListLayoutWidget->save() )
-		load();
-	else
-		QTimer::singleShot( 0, this, SLOT(emitChanged()) );
+    if (d->contactListLayoutWidget->save()) {
+        load();
+    } else {
+        QTimer::singleShot(0, this, SLOT(emitChanged()));
+    }
 }
 
 void AppearanceConfig::load()
 {
-	KCModule::load();
-	d->mPrfsAdvanced.kcfg_contactListResizeAnchor->setChecked(Kopete::AppearanceSettings::contactListAutoResize ());
+    KCModule::load();
+    d->mPrfsAdvanced.kcfg_contactListResizeAnchor->setChecked(Kopete::AppearanceSettings::contactListAutoResize());
 
-	d->contactListLayoutWidget->load();
+    d->contactListLayoutWidget->load();
 //	kDebug(14000) << "called";
 }
 
@@ -171,20 +171,20 @@ void AppearanceConfig::slotHighlightChanged()
 
 void AppearanceConfig::slotChangeFont()
 {
-	emitChanged();
+    emitChanged();
 }
 
 void AppearanceConfig::emitChanged()
 {
-	emit changed( true );
+    emit changed(true);
 }
 
 void AppearanceConfig::slotEditTooltips()
 {
-	QPointer <TooltipEditDialog> dlg = new TooltipEditDialog(this);
-	connect(dlg, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
-	dlg->exec();
-	delete dlg;
+    QPointer <TooltipEditDialog> dlg = new TooltipEditDialog(this);
+    connect(dlg, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
+    dlg->exec();
+    delete dlg;
 }
 
 #include "appearanceconfig.moc"

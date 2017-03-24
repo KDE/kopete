@@ -21,41 +21,44 @@
 
 #include <QVariantList>
 
-namespace Ui { class PrivacyPrefsUI; }
+namespace Ui {
+class PrivacyPrefsUI;
+}
 class PrivacyAccountListModel;
 
 class PrivacyPreferences : public KCModule
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	enum SenderMode { AllowAllMessages, AllowNoMessagesExceptWhiteList, AllowAllMessagesExceptBlackList };
+    enum SenderMode {
+        AllowAllMessages, AllowNoMessagesExceptWhiteList, AllowAllMessagesExceptBlackList
+    };
 
-	explicit PrivacyPreferences(QWidget *parent=0, const QVariantList &args = QVariantList());
-	~PrivacyPreferences();
+    explicit PrivacyPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+    ~PrivacyPreferences();
 
-	void save() Q_DECL_OVERRIDE;
-	void load() Q_DECL_OVERRIDE;
+    void save() Q_DECL_OVERRIDE;
+    void load() Q_DECL_OVERRIDE;
 private Q_SLOTS:
-	void slotConfigChanged();
-	void slotModified();
-	void slotChkDropAtLeastOneToggled(bool);
-	void slotChkDropAllToggled(bool);
+    void slotConfigChanged();
+    void slotModified();
+    void slotChkDropAtLeastOneToggled(bool);
+    void slotChkDropAllToggled(bool);
 
-	void slotBtnAddToWhiteListClicked();
-	void slotBtnAddToBlackListClicked();	
-	void slotBtnClearWhiteListClicked();
-	void slotBtnClearBlackListClicked();
-	void slotBtnRemoveFromWhiteListClicked();
-	void slotBtnRemoveFromBlackListClicked();
+    void slotBtnAddToWhiteListClicked();
+    void slotBtnAddToBlackListClicked();
+    void slotBtnClearWhiteListClicked();
+    void slotBtnClearBlackListClicked();
+    void slotBtnRemoveFromWhiteListClicked();
+    void slotBtnRemoveFromBlackListClicked();
 
-	void slotSetupViews();
+    void slotSetupViews();
 private:
-	Ui::PrivacyPrefsUI *prefUi;
-	PrivacyAccountListModel *m_whiteListModel;
-	PrivacyAccountListModel *m_blackListModel;
+    Ui::PrivacyPrefsUI *prefUi;
+    PrivacyAccountListModel *m_whiteListModel;
+    PrivacyAccountListModel *m_blackListModel;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

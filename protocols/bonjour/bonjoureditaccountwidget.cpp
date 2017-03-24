@@ -31,93 +31,96 @@
 #include <KIdentityManagement/Identity>
 #include <KIdentityManagement/IdentityManager>
 
-BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Account* account)
-: QWidget( parent ), KopeteEditAccountWidget( account )
+BonjourEditAccountWidget::BonjourEditAccountWidget(QWidget *parent, Kopete::Account *account)
+    : QWidget(parent)
+    , KopeteEditAccountWidget(account)
 {
-				qDebug() ;
-	m_preferencesWidget = new Ui::BonjourAccountPreferences();
-	m_preferencesWidget->setupUi( this );
+    qDebug();
+    m_preferencesWidget = new Ui::BonjourAccountPreferences();
+    m_preferencesWidget->setupUi(this);
 
-	if (account) {
-		group = account->configGroup();
-	
-		m_preferencesWidget->kcfg_username->setText(group->readEntry("username"));
-		m_preferencesWidget->kcfg_firstName->setText(group->readEntry("firstName"));
-		m_preferencesWidget->kcfg_lastName->setText(group->readEntry("lastName"));
-		m_preferencesWidget->kcfg_emailAddress->setText(group->readEntry("emailAddress"));
-	} else {
+    if (account) {
+        group = account->configGroup();
 
-		// In this block, we populate the default values
-		QString firstName, lastName, login, emailAddress;
-		QStringList names;
+        m_preferencesWidget->kcfg_username->setText(group->readEntry("username"));
+        m_preferencesWidget->kcfg_firstName->setText(group->readEntry("firstName"));
+        m_preferencesWidget->kcfg_lastName->setText(group->readEntry("lastName"));
+        m_preferencesWidget->kcfg_emailAddress->setText(group->readEntry("emailAddress"));
+    } else {
+        // In this block, we populate the default values
+        QString firstName, lastName, login, emailAddress;
+        QStringList names;
 
-		// Create a KUser object with default values
-		// We May be able to get username and Real Name from here
-		KUser user = KUser();
+        // Create a KUser object with default values
+        // We May be able to get username and Real Name from here
+        KUser user = KUser();
 
-		if (user.isValid()) {
-			// Get the login name from KUser
-			login = user.loginName();
+        if (user.isValid()) {
+            // Get the login name from KUser
+            login = user.loginName();
 
-			// First Get the Names from KUser
-			names = user.property(KUser::FullName).toString().split(' ');
-		}
+            // First Get the Names from KUser
+            names = user.property(KUser::FullName).toString().split(' ');
+        }
 
-		// Next try via the default identity
-		KIdentityManagement::IdentityManager manager(true);
-		const KIdentityManagement::Identity & ident = manager.defaultIdentity();
+        // Next try via the default identity
+        KIdentityManagement::IdentityManager manager(true);
+        const KIdentityManagement::Identity &ident = manager.defaultIdentity();
 
-		if (! ident.isNull()) {
-			// Get the full name from identity (only if not available via KUser)
-			if ( names.isEmpty() )
-				names = ident.fullName().split(' ');
+        if (!ident.isNull()) {
+            // Get the full name from identity (only if not available via KUser)
+            if (names.isEmpty()) {
+                names = ident.fullName().split(' ');
+            }
 
-			// Get the email address
-			emailAddress = ident.primaryEmailAddress();
-		}
+            // Get the email address
+            emailAddress = ident.primaryEmailAddress();
+        }
 
-		// Split the names array into firstName and lastName
-		if (! names.isEmpty()) {
-			firstName = names.takeFirst();
-			lastName = names.join(QStringLiteral(" "));
-		}
+        // Split the names array into firstName and lastName
+        if (!names.isEmpty()) {
+            firstName = names.takeFirst();
+            lastName = names.join(QStringLiteral(" "));
+        }
 
-		if (! login.isEmpty())
-			m_preferencesWidget->kcfg_username->setText(login);
-		if (! firstName.isEmpty())
-			m_preferencesWidget->kcfg_firstName->setText(firstName);
-		if (! lastName.isEmpty())
-			m_preferencesWidget->kcfg_lastName->setText(lastName);
-		if (! emailAddress.isEmpty())
-			m_preferencesWidget->kcfg_emailAddress->setText(emailAddress);
-
-	}
+        if (!login.isEmpty()) {
+            m_preferencesWidget->kcfg_username->setText(login);
+        }
+        if (!firstName.isEmpty()) {
+            m_preferencesWidget->kcfg_firstName->setText(firstName);
+        }
+        if (!lastName.isEmpty()) {
+            m_preferencesWidget->kcfg_lastName->setText(lastName);
+        }
+        if (!emailAddress.isEmpty()) {
+            m_preferencesWidget->kcfg_emailAddress->setText(emailAddress);
+        }
+    }
 }
 
 BonjourEditAccountWidget::~BonjourEditAccountWidget()
 {
-	delete m_preferencesWidget;
+    delete m_preferencesWidget;
 }
 
-Kopete::Account* BonjourEditAccountWidget::apply()
+Kopete::Account *BonjourEditAccountWidget::apply()
 {
-	if (! account() ) {
-		setAccount( new BonjourAccount ( BonjourProtocol::protocol(), m_preferencesWidget->kcfg_username->text()));
-		group = account()->configGroup();
-	}
+    if (!account()) {
+        setAccount(new BonjourAccount(BonjourProtocol::protocol(), m_preferencesWidget->kcfg_username->text()));
+        group = account()->configGroup();
+    }
 
-	group->writeEntry("username", m_preferencesWidget->kcfg_username->text());
-	group->writeEntry("firstName", m_preferencesWidget->kcfg_firstName->text());
-	group->writeEntry("lastName", m_preferencesWidget->kcfg_lastName->text());
-	group->writeEntry("emailAddress", m_preferencesWidget->kcfg_emailAddress->text());
+    group->writeEntry("username", m_preferencesWidget->kcfg_username->text());
+    group->writeEntry("firstName", m_preferencesWidget->kcfg_firstName->text());
+    group->writeEntry("lastName", m_preferencesWidget->kcfg_lastName->text());
+    group->writeEntry("emailAddress", m_preferencesWidget->kcfg_emailAddress->text());
 
-	((BonjourAccount *)account())->parseConfig();
+    ((BonjourAccount *)account())->parseConfig();
 
-	return account();
+    return account();
 }
 
 bool BonjourEditAccountWidget::validateData()
 {
-   	return !( m_preferencesWidget->kcfg_username->text().isEmpty() );
+    return !(m_preferencesWidget->kcfg_username->text().isEmpty());
 }
-

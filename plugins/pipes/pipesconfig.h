@@ -26,19 +26,18 @@
 
 class PipesConfig
 {
-	public:
-		static PipesConfig * self();
-		static PipesPlugin::PipeOptionsList pipes();
-		static void setPipes (PipesPlugin::PipeOptionsList);
-		void save();
-		void load();
-		
-	private:
-		PipesConfig();
-		
-		PipesPlugin::PipeOptionsList mPipesList;
-		static PipesConfig * mSelf;
+public:
+    static PipesConfig *self();
+    static PipesPlugin::PipeOptionsList pipes();
+    static void setPipes(PipesPlugin::PipeOptionsList);
+    void save();
+    void load();
+
+private:
+    PipesConfig();
+
+    PipesPlugin::PipeOptionsList mPipesList;
+    static PipesConfig *mSelf;
 };
 
 #endif
-

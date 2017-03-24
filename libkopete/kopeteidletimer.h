@@ -22,9 +22,7 @@
 
 #include "kopete_export.h"
 
-namespace Kopete
-{
-
+namespace Kopete {
 /**
  * IdleTimer handles global idle time and allows to register idle timeout notifications
  *
@@ -32,50 +30,48 @@ namespace Kopete
  */
 class KOPETE_EXPORT IdleTimer : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-	/**
-	 * Get the only instance of IdleTimer
-	 * @return IdleTimer single instance
-	 */
-	static IdleTimer *self();
+    /**
+     * Get the only instance of IdleTimer
+     * @return IdleTimer single instance
+     */
+    static IdleTimer *self();
 
-	~IdleTimer();
+    ~IdleTimer();
 
-	/**
-	 * @brief Time in seconds the user has been idle
-	 */
-	int idleTime();
+    /**
+     * @brief Time in seconds the user has been idle
+     */
+    int idleTime();
 
 public Q_SLOTS:
-	/**
-	 * @brief Register new timeout notification
-	 * \param idleSeconds the idle notification time period
-	 * \param receiver the object that receives the timeout notification.
-	 * \param memberActive the slot that is called when user has changed its state from idle to active.
-	 * \param memberIdle the slot that is called when user was idle for @param idleSeconds seconds.
-	 */
-	void registerTimeout( int idleSeconds, QObject * receiver,
-	                      const char * memberActive, const char * memberIdle );
+    /**
+     * @brief Register new timeout notification
+     * \param idleSeconds the idle notification time period
+     * \param receiver the object that receives the timeout notification.
+     * \param memberActive the slot that is called when user has changed its state from idle to active.
+     * \param memberIdle the slot that is called when user was idle for @param idleSeconds seconds.
+     */
+    void registerTimeout(int idleSeconds, QObject *receiver, const char *memberActive, const char *memberIdle);
 
-	/**
-	 * removes all registered timeout notifications for this object
-	 */
-	void unregisterTimeout( QObject *receiver );
+    /**
+     * removes all registered timeout notifications for this object
+     */
+    void unregisterTimeout(QObject *receiver);
 
 private slots:
-	void updateIdleTime();
+    void updateIdleTime();
 
 private:
-	IdleTimer();
+    IdleTimer();
 
-	static IdleTimer *instance;
+    static IdleTimer *instance;
 
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
 }
 
 #endif

@@ -21,33 +21,33 @@
 
 class StatusConfig_Manager : public QWidget, private Ui::StatusConfig_Manager
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	StatusConfig_Manager( QWidget *parent = nullptr );
-	~StatusConfig_Manager();
+    StatusConfig_Manager(QWidget *parent = nullptr);
+    ~StatusConfig_Manager();
 
 public slots:
-	void load();
-	void save();
+    void load();
+    void save();
 
-	void addStatus();
-	void addGroup();
-	void removeStatus();
+    void addStatus();
+    void addGroup();
+    void removeStatus();
 
 signals:
-	void changed();
+    void changed();
 
 private slots:
-	void currentRowChanged( const QModelIndex &current, const QModelIndex &previous );
-	
-	void editTitleEdited( const QString &text );
-	void editMessageChanged();
-	void editTypeChanged( int index );
+    void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
+
+    void editTitleEdited(const QString &text);
+    void editMessageChanged();
+    void editTypeChanged(int index);
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
 
 #endif // STATUSCONFIG_MANAGER_H

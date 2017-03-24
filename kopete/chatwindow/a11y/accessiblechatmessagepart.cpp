@@ -27,10 +27,10 @@ QString Q_GUI_EXPORT qTextBeforeOffset( int offset, QAccessible::TextBoundaryTyp
 QString Q_GUI_EXPORT qTextAtOffset( int offset, QAccessible::TextBoundaryType boundaryType, int *startOffset, int *endOffset);
 #endif
 */
-AccessibleChatMessagePart::AccessibleChatMessagePart( KHTMLView* widget ):
-  QAccessibleWidget( widget, QAccessible::Document )
+AccessibleChatMessagePart::AccessibleChatMessagePart(KHTMLView *widget)
+    : QAccessibleWidget(widget, QAccessible::Document)
 {
-  m_part = widget->part();
+    m_part = widget->part();
 }
 
 int AccessibleChatMessagePart::childCount() const
@@ -58,19 +58,19 @@ int AccessibleChatMessagePart::selectionCount()
     return m_part->hasSelection() ? 1 : 0;
 }
 
-void AccessibleChatMessagePart::addSelection( int startOffset, int endOffset )
+void AccessibleChatMessagePart::addSelection(int startOffset, int endOffset)
 {
 }
 
-void AccessibleChatMessagePart::removeSelection( int selectionIndex )
+void AccessibleChatMessagePart::removeSelection(int selectionIndex)
 {
 }
 
-void AccessibleChatMessagePart::setSelection( int selectionIndex, int startOffset, int endOffset )
+void AccessibleChatMessagePart::setSelection(int selectionIndex, int startOffset, int endOffset)
 {
 }
 
-void AccessibleChatMessagePart::setCursorPosition( int position )
+void AccessibleChatMessagePart::setCursorPosition(int position)
 {
 }
 
@@ -78,8 +78,9 @@ QString AccessibleChatMessagePart::plainText() const
 {
     DOM::Node body = m_part->htmlDocument().getElementsByTagName("body").item(0);
 
-    if (body.isNull())
+    if (body.isNull()) {
         return m_part->documentSource();
+    }
 
     QString text = body.textContent().string();
 
@@ -91,31 +92,31 @@ QString AccessibleChatMessagePart::plainText() const
     return lines.join(QLatin1String("\n"));
 }
 
-QString AccessibleChatMessagePart::text( int startOffset, int endOffset )
+QString AccessibleChatMessagePart::text(int startOffset, int endOffset)
 {
     QString text = plainText();
-    text.truncate( endOffset );
-    text.remove( 0, startOffset );
+    text.truncate(endOffset);
+    text.remove(0, startOffset);
     return text;
 }
 
-QString AccessibleChatMessagePart::attributes( int offset, int* startOffset, int* endOffset )
+QString AccessibleChatMessagePart::attributes(int offset, int *startOffset, int *endOffset)
 {
     return QString();
 }
 
-void AccessibleChatMessagePart::selection( int selectionIndex, int* startOffset, int* endOffset )
+void AccessibleChatMessagePart::selection(int selectionIndex, int *startOffset, int *endOffset)
 {
     *startOffset = -1;
     *endOffset = -1;
 }
 
-QRect AccessibleChatMessagePart::characterRect( int offset)
+QRect AccessibleChatMessagePart::characterRect(int offset)
 {
     return QRect();
 }
 
-int AccessibleChatMessagePart::offsetAtPoint( const QPoint& point)
+int AccessibleChatMessagePart::offsetAtPoint(const QPoint &point)
 {
     return 0;
 }
@@ -125,7 +126,7 @@ int AccessibleChatMessagePart::cursorPosition()
     return 0;
 }
 
-void AccessibleChatMessagePart::scrollToSubstring( int startIndex, int endIndex )
+void AccessibleChatMessagePart::scrollToSubstring(int startIndex, int endIndex)
 {
 }
 

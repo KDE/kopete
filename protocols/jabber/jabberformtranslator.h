@@ -1,4 +1,4 @@
- /*
+/*
   * jabberformtranslator.h
   *
   * Copyright (c) 2002-2003 by Till Gerken <till@tantalo.net>
@@ -27,23 +27,21 @@
   *@author Till Gerken <till@tantalo.net>
   */
 
-class JabberFormTranslator:public QWidget
+class JabberFormTranslator : public QWidget
 {
-
-Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit JabberFormTranslator (const XMPP::Form & form, QWidget * parent = nullptr);
-	~JabberFormTranslator ();
+    explicit JabberFormTranslator (const XMPP::Form &form, QWidget *parent = nullptr);
+    ~JabberFormTranslator ();
 
-	XMPP::Form & resultData ();
+    XMPP::Form &resultData();
 
 signals:
-	void gatherData (XMPP::Form & form);
+    void gatherData(XMPP::Form &form);
 
 private:
-	XMPP::Form emptyForm, privForm;
-
+    XMPP::Form emptyForm, privForm;
 };
 
 #endif

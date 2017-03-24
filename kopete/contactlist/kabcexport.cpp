@@ -40,213 +40,194 @@
 
 class ContactLVI : public QListWidgetItem
 {
-	public:
-		ContactLVI ( Kopete::MetaContact * mc, QListWidget * parent, const QString & text, QListWidgetItem::ItemType tt = Type ) : QListWidgetItem( text,parent, tt ), mc( mc )
-		{
-			
-		}
-		Kopete::MetaContact * mc;
-		QString uid;
+public:
+    ContactLVI (Kopete::MetaContact *mc, QListWidget *parent, const QString &text, QListWidgetItem::ItemType tt = Type) : QListWidgetItem(text, parent, tt)
+        , mc(mc)
+    {
+    }
+
+    Kopete::MetaContact *mc;
+    QString uid;
 };
 
-// ctor populates the resource list and contact list, and enables the next button on the first page 
-KabcExportWizard::KabcExportWizard( QWidget *parent )
-	: KAssistantDialog(parent)
+// ctor populates the resource list and contact list, and enables the next button on the first page
+KabcExportWizard::KabcExportWizard(QWidget *parent)
+    : KAssistantDialog(parent)
 {
-	QWidget *page1Widget=new QWidget(this);
-	m_page1.setupUi(page1Widget);
-	m_page1WidgetItem=addPage(page1Widget,i18n("Select Address Book"));
-	QWidget *page2Widget=new QWidget(this);
-	m_page2.setupUi(page2Widget);
-	m_page2WidgetItem=addPage(page2Widget,i18n("Select Contact"));
-	
+    QWidget *page1Widget = new QWidget(this);
+    m_page1.setupUi(page1Widget);
+    m_page1WidgetItem = addPage(page1Widget, i18n("Select Address Book"));
+    QWidget *page2Widget = new QWidget(this);
+    m_page2.setupUi(page2Widget);
+    m_page2WidgetItem = addPage(page2Widget, i18n("Select Contact"));
 
-	connect( m_page1.addrBooks, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
-		  SLOT(slotResourceSelectionChanged(QListWidgetItem*)));
+    connect(m_page1.addrBooks, SIGNAL(currentItemChanged(QListWidgetItem *,QListWidgetItem *)),
+            SLOT(slotResourceSelectionChanged(QListWidgetItem *)));
 
-	connect( m_page2.btnSelectAll, SIGNAL(clicked()), SLOT(slotSelectAll()) );
-	connect( m_page2.btnDeselectAll, SIGNAL(clicked()), SLOT(slotDeselectAll()) );
-	
-	// fill resource selector
-	//DEPRECATED: m_addressBook = Kopete::KABCPersistence::self()->addressBook();
+    connect(m_page2.btnSelectAll, SIGNAL(clicked()), SLOT(slotSelectAll()));
+    connect(m_page2.btnDeselectAll, SIGNAL(clicked()), SLOT(slotDeselectAll()));
 
-	//DEPRECATED: QList<KContacts::Resource*> kabcResources = m_addressBook->resources();
+    // fill resource selector
+    //DEPRECATED: m_addressBook = Kopete::KABCPersistence::self()->addressBook();
 
-	//DEPRECATED: QListIterator<KContacts::Resource*> resIt( kabcResources );
-	//DEPRECATED: KContacts::Resource *resource;
-	
-	uint counter = 0;
-	/*while ( resIt.hasNext() ) 
-	{
-		resource = resIt.next();
-		if ( !resource->readOnly() ) 
-		{
-			m_resourceMap.insert( counter, resource );
-			m_page1.addrBooks->addItem( resource->resourceName() );
-			counter++;
-		}
-	}*/
+    //DEPRECATED: QList<KContacts::Resource*> kabcResources = m_addressBook->resources();
 
-	setValid(m_page1WidgetItem,false);
+    //DEPRECATED: QListIterator<KContacts::Resource*> resIt( kabcResources );
+    //DEPRECATED: KContacts::Resource *resource;
 
-	// if there were no writable address books, tell the user
-	if ( counter == 0 )
-	{
-		m_page1.addrBooks->addItem( i18n( "No writeable address book resource found." ) );
-		m_page1.addrBooks->addItem( i18n( "Add or enable one using the KDE System Settings." ) );
-		m_page1.addrBooks->setEnabled( false );
-	}
+    uint counter = 0;
+    /*while ( resIt.hasNext() )
+    {
+        resource = resIt.next();
+        if ( !resource->readOnly() )
+        {
+            m_resourceMap.insert( counter, resource );
+            m_page1.addrBooks->addItem( resource->resourceName() );
+            counter++;
+        }
+    }*/
 
-	if ( m_page1.addrBooks->count() == 1 )
-		m_page1.addrBooks->setCurrentRow( 0 );
-	
-	// fill contact list
-	QList<Kopete::MetaContact*> contacts = Kopete::ContactList::self()->metaContacts();
-	QList<Kopete::MetaContact*>::iterator it, itEnd = contacts.end();
-	counter = 0;
-	QString alreadyIn = i18n( " (already in address book)" );
-	for ( it = contacts.begin(); it != itEnd; ++it)
-	{
-		Kopete::MetaContact* mc = (*it);
-		m_contactMap.insert( counter, mc );
-		QListWidgetItem * lvi = new ContactLVI( mc, m_page2.contactList,
-				mc->displayName() );
-		lvi->setCheckState( Qt::Unchecked );
-		const QString &kabcId = mc->kabcId();
-		if ( kabcId.isEmpty() /*|| m_addressBook->findByUid(kabcId).isEmpty()*/ )
-		{
-			lvi->setCheckState( Qt::Checked );
-			lvi->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);	
-		}
-		else
-		{
-			lvi->setText( lvi->text() + alreadyIn );
-			lvi->setFlags( 0 );
-		}
-	}
+    setValid(m_page1WidgetItem, false);
+
+    // if there were no writable address books, tell the user
+    if (counter == 0) {
+        m_page1.addrBooks->addItem(i18n("No writeable address book resource found."));
+        m_page1.addrBooks->addItem(i18n("Add or enable one using the KDE System Settings."));
+        m_page1.addrBooks->setEnabled(false);
+    }
+
+    if (m_page1.addrBooks->count() == 1) {
+        m_page1.addrBooks->setCurrentRow(0);
+    }
+
+    // fill contact list
+    QList<Kopete::MetaContact *> contacts = Kopete::ContactList::self()->metaContacts();
+    QList<Kopete::MetaContact *>::iterator it, itEnd = contacts.end();
+    counter = 0;
+    QString alreadyIn = i18n(" (already in address book)");
+    for (it = contacts.begin(); it != itEnd; ++it) {
+        Kopete::MetaContact *mc = (*it);
+        m_contactMap.insert(counter, mc);
+        QListWidgetItem *lvi = new ContactLVI(mc, m_page2.contactList,
+                                              mc->displayName());
+        lvi->setCheckState(Qt::Unchecked);
+        const QString &kabcId = mc->kabcId();
+        if (kabcId.isEmpty() /*|| m_addressBook->findByUid(kabcId).isEmpty()*/) {
+            lvi->setCheckState(Qt::Checked);
+            lvi->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        } else {
+            lvi->setText(lvi->text() + alreadyIn);
+            lvi->setFlags(0);
+        }
+    }
 }
 
 KabcExportWizard::~KabcExportWizard()
 {
-	
 }
 
 void KabcExportWizard::slotDeselectAll()
 {
-	for(int i=0;i<m_page2.contactList->count();i++)
-	{
-		ContactLVI *item = static_cast<ContactLVI *>( m_page2.contactList->item(i) );
-		item->setCheckState( Qt::Unchecked );
-	}
+    for (int i = 0; i < m_page2.contactList->count(); i++) {
+        ContactLVI *item = static_cast<ContactLVI *>(m_page2.contactList->item(i));
+        item->setCheckState(Qt::Unchecked);
+    }
 }
 
 void KabcExportWizard::slotSelectAll()
 {
-	for(int i=0;i<m_page2.contactList->count();i++)
-	{
-		ContactLVI *item = static_cast<ContactLVI *>( m_page2.contactList->item(i) );
-		if ( item->flags() & Qt::ItemIsEnabled)
-			item->setCheckState( Qt::Checked );
-	}
+    for (int i = 0; i < m_page2.contactList->count(); i++) {
+        ContactLVI *item = static_cast<ContactLVI *>(m_page2.contactList->item(i));
+        if (item->flags() & Qt::ItemIsEnabled) {
+            item->setCheckState(Qt::Checked);
+        }
+    }
 }
 
-void KabcExportWizard::slotResourceSelectionChanged( QListWidgetItem * lbi )
+void KabcExportWizard::slotResourceSelectionChanged(QListWidgetItem *lbi)
 {
-	setValid( m_page1WidgetItem,true );
-	Q_UNUSED(lbi);
+    setValid(m_page1WidgetItem, true);
+    Q_UNUSED(lbi);
 }
 
 // accept runs the export algorithm
 void KabcExportWizard::accept()
 {
-	// first add an addressee to the selected resource 
-	// then set the metacontactId of each MC to that of the new addressee
-	//DEPRECATED: KContacts::Resource * selectedResource = m_resourceMap[ ( m_page1.addrBooks->currentRow() ) ];
-	// for each item checked
-	{
-		for(int i=0;i<m_page2.contactList->count();i++)
-		{
-			ContactLVI *item = static_cast<ContactLVI *>(  m_page2.contactList->item(i) );
-			// if it is checked and enabled
-			if ( item->flags() & Qt::ItemIsEnabled && item->checkState() & Qt::Checked)
-			{
-				KContacts::Addressee addr = KContacts::Addressee();
-				//DEPRECATED: addr = m_addressBook->findByUid( item->mc->kabcId() );
-				if ( addr.isEmpty() ) // unassociated contact
-				{
-					//DEPRECATED: kDebug( 14000 ) << "creating addressee " << item->mc->displayName() << " in address book " << selectedResource->resourceName();
-					// create a new addressee in the selected resource
-					//DEPRECATED: addr.setResource( selectedResource );
+    // first add an addressee to the selected resource
+    // then set the metacontactId of each MC to that of the new addressee
+    //DEPRECATED: KContacts::Resource * selectedResource = m_resourceMap[ ( m_page1.addrBooks->currentRow() ) ];
+    // for each item checked
+    {
+        for (int i = 0; i < m_page2.contactList->count(); i++) {
+            ContactLVI *item = static_cast<ContactLVI *>(m_page2.contactList->item(i));
+            // if it is checked and enabled
+            if (item->flags() & Qt::ItemIsEnabled && item->checkState() & Qt::Checked) {
+                KContacts::Addressee addr = KContacts::Addressee();
+                //DEPRECATED: addr = m_addressBook->findByUid( item->mc->kabcId() );
+                if (addr.isEmpty()) { // unassociated contact
+                    //DEPRECATED: kDebug( 14000 ) << "creating addressee " << item->mc->displayName() << " in address book " << selectedResource->resourceName();
+                    // create a new addressee in the selected resource
+                    //DEPRECATED: addr.setResource( selectedResource );
 
-					// set name
-					QList<Kopete::Contact*> contacts = item->mc->contacts();
-					if ( contacts.count() == 1 )
-					{
-						Kopete::Property prop;
-						prop = contacts.first()->property(
-								Kopete::Global::Properties::self()->fullName() );
-						if ( prop.isNull() )
-							addr.setNameFromString( item->mc->displayName() );
-						else
-							addr.setNameFromString(  prop.value().toString() );
-					}
-					else
-						addr.setNameFromString( item->mc->displayName() );
+                    // set name
+                    QList<Kopete::Contact *> contacts = item->mc->contacts();
+                    if (contacts.count() == 1) {
+                        Kopete::Property prop;
+                        prop = contacts.first()->property(
+                            Kopete::Global::Properties::self()->fullName());
+                        if (prop.isNull()) {
+                            addr.setNameFromString(item->mc->displayName());
+                        } else {
+                            addr.setNameFromString(prop.value().toString());
+                        }
+                    } else {
+                        addr.setNameFromString(item->mc->displayName());
+                    }
 
-					// set details
-					exportDetails( item->mc, addr );
-					//DEPRECATED: m_addressBook->insertAddressee( addr );
-					// set the metacontact's id to that of the new addressee 
-					// - this causes the addressbook to be written by libkopete
-					item->mc->setKabcId( addr.uid() );
-				}
-				else
-				{
-					exportDetails( item->mc, addr );
-					//DEPRECATED: m_addressBook->insertAddressee( addr );
-				}
-			}
-		}
-	}
-	// request a write in case we only changed details on existing linked addressee
-	//DEPRECATED: Kopete::KABCPersistence::self()->writeAddressBook( selectedResource );
-	QDialog::accept();
+                    // set details
+                    exportDetails(item->mc, addr);
+                    //DEPRECATED: m_addressBook->insertAddressee( addr );
+                    // set the metacontact's id to that of the new addressee
+                    // - this causes the addressbook to be written by libkopete
+                    item->mc->setKabcId(addr.uid());
+                } else {
+                    exportDetails(item->mc, addr);
+                    //DEPRECATED: m_addressBook->insertAddressee( addr );
+                }
+            }
+        }
+    }
+    // request a write in case we only changed details on existing linked addressee
+    //DEPRECATED: Kopete::KABCPersistence::self()->writeAddressBook( selectedResource );
+    QDialog::accept();
 }
 
-void KabcExportWizard::exportDetails( Kopete::MetaContact * mc, KContacts::Addressee & addr )
+void KabcExportWizard::exportDetails(Kopete::MetaContact *mc, KContacts::Addressee &addr)
 {
-	QList<Kopete::Contact*> contacts = mc->contacts();
-	QList<Kopete::Contact*>::iterator cit, citEnd = contacts.begin();
-	for( cit = contacts.begin(); cit != citEnd; ++cit )
-	{
-		Kopete::Property prop;
-		prop = (*cit)->property( Kopete::Global::Properties::self()->emailAddress() );
-		if ( !prop.isNull() )
-		{
-			addr.insertEmail( prop.value().toString() );
-		}
-		prop = (*cit)->property( Kopete::Global::Properties::self()->privatePhone() );
-		if ( !prop.isNull() )
-		{
-			addr.insertPhoneNumber( KContacts::PhoneNumber( prop.value().toString(), KContacts::PhoneNumber::Home ) );
-		}
-		prop = (*cit)->property( Kopete::Global::Properties::self()->workPhone() );
-		if ( !prop.isNull() )
-		{
-			addr.insertPhoneNumber( KContacts::PhoneNumber( prop.value().toString(), KContacts::PhoneNumber::Work ) );
-		}
-		prop = (*cit)->property( Kopete::Global::Properties::self()->privateMobilePhone() );
-		if ( !prop.isNull() )
-		{
-			addr.insertPhoneNumber( KContacts::PhoneNumber( prop.value().toString(), KContacts::PhoneNumber::Cell ) );
-		}
-	
-	}
-	
-	if( !mc->picture().isNull() )
-	{
-		QImage photo = mc->picture().image();
-		addr.setPhoto( KContacts::Picture( photo ) );
-	}
-}
+    QList<Kopete::Contact *> contacts = mc->contacts();
+    QList<Kopete::Contact *>::iterator cit, citEnd = contacts.begin();
+    for (cit = contacts.begin(); cit != citEnd; ++cit) {
+        Kopete::Property prop;
+        prop = (*cit)->property(Kopete::Global::Properties::self()->emailAddress());
+        if (!prop.isNull()) {
+            addr.insertEmail(prop.value().toString());
+        }
+        prop = (*cit)->property(Kopete::Global::Properties::self()->privatePhone());
+        if (!prop.isNull()) {
+            addr.insertPhoneNumber(KContacts::PhoneNumber(prop.value().toString(), KContacts::PhoneNumber::Home));
+        }
+        prop = (*cit)->property(Kopete::Global::Properties::self()->workPhone());
+        if (!prop.isNull()) {
+            addr.insertPhoneNumber(KContacts::PhoneNumber(prop.value().toString(), KContacts::PhoneNumber::Work));
+        }
+        prop = (*cit)->property(Kopete::Global::Properties::self()->privateMobilePhone());
+        if (!prop.isNull()) {
+            addr.insertPhoneNumber(KContacts::PhoneNumber(prop.value().toString(), KContacts::PhoneNumber::Cell));
+        }
+    }
 
+    if (!mc->picture().isNull()) {
+        QImage photo = mc->picture().image();
+        addr.setPhoto(KContacts::Picture(photo));
+    }
+}

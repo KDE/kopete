@@ -30,7 +30,6 @@
 #include <QStandardPaths>
 #include <QTextCodec>
 
-
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
 #include <KConfigGroup>
@@ -46,481 +45,460 @@
 #include "kopeteidletimer.h"
 
 namespace Kopete {
-
 StatusManager *StatusManager::instance = 0L;
 
 class StatusManager::Private
 {
 public:
-	Status::StatusGroup *root;
-	QHash<QString, Status::StatusItem *> uidHash;
+    Status::StatusGroup *root;
+    QHash<QString, Status::StatusItem *> uidHash;
 
-	int awayTimeout;
-	bool goAvailable;
-	bool useCustomStatus;
+    int awayTimeout;
+    bool goAvailable;
+    bool useCustomStatus;
 
-	uint globalStatusCategory;
-	Kopete::StatusMessage globalStatusMessage;
-	Kopete::StatusMessage customStatusMessage;
-	
-	bool away;
-	QList<Kopete::Account*> autoAwayAccounts;
+    uint globalStatusCategory;
+    Kopete::StatusMessage globalStatusMessage;
+    Kopete::StatusMessage customStatusMessage;
 
-	Kopete::IdleTimer* idleTimer;
+    bool away;
+    QList<Kopete::Account *> autoAwayAccounts;
+
+    Kopete::IdleTimer *idleTimer;
 };
 
 StatusManager::StatusManager()
-	: QObject( qApp ), d( new Private )
+    : QObject(qApp)
+    , d(new Private)
 {
-	d->away = false;
-	d->root = 0;
-	d->idleTimer = 0;
-	loadXML();
+    d->away = false;
+    d->root = 0;
+    d->idleTimer = 0;
+    loadXML();
 
-	loadSettings();
-	loadBehaviorSettings();
-	connect( Kopete::BehaviorSettings::self(), SIGNAL(configChanged()),
-	         this, SLOT(loadBehaviorSettings()) );
+    loadSettings();
+    loadBehaviorSettings();
+    connect(Kopete::BehaviorSettings::self(), SIGNAL(configChanged()),
+            this, SLOT(loadBehaviorSettings()));
 
-	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
-	         this, SLOT(accountUnregistered(const Kopete::Account*)));
+    connect(Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account *)),
+            this, SLOT(accountUnregistered(const Kopete::Account *)));
 
-	connect( Kopete::AccountManager::self(), SIGNAL(accountOnlineStatusChanged(Kopete::Account*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
-		 this, SLOT(checkIdleTimer()));
-
+    connect(Kopete::AccountManager::self(), SIGNAL(accountOnlineStatusChanged(Kopete::Account *,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+            this, SLOT(checkIdleTimer()));
 }
 
 StatusManager::~StatusManager()
 {
-	instance = 0L;
+    instance = 0L;
 
-	delete d->idleTimer;
+    delete d->idleTimer;
 
-	delete d->root;
-	delete d;
+    delete d->root;
+    delete d;
 }
 
 void StatusManager::saveXML()
 {
-	QString filename = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/kopete/statuses.xml" ) ;
-	QSaveFile file(filename);
-	if( file.open(QIODevice::WriteOnly) )
-	{
-		QString buf;
-		QTextStream stream( &buf, QIODevice::WriteOnly );
-		stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
+    QString filename = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/kopete/statuses.xml");
+    QSaveFile file(filename);
+    if (file.open(QIODevice::WriteOnly)) {
+        QString buf;
+        QTextStream stream(&buf, QIODevice::WriteOnly);
+        stream.setCodec("UTF-16");   // QtXML works only with UTF-16
 
-		QDomDocument doc( QLatin1String( "kopete-statuses" ) );
-		doc.appendChild( StatusManager::storeStatusItem( d->root ) );
-		doc.doctype().save( stream, 4 );
-		doc.documentElement().save( stream, 4 ); // QDomDocument::save() override stream codec to UTF-8
-		file.write( buf.toUtf8() );
+        QDomDocument doc(QLatin1String("kopete-statuses"));
+        doc.appendChild(StatusManager::storeStatusItem(d->root));
+        doc.doctype().save(stream, 4);
+        doc.documentElement().save(stream, 4);   // QDomDocument::save() override stream codec to UTF-8
+        file.write(buf.toUtf8());
 
-		file.commit();
-	}
+        file.commit();
+    }
 }
 
 void StatusManager::loadXML()
 {
-	delete d->root;
+    delete d->root;
 
-	d->uidHash.clear();
-	d->root = 0;
+    d->uidHash.clear();
+    d->root = 0;
 
-	const QString filename = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/kopete/statuses.xml" ) ;
+    const QString filename = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/kopete/statuses.xml");
 
-	QDomDocument doc;
-	QFile file( filename );
-	if ( file.open( QIODevice::ReadOnly ) )
-	{
-		if ( doc.setContent( &file ) )
-		{
-			Kopete::Status::StatusItem* rootItem = StatusManager::parseStatusItem( doc.documentElement() );
-			if ( rootItem )
-			{
-				if ( rootItem->isGroup() )
-					d->root = qobject_cast<Status::StatusGroup *>(rootItem);
-				else
-					delete rootItem;
-			}
-		}
-		file.close();
-	}
-	
-	if ( !d->root )
-	{
-		d->root = defaultStatuses();
-		saveXML();
-	}
+    QDomDocument doc;
+    QFile file(filename);
+    if (file.open(QIODevice::ReadOnly)) {
+        if (doc.setContent(&file)) {
+            Kopete::Status::StatusItem *rootItem = StatusManager::parseStatusItem(doc.documentElement());
+            if (rootItem) {
+                if (rootItem->isGroup()) {
+                    d->root = qobject_cast<Status::StatusGroup *>(rootItem);
+                } else {
+                    delete rootItem;
+                }
+            }
+        }
+        file.close();
+    }
 
-	updateUidHash( d->root );
+    if (!d->root) {
+        d->root = defaultStatuses();
+        saveXML();
+    }
+
+    updateUidHash(d->root);
 }
 
 StatusManager *StatusManager::self()
 {
-	if ( !instance )
-		instance = new StatusManager;
+    if (!instance) {
+        instance = new StatusManager;
+    }
 
-	return instance;
+    return instance;
 }
 
-void StatusManager::setRootGroup( Kopete::Status::StatusGroup *rootGroup )
+void StatusManager::setRootGroup(Kopete::Status::StatusGroup *rootGroup)
 {
-	if ( !rootGroup || rootGroup == d->root )
-		return;
+    if (!rootGroup || rootGroup == d->root) {
+        return;
+    }
 
-	delete d->root;
+    delete d->root;
 
-	d->uidHash.clear();
-	d->root = rootGroup;
-	updateUidHash( d->root );
-	
-	emit changed();
+    d->uidHash.clear();
+    d->root = rootGroup;
+    updateUidHash(d->root);
+
+    emit changed();
 }
 
 Status::StatusGroup *StatusManager::getRootGroup() const
 {
-	return d->root;
+    return d->root;
 }
 
 Kopete::Status::StatusGroup *StatusManager::copyRootGroup() const
 {
-	return qobject_cast<Kopete::Status::StatusGroup *>(d->root->copy());
+    return qobject_cast<Kopete::Status::StatusGroup *>(d->root->copy());
 }
 
-const Status::StatusItem *StatusManager::itemForUid( const QString &uid ) const
+const Status::StatusItem *StatusManager::itemForUid(const QString &uid) const
 {
-	return d->uidHash.value( uid, 0 );
+    return d->uidHash.value(uid, 0);
 }
 
-QDomElement StatusManager::storeStatusItem( const Status::StatusItem *item )
+QDomElement StatusManager::storeStatusItem(const Status::StatusItem *item)
 {
-	QDomDocument statusDoc;
-	QString rootName = ( item->isGroup() ) ? QStringLiteral( "group" ) : QStringLiteral( "status" );
-	statusDoc.appendChild( statusDoc.createElement( rootName ) );
-	statusDoc.documentElement().setAttribute( QStringLiteral("uid"), item->uid() );
-	statusDoc.documentElement().setAttribute( QStringLiteral("category"), item->category() );
+    QDomDocument statusDoc;
+    QString rootName = (item->isGroup()) ? QStringLiteral("group") : QStringLiteral("status");
+    statusDoc.appendChild(statusDoc.createElement(rootName));
+    statusDoc.documentElement().setAttribute(QStringLiteral("uid"), item->uid());
+    statusDoc.documentElement().setAttribute(QStringLiteral("category"), item->category());
 
-	QDomElement title = statusDoc.createElement( QStringLiteral( "title" ) );
-	title.appendChild( statusDoc.createTextNode( item->title() ) );
-	statusDoc.documentElement().appendChild( title );
+    QDomElement title = statusDoc.createElement(QStringLiteral("title"));
+    title.appendChild(statusDoc.createTextNode(item->title()));
+    statusDoc.documentElement().appendChild(title);
 
-	if ( item->isGroup() )
-	{
-		const Status::StatusGroup *group = qobject_cast<const Kopete::Status::StatusGroup*>( item );
-		const QList<Status::StatusItem *> childs = group->childList();
-		foreach ( Status::StatusItem *child , childs )
-			statusDoc.documentElement().appendChild( storeStatusItem( child ) );
-	}
-	else
-	{
-		const Status::Status *status = qobject_cast<const Kopete::Status::Status*>( item );
-		QDomElement message = statusDoc.createElement( QStringLiteral( "message" ) );
-		message.appendChild( statusDoc.createTextNode( status->message() ) );
-		statusDoc.documentElement().appendChild( message );
-	}
+    if (item->isGroup()) {
+        const Status::StatusGroup *group = qobject_cast<const Kopete::Status::StatusGroup *>(item);
+        const QList<Status::StatusItem *> childs = group->childList();
+        foreach (Status::StatusItem *child, childs) {
+            statusDoc.documentElement().appendChild(storeStatusItem(child));
+        }
+    } else {
+        const Status::Status *status = qobject_cast<const Kopete::Status::Status *>(item);
+        QDomElement message = statusDoc.createElement(QStringLiteral("message"));
+        message.appendChild(statusDoc.createTextNode(status->message()));
+        statusDoc.documentElement().appendChild(message);
+    }
 
-	return statusDoc.documentElement();
+    return statusDoc.documentElement();
 }
 
-Status::StatusItem *StatusManager::parseStatusItem( QDomElement element )
+Status::StatusItem *StatusManager::parseStatusItem(QDomElement element)
 {
-	if ( element.isNull() )
-		return 0;
-		
-	if ( element.tagName() == QLatin1String( "group" ) )
-	{
-		Status::StatusGroup* group = new Status::StatusGroup( element.attribute( QStringLiteral("uid") ) );
-		group->setCategory( (OnlineStatusManager::Category)element.attribute( QStringLiteral("category"), QStringLiteral("0") ).toInt() );
+    if (element.isNull()) {
+        return 0;
+    }
 
-		QDomNode childNode = element.firstChild();
-		while ( !childNode.isNull() )
-		{
-			QDomElement childElement = childNode.toElement();
-			if ( childElement.tagName() == QLatin1String( "title" ) )
-				group->setTitle( childElement.text() );
-			else if ( childElement.tagName() == QLatin1String( "group" ) || childElement.tagName() == QLatin1String( "status" ) )
-			{
-				Status::StatusItem *item = StatusManager::parseStatusItem( childElement );
-				if ( item )
-					group->appendChild( item );
-			}
-			childNode = childNode.nextSibling();
-		}
-		return group;
-	}
-	else if ( element.tagName() == QLatin1String( "status" ) )
-	{
-		Status::Status* status = new Status::Status( element.attribute( QStringLiteral("uid") ) );
-		status->setCategory( (OnlineStatusManager::Category)element.attribute( QStringLiteral("category"), QStringLiteral("0") ).toInt() );
-		
-		QDomNode childNode = element.firstChild();
-		while ( !childNode.isNull() )
-		{
-			QDomElement childElement = childNode.toElement();
-			if ( childElement.tagName() == QLatin1String( "title" ) )
-				status->setTitle( childElement.text() );
-			else if ( childElement.tagName() == QLatin1String( "message" ) )
-				status->setMessage( childElement.text() );
+    if (element.tagName() == QLatin1String("group")) {
+        Status::StatusGroup *group = new Status::StatusGroup(element.attribute(QStringLiteral("uid")));
+        group->setCategory((OnlineStatusManager::Category)element.attribute(QStringLiteral("category"), QStringLiteral("0")).toInt());
 
-			childNode = childNode.nextSibling();
-		}
-		return status;
-	}
+        QDomNode childNode = element.firstChild();
+        while (!childNode.isNull())
+        {
+            QDomElement childElement = childNode.toElement();
+            if (childElement.tagName() == QLatin1String("title")) {
+                group->setTitle(childElement.text());
+            } else if (childElement.tagName() == QLatin1String("group") || childElement.tagName() == QLatin1String("status")) {
+                Status::StatusItem *item = StatusManager::parseStatusItem(childElement);
+                if (item) {
+                    group->appendChild(item);
+                }
+            }
+            childNode = childNode.nextSibling();
+        }
+        return group;
+    } else if (element.tagName() == QLatin1String("status")) {
+        Status::Status *status = new Status::Status(element.attribute(QStringLiteral("uid")));
+        status->setCategory((OnlineStatusManager::Category)element.attribute(QStringLiteral("category"), QStringLiteral("0")).toInt());
 
-	return 0;
+        QDomNode childNode = element.firstChild();
+        while (!childNode.isNull())
+        {
+            QDomElement childElement = childNode.toElement();
+            if (childElement.tagName() == QLatin1String("title")) {
+                status->setTitle(childElement.text());
+            } else if (childElement.tagName() == QLatin1String("message")) {
+                status->setMessage(childElement.text());
+            }
+
+            childNode = childNode.nextSibling();
+        }
+        return status;
+    }
+
+    return 0;
 }
 
-void StatusManager::updateUidHash( Status::StatusItem *item )
+void StatusManager::updateUidHash(Status::StatusItem *item)
 {
-	if ( item->isGroup() )
-	{
-		Kopete::Status::StatusGroup *group = qobject_cast<Kopete::Status::StatusGroup*>(item);
-		QList<Kopete::Status::StatusItem*> childs = group->childList();
-		foreach( Kopete::Status::StatusItem* child, childs )
-			updateUidHash( child );
-	}
-	else
-	{
-		d->uidHash[item->uid()] = item;
-	}
+    if (item->isGroup()) {
+        Kopete::Status::StatusGroup *group = qobject_cast<Kopete::Status::StatusGroup *>(item);
+        QList<Kopete::Status::StatusItem *> childs = group->childList();
+        foreach (Kopete::Status::StatusItem *child, childs) {
+            updateUidHash(child);
+        }
+    } else {
+        d->uidHash[item->uid()] = item;
+    }
 }
 
 Status::StatusGroup *StatusManager::defaultStatuses() const
 {
-	Status::StatusGroup* group = new Status::StatusGroup();
-	
-	Status::Status* status = new Status::Status();
-	status->setTitle( i18n( "Online" ) );
-	status->setCategory( OnlineStatusManager::Online );
-	group->appendChild( status );
+    Status::StatusGroup *group = new Status::StatusGroup();
 
-	status = new Status::Status();
-	status->setTitle( i18n( "Away" ) );
-	status->setMessage( i18n( "I am gone right now, but I will be back later" ) );
-	status->setCategory( OnlineStatusManager::Away );
-	group->appendChild( status );
+    Status::Status *status = new Status::Status();
+    status->setTitle(i18n("Online"));
+    status->setCategory(OnlineStatusManager::Online);
+    group->appendChild(status);
 
-	status = new Status::Status();
-	status->setTitle( i18n( "Busy" ) );
-	status->setMessage( i18n( "Sorry, I am busy right now" ) );
-	status->setCategory( OnlineStatusManager::Busy );
-	group->appendChild( status );
+    status = new Status::Status();
+    status->setTitle(i18n("Away"));
+    status->setMessage(i18n("I am gone right now, but I will be back later"));
+    status->setCategory(OnlineStatusManager::Away);
+    group->appendChild(status);
 
-	status = new Status::Status();
-	status->setTitle( i18n( "Invisible" ) );
-	status->setCategory( OnlineStatusManager::Invisible );
-	group->appendChild( status );
+    status = new Status::Status();
+    status->setTitle(i18n("Busy"));
+    status->setMessage(i18n("Sorry, I am busy right now"));
+    status->setCategory(OnlineStatusManager::Busy);
+    group->appendChild(status);
 
-	status = new Status::Status();
-	status->setTitle( i18n( "Offline" ) );
-	status->setCategory( OnlineStatusManager::Offline );
-	group->appendChild( status );
+    status = new Status::Status();
+    status->setTitle(i18n("Invisible"));
+    status->setCategory(OnlineStatusManager::Invisible);
+    group->appendChild(status);
 
-	return group;
+    status = new Status::Status();
+    status->setTitle(i18n("Offline"));
+    status->setCategory(OnlineStatusManager::Offline);
+    group->appendChild(status);
+
+    return group;
 }
 
-void StatusManager::setGlobalStatus( uint category, const Kopete::StatusMessage &statusMessage )
+void StatusManager::setGlobalStatus(uint category, const Kopete::StatusMessage &statusMessage)
 {
-	d->globalStatusCategory = category;
-	d->globalStatusMessage = statusMessage;
+    d->globalStatusCategory = category;
+    d->globalStatusMessage = statusMessage;
 
-	KConfigGroup config( KSharedConfig::openConfig(), "Status Manager" );
-	config.writeEntry( "GlobalStatusCategory", d->globalStatusCategory );
-	config.writeEntry( "GlobalStatusTitle", d->globalStatusMessage.title() );
-	config.writeEntry( "GlobalStatusMessage", d->globalStatusMessage.message() );
-	config.sync();
+    KConfigGroup config(KSharedConfig::openConfig(), "Status Manager");
+    config.writeEntry("GlobalStatusCategory", d->globalStatusCategory);
+    config.writeEntry("GlobalStatusTitle", d->globalStatusMessage.title());
+    config.writeEntry("GlobalStatusMessage", d->globalStatusMessage.message());
+    config.sync();
 
-	emit globalStatusChanged();
+    emit globalStatusChanged();
 }
 
-void StatusManager::setGlobalStatusMessage( const Kopete::StatusMessage &statusMessage )
+void StatusManager::setGlobalStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
-	d->globalStatusMessage = statusMessage;
-	
-	KConfigGroup config( KSharedConfig::openConfig(), "Status Manager" );
-	config.writeEntry( "GlobalStatusTitle", d->globalStatusMessage.title() );
-	config.writeEntry( "GlobalStatusMessage", d->globalStatusMessage.message() );
-	config.sync();
+    d->globalStatusMessage = statusMessage;
 
-	// Iterate each connected account, updating its status message but keeping the
-	// same onlinestatus.
-	QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts();
-	foreach ( Kopete::Account *account, accountList )
-	{
-		Kopete::Contact *self = account->myself();
-		bool isInvisible = self && self->onlineStatus().status() == Kopete::OnlineStatus::Invisible;
-		if ( self && account->isConnected() && !isInvisible )
-		{
-			account->setOnlineStatus ( self->onlineStatus(), statusMessage );
-		}
-	}
+    KConfigGroup config(KSharedConfig::openConfig(), "Status Manager");
+    config.writeEntry("GlobalStatusTitle", d->globalStatusMessage.title());
+    config.writeEntry("GlobalStatusMessage", d->globalStatusMessage.message());
+    config.sync();
 
-	emit globalStatusChanged();
+    // Iterate each connected account, updating its status message but keeping the
+    // same onlinestatus.
+    QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
+    foreach (Kopete::Account *account, accountList) {
+        Kopete::Contact *self = account->myself();
+        bool isInvisible = self && self->onlineStatus().status() == Kopete::OnlineStatus::Invisible;
+        if (self && account->isConnected() && !isInvisible) {
+            account->setOnlineStatus(self->onlineStatus(), statusMessage);
+        }
+    }
+
+    emit globalStatusChanged();
 }
 
 Kopete::StatusMessage StatusManager::globalStatusMessage() const
 {
-	return d->globalStatusMessage;
+    return d->globalStatusMessage;
 }
 
 uint StatusManager::globalStatusCategory() const
 {
-	return d->globalStatusCategory;
+    return d->globalStatusCategory;
 }
 
 void StatusManager::askAndSetActive()
 {
-	qCDebug(LIBKOPETE_LOG) << "Found Activity. Confirming if we should go active";
+    qCDebug(LIBKOPETE_LOG) << "Found Activity. Confirming if we should go active";
 
-	// First Create a Dialog
-	QDialog *dialog = new QDialog(Kopete::UI::Global::mainWidget());
-	dialog->setWindowTitle(i18n("Going Online - Kopete"));
-	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::No|QDialogButtonBox::Yes);
-	QWidget *mainWidget = new QWidget();
-	QVBoxLayout *mainLayout = new QVBoxLayout;
-	dialog->setLayout(mainLayout);
-	mainLayout->addWidget(mainWidget);
-	dialog->connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-	dialog->connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-	buttonBox->button(QDialogButtonBox::Yes)->setDefault(true);
-	buttonBox->button(QDialogButtonBox::No)->setShortcut(Qt::Key_Escape);
-	dialog->setAttribute(Qt::WA_DeleteOnClose, true);
-	//PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
-	mainLayout->addWidget(buttonBox);
+    // First Create a Dialog
+    QDialog *dialog = new QDialog(Kopete::UI::Global::mainWidget());
+    dialog->setWindowTitle(i18n("Going Online - Kopete"));
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::No|QDialogButtonBox::Yes);
+    QWidget *mainWidget = new QWidget();
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    dialog->setLayout(mainLayout);
+    mainLayout->addWidget(mainWidget);
+    dialog->connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    dialog->connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    buttonBox->button(QDialogButtonBox::Yes)->setDefault(true);
+    buttonBox->button(QDialogButtonBox::No)->setShortcut(Qt::Key_Escape);
+    dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    //PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
+    mainLayout->addWidget(buttonBox);
 
-	// Set the Text in the Dialog
-	KMessageBox::createKMessageBox( dialog, buttonBox, QMessageBox::Question,
-		i18n("Do You Want to Change Status to Available?"),
-		QStringList(), QString(), NULL, KMessageBox::NoExec
-	);
+    // Set the Text in the Dialog
+    KMessageBox::createKMessageBox(dialog, buttonBox, QMessageBox::Question,
+                                   i18n("Do You Want to Change Status to Available?"),
+                                   QStringList(), QString(), NULL, KMessageBox::NoExec
+                                   );
 
-	// If yes is clicked, go online
-	connect(dialog, SIGNAL(yesClicked()), this, SLOT(setActive()));
+    // If yes is clicked, go online
+    connect(dialog, SIGNAL(yesClicked()), this, SLOT(setActive()));
 
-	// If the user does not click something by the time we go away, kill the dialog
-	QTimer::singleShot(Kopete::BehaviorSettings::self()->autoAwayTimeout() * 1000, dialog, SLOT(close()));
+    // If the user does not click something by the time we go away, kill the dialog
+    QTimer::singleShot(Kopete::BehaviorSettings::self()->autoAwayTimeout() * 1000, dialog, SLOT(close()));
 
-	// Show the Dialog
-	dialog->show();
+    // Show the Dialog
+    dialog->show();
 }
 
 void StatusManager::setActive()
 {
-	qCDebug(LIBKOPETE_LOG) << "Found activity on desktop, setting accounts online";
-	if( d->away )
-	{
-		d->away = false;
-		if ( d->goAvailable )
-		{
-			QList<Kopete::Account*>::iterator it, itEnd = d->autoAwayAccounts.end();
-			for( it = d->autoAwayAccounts.begin(); it != itEnd; ++it )
-			{
-				if( (*it)->isConnected() && (*it)->isAway() )
-				{
-					(*it)->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( (*it)->protocol(),
-						Kopete::OnlineStatusManager::Online ), globalStatusMessage(), Kopete::Account::KeepSpecialFlags );
-				}
-			}
-			d->autoAwayAccounts.clear();
-		}
-	}
+    qCDebug(LIBKOPETE_LOG) << "Found activity on desktop, setting accounts online";
+    if (d->away) {
+        d->away = false;
+        if (d->goAvailable) {
+            QList<Kopete::Account *>::iterator it, itEnd = d->autoAwayAccounts.end();
+            for (it = d->autoAwayAccounts.begin(); it != itEnd; ++it) {
+                if ((*it)->isConnected() && (*it)->isAway()) {
+                    (*it)->setOnlineStatus(Kopete::OnlineStatusManager::self()->onlineStatus((*it)->protocol(),
+                                                                                             Kopete::OnlineStatusManager::Online), globalStatusMessage(), Kopete::Account::KeepSpecialFlags);
+                }
+            }
+            d->autoAwayAccounts.clear();
+        }
+    }
 }
 
 void StatusManager::setAutoAway()
 {
-	qCDebug(LIBKOPETE_LOG) << "Going AutoAway!";
-	if ( !d->away )
-	{
-		d->away = true;
-		
-		// Set all accounts that are not away already to away.
-		// We remember them so later we only set the accounts to
-		// available that we set to away (and not the user).
-		QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
+    qCDebug(LIBKOPETE_LOG) << "Going AutoAway!";
+    if (!d->away) {
+        d->away = true;
 
-		QList<Kopete::Account*>::iterator it, itEnd = accountList.end();
-		for( it = accountList.begin(); it != itEnd; ++it )
-		{
-			if( (*it)->myself()->onlineStatus().status() == Kopete::OnlineStatus::Online )
-			{
-				d->autoAwayAccounts.append( (*it) );
-				
-				if( d->useCustomStatus )
-				{
-					// Display a specific away message
-					(*it)->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( (*it)->protocol(),
-						Kopete::OnlineStatusManager::Idle ), d->customStatusMessage, Kopete::Account::KeepSpecialFlags );
-				}
-				else
-				{
-					// Display the last global away message used
-					(*it)->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( (*it)->protocol(),
-						Kopete::OnlineStatusManager::Idle ), d->globalStatusMessage, Kopete::Account::KeepSpecialFlags );
-				}
-			}
-		}
-	}
+        // Set all accounts that are not away already to away.
+        // We remember them so later we only set the accounts to
+        // available that we set to away (and not the user).
+        QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
+
+        QList<Kopete::Account *>::iterator it, itEnd = accountList.end();
+        for (it = accountList.begin(); it != itEnd; ++it) {
+            if ((*it)->myself()->onlineStatus().status() == Kopete::OnlineStatus::Online) {
+                d->autoAwayAccounts.append((*it));
+
+                if (d->useCustomStatus) {
+                    // Display a specific away message
+                    (*it)->setOnlineStatus(Kopete::OnlineStatusManager::self()->onlineStatus((*it)->protocol(),
+                                                                                             Kopete::OnlineStatusManager::Idle), d->customStatusMessage, Kopete::Account::KeepSpecialFlags);
+                } else {
+                    // Display the last global away message used
+                    (*it)->setOnlineStatus(Kopete::OnlineStatusManager::self()->onlineStatus((*it)->protocol(),
+                                                                                             Kopete::OnlineStatusManager::Idle), d->globalStatusMessage, Kopete::Account::KeepSpecialFlags);
+                }
+            }
+        }
+    }
 }
 
 bool StatusManager::autoAway()
 {
-	return d->away;
+    return d->away;
 }
 
 bool StatusManager::globalAway()
 {
-	return ( d->globalStatusCategory == OnlineStatusManager::Away ||
-	         d->globalStatusCategory == OnlineStatusManager::ExtendedAway ||
-	         d->globalStatusCategory == OnlineStatusManager::Busy ||
-	         d->globalStatusCategory == OnlineStatusManager::Offline );
+    return d->globalStatusCategory == OnlineStatusManager::Away
+           || d->globalStatusCategory == OnlineStatusManager::ExtendedAway
+           || d->globalStatusCategory == OnlineStatusManager::Busy
+           || d->globalStatusCategory == OnlineStatusManager::Offline;
 }
 
-void StatusManager::accountUnregistered( const Kopete::Account *account )
+void StatusManager::accountUnregistered(const Kopete::Account *account)
 {
-	d->autoAwayAccounts.removeAll( const_cast<Kopete::Account *>(account) );
+    d->autoAwayAccounts.removeAll(const_cast<Kopete::Account *>(account));
 }
 
 void StatusManager::checkIdleTimer()
 {
-	// TODO: should we check for d->autoAwayAccounts to see whether to stop the timer?
-	Kopete::IdleTimer* idleTimer = Kopete::IdleTimer::self();
-	idleTimer->unregisterTimeout( this );
+    // TODO: should we check for d->autoAwayAccounts to see whether to stop the timer?
+    Kopete::IdleTimer *idleTimer = Kopete::IdleTimer::self();
+    idleTimer->unregisterTimeout(this);
 
-	if(Kopete::AccountManager::self()->isAnyAccountConnected()) {
-		if ( Kopete::BehaviorSettings::self()->useAutoAway() ) {
-			if (Kopete::BehaviorSettings::self()->autoAwayAskAvailable())
-				idleTimer->registerTimeout( d->awayTimeout, this, SLOT(askAndSetActive()), SLOT(setAutoAway()) );
-			else
-				idleTimer->registerTimeout( d->awayTimeout, this, SLOT(setActive()), SLOT(setAutoAway()) );
-		}
-	}
+    if (Kopete::AccountManager::self()->isAnyAccountConnected()) {
+        if (Kopete::BehaviorSettings::self()->useAutoAway()) {
+            if (Kopete::BehaviorSettings::self()->autoAwayAskAvailable()) {
+                idleTimer->registerTimeout(d->awayTimeout, this, SLOT(askAndSetActive()), SLOT(setAutoAway()));
+            } else {
+                idleTimer->registerTimeout(d->awayTimeout, this, SLOT(setActive()), SLOT(setAutoAway()));
+            }
+        }
+    }
 }
 
 void StatusManager::loadSettings()
 {
-	KConfigGroup config( KSharedConfig::openConfig(), "Status Manager" );
-	d->globalStatusCategory = config.readEntry( "GlobalStatusCategory", 0 );
+    KConfigGroup config(KSharedConfig::openConfig(), "Status Manager");
+    d->globalStatusCategory = config.readEntry("GlobalStatusCategory", 0);
 
-	Kopete::StatusMessage statusMessage;
-	statusMessage.setTitle( config.readEntry( "GlobalStatusTitle", QString() ) );
-	statusMessage.setMessage( config.readEntry( "GlobalStatusMessage", QString() ) );
-	d->globalStatusMessage = statusMessage;
+    Kopete::StatusMessage statusMessage;
+    statusMessage.setTitle(config.readEntry("GlobalStatusTitle", QString()));
+    statusMessage.setMessage(config.readEntry("GlobalStatusMessage", QString()));
+    d->globalStatusMessage = statusMessage;
 }
 
 void StatusManager::loadBehaviorSettings()
 {
-	d->awayTimeout = Kopete::BehaviorSettings::self()->autoAwayTimeout();
-	d->goAvailable = Kopete::BehaviorSettings::self()->autoAwayGoAvailable();
-	d->useCustomStatus = Kopete::BehaviorSettings::self()->useCustomAwayMessage();
-	
-	Kopete::StatusMessage customStatusMessage;
-	customStatusMessage.setTitle( Kopete::BehaviorSettings::self()->autoAwayCustomTitle() );
-	customStatusMessage.setMessage( Kopete::BehaviorSettings::self()->autoAwayCustomMessage() );
-	d->customStatusMessage = customStatusMessage;
+    d->awayTimeout = Kopete::BehaviorSettings::self()->autoAwayTimeout();
+    d->goAvailable = Kopete::BehaviorSettings::self()->autoAwayGoAvailable();
+    d->useCustomStatus = Kopete::BehaviorSettings::self()->useCustomAwayMessage();
 
-	checkIdleTimer();
+    Kopete::StatusMessage customStatusMessage;
+    customStatusMessage.setTitle(Kopete::BehaviorSettings::self()->autoAwayCustomTitle());
+    customStatusMessage.setMessage(Kopete::BehaviorSettings::self()->autoAwayCustomMessage());
+    d->customStatusMessage = customStatusMessage;
+
+    checkIdleTimer();
 }
-
 }
-

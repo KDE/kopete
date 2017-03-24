@@ -1,6 +1,6 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
 // Copyright (C) 2002-2003 Zack Rusin	<zack@kde.org>
 //
 // gadueditcontact.h
@@ -31,33 +31,33 @@
 #include <QTreeWidgetItem>
 
 class GaduAccount;
-namespace Ui { class GaduAddUI; }
+namespace Ui {
+class GaduAddUI;
+}
 class QLabel;
 class QWidget;
 class GaduContact;
 
 class GaduEditContact : public KDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	GaduEditContact( GaduAccount*, GaduContact*,
-		    QWidget* parent = 0 );
-	GaduEditContact( GaduAccount*,  GaduContactsList::ContactLine*,
-		    QWidget* parent = 0 );
-	~GaduEditContact();
+    GaduEditContact(GaduAccount *, GaduContact *, QWidget *parent = 0);
+    GaduEditContact(GaduAccount *, GaduContactsList::ContactLine *, QWidget *parent = 0);
+    ~GaduEditContact();
 protected slots:
-	void slotApply();
-	void listClicked( QTreeWidgetItem* );
+    void slotApply();
+    void listClicked(QTreeWidgetItem *);
 private:
 
-	void init();
-	void fillIn();
-	void fillGroups();
-	GaduAccount*	account_;
-	GaduContact*	contact_;
-	Ui::GaduAddUI*	ui_;
-	GaduContactsList::ContactLine* cl_;
+    void init();
+    void fillIn();
+    void fillGroups();
+    GaduAccount *account_;
+    GaduContact *contact_;
+    Ui::GaduAddUI *ui_;
+    GaduContactsList::ContactLine *cl_;
 };
 
 #endif

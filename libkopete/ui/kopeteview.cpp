@@ -18,36 +18,35 @@
 
 #include "kopeteview.h"
 
-KopeteView::KopeteView( Kopete::ChatSession *manager, Kopete::ViewPlugin *plugin )
-    : m_manager(manager), m_plugin(plugin)
+KopeteView::KopeteView(Kopete::ChatSession *manager, Kopete::ViewPlugin *plugin)
+    : m_manager(manager)
+    , m_plugin(plugin)
 {
 }
 
 Kopete::ChatSession *KopeteView::msgManager() const
 {
-	return m_manager;
+    return m_manager;
 }
 
 void KopeteView::clear()
 {
-	//Do nothing
+    //Do nothing
 }
 
 void KopeteView::appendMessages(QList<Kopete::Message> msgs)
 {
-	QList<Kopete::Message>::iterator it;
-	for ( it = msgs.begin(); it != msgs.end(); ++it )
-	{
-		appendMessage(*it);
-	}
-
+    QList<Kopete::Message>::iterator it;
+    for (it = msgs.begin(); it != msgs.end(); ++it) {
+        appendMessage(*it);
+    }
 }
 
 Kopete::ViewPlugin *KopeteView::plugin()
 {
-	return m_plugin;
+    return m_plugin;
 }
 
-KopeteView::~KopeteView( )
+KopeteView::~KopeteView()
 {
 }

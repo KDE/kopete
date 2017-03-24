@@ -20,7 +20,6 @@
 
 #include <kopeteprotocol.h>
 
-
 /**
  * @brief This Represents the Bonjour Protocol
  *
@@ -31,73 +30,70 @@
  */
 class BonjourProtocol : public Kopete::Protocol
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	BonjourProtocol(QObject *parent, const QStringList &args);
+    BonjourProtocol(QObject *parent, const QStringList &args);
     ~BonjourProtocol();
-	/**
-	 * Convert the serialised data back into a BonjourContact and add this
-	 * to its Kopete::MetaContact
-	 */
-	Kopete::Contact *deserializeContact(
-			Kopete::MetaContact *metaContact,
-			const QMap< QString, QString > & serializedData,
-			const QMap< QString, QString > & addressBookData
-		) Q_DECL_OVERRIDE;
+    /**
+     * Convert the serialised data back into a BonjourContact and add this
+     * to its Kopete::MetaContact
+     */
+    Kopete::Contact *deserializeContact(
+        Kopete::MetaContact *metaContact, const QMap< QString, QString > &serializedData, const QMap< QString, QString > &addressBookData) Q_DECL_OVERRIDE;
 
-	/**
-	 * @brief Generate an Add Contact Page (not actually useful)
-	 *
-	 * As you cannot actually add an contact, this basically brings up an ugly message
-	 *
-	 * @param account is the account to add contact to
-	 * @param parent The parent of the 'to be returned' widget
-	 *
-	 * @return The Add Contact Page Widget
-	 */
-	AddContactPage * createAddContactWidget( QWidget *parent, Kopete::Account *account ) Q_DECL_OVERRIDE;
+    /**
+     * @brief Generate an Add Contact Page (not actually useful)
+     *
+     * As you cannot actually add an contact, this basically brings up an ugly message
+     *
+     * @param account is the account to add contact to
+     * @param parent The parent of the 'to be returned' widget
+     *
+     * @return The Add Contact Page Widget
+     */
+    AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account) Q_DECL_OVERRIDE;
 
-	/**
-	 * @brief Generate an Edit Account Page
-	 *
-	 * Generate the widget needed to add/edit accounts for this protocol
-	 *
-	 * @param account is the account to edit. If @c NULL, a new account is made
-	 * @param parent The parent of the 'to be returned' widget
-	 *
-	 * @return The Edit Account Page Widget
-	 */
-	KopeteEditAccountWidget * createEditAccountWidget( Kopete::Account *account, QWidget *parent ) Q_DECL_OVERRIDE;
+    /**
+     * @brief Generate an Edit Account Page
+     *
+     * Generate the widget needed to add/edit accounts for this protocol
+     *
+     * @param account is the account to edit. If @c NULL, a new account is made
+     * @param parent The parent of the 'to be returned' widget
+     *
+     * @return The Edit Account Page Widget
+     */
+    KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent) Q_DECL_OVERRIDE;
 
-	/**
-	 * @brief Create a New Account
-	 *
-	 * This will Generate a BonjourAccount
-	 * @param accountId A Unique String to identify the Account
-	 * @return The Newly Created Account
-	 */
-	Kopete::Account * createNewAccount( const QString &accountId ) Q_DECL_OVERRIDE;
+    /**
+     * @brief Create a New Account
+     *
+     * This will Generate a BonjourAccount
+     * @param accountId A Unique String to identify the Account
+     * @return The Newly Created Account
+     */
+    Kopete::Account *createNewAccount(const QString &accountId) Q_DECL_OVERRIDE;
 
-	/**
-	 * @brief Access the instance of this protocol
-	 * @return The Instance of this protocol
-	 */
-	static BonjourProtocol *protocol();
+    /**
+     * @brief Access the instance of this protocol
+     * @return The Instance of this protocol
+     */
+    static BonjourProtocol *protocol();
 
-	/**
-	 * Represents contacts that are Online
-	 */
-	const Kopete::OnlineStatus bonjourOnline;
-	/**
-	 * Represents contacts that are Away
-	 */
-	const Kopete::OnlineStatus bonjourAway;
-	/**
-	 * Represents contacts that are Offline
-	 */
-	const Kopete::OnlineStatus bonjourOffline;
+    /**
+     * Represents contacts that are Online
+     */
+    const Kopete::OnlineStatus bonjourOnline;
+    /**
+     * Represents contacts that are Away
+     */
+    const Kopete::OnlineStatus bonjourAway;
+    /**
+     * Represents contacts that are Offline
+     */
+    const Kopete::OnlineStatus bonjourOffline;
 protected:
-	static BonjourProtocol *s_protocol;
+    static BonjourProtocol *s_protocol;
 };
 
 #endif

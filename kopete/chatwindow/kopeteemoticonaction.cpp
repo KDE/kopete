@@ -42,69 +42,65 @@
 class KopeteEmoticonAction::KopeteEmoticonActionPrivate
 {
 public:
-	KopeteEmoticonActionPrivate()
-	{
-		m_popup = new QMenu(0L);
-		emoticonSelector = new EmoticonSelector( m_popup );
-		emoticonSelector->setObjectName( QStringLiteral("KopeteEmoticonActionPrivate::emoticonSelector") );
+    KopeteEmoticonActionPrivate()
+    {
+        m_popup = new QMenu(0L);
+        emoticonSelector = new EmoticonSelector(m_popup);
+        emoticonSelector->setObjectName(QStringLiteral("KopeteEmoticonActionPrivate::emoticonSelector"));
 //FIXME do it the kde4 way
 //		m_popup->insertItem( static_cast<QObject*>(emoticonSelector) );
-		// TODO: Maybe connect to kopeteprefs and redo list only on config changes
-		QWidgetAction *act = new QWidgetAction(m_popup);
-		act->setDefaultWidget(emoticonSelector);
-		m_popup->addAction(act);
-		connect( m_popup, SIGNAL(aboutToShow()), emoticonSelector, SLOT(prepareList()) );
-	}
+        // TODO: Maybe connect to kopeteprefs and redo list only on config changes
+        QWidgetAction *act = new QWidgetAction(m_popup);
+        act->setDefaultWidget(emoticonSelector);
+        m_popup->addAction(act);
+        connect(m_popup, SIGNAL(aboutToShow()), emoticonSelector, SLOT(prepareList()));
+    }
 
-	~KopeteEmoticonActionPrivate()
-	{
-		delete m_popup;
-		m_popup = 0;
-	}
+    ~KopeteEmoticonActionPrivate()
+    {
+        delete m_popup;
+        m_popup = 0;
+    }
 
-	QMenu *m_popup;
-	EmoticonSelector *emoticonSelector;
+    QMenu *m_popup;
+    EmoticonSelector *emoticonSelector;
 };
 
-KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
-  : KActionMenu( i18n( "Add Smiley" ), parent )
+KopeteEmoticonAction::KopeteEmoticonAction(QObject *parent)
+    : KActionMenu(i18n("Add Smiley"), parent)
 {
-	d = new KopeteEmoticonActionPrivate;
+    d = new KopeteEmoticonActionPrivate;
 
-	// Try to load the icon for our current emoticon theme, when it fails
-	// fall back to our own default
-	QString icon;
-	QHash<QString, QStringList> emoticonsMap = Kopete::Emoticons::self()->theme().emoticonsMap();
-	for( QHash<QString, QStringList>::const_iterator it = emoticonsMap.constBegin();
-		it != emoticonsMap.constEnd(); ++it )
-	{
-		if( ( *it ).contains( QStringLiteral(":)") ) || ( *it ).contains( QStringLiteral(":-)") ) )
-		{
-			icon = it.key();
-			break;
-		}
-	}
+    // Try to load the icon for our current emoticon theme, when it fails
+    // fall back to our own default
+    QString icon;
+    QHash<QString, QStringList> emoticonsMap = Kopete::Emoticons::self()->theme().emoticonsMap();
+    for (QHash<QString, QStringList>::const_iterator it = emoticonsMap.constBegin();
+         it != emoticonsMap.constEnd(); ++it) {
+        if ((*it).contains(QStringLiteral(":)")) || (*it).contains(QStringLiteral(":-)"))) {
+            icon = it.key();
+            break;
+        }
+    }
 
+    setMenu(d->m_popup);
 
-	setMenu( d->m_popup );
+    if (icon.isNull()) {
+        setIcon(QIcon::fromTheme(QStringLiteral("emoticon")));
+    } else {
+        setIcon(QIcon::fromTheme(icon));
+    }
 
-	if ( icon.isNull() )
-		setIcon( QIcon::fromTheme(QStringLiteral("emoticon")) );
-	else
-		setIcon( QIcon::fromTheme( icon ) );
-
-	//FIXME: setShortcutConfigurable( this, false );
-	connect( d->emoticonSelector, SIGNAL(itemSelected(QString)),
-		this, SIGNAL(activated(QString)) );
+    //FIXME: setShortcutConfigurable( this, false );
+    connect(d->emoticonSelector, SIGNAL(itemSelected(QString)),
+            this, SIGNAL(activated(QString)));
 }
 
 KopeteEmoticonAction::~KopeteEmoticonAction()
 {
 //	kDebug(14010) << "KopeteEmoticonAction::~KopeteEmoticonAction()";
-	delete d;
-	d = 0;
+    delete d;
+    d = 0;
 }
 
-
 // vim: set noet ts=4 sts=4 sw=4:
-

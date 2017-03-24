@@ -22,20 +22,18 @@
 
 class StatisticsDB
 {
+public:
+    StatisticsDB();
+    ~StatisticsDB();
+    //sql helper methods
+    QStringList query(const QString &statement, QStringList *const names = 0, bool debug = false);
+    QString escapeString(QString string);
 
-	public:
-		StatisticsDB();
-		~StatisticsDB();
-		//sql helper methods
-		QStringList query ( const QString& statement, QStringList* const names = 0, bool debug = false );
-		QString escapeString ( QString string );
-
-		bool transaction ();
-		bool commit ();
-	private:
-		QSqlDatabase m_db;
-		bool has_transaction;
+    bool transaction();
+    bool commit();
+private:
+    QSqlDatabase m_db;
+    bool has_transaction;
 };
 
 #endif
-

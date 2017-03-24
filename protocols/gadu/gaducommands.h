@@ -1,7 +1,7 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 2003-2004 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
-// Copyright (C) 2002-2003	 Zack Rusin 	<zack@kde.org>
+// Copyright (C) 2003-2004 Grzegorz Jaskiewicz  <gj at pointblue.com.pl>
+// Copyright (C) 2002-2003	 Zack Rusin     <zack@kde.org>
 //
 // gaducommands.h - all basic, and not-session dependent commands
 // (meaning you don't have to be logged in for any of these).
@@ -37,114 +37,113 @@ class QPixmap;
 
 class GaduCommand : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	GaduCommand( QObject* parent = 0 );
-	virtual ~GaduCommand();
+    GaduCommand(QObject *parent = 0);
+    virtual ~GaduCommand();
 
-	virtual void execute() = 0;
+    virtual void execute() = 0;
 
-	bool done() const;
+    bool done() const;
 
 signals:
-	//e.g. emit done( i18n("Done"), i18n("Registration complete") );
-	void done( const QString& title, const QString& what );
-	void error( const QString& title, const QString& error );
-	void socketReady();
-	void operationStatus( const QString );
+    //e.g. emit done( i18n("Done"), i18n("Registration complete") );
+    void done(const QString &title, const QString &what);
+    void error(const QString &title, const QString &error);
+    void socketReady();
+    void operationStatus(const QString);
 
 protected:
-	void checkSocket( int, int );
-	void enableNotifiers( int );
-	void disableNotifiers();
-	void deleteNotifiers();
+    void checkSocket(int, int);
+    void enableNotifiers(int);
+    void disableNotifiers();
+    void deleteNotifiers();
 
-	bool done_;
+    bool done_;
 
 protected slots:
-	void forwarder();
+    void forwarder();
 
 private:
-	QSocketNotifier*	read_;
-	QSocketNotifier*	write_;
+    QSocketNotifier *read_;
+    QSocketNotifier *write_;
 };
 
 class RegisterCommand : public GaduCommand
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	RegisterCommand( QObject* parent = 0 );
-	RegisterCommand( const QString& email, const QString& password ,
-					QObject* parent = 0 );
-	~RegisterCommand();
+    RegisterCommand(QObject *parent = 0);
+    RegisterCommand(const QString &email, const QString &password, QObject *parent = 0);
+    ~RegisterCommand();
 
-	void setUserinfo( const QString& email, const QString& password, const QString& token );
-	void execute();
-	unsigned int newUin();
-	void requestToken();
-	void cancel();
+    void setUserinfo(const QString &email, const QString &password, const QString &token);
+    void execute();
+    unsigned int newUin();
+    void requestToken();
+    void cancel();
 
 signals:
-	void tokenRecieved( QPixmap, QString );
+    void tokenRecieved(QPixmap, QString);
 
 protected slots:
-	void watcher();
+    void watcher();
 
 private:
-	enum RegisterState{ RegisterStateNoToken, RegisterStateWaitingForToken, RegisterStateGotToken, RegisterStateWaitingForNumber, RegisterStateDone };
-	RegisterState	state;
-	QString			email_;
-	QString			password_;
-	struct gg_http*	session_;
-	int 			uin;
-	QString			tokenId;
-	QString			tokenString;
+    enum RegisterState {
+        RegisterStateNoToken, RegisterStateWaitingForToken, RegisterStateGotToken, RegisterStateWaitingForNumber, RegisterStateDone
+    };
+    RegisterState state;
+    QString email_;
+    QString password_;
+    struct gg_http *session_;
+    int uin;
+    QString tokenId;
+    QString tokenString;
 };
 
 class RemindPasswordCommand : public GaduCommand
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit RemindPasswordCommand( uin_t uin, QObject* parent = 0 );
-	RemindPasswordCommand( QObject* parent = 0 );
-	~RemindPasswordCommand();
+    explicit RemindPasswordCommand(uin_t uin, QObject *parent = 0);
+    RemindPasswordCommand(QObject *parent = 0);
+    ~RemindPasswordCommand();
 
-	void setUIN( uin_t );
-	void execute();
+    void setUIN(uin_t);
+    void execute();
 
 protected slots:
-	void watcher();
+    void watcher();
 
 private:
-	uin_t			uin_;
-	struct gg_http*	session_;
+    uin_t uin_;
+    struct gg_http *session_;
 };
 
 class ChangePasswordCommand : public GaduCommand
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	ChangePasswordCommand( QObject* parent = 0 );
-	~ChangePasswordCommand();
+    ChangePasswordCommand(QObject *parent = 0);
+    ~ChangePasswordCommand();
 
-	void setInfo( uin_t uin, const QString& passwd, const QString& newpasswd,
-				const QString& newemail );
-	void execute();
+    void setInfo(uin_t uin, const QString &passwd, const QString &newpasswd, const QString &newemail);
+    void execute();
 
 protected slots:
-	void watcher();
+    void watcher();
 
 private:
-	struct gg_http*	session_;
-	QString			passwd_;
-	QString			newpasswd_;
-	QString			newemail_;
-	uin_t			uin_;
+    struct gg_http *session_;
+    QString passwd_;
+    QString newpasswd_;
+    QString newemail_;
+    uin_t uin_;
 };
-
 
 #endif

@@ -23,27 +23,30 @@
 
 class ParseEmoticonTask : public Kopete::Task
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	ParseEmoticonTask(const QString &sourceString);
+    ParseEmoticonTask(const QString &sourceString);
 
-	QString parseResult() const { return m_parsed; }
+    QString parseResult() const
+    {
+        return m_parsed;
+    }
 
 private slots:
-	void start();
+    void start();
 
 private:
-	void parseEmoticon(const QString &value);
+    void parseEmoticon(const QString &value);
 
-	QString m_source;
-	QString m_parsed;
+    QString m_source;
+    QString m_parsed;
 };
 
 class KopeteTaskTest : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 private slots:
-	void testEmoticonTask();
+    void testEmoticonTask();
 };
 
 #endif

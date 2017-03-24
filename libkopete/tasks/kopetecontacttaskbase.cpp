@@ -26,42 +26,38 @@
 #include <kopetecontact.h>
 #include <kopeteprotocol.h>
 
-namespace Kopete
-{
-
+namespace Kopete {
 class ContactTaskBase::Private
 {
 public:
-	QPointer<Kopete::Contact> contact;
+    QPointer<Kopete::Contact> contact;
 };
 
 ContactTaskBase::ContactTaskBase(QObject *parent)
- : Kopete::Task(parent), d(new Private)
+    : Kopete::Task(parent)
+    , d(new Private)
 {
 }
 
 ContactTaskBase::~ContactTaskBase()
 {
-	delete d;
+    delete d;
 }
 
 void ContactTaskBase::setContact(Kopete::Contact *contact)
 {
-	d->contact = contact;
+    d->contact = contact;
 
-	// Add the children tasks for DeleteContactTask from the rptocol
-	KJob *subTask = d->contact->protocol()->createProtocolTask( taskType() );
-	if( subTask )
-	{
-		qCDebug(LIBKOPETE_LOG) << "Adding protocol subtask for " << taskType();
-		addSubTask(subTask);
-	}
+    // Add the children tasks for DeleteContactTask from the rptocol
+    KJob *subTask = d->contact->protocol()->createProtocolTask(taskType());
+    if (subTask) {
+        qCDebug(LIBKOPETE_LOG) << "Adding protocol subtask for " << taskType();
+        addSubTask(subTask);
+    }
 }
 
 Kopete::Contact *ContactTaskBase::contact()
 {
-	return d->contact;
+    return d->contact;
 }
-
 } // end namespace Kopete
-

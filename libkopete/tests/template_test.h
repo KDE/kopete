@@ -24,12 +24,10 @@
 class Template_Test : public KUnitTest::Tester
 {
 public:
-	void allTests();
+    void allTests();
 public slots:
-	void testSomething();
+    void testSomething();
 private:
-	
 };
 
 #endif
-

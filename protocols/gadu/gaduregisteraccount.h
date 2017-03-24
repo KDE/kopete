@@ -1,6 +1,6 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
 //
 // gaduregisteraccount.h
 //
@@ -29,35 +29,37 @@ class QString;
 class QPixmap;
 class RegisterCommand;
 class QRegExp;
-namespace Ui { class GaduRegisterAccountUI; }
+namespace Ui {
+class GaduRegisterAccountUI;
+}
 
 class GaduRegisterAccount : public KDialog
 {
     Q_OBJECT
 
 public:
-	GaduRegisterAccount( QWidget* = 0 );
-	~GaduRegisterAccount( );
+    GaduRegisterAccount(QWidget * = 0);
+    ~GaduRegisterAccount();
 
 signals:
-	void registeredNumber( unsigned int, QString  );
+    void registeredNumber(unsigned int, QString);
 
 protected slots:
-	void slotClose();
-	void displayToken( QPixmap, QString );
-	void registrationError(  const QString&, const QString& );
-	void registrationDone(  const QString&,  const QString& );
-	void inputChanged( const QString & );
-	void doRegister();
-	void updateStatus( const QString status );
+    void slotClose();
+    void displayToken(QPixmap, QString);
+    void registrationError(const QString &, const QString &);
+    void registrationDone(const QString &, const QString &);
+    void inputChanged(const QString &);
+    void doRegister();
+    void updateStatus(const QString status);
 
 private:
-	void validateInput();
+    void validateInput();
 
-	Ui::GaduRegisterAccountUI*	ui;
-	RegisterCommand*	cRegister;
-	QRegExp*		emailRegexp; 
-	QPixmap			hintPixmap;
+    Ui::GaduRegisterAccountUI *ui;
+    RegisterCommand *cRegister;
+    QRegExp *emailRegexp;
+    QPixmap hintPixmap;
 };
 
 #endif

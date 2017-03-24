@@ -29,9 +29,15 @@
 class QStringList;
 class QString;
 
-namespace Kopete { class Message; }
-namespace Kopete { class MetaContact; }
-namespace Kopete { class ChatSession; }
+namespace Kopete {
+class Message;
+}
+namespace Kopete {
+class MetaContact;
+}
+namespace Kopete {
+class ChatSession;
+}
 
 class HighlightConfig;
 
@@ -41,22 +47,21 @@ class HighlightConfig;
 
 class HighlightPlugin : public Kopete::Plugin
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	static HighlightPlugin  *plugin();
+    static HighlightPlugin *plugin();
 
-	HighlightPlugin( QObject *parent, const QVariantList &args );
-	~HighlightPlugin();
+    HighlightPlugin(QObject *parent, const QVariantList &args);
+    ~HighlightPlugin();
 
 public slots:
-	void slotIncomingMessage( Kopete::Message& msg );
-	void slotSettingsChanged();
-
+    void slotIncomingMessage(Kopete::Message &msg);
+    void slotSettingsChanged();
 
 private:
-	static HighlightPlugin* pluginStatic_;
-	HighlightConfig *m_config;
+    static HighlightPlugin *pluginStatic_;
+    HighlightConfig *m_config;
 };
 
 #endif

@@ -31,23 +31,24 @@
 
 class QCheckBox;
 
-namespace Kleo { class EncryptionKeyRequester; }
+namespace Kleo {
+class EncryptionKeyRequester;
+}
 
 class CryptographyPreferences : public KCModule
 {
+    Q_OBJECT
 
-		Q_OBJECT
+public:
+    explicit CryptographyPreferences (QWidget *parent = 0, const QVariantList &args = QVariantList());
+    virtual ~CryptographyPreferences();
+    virtual void save();
+    virtual void load();
+    virtual void defaults();
 
-	public:
-		explicit CryptographyPreferences ( QWidget *parent = 0, const QVariantList &args = QVariantList() );
-		virtual ~CryptographyPreferences();
-		virtual void save();
-		virtual void load();
-		virtual void defaults();
-
-	private:
-		Kleo::EncryptionKeyRequester * key;
-		QCheckBox * checkBox;
+private:
+    Kleo::EncryptionKeyRequester *key;
+    QCheckBox *checkBox;
 };
 
 #endif

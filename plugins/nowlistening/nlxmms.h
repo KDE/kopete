@@ -6,10 +6,10 @@
     Copyright (c) 2002 by Will Stephenson <will@stevello.free-online.co.uk>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
-	
-	Purpose: 
-	This class abstracts the interface to the X Multimedia System (xmms) by
-	implementing NLMediaPlayer
+
+    Purpose:
+    This class abstracts the interface to the X Multimedia System (xmms) by
+    implementing NLMediaPlayer
 
     *************************************************************************
     *                                                                       *
@@ -30,9 +30,9 @@
 
 class NLXmms : public NLMediaPlayer
 {
-	public:
-		NLXmms();
-		virtual void update();
+public:
+    NLXmms();
+    virtual void update();
 };
 
 #endif

@@ -31,19 +31,14 @@
 #include "avatarselectorwidget.h"
 #include "kopeteavatarmanager.h"
 
-namespace Kopete
-{
-
-namespace UI
-{
-
+namespace Kopete {
+namespace UI {
 class AvatarDialog::Private
 {
 public:
     Private()
         : mainWidget(nullptr)
     {
-
     }
 
     AvatarSelectorWidget *mainWidget;
@@ -52,9 +47,10 @@ public:
 };
 
 AvatarDialog::AvatarDialog(QWidget *parent)
-    : QDialog(parent), d(new Private)
+    : QDialog(parent)
+    , d(new Private)
 {
-    setWindowTitle( i18n("Select Avatar") );
+    setWindowTitle(i18n("Select Avatar"));
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     d->mainWidget = new Kopete::UI::AvatarSelectorWidget(this);
     mainLayout->addWidget(d->mainWidget);
@@ -78,26 +74,24 @@ QString AvatarDialog::selectedAvatarPath() const
     return d->selectedPath;
 }
 
-QString AvatarDialog::getAvatar(QWidget *parent, const QString &currentAvatar, bool * ok )
+QString AvatarDialog::getAvatar(QWidget *parent, const QString &currentAvatar, bool *ok)
 {
     QPointer <AvatarDialog> dialog = new AvatarDialog(parent);
     dialog->d->mainWidget->setCurrentAvatar(currentAvatar);
     dialog->d->currentPath = currentAvatar;
-    if ( dialog->exec() == QDialog::Accepted )
-    {
-        if ( ok ) {
+    if (dialog->exec() == QDialog::Accepted) {
+        if (ok) {
             *ok = true;
         }
-    }
-    else
-    {
-        if ( ok ) {
+    } else {
+        if (ok) {
             *ok = false;
         }
     }
     QString ret;
-    if ( dialog )
+    if (dialog) {
         ret = dialog->selectedAvatarPath();
+    }
     delete dialog;
     return ret;
 }
@@ -110,8 +104,5 @@ void AvatarDialog::slotOkClicked()
     emit result();
     accept();
 }
-
-
 } // namespace UI
-
 } // namespace Kopete

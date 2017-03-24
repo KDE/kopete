@@ -19,23 +19,25 @@
 #include <QObject>
 #include <kxmlguiclient.h>
 
-namespace Kopete { class ChatSession; }
+namespace Kopete {
+class ChatSession;
+}
 class QAction;
 
-class PrivacyGUIClient : public QObject , public KXMLGUIClient
+class PrivacyGUIClient : public QObject, public KXMLGUIClient
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     PrivacyGUIClient(Kopete::ChatSession *parent = nullptr);
-	~PrivacyGUIClient();
+    ~PrivacyGUIClient();
 private slots:
-	void slotAddToWhiteList();
-	void slotAddToBlackList();
+    void slotAddToWhiteList();
+    void slotAddToBlackList();
 
 private:
-	Kopete::ChatSession *m_manager;
-	QAction *actionAddToWhiteList;
-	QAction *actionAddToBlackList;
+    Kopete::ChatSession *m_manager;
+    QAction *actionAddToWhiteList;
+    QAction *actionAddToBlackList;
 };
 
 #endif

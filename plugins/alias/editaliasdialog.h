@@ -26,13 +26,13 @@ class QWidget;
 
 class EditAliasDialog : public QDialog, public Ui::AliasDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	EditAliasDialog( QWidget* parent = 0 );
-	virtual ~EditAliasDialog();
-	
+    EditAliasDialog(QWidget *parent = 0);
+    virtual ~EditAliasDialog();
+
 public slots:
-	void checkButtonsEnabled();
+    void checkButtonsEnabled();
 };
 
 #endif

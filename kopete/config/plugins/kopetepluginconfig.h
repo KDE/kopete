@@ -32,23 +32,22 @@ class KPluginSelector;
  */
 class KopetePluginConfig : public KCModule
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	KopetePluginConfig( QWidget *parent, const QVariantList &args  );
-	~KopetePluginConfig();
+    KopetePluginConfig(QWidget *parent, const QVariantList &args);
+    ~KopetePluginConfig();
 
 public slots:
-	void load() Q_DECL_OVERRIDE;
-	void save() Q_DECL_OVERRIDE;
+    void load() Q_DECL_OVERRIDE;
+    void save() Q_DECL_OVERRIDE;
 
-	void defaults() Q_DECL_OVERRIDE;
-    void reparseConfiguration(const QByteArray&conf);
+    void defaults() Q_DECL_OVERRIDE;
+    void reparseConfiguration(const QByteArray &conf);
 private:
-	KPluginSelector *m_pluginSelector;
+    KPluginSelector *m_pluginSelector;
 };
 
 #endif // KOPETEPLUGINCONFIG_H
 
 // vim: set noet ts=4 sts=4 sw=4:
-

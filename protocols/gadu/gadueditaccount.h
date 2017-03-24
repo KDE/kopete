@@ -1,6 +1,6 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 2003 Grzegorz Jaskiewicz   <gj at pointblue.com.pl>
 //
 // gadueditaccount.h
 //
@@ -30,34 +30,36 @@
 class GaduAccount;
 class GaduProtocol;
 
-namespace Kopete { class Account; }
+namespace Kopete {
+class Account;
+}
 
 class GaduEditAccount : public QWidget, private Ui::GaduAccountEditUI, public KopeteEditAccountWidget
 {
     Q_OBJECT
 
 public:
-	GaduEditAccount( GaduProtocol*, Kopete::Account*, QWidget* parent = 0 );
-	virtual bool validateData();
-	Kopete::Account* apply();
+    GaduEditAccount(GaduProtocol *, Kopete::Account *, QWidget *parent = 0);
+    virtual bool validateData();
+    Kopete::Account *apply();
 
 private slots:
-	void registerNewAccount();
-	void newUin( unsigned int, QString  );
-	void registrationFailed();
-	void slotSearchResult( const SearchResult&, unsigned int );
+    void registerNewAccount();
+    void newUin(unsigned int, QString);
+    void registrationFailed();
+    void slotSearchResult(const SearchResult &, unsigned int);
 
 private:
-	void enableUserInfo( bool );
-	void publishUserInfo();
+    void enableUserInfo(bool);
+    void publishUserInfo();
 
-	GaduProtocol*		protocol_;
-	bool			reg_in_progress;
-	bool			isSsl;
-	RegisterCommand*	rcmd;
-	GaduRegisterAccount*	regDialog;
-	GaduAccount*		account_;
-	unsigned int 		seqNr;
+    GaduProtocol *protocol_;
+    bool reg_in_progress;
+    bool isSsl;
+    RegisterCommand *rcmd;
+    GaduRegisterAccount *regDialog;
+    GaduAccount *account_;
+    unsigned int seqNr;
 };
 
 #endif

@@ -37,73 +37,70 @@
 
 namespace Kopete {
 namespace UI {
-
-
-AddressBookLinkWidget::AddressBookLinkWidget( QWidget * parent, const char * name ) : QWidget(parent), Ui::AddressBookLinkWidgetBase(), mMetaContact( 0 )
+AddressBookLinkWidget::AddressBookLinkWidget(QWidget *parent, const char *name) : QWidget(parent)
+    , Ui::AddressBookLinkWidgetBase()
+    , mMetaContact(0)
 {
-	setObjectName(name);
-	setupUi(this);
+    setObjectName(name);
+    setupUi(this);
 
-	btnClear->setIcon( QIcon::fromTheme( (QApplication::layoutDirection() == Qt::RightToLeft) ? QStringLiteral( "edit-clear-locationbar-ltr" ) : QStringLiteral( "edit-clear-locationbar-rtl") ) );
-	connect( btnClear, SIGNAL(clicked()), this, SLOT(slotClearAddressee()) );
-	connect( btnSelectAddressee, SIGNAL(clicked()), SLOT(slotSelectAddressee()) );
+    btnClear->setIcon(QIcon::fromTheme((QApplication::layoutDirection() == Qt::RightToLeft) ? QStringLiteral("edit-clear-locationbar-ltr") : QStringLiteral("edit-clear-locationbar-rtl")));
+    connect(btnClear, SIGNAL(clicked()), this, SLOT(slotClearAddressee()));
+    connect(btnSelectAddressee, SIGNAL(clicked()), SLOT(slotSelectAddressee()));
 }
 
-void AddressBookLinkWidget::setAddressee( const KContacts::Addressee& addr )
+void AddressBookLinkWidget::setAddressee(const KContacts::Addressee &addr)
 {
-	edtAddressee->setText( addr.realName() );
-	btnClear->setEnabled( !addr.isEmpty() );
+    edtAddressee->setText(addr.realName());
+    btnClear->setEnabled(!addr.isEmpty());
 }
 
-void AddressBookLinkWidget::setMetaContact( const Kopete::MetaContact * mc )
+void AddressBookLinkWidget::setMetaContact(const Kopete::MetaContact *mc)
 {
-	mMetaContact = mc;
+    mMetaContact = mc;
 }
 
 QString AddressBookLinkWidget::uid() const
 {
-	return mSelectedUid;
+    return mSelectedUid;
 }
 
 void AddressBookLinkWidget::slotClearAddressee()
 {
-	edtAddressee->clear();
-	btnClear->setEnabled( false );
-	KContacts::Addressee mrEmpty;
-	mSelectedUid.clear();
-	emit addresseeChanged( mrEmpty );
+    edtAddressee->clear();
+    btnClear->setEnabled(false);
+    KContacts::Addressee mrEmpty;
+    mSelectedUid.clear();
+    emit addresseeChanged(mrEmpty);
 }
 
 void AddressBookLinkWidget::slotSelectAddressee()
 {
-	QString message;
-	if ( mMetaContact )
-		message = i18n("Choose the corresponding entry for '%1'", mMetaContact->displayName() );
- 	else
-		message = i18n("Choose the corresponding entry in the address book" );
+    QString message;
+    if (mMetaContact) {
+        message = i18n("Choose the corresponding entry for '%1'", mMetaContact->displayName());
+    } else {
+        message = i18n("Choose the corresponding entry in the address book");
+    }
 
-	QString assocDisplayText;
-	if ( mMetaContact )
-	{
-		assocDisplayText = mMetaContact->kabcId();
-	}
-	QPointer <Kopete::UI::AddressBookSelectorDialog> dialog = new Kopete::UI::AddressBookSelectorDialog( i18n("Address Book Association"), message,
-	                                              assocDisplayText, this );
-	int result = dialog->exec();
+    QString assocDisplayText;
+    if (mMetaContact) {
+        assocDisplayText = mMetaContact->kabcId();
+    }
+    QPointer <Kopete::UI::AddressBookSelectorDialog> dialog = new Kopete::UI::AddressBookSelectorDialog(i18n("Address Book Association"), message,
+                                                                                                        assocDisplayText, this);
+    int result = dialog->exec();
 
-	KContacts::Addressee addr;
-	if ( result == QDialog::Accepted && dialog )
-	{
-		addr = dialog->addressBookSelectorWidget()->addressee();
+    KContacts::Addressee addr;
+    if (result == QDialog::Accepted && dialog) {
+        addr = dialog->addressBookSelectorWidget()->addressee();
 
-		edtAddressee->setText( addr.realName() );
-		btnClear->setEnabled( !addr.isEmpty() );
-		mSelectedUid = ( addr.isEmpty() ? QString() : addr.uid() );
-		emit addresseeChanged( addr );
-	}
-	delete dialog;
+        edtAddressee->setText(addr.realName());
+        btnClear->setEnabled(!addr.isEmpty());
+        mSelectedUid = (addr.isEmpty() ? QString() : addr.uid());
+        emit addresseeChanged(addr);
+    }
+    delete dialog;
 }
-
 } // end namespace UI
 } // end namespace Kopete
-

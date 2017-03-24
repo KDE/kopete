@@ -28,26 +28,28 @@
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
 
-namespace Kopete { class ChatSession; }
+namespace Kopete {
+class ChatSession;
+}
 
 /**
   * @author Olivier Goffart <ogoffart@kde.org>
   */
 
-class TranslatorGUIClient : public QObject , public KXMLGUIClient
+class TranslatorGUIClient : public QObject, public KXMLGUIClient
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit TranslatorGUIClient( Kopete::ChatSession *parent );
-	~TranslatorGUIClient();
+    explicit TranslatorGUIClient(Kopete::ChatSession *parent);
+    ~TranslatorGUIClient();
 
 private slots:
-	 void slotTranslateChat();
-	 void messageTranslated(const QVariant&);
+    void slotTranslateChat();
+    void messageTranslated(const QVariant &);
 
 private:
-	Kopete::ChatSession *m_manager;
+    Kopete::ChatSession *m_manager;
 };
 
 #endif
@@ -60,4 +62,3 @@ private:
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
-

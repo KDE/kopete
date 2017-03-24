@@ -29,76 +29,73 @@ class QDomDocument;
 class QDomElement;
 
 namespace Kopete {
-
 class Group;
 class MetaContact;
 class MessageEvent;
 
 namespace UI {
-
 /**
 @author Aleix Pol <aleixpol@gmail.com>
 */
 class KOPETE_CONTACT_LIST_EXPORT ContactListModel : public QAbstractItemModel
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	ContactListModel(QObject* parent = nullptr);
+    ContactListModel(QObject *parent = nullptr);
 
-	void init();
+    void init();
 
-	int columnCount ( const QModelIndex & parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
-	/* drag-n-drop stuff */
-	Qt::DropActions supportedDropActions() const Q_DECL_OVERRIDE;
-	QMimeData* mimeData(const QModelIndexList &indexes) const Q_DECL_OVERRIDE;
-	QStringList mimeTypes() const Q_DECL_OVERRIDE;
-	bool setData(const QModelIndex &index, const QVariant &value, const int role) Q_DECL_OVERRIDE;
+    /* drag-n-drop stuff */
+    Qt::DropActions supportedDropActions() const Q_DECL_OVERRIDE;
+    QMimeData *mimeData(const QModelIndexList &indexes) const Q_DECL_OVERRIDE;
+    QStringList mimeTypes() const Q_DECL_OVERRIDE;
+    bool setData(const QModelIndex &index, const QVariant &value, const int role) Q_DECL_OVERRIDE;
 
-	bool loadModelSettings( const QString& modelType );
-	bool saveModelSettings( const QString& modelType );
+    bool loadModelSettings(const QString &modelType);
+    bool saveModelSettings(const QString &modelType);
 
 public Q_SLOTS:
-	virtual void addMetaContact( Kopete::MetaContact* );
-	virtual void removeMetaContact( Kopete::MetaContact* );
+    virtual void addMetaContact(Kopete::MetaContact *);
+    virtual void removeMetaContact(Kopete::MetaContact *);
 
-	virtual void addGroup( Kopete::Group* );
-	virtual void removeGroup( Kopete::Group* );
+    virtual void addGroup(Kopete::Group *);
+    virtual void removeGroup(Kopete::Group *);
 
-	virtual void addMetaContactToGroup( Kopete::MetaContact*, Kopete::Group* );
-	virtual void removeMetaContactFromGroup( Kopete::MetaContact*, Kopete::Group* );
-	virtual void moveMetaContactToGroup( Kopete::MetaContact*, Kopete::Group*, Kopete::Group*);
+    virtual void addMetaContactToGroup(Kopete::MetaContact *, Kopete::Group *);
+    virtual void removeMetaContactFromGroup(Kopete::MetaContact *, Kopete::Group *);
+    virtual void moveMetaContactToGroup(Kopete::MetaContact *, Kopete::Group *, Kopete::Group *);
 
 protected Q_SLOTS:
-	virtual void appearanceConfigChanged() = 0;
-	virtual void handleContactDataChange( Kopete::MetaContact* ) = 0;
-	virtual void loadContactList();
-	void handleContactDataChange();
-	void newMessageEvent( Kopete::MessageEvent *event );
-	void newMessageEventDone( Kopete::MessageEvent *event );
+    virtual void appearanceConfigChanged() = 0;
+    virtual void handleContactDataChange(Kopete::MetaContact *) = 0;
+    virtual void loadContactList();
+    void handleContactDataChange();
+    void newMessageEvent(Kopete::MessageEvent *event);
+    void newMessageEventDone(Kopete::MessageEvent *event);
 
 protected:
-	bool dropUrl( const QMimeData *data, int row, const QModelIndex &parent, Qt::DropAction action );
-	typedef QPair<Kopete::Group*, Kopete::MetaContact*> GroupMetaContactPair;
-	virtual bool dropMetaContacts( int row, const QModelIndex &parent, Qt::DropAction action, const QList<GroupMetaContactPair> &items );
+    bool dropUrl(const QMimeData *data, int row, const QModelIndex &parent, Qt::DropAction action);
+    typedef QPair<Kopete::Group *, Kopete::MetaContact *> GroupMetaContactPair;
+    virtual bool dropMetaContacts(int row, const QModelIndex &parent, Qt::DropAction action, const QList<GroupMetaContactPair> &items);
 
-	QList<QVariant> emoticonStringToList( const QString &msg ) const;
+    QList<QVariant> emoticonStringToList(const QString &msg) const;
 
-	QVariant metaContactData( const Kopete::MetaContact* mc, int role ) const;
-	QVariant metaContactImage( const Kopete::MetaContact* mc ) const;
-	QString metaContactTooltip( const Kopete::MetaContact* metaContact ) const;
+    QVariant metaContactData(const Kopete::MetaContact *mc, int role) const;
+    QVariant metaContactImage(const Kopete::MetaContact *mc) const;
+    QString metaContactTooltip(const Kopete::MetaContact *metaContact) const;
 
-	virtual void loadModelSettingsImpl( QDomElement& rootElement ) = 0;
-	virtual void saveModelSettingsImpl( QDomDocument& doc, QDomElement& rootElement ) = 0;
+    virtual void loadModelSettingsImpl(QDomElement &rootElement) = 0;
+    virtual void saveModelSettingsImpl(QDomDocument &doc, QDomElement &rootElement) = 0;
 
-	bool m_manualGroupSorting;
-	bool m_manualMetaContactSorting;
+    bool m_manualGroupSorting;
+    bool m_manualMetaContactSorting;
 
 private:
-	QHash< const Kopete::MetaContact*, QSet<Kopete::MessageEvent*> > m_newMessageMetaContactSet;
+    QHash< const Kopete::MetaContact *, QSet<Kopete::MessageEvent *> > m_newMessageMetaContactSet;
 };
 }
-
 }
 
 #endif

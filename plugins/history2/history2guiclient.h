@@ -23,40 +23,41 @@
 
 class KAction;
 
-namespace Kopete { class ChatSession; }
+namespace Kopete {
+class ChatSession;
+}
 
 class History2Logger;
 
 /**
  *@author Olivier Goffart
  */
-class History2GUIClient : public QObject , public KXMLGUIClient
+class History2GUIClient : public QObject, public KXMLGUIClient
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	History2GUIClient(Kopete::ChatSession *parent = 0);
-	~History2GUIClient();
-
+    History2GUIClient(Kopete::ChatSession *parent = 0);
+    ~History2GUIClient();
 
 private slots:
-	void slotPrevious();
-	void slotLast();
-	void slotNext();
-	void slotQuote();
-	void slotViewHistory2();
+    void slotPrevious();
+    void slotLast();
+    void slotNext();
+    void slotQuote();
+    void slotViewHistory2();
 
 private:
 
-	Kopete::ChatSession *m_manager;
-	//bool m_autoChatWindow;
-	//int m_nbAutoChatWindow;
-	//unsigned int m_nbChatWindow;
+    Kopete::ChatSession *m_manager;
+    //bool m_autoChatWindow;
+    //int m_nbAutoChatWindow;
+    //unsigned int m_nbChatWindow;
 
-	KAction *actionPrev;
-	KAction *actionNext;
-	KAction *actionLast;
+    KAction *actionPrev;
+    KAction *actionNext;
+    KAction *actionLast;
 
-	int offset;
+    int offset;
 };
 
 #endif

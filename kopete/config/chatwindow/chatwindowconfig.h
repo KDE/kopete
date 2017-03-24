@@ -35,68 +35,71 @@ class FakeContact;
 class ChatMessagePart;
 class QTabWidget;
 
-namespace Kopete { class MetaContact; class ChatSession; }
+namespace Kopete {
+class MetaContact;
+class ChatSession;
+}
 
 class ChatWindowConfig : public KCModule
 {
-	Q_OBJECT
+    Q_OBJECT
 
-friend class KopeteStyleNewStuff;
+    friend class KopeteStyleNewStuff;
 
 public:
-	ChatWindowConfig( QWidget *parent, const QVariantList &args );
-	~ChatWindowConfig();
+    ChatWindowConfig(QWidget *parent, const QVariantList &args);
+    ~ChatWindowConfig();
 
-	void save() Q_DECL_OVERRIDE;
-	void load() Q_DECL_OVERRIDE;
+    void save() Q_DECL_OVERRIDE;
+    void load() Q_DECL_OVERRIDE;
 
 private slots:
-	//----- Style TAB ---------------------
-	void slotInstallChatStyle();
-	int installChatStyle(const QUrl &styleToInstall);
-	void slotDeleteChatStyle();
-	void slotChatStyleSelected(const QString &styleName);
-	void slotChatStyleVariantSelected(const QString &variantName);
-	void emitChanged();
-	//void slotGetChatStyles();
-	void slotLoadChatStyles();
-	void slotUpdateChatPreview();
-	//----- Emoticons TAB ---------------------
-	void slotManageEmoticonThemes();
+    //----- Style TAB ---------------------
+    void slotInstallChatStyle();
+    int installChatStyle(const QUrl &styleToInstall);
+    void slotDeleteChatStyle();
+    void slotChatStyleSelected(const QString &styleName);
+    void slotChatStyleVariantSelected(const QString &variantName);
+    void emitChanged();
+    //void slotGetChatStyles();
+    void slotLoadChatStyles();
+    void slotUpdateChatPreview();
+    //----- Emoticons TAB ---------------------
+    void slotManageEmoticonThemes();
 
 private:
-	//----- Style TAB ---------------------
-	void createPreviewChatSession();
-	void createPreviewMessages();
-	//----- Emoticons TAB ---------------------
-	void updateEmoticonList();
-	
+    //----- Style TAB ---------------------
+    void createPreviewChatSession();
+    void createPreviewMessages();
+    //----- Emoticons TAB ---------------------
+    void updateEmoticonList();
+
 private:
-	//----- TAB Widget ---------------------
-	QTabWidget *m_tab;
-	//----- Style TAB ----------------------
-	Ui::ChatWindowConfig_Style m_styleUi;
-	ChatMessagePart *m_preview;
+    //----- TAB Widget ---------------------
+    QTabWidget *m_tab;
+    //----- Style TAB ----------------------
+    Ui::ChatWindowConfig_Style m_styleUi;
+    ChatMessagePart *m_preview;
 
-	ChatWindowStyle::StyleVariants m_currentVariantMap;
-	QPointer<ChatWindowStyle> m_currentStyle;
-	bool m_loading;
-	bool m_allowDownloadTheme;
-	// For style preview
-	FakeProtocol *m_previewProtocol;
-	FakeAccount *m_previewAccount;
-	Kopete::MetaContact *m_jackMetaContact;
-	FakeContact *m_myself;
-	FakeContact *m_jack;
-	Kopete::ChatSession *m_previewChatSession;
+    ChatWindowStyle::StyleVariants m_currentVariantMap;
+    QPointer<ChatWindowStyle> m_currentStyle;
+    bool m_loading;
+    bool m_allowDownloadTheme;
+    // For style preview
+    FakeProtocol *m_previewProtocol;
+    FakeAccount *m_previewAccount;
+    Kopete::MetaContact *m_jackMetaContact;
+    FakeContact *m_myself;
+    FakeContact *m_jack;
+    Kopete::ChatSession *m_previewChatSession;
 
-	//----- Emoticons TAB ---------------------
-	Ui::ChatWindowConfig_Emoticons m_emoticonsUi;
+    //----- Emoticons TAB ---------------------
+    Ui::ChatWindowConfig_Emoticons m_emoticonsUi;
 
-	//----- Colors TAB ------------------------
-	Ui::ChatWindowConfig_Colors m_colorsUi;
+    //----- Colors TAB ------------------------
+    Ui::ChatWindowConfig_Colors m_colorsUi;
 
-	//----- Tab TAB ---------------------
-	Ui::ChatWindowConfig_Tab m_tabUi;
+    //----- Tab TAB ---------------------
+    Ui::ChatWindowConfig_Tab m_tabUi;
 };
 #endif

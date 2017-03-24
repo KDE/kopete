@@ -24,24 +24,24 @@ class StatusConfig_Manager;
 class StatusConfig_General;
 
 /**
-	@author Roman Jarosz <kedgedev@centrum.cz>
+    @author Roman Jarosz <kedgedev@centrum.cz>
 */
 class StatusConfig : public KCModule
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-		StatusConfig( QWidget *parent, const QVariantList &args );
+public:
+    StatusConfig(QWidget *parent, const QVariantList &args);
 
-	public slots:
-		void save() Q_DECL_OVERRIDE;
-		void load() Q_DECL_OVERRIDE;
+public slots:
+    void save() Q_DECL_OVERRIDE;
+    void load() Q_DECL_OVERRIDE;
 
-	private:
-		QTabWidget* mStatusTabCtl;
+private:
+    QTabWidget *mStatusTabCtl;
 
-		StatusConfig_Manager *mPrfsManager;
-		StatusConfig_General *mPrfsGeneral;
+    StatusConfig_Manager *mPrfsManager;
+    StatusConfig_General *mPrfsGeneral;
 };
 
 #endif

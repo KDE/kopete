@@ -20,18 +20,18 @@
 
 using namespace KUnitTest;
 
-KUNITTEST_MODULE( kunittest_template_test, "KopeteSuite");
-KUNITTEST_MODULE_REGISTER_TESTER( Template_Test );
+KUNITTEST_MODULE(kunittest_template_test, "KopeteSuite");
+KUNITTEST_MODULE_REGISTER_TESTER(Template_Test);
 
 void Template_Test::allTests()
 {
-	testSomething();
+    testSomething();
 }
 
 void Template_Test::testSomething()
 {
-		int result = 1;
-		int expected = 1;
-		// result should be the expected one
-		CHECK(result, expected);
+    int result = 1;
+    int expected = 1;
+    // result should be the expected one
+    CHECK(result, expected);
 }

@@ -22,19 +22,17 @@
 #include "kopetegroup.h"
 
 namespace Kopete {
-
 class Group::Private
 {
 public:
-	QString displayName;
-	Group::GroupType type;
-	bool expanded;
-	uint groupId;
+    QString displayName;
+    Group::GroupType type;
+    bool expanded;
+    uint groupId;
 
-	//Unique contact id per metacontact
-	static uint uniqueGroupId;
+    //Unique contact id per metacontact
+    static uint uniqueGroupId;
 };
-
-} //END namespace Kopete 
+} //END namespace Kopete
 
 #endif

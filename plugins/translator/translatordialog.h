@@ -1,7 +1,7 @@
 /*
     translatordialog.h  -  description
 
-	Copyright (c) 2002      by Olivier Goffart <ogoffart@kde.org>
+    Copyright (c) 2002      by Olivier Goffart <ogoffart@kde.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -30,16 +30,16 @@ class KTextEdit;
  */
 class TranslatorDialog : public KDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit TranslatorDialog(const QString &translated, QWidget *parent=0);
-	~TranslatorDialog();
+    explicit TranslatorDialog(const QString &translated, QWidget *parent = 0);
+    ~TranslatorDialog();
 
-	QString translatedText();
+    QString translatedText();
 
 private:
-	KTextEdit *m_textEdit;
+    KTextEdit *m_textEdit;
 
 private slots: // Public slots
 //  void slotFinished();
@@ -48,4 +48,3 @@ private slots: // Public slots
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

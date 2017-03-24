@@ -22,7 +22,9 @@
 #include <QVariantList>
 #include <QUuid>
 
-namespace Ui { class PipesPrefsUI; }
+namespace Ui {
+class PipesPrefsUI;
+}
 class PipesModel;
 
 /**
@@ -32,43 +34,46 @@ class PipesModel;
 
 class PipesPreferences : public KCModule
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-		explicit PipesPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
-		~PipesPreferences();
+public:
+    explicit PipesPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+    ~PipesPreferences();
 
-		/*
-		 * Save pipes to file; QUuid's are used to identify them
-		 */
-		void save();
-		
-		/*
-		 * Load pipes by QUuid
-		 */
-		void load();
-		
-		QSize sizeHint() const { return QSize ( 600, 350 ); }
+    /*
+     * Save pipes to file; QUuid's are used to identify them
+     */
+    void save();
 
-	private slots:
-		/*
-		 * Add a row to the model
-		 */
-		void slotAdd();
-		
-		/*
-		 * Remove a row from the model
-		 */
-		void slotRemove();
-		
-		/*
-		 * Resize tableview
-		 */
-		void slotListChanged();
+    /*
+     * Load pipes by QUuid
+     */
+    void load();
 
-	private:
-		Ui::PipesPrefsUI *mPrefs;
-		PipesModel * mModel;
+    QSize sizeHint() const
+    {
+        return QSize(600, 350);
+    }
+
+private slots:
+    /*
+     * Add a row to the model
+     */
+    void slotAdd();
+
+    /*
+     * Remove a row from the model
+     */
+    void slotRemove();
+
+    /*
+     * Resize tableview
+     */
+    void slotListChanged();
+
+private:
+    Ui::PipesPrefsUI *mPrefs;
+    PipesModel *mModel;
 };
 
 #endif

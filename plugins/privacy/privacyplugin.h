@@ -1,5 +1,5 @@
 /*
-    Privacy Plugin - Filter messages 
+    Privacy Plugin - Filter messages
 
     Copyright (c) 2006 by Andre Duffeck <duffeck@kde.org>
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
@@ -23,11 +23,11 @@
 #include "kopeteplugin.h"
 #include <QVariantList>
 
-namespace Kopete { 
-	class Message;
-	class ChatSession;
-	class MessageEvent;
-	class Contact;
+namespace Kopete {
+class Message;
+class ChatSession;
+class MessageEvent;
+class Contact;
 }
 class KopeteView;
 class PrivacyMessageHandlerFactory;
@@ -35,28 +35,28 @@ class PrivacyGUIClient;
 
 class PrivacyPlugin : public Kopete::Plugin
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	static PrivacyPlugin *plugin();
+    static PrivacyPlugin *plugin();
 
-	PrivacyPlugin( QObject *parent, const QVariantList &args );
-	~PrivacyPlugin();
+    PrivacyPlugin(QObject *parent, const QVariantList &args);
+    ~PrivacyPlugin();
 
-	void addContactsToWhiteList( QList<const Kopete::Contact *> list );
-	void addContactsToBlackList( QList<const Kopete::Contact *> list );
+    void addContactsToWhiteList(QList<const Kopete::Contact *> list);
+    void addContactsToBlackList(QList<const Kopete::Contact *> list);
 
 private Q_SLOTS:
-	void slotSettingsChanged();
-	void slotIncomingMessage( Kopete::MessageEvent *event );
-	void slotAddToWhiteList();
-	void slotAddToBlackList();
+    void slotSettingsChanged();
+    void slotIncomingMessage(Kopete::MessageEvent *event);
+    void slotAddToWhiteList();
+    void slotAddToBlackList();
 
-	void slotViewCreated( KopeteView* );
-	void slotChatSessionClosed( Kopete::ChatSession* );
+    void slotViewCreated(KopeteView *);
+    void slotChatSessionClosed(Kopete::ChatSession *);
 private:
-	static PrivacyPlugin *pluginStatic_;
-	PrivacyMessageHandlerFactory *m_inboundHandler;
-	QMap<Kopete::ChatSession*,PrivacyGUIClient*> m_guiClients;
+    static PrivacyPlugin *pluginStatic_;
+    PrivacyMessageHandlerFactory *m_inboundHandler;
+    QMap<Kopete::ChatSession *, PrivacyGUIClient *> m_guiClients;
 };
 
 #endif

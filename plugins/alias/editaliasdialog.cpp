@@ -22,19 +22,18 @@
 #include <qstring.h>
 #include <QLineEdit>
 
-
-EditAliasDialog::EditAliasDialog( QWidget* parent )
-: QDialog( parent )
+EditAliasDialog::EditAliasDialog(QWidget *parent)
+    : QDialog(parent)
 {
-	setupUi( this );
-	
-	QObject::connect( alias, SIGNAL(textChanged(QString)), this, SLOT(checkButtonsEnabled()) );
-	QObject::connect( command, SIGNAL(textChanged(QString)), this, SLOT(checkButtonsEnabled()) );
-	QObject::connect( protocolList, SIGNAL(selectionChanged()), this, SLOT(checkButtonsEnabled()) );
-        QObject::connect( kPushButton3, SIGNAL(clicked()), this, SLOT(reject()) );
-        QObject::connect( addButton, SIGNAL(clicked()), this, SLOT(accept()) );
+    setupUi(this);
 
-	checkButtonsEnabled();
+    QObject::connect(alias, SIGNAL(textChanged(QString)), this, SLOT(checkButtonsEnabled()));
+    QObject::connect(command, SIGNAL(textChanged(QString)), this, SLOT(checkButtonsEnabled()));
+    QObject::connect(protocolList, SIGNAL(selectionChanged()), this, SLOT(checkButtonsEnabled()));
+    QObject::connect(kPushButton3, SIGNAL(clicked()), this, SLOT(reject()));
+    QObject::connect(addButton, SIGNAL(clicked()), this, SLOT(accept()));
+
+    checkButtonsEnabled();
 }
 
 EditAliasDialog::~EditAliasDialog()
@@ -43,11 +42,11 @@ EditAliasDialog::~EditAliasDialog()
 
 void EditAliasDialog::checkButtonsEnabled()
 {
-	if ( !alias->text().isEmpty() && !command->text().isEmpty() && !protocolList->selectedItems().isEmpty() )
-		addButton->setEnabled( true );
-	else
-		addButton->setEnabled( false ) ;
+    if (!alias->text().isEmpty() && !command->text().isEmpty() && !protocolList->selectedItems().isEmpty()) {
+        addButton->setEnabled(true);
+    } else {
+        addButton->setEnabled(false);
+    }
 }
-
 
 // kate: space-indent off; replace-tabs off; tab-width 4; indent-mode csands;

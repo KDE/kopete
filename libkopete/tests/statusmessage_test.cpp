@@ -22,58 +22,56 @@
 
 #include "kopetestatusmessage.h"
 
-QTEST_KDEMAIN( StatusMessage_Test, GUI )
-
+QTEST_KDEMAIN(StatusMessage_Test, GUI)
 
 void StatusMessage_Test::testNormalStatus()
 {
-	Kopete::StatusMessage status1;
-	status1.setMessage( QLatin1String("http://kopete.kde.org/") );
+    Kopete::StatusMessage status1;
+    status1.setMessage(QLatin1String("http://kopete.kde.org/"));
 
-	QCOMPARE( status1.message(), QString("http://kopete.kde.org/") );
+    QCOMPARE(status1.message(), QString("http://kopete.kde.org/"));
 
-	Kopete::StatusMessage status2( QLatin1String("QTestLib rocks !") );
-	
-	QCOMPARE( status2.message(), QString("QTestLib rocks !") );
+    Kopete::StatusMessage status2(QLatin1String("QTestLib rocks !"));
+
+    QCOMPARE(status2.message(), QString("QTestLib rocks !"));
 }
 
 void StatusMessage_Test::testMusicMetaData()
 {
-	Kopete::StatusMessage status2;
-	status2.setMessage( QLatin1String("Jordan Rudess = keyboard god") );
+    Kopete::StatusMessage status2;
+    status2.setMessage(QLatin1String("Jordan Rudess = keyboard god"));
 
-	status2.addMetaData( QLatin1String("musicPlayer"), QString("amaroK") );
-	status2.addMetaData( QLatin1String("artist"), QString("Dream Theater") );
-	status2.addMetaData( QLatin1String("title"), QString("Beyond This Life") );
-	status2.addMetaData( QLatin1String("album"), QString("Live Scenes From New York") );
-	
-	QCOMPARE( status2.hasMetaData("hjjhadhasdasd"), false );
-	QCOMPARE( status2.hasMetaData("artist"), true );
-	QCOMPARE( status2.metaData("artist").toString(), QString("Dream Theater") );
-	QCOMPARE( status2.message(), QString("Jordan Rudess = keyboard god") );
+    status2.addMetaData(QLatin1String("musicPlayer"), QString("amaroK"));
+    status2.addMetaData(QLatin1String("artist"), QString("Dream Theater"));
+    status2.addMetaData(QLatin1String("title"), QString("Beyond This Life"));
+    status2.addMetaData(QLatin1String("album"), QString("Live Scenes From New York"));
+
+    QCOMPARE(status2.hasMetaData("hjjhadhasdasd"), false);
+    QCOMPARE(status2.hasMetaData("artist"), true);
+    QCOMPARE(status2.metaData("artist").toString(), QString("Dream Theater"));
+    QCOMPARE(status2.message(), QString("Jordan Rudess = keyboard god"));
 }
 
 void StatusMessage_Test::testAppendHash()
 {
-	Kopete::StatusMessage status3;
-	status3.setMessage( QLatin1String("Jordan Rudess = keyboard god") );
+    Kopete::StatusMessage status3;
+    status3.setMessage(QLatin1String("Jordan Rudess = keyboard god"));
 
-	status3.addMetaData( QLatin1String("musicPlayer"), QString("amaroK") );
-	status3.addMetaData( QLatin1String("artist"), QString("Dream Theater") );
-	status3.addMetaData( QLatin1String("title"), QString("Beyond This Life") );
-	status3.addMetaData( QLatin1String("album"), QString("Live Scenes From New York") );
+    status3.addMetaData(QLatin1String("musicPlayer"), QString("amaroK"));
+    status3.addMetaData(QLatin1String("artist"), QString("Dream Theater"));
+    status3.addMetaData(QLatin1String("title"), QString("Beyond This Life"));
+    status3.addMetaData(QLatin1String("album"), QString("Live Scenes From New York"));
 
-	QCOMPARE( status3.metaData("artist").toString(), QString("Dream Theater") );
-	QCOMPARE( status3.metaData("title").toString(), QString("Beyond This Life") );
+    QCOMPARE(status3.metaData("artist").toString(), QString("Dream Theater"));
+    QCOMPARE(status3.metaData("title").toString(), QString("Beyond This Life"));
 
-	QHash<QString,QVariant> metadataHash;
-	metadataHash.insert( QLatin1String("artist"), QLatin1String("Iron Maiden") );
-	metadataHash.insert( QLatin1String("title"), QLatin1String("Blood Brothers") );
+    QHash<QString, QVariant> metadataHash;
+    metadataHash.insert(QLatin1String("artist"), QLatin1String("Iron Maiden"));
+    metadataHash.insert(QLatin1String("title"), QLatin1String("Blood Brothers"));
 
-	status3.addMetaData( metadataHash);
+    status3.addMetaData(metadataHash);
 
-	QCOMPARE( status3.metaData("artist").toString(), QString("Iron Maiden") );
-	QCOMPARE( status3.metaData("title").toString(), QString("Blood Brothers") );
-	QCOMPARE( status3.metaData("album").toString(), QString("Live Scenes From New York") );
+    QCOMPARE(status3.metaData("artist").toString(), QString("Iron Maiden"));
+    QCOMPARE(status3.metaData("title").toString(), QString("Blood Brothers"));
+    QCOMPARE(status3.metaData("album").toString(), QString("Live Scenes From New York"));
 }
-

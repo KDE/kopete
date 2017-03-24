@@ -23,148 +23,134 @@
 #include <QStringList>
 #include <KDebug>
 
-
-
 namespace Kopete {
-
 class PropertyContainer::Private
 {
 public:
-	Kopete::Property::Map properties;
+    Kopete::Property::Map properties;
 };
 
 PropertyContainer::PropertyContainer(QObject *parent)
-: QObject(parent), d(new Private())
+    : QObject(parent)
+    , d(new Private())
 {
 }
 
 PropertyContainer::~PropertyContainer()
 {
-	delete d;
+    delete d;
 }
 
 void PropertyContainer::serializeProperties(QMap<QString, QString> &serializedData) const
 {
+    Kopete::Property::Map::ConstIterator it;// = d->properties.ConstIterator;
+    for (it = d->properties.constBegin(); it != d->properties.constEnd(); ++it) {
+        if (!it.value().tmpl().persistent()) {
+            continue;
+        }
 
-	Kopete::Property::Map::ConstIterator it;// = d->properties.ConstIterator;
-	for (it=d->properties.constBegin(); it != d->properties.constEnd(); ++it)
-	{
-		if (!it.value().tmpl().persistent())
-			continue;
+        QVariant val = it.value().value();
+        QString key = QStringLiteral("prop_%1_%2").arg(QString::fromLatin1(val.typeName()), it.key());
 
-		QVariant val = it.value().value();
-		QString key = QStringLiteral("prop_%1_%2").arg(QString::fromLatin1(val.typeName()), it.key());
-
-		serializedData[key] = val.toString();
-
-	} // end for()
+        serializedData[key] = val.toString();
+    } // end for()
 } // end serializeProperties()
 
-void PropertyContainer::deserializeProperties( const QMap<QString, QString> &serializedData )
+void PropertyContainer::deserializeProperties(const QMap<QString, QString> &serializedData)
 {
-	QMap<QString, QString>::ConstIterator it;
-	for ( it=serializedData.constBegin(); it != serializedData.constEnd(); ++it )
-	{
-		QString key = it.key();
+    QMap<QString, QString>::ConstIterator it;
+    for (it = serializedData.constBegin(); it != serializedData.constEnd(); ++it) {
+        QString key = it.key();
 
-		if ( !key.startsWith( QLatin1String("prop_") ) ) // avoid parsing other serialized data
-			continue;
+        if (!key.startsWith(QLatin1String("prop_"))) {   // avoid parsing other serialized data
+            continue;
+        }
 
-		QStringList keyList = key.split( QChar('_'), QString::SkipEmptyParts );
-		if( keyList.count() < 3 ) // invalid key, not enough parts in string "prop_X_Y"
-			continue;
+        QStringList keyList = key.split(QChar('_'), QString::SkipEmptyParts);
+        if (keyList.count() < 3) { // invalid key, not enough parts in string "prop_X_Y"
+            continue;
+        }
 
-		key = keyList[2]; // overwrite key var with the real key name this property has
-		QString type( keyList[1] ); // needed for QVariant casting
+        key = keyList[2]; // overwrite key var with the real key name this property has
+        QString type(keyList[1]);   // needed for QVariant casting
 
-		QVariant variant( it.value() );
-		if( !variant.convert(QVariant::nameToType(type.toLatin1())) )
-		{
-			qCDebug(LIBKOPETE_LOG) <<
-				"Casting QVariant to needed type FAILED" <<
-				"key=" << key << ", type=" << type << endl;
-			continue;
-		}
+        QVariant variant(it.value());
+        if (!variant.convert(QVariant::nameToType(type.toLatin1()))) {
+            qCDebug(LIBKOPETE_LOG)
+                <<"Casting QVariant to needed type FAILED"
+                <<"key=" << key << ", type=" << type << endl;
+            continue;
+        }
 
-		Kopete::PropertyTmpl tmpl = Kopete::Global::Properties::self()->tmpl(key);
-		if( tmpl.isNull() )
-		{
-			qCDebug(LIBKOPETE_LOG) << "no PropertyTmpl defined for" \
-				" key " << key << ", cannot restore persistent property" << endl;
-			continue;
-		}
+        Kopete::PropertyTmpl tmpl = Kopete::Global::Properties::self()->tmpl(key);
+        if (tmpl.isNull()) {
+            qCDebug(LIBKOPETE_LOG) << "no PropertyTmpl defined for" \
+                                      " key " << key << ", cannot restore persistent property" << endl;
+            continue;
+        }
 
-		setProperty(tmpl, variant);
-	} // end for()
+        setProperty(tmpl, variant);
+    } // end for()
 }
 
 QStringList PropertyContainer::properties() const
 {
-	return d->properties.keys();
+    return d->properties.keys();
 }
 
 bool PropertyContainer::hasProperty(const QString &key) const
 {
-	return d->properties.contains(key);
+    return d->properties.contains(key);
 }
 
 const Property &PropertyContainer::property(const QString &key) const
 {
-	if(hasProperty(key))
-		return d->properties[key];
-	else
-		return Kopete::Property::null;
+    if (hasProperty(key)) {
+        return d->properties[key];
+    } else {
+        return Kopete::Property::null;
+    }
 }
 
 const Kopete::Property &PropertyContainer::property(
-	const Kopete::PropertyTmpl &tmpl) const
+    const Kopete::PropertyTmpl &tmpl) const
 {
-	if(hasProperty(tmpl.key()))
-		return d->properties[tmpl.key()];
-	else
-		return Kopete::Property::null;
+    if (hasProperty(tmpl.key())) {
+        return d->properties[tmpl.key()];
+    } else {
+        return Kopete::Property::null;
+    }
 }
 
-
-void PropertyContainer::setProperty(const Kopete::PropertyTmpl &tmpl,
-	const QVariant &value)
+void PropertyContainer::setProperty(const Kopete::PropertyTmpl &tmpl, const QVariant &value)
 {
-	if(tmpl.isNull() || tmpl.key().isEmpty())
-	{
-		kDebug(14000) <<
-			"No valid template for property passed!" << endl;
-		return;
-	}
+    if (tmpl.isNull() || tmpl.key().isEmpty()) {
+        kDebug(14000)
+            <<"No valid template for property passed!" << endl;
+        return;
+    }
 
-	if(value.isNull() || (value.canConvert(QVariant::String) && value.toString().isEmpty()))
-	{
-		removeProperty(tmpl);
-	}
-	else
-	{
-		QVariant oldValue = property(tmpl.key()).value();
+    if (value.isNull() || (value.canConvert(QVariant::String) && value.toString().isEmpty())) {
+        removeProperty(tmpl);
+    } else {
+        QVariant oldValue = property(tmpl.key()).value();
 
-		if(oldValue != value)
-		{
-			Kopete::Property prop(tmpl, value);
-			d->properties.remove(tmpl.key());
-			d->properties.insert(tmpl.key(), prop);
+        if (oldValue != value) {
+            Kopete::Property prop(tmpl, value);
+            d->properties.remove(tmpl.key());
+            d->properties.insert(tmpl.key(), prop);
 
-			emit propertyChanged(this, tmpl.key(), oldValue, value);
-		}
-	}
+            emit propertyChanged(this, tmpl.key(), oldValue, value);
+        }
+    }
 }
 
 void PropertyContainer::removeProperty(const Kopete::PropertyTmpl &tmpl)
 {
-	if(!tmpl.isNull() && !tmpl.key().isEmpty() && hasProperty(tmpl.key()))
-	{
-		QVariant oldValue = property(tmpl.key()).value();
-		d->properties.remove(tmpl.key());
-		emit propertyChanged(this, tmpl.key(), oldValue, QVariant());
-	}
+    if (!tmpl.isNull() && !tmpl.key().isEmpty() && hasProperty(tmpl.key())) {
+        QVariant oldValue = property(tmpl.key()).value();
+        d->properties.remove(tmpl.key());
+        emit propertyChanged(this, tmpl.key(), oldValue, QVariant());
+    }
 }
-
 } //END namespace Kopete
-
-

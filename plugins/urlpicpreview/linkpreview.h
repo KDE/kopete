@@ -1,10 +1,10 @@
 /*
     linkpreview.h
- 
+
     Copyright (c) 2005      by Heiko Schaefer        <heiko@rangun.de>
- 
+
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
- 
+
     ************************************************************************ *
     *                                                                        *
     * This program is free software; you can redistribute it and/or modify   *
@@ -27,16 +27,17 @@
 class KHTMLPart;
 class URLPicPreviewPlugin;
 
-class LinkPreview : public QObject {
+class LinkPreview : public QObject
+{
     Q_OBJECT
 
-    LinkPreview(const LinkPreview&);
-    LinkPreview& operator=(const LinkPreview&);
+    LinkPreview(const LinkPreview &);
+    LinkPreview &operator=(const LinkPreview &);
 
 public:
     virtual ~LinkPreview();
-    static LinkPreview * self(const URLPicPreviewPlugin * plugin);
-    QPixmap getPreviewPic(const KUrl& url);
+    static LinkPreview *self(const URLPicPreviewPlugin *plugin);
+    QPixmap getPreviewPic(const KUrl &url);
 
 private:
     LinkPreview();
@@ -46,8 +47,8 @@ protected slots:
 
 private:
     QPixmap m_pic;
-    KHTMLPart * m_khtml;
-    static LinkPreview * m_self;
+    KHTMLPart *m_khtml;
+    static LinkPreview *m_self;
     bool m_URLLoading;
 };
 

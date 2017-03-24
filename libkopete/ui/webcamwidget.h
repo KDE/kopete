@@ -14,8 +14,8 @@
     *************************************************************************
 */
 
-#ifndef WEBCAMWIDGET_H 
-#define WEBCAMWIDGET_H 
+#ifndef WEBCAMWIDGET_H
+#define WEBCAMWIDGET_H
 
 #include <qwidget.h>
 #include <qpixmap.h>
@@ -23,45 +23,43 @@
 
 #include "kopete_export.h"
 
-namespace Kopete
-{
+namespace Kopete {
 /**
  * A simple widget to display webcam frames.
  */
 class KOPETE_EXPORT WebcamWidget : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	* @brief WebcamWidget constructor.
-	* @param parent The parent widget of this widget
-	*/
-	WebcamWidget(QWidget* parent = nullptr);
-	~WebcamWidget();
+    /**
+    * @brief WebcamWidget constructor.
+    * @param parent The parent widget of this widget
+    */
+    WebcamWidget(QWidget *parent = nullptr);
+    ~WebcamWidget();
 
-	/**
-	 * @brief Updates the frame being displayed in the widget
-	 * @param pixmap The frame to be displayed
-	 */
-	void updatePixmap(const QPixmap& pixmap);
+    /**
+     * @brief Updates the frame being displayed in the widget
+     * @param pixmap The frame to be displayed
+     */
+    void updatePixmap(const QPixmap &pixmap);
 
-	/**
-	 * @brief Clear the widget
-	 */
-	void clear();
+    /**
+     * @brief Clear the widget
+     */
+    void clear();
 
-	/**
-	 * @brief Set a text to be displayed in the widget
-	 * @param text The text to be displayed
-	 */
-	void setText(const QString& text);
+    /**
+     * @brief Set a text to be displayed in the widget
+     * @param text The text to be displayed
+     */
+    void setText(const QString &text);
 protected slots:
-	void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
+    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 
 private:
-	QPixmap mPixmap;
-	QString mText;
+    QPixmap mPixmap;
+    QString mText;
 };
-
 } // end namespace Kopete
 #endif

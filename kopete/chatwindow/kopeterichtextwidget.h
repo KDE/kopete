@@ -53,9 +53,9 @@ public:
 public:
     virtual void createActions(KActionCollection *actionCollection);
 
-    void setDefaultPlainCharFormat(const QTextCharFormat& format);
-    void setDefaultRichCharFormat(const QTextCharFormat& format);
-    void setCurrentRichCharFormat(const QTextCharFormat & format);
+    void setDefaultPlainCharFormat(const QTextCharFormat &format);
+    void setDefaultRichCharFormat(const QTextCharFormat &format);
+    void setCurrentRichCharFormat(const QTextCharFormat &format);
 
     QTextCharFormat defaultPlainFormat() const;
     QTextCharFormat defaultRichFormat() const;
@@ -76,7 +76,7 @@ public Q_SLOTS:
     void setTextItalic(bool italic);
     void setTextUnderline(bool underline);
     void setTextStrikeOut(bool strikeout);
-    void setSendKeySequenceList(const QList<QKeySequence>& keySequenceList);
+    void setSendKeySequenceList(const QList<QKeySequence> &keySequenceList);
 
     void slotResetFontAndColor();
     void slotCheckSpellingChanged(bool b);
@@ -87,7 +87,7 @@ signals:
     void documentSizeUpdated(int difference);
 
 protected:
-    void insertFromMimeData(const QMimeData * source) Q_DECL_OVERRIDE;
+    void insertFromMimeData(const QMimeData *source) Q_DECL_OVERRIDE;
     bool event(QEvent *event) Q_DECL_OVERRIDE;
 
 protected slots:
@@ -96,10 +96,10 @@ protected slots:
     void slotTextModeChanged(KRichTextEdit::Mode mode);
 
 private:
-    void setCurrentPlainCharFormat(const QTextCharFormat & format);
+    void setCurrentPlainCharFormat(const QTextCharFormat &format);
 
     // Leave it in private secion, you should call setCurrentRichCharFormat or setDefaultPlainCharFormat.
-    void setCurrentCharFormat(const QTextCharFormat & format);
+    void setCurrentCharFormat(const QTextCharFormat &format);
 
     KopeteRichTextWidget::RichTextSupport getProtocolRichTextSupport() const;
 

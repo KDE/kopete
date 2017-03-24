@@ -17,9 +17,9 @@
 #define XOAUTH2PROVIDER_H
 
 namespace QCA {
-	class Provider;
+class Provider;
 }
 
-QCA::Provider* createProviderXOAuth2();
+QCA::Provider *createProviderXOAuth2();
 
 #endif // XOAUTH2PROVIDER_H

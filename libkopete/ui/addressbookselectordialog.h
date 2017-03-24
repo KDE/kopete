@@ -30,12 +30,8 @@
 
 #include "kopete_export.h"
 
-
-namespace Kopete
-{
-namespace UI
-{
-
+namespace Kopete {
+namespace UI {
 class AddressBookSelectorWidget;
 
 /**
@@ -48,47 +44,45 @@ class AddressBookSelectorWidget;
  */
 class KOPETE_EXPORT AddressBookSelectorDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	* The constructor of an empty AddressBookSelectorWidget
-	*/
-	AddressBookSelectorDialog( const QString &title, const QString &message,
-	                           const QString &preSelectUid, QWidget *parent = nullptr
-	                          );
-	/**
-	* The destructor of the dialog
-	*/
-	~AddressBookSelectorDialog();
+    /**
+    * The constructor of an empty AddressBookSelectorWidget
+    */
+    AddressBookSelectorDialog(const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent = nullptr);
+    /**
+    * The destructor of the dialog
+    */
+    ~AddressBookSelectorDialog();
 
-	/**
-	* @returns the AddressBookSelectorWidget widget so that additional
-	* parameters can be set by using it.
-	*/
-	AddressBookSelectorWidget *addressBookSelectorWidget() const
-	{ return m_addressBookSelectorWidget; }
+    /**
+    * @returns the AddressBookSelectorWidget widget so that additional
+    * parameters can be set by using it.
+    */
+    AddressBookSelectorWidget *addressBookSelectorWidget() const
+    {
+        return m_addressBookSelectorWidget;
+    }
 
-	/**
-	* Creates a modal dialog, lets the user to select a addressbook contact
-	* and returns when the dialog is closed.
-	*
-	* @returns the selected contact, or a null addressee if the user
-	* pressed the Cancel button. Optionally
-	*/
-	static KContacts::Addressee getAddressee( const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent = nullptr );
+    /**
+    * Creates a modal dialog, lets the user to select a addressbook contact
+    * and returns when the dialog is closed.
+    *
+    * @returns the selected contact, or a null addressee if the user
+    * pressed the Cancel button. Optionally
+    */
+    static KContacts::Addressee getAddressee(const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent = nullptr);
 
 protected slots:
-	void accept() Q_DECL_OVERRIDE;
-	void reject() Q_DECL_OVERRIDE;
-	void slotWidgetAddresseeListClicked( QTreeWidgetItem *addressee );
+    void accept() Q_DECL_OVERRIDE;
+    void reject() Q_DECL_OVERRIDE;
+    void slotWidgetAddresseeListClicked(QTreeWidgetItem *addressee);
 protected:
-	 AddressBookSelectorWidget *m_addressBookSelectorWidget;
+    AddressBookSelectorWidget *m_addressBookSelectorWidget;
 };
-
 } // namespace UI
 } // namespace Kopete
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

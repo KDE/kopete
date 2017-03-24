@@ -24,9 +24,7 @@
 #include <kopete_export.h>
 class QDomElement;
 
-namespace Kopete
-{
-
+namespace Kopete {
 /**
  * @brief XML storage for contact list elements.
  *
@@ -56,34 +54,33 @@ public:
     void save() Q_DECL_OVERRIDE;
 
 protected:
-    bool parseMetaContact( Kopete::MetaContact *metaContact, const QDomElement &element );
-    bool parseGroup( Kopete::Group *group, const QDomElement &element );
-    bool parseContactListElement( Kopete::ContactListElement *contactListElement, const QDomElement &element );
+    bool parseMetaContact(Kopete::MetaContact *metaContact, const QDomElement &element);
+    bool parseGroup(Kopete::Group *group, const QDomElement &element);
+    bool parseContactListElement(Kopete::ContactListElement *contactListElement, const QDomElement &element);
 
-    const QDomElement storeMetaContact( Kopete::MetaContact *metaContact, bool minimal = false ) const;
-    const QDomElement storeGroup( Kopete::Group *group ) const;
-    const QList<QDomElement> storeContactListElement( Kopete::ContactListElement *contactListElement ) const;
+    const QDomElement storeMetaContact(Kopete::MetaContact *metaContact, bool minimal = false) const;
+    const QDomElement storeGroup(Kopete::Group *group) const;
+    const QList<QDomElement> storeContactListElement(Kopete::ContactListElement *contactListElement) const;
 
-    bool updateFrom10to11( QDomElement &rootElement ) const;
-    bool updateFrom11to12( QDomElement &rootElement ) const;
+    bool updateFrom10to11(QDomElement &rootElement) const;
+    bool updateFrom11to12(QDomElement &rootElement) const;
 
-    uint readVersion( QDomElement &rootElement ) const;
+    uint readVersion(QDomElement &rootElement) const;
 
 private:
     /**
      * Convert the contact list from an older version
      */
-    void convertContactList( const QString &fileName, uint fromVersion, uint toVersion );
+    void convertContactList(const QString &fileName, uint fromVersion, uint toVersion);
 
-    QString sourceToString( Kopete::MetaContact::PropertySource source ) const;
-    Kopete::MetaContact::PropertySource stringToSource( const QString &name ) const;
+    QString sourceToString(Kopete::MetaContact::PropertySource source) const;
+    Kopete::MetaContact::PropertySource stringToSource(const QString &name) const;
 
     void checkGroupIds();
 
     class Private;
-    Private* d;
+    Private *d;
 };
-
 }
 
 #endif

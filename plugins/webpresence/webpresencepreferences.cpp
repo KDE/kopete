@@ -23,27 +23,28 @@
 #include "ui_webpresenceprefs.h"
 #include "webpresenceconfig.h"
 
-K_PLUGIN_FACTORY(WebPresencePreferencesFactory, registerPlugin<WebPresencePreferences>();)
+K_PLUGIN_FACTORY(WebPresencePreferencesFactory, registerPlugin<WebPresencePreferences>();
+                 )
 K_EXPORT_PLUGIN(WebPresencePreferencesFactory("kcm_kopete_webpresence"))
 
 WebPresencePreferences::WebPresencePreferences(QWidget *parent, const QVariantList &args)
-		: KCModule(parent, args)
+    : KCModule(parent, args)
 {
-	QVBoxLayout* l = new QVBoxLayout( this );
-	QWidget* w = new QWidget;
-	m_preferencesDialog = new Ui::WebPresencePrefsUI;
-	m_preferencesDialog->setupUi( w );
-	l->addWidget( w );
-	
-	addConfig( WebPresenceConfig::self(), w );
+    QVBoxLayout *l = new QVBoxLayout(this);
+    QWidget *w = new QWidget;
+    m_preferencesDialog = new Ui::WebPresencePrefsUI;
+    m_preferencesDialog->setupUi(w);
+    l->addWidget(w);
 
-	m_preferencesDialog->kcfg_uploadURL->setMode( KFile::File | KFile::ExistingOnly | KFile::LocalOnly );
-	m_preferencesDialog->kcfg_formatStylesheetURL->setFilter( QStringLiteral("*.xsl") );
+    addConfig(WebPresenceConfig::self(), w);
+
+    m_preferencesDialog->kcfg_uploadURL->setMode(KFile::File | KFile::ExistingOnly | KFile::LocalOnly);
+    m_preferencesDialog->kcfg_formatStylesheetURL->setFilter(QStringLiteral("*.xsl"));
 }
 
 WebPresencePreferences::~WebPresencePreferences()
 {
-	delete m_preferencesDialog;
+    delete m_preferencesDialog;
 }
 
 #include "webpresencepreferences.moc"

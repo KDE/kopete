@@ -23,10 +23,9 @@
 #include <QDomDocument>
 #include <QVariantList>
 
-namespace Kopete
-{
-	class SimpleMessageHandlerFactory;
-	class Message;
+namespace Kopete {
+class SimpleMessageHandlerFactory;
+class Message;
 }
 
 /**
@@ -36,80 +35,83 @@ namespace Kopete
 
 class PipesPlugin : public Kopete::Plugin
 {
-		Q_OBJECT
+    Q_OBJECT
 
-	public:
-		/*
-		 * Used to indicate direction that a pipe is used for
-		 */
-		enum PipeDirection { Inbound = 0x1, Outbound = 0x2, BothDirections = Inbound | Outbound };
+public:
+    /*
+     * Used to indicate direction that a pipe is used for
+     */
+    enum PipeDirection {
+        Inbound = 0x1, Outbound = 0x2, BothDirections = Inbound | Outbound
+    };
 
-		/*
-		 * Used to indicate what should be outputted, and what the input should be interpreted as
-		 */
-		enum PipeContents { HtmlBody = 0, PlainBody = 1, Xml = 2 };
+    /*
+     * Used to indicate what should be outputted, and what the input should be interpreted as
+     */
+    enum PipeContents {
+        HtmlBody = 0, PlainBody = 1, Xml = 2
+    };
 
-		/*
-		 * Stores everything we need to know about a pipe
-		 */
-		class PipeOptions
-		{
-			public:
-				QUuid uid;
-				bool enabled;
-				QString path;
-				PipeDirection direction;
-				PipeContents pipeContents;
-		};
-		typedef QList<PipeOptions> PipeOptionsList;
+    /*
+     * Stores everything we need to know about a pipe
+     */
+    class PipeOptions
+    {
+    public:
+        QUuid uid;
+        bool enabled;
+        QString path;
+        PipeDirection direction;
+        PipeContents pipeContents;
+    };
+    typedef QList<PipeOptions> PipeOptionsList;
 
-	public:
-		static PipesPlugin* plugin();
-		
-		PipesPlugin ( QObject *parent, const QVariantList &args );
-		~PipesPlugin();
+public:
+    static PipesPlugin *plugin();
 
-	private slots:
-		/*
-		 * Grab incoming message, call doPiping for each
-		 * appropriate pipe
-		 */
-		void slotIncomingMessage ( Kopete::Message & );
+    PipesPlugin (QObject *parent, const QVariantList &args);
+    ~PipesPlugin();
 
-		/*
-		 * Grab outgoing message, call doPiping for each
-		 * appropriate pipe
-		 */
-		void slotOutgoingMessage ( Kopete::Message & );
+private slots:
+    /*
+     * Grab incoming message, call doPiping for each
+     * appropriate pipe
+     */
+    void slotIncomingMessage(Kopete::Message &);
 
-	private:
-		/*
-		 * Fork process, push appropriate output to it,
-		 * then read it's output and appropriately put it
-		 * back in the message.
-		 */
-		static void doPiping ( Kopete::Message &, PipeOptions );
+    /*
+     * Grab outgoing message, call doPiping for each
+     * appropriate pipe
+     */
+    void slotOutgoingMessage(Kopete::Message &);
 
-		/*
-		 * Turn a Message into a QDomDocument, return that XML.
-		 * Info for the XML is pulled from all over Kopete.
-		 */
-		static QByteArray createXml ( const Kopete::Message & );
+private:
+    /*
+     * Fork process, push appropriate output to it,
+     * then read it's output and appropriately put it
+     * back in the message.
+     */
+    static void doPiping(Kopete::Message &, PipeOptions);
 
-		/*
-		 * Take a QByteArray containing XML, take pertinent info from
-		 * that, and put it in the Message.
-		 */
-		static void readXml ( PipeOptions, Kopete::Message &, const QByteArray & );
+    /*
+     * Turn a Message into a QDomDocument, return that XML.
+     * Info for the XML is pulled from all over Kopete.
+     */
+    static QByteArray createXml(const Kopete::Message &);
 
-	private:
-		static PipesPlugin* mPluginStatic;
-		PipeOptionsList mPipesList;
-		Kopete::SimpleMessageHandlerFactory * mInboundHandler;
+    /*
+     * Take a QByteArray containing XML, take pertinent info from
+     * that, and put it in the Message.
+     */
+    static void readXml(PipeOptions, Kopete::Message &, const QByteArray &);
 
+private:
+    static PipesPlugin *mPluginStatic;
+    PipeOptionsList mPipesList;
+    Kopete::SimpleMessageHandlerFactory *mInboundHandler;
 };
 
-Q_DECLARE_METATYPE ( PipesPlugin::PipeDirection )
-Q_DECLARE_METATYPE ( PipesPlugin::PipeContents )
+Q_DECLARE_METATYPE(PipesPlugin::PipeDirection)
+Q_DECLARE_METATYPE(PipesPlugin::PipeContents)
 
 #endif

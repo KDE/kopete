@@ -26,17 +26,16 @@
   *@author Duncan Mac-Vicar Prett <duncan@kde.org>
   */
 
- class KopeteStatusGroupViewItem : public QTreeWidgetItem
+class KopeteStatusGroupViewItem : public QTreeWidgetItem
 {
-public: 
-	KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , QTreeWidget *parent);
-	~KopeteStatusGroupViewItem();
+public:
+    KopeteStatusGroupViewItem(Kopete::OnlineStatus::StatusType status_, QTreeWidget *parent);
+    ~KopeteStatusGroupViewItem();
 
 private:
 
-	Kopete::OnlineStatus::StatusType m_status;
-	QString key( int column, bool ascending ) const;
-
+    Kopete::OnlineStatus::StatusType m_status;
+    QString key(int column, bool ascending) const;
 };
 
 #endif

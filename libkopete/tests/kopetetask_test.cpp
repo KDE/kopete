@@ -20,48 +20,47 @@
 #include <QtTest/QSignalSpy>
 #include <QTimer>
 
-
 #include <kcmdlineargs.h>
 #include <kdebug.h>
 
 #include <kopetetask.h>
 #include <kopeteemoticons.h>
 
-QTEST_KDEMAIN( KopeteTaskTest, GUI )
+QTEST_KDEMAIN(KopeteTaskTest, GUI)
 
 const QString sampleString = QString("Sample string :) :D ;)");
 
 ParseEmoticonTask::ParseEmoticonTask(const QString &sourceString)
- : Kopete::Task(), m_source(sourceString)
+    : Kopete::Task()
+    , m_source(sourceString)
 {
-	QTimer::singleShot(0, this, SLOT(start()));
+    QTimer::singleShot(0, this, SLOT(start()));
 }
 
 void ParseEmoticonTask::start()
 {
-	parseEmoticon(m_source);
+    parseEmoticon(m_source);
 }
 
 void ParseEmoticonTask::parseEmoticon(const QString &value)
 {
-	m_parsed = Kopete::Emoticons::parseEmoticons(value, KEmoticonsTheme::RelaxedParse | KEmoticonsTheme::SkipHTML);
+    m_parsed = Kopete::Emoticons::parseEmoticons(value, KEmoticonsTheme::RelaxedParse | KEmoticonsTheme::SkipHTML);
 
-	if(m_parsed.isEmpty())
-	{
-		setError(100);
-	}
+    if (m_parsed.isEmpty()) {
+        setError(100);
+    }
 
-	emitResult();
+    emitResult();
 }
 
 void KopeteTaskTest::testEmoticonTask()
 {
-	ParseEmoticonTask *task = new ParseEmoticonTask(sampleString);
-	QSignalSpy spy(task, SIGNAL(result(KJob*)));
+    ParseEmoticonTask *task = new ParseEmoticonTask(sampleString);
+    QSignalSpy spy(task, SIGNAL(result(KJob *)));
 
-	// For the task to execute, we must manually call the event loop.
-	qApp->processEvents();
-	
-	QCOMPARE(spy.count(), 1);
-	QCOMPARE(task->error(), 0);
+    // For the task to execute, we must manually call the event loop.
+    qApp->processEvents();
+
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(task->error(), 0);
 }

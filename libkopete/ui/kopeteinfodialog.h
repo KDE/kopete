@@ -1,5 +1,5 @@
 /*
-    kopeteinfodialog.h - A dialog to display and configure information 
+    kopeteinfodialog.h - A dialog to display and configure information
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
 
@@ -22,12 +22,8 @@
 #include <QDialog>
 #include "kopete_export.h"
 
-namespace Kopete
-{
-
-namespace UI
-{
-
+namespace Kopete {
+namespace UI {
 /**
  * \brief a dialog for displaying and configuring information
  *
@@ -35,53 +31,49 @@ namespace UI
  */
 class KOPETE_EXPORT InfoDialog : public QDialog
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-	/**
-	 * Constructor.
-	 *
-	 * @param parent the parent of this widget
-	 * @param title the title to be shown in the dialog
-	 * @param icon the name of the icon to be used
-	 */
-	InfoDialog(QWidget *parent, 
-			   const QString &title = QString(), const QString &icon = QString());
-	/**
-	 * Constructor.
-	 *
-	 * @param parent the parent of this widget
-	 * @param title the title to be shown in the dialog
-	 * @param icon the icon to be used
-	 */
-	InfoDialog(QWidget *parent, 
-			   const QString &title, const QIcon &icon);
+    /**
+     * Constructor.
+     *
+     * @param parent the parent of this widget
+     * @param title the title to be shown in the dialog
+     * @param icon the name of the icon to be used
+     */
+    InfoDialog(QWidget *parent, const QString &title = QString(), const QString &icon = QString());
+    /**
+     * Constructor.
+     *
+     * @param parent the parent of this widget
+     * @param title the title to be shown in the dialog
+     * @param icon the icon to be used
+     */
+    InfoDialog(QWidget *parent, const QString &title, const QIcon &icon);
 
-	/**
-	 * Destructor.
-	 */
-	~InfoDialog();
+    /**
+     * Destructor.
+     */
+    ~InfoDialog();
 
-	void setTitle(const QString &title);
-	void setIcon(const QString &icon);
-	void setIcon(const QIcon &icon);
-	
-	void addWidget(QWidget *w, const QString &caption);
+    void setTitle(const QString &title);
+    void setIcon(const QString &icon);
+    void setIcon(const QIcon &icon);
+
+    void addWidget(QWidget *w, const QString &caption);
 
 protected slots:
-	/**
-	 * This should be reimplemented in derived dialogs to enable saving info
-	 */
-	virtual void slotSave();
+    /**
+     * This should be reimplemented in derived dialogs to enable saving info
+     */
+    virtual void slotSave();
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 
     void initialize();
-
 };
-
 } // namespace UI
 } // namespace Kopete
 #endif

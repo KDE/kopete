@@ -38,152 +38,157 @@
 #include "history2dialog.h"
 #include "history2plugin.h"
 
-History2GUIClient::History2GUIClient ( Kopete::ChatSession *parent )
-	: QObject ( parent ), KXMLGUIClient ( parent ) {
-	setComponentData ( KGenericFactory<History2Plugin>::componentData() );
+History2GUIClient::History2GUIClient (Kopete::ChatSession *parent)
+    : QObject(parent)
+    , KXMLGUIClient(parent)
+{
+    setComponentData(KGenericFactory<History2Plugin>::componentData());
 
-	m_manager = parent;
+    m_manager = parent;
 
-	// Refuse to build this client, it is based on wrong parameters
-	if ( !m_manager || m_manager->members().isEmpty() )
-		deleteLater();
+    // Refuse to build this client, it is based on wrong parameters
+    if (!m_manager || m_manager->members().isEmpty()) {
+        deleteLater();
+    }
 
-	QList<Kopete::Contact*> mb=m_manager->members();
+    QList<Kopete::Contact *> mb = m_manager->members();
 
-	actionLast = new KAction ( KIcon ( "go-last" ), i18n ( "Latest History" ), this );
-	actionCollection()->addAction ( "historyLast", actionLast );
-	connect ( actionLast, SIGNAL (triggered(bool)), this, SLOT (slotLast()) );
-	actionPrev = KStandardAction::back ( this, SLOT (slotPrevious()), this );
-	actionCollection()->addAction ( "historyPrevious", actionPrev );
-	actionNext = KStandardAction::forward ( this, SLOT (slotNext()), this );
-	actionCollection()->addAction ( "historyNext", actionNext );
+    actionLast = new KAction(KIcon("go-last"), i18n("Latest History"), this);
+    actionCollection()->addAction("historyLast", actionLast);
+    connect(actionLast, SIGNAL(triggered(bool)), this, SLOT(slotLast()));
+    actionPrev = KStandardAction::back(this, SLOT(slotPrevious()), this);
+    actionCollection()->addAction("historyPrevious", actionPrev);
+    actionNext = KStandardAction::forward(this, SLOT(slotNext()), this);
+    actionCollection()->addAction("historyNext", actionNext);
 
-	KAction *viewChatHistory2 = new KAction( KIcon("view-history"), i18n("View &History" ), this );
-	actionCollection()->addAction( "viewChatHistory", viewChatHistory2 );
-	viewChatHistory2->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_H));
-	connect(viewChatHistory2, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory2()));
+    KAction *viewChatHistory2 = new KAction(KIcon("view-history"), i18n("View &History"), this);
+    actionCollection()->addAction("viewChatHistory", viewChatHistory2);
+    viewChatHistory2->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_H));
+    connect(viewChatHistory2, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory2()));
 
-	KAction *actionQuote = new KAction ( KIcon ( "go-last" ),i18n ( "Quote Last Message" ), this );
-	actionCollection()->addAction ( "historyQuote",actionQuote );
-	connect ( actionQuote,SIGNAL (triggered(bool)),this,SLOT (slotQuote()) );
+    KAction *actionQuote = new KAction(KIcon("go-last"), i18n("Quote Last Message"), this);
+    actionCollection()->addAction("historyQuote", actionQuote);
+    connect(actionQuote, SIGNAL(triggered(bool)), this, SLOT(slotQuote()));
 
-	// we are generally at last when beginning
-	actionPrev->setEnabled ( true );
-	actionNext->setEnabled ( false );
-	actionLast->setEnabled ( false );
+    // we are generally at last when beginning
+    actionPrev->setEnabled(true);
+    actionNext->setEnabled(false);
+    actionLast->setEnabled(false);
 
-	setXMLFile ( "history2chatui.rc" );
+    setXMLFile("history2chatui.rc");
 
-	offset = 0;
+    offset = 0;
 }
 
-
-History2GUIClient::~History2GUIClient() {
+History2GUIClient::~History2GUIClient()
+{
 }
 
+void History2GUIClient::slotPrevious()
+{
+    KopeteView *m_currentView = m_manager->view(true);
+    m_currentView->clear();
 
-void History2GUIClient::slotPrevious() {
-	KopeteView *m_currentView = m_manager->view ( true );
-	m_currentView->clear();
+    QList<Kopete::Contact *> mb = m_manager->members();
+    QList<Kopete::Message> msgs = History2Logger::instance()->readMessages(
+        History2Config::number_ChatWindow(), offset, mb.first()->metaContact());
 
-	QList<Kopete::Contact*> mb = m_manager->members();
-	QList<Kopete::Message> msgs = History2Logger::instance()->readMessages (
-	                                  History2Config::number_ChatWindow(), offset, mb.first()->metaContact() );
+    actionPrev->setEnabled(msgs.count() == History2Config::number_ChatWindow());
+    actionNext->setEnabled(true);
+    actionLast->setEnabled(true);
 
-	actionPrev->setEnabled ( msgs.count() == History2Config::number_ChatWindow() );
-	actionNext->setEnabled ( true );
-	actionLast->setEnabled ( true );
-
-	offset += msgs.size();
-	m_currentView->appendMessages ( msgs );
+    offset += msgs.size();
+    m_currentView->appendMessages(msgs);
 }
 
-void History2GUIClient::slotLast() {
-	KopeteView *m_currentView = m_manager->view ( true );
-	m_currentView->clear();
+void History2GUIClient::slotLast()
+{
+    KopeteView *m_currentView = m_manager->view(true);
+    m_currentView->clear();
 
-	offset = 0;
-	QList<Kopete::Contact*> mb = m_manager->members();
+    offset = 0;
+    QList<Kopete::Contact *> mb = m_manager->members();
 
-	QList<Kopete::Message> msgs =History2Logger::instance()->readMessages (
-		 History2Config::number_ChatWindow(), offset, mb.first()->metaContact() );
+    QList<Kopete::Message> msgs = History2Logger::instance()->readMessages(
+        History2Config::number_ChatWindow(), offset, mb.first()->metaContact());
 
-	actionPrev->setEnabled ( true );
-	actionNext->setEnabled ( false );
-	actionLast->setEnabled ( false );
+    actionPrev->setEnabled(true);
+    actionNext->setEnabled(false);
+    actionLast->setEnabled(false);
 
-	m_currentView->appendMessages ( msgs );
+    m_currentView->appendMessages(msgs);
 }
 
+void History2GUIClient::slotNext()
+{
+    KopeteView *m_currentView = m_manager->view(true);
+    m_currentView->clear();
 
-void History2GUIClient::slotNext() {
-	KopeteView *m_currentView = m_manager->view ( true );
-	m_currentView->clear();
+    offset -= qMax(0, History2Config::number_ChatWindow());
 
-	offset -= qMax(0,History2Config::number_ChatWindow());
+    QList<Kopete::Contact *> mb = m_manager->members();
+    QList<Kopete::Message> msgs = History2Logger::instance()->readMessages(
+        History2Config::number_ChatWindow(), offset, mb.first()->metaContact());
 
-	QList<Kopete::Contact*> mb = m_manager->members();
-	QList<Kopete::Message> msgs =History2Logger::instance()->readMessages (
-		History2Config::number_ChatWindow(),offset, mb.first()->metaContact() );
+    actionPrev->setEnabled(true);
+    actionNext->setEnabled(msgs.count() == History2Config::number_ChatWindow());
+    actionLast->setEnabled(msgs.count() == History2Config::number_ChatWindow());
 
-
-	actionPrev->setEnabled ( true );
-	actionNext->setEnabled ( msgs.count() == History2Config::number_ChatWindow() );
-	actionLast->setEnabled ( msgs.count() == History2Config::number_ChatWindow() );
-
-	m_currentView->appendMessages ( msgs );
+    m_currentView->appendMessages(msgs);
 }
 
-void History2GUIClient::slotQuote() {
-	KopeteView *m_currentView = m_manager->view ( true );
+void History2GUIClient::slotQuote()
+{
+    KopeteView *m_currentView = m_manager->view(true);
 
-	if ( !m_currentView )
-		return;
+    if (!m_currentView) {
+        return;
+    }
 
-	QList<Kopete::Contact*> mb = m_manager->members();
-	QList<Kopete::Message> msgs =History2Logger::instance()->readMessages (
-	                                 History2Config::number_ChatWindow(), offset, mb.first()->metaContact());
-	offset += msgs.size();
-	Kopete::Message msg = m_manager->view()->currentMessage();
-	QString body = msgs.isEmpty() ? "" : msgs.last().plainBody();
-	kDebug(14310) << "Quoting last message " << body;
+    QList<Kopete::Contact *> mb = m_manager->members();
+    QList<Kopete::Message> msgs = History2Logger::instance()->readMessages(
+        History2Config::number_ChatWindow(), offset, mb.first()->metaContact());
+    offset += msgs.size();
+    Kopete::Message msg = m_manager->view()->currentMessage();
+    QString body = msgs.isEmpty() ? "" : msgs.last().plainBody();
+    kDebug(14310) << "Quoting last message " << body;
 
-	body = body.replace('\n', "\n> ");
-	body.prepend ("> ");
-	body.append ("\n");
+    body = body.replace('\n', "\n> ");
+    body.prepend("> ");
+    body.append("\n");
 
-	msg.setPlainBody ( body );
-	m_manager->view()->setCurrentMessage ( msg );
+    msg.setPlainBody(body);
+    m_manager->view()->setCurrentMessage(msg);
 }
 
-void History2GUIClient::slotViewHistory2() {
-	// Original Code, but this any segfault if anything in this pipe is NULL - Tejas Dinkar
-	//Kopete::MetaContact *m = Kopete::ChatSessionManager::self()->activeView()->msgManager()->members().first()->metaContact();
+void History2GUIClient::slotViewHistory2()
+{
+    // Original Code, but this any segfault if anything in this pipe is NULL - Tejas Dinkar
+    //Kopete::MetaContact *m = Kopete::ChatSessionManager::self()->activeView()->msgManager()->members().first()->metaContact();
 
-	//The same as above but with some checking
-	KopeteView *view= Kopete::ChatSessionManager::self()->activeView();
-	if (!view) {
-		kDebug()<<"Unable to Get Active View!";
-		return;
-	}
+    //The same as above but with some checking
+    KopeteView *view = Kopete::ChatSessionManager::self()->activeView();
+    if (!view) {
+        kDebug()<<"Unable to Get Active View!";
+        return;
+    }
 
-	Kopete::ChatSession *session = view->msgManager();
-	if (!session) {
-		kDebug()<<"Unable to Get Active Session!";
-		return;
-	}
+    Kopete::ChatSession *session = view->msgManager();
+    if (!session) {
+        kDebug()<<"Unable to Get Active Session!";
+        return;
+    }
 
-	Kopete::Contact *contact = session->members().first();
-	if (!contact) {
-		kDebug()<<"Unable to get contact!";
-		return;
-	}
+    Kopete::Contact *contact = session->members().first();
+    if (!contact) {
+        kDebug()<<"Unable to get contact!";
+        return;
+    }
 
-	Kopete::MetaContact *m = contact->metaContact();
+    Kopete::MetaContact *m = contact->metaContact();
 
-	if(m) {
-		History2Dialog* dialog = new History2Dialog(m);
-		dialog->setObjectName( QLatin1String("HistoryDialog") );
-	}
+    if (m) {
+        History2Dialog *dialog = new History2Dialog(m);
+        dialog->setObjectName(QLatin1String("HistoryDialog"));
+    }
 }
-

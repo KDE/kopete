@@ -16,5 +16,3 @@
 */
 
 #include "kopetemetacontact_mock.h"
-
-

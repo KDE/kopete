@@ -21,40 +21,37 @@
 #include <kopeteonlinestatus.h>
 
 namespace Kopete {
-
 class OnlineStatusAction::Private
 {
 public:
-	Private( const OnlineStatus& t_status )
-	 : status(t_status)
-	{}
+    Private(const OnlineStatus &t_status)
+        : status(t_status)
+    {
+    }
 
-	OnlineStatus status;
+    OnlineStatus status;
 };
 
-OnlineStatusAction::OnlineStatusAction( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent )
-	: QAction( pix, text, parent) , d( new Private(status) )
+OnlineStatusAction::OnlineStatusAction(const OnlineStatus &status, const QString &text, const QIcon &pix, QObject *parent)
+    : QAction(pix, text, parent)
+    , d(new Private(status))
 {
-	setShortcut( QKeySequence() );
+    setShortcut(QKeySequence());
 
-	connect(this, SIGNAL(triggered(bool)), this, SLOT(slotActivated()));
+    connect(this, SIGNAL(triggered(bool)), this, SLOT(slotActivated()));
 
-	connect(parent,SIGNAL(destroyed()),this,SLOT(deleteLater()));
+    connect(parent, SIGNAL(destroyed()), this, SLOT(deleteLater()));
 }
 
 OnlineStatusAction::~OnlineStatusAction()
 {
-	delete d;
+    delete d;
 }
 
 void OnlineStatusAction::slotActivated()
 {
-	emit activated(d->status);
+    emit activated(d->status);
 }
-
-
 } //END namespace Kopete
 
-
 // vim: set noet ts=4 sts=4 sw=4:
-

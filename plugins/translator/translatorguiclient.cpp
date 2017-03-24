@@ -37,20 +37,21 @@
 #include "translatorplugin.h"
 #include "translatorlanguages.h"
 
-TranslatorGUIClient::TranslatorGUIClient( Kopete::ChatSession *parent )
-: QObject( parent ), KXMLGUIClient( parent )
+TranslatorGUIClient::TranslatorGUIClient(Kopete::ChatSession *parent)
+    : QObject(parent)
+    , KXMLGUIClient(parent)
 {
-	//setComponentData( TranslatorPlugin::plugin()->componentData() );
-	connect( TranslatorPlugin::plugin(), SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()) );
+    //setComponentData( TranslatorPlugin::plugin()->componentData() );
+    connect(TranslatorPlugin::plugin(), SIGNAL(destroyed(QObject *)), this, SLOT(deleteLater()));
 
-	m_manager = parent;
+    m_manager = parent;
 
-	KAction *translate = new KAction( KIcon("preferences-desktop-locale"), i18n( "Translate" ), this );
-        actionCollection()->addAction( "translateCurrentMessage", translate );
-	connect( translate, SIGNAL(triggered(bool)), this, SLOT(slotTranslateChat()) );
-	translate->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_T) );
+    KAction *translate = new KAction(KIcon("preferences-desktop-locale"), i18n("Translate"), this);
+    actionCollection()->addAction("translateCurrentMessage", translate);
+    connect(translate, SIGNAL(triggered(bool)), this, SLOT(slotTranslateChat()));
+    translate->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
 
-	setXMLFile( "translatorchatui.rc" );
+    setXMLFile("translatorchatui.rc");
 }
 
 TranslatorGUIClient::~TranslatorGUIClient()
@@ -59,48 +60,47 @@ TranslatorGUIClient::~TranslatorGUIClient()
 
 void TranslatorGUIClient::slotTranslateChat()
 {
-	if ( !m_manager->view() )
-		return;
+    if (!m_manager->view()) {
+        return;
+    }
 
-	Kopete::Message msg = m_manager->view()->currentMessage();
-	QString body = msg.plainBody();
-	if ( body.isEmpty() )
-		return;
+    Kopete::Message msg = m_manager->view()->currentMessage();
+    QString body = msg.plainBody();
+    if (body.isEmpty()) {
+        return;
+    }
 
-	QString src_lang = TranslatorPlugin::plugin()->m_myLang;
-	QString dst_lang;
+    QString src_lang = TranslatorPlugin::plugin()->m_myLang;
+    QString dst_lang;
 
-	QList<Kopete::Contact*> list = m_manager->members();
-	Kopete::MetaContact *to = list.first()->metaContact();
-	dst_lang = to->pluginData( TranslatorPlugin::plugin(), "languageKey" );
-	if ( dst_lang.isEmpty() || dst_lang == "null" )
-	{
-		kDebug( 14308 ) << "Cannot determine dst Metacontact language (" << to->displayName() << ")";
-		return;
-	}
+    QList<Kopete::Contact *> list = m_manager->members();
+    Kopete::MetaContact *to = list.first()->metaContact();
+    dst_lang = to->pluginData(TranslatorPlugin::plugin(), "languageKey");
+    if (dst_lang.isEmpty() || dst_lang == "null") {
+        kDebug(14308) << "Cannot determine dst Metacontact language (" << to->displayName() << ")";
+        return;
+    }
 
-	// We search for src_dst
-	TranslatorPlugin::plugin()->translateMessage( body, src_lang, dst_lang, this, SLOT(messageTranslated(QVariant)) );
+    // We search for src_dst
+    TranslatorPlugin::plugin()->translateMessage(body, src_lang, dst_lang, this, SLOT(messageTranslated(QVariant)));
 }
 
-void TranslatorGUIClient::messageTranslated( const QVariant &result )
+void TranslatorGUIClient::messageTranslated(const QVariant &result)
 {
-	QString translated = result.toString();
-	if ( translated.isEmpty() )
-	{
-		kDebug( 14308 ) << "Empty string returned";
-		return;
-	}
+    QString translated = result.toString();
+    if (translated.isEmpty()) {
+        kDebug(14308) << "Empty string returned";
+        return;
+    }
 
-	//if the user close the window before the translation arrive, return
-	if ( !m_manager->view() )
-		return;
+    //if the user close the window before the translation arrive, return
+    if (!m_manager->view()) {
+        return;
+    }
 
-	Kopete::Message msg = m_manager->view()->currentMessage();
-	msg.setPlainBody( translated );
-	m_manager->view()->setCurrentMessage( msg );
+    Kopete::Message msg = m_manager->view()->currentMessage();
+    msg.setPlainBody(translated);
+    m_manager->view()->setCurrentMessage(msg);
 }
-
 
 // vim: set noet ts=4 sts=4 sw=4:
-

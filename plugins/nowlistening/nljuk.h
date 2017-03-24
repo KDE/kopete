@@ -8,10 +8,10 @@
     Copyright (c) 2003 by Ismail Donmez <ismail.donmez@boun.edu.tr>
 
     Kopete    (c) 2002,2003 by the Kopete developers  <kopete-devel@kde.org>
-	
-	Purpose: 
-	This class abstracts the interface to JuK by
-	implementing NLMediaPlayer
+
+    Purpose:
+    This class abstracts the interface to JuK by
+    implementing NLMediaPlayer
 
     *************************************************************************
     *                                                                       *
@@ -33,14 +33,13 @@ class QDBusInterface;
 
 class NLJuk : public NLMediaPlayer
 {
-	public:
-		NLJuk();
-		virtual ~NLJuk();
-		virtual void update();
+public:
+    NLJuk();
+    virtual ~NLJuk();
+    virtual void update();
 
-	private:
-		QDBusInterface *m_client;
+private:
+    QDBusInterface *m_client;
 };
 
 #endif
-

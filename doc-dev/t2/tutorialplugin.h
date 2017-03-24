@@ -24,11 +24,10 @@
 
 class TutorialPlugin : public Kopete::Plugin
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-    TutorialPlugin( QObject * parent, const QStringList & );
+    TutorialPlugin(QObject *parent, const QStringList &);
     virtual ~TutorialPlugin();
 };
 
 #endif
-
