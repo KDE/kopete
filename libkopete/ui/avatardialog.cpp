@@ -41,8 +41,10 @@ class AvatarDialog::Private
 {
 public:
     Private()
-        : mainWidget(0)
-    {}
+        : mainWidget(nullptr)
+    {
+
+    }
 
     AvatarSelectorWidget *mainWidget;
     QString selectedPath;

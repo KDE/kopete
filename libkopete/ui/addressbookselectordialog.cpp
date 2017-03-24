@@ -42,10 +42,10 @@ AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const
  : QDialog( parent )
 {
 	setWindowTitle( title );
-	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel|QDialogButtonBox::Help);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel|QDialogButtonBox::Help, this);
 	QWidget *mainWidget = new QWidget(this);
-	QVBoxLayout *mainLayout = new QVBoxLayout;
-	setLayout(mainLayout);
 	mainLayout->addWidget(mainWidget);
 	okButton = buttonBox->button(QDialogButtonBox::Ok);
 	okButton->setDefault(true);

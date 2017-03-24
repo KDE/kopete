@@ -27,24 +27,22 @@ QDialog(parent)
 	setAttribute(Qt::WA_DeleteOnClose);
 	QWidget *widget = new QWidget(this);
 	ui.setupUi(widget);
-	QVBoxLayout *mainLayout = new QVBoxLayout;
-	setLayout(mainLayout);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
 	mainLayout->addWidget(widget);
 	setWindowTitle(i18n("XML Console"));
 	// Buttons
-	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, this);
 	QPushButton *user1Button = new QPushButton;
 	buttonBox->addButton(user1Button, QDialogButtonBox::ActionRole);
 	QPushButton *user2Button = new QPushButton;
 	buttonBox->addButton(user2Button, QDialogButtonBox::ActionRole);
-	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-	//PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 	mainLayout->addWidget(buttonBox);
 	user1Button->setText(i18n("Clear"));
 	user2Button->setText(i18n("Send"));
-	connect(user1Button, SIGNAL(clicked()), this, SLOT(slotClear()));
-	connect(user2Button, SIGNAL(clicked()), this, SLOT(slotSend()));
+    connect(user1Button, &QAbstractButton::clicked, this, &dlgXMPPConsole::slotClear);
+    connect(user2Button, &QAbstractButton::clicked, this, &dlgXMPPConsole::slotSend);
 }
 
 dlgXMPPConsole::~dlgXMPPConsole()
