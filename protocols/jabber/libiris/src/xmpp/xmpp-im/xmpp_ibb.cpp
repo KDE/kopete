@@ -148,7 +148,7 @@ void IBBConnection::close()
 		return;
 
 	if(d->state == WaitingForAccept) {
-		d->m->doReject(this, d->iq_id, Stanza::Error::Forbidden, "Rejected");
+		d->m->doReject(this, d->iq_id, Stanza::Error::Forbidden, QStringLiteral("Rejected"));
 		resetConnection();
 		return;
 	}
@@ -201,7 +201,7 @@ bool IBBConnection::isOpen() const
 qint64 IBBConnection::writeData(const char *data, qint64 maxSize)
 {
 	if(d->state != Active || d->closePending || d->closing) {
-		setErrorString("read only");
+		setErrorString(QStringLiteral("read only"));
 		return 0;
 	}
 
@@ -229,11 +229,11 @@ void IBBConnection::waitForAccept(const Jid &peer, const QString &iq_id,
 void IBBConnection::takeIncomingData(const IBBData &ibbData)
 {
 	if (ibbData.seq != d->seq) {
-		d->m->doReject(this, d->iq_id, Stanza::Error::UnexpectedRequest, "Invalid sequence");
+		d->m->doReject(this, d->iq_id, Stanza::Error::UnexpectedRequest, QStringLiteral("Invalid sequence"));
 		return;
 	}
 	if (ibbData.data.size() > d->blockSize) {
-		d->m->doReject(this, d->iq_id, Stanza::Error::BadRequest, "Too much data");
+		d->m->doReject(this, d->iq_id, Stanza::Error::BadRequest, QStringLiteral("Too much data"));
 		return;
 	}
 	d->seq++;
@@ -334,18 +334,18 @@ void IBBConnection::trySend()
 //----------------------------------------------------------------------------
 IBBData& IBBData::fromXml(const QDomElement &e)
 {
-	sid = e.attribute("sid");
-	seq = e.attribute("seq").toInt();
+	sid = e.attribute(QStringLiteral("sid"));
+	seq = e.attribute(QStringLiteral("seq")).toInt();
 	data = QByteArray::fromBase64(e.text().toUtf8());
 	return *this;
 }
 
 QDomElement IBBData::toXml(QDomDocument *doc) const
 {
-	QDomElement query = textTag(doc, "data", QString::fromLatin1(data.toBase64())).toElement();
-	query.setAttribute("xmlns", IBB_NS);
-	query.setAttribute("seq", QString::number(seq));
-	query.setAttribute("sid", sid);
+	QDomElement query = textTag(doc, QStringLiteral("data"), QString::fromLatin1(data.toBase64())).toElement();
+	query.setAttribute(QStringLiteral("xmlns"), IBB_NS);
+	query.setAttribute(QStringLiteral("seq"), QString::number(seq));
+	query.setAttribute(QStringLiteral("sid"), sid);
 	return query;
 }
 
@@ -426,7 +426,7 @@ void IBBManager::takeIncomingData(const Jid &from, const QString &id,
 	IBBConnection *c = findConnection(data.sid, from);
 	if(!c) {
 		if (sKind == Stanza::IQ) {
-			d->ibb->respondError(from, id, Stanza::Error::ItemNotFound, "No such stream");
+			d->ibb->respondError(from, id, Stanza::Error::ItemNotFound, QStringLiteral("No such stream"));
 		}
 		// TODO imeplement xep-0079 error processing in case of Stanza::Message
 	}
@@ -443,7 +443,7 @@ void IBBManager::ibb_closeRequest(const Jid &from, const QString &id,
 {
 	IBBConnection *c = findConnection(sid, from);
 	if(!c) {
-		d->ibb->respondError(from, id, Stanza::Error::ItemNotFound, "No such stream");
+		d->ibb->respondError(from, id, Stanza::Error::ItemNotFound, QStringLiteral("No such stream"));
 	}
 	else {
 		d->ibb->respondAck(from, id);
@@ -525,13 +525,13 @@ void JT_IBB::request(const Jid &to, const QString &sid)
 	d->mode = ModeRequest;
 	QDomElement iq;
 	d->to = to;
-	iq = createIQ(doc(), "set", to.full(), id());
-	QDomElement query = doc()->createElement("open");
+	iq = createIQ(doc(), QStringLiteral("set"), to.full(), id());
+	QDomElement query = doc()->createElement(QStringLiteral("open"));
 	//genUniqueKey
-	query.setAttribute("xmlns", IBB_NS);
-	query.setAttribute("sid", sid);
-	query.setAttribute("block-size", IBB_PACKET_SIZE);
-	query.setAttribute("stanza", "iq");
+	query.setAttribute(QStringLiteral("xmlns"), IBB_NS);
+	query.setAttribute(QStringLiteral("sid"), sid);
+	query.setAttribute(QStringLiteral("block-size"), IBB_PACKET_SIZE);
+	query.setAttribute(QStringLiteral("stanza"), QStringLiteral("iq"));
 	iq.appendChild(query);
 	d->iq = iq;
 }
@@ -542,7 +542,7 @@ void JT_IBB::sendData(const Jid &to, const IBBData &ibbData)
 	QDomElement iq;
 	d->to = to;
 	d->bytesWritten = ibbData.data.size();
-	iq = createIQ(doc(), "set", to.full(), id());
+	iq = createIQ(doc(), QStringLiteral("set"), to.full(), id());
 	iq.appendChild(ibbData.toXml(doc()));
 	d->iq = iq;
 }
@@ -552,10 +552,10 @@ void JT_IBB::close(const Jid &to, const QString &sid)
 	d->mode = ModeSendData;
 	QDomElement iq;
 	d->to = to;
-	iq = createIQ(doc(), "set", to.full(), id());
-	QDomElement query = iq.appendChild(doc()->createElement("close")).toElement();
-	query.setAttribute("xmlns", IBB_NS);
-	query.setAttribute("sid", sid);
+	iq = createIQ(doc(), QStringLiteral("set"), to.full(), id());
+	QDomElement query = iq.appendChild(doc()->createElement(QStringLiteral("close"))).toElement();
+	query.setAttribute(QStringLiteral("xmlns"), IBB_NS);
+	query.setAttribute(QStringLiteral("sid"), sid);
 
 	d->iq = iq;
 }
@@ -563,7 +563,7 @@ void JT_IBB::close(const Jid &to, const QString &sid)
 void JT_IBB::respondError(const Jid &to, const QString &id,
 						  Stanza::Error::ErrorCond cond, const QString &text)
 {
-	QDomElement iq = createIQ(doc(), "error", to.full(), id);
+	QDomElement iq = createIQ(doc(), QStringLiteral("error"), to.full(), id);
 	Stanza::Error error(Stanza::Error::Cancel, cond, text);
 	iq.appendChild(error.toXml(*client()->doc(), client()->stream().baseNS()));
 	send(iq);
@@ -571,7 +571,7 @@ void JT_IBB::respondError(const Jid &to, const QString &id,
 
 void JT_IBB::respondAck(const Jid &to, const QString &id)
 {
-	send( createIQ(doc(), "result", to.full(), id) );
+	send( createIQ(doc(), QStringLiteral("result"), to.full(), id) );
 }
 
 void JT_IBB::onGo()
@@ -583,38 +583,38 @@ bool JT_IBB::take(const QDomElement &e)
 {
 	if(d->serve) {
 		// must be an iq-set tag
-		if(e.tagName() != "iq" || e.attribute("type") != "set")
+		if(e.tagName() != QLatin1String("iq") || e.attribute(QStringLiteral("type")) != QLatin1String("set"))
 			return false;
 
-		QString id = e.attribute("id");
-		QString from = e.attribute("from");
-		QDomElement openEl = e.firstChildElement("open");
-		if (!openEl.isNull() && openEl.attribute("xmlns") == IBB_NS) {
+		QString id = e.attribute(QStringLiteral("id"));
+		QString from = e.attribute(QStringLiteral("from"));
+		QDomElement openEl = e.firstChildElement(QStringLiteral("open"));
+		if (!openEl.isNull() && openEl.attribute(QStringLiteral("xmlns")) == IBB_NS) {
 			emit incomingRequest(Jid(from), id,
-							openEl.attribute("sid"),
-							openEl.attribute("block-size").toInt(),
-							openEl.attribute("stanza"));
+							openEl.attribute(QStringLiteral("sid")),
+							openEl.attribute(QStringLiteral("block-size")).toInt(),
+							openEl.attribute(QStringLiteral("stanza")));
 			return true;
 		}
-		QDomElement dataEl = e.firstChildElement("data");
-		if (!dataEl.isNull() && dataEl.attribute("xmlns") == IBB_NS) {
+		QDomElement dataEl = e.firstChildElement(QStringLiteral("data"));
+		if (!dataEl.isNull() && dataEl.attribute(QStringLiteral("xmlns")) == IBB_NS) {
 			IBBData data;
 			emit incomingData(Jid(from), id, data.fromXml(dataEl), Stanza::IQ);
 			return true;
 		}
-		QDomElement closeEl = e.firstChildElement("close");
-		if (!closeEl.isNull() && closeEl.attribute("xmlns") == IBB_NS) {
-			emit closeRequest(Jid(from), id, closeEl.attribute("sid"));
+		QDomElement closeEl = e.firstChildElement(QStringLiteral("close"));
+		if (!closeEl.isNull() && closeEl.attribute(QStringLiteral("xmlns")) == IBB_NS) {
+			emit closeRequest(Jid(from), id, closeEl.attribute(QStringLiteral("sid")));
 			return true;
 		}
 		return false;
 	}
 	else {
-		Jid from(e.attribute("from"));
-		if(e.attribute("id") != id() || !d->to.compare(from))
+		Jid from(e.attribute(QStringLiteral("from")));
+		if(e.attribute(QStringLiteral("id")) != id() || !d->to.compare(from))
 			return false;
 
-		if(e.attribute("type") == "result") {
+		if(e.attribute(QStringLiteral("type")) == QLatin1String("result")) {
 			setSuccess();
 		}
 		else {

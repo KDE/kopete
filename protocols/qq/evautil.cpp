@@ -254,7 +254,7 @@ std::string textToStream(const std::string &text, bool& hasImage)
 						char *strLen = new char[4];
 						sprintf(strLen, "%3d", len);
 						sendFormat += strLen;
-						delete strLen;
+						delete[] strLen;
 						sendFormat += zdyTag;
 					}
 					converted += sendFormat;

@@ -94,10 +94,10 @@ void YahooChatTask::getYahooChatCategories()
 	KIO::TransferJob *transfer;
 
 	transfer = KIO::get( KUrl("http://insider.msg.yahoo.com/ycontent/?chatcat=0"), KIO::NoReload, KIO::HideProgressInfo );
-	transfer->addMetaData( "UserAgent", "Mozilla/4.0 (compatible; MSIE 5.5)");
-	transfer->addMetaData( "no-cache", "true" );
-	transfer->addMetaData( "cookies", "manual" );
-	transfer->addMetaData("setcookies", QString("Cookie: %1; %2; %3").arg(client()->tCookie(), client()->yCookie()) );
+	transfer->addMetaData( QStringLiteral("UserAgent"), QStringLiteral("Mozilla/4.0 (compatible; MSIE 5.5)"));
+	transfer->addMetaData( QStringLiteral("no-cache"), QStringLiteral("true") );
+	transfer->addMetaData( QStringLiteral("cookies"), QStringLiteral("manual") );
+	transfer->addMetaData(QStringLiteral("setcookies"), QStringLiteral("Cookie: %1; %2; %3").arg(client()->tCookie(), client()->yCookie()) );
 
 
 	connect( transfer, SIGNAL(result(KJob*)), this, SLOT(slotCategoriesComplete(KJob*)) );
@@ -109,11 +109,11 @@ void YahooChatTask::getYahooChatRooms( const Yahoo::ChatCategory &category )
 	kDebug(YAHOO_RAW_DEBUG) << "Category Id: " << category.id;
 	KIO::TransferJob *transfer;
 
-	transfer = KIO::get( KUrl(QString("http://insider.msg.yahoo.com/ycontent/?chatroom_%1=0").arg( category.id )), KIO::NoReload, KIO::HideProgressInfo );
-	transfer->addMetaData( "UserAgent", "Mozilla/4.0 (compatible; MSIE 5.5)");
-	transfer->addMetaData( "no-cache", "true" );
-	transfer->addMetaData( "cookies", "manual" );
-	transfer->addMetaData("setcookies", QString("Cookie: %1; %2; %3").arg(client()->tCookie(), client()->yCookie()) );
+	transfer = KIO::get( KUrl(QStringLiteral("http://insider.msg.yahoo.com/ycontent/?chatroom_%1=0").arg( category.id )), KIO::NoReload, KIO::HideProgressInfo );
+	transfer->addMetaData( QStringLiteral("UserAgent"), QStringLiteral("Mozilla/4.0 (compatible; MSIE 5.5)"));
+	transfer->addMetaData( QStringLiteral("no-cache"), QStringLiteral("true") );
+	transfer->addMetaData( QStringLiteral("cookies"), QStringLiteral("manual") );
+	transfer->addMetaData(QStringLiteral("setcookies"), QStringLiteral("Cookie: %1; %2; %3").arg(client()->tCookie(), client()->yCookie()) );
 
 
 	connect( transfer, SIGNAL(result(KJob*)), this, SLOT(slotChatRoomsComplete(KJob*)) );
@@ -215,7 +215,7 @@ void YahooChatTask::login()
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceChatOnline);
 	t->setId( client()->sessionID() );
 	t->setParam( 1, client()->userId().toLocal8Bit() );
-	t->setParam( 135, QString("ym%1").arg(YMSG_PROGRAM_VERSION_STRING).toLocal8Bit() );
+	t->setParam( 135, QStringLiteral("ym%1").arg(YMSG_PROGRAM_VERSION_STRING).toLocal8Bit() );
 
 	send( t );
 }
@@ -259,11 +259,11 @@ void YahooChatTask::parseJoin( YMSGTransfer *t )
 	comment = t->firstParam( 105 );
 	error = t->firstParam( 114 );
 
-	if( error.startsWith( "-35" ) ) {
+	if( error.startsWith( QLatin1String("-35") ) ) {
 		client()->notifyError( i18n("Could not join chat"), 
 				i18n("The room is full. Please choose another one."), Client::Error );
 		return;
-	} else if( error.startsWith( "-15" ) ) {
+	} else if( error.startsWith( QLatin1String("-15") ) ) {
 		client()->notifyError( i18n("Could not join chat"), 
 				i18n("Invalid user."), Client::Error );
 		return;
@@ -277,8 +277,8 @@ void YahooChatTask::parseJoin( YMSGTransfer *t )
         if( room == 0 && category == 0 && !comment.isEmpty() ) 
         {
         	kDebug(YAHOO_RAW_DEBUG) << "Showing captcha request";
-		emit chatRoomJoined( room, category, "", handle );
-		emit chatMessageReceived( "Yahoo", comment, handle );
+		emit chatRoomJoined( room, category, QLatin1String(""), handle );
+		emit chatMessageReceived( QStringLiteral("Yahoo"), comment, handle );
         }
 
 	if( room > 0 && category > 0 )

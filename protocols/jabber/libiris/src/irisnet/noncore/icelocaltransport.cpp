@@ -378,7 +378,7 @@ private:
 		if(retryCount < 3)
 		{
 			if(debugLevel >= IceTransport::DL_Info)
-				emit q->debugLine("retrying...");
+				emit q->debugLine(QStringLiteral("retrying..."));
 
 			delete sock;
 			sock = 0;
@@ -437,7 +437,7 @@ private:
 			else
 			{
 				if(debugLevel >= IceTransport::DL_Packet)
-					emit q->debugLine("Warning: server responded with what doesn't seem to be a STUN or data packet, skipping.");
+					emit q->debugLine(QStringLiteral("Warning: server responded with what doesn't seem to be a STUN or data packet, skipping."));
 			}
 		}
 
@@ -641,19 +641,19 @@ private slots:
 	void turn_connected()
 	{
 		if(debugLevel >= IceTransport::DL_Info)
-			emit q->debugLine("turn_connected");
+			emit q->debugLine(QStringLiteral("turn_connected"));
 	}
 
 	void turn_tlsHandshaken()
 	{
 		if(debugLevel >= IceTransport::DL_Info)
-			emit q->debugLine("turn_tlsHandshaken");
+			emit q->debugLine(QStringLiteral("turn_tlsHandshaken"));
 	}
 
 	void turn_closed()
 	{
 		if(debugLevel >= IceTransport::DL_Info)
-			emit q->debugLine("turn_closed");
+			emit q->debugLine(QStringLiteral("turn_closed"));
 
 		delete turn;
 		turn = 0;
@@ -675,12 +675,12 @@ private slots:
 		}
 
 		if(debugLevel >= IceTransport::DL_Info)
-			emit q->debugLine(QString("Server says we are ") + allocate->reflexiveAddress().toString() + ';' + QString::number(allocate->reflexivePort()));
+			emit q->debugLine(QStringLiteral("Server says we are ") + allocate->reflexiveAddress().toString() + ';' + QString::number(allocate->reflexivePort()));
 
 		relAddr = allocate->relayedAddress();
 		relPort = allocate->relayedPort();
 		if(debugLevel >= IceTransport::DL_Info)
-			emit q->debugLine(QString("Server relays via ") + relAddr.toString() + ';' + QString::number(relPort));
+			emit q->debugLine(QStringLiteral("Server relays via ") + relAddr.toString() + ';' + QString::number(relPort));
 
 		turnActivated = true;
 
@@ -695,7 +695,7 @@ private slots:
 	void turn_error(XMPP::TurnClient::Error e)
 	{
 		if(debugLevel >= IceTransport::DL_Info)
-			emit q->debugLine(QString("turn_error: ") + turn->errorString());
+			emit q->debugLine(QStringLiteral("turn_error: ") + turn->errorString());
 
 		delete turn;
 		turn = 0;

@@ -137,7 +137,7 @@ bool Task::take( Transfer * transfer)
 		
 		if(t->take( transfer ))
 		{
-			client()->debug( QString( "Transfer ACCEPTED by: %1" ).arg( t->metaObject()->className() ) );
+			client()->debug( QStringLiteral( "Transfer ACCEPTED by: %1" ).arg( t->metaObject()->className() ) );
 			return true;
 		}
 	}
@@ -157,7 +157,7 @@ void Task::safeDelete()
 
 void Task::onGo()
 {
-	client()->debug( "ERROR: calling default NULL onGo() for this task, you should reimplement this!");
+	client()->debug( QStringLiteral("ERROR: calling default NULL onGo() for this task, you should reimplement this!"));
 }
 
 void Task::onDisconnect()
@@ -202,7 +202,7 @@ void Task::setError(int code, const QString &str)
 
 void Task::done()
 {
-	debug("Task::done()");
+	debug(QStringLiteral("Task::done()"));
 	if(d->done || d->insignificant)
 		return;
 	d->done = true;
@@ -211,7 +211,7 @@ void Task::done()
 		d->deleteme = true;
 
 	d->insignificant = true;
-	debug("emitting finished");
+	debug(QStringLiteral("emitting finished"));
 	finished();
 	d->insignificant = false;
 
@@ -251,7 +251,7 @@ void Task::clientDisconnected()
 
 void Task::debug(const QString &str)
 {
-	client()->debug(QString("%1: ").arg(metaObject()->className()) + str);
+	client()->debug(QStringLiteral("%1: ").arg(metaObject()->className()) + str);
 }
 
 bool Task::forMe( const Transfer * transfer ) const

@@ -36,7 +36,7 @@ public:
 };
 
 IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
-: Kopete::UI::InfoDialog(parent, i18n("Identity Information"), "identity"), d(new Private())
+: Kopete::UI::InfoDialog(parent, i18n("Identity Information"), QStringLiteral("identity")), d(new Private())
 {
 	Q_ASSERT(identity);
 
@@ -49,8 +49,8 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 	// add the general page
 	QWidget *w = new QWidget(this);
 	d->general.setupUi(w);
-	d->general.selectPhoto->setIcon(QIcon::fromTheme("view-preview"));
-	d->general.clearPhoto->setIcon(QIcon::fromTheme("edit-clear-locationbar-rtl"));
+	d->general.selectPhoto->setIcon(QIcon::fromTheme(QStringLiteral("view-preview")));
+	d->general.clearPhoto->setIcon(QIcon::fromTheme(QStringLiteral("edit-clear-locationbar-rtl")));
 	d->general.photo->setText( QString("<qt><a href=\"selectPhoto\">"
 										"<p align=\"center\">%1</p>"
 										"</a></qt>").arg( i18n("No Photo") ));

@@ -29,7 +29,7 @@
 
 YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 {
-	setObjectName( QLatin1String("yahoo_webcam") );
+	setObjectName( QStringLiteral("yahoo_webcam") );
 	kDebug(YAHOO_GEN_DEBUG) ;
 	theAccount = account;
 	theDialog = 0L;
@@ -41,7 +41,7 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 	m_updateTimer = new QTimer( this );
 	connect( m_updateTimer, SIGNAL(timeout()), this, SLOT(updateImage()) );	
 
-	theDialog = new YahooWebcamDialog( "YahooWebcam" );
+	theDialog = new YahooWebcamDialog( QStringLiteral("YahooWebcam") );
 	connect( theDialog, SIGNAL(closingWebcamDialog()), this, SLOT(webcamDialogClosing()) );
 #ifndef VIDEOSUPPORT_DISABLED
 	m_devicePool = Kopete::AV::VideoDevicePool::self();

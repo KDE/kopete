@@ -139,7 +139,7 @@ void ChatRoomTask::doInvite()
 	b3.addWord( 0x0004 );
 	b3.addWord( 0x2321 );
 
-	QString joinStr = "aol://2719:10-";
+	QString joinStr = QStringLiteral("aol://2719:10-");
 	joinStr.append( QString::number( m_exchange ) );
 	joinStr.append( "-" );
 	joinStr.append( m_room );

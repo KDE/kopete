@@ -234,9 +234,9 @@ void YahooUserInfoDialog::setData( const YABEntry &yab )
 	m_genInfoWidget->titleEdit->setText( yab.title );
 	
 	if( yab.birthday.isValid() )
-		m_genInfoWidget->birthdayEdit->setText( QString("%1/%2/%3").arg( yab.birthday.day() ).arg( yab.birthday.month() ).arg( yab.birthday.year() ));
+		m_genInfoWidget->birthdayEdit->setText( QStringLiteral("%1/%2/%3").arg( yab.birthday.day() ).arg( yab.birthday.month() ).arg( yab.birthday.year() ));
 	if( yab.anniversary.isValid() )
-	m_genInfoWidget->anniversaryEdit->setText( QString("%1/%2/%3").arg( yab.anniversary.day() ).arg( yab.anniversary.month() ).arg( yab.anniversary.year() ));
+	m_genInfoWidget->anniversaryEdit->setText( QStringLiteral("%1/%2/%3").arg( yab.anniversary.day() ).arg( yab.anniversary.month() ).arg( yab.anniversary.year() ));
 	
 	m_genInfoWidget->addressEdit->setPlainText( yab.privateAdress );
 	m_genInfoWidget->cityEdit->setText( yab.privateCity );

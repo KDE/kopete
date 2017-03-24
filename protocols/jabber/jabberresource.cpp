@@ -70,12 +70,12 @@ JabberResource::JabberResource ( JabberAccount *account, const XMPP::Jid &jid, c
 		}
 		else
 		{
-			if(cm->features(jid).list().contains("jabber:iq:version"))
+			if(cm->features(jid).list().contains(QStringLiteral("jabber:iq:version")))
 			{
 				QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT (slotGetTimedClientVersion()) );
 			}
 
-			if(cm->features(jid).list().contains("urn:xmpp:receipts"))
+			if(cm->features(jid).list().contains(QStringLiteral("urn:xmpp:receipts")))
 			{
 				d->sendsDeliveredEvent = true;
 			}
@@ -196,12 +196,12 @@ void JabberResource::slotGotDiscoCapabilities ()
 	{
 		d->supportedFeatures = discoInfo->item().features();
 
-		if(d->supportedFeatures.list().contains("jabber:iq:version"))
+		if(d->supportedFeatures.list().contains(QStringLiteral("jabber:iq:version")))
 		{
 			QTimer::singleShot ( d->account->client()->getPenaltyTime () * 1000, this, SLOT (slotGetTimedClientVersion()) );
 		}
 
-		if(d->supportedFeatures.list().contains("urn:xmpp:receipts"))
+		if(d->supportedFeatures.list().contains(QStringLiteral("urn:xmpp:receipts")))
 		{
 			d->sendsDeliveredEvent = true;
 		}

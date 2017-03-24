@@ -90,7 +90,7 @@ public:
 
 	QString protocolIcon() const
 	{
-		return protocol ?  protocol->pluginIcon() : QString::fromLatin1( "unknown" );
+		return protocol ?  protocol->pluginIcon() : QStringLiteral( "unknown" );
 	}
 };
 
@@ -172,7 +172,7 @@ OnlineStatus::OnlineStatus( StatusType status )
 	case Unknown:
 	default:
 		d->description = i18n( "Unknown" );
-		d->overlayIcons = QStringList( QString::fromLatin1("status_unknown") );
+		d->overlayIcons = QStringList( QLatin1String("status_unknown") );
 		break;
 
 	}
@@ -185,7 +185,7 @@ OnlineStatus::OnlineStatus()
 	d->internalStatus = 0;
 	d->weight = 0;
 	d->protocol = 0L;
-	d->overlayIcons = QStringList( QString::fromLatin1( "status_unknown" ) );
+	d->overlayIcons = QStringList( QLatin1String( "status_unknown" ) );
 	d->categories = 0x00;
 	d->options = 0x00;
 }

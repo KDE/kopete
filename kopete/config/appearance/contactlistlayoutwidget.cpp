@@ -151,7 +151,7 @@ bool ContactListLayoutWidget::saveLayoutData( QString& layoutName, bool showProm
 		{
 			int ret = KMessageBox::warningYesNoCancel( this, i18n( "Unsaved data?" ), i18n( "Layout" ), KStandardGuiItem::save(),
 			                                           KStandardGuiItem::discard(), KStandardGuiItem::cancel(),
-			                                           "askRemovingContactOrGroup", KMessageBox::Notify | KMessageBox::Dangerous );
+			                                           QStringLiteral("askRemovingContactOrGroup"), KMessageBox::Notify | KMessageBox::Dangerous );
 			if ( ret == KMessageBox::Cancel )
 				return false;
 			else if ( ret == KMessageBox::No )

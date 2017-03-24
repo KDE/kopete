@@ -55,7 +55,7 @@ IdentityManager * IdentityManager::self()
 IdentityManager::IdentityManager()
 : QObject( qApp ), d(new Private())
 {
-	setObjectName( "KopeteIdentityManager" );
+	setObjectName( QStringLiteral("KopeteIdentityManager") );
 }
 
 
@@ -216,7 +216,7 @@ void IdentityManager::load()
 	// Iterate over all groups that start with "Identity_" as those are identities.
 	KSharedConfig::Ptr config = KSharedConfig::openConfig();
 
-	QStringList identityGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Identity_" ) ) );
+	QStringList identityGroups = config->groupList().filter( QRegExp( QLatin1String( "^Identity_" ) ) );
 	for ( QStringList::Iterator it = identityGroups.begin(); it != identityGroups.end(); ++it )
 	{
 		KConfigGroup cg( config, *it );

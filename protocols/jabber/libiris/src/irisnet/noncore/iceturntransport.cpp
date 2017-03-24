@@ -76,19 +76,19 @@ private slots:
 	void turn_connected()
 	{
 		if(debugLevel >= IceTransport::DL_Info)
-			emit q->debugLine("turn_connected");
+			emit q->debugLine(QStringLiteral("turn_connected"));
 	}
 
 	void turn_tlsHandshaken()
 	{
 		if(debugLevel >= IceTransport::DL_Info)
-			emit q->debugLine("turn_tlsHandshaken");
+			emit q->debugLine(QStringLiteral("turn_tlsHandshaken"));
 	}
 
 	void turn_closed()
 	{
 		if(debugLevel >= IceTransport::DL_Info)
-			emit q->debugLine("turn_closed");
+			emit q->debugLine(QStringLiteral("turn_closed"));
 
 		emit q->stopped();
 	}
@@ -105,7 +105,7 @@ private slots:
 	void turn_retrying()
 	{
 		if(debugLevel >= IceTransport::DL_Info)
-			emit q->debugLine("turn_retrying");
+			emit q->debugLine(QStringLiteral("turn_retrying"));
 	}
 
 	void turn_activated()
@@ -115,11 +115,11 @@ private slots:
 		QHostAddress saddr = allocate->reflexiveAddress();
 		quint16 sport = allocate->reflexivePort();
 		if(debugLevel >= IceTransport::DL_Info)
-			emit q->debugLine(QString("Server says we are ") + saddr.toString() + ';' + QString::number(sport));
+			emit q->debugLine(QStringLiteral("Server says we are ") + saddr.toString() + ';' + QString::number(sport));
 		saddr = allocate->relayedAddress();
 		sport = allocate->relayedPort();
 		if(debugLevel >= IceTransport::DL_Info)
-			emit q->debugLine(QString("Server relays via ") + saddr.toString() + ';' + QString::number(sport));
+			emit q->debugLine(QStringLiteral("Server relays via ") + saddr.toString() + ';' + QString::number(sport));
 
 		relayAddr = saddr;
 		relayPort = sport;
@@ -140,7 +140,7 @@ private slots:
 	void turn_error(XMPP::TurnClient::Error e)
 	{
 		if(debugLevel >= IceTransport::DL_Info)
-			emit q->debugLine(QString("turn_error: ") + turn.errorString());
+			emit q->debugLine(QStringLiteral("turn_error: ") + turn.errorString());
 
 		turnErrorCode = e;
 		emit q->error(IceTurnTransport::ErrorTurn);

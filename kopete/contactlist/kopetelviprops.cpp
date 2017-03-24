@@ -78,13 +78,13 @@ KopeteGVIProps::KopeteGVIProps(Kopete::Group *group, QWidget *parent)
 	setButtons( Ok | Cancel );
 
 	mainWidget = new QWidget( this );
-	mainWidget->setObjectName( "mainWidget" );
+	mainWidget->setObjectName( QStringLiteral("mainWidget") );
 	ui_mainWidget = new Ui::KopeteGVIPropsWidget;
 	ui_mainWidget->setupUi( mainWidget );
 
 	ui_mainWidget->icnbOpen->setIconSize(QSize(KIconLoader::SizeSmall,KIconLoader::SizeSmall));
 	ui_mainWidget->icnbClosed->setIconSize(QSize(KIconLoader::SizeSmall,KIconLoader::SizeSmall));
-	QPair<QString,QString> context=qMakePair( QString::fromLatin1("group") , QString::number(mGroup->groupId() ) );
+	QPair<QString,QString> context=qMakePair( QStringLiteral("group") , QString::number(mGroup->groupId() ) );
 	mNotificationProps = new CustomNotificationProps( this, context );
 
 	QWidget* npMainWidget = new QWidget();
@@ -169,7 +169,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(Kopete::MetaContact *metaContact, QWidget
 	m_countPhotoCapable = 0;
 
 	mainWidget = new QWidget( this );
-	mainWidget->setObjectName( "mainWidget" );
+	mainWidget->setObjectName( QStringLiteral("mainWidget") );
 	ui_mainWidget = new Ui::KopeteMetaLVIPropsWidget;
 	ui_mainWidget->setupUi( mainWidget );
 
@@ -178,7 +178,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(Kopete::MetaContact *metaContact, QWidget
 	ui_mainWidget->icnbAway->setIconSize( QSize(KIconLoader::SizeSmall,KIconLoader::SizeSmall) );
 	ui_mainWidget->icnbUnknown->setIconSize( QSize(KIconLoader::SizeSmall,KIconLoader::SizeSmall) );
 
-	QPair<QString,QString> context=qMakePair( QString::fromLatin1("contact"), mMetaContact->metaContactId().toString() );
+	QPair<QString,QString> context=qMakePair( QStringLiteral("contact"), mMetaContact->metaContactId().toString() );
 	mNotificationProps = new CustomNotificationProps( this, context  );
 	// add a button to the notification props to get the sound from KABC
 	// the widget's vert box layout, horiz box layout containing button, spacer, followed by a spacer
@@ -187,10 +187,10 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(Kopete::MetaContact *metaContact, QWidget
 	QHBoxLayout* hb = new QHBoxLayout();
 	vb->addItem( hb );
 	hb->setMargin( -1 );
-	hb->setObjectName( "soundFromKABClayout" );
+	hb->setObjectName( QStringLiteral("soundFromKABClayout") );
 
 	mFromKABC = new QPushButton( i18n( "Sync KABC..." ), mNotificationProps->widget() );
-	mFromKABC->setObjectName( QLatin1String("getSoundFromKABC") );
+	mFromKABC->setObjectName( QStringLiteral("getSoundFromKABC") );
 	hb->addWidget( mFromKABC ); // [ [Button] <-xxxxx-> ]
 	hb->addStretch();
 	vb->addStretch(); // vert spacer keeps the rest snug
@@ -610,13 +610,13 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 	QFileDialog *fileDialog = requester->fileDialog();
 	fileDialog->setWindowTitle( i18n("Select Sound File") );
 	QStringList filters;
-	filters << "audio/x-wav" << "audio/mpeg" << "application/ogg"
-			<< "audio/x-adpcm";
+	filters << QStringLiteral("audio/x-wav") << QStringLiteral("audio/mpeg") << QStringLiteral("application/ogg")
+			<< QStringLiteral("audio/x-adpcm");
 	fileDialog->setMimeTypeFilters( filters );
 
 	// find the first "sound"-resource that contains files
 	QStringList soundDirs =
-		KGlobal::dirs()->findDirs("data", "kopete/sounds");
+		KGlobal::dirs()->findDirs("data", QStringLiteral("kopete/sounds"));
 	soundDirs += KGlobal::dirs()->resourceDirs( "sound" );
 
 	if ( !soundDirs.isEmpty() ) {

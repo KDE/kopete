@@ -123,7 +123,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 #endif
 
-	setXMLFile("jabberchatui.rc");
+	setXMLFile(QStringLiteral("jabberchatui.rc"));
 
 }
 
@@ -324,13 +324,13 @@ void JabberChatSession::sendNotification( Event event )
 				message.setChatState( new_state );
 			}
 
-			if (view() && view()->plugin()->pluginId() == "kopete_emailwindow" )
+			if (view() && view()->plugin()->pluginId() == QLatin1String("kopete_emailwindow") )
 			{
-				message.setType ( "normal" );
+				message.setType ( QStringLiteral("normal") );
 			}
 			else
 			{
-				message.setType ( "chat" );
+				message.setType ( QStringLiteral("chat") );
 			}
 
 			// send message
@@ -389,13 +389,13 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
 		JabberResource *jresource = account()->resourcePool()->getJabberResource(toJid, resource());
 
-		bool xsigned = message.classes().contains ( "signed" );
-		bool xencrypted = message.classes().contains ( "encrypted" );
+		bool xsigned = message.classes().contains ( QStringLiteral("signed") );
+		bool xencrypted = message.classes().contains ( QStringLiteral("encrypted") );
 
-		bool fxsigned = jresource && jresource->features().test ( QStringList ( "jabber:x:signed" ) );
-		bool fxencrypted = jresource && jresource->features().test ( QStringList ( "jabber:x:encrypted" ) );
+		bool fxsigned = jresource && jresource->features().test ( QStringList ( QStringLiteral("jabber:x:signed") ) );
+		bool fxencrypted = jresource && jresource->features().test ( QStringList ( QStringLiteral("jabber:x:encrypted") ) );
 
-		if ( ( ( xsigned && fxsigned ) || ( xencrypted && fxencrypted ) || ! account()->oldEncrypted() ) && message.plainBody().indexOf ( "-----BEGIN PGP MESSAGE-----" ) != -1 )
+		if ( ( ( xsigned && fxsigned ) || ( xencrypted && fxencrypted ) || ! account()->oldEncrypted() ) && message.plainBody().indexOf ( QLatin1String("-----BEGIN PGP MESSAGE-----") ) != -1 )
 		{
 			/*
 			 * This message is encrypted, so we need to set
@@ -407,19 +407,19 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
 			// please don't translate the following string
 			if ( xsigned && xencrypted )
-				jabberMessage.setBody ( "This message is signed and encrypted." );
+				jabberMessage.setBody ( QStringLiteral("This message is signed and encrypted.") );
 			else if ( xsigned )
 				jabberMessage.setBody ( message.plainBody().trimmed() );
 			else if ( xencrypted )
-				jabberMessage.setBody ( "This message is encrypted." );
+				jabberMessage.setBody ( QStringLiteral("This message is encrypted.") );
 			else
-				jabberMessage.setBody ( "This message is signed or encrypted." );
+				jabberMessage.setBody ( QStringLiteral("This message is signed or encrypted.") );
 
 			QString encryptedBody = message.plainBody().trimmed();
 
 			// remove PGP header and footer from message
-			encryptedBody.truncate ( encryptedBody.length () - QString("-----END PGP MESSAGE-----").length () - 2 );
-			encryptedBody = encryptedBody.right ( encryptedBody.length () - encryptedBody.indexOf ( "\n\n" ) - 2 );
+			encryptedBody.truncate ( encryptedBody.length () - QStringLiteral("-----END PGP MESSAGE-----").length () - 2 );
+			encryptedBody = encryptedBody.right ( encryptedBody.length () - encryptedBody.indexOf ( QLatin1String("\n\n") ) - 2 );
 
 			// assign payload to message
 			if ( xsigned && ! xencrypted )
@@ -435,7 +435,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 			{
 				JabberResource *bestResource = account()->resourcePool()->bestJabberResource(toJid);
 				if( bestResource && bestResource->features().test(
-						QStringList("http://jabber.org/protocol/xhtml-im")) )
+						QStringList(QStringLiteral("http://jabber.org/protocol/xhtml-im"))) )
 				{
 					QString xhtmlBody = message.escapedBody();
 
@@ -448,7 +448,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 					xhtmlBody.remove('\n');
 
 					//&nbsp; is not a valid XML entity
-					xhtmlBody.replace("&nbsp;" , "&#160;");
+					xhtmlBody.replace(QLatin1String("&nbsp;") , QLatin1String("&#160;"));
 
 					xhtmlBody="<body xmlns=\"http://www.w3.org/1999/xhtml\">" + xhtmlBody + "</body>";
 
@@ -466,13 +466,13 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
 		// FIXME: the view() is a speedy way to solve BUG:108389. A better solution is to be found
 		// but I don't want to introduce a new bug during the bug hunt ;-).
-		if (view() && view()->plugin()->pluginId() == "kopete_emailwindow" )
+		if (view() && view()->plugin()->pluginId() == QLatin1String("kopete_emailwindow") )
 		{
-			jabberMessage.setType ( "normal" );
+			jabberMessage.setType ( QStringLiteral("normal") );
 		}
 		else
 		{
-			jabberMessage.setType ( "chat" );
+			jabberMessage.setType ( QStringLiteral("chat") );
 		}
 
 		// add request for all notifications
@@ -483,7 +483,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		jabberMessage.setChatState( XMPP::StateActive );
 
 		// XEP-0184: Message Delivery Receipts
-		if( jresource && jresource->features().test(QStringList("urn:xmpp:receipts")) )
+		if( jresource && jresource->features().test(QStringList(QStringLiteral("urn:xmpp:receipts"))) )
 		{
 			jabberMessage.setMessageReceipt( ReceiptRequest );
 		}

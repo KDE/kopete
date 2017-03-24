@@ -64,14 +64,14 @@ void CreateContactTask::contactFromUserId( const QString & userId, const QString
 
 void CreateContactTask::onGo()
 {
-	client()->debug( "CreateContactTask::onGo() - Welcome to the Create Contact Task Show!");
+	client()->debug( QStringLiteral("CreateContactTask::onGo() - Welcome to the Create Contact Task Show!"));
 	QList<FolderItem>::ConstIterator it = m_folders.constBegin();
 	QList<FolderItem>::ConstIterator end = m_folders.constEnd();
 	
 	// create contacts on the server
 	for ( ; it != end; ++it )
 	{
-		client()->debug( QString( " - contact is in folder %1 with id %2" ).arg( (*it).name ).arg( (*it).id ) );
+		client()->debug( QStringLiteral( " - contact is in folder %1 with id %2" ).arg( (*it).name ).arg( (*it).id ) );
 		CreateContactInstanceTask * ccit = new CreateContactInstanceTask( client()->rootTask() );
 		// the add contact action may cause other contacts' sequence numbers to change
 		// CreateContactInstanceTask signals these changes, so we propagate the signal via the Client, to the GroupWiseAccount
@@ -90,29 +90,29 @@ void CreateContactTask::onGo()
 
 	if ( m_topLevel )
 	{
-		client()->debug( " - contact is in top level folder " );
+		client()->debug( QStringLiteral(" - contact is in top level folder ") );
 		CreateContactInstanceTask * ccit = new CreateContactInstanceTask( client()->rootTask() );
 		connect( ccit, SIGNAL(gotContactAdded(ContactItem)), SLOT(slotContactAdded(ContactItem)) );
         connect( ccit, SIGNAL(finished()), SLOT(slotCheckContactInstanceCreated()) );
 		ccit->contactFromDN( m_userId, m_displayName, 0 );
 		ccit->go( true );
 	}
-	client()->debug( "CreateContactTask::onGo() - DONE" );
+	client()->debug( QStringLiteral("CreateContactTask::onGo() - DONE") );
 }
 
 void CreateContactTask::slotContactAdded( const ContactItem & addedContact )
 {
-	client()->debug( "CreateContactTask::slotContactAdded()" );
+	client()->debug( QStringLiteral("CreateContactTask::slotContactAdded()") );
 	// as each contact instance has been added on the server, 
 	// remove the folderitem it belongs in.
 	// once the list is empty, we have been successful
 
 	if ( addedContact.displayName != m_displayName )
 	{
-		client()->debug( " - addedContact is not the one we were trying to add, ignoring it ( Account will update it )" );
+		client()->debug( QStringLiteral(" - addedContact is not the one we were trying to add, ignoring it ( Account will update it )") );
 		return;
 	}
-	client()->debug( QString( "CreateContactTask::slotContactAdded() - Contact Instance %1 was created on the server, with objectId %2 in folder %3" ).arg
+	client()->debug( QStringLiteral( "CreateContactTask::slotContactAdded() - Contact Instance %1 was created on the server, with objectId %2 in folder %3" ).arg
 			( addedContact.displayName ).arg( addedContact.id ).arg( addedContact.parentId ) );
 			
 	if ( m_dn.isEmpty() )
@@ -128,7 +128,7 @@ void CreateContactTask::slotContactAdded( const ContactItem & addedContact )
 	
 	if ( m_folders.isEmpty() && !m_topLevel )
 	{
-		client()->debug( "CreateContactTask::slotContactAdded() - All contacts were created on the server, we are finished!" );
+		client()->debug( QStringLiteral("CreateContactTask::slotContactAdded() - All contacts were created on the server, we are finished!") );
 		setSuccess(); 
 	}
 }

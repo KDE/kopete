@@ -213,15 +213,15 @@ QByteArray OContact::metaInfoId() const
 
 QString OContact::toString() const
 {
-	QString ssiString = QString::fromLatin1( "name: " );
+	QString ssiString = QStringLiteral( "name: " );
 	ssiString += m_name;
-	ssiString += " gid: ";
+	ssiString += QLatin1String(" gid: ");
 	ssiString += QString::number( m_gid );
-	ssiString += " bid: ";
+	ssiString += QLatin1String(" bid: ");
 	ssiString += QString::number( m_bid );
-	ssiString += " type: ";
+	ssiString += QLatin1String(" type: ");
 	ssiString += QString::number( m_type );
-	ssiString += " tlv length: ";
+	ssiString += QLatin1String(" tlv length: ");
 	ssiString += QString::number( m_tlvLength );
 	return ssiString;
 }

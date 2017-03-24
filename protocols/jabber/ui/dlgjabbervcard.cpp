@@ -410,8 +410,8 @@ void dlgJabberVCard::slotSaveVCard()
 		vCard.setPhoto( ba );
 	}
 
-	vCard.setVersion("3.0");
-	vCard.setProdId("Kopete");
+	vCard.setVersion(QStringLiteral("3.0"));
+	vCard.setProdId(QStringLiteral("Kopete"));
 
 	XMPP::JT_VCard *task = new XMPP::JT_VCard( m_account->client()->rootTask() );
 	// signal to ourselves when the vCard data arrived
@@ -510,7 +510,7 @@ void dlgJabberVCard::slotClearPhoto()
 
 void dlgJabberVCard::slotOpenURL(const QString &url)
 {
-	if ( !url.isEmpty () || (url == QString::fromLatin1("mailto:") ) )
+	if ( !url.isEmpty () || (url == QLatin1String("mailto:") ) )
 		new KRun( QUrl( url ), this );
 }
 

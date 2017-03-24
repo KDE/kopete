@@ -152,7 +152,7 @@ namespace XMPP
 		void sendData(const Jid &, const IBBData &ibbData);
 		void close(const Jid &, const QString &sid);
 		void respondError(const Jid &, const QString &id,
-						  Stanza::Error::ErrorCond cond, const QString &text = "");
+						  Stanza::Error::ErrorCond cond, const QString &text = QLatin1String(""));
 		void respondAck(const Jid &to, const QString &id);
 
 		void onGo() Q_DECL_OVERRIDE;

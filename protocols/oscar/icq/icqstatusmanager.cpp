@@ -32,11 +32,11 @@ public:
 	// connecting and unknown should have the same internal status as offline, so converting to a Presence gives an Offline one
 	Private()
 		: connecting(     Kopete::OnlineStatus::Connecting, 99, ICQProtocol::protocol(),
-					      99,                QStringList(QString("icq_connecting")), i18n("Connecting...") )
+					      99,                QStringList(QStringLiteral("icq_connecting")), i18n("Connecting...") )
 		, unknown(        Kopete::OnlineStatus::Unknown,     0, ICQProtocol::protocol(),
-		                  Oscar::Presence::Offline, QStringList(QString("status_unknown")), i18n("Unknown") )
+		                  Oscar::Presence::Offline, QStringList(QStringLiteral("status_unknown")), i18n("Unknown") )
 		, waitingForAuth( Kopete::OnlineStatus::Unknown,     1, ICQProtocol::protocol(),
-		                  Oscar::Presence::Offline, QStringList(QString("dialog-cancel")),  i18n("Waiting for Authorization") )
+		                  Oscar::Presence::Offline, QStringList(QStringLiteral("dialog-cancel")),  i18n("Waiting for Authorization") )
 		, invisible(      Kopete::OnlineStatus::Invisible,   2, ICQProtocol::protocol(),
 		                  Oscar::Presence::Offline, QStringList(),    QString(),
 						  QString(), Kopete::OnlineStatusManager::Invisible,
@@ -74,24 +74,24 @@ ICQStatusManager::ICQStatusManager()
 
 	data << PresenceType( Presence::Offline, OnlineStatus::Offline, OFFLINE, OFFLINE, i18n( "O&ffline" ), i18n("Offline"), QStringList(), Kopete::OnlineStatusManager::Offline, 0, PresenceType::FlagsList() << Presence::None << Presence::AIM << Presence::Invisible );
 
-	data << PresenceType( Presence::DoNotDisturb, OnlineStatus::Busy, SET_DND, IS_DND, i18n( "&Do Not Disturb" ), i18n("Do Not Disturb"), QStringList(QString("contact_busy_overlay")), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasStatusMessage, PresenceType::FlagsList() << Presence::None << Presence::Invisible << Presence::Wireless << (Presence::Wireless | Presence::Invisible) );
+	data << PresenceType( Presence::DoNotDisturb, OnlineStatus::Busy, SET_DND, IS_DND, i18n( "&Do Not Disturb" ), i18n("Do Not Disturb"), QStringList(QStringLiteral("contact_busy_overlay")), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasStatusMessage, PresenceType::FlagsList() << Presence::None << Presence::Invisible << Presence::Wireless << (Presence::Wireless | Presence::Invisible) );
 
-	data << PresenceType( Presence::Occupied, OnlineStatus::Busy, SET_OCC, IS_OCC, i18n( "O&ccupied" ), i18n("Occupied"), QStringList(QString("contact_busy_overlay")), 0, Kopete::OnlineStatusManager::HasStatusMessage, PresenceType::FlagsList() << Presence::None << Presence::Invisible );
+	data << PresenceType( Presence::Occupied, OnlineStatus::Busy, SET_OCC, IS_OCC, i18n( "O&ccupied" ), i18n("Occupied"), QStringList(QStringLiteral("contact_busy_overlay")), 0, Kopete::OnlineStatusManager::HasStatusMessage, PresenceType::FlagsList() << Presence::None << Presence::Invisible );
 
-	data << PresenceType( Presence::NotAvailable, OnlineStatus::Away, SET_NA, IS_NA, i18n( "Not A&vailable" ), i18n("Not Available"), QStringList(QString("contact_xa_overlay")), Kopete::OnlineStatusManager::ExtendedAway, Kopete::OnlineStatusManager::HasStatusMessage, PresenceType::FlagsList() << Presence::None << Presence::Invisible );
+	data << PresenceType( Presence::NotAvailable, OnlineStatus::Away, SET_NA, IS_NA, i18n( "Not A&vailable" ), i18n("Not Available"), QStringList(QStringLiteral("contact_xa_overlay")), Kopete::OnlineStatusManager::ExtendedAway, Kopete::OnlineStatusManager::HasStatusMessage, PresenceType::FlagsList() << Presence::None << Presence::Invisible );
 
-	data << PresenceType( Presence::Away, OnlineStatus::Away, SET_AWAY, IS_AWAY, i18n( "&Away" ), i18n("Away"), QStringList(QString("contact_away_overlay")), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage, PresenceType::FlagsList() << Presence::None << Presence::Invisible << Presence::AIM << (Presence::AIM | Presence::Invisible) << Presence::Wireless << (Presence::Wireless | Presence::Invisible) );
+	data << PresenceType( Presence::Away, OnlineStatus::Away, SET_AWAY, IS_AWAY, i18n( "&Away" ), i18n("Away"), QStringList(QStringLiteral("contact_away_overlay")), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage, PresenceType::FlagsList() << Presence::None << Presence::Invisible << Presence::AIM << (Presence::AIM | Presence::Invisible) << Presence::Wireless << (Presence::Wireless | Presence::Invisible) );
 
-	data << PresenceType( Presence::FreeForChat,  OnlineStatus::Online,  SET_FFC,  IS_FFC,  i18n( "&Free for Chat" ),  i18n("Free For Chat"), QStringList(QString("icq_ffc")), Kopete::OnlineStatusManager::FreeForChat,  0, PresenceType::FlagsList() << Presence::None << Presence::Invisible );
+	data << PresenceType( Presence::FreeForChat,  OnlineStatus::Online,  SET_FFC,  IS_FFC,  i18n( "&Free for Chat" ),  i18n("Free For Chat"), QStringList(QStringLiteral("icq_ffc")), Kopete::OnlineStatusManager::FreeForChat,  0, PresenceType::FlagsList() << Presence::None << Presence::Invisible );
 
 	data << PresenceType( Presence::Online, OnlineStatus::Online, ONLINE, ONLINE, i18n( "O&nline" ), i18n("Online"), QStringList(), Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HasStatusMessage, PresenceType::FlagsList() << Presence::None << Presence::Invisible << Presence::AIM << (Presence::AIM | Presence::Invisible) << Presence::Wireless << (Presence::Wireless | Presence::Invisible) );
 
 	setPresenceType( data );
 
 	QList<PresenceOverlay> overlay;
-	overlay << PresenceOverlay( Presence::Invisible, i18n("Invisible"), QStringList(QString("contact_invisible_overlay")) );
-	overlay << PresenceOverlay( Presence::Wireless, i18n("Mobile"), QStringList(QString("contact_phone_overlay")) );
-	overlay << PresenceOverlay( Presence::AIM, i18n("AIM"), QStringList(QString("aim_overlay")) );
+	overlay << PresenceOverlay( Presence::Invisible, i18n("Invisible"), QStringList(QStringLiteral("contact_invisible_overlay")) );
+	overlay << PresenceOverlay( Presence::Wireless, i18n("Mobile"), QStringList(QStringLiteral("contact_phone_overlay")) );
+	overlay << PresenceOverlay( Presence::AIM, i18n("AIM"), QStringList(QStringLiteral("aim_overlay")) );
 	setPresenceOverlay( overlay );
 
 	setPresenceFlagsMask( ~(Presence::Flags)Presence::ICQ );
@@ -138,7 +138,7 @@ void ICQStatusManager::loadXtrazStatuses()
 		for ( int i = 0; i < 32; i++ )
 		{
 			statusList<<i;
-			messageList<<"";
+			messageList<<QLatin1String("");
 		}
 		descriptionList
 		<<i18nc("@item icq xtraz status","angry")
@@ -171,7 +171,7 @@ void ICQStatusManager::loadXtrazStatuses()
 		<<i18nc("@item icq xtraz status","i am high")
 		<<i18nc("@item icq xtraz status","wc")
 		<<i18nc("@item icq xtraz status","to be or not to be")
-		<<"?"//"watching pro7 on TV"
+		<<QStringLiteral("?")//"watching pro7 on TV"
 		<<i18nc("@item icq xtraz status","love");
 	}
 

@@ -35,7 +35,7 @@ StatusConfig::StatusConfig( QWidget *parent, const QVariantList &args )
 	layout->setContentsMargins( 0, 0, 0, 0);
 	
 	mStatusTabCtl = new QTabWidget(this);
-	mStatusTabCtl->setObjectName("mStatusTabCtl");
+	mStatusTabCtl->setObjectName(QStringLiteral("mStatusTabCtl"));
 	layout->addWidget( mStatusTabCtl );
 	
 	mPrfsManager = new StatusConfig_Manager( mStatusTabCtl );

@@ -42,16 +42,16 @@ namespace XMPP {
 
 QDomElement CapsInfo::toXml(QDomDocument *doc) const
 {
-	QDomElement caps = doc->createElement("info");
-	caps.appendChild(textTag(doc, "atime", _lastSeen.toString(Qt::ISODate)));
+	QDomElement caps = doc->createElement(QStringLiteral("info"));
+	caps.appendChild(textTag(doc, QStringLiteral("atime"), _lastSeen.toString(Qt::ISODate)));
 	caps.appendChild(_disco.toDiscoInfoResult(doc));
 	return caps;
 }
 
 CapsInfo CapsInfo::fromXml(const QDomElement &caps)
 {
-	QDateTime lastSeen = QDateTime::fromString(caps.firstChildElement("atime").nodeValue(), Qt::ISODate);
-	DiscoItem item = DiscoItem::fromDiscoInfoResult(caps.firstChildElement("query"));
+	QDateTime lastSeen = QDateTime::fromString(caps.firstChildElement(QStringLiteral("atime")).nodeValue(), Qt::ISODate);
+	DiscoItem item = DiscoItem::fromDiscoInfoResult(caps.firstChildElement(QStringLiteral("query")));
 	if (item.features().isEmpty()) { // it's hardly possible if client does not support anything.
 		return CapsInfo();
 	}
@@ -95,12 +95,12 @@ void CapsRegistry::save()
 {
 	// Generate XML
 	QDomDocument doc;
-	QDomElement capabilities = doc.createElement("capabilities");
+	QDomElement capabilities = doc.createElement(QStringLiteral("capabilities"));
 	doc.appendChild(capabilities);
 	QHash<QString,CapsInfo>::ConstIterator i = capsInfo_.constBegin();
 	for( ; i != capsInfo_.end(); i++) {
 		QDomElement info = i.value().toXml(&doc);
-		info.setAttribute("node",i.key());
+		info.setAttribute(QStringLiteral("node"),i.key());
 		capabilities.appendChild(info);
 	}
 
@@ -137,7 +137,7 @@ void CapsRegistry::load()
 	}
 
 	QDomElement caps = doc.documentElement();
-	if (caps.tagName() != "capabilities") {
+	if (caps.tagName() != QLatin1String("capabilities")) {
 		qWarning("caps.cpp: Invalid capabilities element");
 		return;
 	}
@@ -151,8 +151,8 @@ void CapsRegistry::load()
 			continue;
 		}
 
-		if(i.tagName() == "info") {
-			QString node = i.attribute("node");
+		if(i.tagName() == QLatin1String("info")) {
+			QString node = i.attribute(QStringLiteral("node"));
 			int sep = node.indexOf('#');
 			if (sep > 0 && sep + 1 < node.length()) {
 				CapsInfo info = CapsInfo::fromXml(i);
@@ -290,7 +290,7 @@ void CapsManager::updateCaps(const Jid& jid, const CapsSpec &c)
 		}
 		else {
 			// Remove all caps specifications
-			qWarning() << QString("caps.cpp: Illegal caps info from %1: node=%2, ver=%3").arg(QString(jid.full()).replace('%',"%%")).arg(fullNode).arg(c.version());
+			qWarning() << QStringLiteral("caps.cpp: Illegal caps info from %1: node=%2, ver=%3").arg(QString(jid.full()).replace('%',QLatin1String("%%"))).arg(fullNode).arg(c.version());
 			capsSpecs_.remove(jid.full());
 		}
 	}
@@ -399,9 +399,9 @@ QString CapsManager::clientName(const Jid& jid) const
 		QString cs_str = cs.flatten();
 		if (CapsRegistry::instance()->isRegistered(cs_str)) {
 			DiscoItem disco = CapsRegistry::instance()->disco(cs_str);
-			XData si = disco.registeredExtension(QLatin1String("urn:xmpp:dataforms:softwareinfo"));
+			XData si = disco.registeredExtension(QStringLiteral("urn:xmpp:dataforms:softwareinfo"));
 			if (si.isValid()) {
-				name = si.getField("software").value().value(0);
+				name = si.getField(QStringLiteral("software")).value().value(0);
 			}
 
 			if (name.isEmpty()) {
@@ -415,15 +415,15 @@ QString CapsManager::clientName(const Jid& jid) const
 		// Try to be intelligent about the name
 		if (name.isEmpty()) {
 			name = cs.node();
-			if (name.startsWith("http://"))
+			if (name.startsWith(QLatin1String("http://")))
 				name = name.right(name.length() - 7);
-			else if (name.startsWith("https://"))
+			else if (name.startsWith(QLatin1String("https://")))
 				name = name.right(name.length() - 8);
 
-			if (name.startsWith("www."))
+			if (name.startsWith(QLatin1String("www.")))
 				name = name.right(name.length() - 4);
 
-			int cut_pos = name.indexOf("/");
+			int cut_pos = name.indexOf(QLatin1String("/"));
 			if (cut_pos != -1)
 				name = name.left(cut_pos);
 		}
@@ -447,8 +447,8 @@ QString CapsManager::clientVersion(const Jid& jid) const
 	const CapsSpec &cs = capsSpecs_[jid.full()];
 	QString cs_str = cs.flatten();
 	if (CapsRegistry::instance()->isRegistered(cs_str)) {
-		XData form = CapsRegistry::instance()->disco(cs_str).registeredExtension("urn:xmpp:dataforms:softwareinfo");
-		version = form.getField("software_version").value().value(0);
+		XData form = CapsRegistry::instance()->disco(cs_str).registeredExtension(QStringLiteral("urn:xmpp:dataforms:softwareinfo"));
+		version = form.getField(QStringLiteral("software_version")).value().value(0);
 	}
 
 	return version;
@@ -463,10 +463,10 @@ QString CapsManager::osVersion(const Jid &jid) const
 	if (capsEnabled(jid)) {
 		QString cs_str = capsSpecs_[jid.full()].flatten();
 		if (CapsRegistry::instance()->isRegistered(cs_str)) {
-			XData form = CapsRegistry::instance()->disco(cs_str).registeredExtension("urn:xmpp:dataforms:softwareinfo");
-			os_str = form.getField("os").value().value(0).trimmed();
+			XData form = CapsRegistry::instance()->disco(cs_str).registeredExtension(QStringLiteral("urn:xmpp:dataforms:softwareinfo"));
+			os_str = form.getField(QStringLiteral("os")).value().value(0).trimmed();
 			if (!os_str.isEmpty()) {
-				QString os_ver = form.getField("os_version").value().value(0).trimmed();
+				QString os_ver = form.getField(QStringLiteral("os_version")).value().value(0).trimmed();
 				if (!os_ver.isEmpty())
 					os_str.append(" " + os_ver);
 			}

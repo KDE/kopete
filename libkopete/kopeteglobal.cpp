@@ -127,103 +127,103 @@ bool Properties::isRegistered(const QString &key)
 
 const PropertyTmpl &Properties::fullName() const
 {
-	return createProp(QLatin1String("FormattedName"),
+	return createProp(QStringLiteral("FormattedName"),
 		i18n("Full Name"));
 }
 
 const PropertyTmpl &Properties::idleTime() const
 {
-	return createProp(QLatin1String("idleTime"),
+	return createProp(QStringLiteral("idleTime"),
 		i18n("Idle Time"));
 }
 
 const PropertyTmpl &Properties::onlineSince() const
 {
-	return createProp(QLatin1String("onlineSince"),
+	return createProp(QStringLiteral("onlineSince"),
 		i18n("Online Since"));
 }
 
 const PropertyTmpl &Properties::lastSeen() const
 {
-	return createProp(QLatin1String("lastSeen"),
+	return createProp(QStringLiteral("lastSeen"),
 		i18n("Last Seen"), QString(), true);
 }
 
 const PropertyTmpl &Properties::statusTitle() const
 {
-	return createProp(QLatin1String("statusTitle"),
+	return createProp(QStringLiteral("statusTitle"),
 	                  i18n("Status Title"));
 }
 
 const PropertyTmpl &Properties::statusMessage() const
 {
-	return createProp(QLatin1String("statusMessage"),
+	return createProp(QStringLiteral("statusMessage"),
 		i18n("Status Message"));
 }
 
 const PropertyTmpl &Properties::firstName() const
 {
-	return createProp(QLatin1String("firstName"),
+	return createProp(QStringLiteral("firstName"),
 		i18n("First Name"), QString(), true);
 }
 
 const PropertyTmpl &Properties::lastName() const
 {
-	return createProp(QLatin1String("lastName"),
+	return createProp(QStringLiteral("lastName"),
 		i18n("Last Name"), QString(), true);
 }
 
 const PropertyTmpl &Properties::privatePhone() const
 {
-	return createProp(QLatin1String("privatePhoneNumber"),
+	return createProp(QStringLiteral("privatePhoneNumber"),
 		i18n("Private Phone"), QString(), true);
 }
 
 const PropertyTmpl &Properties::privateMobilePhone() const
 {
-	return createProp(QLatin1String("privateMobilePhoneNumber"),
+	return createProp(QStringLiteral("privateMobilePhoneNumber"),
 		i18n("Private Mobile Phone"), QString(), true);
 }
 
 const PropertyTmpl &Properties::workPhone() const
 {
-	return createProp(QLatin1String("workPhoneNumber"),
+	return createProp(QStringLiteral("workPhoneNumber"),
 		i18n("Work Phone"), QString(), true);
 }
 
 const PropertyTmpl &Properties::workMobilePhone() const
 {
-	return createProp(QLatin1String("workMobilePhoneNumber"),
+	return createProp(QStringLiteral("workMobilePhoneNumber"),
 		i18n("Work Mobile Phone"), QString(), true);
 }
 
 const PropertyTmpl &Properties::emailAddress() const
 {
-	return createProp(QLatin1String("emailAddress"),
-		i18n("Email Address"), QLatin1String("mail"), true);
+	return createProp(QStringLiteral("emailAddress"),
+		i18n("Email Address"), QStringLiteral("mail"), true);
 }
 
 const PropertyTmpl &Properties::nickName() const
 {
-	return createProp(QLatin1String("nickName"),
+	return createProp(QStringLiteral("nickName"),
 		i18n("Nick Name"), QString(), true);
 }
 
 const PropertyTmpl &Properties::customName() const
 {
-	return createProp(QLatin1String("customName"),
+	return createProp(QStringLiteral("customName"),
 		i18n("Custom Name"), QString(), true);
 }
 
 const PropertyTmpl &Properties::isAlwaysVisible() const
 {
-	return createProp(QLatin1String("isAlwaysVisible"),
+	return createProp(QStringLiteral("isAlwaysVisible"),
 		i18n("Shown even if offline"), QString(), true);
 }
 
 const PropertyTmpl &Properties::photo() const
 {
-	return createProp(QLatin1String("photo"),
+	return createProp(QStringLiteral("photo"),
 					  i18n("Photo"), QString(), true);
 }
 

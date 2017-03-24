@@ -237,12 +237,12 @@ void JabberBaseContact::updateResourceList ()
 		return;
 	}
 
-	QString resourceListStr = "<table cellspacing=\"0\">";
+	QString resourceListStr = QStringLiteral("<table cellspacing=\"0\">");
 
 	for ( JabberResourcePool::ResourceList::iterator it = resourceList.begin (); it != resourceList.end (); ++it )
 	{
 		// icon, resource name and priority
-		resourceListStr += QString ( "<tr><td><img src=\"kopete-onlinestatus-icon:%1\" /> <b>%2</b> (Priority: %3)</td></tr>" ).
+		resourceListStr += QStringLiteral ( "<tr><td><img src=\"kopete-onlinestatus-icon:%1\" /> <b>%2</b> (Priority: %3)</td></tr>" ).
 						   arg ( protocol()->resourceToKOS((*it)->resource()).mimeSourceFor ( account () ),
 								 (*it)->resource().name (), QString::number ( (*it)->resource().priority () ) );
 
@@ -268,12 +268,12 @@ void JabberBaseContact::updateResourceList ()
 			{
 				clientNameVersion += ' ' + clientVersion;
 			}
-			resourceListStr += QString ( "<tr><td>%1: %2" ).arg ( i18n ( "Client" ), clientNameVersion );
+			resourceListStr += QStringLiteral ( "<tr><td>%1: %2" ).arg ( i18n ( "Client" ), clientNameVersion );
 			if ( !clientSystem.isEmpty () )
 			{
-				resourceListStr += QString ( " (%1)" ).arg ( clientSystem );
+				resourceListStr += QStringLiteral ( " (%1)" ).arg ( clientSystem );
 			}
-			resourceListStr += QString ( "</td></tr>" );
+			resourceListStr += QStringLiteral ( "</td></tr>" );
 		}
 		
 		// Supported features
@@ -287,23 +287,23 @@ void JabberBaseContact::updateResourceList ()
 			if ( tempFeature.id() > XMPP::Features::FID_None )
 				name = tempFeature.name();
 			if ( name.isEmpty() ) {
-				if ( *featuresIt == "http://jabber.org/protocol/mood" )
+				if ( *featuresIt == QLatin1String("http://jabber.org/protocol/mood") )
 					name = i18n("User Mood");
-				else if ( *featuresIt == "http://jabber.org/protocol/muc" )
+				else if ( *featuresIt == QLatin1String("http://jabber.org/protocol/muc") )
 					name = i18n("Groupchat");
-				else if ( *featuresIt == "http://jabber.org/protocol/xhtml-im" )
+				else if ( *featuresIt == QLatin1String("http://jabber.org/protocol/xhtml-im") )
 					name = i18n("Rich text messages");
-				else if ( *featuresIt == "jabber:x:data" )
+				else if ( *featuresIt == QLatin1String("jabber:x:data") )
 					name = i18n("Data Forms");
-				else if ( *featuresIt == "jabber:x:encrypted" || *featuresIt == "jabber:x:signed" )
+				else if ( *featuresIt == QLatin1String("jabber:x:encrypted") || *featuresIt == QLatin1String("jabber:x:signed") )
 					name = i18n("OpenPGP");
-				else if ( *featuresIt == "jabber:x:event" )
+				else if ( *featuresIt == QLatin1String("jabber:x:event") )
 					name = i18n("Message Events");
-				else if ( *featuresIt == "urn:xmpp:receipts" )
+				else if ( *featuresIt == QLatin1String("urn:xmpp:receipts") )
 					name = i18n("Message Delivery Receipts");
-				else if ( featuresIt->startsWith("http://jabber.org/protocol/si") )
+				else if ( featuresIt->startsWith(QLatin1String("http://jabber.org/protocol/si")) )
 					name = i18n("File transfers");
-				else if ( featuresIt->startsWith("http://jabber.org/protocol/disco") )
+				else if ( featuresIt->startsWith(QLatin1String("http://jabber.org/protocol/disco")) )
 					name = i18n("Service Discovery");
 			}
 			if ( !name.isEmpty() )
@@ -311,17 +311,17 @@ void JabberBaseContact::updateResourceList ()
 		}
 		if( !features.empty() ) {
 			features.removeDuplicates();
-			resourceListStr += QString( "<tr><td>%1: %2</td></tr>" ).arg ( i18n ( "Supported Features" ), features.join( ", " ) );
+			resourceListStr += QStringLiteral( "<tr><td>%1: %2</td></tr>" ).arg ( i18n ( "Supported Features" ), features.join( QStringLiteral(", ") ) );
 		}
 		
 		// resource timestamp
-		resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
+		resourceListStr += QStringLiteral ( "<tr><td>%1: %2</td></tr>" ).
 						   arg ( i18n ( "Timestamp" ), QLocale().toString ( (*it)->resource().status().timeStamp(), QLocale::ShortFormat ) );
 
 		// message, if any
 		if ( !(*it)->resource().status().status().trimmed().isEmpty () )
 		{
-			resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
+			resourceListStr += QStringLiteral ( "<tr><td>%1: %2</td></tr>" ).
 							   arg ( 
 								i18n ( "Message" ), 
 								Kopete::Message::escape( (*it)->resource().status().status () ) 
@@ -329,7 +329,7 @@ void JabberBaseContact::updateResourceList ()
 		}
 	}
 	
-	resourceListStr += "</table>";
+	resourceListStr += QLatin1String("</table>");
 	
 	setProperty ( protocol()->propAvailableResources, resourceListStr );
 }
@@ -352,7 +352,7 @@ void JabberBaseContact::reevaluateStatus ()
 									  status.weight() ,
 									  protocol() ,
 									  status.internalStatus() | 0x0100,
-									  status.overlayIcons() + QStringList("status_unknown_overlay") , //FIXME: find better icon
+									  status.overlayIcons() + QStringList(QStringLiteral("status_unknown_overlay")) , //FIXME: find better icon
 									  status.description() );
 	}
 	
@@ -420,9 +420,9 @@ void JabberBaseContact::serialize (QMap < QString, QString > &serializedData, QM
 {
 
 	// Contact id and display name are already set for us, only add the rest
-	serializedData["JID"] = mRosterItem.jid().full();
+	serializedData[QStringLiteral("JID")] = mRosterItem.jid().full();
 
-	serializedData["groups"] = mRosterItem.groups ().join (QString::fromLatin1 (","));
+	serializedData[QStringLiteral("groups")] = mRosterItem.groups ().join (QStringLiteral (","));
 }
 
 void JabberBaseContact::slotUserInfo( )
@@ -529,8 +529,8 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	
 	if( !vCard.org().name.isEmpty() )
 		setProperty( protocol()->propCompanyName, vCard.org().name );
-	if( !vCard.org().unit.join(",").isEmpty() )
-		setProperty( protocol()->propCompanyDepartement, vCard.org().unit.join(",")) ;
+	if( !vCard.org().unit.join(QStringLiteral(",")).isEmpty() )
+		setProperty( protocol()->propCompanyDepartement, vCard.org().unit.join(QStringLiteral(","))) ;
 	if( !vCard.title().isEmpty() )
 		setProperty( protocol()->propCompanyPosition, vCard.title() );
 	if( !vCard.role().isEmpty() )

@@ -43,9 +43,9 @@ JT_GetLastActivity::~JT_GetLastActivity()
 void JT_GetLastActivity::get(const Jid &j)
 {
 	jid = j;
-	iq = createIQ(doc(), "get", jid.full(), id());
-	QDomElement query = doc()->createElement("query");
-	query.setAttribute("xmlns", "jabber:iq:last");
+	iq = createIQ(doc(), QStringLiteral("get"), jid.full(), id());
+	QDomElement query = doc()->createElement(QStringLiteral("query"));
+	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:last"));
 	iq.appendChild(query);
 }
 
@@ -69,12 +69,12 @@ bool JT_GetLastActivity::take(const QDomElement &x)
 	if(!iqVerify(x, jid, id()))
 		return false;
 
-	if(x.attribute("type") == "result") {
+	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
 		QDomElement q = queryTag(x);
 
 		d->message = q.text();
 		bool ok;
-		d->seconds = q.attribute("seconds").toInt(&ok);
+		d->seconds = q.attribute(QStringLiteral("seconds")).toInt(&ok);
 
 		setSuccess(ok);
 	}

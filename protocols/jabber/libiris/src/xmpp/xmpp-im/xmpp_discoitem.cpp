@@ -115,7 +115,7 @@ QString DiscoItem::capsHash(QCryptographicHash::Algorithm algo) const
 	qSort(idents);
 
 	foreach (const DiscoItem::Identity &id, idents) {
-		prep << QString("%1/%2/%3/%4").arg(id.category, id.type, id.lang, id.name);
+		prep << QStringLiteral("%1/%2/%3/%4").arg(id.category, id.type, id.lang, id.name);
 	}
 
 	QStringList fl = d->features.list();
@@ -166,7 +166,7 @@ DiscoItem DiscoItem::fromDiscoInfoResult(const QDomElement &q)
 {
 	DiscoItem item;
 
-	item.setNode( q.attribute("node") );
+	item.setNode( q.attribute(QStringLiteral("node")) );
 
 	QStringList features;
 	DiscoItem::Identities identities;
@@ -177,20 +177,20 @@ DiscoItem DiscoItem::fromDiscoInfoResult(const QDomElement &q)
 		if( e.isNull() )
 			continue;
 
-		if ( e.tagName() == "feature" ) {
-			features << e.attribute("var");
+		if ( e.tagName() == QLatin1String("feature") ) {
+			features << e.attribute(QStringLiteral("var"));
 		}
-		else if ( e.tagName() == "identity" ) {
+		else if ( e.tagName() == QLatin1String("identity") ) {
 			DiscoItem::Identity id;
 
-			id.category = e.attribute("category");
-			id.type     = e.attribute("type");
-			id.lang     = e.attribute("lang");
-			id.name     = e.attribute("name");
+			id.category = e.attribute(QStringLiteral("category"));
+			id.type     = e.attribute(QStringLiteral("type"));
+			id.lang     = e.attribute(QStringLiteral("lang"));
+			id.name     = e.attribute(QStringLiteral("name"));
 
 			identities.append( id );
 		}
-		else if (e.tagName() == QLatin1String("x") && e.attribute("xmlns") == QLatin1String("jabber:x:data")) {
+		else if (e.tagName() == QLatin1String("x") && e.attribute(QStringLiteral("xmlns")) == QLatin1String("jabber:x:data")) {
 			XData form;
 			form.fromXml(e);
 			extList.append(form);
@@ -206,24 +206,24 @@ DiscoItem DiscoItem::fromDiscoInfoResult(const QDomElement &q)
 
 QDomElement DiscoItem::toDiscoInfoResult(QDomDocument *doc) const
 {
-	QDomElement q = doc->createElementNS(QLatin1String("http://jabber.org/protocol/disco#info"), QLatin1String("query"));
-	q.setAttribute("node", d->node);
+	QDomElement q = doc->createElementNS(QStringLiteral("http://jabber.org/protocol/disco#info"), QStringLiteral("query"));
+	q.setAttribute(QStringLiteral("node"), d->node);
 
 	foreach (const Identity &id, d->identities) {
-		QDomElement idel = q.appendChild(doc->createElement(QLatin1String("identity"))).toElement();
-		idel.setAttribute("category", id.category);
-		idel.setAttribute("type", id.type);
+		QDomElement idel = q.appendChild(doc->createElement(QStringLiteral("identity"))).toElement();
+		idel.setAttribute(QStringLiteral("category"), id.category);
+		idel.setAttribute(QStringLiteral("type"), id.type);
 		if (!id.lang.isEmpty()) {
-			idel.setAttribute("lang", id.lang);
+			idel.setAttribute(QStringLiteral("lang"), id.lang);
 		}
 		if (!id.name.isEmpty()) {
-			idel.setAttribute("name", id.name);
+			idel.setAttribute(QStringLiteral("name"), id.name);
 		}
 	}
 
 	foreach (const QString &f, d->features.list()) {
-		QDomElement fel = q.appendChild(doc->createElement(QLatin1String("feature"))).toElement();
-		fel.setAttribute("var", f);
+		QDomElement fel = q.appendChild(doc->createElement(QStringLiteral("feature"))).toElement();
+		fel.setAttribute(QStringLiteral("var"), f);
 	}
 
 	foreach (const XData &f, d->exts) {
@@ -320,9 +320,9 @@ DiscoItem::Action DiscoItem::string2action(QString s)
 {
 	Action a;
 
-	if ( s == "update" )
+	if ( s == QLatin1String("update") )
 		a = Update;
-	else if ( s == "remove" )
+	else if ( s == QLatin1String("remove") )
 		a = Remove;
 	else
 		a = None;
@@ -335,9 +335,9 @@ QString DiscoItem::action2string(Action a)
 	QString s;
 
 	if ( a == Update )
-		s = "update";
+		s = QStringLiteral("update");
 	else if ( a == Remove )
-		s = "remove";
+		s = QStringLiteral("remove");
 	else
 		s = QString::null;
 

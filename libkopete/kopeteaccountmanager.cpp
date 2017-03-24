@@ -87,14 +87,14 @@ AccountManager * AccountManager::self()
 AccountManager::AccountManager()
 : QObject( qApp ), d(new Private())
 {
-	setObjectName( "KopeteAccountManager" );
+	setObjectName( QStringLiteral("KopeteAccountManager") );
 	connect( Solid::Networking::notifier(), SIGNAL(shouldConnect()), this, SLOT(networkConnected()) );
 	connect( Solid::Networking::notifier(), SIGNAL(shouldDisconnect()), this, SLOT(networkDisconnected()) );
 	connect( Solid::PowerManagement::notifier(), SIGNAL(resumingFromSuspend()), this, SLOT(resume()) );
 #ifdef __GNUC__
 #warning TODO: Switch to a org.kde.Solid.PowerManagement Sleeping/Suspending signal when available.
 #endif
-	QDBusConnection::systemBus().connect( "org.freedesktop.UPower", "/org/freedesktop/UPower", "", "Sleeping", this, SLOT( suspend() ) );
+	QDBusConnection::systemBus().connect( QStringLiteral("org.freedesktop.UPower"), QStringLiteral("/org/freedesktop/UPower"), QLatin1String(""), QStringLiteral("Sleeping"), this, SLOT( suspend() ) );
 	d->suspended = false;
 }
 
@@ -169,7 +169,7 @@ void AccountManager::suspend()
 	d->suspendedStatusMessage = Kopete::StatusManager::self()->globalStatusMessage();
 	d->suspendedStatusCategory = Kopete::StatusManager::self()->globalStatusCategory();
 
-	Kopete::StatusMessage statusMessage( i18n( "Offline" ), "" );
+	Kopete::StatusMessage statusMessage( i18n( "Offline" ), QLatin1String("") );
 	QList <Kopete::Status::StatusItem *> statusList = Kopete::StatusManager::self()->getRootGroup()->childList();
 	//find first Status for OffineStatus
 	for ( QList <Kopete::Status::StatusItem *>::ConstIterator it = statusList.constBegin(); it != statusList.constEnd(); ++it )
@@ -383,15 +383,15 @@ void AccountManager::load()
 	// Don't try to optimize duplicate calls out, the plugin queue is smart enough
 	// (and fast enough) to handle that without adding complexity here
 	KSharedConfig::Ptr config = KSharedConfig::openConfig();
-	QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
+	QStringList accountGroups = config->groupList().filter( QRegExp( QLatin1String( "^Account_" ) ) );
 	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
 	{
 		KConfigGroup cg( config, *it );
-		KConfigGroup pluginConfig( config, QLatin1String("Plugins") );
+		KConfigGroup pluginConfig( config, QStringLiteral("Plugins") );
 
 		QString protocol = cg.readEntry( "Protocol", QString() );
-		if ( protocol.endsWith( QString::fromLatin1( "Protocol" ) ) )
-			protocol = QString::fromLatin1( "kopete_" ) + protocol.toLower().remove( QString::fromLatin1( "protocol" ) );
+		if ( protocol.endsWith( QLatin1String( "Protocol" ) ) )
+			protocol = QLatin1String( "kopete_" ) + protocol.toLower().remove( QStringLiteral( "protocol" ) );
 
 		if ( cg.readEntry( "Enabled", true ) && pluginConfig.readEntry(protocol + QLatin1String("Enabled"), true) )
 			PluginManager::self()->loadPlugin( protocol, PluginManager::LoadAsync );
@@ -407,7 +407,7 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 	// Iterate over all groups that start with "Account_" as those are accounts
 	// and parse them if they are from this protocol
 	KSharedConfig::Ptr config = KSharedConfig::openConfig();
-	const QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
+	const QStringList accountGroups = config->groupList().filter( QRegExp( QLatin1String( "^Account_" ) ) );
 	for ( QStringList::ConstIterator it = accountGroups.constBegin(); it != accountGroups.constEnd(); ++it )
 	{
 		KConfigGroup cg( config, *it );
@@ -536,7 +536,7 @@ void AccountManager::removeAccountInternal()
 
 	// FIXME: pluginId() should return the internal name and not the class name, so
 	//        we can get rid of this hack - Olivier/Martijn
-	QString protocolName = protocol->pluginId().remove( QString::fromLatin1( "Protocol" ) ).toLower();
+	QString protocolName = protocol->pluginId().remove( QStringLiteral( "Protocol" ) ).toLower();
 
 	PluginManager::self()->setPluginEnabled( protocolName, false );
 	PluginManager::self()->unloadPlugin( protocolName );

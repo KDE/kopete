@@ -459,8 +459,8 @@ void BSocket::resetConnection(bool clear)
 	}
 
 	d->state = Idle;
-	d->domain = "";
-	d->host = "";
+	d->domain = QLatin1String("");
+	d->host = QLatin1String("");
 	d->address = QHostAddress();
 	d->port = 0;
 	setOpenMode(QIODevice::NotOpen);

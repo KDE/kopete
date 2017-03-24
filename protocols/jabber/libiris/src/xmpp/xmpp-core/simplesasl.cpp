@@ -144,16 +144,16 @@ public:
 
 		mechanism_ = QString();
 		foreach(QString mech, mechlist) {
-			if (mech == "SCRAM-SHA-1") {
-				mechanism_ = "SCRAM-SHA-1";
+			if (mech == QLatin1String("SCRAM-SHA-1")) {
+				mechanism_ = QStringLiteral("SCRAM-SHA-1");
 				break;
 			}
-			if (mech == "DIGEST-MD5") {
-				mechanism_ = "DIGEST-MD5";
+			if (mech == QLatin1String("DIGEST-MD5")) {
+				mechanism_ = QStringLiteral("DIGEST-MD5");
 				break;
 			}
-			if (mech == "PLAIN" && allow_plain)
-				mechanism_ = "PLAIN";
+			if (mech == QLatin1String("PLAIN") && allow_plain)
+				mechanism_ = QStringLiteral("PLAIN");
 		}
 
 		if(!capable || mechanism_.isEmpty()) {
@@ -185,7 +185,7 @@ public:
 			out_mech = mechanism_;
 
 			// PLAIN
-			if (out_mech == "PLAIN" || out_mech == "SCRAM-SHA-1") {
+			if (out_mech == QLatin1String("PLAIN") || out_mech == QLatin1String("SCRAM-SHA-1")) {
 				// First, check if we have everything
 				if(need.user || need.pass) {
 					qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
@@ -201,9 +201,9 @@ public:
 					goto ready;
 				}
 			}
-			if (out_mech == "PLAIN") {
+			if (out_mech == QLatin1String("PLAIN")) {
 				out_buf = PLAINMessage(authz, user, pass.toByteArray()).getValue();
-			} else if (out_mech == "SCRAM-SHA-1") {
+			} else if (out_mech == QLatin1String("SCRAM-SHA-1")) {
 				// send client-first-message
 				SCRAMSHA1Message msg(authz, user, QByteArray(0, ' '), RandRandomNumberGenerator());
 				if (msg.isValid()) {
@@ -216,13 +216,13 @@ public:
 				}
 			}
 			++step;
-			if (out_mech == "PLAIN")
+			if (out_mech == QLatin1String("PLAIN"))
 				result_ = Success;
 			else
 				result_ = Continue;
 		} else if(step == 1) {
 			Q_ASSERT(out_mech != "PLAIN");
-			if (out_mech == "DIGEST-MD5") {
+			if (out_mech == QLatin1String("DIGEST-MD5")) {
 				// if we still need params, then the app has failed us!
 				if(need.user || need.authzid || need.pass || need.realm) {
 					qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
@@ -251,7 +251,7 @@ public:
 				out_buf = response.getValue();
 				++step;
 				result_ = Continue;
-			} else if (out_mech == "SCRAM-SHA-1") {
+			} else if (out_mech == QLatin1String("SCRAM-SHA-1")) {
 				// if we still need params, then the app has failed us!
 				if(need.user || need.pass) {
 					qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
@@ -288,7 +288,7 @@ public:
 				++step;
 				result_ = Continue;
 			}
-		} else if (step == 2 && out_mech == "SCRAM-SHA-1") {
+		} else if (step == 2 && out_mech == QLatin1String("SCRAM-SHA-1")) {
 			// verify the server's response on success, for SCRAM-SHA-1
 			SCRAMSHA1Signature sig(in_buf, server_signature);
 			if (sig.isValid()) {
@@ -342,7 +342,7 @@ ready:
 	}
 
 	bool haveClientInit() const Q_DECL_OVERRIDE {
-		return out_mech == "PLAIN";
+		return out_mech == QLatin1String("PLAIN");
 	}
 
 	QByteArray stepData() const Q_DECL_OVERRIDE {
@@ -438,16 +438,16 @@ public:
 	}
 
 	QString name() const Q_DECL_OVERRIDE {
-		return "simplesasl";
+		return QStringLiteral("simplesasl");
 	}
 
 	QStringList features() const Q_DECL_OVERRIDE {
-		return QStringList("sasl");
+		return QStringList(QStringLiteral("sasl"));
 	}
 
 	QCA::Provider::Context* createContext(const QString& cap) Q_DECL_OVERRIDE
 	{
-		if(cap == "sasl")
+		if(cap == QLatin1String("sasl"))
 			return new SimpleSASLContext(this);
 		return 0;
 	}

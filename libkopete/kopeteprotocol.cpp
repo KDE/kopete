@@ -57,7 +57,7 @@ Protocol::Protocol( QObject *parent, bool canAddMyself )
 	d->mStickLastSeen = Global::Properties::self()->lastSeen();
 	d->mStickFullName = Global::Properties::self()->fullName();
 	d->unloading = false;
-	d->accountNotConnectedStatus = Kopete::OnlineStatus( Kopete::OnlineStatus::Unknown, 0, this, Kopete::OnlineStatus::AccountOffline, QStringList(QString::fromLatin1( "account_offline_overlay" )), i18n( "Account Offline" ) );
+	d->accountNotConnectedStatus = Kopete::OnlineStatus( Kopete::OnlineStatus::Unknown, 0, this, Kopete::OnlineStatus::AccountOffline, QStringList(QLatin1String( "account_offline_overlay" )), i18n( "Account Offline" ) );
 }
 
 Protocol::~Protocol()
@@ -189,10 +189,10 @@ void Protocol::serialize( MetaContact *metaContact )
 
 		// Preset the contactId and preferredNameType, if the plugin doesn't want to save
 		// them, or use its own format, it can call clear() on the provided list
-		sd[ QString::fromLatin1( "contactId" ) ] =   c->contactId();
-		sd[ QString::fromLatin1( "preferredNameType" ) ] = nameType;
+		sd[ QStringLiteral( "contactId" ) ] =   c->contactId();
+		sd[ QStringLiteral( "preferredNameType" ) ] = nameType;
 		if(c->account())
-			sd[ QString::fromLatin1( "accountId" ) ] = c->account()->accountId();
+			sd[ QStringLiteral( "accountId" ) ] = c->account()->accountId();
 
 		// If there's an index field preset it too
 		QString index = c->protocol()->addressBookIndexField();
@@ -235,8 +235,8 @@ void Protocol::deserializeContactList( MetaContact *metaContact, const QList< QM
 {
 	foreach ( const ContactListElement::ContactData &sd, dataList )
 	{
-		const QString& accountId = sd[ QString::fromLatin1( "accountId" ) ];
-		if( !d->canAddMyself && accountId == sd[ QString::fromLatin1( "contactId" ) ] )
+		const QString& accountId = sd[ QStringLiteral( "accountId" ) ];
+		if( !d->canAddMyself && accountId == sd[ QStringLiteral( "contactId" ) ] )
 		{
 			qCDebug(LIBKOPETE_LOG) << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it";
 			continue;

@@ -79,7 +79,7 @@ ContactList *ContactList::self()
 ContactList::ContactList()
 	: QObject( kapp ), d(new Private())
 {
-	setObjectName( "KopeteContactList" );
+	setObjectName( QStringLiteral("KopeteContactList") );
 
 	//the myself metacontact can't be created now, because it will use
 	//ContactList::self() as parent which will call this constructor -> infinite loop
@@ -91,7 +91,7 @@ ContactList::ContactList()
 
 	// automatically save on changes to the list
 	d->saveTimer = new QTimer( this );
-	d->saveTimer->setObjectName( "saveTimer" );
+	d->saveTimer->setObjectName( QStringLiteral("saveTimer") );
 	d->saveTimer->setSingleShot( true );
 	connect( d->saveTimer, SIGNAL(timeout()), SLOT (save()) );
 

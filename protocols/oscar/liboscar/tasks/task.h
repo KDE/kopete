@@ -76,8 +76,8 @@ protected:
 	virtual void onDisconnect();
 	void setId( quint32 id );
 	void send( Transfer * request );
-	void setSuccess( int code=0, const QString &str="" );
-	void setError( int code=0, const QString &str="" );
+	void setSuccess( int code=0, const QString &str=QLatin1String("") );
+	void setError( int code=0, const QString &str=QLatin1String("") );
 
 	/**
 	 * Used in take() to check if the offered transfer is for this Task

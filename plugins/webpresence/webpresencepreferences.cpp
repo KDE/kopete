@@ -38,7 +38,7 @@ WebPresencePreferences::WebPresencePreferences(QWidget *parent, const QVariantLi
 	addConfig( WebPresenceConfig::self(), w );
 
 	m_preferencesDialog->kcfg_uploadURL->setMode( KFile::File | KFile::ExistingOnly | KFile::LocalOnly );
-	m_preferencesDialog->kcfg_formatStylesheetURL->setFilter( "*.xsl" );
+	m_preferencesDialog->kcfg_formatStylesheetURL->setFilter( QStringLiteral("*.xsl") );
 }
 
 WebPresencePreferences::~WebPresencePreferences()

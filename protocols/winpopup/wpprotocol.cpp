@@ -53,7 +53,7 @@ K_EXPORT_PLUGIN( WPProtocolFactory( "kopete_wp" ) )
 WPProtocol::WPProtocol( QObject *parent, const QVariantList & /* args */ )
 : Kopete::Protocol( parent ),
 	WPOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QStringList(), i18n("Online"),  i18n("Online")),
-	WPAway(    Kopete::OnlineStatus::Away,    20, this, 1,  QStringList(QString::fromLatin1("wp_away")),     i18n("Away"),    i18n("Away")),
+	WPAway(    Kopete::OnlineStatus::Away,    20, this, 1,  QStringList(QLatin1String("wp_away")),     i18n("Away"),    i18n("Away")),
 	WPOffline( Kopete::OnlineStatus::Offline, 0,  this, 2,  QStringList(), i18n("Offline"), i18n("Offline"))
 {
 //	kDebug(14170) << "WPProtocol::WPProtocol()";
@@ -64,7 +64,7 @@ WPProtocol::WPProtocol( QObject *parent, const QVariantList & /* args */ )
 //	initActions();
 	// TODO: Maybe use this in the future?
 
-	addAddressBookField( "messaging/winpopup", Kopete::Plugin::MakeIndexField );
+	addAddressBookField( QStringLiteral("messaging/winpopup"), Kopete::Plugin::MakeIndexField );
 
 	readConfig();
 
@@ -92,9 +92,9 @@ Kopete::Contact *WPProtocol::deserializeContact( Kopete::MetaContact *metaContac
 	const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
-	QString contactId = serializedData[ "contactId" ];
-	QString accountId = serializedData[ "accountId" ];
-	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ "preferredNameType" ]);
+	QString contactId = serializedData[ QStringLiteral("contactId") ];
+	QString accountId = serializedData[ QStringLiteral("accountId") ];
+	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ QStringLiteral("preferredNameType") ]);
 
 	WPAccount *theAccount = static_cast<WPAccount *>(Kopete::AccountManager::self()->findAccount(protocol()->pluginId(), accountId));
 	if(!theAccount)	{
@@ -147,9 +147,9 @@ void WPProtocol::installSamba()
 //	kDebug(14170) <<  "WPProtocol::installSamba()" endl;
 
 	QStringList args;
-	args += KStandardDirs::findExe("winpopup-install");
-	args += KStandardDirs::findExe("winpopup-send");
-	if (KToolInvocation::kdeinitExecWait("kdesu", args) == 0)
+	args += KStandardDirs::findExe(QStringLiteral("winpopup-install"));
+	args += KStandardDirs::findExe(QStringLiteral("winpopup-send"));
+	if (KToolInvocation::kdeinitExecWait(QStringLiteral("kdesu"), args) == 0)
 		KMessageBox::information(Kopete::UI::Global::mainWidget(), i18n("The Samba configuration file has been modified."), i18n("Configuration Successful"));
 	else
 		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Updating the Samba configuration file failed."), i18n("Configuration Failed"));

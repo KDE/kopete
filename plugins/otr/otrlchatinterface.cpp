@@ -73,12 +73,12 @@ OtrlPolicy OtrlChatInterface::policy(void *opdata, ConnContext *context){
 	bool noerr;
 
 	// Disable OTR for IRC
-	if( session->protocol()->pluginId() == "IRCProtocol" ){
+	if( session->protocol()->pluginId() == QLatin1String("IRCProtocol") ){
 //		kdDebug() << "Disabling OTR for: " << session->protocol()->pluginId() << endl;
 		return OTRL_POLICY_NEVER;
 	}
 	QString policy;
-	policy = session->members().first()->metaContact()->pluginData( chatPlugin, QString("otr_policy") );
+	policy = session->members().first()->metaContact()->pluginData( chatPlugin, QStringLiteral("otr_policy") );
 //	kdDebug() << "Metacontact policy is: " << policy.toInt( &noerr, 10) << endl;
 	switch( policy.toInt( &noerr, 10 ) ){
 		case 1:
@@ -182,7 +182,7 @@ void OtrlChatInterface::write_fingerprints(void *opdata){
 	Q_UNUSED(opdata)
 
 //	kdDebug() << "Writing fingerprints" << endl;
-	QString savePath = QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints";
+	QString savePath = QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true )) + "fingerprints";
 	otrl_privkey_write_fingerprints( userstate, savePath.toLocal8Bit() );
 }
 
@@ -250,13 +250,13 @@ int OtrlChatInterface::max_message_size(void *opdata, ConnContext *context){
 
 	kDebug(14318) << session->protocol()->pluginId();
 
-	if( session->protocol()->pluginId() == "WlmProtocol" ){
+	if( session->protocol()->pluginId() == QLatin1String("WlmProtocol") ){
 		return 1409;
-	} else if( session->protocol()->pluginId() == "ICQProtocol" ){
+	} else if( session->protocol()->pluginId() == QLatin1String("ICQProtocol") ){
 		return 1274;
-	} else if( session->protocol()->pluginId() == "AIMProtocol" ){
+	} else if( session->protocol()->pluginId() == QLatin1String("AIMProtocol") ){
 		return 1274;
-	} else if( session->protocol()->pluginId() == "YahooProtocol" ){
+	} else if( session->protocol()->pluginId() == QLatin1String("YahooProtocol") ){
 		return 700;
 	}
 
@@ -481,7 +481,7 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
 
 void OtrlChatInterface::create_instag(void *opdata, const char *accountname, const char *protocol) {
 	Q_UNUSED(opdata)
-	QString storeFile = QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "instags";
+	QString storeFile = QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true )) + "instags";
 	otrl_instag_generate(OtrlChatInterface::self()->getUserstate(), storeFile.toLocal8Bit(), accountname, protocol);
 }
 
@@ -533,17 +533,17 @@ OtrlChatInterface::OtrlChatInterface():
 	OTRL_INIT;
 
 	userstate = otrl_userstate_create();
-	QString readPath = QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkeys";
+	QString readPath = QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true )) + "privkeys";
 	otrl_privkey_read( userstate, readPath.toLocal8Bit() );
 
 	unsigned int interval = otrl_message_poll_get_default_interval(userstate);
 	m_forwardSecrecyTimer.start(interval * 1000);
 	QObject::connect(&m_forwardSecrecyTimer, SIGNAL(timeout()), this, SLOT(otrlMessagePoll()));
 
-	readPath = QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints";
+	readPath = QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true )) + "fingerprints";
 	otrl_privkey_read_fingerprints(userstate, readPath.toLocal8Bit(), NULL, NULL);
 
-	readPath = QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true)) + "instags";
+	readPath = QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true)) + "instags";
 	otrl_instag_read(userstate, readPath.toLocal8Bit());
 }
 
@@ -624,7 +624,7 @@ int OtrlChatInterface::decryptMessage( Kopete::Message &message){
 		if( newMessage != NULL ){
 			body = QString::fromUtf8(newMessage);
 			otrl_message_free( newMessage );
-			body.replace( QString('\n'), QString("<br>") );
+			body.replace( QString('\n'), QStringLiteral("<br>") );
 			message.setHtmlBody( body );
 
 			return 0; // message is decrypted and ready to deliver
@@ -642,7 +642,7 @@ int OtrlChatInterface::encryptMessage( Kopete::Message &message ){
 	bool plaintext = message.format() == Qt::PlainText;
 
 	if(plaintext){
-		msgBody = Qt::escape(message.plainBody()).replace('\n', "<br/>");
+		msgBody = Qt::escape(message.plainBody()).replace('\n', QLatin1String("<br/>"));
 	} else {
 		msgBody = message.escapedBody();
 	}
@@ -861,7 +861,7 @@ void OtrlChatInterface::setTrust( Kopete::ChatSession *session, bool trust ){
 			otrl_context_set_trust( fingerprint, NULL );
 		}
 		kDebug(14318) << "Writing fingerprints";
-		otrl_privkey_write_fingerprints( userstate, QString( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints" ).toLocal8Bit() );
+		otrl_privkey_write_fingerprints( userstate, QString( QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true )) + "fingerprints" ).toLocal8Bit() );
 		emitGoneSecure( session, privState( session ) );
 	} else {
 		kDebug(14318) << "could not find fingerprint";
@@ -959,8 +959,8 @@ KeyGenThread::KeyGenThread( const QString &accountname, const QString &protocol 
 
 void KeyGenThread::run()
 {
-	QString storeFile = QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkeys";
+	QString storeFile = QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true )) + "privkeys";
 	otrl_privkey_generate(OtrlChatInterface::self()->getUserstate(), storeFile.toLocal8Bit(), accountname.toLocal8Bit(), protocol.toLocal8Bit());
-	OtrlChatInterface::self()->checkFilePermissions( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkeys" );
+	OtrlChatInterface::self()->checkFilePermissions( QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true )) + "privkeys" );
 }
 

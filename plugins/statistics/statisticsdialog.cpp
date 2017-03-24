@@ -113,15 +113,15 @@ StatisticsDialog::~StatisticsDialog()
 // We only generate pages when the user clicks on a link
 void StatisticsDialog::slotOpenURLRequest ( const KUrl& url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & )
 {
-	if ( url.protocol() == "main" )
+	if ( url.protocol() == QLatin1String("main") )
 	{
 		generatePageGeneral();
 	}
-	else if ( url.protocol() == "dayofweek" )
+	else if ( url.protocol() == QLatin1String("dayofweek") )
 	{
 		generatePageForDay ( url.path().toInt() );
 	}
-	else if ( url.protocol() == "monthofyear" )
+	else if ( url.protocol() == QLatin1String("monthofyear") )
 	{
 		generatePageForMonth ( url.path().toInt() );
 	}
@@ -387,7 +387,7 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 			else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Offline )
 				status = i18n ( "Offline" );
 
-			todayString.append ( QString ( "<tr><td>%2</td><td>%3</td><td>%4</td></tr>" ).arg ( status, dateTime1.time().toString(), dateTime2.time().toString() ) );
+			todayString.append ( QStringLiteral ( "<tr><td>%2</td><td>%3</td><td>%4</td></tr>" ).arg ( status, dateTime1.time().toString(), dateTime2.time().toString() ) );
 		}
 
 		// We add a listview item to the log list
@@ -426,24 +426,24 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 	                                "Total online time :</b> %2<br>", m_contact->metaContact()->displayName(), stringFromSeconds ( totalOnlineTime ) ) );
 	generalHTMLPart->write ( i18n ( "<b title=\"The total time %1 was away\">Total busy time :</b> %2<br>", m_contact->metaContact()->displayName(), stringFromSeconds ( totalAwayTime ) ) );
 	generalHTMLPart->write ( i18n ( "<b title=\"The total time %1 was offline\">Total offline time :</b> %2", m_contact->metaContact()->displayName(), stringFromSeconds ( totalOfflineTime ) ) );
-	generalHTMLPart->write ( QString ( "</div>" ) );
+	generalHTMLPart->write ( QStringLiteral ( "</div>" ) );
 
 	if ( subTitle == i18n ( "General information" ) )
 		/*
 		 * General stats that should not be shown on "day" or "month" pages
 		 */
 	{
-		generalHTMLPart->write ( QString ( "<div class=\"statgroup\">" ) );
+		generalHTMLPart->write ( QStringLiteral ( "<div class=\"statgroup\">" ) );
 		generalHTMLPart->write ( i18np ( "<b>Average message length:</b> %1 character<br>",
 						"<b>Average message length:</b> %1 characters<br>", m_contact->messageLength() ) );
 		generalHTMLPart->write ( i18np ( "<b>Time between two messages:</b> %1 second",
 						 "<b>Time between two messages:</b> %1 seconds", m_contact->timeBetweenTwoMessages() ) );
-		generalHTMLPart->write ( QString ( "</div>" ) );
+		generalHTMLPart->write ( QStringLiteral ( "</div>" ) );
 
-		generalHTMLPart->write ( QString ( "<div class=\"statgroup\">" ) );
+		generalHTMLPart->write ( QStringLiteral ( "<div class=\"statgroup\">" ) );
 		generalHTMLPart->write ( i18n ( "<b title=\"The last time you talked with %1\">Last talk :</b> %2<br>", m_contact->metaContact()->displayName(), QLocale().toString ( m_contact->lastTalk() ) ) );
 		generalHTMLPart->write ( i18n ( "<b title=\"The last time %1 was online or away\">Last time present :</b> %2", m_contact->metaContact()->displayName(), QLocale().toString ( m_contact->lastPresent() ) ) );
-		generalHTMLPart->write ( QString ( "</div>" ) );
+		generalHTMLPart->write ( QStringLiteral ( "</div>" ) );
 
 		//generalHTMLPart->write(QString("<div class=\"statgroup\">"));
 		//generalHTMLPart->write(i18n("<b title=\"%1 uses to set his status online at these hours (EXPERIMENTAL)\">Main online events :</b><br>").arg(m_contact->metaContact()->displayName()));
@@ -456,21 +456,21 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 		generalHTMLPart->write ( i18n ( "Is <b>%1</b> since <b>%2</b>",
 		                                Kopete::OnlineStatus ( m_contact->oldStatus() ).description(),
 		                                QLocale().toString ( m_contact->oldStatusDateTime() ) ) );
-		generalHTMLPart->write ( QString ( "</div>" ) );
+		generalHTMLPart->write ( QStringLiteral ( "</div>" ) );
 	}
 
 	/*
 	 * Chart which shows the hours where plugin has seen this contact online
 	 */
-	generalHTMLPart->write ( QString ( "<div class=\"statgroup\">" ) );
-	generalHTMLPart->write ( QString ( "<table width=\"100%\"><tr><td colspan=\"3\">" )
+	generalHTMLPart->write ( QStringLiteral ( "<div class=\"statgroup\">" ) );
+	generalHTMLPart->write ( QStringLiteral ( "<table width=\"100%\"><tr><td colspan=\"3\">" )
 	                         + i18nc ( "TRANSLATOR: please reverse 'left' and 'right' as appropriate for your language",
 	                                   "When was this contact visible?<br />All charts are in 24 blocks, "
 	                                   "one per hour, encompassing one day. %1 is on the left, "
 	                                   "and %2 is on the right.", QLocale().toString ( QTime ( 0, 0 ) ),
 	                                   QLocale().toString ( QTime ( 23, 59 ) ) )
-	                         + QString ( "</td></tr>" ) );
-	generalHTMLPart->write ( QString ( "<tr><td height=\"200\" valign=\"bottom\" colspan=\"3\" class=\"chart\">" ) );
+	                         + QStringLiteral ( "</td></tr>" ) );
+	generalHTMLPart->write ( QStringLiteral ( "<tr><td height=\"200\" valign=\"bottom\" colspan=\"3\" class=\"chart\">" ) );
 
 	QString chartString;
 	QByteArray colorPath;
@@ -486,40 +486,40 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 	{
 
 		int hrWidth = qRound ( ( double ) ( hoursOnline[i] + hoursAway[i] ) / ( double ) hours[iMaxHours]*100. );
-		chartString += QString ( "<img class=\"margin:0px;\"  height=\"" )
+		chartString += QStringLiteral ( "<img class=\"margin:0px;\"  height=\"" )
 		               + ( totalTime ? QString::number ( hrWidth ) : QString::number ( 0 ) )
-		               + QString ( "\" src=\"data:image/png;base64," )
+		               + QStringLiteral ( "\" src=\"data:image/png;base64," )
 		               +colorPath
 		               +"\" width=\"4%\" title=\""
 		               +i18n ( "Between %1 and %2, %3 was visible for %4% of the hour.",
 		                       QLocale().toString ( QTime ( i, 0 ) ),
 		                       QLocale().toString ( QTime ( ( i+1 ) % 24, 0 ) ),
 		                       m_contact->metaContact()->displayName(), hrWidth )
-		               + QString ( "\">" );
+		               + QStringLiteral ( "\">" );
 	}
 	generalHTMLPart->write ( chartString );
-	generalHTMLPart->write ( QString ( "</td></tr>" ) );
+	generalHTMLPart->write ( QStringLiteral ( "</td></tr>" ) );
 
 
 
-	generalHTMLPart->write ( QString ( "<tr><td>" )
+	generalHTMLPart->write ( QStringLiteral ( "<tr><td>" )
 	                         +i18n ( "Online time" )
-	                         +QString ( "</td><td>" )
+	                         +QStringLiteral ( "</td><td>" )
 	                         +i18n ( "Away time" )
-	                         +QString ( "</td><td>" )
+	                         +QStringLiteral ( "</td><td>" )
 	                         +i18n ( "Offline time" )
-	                         +QString ( "</td></tr><td valign=\"bottom\" width=\"33%\" class=\"chart\">" ) );
+	                         +QStringLiteral ( "</td></tr><td valign=\"bottom\" width=\"33%\" class=\"chart\">" ) );
 
 
 	generalHTMLPart->write ( generateHTMLChart ( hoursOnline, hoursAway, hoursOffline, i18n ( "online" ),
 	                         m_onlineColor ) );
-	generalHTMLPart->write ( QString ( "</td><td valign=\"bottom\" width=\"33%\" class=\"chart\">" ) );
+	generalHTMLPart->write ( QStringLiteral ( "</td><td valign=\"bottom\" width=\"33%\" class=\"chart\">" ) );
 	generalHTMLPart->write ( generateHTMLChart ( hoursAway, hoursOnline, hoursOffline, i18n ( "away" ),
 	                         m_awayColor ) );
-	generalHTMLPart->write ( QString ( "</td><td valign=\"bottom\" width=\"33%\" class=\"chart\">" ) );
+	generalHTMLPart->write ( QStringLiteral ( "</td><td valign=\"bottom\" width=\"33%\" class=\"chart\">" ) );
 	generalHTMLPart->write ( generateHTMLChart ( hoursOffline, hoursAway, hoursOnline, i18n ( "offline" ),
 	                         m_offlineColor ) );
-	generalHTMLPart->write ( QString ( "</td></tr></table></div>" ) );
+	generalHTMLPart->write ( QStringLiteral ( "</td></tr></table></div>" ) );
 
 	if ( subTitle == i18n ( "General information" ) )
 		/* On main page, show the different status of the contact today
@@ -527,7 +527,7 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 	{
 		generalHTMLPart->write ( QString ( todayString ) );
 	}
-	generalHTMLPart->write ( QString ( "</body></html>" ) );
+	generalHTMLPart->write ( QStringLiteral ( "</body></html>" ) );
 
 	generalHTMLPart->end();
 
@@ -561,9 +561,9 @@ QString StatisticsDialog::generateHTMLChart ( const int *hours, const int *hours
 		int totalTime = hours[i] + hours2[i] + hours3[i];
 
 		int hrWidth = qRound ( ( double ) hours[i]/ ( double ) totalTime*100. );
-		chartString += QString ( "<img class=\"margin:0px;\"  height=\"" )
+		chartString += QStringLiteral ( "<img class=\"margin:0px;\"  height=\"" )
 		               + ( totalTime ? QString::number ( hrWidth ) : QString::number ( 0 ) )
-		               + QString ( "\" src=\"data:image/png;base64," )
+		               + QStringLiteral ( "\" src=\"data:image/png;base64," )
 		               + colorPath
 		               + "\" width=\"4%\" title=\""
 		               + i18n ( "Between %1 and %2, %3 was %4% %5.",
@@ -680,7 +680,7 @@ void StatisticsDialog::generateOneDayStats ()
 		else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Offline )
 			status = i18n ( "Offline" );
 
-		todayString.append ( QString ( "<tr><td>%2</td><td>%3</td><td>%4</td></tr>" ).arg ( status, dateTime1.time().toString(), dateTime2.time().toString() ) );
+		todayString.append ( QStringLiteral ( "<tr><td>%2</td><td>%3</td><td>%4</td></tr>" ).arg ( status, dateTime1.time().toString(), dateTime2.time().toString() ) );
 	}
 	todayString.append ( "</table></div>" );
 	
@@ -692,7 +692,7 @@ void StatisticsDialog::generateOneDayStats ()
 			"}"
 			"</style></head><body>" ) );
 	calendarHTMLPart->write ( todayString );
-	calendarHTMLPart->write ( QString ( "</body></html>" ) );
+	calendarHTMLPart->write ( QStringLiteral ( "</body></html>" ) );
 	calendarHTMLPart->end();
 
 }

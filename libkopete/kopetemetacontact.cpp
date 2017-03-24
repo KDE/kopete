@@ -465,32 +465,32 @@ QString MetaContact::statusIcon() const
 			if( useCustomIcon() )
 				return icon( ContactListElement::Online );
 			else
-				return QString::fromUtf8( "user-online" );
+				return QStringLiteral( "user-online" );
 		case OnlineStatus::Away:
 			if( useCustomIcon() )
 				return icon( ContactListElement::Away );
 			else
-				return QString::fromUtf8( "user-away" );
+				return QStringLiteral( "user-away" );
 		case OnlineStatus::Busy:
 			if( useCustomIcon() )
 				return icon( ContactListElement::Away ); //Might want to create custom for busy too
 			else
-				return QString::fromUtf8( "user-busy" );
+				return QStringLiteral( "user-busy" );
 
 		case OnlineStatus::Unknown:
 			if( useCustomIcon() )
 				return icon( ContactListElement::Unknown );
 			if ( d->contacts.isEmpty() )
-				return QString::fromUtf8( "metacontact_unknown" );
+				return QStringLiteral( "metacontact_unknown" );
 			else
-				return QString::fromUtf8( "user-offline" );
+				return QStringLiteral( "user-offline" );
 
 		case OnlineStatus::Offline:
 		default:
 			if( useCustomIcon() )
 				return icon( ContactListElement::Offline );
 			else
-				return QString::fromUtf8( "user-offline" );
+				return QStringLiteral( "user-offline" );
 	}
 }
 
@@ -1186,7 +1186,7 @@ QString MetaContact::kabcId() const
 		Contact *c=d->contacts.first();
 		if(!c)
 			return QString();
-		return c->protocol()->pluginId()+QString::fromUtf8(":")+c->account()->accountId()+QString::fromUtf8(":") + c->contactId() ;
+		return c->protocol()->pluginId()+QLatin1String(":")+c->account()->accountId()+QLatin1String(":") + c->contactId() ;
 	}
 	return d->kabcId;
 }
@@ -1358,15 +1358,15 @@ void MetaContact::onlineStatusNotification( Kopete::Contact * c )
 		case noChange:
 			break;
 		case signedIn:
-			notify = new KNotification( QString("kopete_contact_online"), Kopete::UI::Global::mainWidget() );
+			notify = new KNotification( QStringLiteral("kopete_contact_online"), Kopete::UI::Global::mainWidget() );
 			notify->setActions( QStringList( i18nc("@action", "Chat") ) );
 			break;
 		case changedStatus:
-			notify = new KNotification( QString("kopete_contact_status_change"), Kopete::UI::Global::mainWidget() );
+			notify = new KNotification( QStringLiteral("kopete_contact_status_change"), Kopete::UI::Global::mainWidget() );
 			notify->setActions( QStringList( i18nc("@action", "Chat") ) );
 			break;
 		case signedOut:
-			notify = new KNotification( QString("kopete_contact_offline"), Kopete::UI::Global::mainWidget() );
+			notify = new KNotification( QStringLiteral("kopete_contact_offline"), Kopete::UI::Global::mainWidget() );
 			break;
 		}
 
@@ -1380,10 +1380,10 @@ void MetaContact::onlineStatusNotification( Kopete::Contact * c )
 			notify->setPixmap( QPixmap::fromImage( picture().image() ) );
 			connect( notify, SIGNAL(activated(uint)) , this, SLOT(execute()) );
 
-			notify->addContext( qMakePair( QString::fromLatin1("contact"), metaContactId().toString() ) );
+			notify->addContext( qMakePair( QStringLiteral("contact"), metaContactId().toString() ) );
 			foreach( Kopete::Group *g , groups() )
 			{
-				notify->addContext( qMakePair( QString::fromLatin1("group") , QString::number( g->groupId() ) ) );
+				notify->addContext( qMakePair( QStringLiteral("group") , QString::number( g->groupId() ) ) );
 			}
 			notify->sendEvent();
 		}

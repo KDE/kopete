@@ -85,15 +85,15 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 
 
 	// Checking file Permissions
-	OtrlChatInterface::self()->checkFilePermissions( QString( KGlobal::dirs()->saveLocation( "data", "kopete_otr/", true ) ) + "privkeys" );
-	OtrlChatInterface::self()->checkFilePermissions( QString( KGlobal::dirs()->saveLocation( "data", "kopete_otr/", true ) ) + "fingerprints" );
+	OtrlChatInterface::self()->checkFilePermissions( QString( KGlobal::dirs()->saveLocation( "data", QStringLiteral("kopete_otr/"), true ) ) + "privkeys" );
+	OtrlChatInterface::self()->checkFilePermissions( QString( KGlobal::dirs()->saveLocation( "data", QStringLiteral("kopete_otr/"), true ) ) + "fingerprints" );
 
 	//setting the policy
 	slotSettingsChanged();
 
 	//adding menu to contaclists menubar and contacts popup menu
-    otrPolicyMenu = new KSelectAction( QIcon::fromTheme("object-locked"), i18nc( "@item:inmenu", "&OTR Policy" ), this );
-	actionCollection()->addAction( "otr_policy", otrPolicyMenu );
+    otrPolicyMenu = new KSelectAction( QIcon::fromTheme(QStringLiteral("object-locked")), i18nc( "@item:inmenu", "&OTR Policy" ), this );
+	actionCollection()->addAction( QStringLiteral("otr_policy"), otrPolicyMenu );
 
     QAction *separatorAction = new QAction( otrPolicyMenu );
 	separatorAction->setSeparator( true );
@@ -110,7 +110,7 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	connect( otrPolicyMenu, SIGNAL(triggered(int)), this, SLOT(slotSetPolicy()) );
 	connect( Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), this, SLOT(slotSelectionChanged(bool)) );
 
-	setXMLFile( "otrui.rc" );
+	setXMLFile( QStringLiteral("otrui.rc") );
 
 	//Add GUI action to all already existing kmm 
 	// (if the plugin is launched when kopete already runing)
@@ -144,7 +144,7 @@ void OTRPlugin::slotNewChatSessionWindow( Kopete::ChatSession *KMM )
 	//If not it could be a Jabber-MUC
 	//If there is more than one member it is a MUC
 	// Also don't add the Button on an IRC window!
-	if( KMM->members().count() == 1 && (KMM->protocol()) && ( KMM->protocol()->pluginId() != "IRCProtocol" ) ){
+	if( KMM->members().count() == 1 && (KMM->protocol()) && ( KMM->protocol()->pluginId() != QLatin1String("IRCProtocol") ) ){
 		new OtrGUIClient( KMM );
 	}
 }
@@ -169,7 +169,7 @@ void OTRPlugin::slotOutgoingMessage( Kopete::Message& msg )
 	if( !msg.plainBody().isEmpty() ){
 		messageCache.insert( msg.plainBody(), qMakePair( cacheBody, cachePlain ) );
 	} else {
-		messageCache.insert( "!OTR:MsgDelByOTR", qMakePair( cacheBody, cachePlain ) );
+		messageCache.insert( QStringLiteral("!OTR:MsgDelByOTR"), qMakePair( cacheBody, cachePlain ) );
 	}
 
 	kDebug(14318) << "Outgoing message after processing:" << msg.plainBody() << msg.format();
@@ -180,7 +180,7 @@ void  OTRPlugin::slotEnableOtr( Kopete::ChatSession *session, bool enable ){
 
 
 	if( enable ){
-		QString policy = session->members().first()->metaContact()->pluginData( OTRPlugin::plugin(), "otr_policy" );
+		QString policy = session->members().first()->metaContact()->pluginData( OTRPlugin::plugin(), QStringLiteral("otr_policy") );
 		bool noerr;
 		KopeteOtrKcfg::self()->readConfig();
 		if( policy.toInt( &noerr, 10 ) == 4 || ( policy.toInt( &noerr, 10 ) == 0 && KopeteOtrKcfg::self()->rbNever() ) ){
@@ -290,13 +290,13 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 		// This prevents the empty message from being shown in our chatwindow
 		if( msg.plainBody().isEmpty() ){
 			event->discard();
-			if(messageCache.contains("!OTR:MsgDelByOTR")){
-				if (!messageCache["!OTR:MsgDelByOTR"].second)
-					msg.setHtmlBody(messageCache["!OTR:MsgDelByOTR"].first);
+			if(messageCache.contains(QStringLiteral("!OTR:MsgDelByOTR"))){
+				if (!messageCache[QStringLiteral("!OTR:MsgDelByOTR")].second)
+					msg.setHtmlBody(messageCache[QStringLiteral("!OTR:MsgDelByOTR")].first);
 				else
-					msg.setPlainBody(messageCache["!OTR:MsgDelByOTR"].first);
+					msg.setPlainBody(messageCache[QStringLiteral("!OTR:MsgDelByOTR")].first);
 				msg.manager()->view()->setCurrentMessage(msg);
-				messageCache.remove("!OTR:MsgDelByOTR");
+				messageCache.remove(QStringLiteral("!OTR:MsgDelByOTR"));
 			}
 			return;
 		}
@@ -316,10 +316,10 @@ void OTRPlugin::slotSelectionChanged( bool single){
 
 	Kopete::MetaContact *metaContact = Kopete::ContactList::self()->selectedMetaContacts().first();
 
-	QString policy = metaContact->pluginData( this, "otr_policy" );
+	QString policy = metaContact->pluginData( this, QStringLiteral("otr_policy") );
 
 	bool noerr;
-	if ( !policy.isEmpty() && policy != "null" )
+	if ( !policy.isEmpty() && policy != QLatin1String("null") )
 		otrPolicyMenu->setCurrentItem( policy.toInt( &noerr, 10 ) + 1); // +1 because of the Separator
 	else
 		otrPolicyMenu->setCurrentItem( 0 );
@@ -330,7 +330,7 @@ void OTRPlugin::slotSetPolicy(){
 	kDebug(14318) << "Setting contact policy";
 	Kopete::MetaContact *metaContact = Kopete::ContactList::self()->selectedMetaContacts().first();
 	if( metaContact ){
-		metaContact->setPluginData( this, "otr_policy", QString::number( otrPolicyMenu->currentItem() - 1 ) ); // -1 because of the Separator
+		metaContact->setPluginData( this, QStringLiteral("otr_policy"), QString::number( otrPolicyMenu->currentItem() - 1 ) ); // -1 because of the Separator
 	}
 	kDebug(14318) << "Selected policy: " << otrPolicyMenu->currentItem();
 }

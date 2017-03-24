@@ -49,26 +49,26 @@ AHCommand::AHCommand(const QDomElement &e)
 {
 	mHasData = false;
 	mDefaultAction = NoAction;
-	mStatus = string2status(e.attribute("status"));
-	mNode = e.attribute("node");
-	mAction = string2action(e.attribute("action"));
-	mSessionId = e.attribute("sessionid");
+	mStatus = string2status(e.attribute(QStringLiteral("status")));
+	mNode = e.attribute(QStringLiteral("node"));
+	mAction = string2action(e.attribute(QStringLiteral("action")));
+	mSessionId = e.attribute(QStringLiteral("sessionid"));
 
 	for(QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
 	{
 		QDomElement ee = n.toElement();
 		if(ee.isNull())
 			continue;
-		if(ee.tagName() == "x" && ee.attribute("xmlns") == "jabber:x:data")
+		if(ee.tagName() == QLatin1String("x") && ee.attribute(QStringLiteral("xmlns")) == QLatin1String("jabber:x:data"))
 		{
 			// Data form
 			mData.fromXml(ee);
 			mHasData = true;
 		}
-		else if(ee.tagName() == "actions")
+		else if(ee.tagName() == QLatin1String("actions"))
 		{
 			// Actions
-			QString execute = ee.attribute("execute");
+			QString execute = ee.attribute(QStringLiteral("execute"));
 			if(!execute.isEmpty()) 
 				mDefaultAction = string2action(execute);
 			for(QDomNode m = ee.firstChild(); !m.isNull(); m = m.nextSibling())
@@ -83,17 +83,17 @@ AHCommand::AHCommand(const QDomElement &e)
 
 QDomElement AHCommand::toXml(QDomDocument *doc, bool submit)
 {
-	QDomElement command = doc->createElement("command");
-	command.setAttribute("xmlns", AHC_NS);
+	QDomElement command = doc->createElement(QStringLiteral("command"));
+	command.setAttribute(QStringLiteral("xmlns"), AHC_NS);
 	if(mStatus != NoStatus)
-		command.setAttribute("status", status2string(mStatus));
+		command.setAttribute(QStringLiteral("status"), status2string(mStatus));
 	if(mHasData)
 		command.appendChild(mData.toXml(doc, submit));
 	if(mAction != Execute)
-		command.setAttribute("action", action2string(mAction));
-	command.setAttribute("node", mNode);
+		command.setAttribute(QStringLiteral("action"), action2string(mAction));
+	command.setAttribute(QStringLiteral("node"), mNode);
 	if(!mSessionId.isEmpty())
-		command.setAttribute("sessionid", mSessionId);
+		command.setAttribute(QStringLiteral("sessionid"), mSessionId);
 	return command;
 }
 
@@ -102,13 +102,13 @@ QString AHCommand::status2string(Status status)
 	switch(status)
 	{
 	case Executing:
-		return "executing";
+		return QStringLiteral("executing");
 	case Completed:
-		return "completed";
+		return QStringLiteral("completed");
 	case Canceled:
-		return "canceled";
+		return QStringLiteral("canceled");
 	default:
-		return "";
+		return QLatin1String("");
 	}
 }
 
@@ -117,27 +117,27 @@ QString AHCommand::action2string(Action action)
 	switch(action)
 	{
 	case Prev:
-		return "prev";
+		return QStringLiteral("prev");
 	case Next:
-		return "next";
+		return QStringLiteral("next");
 	case Cancel:
-		return "cancel";
+		return QStringLiteral("cancel");
 	case Complete:
-		return "complete";
+		return QStringLiteral("complete");
 	default:
-		return "";
+		return QLatin1String("");
 	}
 }
 
 AHCommand::Action AHCommand::string2action(const QString &s)
 {
-	if(s == "prev")
+	if(s == QLatin1String("prev"))
 		return Prev;
-	else if(s == "next")
+	else if(s == QLatin1String("next"))
 		return Next;
-	else if(s == "complete")
+	else if(s == QLatin1String("complete"))
 		return Complete;
-	else if(s == "cancel")
+	else if(s == QLatin1String("cancel"))
 		return Cancel;
 	else
 		return Execute;
@@ -145,11 +145,11 @@ AHCommand::Action AHCommand::string2action(const QString &s)
 
 AHCommand::Status AHCommand::string2status(const QString &s)
 {
-	if(s == "canceled")
+	if(s == QLatin1String("canceled"))
 		return Canceled;
-	else if(s == "completed")
+	else if(s == QLatin1String("completed"))
 		return Completed;
-	else if(s == "executing")
+	else if(s == QLatin1String("executing"))
 		return Executing;
 	else 
 		return NoStatus;
@@ -169,7 +169,7 @@ JT_AHCommand::~JT_AHCommand()
 
 void JT_AHCommand::onGo()
 {
-	QDomElement e = createIQ(doc(), "set", mJid.full(), id());
+	QDomElement e = createIQ(doc(), QStringLiteral("set"), mJid.full(), id());
 	e.appendChild(mCommand.toXml(doc(), true));
 	send(e);
 }
@@ -180,9 +180,9 @@ bool JT_AHCommand::take(const QDomElement &e)
 		return false;
 	
 	// Result of a command
-	if(e.attribute("type") == "result")
+	if(e.attribute(QStringLiteral("type")) == QLatin1String("result"))
 	{
-		QDomElement i = e.firstChildElement("command");
+		QDomElement i = e.firstChildElement(QStringLiteral("command"));
 		if(!i.isNull())
 		{
 			AHCommand c(i);
@@ -216,10 +216,10 @@ Task(t)
 
 void JT_AHCGetList::onGo()
 {
-	QDomElement e = createIQ(doc(), "get", mJid.full(), id());
-	QDomElement q = doc()->createElement("query");
-	q.setAttribute("xmlns", "http://jabber.org/protocol/disco#items");
-	q.setAttribute("node", AHC_NS);
+	QDomElement e = createIQ(doc(), QStringLiteral("get"), mJid.full(), id());
+	QDomElement q = doc()->createElement(QStringLiteral("query"));
+	q.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://jabber.org/protocol/disco#items"));
+	q.setAttribute(QStringLiteral("node"), AHC_NS);
 	e.appendChild(q);
 	send(e);
 }
@@ -229,10 +229,10 @@ bool JT_AHCGetList::take(const QDomElement &e)
 	if(!iqVerify(e, mJid, id()))
 		return false;
 
-	if(e.attribute("type") == "result")
+	if(e.attribute(QStringLiteral("type")) == QLatin1String("result"))
 	{
 		mCommands.clear();
-		QDomElement commands = e.firstChildElement("query");
+		QDomElement commands = e.firstChildElement(QStringLiteral("query"));
 		if(!commands.isNull())
 		{
 			for(QDomNode n = commands.firstChild(); !n.isNull(); n = n.nextSibling())
@@ -240,12 +240,12 @@ bool JT_AHCGetList::take(const QDomElement &e)
 				QDomElement i = n.toElement();
 				if(i.isNull())
 					continue;
-				if(i.tagName() == "item")
+				if(i.tagName() == QLatin1String("item"))
 				{
 					JT_AHCGetList::Item ci;
-					ci.jid = i.attribute("jid");
-					ci.node = i.attribute("node");
-					ci.name = i.attribute("name");
+					ci.jid = i.attribute(QStringLiteral("jid"));
+					ci.node = i.attribute(QStringLiteral("node"));
+					ci.name = i.attribute(QStringLiteral("name"));
 					mCommands.append(ci);
 				}
 			}

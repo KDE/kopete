@@ -85,7 +85,7 @@ public:
 	}
 
 	void startClient(const QStringList &mechlist, bool) Q_DECL_OVERRIDE {
-		if (!mechlist.contains(QLatin1String("X-OAUTH2"))) {
+		if (!mechlist.contains(QStringLiteral("X-OAUTH2"))) {
 			qWarning("No X-OAUTH2 auth method");
 			authCondition_ = QCA::SASL::NoMechanism;
 			QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
@@ -144,7 +144,7 @@ public:
 	}
 
 	QString mech() const Q_DECL_OVERRIDE {
-		return QLatin1String("X-OAUTH2");
+		return QStringLiteral("X-OAUTH2");
 	}
 
 	bool haveClientInit() const Q_DECL_OVERRIDE {
@@ -224,10 +224,10 @@ private:
 #else
 		QUrlQuery query;
 #endif
-		query.addQueryItem(QLatin1String("client_id"), clientId);
-		query.addQueryItem(QLatin1String("client_secret"), QString::fromUtf8(clientSecretKey.toByteArray()));
-		query.addQueryItem(QLatin1String("refresh_token"), QString::fromUtf8(refreshToken.toByteArray()));
-		query.addQueryItem(QLatin1String("grant_type"), QLatin1String("refresh_token"));
+		query.addQueryItem(QStringLiteral("client_id"), clientId);
+		query.addQueryItem(QStringLiteral("client_secret"), QString::fromUtf8(clientSecretKey.toByteArray()));
+		query.addQueryItem(QStringLiteral("refresh_token"), QString::fromUtf8(refreshToken.toByteArray()));
+		query.addQueryItem(QStringLiteral("grant_type"), QStringLiteral("refresh_token"));
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 		const QByteArray &data = query.encodedQuery();
 #else
@@ -271,8 +271,8 @@ private slots:
 #endif
 		if (ok && replyVariant.type() == QVariant::Map) {
 			const QVariantMap &replyMap = replyVariant.toMap();
-			if (replyMap.contains(QLatin1String("access_token"))) {
-				const QVariant &accessTokenVariant = replyMap.value(QLatin1String("access_token"));
+			if (replyMap.contains(QStringLiteral("access_token"))) {
+				const QVariant &accessTokenVariant = replyMap.value(QStringLiteral("access_token"));
 				if (accessTokenVariant.type() == QVariant::String)
 					accessToken = accessTokenVariant.toString().toUtf8();
 				else
@@ -280,9 +280,9 @@ private slots:
 			} else {
 				ok = false;
 			}
-			if (!ok || replyMap.contains(QLatin1String("error"))) {
-				const QString &error = replyMap.value(QLatin1String("error")).toString();
-				const QString &errorDescription = replyMap.value(QLatin1String("error_description")).toString();
+			if (!ok || replyMap.contains(QStringLiteral("error"))) {
+				const QString &error = replyMap.value(QStringLiteral("error")).toString();
+				const QString &errorDescription = replyMap.value(QStringLiteral("error_description")).toString();
 				qWarning("requestAccessToken failed, error: %s, description: %s", error.toUtf8().data(), errorDescription.toUtf8().data());
 				accessToken.clear();
 			}
@@ -310,11 +310,11 @@ public:
 	}
 
 	QString name() const Q_DECL_OVERRIDE {
-		return QLatin1String("xoauth2sasl");
+		return QStringLiteral("xoauth2sasl");
 	}
 
 	QStringList features() const Q_DECL_OVERRIDE {
-		return QStringList(QLatin1String("sasl"));
+		return QStringList(QStringLiteral("sasl"));
 	}
 
 	QCA::Provider::Context *createContext(const QString& type) Q_DECL_OVERRIDE {

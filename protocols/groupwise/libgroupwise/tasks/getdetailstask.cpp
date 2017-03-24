@@ -44,7 +44,7 @@ void GetDetailsTask::userDNs( const QStringList & userDNs )
 	{
 		lst.append( new Field::SingleField( Field::NM_A_SZ_DN, 0, NMFIELD_TYPE_UTF8, *it ) );
 	}
-	createTransfer( "getdetails", lst );
+	createTransfer( QStringLiteral("getdetails"), lst );
 }
 
 bool GetDetailsTask::take( Transfer * transfer )

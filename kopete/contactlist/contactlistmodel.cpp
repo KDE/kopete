@@ -91,9 +91,9 @@ QStringList ContactListModel::mimeTypes() const
 {
 	QStringList types;
 
-	types << "application/kopete.group";
-	types << "application/kopete.metacontacts.list";
-	types << "text/uri-list";
+	types << QStringLiteral("application/kopete.group");
+	types << QStringLiteral("application/kopete.metacontacts.list");
+	types << QStringLiteral("text/uri-list");
 
 	return types;
 }
@@ -144,9 +144,9 @@ QMimeData* ContactListModel::mimeData(const QModelIndexList &indexes) const
 		return 0;
 
 	if ( (dragType & DragGroup) == DragGroup )
-		mdata->setData("application/kopete.group", encodedData);
+		mdata->setData(QStringLiteral("application/kopete.group"), encodedData);
 	else if ( (dragType & DragMetaContact) == DragMetaContact )
-		mdata->setData("application/kopete.metacontacts.list", encodedData);
+		mdata->setData(QStringLiteral("application/kopete.metacontacts.list"), encodedData);
 	else
 		return 0;
 
@@ -173,7 +173,7 @@ bool ContactListModel::loadModelSettings( const QString& modelType )
 {
 	QDomDocument doc;
 
-	QString fileName = KStandardDirs::locateLocal( "appdata", QLatin1String( "contactlistmodel.xml" ) );
+	QString fileName = KStandardDirs::locateLocal( "appdata", QStringLiteral( "contactlistmodel.xml" ) );
 	if ( QFile::exists( fileName ) )
 	{
 		QFile file( fileName );
@@ -186,15 +186,15 @@ bool ContactListModel::loadModelSettings( const QString& modelType )
 		}
 	}
 
-	QDomElement rootElement = doc.firstChildElement( "Models" );
+	QDomElement rootElement = doc.firstChildElement( QStringLiteral("Models") );
 	if ( !rootElement.isNull() )
 	{
 		QDomElement modelRootElement;
-		QDomNodeList modelRootList = rootElement.elementsByTagName("Model");
+		QDomNodeList modelRootList = rootElement.elementsByTagName(QStringLiteral("Model"));
 		for ( int index = 0; index < modelRootList.size(); ++index )
 		{
 			QDomElement element = modelRootList.item( index ).toElement();
-			if ( !element.isNull() && element.attribute( "type" ) == modelType )
+			if ( !element.isNull() && element.attribute( QStringLiteral("type") ) == modelType )
 			{
 				modelRootElement = element;
 				break;
@@ -217,7 +217,7 @@ bool ContactListModel::saveModelSettings( const QString& modelType )
 {
 	QDomDocument doc;
 
-	QString fileName = KStandardDirs::locateLocal( "appdata", QLatin1String( "contactlistmodel.xml" ) );
+	QString fileName = KStandardDirs::locateLocal( "appdata", QStringLiteral( "contactlistmodel.xml" ) );
 	if ( QFile::exists( fileName ) )
 	{
 		QFile file( fileName );
@@ -227,19 +227,19 @@ bool ContactListModel::saveModelSettings( const QString& modelType )
 		file.close();
 	}
 
-	QDomElement rootElement = doc.firstChildElement( "Models" );
+	QDomElement rootElement = doc.firstChildElement( QStringLiteral("Models") );
 	if ( rootElement.isNull() )
 	{
-		rootElement = doc.createElement( "Models" );
+		rootElement = doc.createElement( QStringLiteral("Models") );
 		doc.appendChild( rootElement );
 	}
 
 	QDomElement modelRootElement;
-	QDomNodeList modelRootList = rootElement.elementsByTagName("Model");
+	QDomNodeList modelRootList = rootElement.elementsByTagName(QStringLiteral("Model"));
 	for ( int index = 0; index < modelRootList.size(); ++index )
 	{
 		QDomElement element = modelRootList.item( index ).toElement();
-		if ( !element.isNull() && element.attribute( "type" ) == modelType )
+		if ( !element.isNull() && element.attribute( QStringLiteral("type") ) == modelType )
 		{
 			modelRootElement = element;
 			break;
@@ -248,9 +248,9 @@ bool ContactListModel::saveModelSettings( const QString& modelType )
 
 	if ( modelRootElement.isNull() )
 	{
-		modelRootElement = doc.createElement( "Model" );
+		modelRootElement = doc.createElement( QStringLiteral("Model") );
 		rootElement.appendChild( modelRootElement );
-		modelRootElement.setAttribute( "type", modelType );
+		modelRootElement.setAttribute( QStringLiteral("type"), modelType );
 	}
 
 	saveModelSettingsImpl( doc, modelRootElement );
@@ -410,8 +410,8 @@ bool ContactListModel::dropUrl( const QMimeData *data, int row, const QModelInde
 		if( url.scheme() == QLatin1String( "kopetemessage" ) )
 		{
 			//Add a contact
-			QString protocolId = QUrlQuery(url).queryItemValue( "protocolId" );
-			QString accountId = QUrlQuery(url).queryItemValue( "accountId" );
+			QString protocolId = QUrlQuery(url).queryItemValue( QStringLiteral("protocolId") );
+			QString accountId = QUrlQuery(url).queryItemValue( QStringLiteral("accountId") );
 			QString contactId = url.host();
 
 			qDebug() << "protocolId=" << protocolId << ", accountId=" << accountId << ", contactId=" << contactId;
@@ -489,8 +489,8 @@ bool ContactListModel::dropMetaContacts( int row, const QModelIndex &parent, Qt:
 			displayNames << mc->displayName();
 		}
 
-		if( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "<qt>Are you sure you want to merge meta contacts?\n<b>%1</b>", displayNames.join( ", " ) ),
-		                                i18n( "Meta Contact Merge" ), KStandardGuiItem::yes(), KStandardGuiItem::no(),"askDDMergeMetaContacts",
+		if( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "<qt>Are you sure you want to merge meta contacts?\n<b>%1</b>", displayNames.join( QStringLiteral(", ") ) ),
+		                                i18n( "Meta Contact Merge" ), KStandardGuiItem::yes(), KStandardGuiItem::no(),QStringLiteral("askDDMergeMetaContacts"),
 										KMessageBox::Dangerous ) != KMessageBox::Yes)
 		{
 			return false;
@@ -593,34 +593,34 @@ QVariant ContactListModel::metaContactImage( const Kopete::MetaContact* mc ) con
 		if( mc->useCustomIcon() )
 			return mc->icon( ContactListElement::Online );
 		else
-			return QString::fromUtf8( "user-online" );
+			return QLatin1String( "user-online" );
 		break;
 	case OnlineStatus::Away:
 		if( mc->useCustomIcon() )
 			return mc->icon( ContactListElement::Away );
 		else
-			return QString::fromUtf8( "user-away" );
+			return QLatin1String( "user-away" );
 		break;
 	case OnlineStatus::Busy:
 		if( mc->useCustomIcon() )
 			return mc->icon( ContactListElement::Away );
 		else
-			return QString::fromUtf8( "user-busy" );
+			return QLatin1String( "user-busy" );
 		break;
 	case OnlineStatus::Unknown:
 		if( mc->useCustomIcon() )
 			return mc->icon( ContactListElement::Unknown );
 		if ( mc->contacts().isEmpty() )
-			return QString::fromUtf8( "metacontact_unknown" );
+			return QLatin1String( "metacontact_unknown" );
 		else
-			return QString::fromUtf8( "user-offline" );
+			return QLatin1String( "user-offline" );
 		break;
 	case OnlineStatus::Offline:
 	default:
 		if( mc->useCustomIcon() )
 			return mc->icon( ContactListElement::Offline );
 		else
-			return QString::fromUtf8( "user-offline" );
+			return QLatin1String( "user-offline" );
 		break;
 	}
 
@@ -630,7 +630,7 @@ QVariant ContactListModel::metaContactImage( const Kopete::MetaContact* mc ) con
 QString ContactListModel::metaContactTooltip( const Kopete::MetaContact* metaContact ) const
 {
 	// We begin with the meta contact display name at the top of the tooltip
-	QString toolTip = QLatin1String("<qt><table>");
+	QString toolTip = QStringLiteral("<qt><table>");
 	toolTip += QLatin1String("<tr><td>");
 	
 	if ( !metaContact->picture().isNull() )
@@ -647,11 +647,11 @@ QString ContactListModel::metaContactTooltip( const Kopete::MetaContact* metaCon
 		// NOTE: attribute style="max-width:96px; max-height:96px;" not working
 		const QImage &image = metaContact->picture().image();
 		if ( image.width() <= 96 && image.height() <= 96 )
-			toolTip += QString::fromLatin1("<img src=\"%1\">&nbsp;").arg( metaContact->picture().path() );
+			toolTip += QStringLiteral("<img src=\"%1\">&nbsp;").arg( metaContact->picture().path() );
 		else if ( image.width() > image.height() )
-			toolTip += QString::fromLatin1("<img src=\"%1\" width=\"96\">&nbsp;").arg( metaContact->picture().path() );
+			toolTip += QStringLiteral("<img src=\"%1\" width=\"96\">&nbsp;").arg( metaContact->picture().path() );
 		else
-			toolTip += QString::fromLatin1("<img src=\"%1\" height=\"96\">&nbsp;").arg( metaContact->picture().path() );
+			toolTip += QStringLiteral("<img src=\"%1\" height=\"96\">&nbsp;").arg( metaContact->picture().path() );
 	}
 
 	toolTip += QLatin1String("</td><td>");
@@ -667,7 +667,7 @@ QString ContactListModel::metaContactTooltip( const Kopete::MetaContact* metaCon
 			displayName += Qt::escape( (*it).text );
 	}
 
-	toolTip += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br>").arg( displayName );
+	toolTip += QStringLiteral("<b><font size=\"+1\">%1</font></b><br>").arg( displayName );
 
 	QList<Contact*> contacts = metaContact->contacts();
 	if ( contacts.count() == 1 )
@@ -679,7 +679,7 @@ QString ContactListModel::metaContactTooltip( const Kopete::MetaContact* metaCon
 	// Iterate through children and display a summary tooltip
 	foreach ( Contact* c, contacts )
 	{
-		QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
+		QString iconName = QStringLiteral("kopete-contact-icon:%1:%2:%3")
 			.arg( QString(QUrl::toPercentEncoding( c->protocol()->pluginId() )),
 			      QString(QUrl::toPercentEncoding( c->account()->accountId() )),
 			      QString(QUrl::toPercentEncoding( c->contactId() ) )

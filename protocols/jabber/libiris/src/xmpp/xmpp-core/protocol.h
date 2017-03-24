@@ -165,7 +165,7 @@ namespace XMPP
 
 		// shutdown
 		void shutdown();
-		void shutdownWithError(int cond, const QString &otherHost="");
+		void shutdownWithError(int cond, const QString &otherHost=QLatin1String(""));
 
 		// <stream> information
 		QString to, from, id, lang;
@@ -190,12 +190,12 @@ namespace XMPP
 		static QString streamCondToString(int);
 
 		void send(const QDomElement &e, bool clip=false);
-		void sendStreamError(int cond, const QString &text="", const QDomElement &appSpec=QDomElement());
+		void sendStreamError(int cond, const QString &text=QLatin1String(""), const QDomElement &appSpec=QDomElement());
 		void sendStreamError(const QString &text); // old-style
 
-		bool errorAndClose(int cond, const QString &text="", const QDomElement &appSpec=QDomElement());
+		bool errorAndClose(int cond, const QString &text=QLatin1String(""), const QDomElement &appSpec=QDomElement());
 		bool error(int code);
-		void delayErrorAndClose(int cond, const QString &text="", const QDomElement &appSpec=QDomElement());
+		void delayErrorAndClose(int cond, const QString &text=QLatin1String(""), const QDomElement &appSpec=QDomElement());
 		void delayError(int code);
 
 		// reimplemented

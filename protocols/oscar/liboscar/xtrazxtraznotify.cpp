@@ -70,7 +70,7 @@ Oscar::MessagePlugin* XtrazNotify::statusResponse( int iconIndex, const QString&
 	// Randomizer service it's not necessary but ICQ5 sends it.
 	serviceList.append( new XRandomizerService() );
 
-	QString data = createResponse( "OnRemoteNotification", serviceList );
+	QString data = createResponse( QStringLiteral("OnRemoteNotification"), serviceList );
 	qDeleteAll( serviceList );
 
 	Oscar::MessagePlugin *plugin = new Oscar::MessagePlugin();
@@ -97,7 +97,7 @@ Oscar::MessagePlugin* XtrazNotify::statusRequest() const
 	
 	XAwayService awayService;
 	awayService.setSenderId( m_senderUni );
-	QString data = createRequest( "srvMng", &awayService );
+	QString data = createRequest( QStringLiteral("srvMng"), &awayService );
 	
 	Buffer buf;
 	buf.addLEDBlock( data.toUtf8() );
@@ -122,12 +122,12 @@ bool XtrazNotify::handle( Oscar::MessagePlugin* plugin )
 	}
 	
 	QDomElement docElement = xmlDocument.documentElement();
-	if ( docElement.tagName() == "N" )
+	if ( docElement.tagName() == QLatin1String("N") )
 	{
 		m_type = Request;
 		return handleRequest( docElement );
 	}
-	else if ( docElement.tagName() == "NR" )
+	else if ( docElement.tagName() == QLatin1String("NR") )
 	{
 		m_type = Response;
 		return handleResponse( docElement );
@@ -154,7 +154,7 @@ const XService* XtrazNotify::findService( const QString& serviceId ) const
 
 QString XtrazNotify::createRequest( const QString &pluginId, const XService* service ) const
 {
-	QString body = QString( "<N><QUERY>%1</QUERY><NOTIFY>%2</NOTIFY></N>\r\n" );
+	QString body = QStringLiteral( "<N><QUERY>%1</QUERY><NOTIFY>%2</NOTIFY></N>\r\n" );
 	
 	QDomDocument queryDoc = xmlQuery( pluginId );
 	QString query = Qt::escape( queryDoc.toString(0) );
@@ -167,7 +167,7 @@ QString XtrazNotify::createRequest( const QString &pluginId, const XService* ser
 
 QString XtrazNotify::createResponse( const QString &event, const QList<XService*> &serviceList ) const
 {
-	QString body = QString( "<NR><RES>%1</RES></NR>\r\n" );
+	QString body = QStringLiteral( "<NR><RES>%1</RES></NR>\r\n" );
 
 	QDomDocument serviceDoc = xmlRet( event, serviceList );
 	QString response = Qt::escape( serviceDoc.toString(0) );
@@ -179,9 +179,9 @@ QDomDocument XtrazNotify::xmlQuery( const QString &pluginId ) const
 {
 	QDomDocument doc;
 	
-	QDomElement eRoot = doc.createElement( "Q" );
+	QDomElement eRoot = doc.createElement( QStringLiteral("Q") );
 	
-	QDomElement ePluginId = doc.createElement( "PluginID" );
+	QDomElement ePluginId = doc.createElement( QStringLiteral("PluginID") );
 	ePluginId.appendChild( doc.createTextNode( pluginId ) );
 	
 	eRoot.appendChild( ePluginId );
@@ -205,8 +205,8 @@ QDomDocument XtrazNotify::xmlRet( const QString &event, const QList<XService*> &
 {
 	QDomDocument doc;
 	
-	QDomElement eRoot = doc.createElement( "ret" );
-	eRoot.setAttribute( "event", event );
+	QDomElement eRoot = doc.createElement( QStringLiteral("ret") );
+	eRoot.setAttribute( QStringLiteral("event"), event );
 	
 	foreach( XService* service, serviceList )
 		eRoot.appendChild( service->create( doc, XService::Response ) );
@@ -223,7 +223,7 @@ bool XtrazNotify::handleResponse( QDomElement eRoot )
 	for ( childNode = eRoot.firstChild(); !childNode.isNull(); childNode = childNode.nextSibling() )
 	{
 		QDomElement e = childNode.toElement();
-		if( !e.isNull() && e.tagName() == "RES" )
+		if( !e.isNull() && e.tagName() == QLatin1String("RES") )
 		{
 			QDomDocument resDocument;
 			if ( !resDocument.setContent( e.text() ) )
@@ -248,7 +248,7 @@ bool XtrazNotify::handleRequest( QDomElement eRoot )
 		QDomElement e = childNode.toElement();
 		if ( !e.isNull() )
 		{
-			if ( e.tagName() == "NOTIFY" )
+			if ( e.tagName() == QLatin1String("NOTIFY") )
 			{
 				QDomDocument resDocument;
 				if ( !resDocument.setContent( e.text() ) )
@@ -262,7 +262,7 @@ bool XtrazNotify::handleRequest( QDomElement eRoot )
 				if ( service )
 					m_serviceList.append( service );
 			}
-			else if ( e.tagName() == "QUERY" )
+			else if ( e.tagName() == QLatin1String("QUERY") )
 			{
 				QDomDocument qDocument;
 				if ( !qDocument.setContent( e.text() ) )
@@ -285,7 +285,7 @@ bool XtrazNotify::handleRet( QDomElement eRoot )
 	for ( childNode = eRoot.firstChild(); !childNode.isNull(); childNode = childNode.nextSibling() )
 	{
 		QDomElement e = childNode.toElement();
-		if( !e.isNull() && e.tagName() == "srv" )
+		if( !e.isNull() && e.tagName() == QLatin1String("srv") )
 		{
 			XService* service = handleServiceElement( e );
 			if ( service )
@@ -301,7 +301,7 @@ bool XtrazNotify::handleQuery( QDomElement eRoot )
 	for ( childNode = eRoot.firstChild(); !childNode.isNull(); childNode = childNode.nextSibling() )
 	{
 		QDomElement e = childNode.toElement();
-		if( !e.isNull() && e.tagName() == "PluginID" )
+		if( !e.isNull() && e.tagName() == QLatin1String("PluginID") )
 		{
 			m_pluginId = e.text();
 		}
@@ -313,7 +313,7 @@ XService* XtrazNotify::handleServiceElement( QDomElement& eRoot ) const
 {
 	XService* service = 0;
 
-	QDomElement eId = eRoot.namedItem( "id" ).toElement();
+	QDomElement eId = eRoot.namedItem( QStringLiteral("id") ).toElement();
 	if( eId.isNull() )
 		return 0;
 
@@ -326,7 +326,7 @@ XService* XtrazNotify::handleServiceElement( QDomElement& eRoot ) const
 
 XService* XtrazNotify::serviceFromId( const QString& id ) const
 {
-	if ( id == "cAwaySrv" )
+	if ( id == QLatin1String("cAwaySrv") )
 		return new XAwayService();
 	else if ( id.isEmpty()  )
 		return new XService();

@@ -145,12 +145,12 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 		QBuffer buffer(&ba);
 		buffer.open(QIODevice::WriteOnly);
 		img.save(&buffer, "PNG"); // writes image into ba in PNG format
-		preview= FTThumbnail(ba,QString("image/png"),img.width(),img.height());
+		preview= FTThumbnail(ba,QStringLiteral("image/png"),img.width(),img.height());
 	}
 
 	  
 	if(canOpen) {
-		mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), QUrl(file).fileName (), mLocalFile.size (), "", preview);
+		mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), QUrl(file).fileName (), mLocalFile.size (), QLatin1String(""), preview);
 	} else {
 		mKopeteTransfer->slotError ( KIO::ERR_CANNOT_OPEN_FOR_READING, file );
 	}

@@ -224,7 +224,7 @@ bool KopeteStatusModel::removeRows( int row, int count, const QModelIndex &paren
 QStringList KopeteStatusModel::mimeTypes() const
 {
 	QStringList types;
-	types << "application/xml-kopete-status";
+	types << QStringLiteral("application/xml-kopete-status");
 	return types;
 }
 
@@ -241,13 +241,13 @@ QMimeData *KopeteStatusModel::mimeData( const QModelIndexList &indexes ) const
 		if ( index.isValid() && index.column() == 0 )
 		{
 			Status::StatusItem *item = getStatusItem( index );
-			QDomDocument doc( QString::fromLatin1( "kopete-status" ) );
+			QDomDocument doc( QLatin1String( "kopete-status" ) );
 			doc.appendChild( StatusManager::storeStatusItem( item ) );
 			stream << doc.toString();
 		}
 	}
 
-	mimeData->setData( "application/xml-kopete-status", encodedData );
+	mimeData->setData( QStringLiteral("application/xml-kopete-status"), encodedData );
 	return mimeData;
 }
 
@@ -257,7 +257,7 @@ bool KopeteStatusModel::dropMimeData( const QMimeData *data, Qt::DropAction acti
 	if ( action == Qt::IgnoreAction )
 		return true;
 
-	if ( !data->hasFormat( "application/xml-kopete-status" ) )
+	if ( !data->hasFormat( QStringLiteral("application/xml-kopete-status") ) )
 		return false;
 	
 	if ( column > 0 )
@@ -272,7 +272,7 @@ bool KopeteStatusModel::dropMimeData( const QMimeData *data, Qt::DropAction acti
 	else
 		beginRow = rowCount( QModelIndex() );
 
-	QByteArray encodedData = data->data( "application/xml-kopete-status" );
+	QByteArray encodedData = data->data( QStringLiteral("application/xml-kopete-status") );
 	QDataStream stream( &encodedData, QIODevice::ReadOnly );
 
 	using namespace Kopete;
@@ -299,7 +299,7 @@ bool KopeteStatusModel::dropMimeData( const QMimeData *data, Qt::DropAction acti
 		{
 			Status::StatusItem *item = StatusManager::parseStatusItem( doc.documentElement() );
 			
-			QDomDocument doc2( QString::fromLatin1( "kopete-status" ) );
+			QDomDocument doc2( QLatin1String( "kopete-status" ) );
 			doc2.appendChild( StatusManager::storeStatusItem( item ) );
 
 			// Don't create nasted groups

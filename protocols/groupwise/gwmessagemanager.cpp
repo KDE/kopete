@@ -76,7 +76,7 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 
 	// Set up the Invite menu
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), this );
-	actionCollection()->addAction( "gwInvite", m_actionInvite );
+	actionCollection()->addAction( QStringLiteral("gwInvite"), m_actionInvite );
 	connect( m_actionInvite->menu(), SIGNAL(aboutToShow()), this, SLOT(slotActionInviteAboutToShow()) ) ;
 
 	m_secure = new QAction( QIcon::fromTheme(QStringLiteral("security-high")), i18n( "Security Status" ), 0 ); // "gwSecureChat"
@@ -87,7 +87,7 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 	QObject::connect( m_secure, SIGNAL(triggered(bool)),  SLOT(slotShowArchiving()) );
 	updateArchiving();
 
-	setXMLFile("gwchatui.rc");
+	setXMLFile(QStringLiteral("gwchatui.rc"));
 	setMayInvite( true );
 }
 
@@ -327,7 +327,7 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 	}
 	// Invite someone off-list
 	QAction *b = new QAction( i18n("&Other..."), this );
-	actionCollection()->addAction( "actionOther", b );
+	actionCollection()->addAction( QStringLiteral("actionOther"), b );
 	QObject::connect( b, SIGNAL(triggered(bool)),
 	                  this, SLOT(slotInviteOtherContact()) );
 	m_actionInvite->addAction( b );

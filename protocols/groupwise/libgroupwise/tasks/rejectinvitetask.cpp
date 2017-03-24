@@ -33,6 +33,6 @@ void RejectInviteTask::reject( const GroupWise::ConferenceGuid & guid )
 	Field::FieldList lst, tmp;
 	tmp.append( new Field::SingleField( Field::NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, guid ) );
 	lst.append( new Field::MultiField( Field::NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, tmp ) );
-	createTransfer( "rejectconf", lst );
+	createTransfer( QStringLiteral("rejectconf"), lst );
 }
 

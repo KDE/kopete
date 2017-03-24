@@ -92,7 +92,7 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 		QQAccount *m_account = static_cast<QQAccount*>( account );
 		d->ui->m_serverName->setText( m_account->serverName() );
 		d->ui->m_serverPort->setValue( m_account->serverPort() );
-		if ( ( m_account->serverName() != "tcpconn.tencent.com" ) || ( m_account->serverPort() != 80) ) {
+		if ( ( m_account->serverName() != QLatin1String("tcpconn.tencent.com") ) || ( m_account->serverPort() != 80) ) {
 			d->ui->optionOverrideServer->setChecked( true );
 			d->ui->m_serverName->setEnabled(true);
 			d->ui->m_serverPort->setEnabled(true);
@@ -174,7 +174,7 @@ bool QQEditAccountWidget::validateData()
 
 void QQEditAccountWidget::slotOpenRegister()
 {
-	KToolInvocation::invokeBrowser( "http://freereg.qq.com/"  );
+	KToolInvocation::invokeBrowser( QStringLiteral("http://freereg.qq.com/")  );
 }
 
 

@@ -79,19 +79,19 @@ public:
 		delete dec;
 		dec = 0;
 		in.resize(0);
-		out = "";
+		out = QLatin1String("");
 		at = 0;
 		paused = false;
 		mightChangeEncoding = true;
 		checkBad = true;
 		last = QChar();
-		v_encoding = "";
+		v_encoding = QLatin1String("");
 		resetLastData();
 	}
 
 	void resetLastData()
 	{
-		last_string = "";
+		last_string = QLatin1String("");
 	}
 
 	QString lastString() const
@@ -275,17 +275,17 @@ private:
 
 	QString processXmlHeader(const QString &h)
 	{
-		if(h.left(5) != "<?xml")
-			return "";
+		if(h.left(5) != QLatin1String("<?xml"))
+			return QLatin1String("");
 
-		int endPos = h.indexOf(">");
-		int startPos = h.indexOf("encoding");
+		int endPos = h.indexOf(QLatin1String(">"));
+		int startPos = h.indexOf(QLatin1String("encoding"));
 		if(startPos < endPos && startPos != -1) {
 			QString encoding;
 			do {
 				startPos++;
 				if(startPos > endPos) {
-					return "";
+					return QLatin1String("");
 				}
 			} while(h[startPos] != '"' && h[startPos] != '\'');
 			startPos++;
@@ -293,13 +293,13 @@ private:
 				encoding += h[startPos];
 				startPos++;
 				if(startPos > endPos) {
-					return "";
+					return QLatin1String("");
 				}
 			}
 			return encoding;
 		}
 		else
-			return "";
+			return QLatin1String("");
 	}
 
 	bool tryExtractPart(QString *s)
@@ -745,8 +745,8 @@ Parser::Parser()
 	// check for evil bug in Qt <= 3.2.1
 	if(!qt_bug_check) {
 		qt_bug_check = true;
-		QDomElement e = d->doc->createElementNS("someuri", "somename");
-		if(e.hasAttributeNS("someuri", "somename"))
+		QDomElement e = d->doc->createElementNS(QStringLiteral("someuri"), QStringLiteral("somename"));
+		if(e.hasAttributeNS(QStringLiteral("someuri"), QStringLiteral("somename")))
 			qt_bug_have = true;
 		else
 			qt_bug_have = false;

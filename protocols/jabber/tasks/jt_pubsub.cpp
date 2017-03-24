@@ -25,15 +25,15 @@ using namespace XMPP;
 JT_PubSubPublish::JT_PubSubPublish(XMPP::Task *parent, const QString &node, XMPP::PubSubItem &psitem):
 Task(parent)
 {
-	mIQ = createIQ(doc(), "set", "", id());
-	QDomElement pubsub = doc()->createElement("pubsub");
-	pubsub.setAttribute("xmlns", PUBSUB_NS);
+	mIQ = createIQ(doc(), QStringLiteral("set"), QLatin1String(""), id());
+	QDomElement pubsub = doc()->createElement(QStringLiteral("pubsub"));
+	pubsub.setAttribute(QStringLiteral("xmlns"), PUBSUB_NS);
 	mIQ.appendChild(pubsub);
-	QDomElement publish = doc()->createElement("publish");
-	publish.setAttribute("node", node);
+	QDomElement publish = doc()->createElement(QStringLiteral("publish"));
+	publish.setAttribute(QStringLiteral("node"), node);
 	pubsub.appendChild(publish);
-	QDomElement item = doc()->createElement("item");
-	item.setAttribute("id", psitem.id());
+	QDomElement item = doc()->createElement(QStringLiteral("item"));
+	item.setAttribute(QStringLiteral("id"), psitem.id());
 	publish.appendChild(item);
 	item.appendChild(psitem.payload());
 }
@@ -51,7 +51,7 @@ bool JT_PubSubPublish::take(const QDomElement &x)
 {
 	if(!iqVerify(x, "", id()))
 		return false;
-	if(x.attribute("type") == "result")
+	if(x.attribute(QStringLiteral("type")) == QLatin1String("result"))
 		setSuccess();
 	else
 		setError(x);

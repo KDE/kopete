@@ -382,7 +382,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	
         QString d = QString::fromAscii( packet.data() + pos, packet.size() - pos );
         QStringList list;
-        list = d.split( "\xc0\x80" );
+        list = d.split( QStringLiteral("\xc0\x80") );
         for( int i = 0; i+1 < list.size() && pos+1 < len+20; i += 2 ) {
                 QString key = list[i];
                 QString value = QString::fromUtf8( list[i+1].toAscii() );

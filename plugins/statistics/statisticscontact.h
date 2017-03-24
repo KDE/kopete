@@ -164,7 +164,7 @@ private:
 	 * \retval statvar1 
 	 * \retval statvar2
 	 */
-	void commonStatsCheck(const QString &name, QString& statVar1, QString& statVar2, const QString &defaultValue1 = "", const QString &defaultValue2 = "");
+	void commonStatsCheck(const QString &name, QString& statVar1, QString& statVar2, const QString &defaultValue1 = QLatin1String(""), const QString &defaultValue2 = QLatin1String(""));
 	
 	/**
 	 * @brief Same as commonStatsCheck for integers.

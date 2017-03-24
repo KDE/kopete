@@ -46,22 +46,22 @@ QString PrivacyListItem::toString() const
 {
 	QString act;
 	if (action() == PrivacyListItem::Deny) 
-		act = "Deny";
+		act = QStringLiteral("Deny");
 	else 
-		act = "Allow";
+		act = QStringLiteral("Allow");
 	
 	QString what;
 	if (all()) 
-		what = "All";
+		what = QStringLiteral("All");
 	else {
 		if (message()) 
-			what += "Messages,";
+			what += QLatin1String("Messages,");
 		if (presenceIn()) 
-			what += "Presence-In,";
+			what += QLatin1String("Presence-In,");
 		if (presenceOut()) 
-			what += "Presence-Out,";
+			what += QLatin1String("Presence-Out,");
 		if (iq()) 
-			what += "Queries,";
+			what += QLatin1String("Queries,");
 		what.truncate(what.length()-1);
 	}
 	
@@ -86,34 +86,34 @@ QString PrivacyListItem::toString() const
 
 QDomElement PrivacyListItem::toXml(QDomDocument& doc) const
 {
-	QDomElement item = doc.createElement("item");
+	QDomElement item = doc.createElement(QStringLiteral("item"));
 	
 	if (type_ == JidType) 
-		item.setAttribute("type","jid");
+		item.setAttribute(QStringLiteral("type"),QStringLiteral("jid"));
 	else if (type_ == GroupType)
-		item.setAttribute("type","group");
+		item.setAttribute(QStringLiteral("type"),QStringLiteral("group"));
 	else if (type_ == SubscriptionType)
-		item.setAttribute("type","subscription");
+		item.setAttribute(QStringLiteral("type"),QStringLiteral("subscription"));
 	
 	if (type_ != FallthroughType)
-		item.setAttribute("value",value_);
+		item.setAttribute(QStringLiteral("value"),value_);
 	
 	if (action_ == Allow) 
-		item.setAttribute("action","allow");
+		item.setAttribute(QStringLiteral("action"),QStringLiteral("allow"));
 	else
-		item.setAttribute("action","deny");
+		item.setAttribute(QStringLiteral("action"),QStringLiteral("deny"));
 
-	item.setAttribute("order", order_);
+	item.setAttribute(QStringLiteral("order"), order_);
 	
 	if (!(message_ && presenceIn_ && presenceOut_ && iq_)) {
 		if (message_)
-			item.appendChild(doc.createElement("message"));
+			item.appendChild(doc.createElement(QStringLiteral("message")));
 		if (presenceIn_)
-			item.appendChild(doc.createElement("presence-in"));
+			item.appendChild(doc.createElement(QStringLiteral("presence-in")));
 		if (presenceOut_)
-			item.appendChild(doc.createElement("presence-out"));
+			item.appendChild(doc.createElement(QStringLiteral("presence-out")));
 		if (iq_)
-			item.appendChild(doc.createElement("iq"));
+			item.appendChild(doc.createElement(QStringLiteral("iq")));
 	}
 
 	return item;
@@ -122,50 +122,50 @@ QDomElement PrivacyListItem::toXml(QDomDocument& doc) const
 void PrivacyListItem::fromXml(const QDomElement& el)
 {
 	//kDebug (JABBER_DEBUG_GLOBAL) << "Parsing privacy list item";
-	if (el.isNull() || el.tagName() != "item") {
+	if (el.isNull() || el.tagName() != QLatin1String("item")) {
 		kWarning (JABBER_DEBUG_GLOBAL) << "Invalid root tag for privacy list item.";
 		return;
 	}
 
-	QString type = el.attribute("type"); 
-	if (type == "jid")
+	QString type = el.attribute(QStringLiteral("type")); 
+	if (type == QLatin1String("jid"))
 		type_ = JidType;
-	else if (type == "group")
+	else if (type == QLatin1String("group"))
 		type_ = GroupType;
-	else if (type == "subscription")
+	else if (type == QLatin1String("subscription"))
 		type_ = SubscriptionType;
 	else
 		type_ = FallthroughType;
 	
-	QString value = el.attribute("value");
+	QString value = el.attribute(QStringLiteral("value"));
 	value_ = value;
 	if (type_ == JidType && XMPP::Jid(value_).isEmpty()) 
 		kWarning (JABBER_DEBUG_GLOBAL) << "Invalid value for item of type 'jid'.";
 	else if (type_ == GroupType && value_.isEmpty()) 
 		kWarning (JABBER_DEBUG_GLOBAL) << "Empty value for item of type 'group'.";
-	else if (type_ == SubscriptionType && value_ != "from" && value != "to" && value_ != "both" && value_ != "none")
+	else if (type_ == SubscriptionType && value_ != QLatin1String("from") && value != QLatin1String("to") && value_ != QLatin1String("both") && value_ != QLatin1String("none"))
 		kWarning (JABBER_DEBUG_GLOBAL) << "Invalid value for item of type 'subscription'.";
 	else if (type_ == FallthroughType && !value_.isEmpty()) 
 		kWarning (JABBER_DEBUG_GLOBAL) << "Value given for item of fallthrough type.";
 		
-	QString action = el.attribute("action");
-	if (action == "allow") 
+	QString action = el.attribute(QStringLiteral("action"));
+	if (action == QLatin1String("allow")) 
 		action_ = Allow;
-	else if (action == "deny")
+	else if (action == QLatin1String("deny"))
 		action_ = Deny;
 	else
 		kWarning (JABBER_DEBUG_GLOBAL) << "Invalid action given for item.";
 
 	bool ok;
-	order_ = el.attribute("order").toUInt(&ok);
+	order_ = el.attribute(QStringLiteral("order")).toUInt(&ok);
 	if (!ok)
 		kWarning (JABBER_DEBUG_GLOBAL) << "Invalid order value for item.";
 
 	if (el.hasChildNodes()) {
-		message_ = !el.firstChildElement("message").isNull();
-		presenceIn_ = !el.firstChildElement("presence-in").isNull();
-		presenceOut_ = !el.firstChildElement("presence-out").isNull();
-		iq_ = !el.firstChildElement("iq").isNull();
+		message_ = !el.firstChildElement(QStringLiteral("message")).isNull();
+		presenceIn_ = !el.firstChildElement(QStringLiteral("presence-in")).isNull();
+		presenceOut_ = !el.firstChildElement(QStringLiteral("presence-out")).isNull();
+		iq_ = !el.firstChildElement(QStringLiteral("iq")).isNull();
 	}
 	else {
 		message_ = presenceIn_ = presenceOut_ = iq_ = true;

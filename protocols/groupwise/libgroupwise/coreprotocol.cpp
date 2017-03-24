@@ -105,9 +105,9 @@ url_escape_string( const char *src)
 CoreProtocol::CoreProtocol() : QObject()
 {
 	m_eventProtocol = new EventProtocol( this );
-	m_eventProtocol->setObjectName( "eventprotocol" );
+	m_eventProtocol->setObjectName( QStringLiteral("eventprotocol") );
 	m_responseProtocol = new ResponseProtocol( this );
-	m_responseProtocol->setObjectName( "responseprotocol" );
+	m_responseProtocol->setObjectName( QStringLiteral("responseprotocol") );
 }
 
 CoreProtocol::~CoreProtocol() 
@@ -144,11 +144,11 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 	while ( m_in.size() && ( parsedBytes = wireToTransfer( m_in ) ) )
 	{
 		transferCount++;
-		debug( QString( "parsed transfer #%1 in chunk" ).arg( transferCount ) );
+		debug( QStringLiteral( "parsed transfer #%1 in chunk" ).arg( transferCount ) );
 		int size =  m_in.size();
 		if ( parsedBytes < size )
 		{
-			debug( " - more data in chunk!" );
+			debug( QStringLiteral(" - more data in chunk!") );
 			// copy the unparsed bytes into a new qbytearray and replace m_in with that
 			QByteArray remainder( size - parsedBytes, 0 );
 			memcpy( remainder.data(), m_in.data() + parsedBytes, remainder.size() );
@@ -158,28 +158,28 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 			m_in.truncate( 0 );
 	}
 	if ( m_state == NeedMore )
-		debug( " - message was incomplete, waiting for more..." );
+		debug( QStringLiteral(" - message was incomplete, waiting for more...") );
 	if ( m_eventProtocol->state() == EventProtocol::OutOfSync )
 	{	
-		debug( " - protocol thinks it is out of sync, discarding the rest of the buffer and hoping the server regains sync soon..." );
+		debug( QStringLiteral(" - protocol thinks it is out of sync, discarding the rest of the buffer and hoping the server regains sync soon...") );
 		m_in.truncate( 0 );
 	}
-	debug( " - done processing chunk" );
+	debug( QStringLiteral(" - done processing chunk") );
 }
 
 Transfer* CoreProtocol::incomingTransfer()
 {	
-	debug( "" );
+	debug( QLatin1String("") );
 	if ( m_state == Available )
 	{
-		debug( " - got a transfer" );
+		debug( QStringLiteral(" - got a transfer") );
 		m_state = NoData;
 		return m_inTransfer;
 		m_inTransfer = 0;
 	}
 	else
 	{
-		debug( " - no milk today." );
+		debug( QStringLiteral(" - no milk today.") );
 		return 0;
 	}
 }
@@ -187,7 +187,7 @@ Transfer* CoreProtocol::incomingTransfer()
 void cp_dump( const QByteArray &bytes )
 {
 #ifdef LIBGW_DEBUG
-	CoreProtocol::debug( QString( "contains: %1 bytes" ).arg( bytes.count() ) );
+	CoreProtocol::debug( QStringLiteral( "contains: %1 bytes" ).arg( bytes.count() ) );
 	for ( int i = 0; i < bytes.count(); ++i )
 	{
 		printf( "%02x ", bytes[ i ] );
@@ -200,13 +200,13 @@ void cp_dump( const QByteArray &bytes )
 
 void CoreProtocol::outgoingTransfer( Request* outgoing )
 {
-	debug( "" );
+	debug( QLatin1String("") );
 	// Convert the outgoing data into wire format
 	Request * request = dynamic_cast<Request *>( outgoing );
 	Field::FieldList fields = request->fields();
 	if ( fields.isEmpty() )
 	{
-		debug( "Transfer contained no fields, it must be a ping.");
+		debug( QStringLiteral("Transfer contained no fields, it must be a ping."));
 /*		m_error = NMERR_BAD_PARM;
 		return;*/
 	}
@@ -223,12 +223,12 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 
 	// strip out any embedded host and port in the command string 
 	QByteArray command, host, port;
-	if ( request->command().section( ':', 0, 0 ) == "login" )
+	if ( request->command().section( ':', 0, 0 ) == QLatin1String("login") )
 	{
 		command = "login";
 		host = request->command().section( ':', 1, 1 ).toAscii();
 		port = request->command().section( ':', 2, 2 ).toAscii();
-		debug( QString( "Host: %1 Port: %2" ).arg( host.data() ).arg( port.data() ) );
+		debug( QStringLiteral( "Host: %1 Port: %2" ).arg( host.data() ).arg( port.data() ) );
 	}
 	else
 		command = request->command().toAscii();
@@ -249,7 +249,7 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 		dout <<  "\r\n";
 
 	dout.flush();
-	debug( QString( "data out: %1" ).arg( bytesOut.data() ) );
+	debug( QStringLiteral( "data out: %1" ).arg( bytesOut.data() ) );
 	emit outgoingData( bytesOut );
 	// now convert 
 	fieldsToWire( fields );
@@ -260,7 +260,7 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 
 void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 {
-	debug( "");
+	debug( QLatin1String(""));
 	int subFieldCount = 0;
 	
 	// TODO: consider constructing this as a QStringList and then join()ing it.
@@ -345,7 +345,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		outgoing.append( GW_URLVAR_TYPE );
 		outgoing.append( typeString );
 								
-		debug( QString( "outgoing data: %1" ).arg( outgoing.data() ) );
+		debug( QStringLiteral( "outgoing data: %1" ).arg( outgoing.data() ) );
 		dout.writeRawData( outgoing.data(), outgoing.length() );
 		// write what we have so far, we may be calling this function recursively
 		//kDebug( 14999 ) << "writing \'" << bout << "\'";
@@ -370,7 +370,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		dout.setByteOrder( QDataStream::LittleEndian );
 		dout.writeRawData( "\r\n", 2 );
 		emit outgoingData( bytesOut );
-		debug( "- request completed" );
+		debug( QStringLiteral("- request completed") );
 	}
 	//debug( " - method done" );
 }
@@ -398,7 +398,7 @@ int CoreProtocol::wireToTransfer( QByteArray& wire )
 			if ( t )
 			{
 				m_inTransfer = t;
-				debug( "- got a RESPONSE " );
+				debug( QStringLiteral("- got a RESPONSE ") );
 				
 				m_state = Available;
 				emit incomingData();
@@ -408,18 +408,18 @@ int CoreProtocol::wireToTransfer( QByteArray& wire )
 		}
 		else // otherwise -> Event code
 		{	
-			debug( QString( "- looks like an EVENT: %1, length %2" ).arg( val ).arg( wire.size() ) );
+			debug( QStringLiteral( "- looks like an EVENT: %1, length %2" ).arg( val ).arg( wire.size() ) );
 			Transfer * t = m_eventProtocol->parse( wire, bytesParsed );
 			if ( t )
 			{
 				m_inTransfer = t;
-				debug( QString( "- got an EVENT: %1, parsed: %2" ).arg( val ).arg( bytesParsed ) );
+				debug( QStringLiteral( "- got an EVENT: %1, parsed: %2" ).arg( val ).arg( bytesParsed ) );
 				m_state = Available;
 				emit incomingData();
 			}
 			else
 			{
-				debug( "- EventProtocol was unable to parse it" );
+				debug( QStringLiteral("- EventProtocol was unable to parse it") );
 				bytesParsed = 0;
 			}
 		}
@@ -493,7 +493,7 @@ QLatin1Char CoreProtocol::encode_method( quint8 method )
 
 void CoreProtocol::slotOutgoingData( const QByteArray &out )
 {
-	debug( QString( "%1" ).arg( QString::fromAscii( out ) ) );
+	debug( QStringLiteral( "%1" ).arg( QString::fromAscii( out ) ) );
 }
 
 bool CoreProtocol::okToProceed()
@@ -503,7 +503,7 @@ bool CoreProtocol::okToProceed()
 		if ( m_din->atEnd() )
 		{
 			m_state = NeedMore;
-			debug( "- Server message ended prematurely!" );
+			debug( QStringLiteral("- Server message ended prematurely!") );
 		}
 		else
 			return true;

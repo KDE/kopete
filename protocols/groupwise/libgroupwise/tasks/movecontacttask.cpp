@@ -53,12 +53,12 @@ void MoveContactTask::moveContact( const ContactItem & contact, const int newPar
 
 	lst.append( new Field::SingleField( Field::NM_A_SZ_SEQUENCE_NUMBER, 0, NMFIELD_TYPE_UTF8, "-1" ) );
 	lst.append( new Field::SingleField( Field::NM_A_SZ_PARENT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( newParent ) ) );
-	createTransfer( "movecontact", lst );
+	createTransfer( QStringLiteral("movecontact"), lst );
 }
 
 void MoveContactTask::moveContactToNewFolder( const ContactItem & contact, const int newSequenceNumber, const QString & folderDisplayName )
 {
-	client()->debug("MoveContactTask::moveContactToNewFolder()" );
+	client()->debug(QStringLiteral("MoveContactTask::moveContactToNewFolder()") );
 	m_folderSequence = newSequenceNumber;
 	m_folderDisplayName = folderDisplayName;
 	m_contactToMove = contact;
@@ -76,7 +76,7 @@ void MoveContactTask::onGo()
 
 void MoveContactTask::onFolderCreated()
 {
-	client()->debug("MoveContactTask::onFolderCreated()" );
+	client()->debug(QStringLiteral("MoveContactTask::onFolderCreated()") );
 	moveContact( m_contactToMove, m_folderId );
 	RequestTask::onGo();
 }

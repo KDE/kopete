@@ -50,14 +50,14 @@ PrivacyPlugin::PrivacyPlugin( QObject *parent, const QVariantList & )
 	if( !pluginStatic_ )
 		pluginStatic_ = this;
 
-    QAction *addToWhiteList = new QAction( QIcon::fromTheme("privacy_whitelist"), i18n("Add to WhiteList" ), this );
-        actionCollection()->addAction( "addToWhiteList", addToWhiteList );
+    QAction *addToWhiteList = new QAction( QIcon::fromTheme(QStringLiteral("privacy_whitelist")), i18n("Add to WhiteList" ), this );
+        actionCollection()->addAction( QStringLiteral("addToWhiteList"), addToWhiteList );
 	connect(addToWhiteList, SIGNAL(triggered(bool)), this, SLOT(slotAddToWhiteList()));
-    QAction *addToBlackList = new QAction( QIcon::fromTheme("privacy_blacklist"), i18n("Add to BlackList" ), this );
-        actionCollection()->addAction( "addToBlackList", addToBlackList );
+    QAction *addToBlackList = new QAction( QIcon::fromTheme(QStringLiteral("privacy_blacklist")), i18n("Add to BlackList" ), this );
+        actionCollection()->addAction( QStringLiteral("addToBlackList"), addToBlackList );
 	connect(addToBlackList, SIGNAL(triggered(bool)), this, SLOT(slotAddToBlackList()));
 
-	setXMLFile("privacyui.rc");
+	setXMLFile(QStringLiteral("privacyui.rc"));
 
 	m_inboundHandler = new PrivacyMessageHandlerFactory( Kopete::Message::Inbound,
 		Kopete::MessageHandlerFactory::InStageStart, this, SLOT(slotIncomingMessage(Kopete::MessageEvent*)) );
@@ -159,7 +159,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 		{
 			kDebug(14313) << "Message from " << msg.from()->protocol()->pluginId() << ":" << msg.from()->contactId() << " dropped (not whitelisted)";
 			if ( !msg.manager()->account()->isBusy() )
-				KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because this contact is not on your whitelist.", msg.from()->contactId()) );
+				KNotification::event( QStringLiteral("message_dropped"), i18n("A message from %1 was dropped, because this contact is not on your whitelist.", msg.from()->contactId()) );
 			event->discard();
 			return;
 		}
@@ -170,7 +170,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 		{
 			kDebug(14313) << "Message from " << msg.from()->protocol()->pluginId() << ":" << msg.from()->contactId() << " dropped (blacklisted)";
 			if ( !msg.manager()->account()->isBusy() )
-				KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because this contact is on your blacklist.", msg.from()->contactId()) );
+				KNotification::event( QStringLiteral("message_dropped"), i18n("A message from %1 was dropped, because this contact is on your blacklist.", msg.from()->contactId()) );
 			event->discard();
 			return;
 		}
@@ -181,7 +181,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 		{
 			kDebug(14313) << "Message from " << msg.from()->contactId() << " dropped (not on the contact list)";
 			if ( !msg.manager()->account()->isBusy() )
-				KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because this contact is not on your contact list.", msg.from()->contactId()) );
+				KNotification::event( QStringLiteral("message_dropped"), i18n("A message from %1 was dropped, because this contact is not on your contact list.", msg.from()->contactId()) );
 			event->discard();
 			return;
 		}
@@ -199,7 +199,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 			{
 				kDebug(14313) << "Message dropped because it contained: " << word;
 				if ( !msg.manager()->account()->isBusy() )
-					KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because it contained a blacklisted word.", msg.from()->contactId()) );
+					KNotification::event( QStringLiteral("message_dropped"), i18n("A message from %1 was dropped, because it contained a blacklisted word.", msg.from()->contactId()) );
 				event->discard();
 				return;
 			}
@@ -224,7 +224,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 		{
 			kDebug(14313) << "Message dropped because it contained blacklisted words.";
 			if ( !msg.manager()->account()->isBusy() )
-				KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because it contained blacklisted words.", msg.from()->contactId()) );
+				KNotification::event( QStringLiteral("message_dropped"), i18n("A message from %1 was dropped, because it contained blacklisted words.", msg.from()->contactId()) );
 			event->discard();
 			return;
 		}
@@ -233,7 +233,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 
 void PrivacyPlugin::slotViewCreated( KopeteView *view )
 {
-	if(view->plugin()->pluginInfo().pluginName() != QString::fromLatin1("kopete_chatwindow") )
+	if(view->plugin()->pluginInfo().pluginName() != QLatin1String("kopete_chatwindow") )
 		return;  //Email chat windows are not supported.
 
 	Kopete::ChatSession *session = view->msgManager();

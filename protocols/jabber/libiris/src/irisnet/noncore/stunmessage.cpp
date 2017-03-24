@@ -294,7 +294,7 @@ static quint32 fingerprint_calc(const quint8 *buf, int size)
 
 static QByteArray message_integrity_calc(const quint8 *buf, int size, const QByteArray &key)
 {
-	QCA::MessageAuthenticationCode hmac("hmac(sha1)", key);
+	QCA::MessageAuthenticationCode hmac(QStringLiteral("hmac(sha1)"), key);
 	QByteArray region = QByteArray::fromRawData((const char *)buf, size);
 	QByteArray result = hmac.process(region).toByteArray();
 	Q_ASSERT(result.size() == 20);

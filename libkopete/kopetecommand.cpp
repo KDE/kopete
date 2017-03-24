@@ -50,7 +50,7 @@ Kopete::Command::Command( QObject *parent, const QString &command, const char* h
 	: QAction( QIcon::fromTheme(pix), command[0].toUpper() + command.right( command.length() - 1).toLower(), 0 )
 	, d(new Private)
 {
-	setObjectName( command.toLower() + QString::fromLatin1("_command") );
+	setObjectName( command.toLower() + QLatin1String("_command") );
 	setShortcut( cut );
 	d->parent = parent;
 	connect(this, SIGNAL(triggered(bool)),this, SLOT(slotAction()));
@@ -129,8 +129,8 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 
 			// Translate %s to the whole string and %n to current display name
 
-			formatString.replace( QString::fromLatin1("%n"), manager->myself()->displayName() );
-			formatString.replace( QString::fromLatin1("%s"), args );
+			formatString.replace( QLatin1String("%n"), manager->myself()->displayName() );
+			formatString.replace( QLatin1String("%s"), args );
 
 			// Translate %1..%N to word1..wordN
 			while( mArgs.count() > 0 )
@@ -141,7 +141,7 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 
 			qCDebug(LIBKOPETE_LOG) << "New Command after processing alias: " << formatString;
 
-			Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/") + formatString, manager );
+			Kopete::CommandHandler::commandHandler()->processMessage( QLatin1String("/") + formatString, manager );
 		}
 		else
 		{

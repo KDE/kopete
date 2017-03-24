@@ -52,7 +52,7 @@ bool QQAddContactPage::apply( Kopete::Account* a, Kopete::MetaContact* m )
 		if ( m_qqAddUI->m_rbEcho->isChecked() )
 		{
 			type = m_qqAddUI->m_uniqueName->text();
-			name = QString::fromLatin1( "Echo Contact" );
+			name = QStringLiteral( "Echo Contact" );
 			ok = true;
 		}
 		if ( ok )

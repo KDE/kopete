@@ -2270,49 +2270,49 @@ int VideoDevice::pixelFormatDepth(pixel_format pixelformat)
 QString VideoDevice::pixelFormatName(pixel_format pixelformat)
 {
 	QString returnvalue;
-	returnvalue = "None";
+	returnvalue = QStringLiteral("None");
 	switch(pixelformat)
 	{
-		case PIXELFORMAT_NONE	: returnvalue = "None";			break;
+		case PIXELFORMAT_NONE	: returnvalue = QStringLiteral("None");			break;
 
 // Packed RGB formats
-		case PIXELFORMAT_RGB332	: returnvalue = "8-bit RGB332";		break;
-		case PIXELFORMAT_RGB444	: returnvalue = "8-bit RGB444";		break;
-		case PIXELFORMAT_RGB555	: returnvalue = "16-bit RGB555";	break;
-		case PIXELFORMAT_RGB565	: returnvalue = "16-bit RGB565";	break;
-		case PIXELFORMAT_RGB555X: returnvalue = "16-bit RGB555X";	break;
-		case PIXELFORMAT_RGB565X: returnvalue = "16-bit RGB565X";	break;
-		case PIXELFORMAT_BGR24	: returnvalue = "24-bit BGR24";		break;
-		case PIXELFORMAT_RGB24	: returnvalue = "24-bit RGB24";		break;
-		case PIXELFORMAT_BGR32	: returnvalue = "32-bit BGR32";		break;
-		case PIXELFORMAT_RGB32	: returnvalue = "32-bit RGB32";		break;
+		case PIXELFORMAT_RGB332	: returnvalue = QStringLiteral("8-bit RGB332");		break;
+		case PIXELFORMAT_RGB444	: returnvalue = QStringLiteral("8-bit RGB444");		break;
+		case PIXELFORMAT_RGB555	: returnvalue = QStringLiteral("16-bit RGB555");	break;
+		case PIXELFORMAT_RGB565	: returnvalue = QStringLiteral("16-bit RGB565");	break;
+		case PIXELFORMAT_RGB555X: returnvalue = QStringLiteral("16-bit RGB555X");	break;
+		case PIXELFORMAT_RGB565X: returnvalue = QStringLiteral("16-bit RGB565X");	break;
+		case PIXELFORMAT_BGR24	: returnvalue = QStringLiteral("24-bit BGR24");		break;
+		case PIXELFORMAT_RGB24	: returnvalue = QStringLiteral("24-bit RGB24");		break;
+		case PIXELFORMAT_BGR32	: returnvalue = QStringLiteral("32-bit BGR32");		break;
+		case PIXELFORMAT_RGB32	: returnvalue = QStringLiteral("32-bit RGB32");		break;
 
 // Bayer RGB format
-		case PIXELFORMAT_SBGGR8	: returnvalue = "Bayer RGB format";	break;
+		case PIXELFORMAT_SBGGR8	: returnvalue = QStringLiteral("Bayer RGB format");	break;
 
 // YUV formats
-		case PIXELFORMAT_GREY	: returnvalue = "8-bit Grayscale";	break;
-		case PIXELFORMAT_YUYV	: returnvalue = "Packed YUV 4:2:2";	break;
-		case PIXELFORMAT_UYVY	: returnvalue = "Packed YVU 4:2:2";	break;
-		case PIXELFORMAT_YUV420P: returnvalue = "Planar YUV 4:2:0";	break;
-		case PIXELFORMAT_YUV422P: returnvalue = "Planar YUV 4:2:2";	break;
+		case PIXELFORMAT_GREY	: returnvalue = QStringLiteral("8-bit Grayscale");	break;
+		case PIXELFORMAT_YUYV	: returnvalue = QStringLiteral("Packed YUV 4:2:2");	break;
+		case PIXELFORMAT_UYVY	: returnvalue = QStringLiteral("Packed YVU 4:2:2");	break;
+		case PIXELFORMAT_YUV420P: returnvalue = QStringLiteral("Planar YUV 4:2:0");	break;
+		case PIXELFORMAT_YUV422P: returnvalue = QStringLiteral("Planar YUV 4:2:2");	break;
 
 
 // Compressed formats
-		case PIXELFORMAT_JPEG	: returnvalue = "JPEG image";		break;
-		case PIXELFORMAT_MPEG	: returnvalue = "MPEG stream";		break;
+		case PIXELFORMAT_JPEG	: returnvalue = QStringLiteral("JPEG image");		break;
+		case PIXELFORMAT_MPEG	: returnvalue = QStringLiteral("MPEG stream");		break;
 
 // Reserved formats
-		case PIXELFORMAT_DV	: returnvalue = "DV (unknown)";		break;
-		case PIXELFORMAT_ET61X251:returnvalue = "ET61X251";		break;
-		case PIXELFORMAT_HI240	: returnvalue = "8-bit HI240 (RGB332)";	break;
-		case PIXELFORMAT_HM12	: returnvalue = "Packed YUV 4:2:2";	break;
-		case PIXELFORMAT_MJPEG	: returnvalue = "8-bit Grayscale";	break;
-		case PIXELFORMAT_PWC1	: returnvalue = "PWC1";			break;
-		case PIXELFORMAT_PWC2	: returnvalue = "PWC2";			break;
-		case PIXELFORMAT_SN9C10X: returnvalue = "SN9C102";		break;
-		case PIXELFORMAT_WNVA	: returnvalue = "Winnov Videum";	break;
-		case PIXELFORMAT_YYUV	: returnvalue = "YYUV (unknown)";	break;
+		case PIXELFORMAT_DV	: returnvalue = QStringLiteral("DV (unknown)");		break;
+		case PIXELFORMAT_ET61X251:returnvalue = QStringLiteral("ET61X251");		break;
+		case PIXELFORMAT_HI240	: returnvalue = QStringLiteral("8-bit HI240 (RGB332)");	break;
+		case PIXELFORMAT_HM12	: returnvalue = QStringLiteral("Packed YUV 4:2:2");	break;
+		case PIXELFORMAT_MJPEG	: returnvalue = QStringLiteral("8-bit Grayscale");	break;
+		case PIXELFORMAT_PWC1	: returnvalue = QStringLiteral("PWC1");			break;
+		case PIXELFORMAT_PWC2	: returnvalue = QStringLiteral("PWC2");			break;
+		case PIXELFORMAT_SN9C10X: returnvalue = QStringLiteral("SN9C102");		break;
+		case PIXELFORMAT_WNVA	: returnvalue = QStringLiteral("Winnov Videum");	break;
+		case PIXELFORMAT_YYUV	: returnvalue = QStringLiteral("YYUV (unknown)");	break;
 	}
 	return returnvalue;
 }
@@ -2320,7 +2320,7 @@ QString VideoDevice::pixelFormatName(pixel_format pixelformat)
 QString VideoDevice::pixelFormatName(int pixelformat)
 {
 	QString returnvalue;
-	returnvalue = "None";
+	returnvalue = QStringLiteral("None");
 	switch(m_driver)
 	{
 #if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
@@ -2607,58 +2607,58 @@ __u64 VideoDevice::signalStandardCode(signal_standard standard)
 QString VideoDevice::signalStandardName(signal_standard standard)
 {
 	QString returnvalue;
-	returnvalue = "None";
+	returnvalue = QStringLiteral("None");
 	switch(standard)
 	{
-		case STANDARD_PAL_B	: returnvalue = "PAL-B";	break;
-		case STANDARD_PAL_B1	: returnvalue = "PAL-B1"; 	break;
-		case STANDARD_PAL_G	: returnvalue = "PAL-G";	break;
-		case STANDARD_PAL_H	: returnvalue = "PAL-H";	break;
-		case STANDARD_PAL_I	: returnvalue = "PAL-I";	break;
-		case STANDARD_PAL_D	: returnvalue = "PAL-D";	break;
-		case STANDARD_PAL_D1	: returnvalue = "PAL-D1";	break;
-		case STANDARD_PAL_K	: returnvalue = "PAL-K";	break;
+		case STANDARD_PAL_B	: returnvalue = QStringLiteral("PAL-B");	break;
+		case STANDARD_PAL_B1	: returnvalue = QStringLiteral("PAL-B1"); 	break;
+		case STANDARD_PAL_G	: returnvalue = QStringLiteral("PAL-G");	break;
+		case STANDARD_PAL_H	: returnvalue = QStringLiteral("PAL-H");	break;
+		case STANDARD_PAL_I	: returnvalue = QStringLiteral("PAL-I");	break;
+		case STANDARD_PAL_D	: returnvalue = QStringLiteral("PAL-D");	break;
+		case STANDARD_PAL_D1	: returnvalue = QStringLiteral("PAL-D1");	break;
+		case STANDARD_PAL_K	: returnvalue = QStringLiteral("PAL-K");	break;
 
-		case STANDARD_PAL_M	: returnvalue = "PAL-M";	break;
-		case STANDARD_PAL_N	: returnvalue = "PAL-N";	break;
-		case STANDARD_PAL_Nc	: returnvalue = "PAL-Nc";	break;
-		case STANDARD_PAL_60	: returnvalue = "PAL-60";	break;
+		case STANDARD_PAL_M	: returnvalue = QStringLiteral("PAL-M");	break;
+		case STANDARD_PAL_N	: returnvalue = QStringLiteral("PAL-N");	break;
+		case STANDARD_PAL_Nc	: returnvalue = QStringLiteral("PAL-Nc");	break;
+		case STANDARD_PAL_60	: returnvalue = QStringLiteral("PAL-60");	break;
 
-		case STANDARD_NTSC_M	: returnvalue = "NTSC-M";	break;
-		case STANDARD_NTSC_M_JP	: returnvalue = "NTSC-M(JP)";	break;
-		case STANDARD_NTSC_443	: returnvalue = "NTSC-443";	break;
-		case STANDARD_NTSC_M_KR	: returnvalue = "NTSC-M(KR)";	break;
+		case STANDARD_NTSC_M	: returnvalue = QStringLiteral("NTSC-M");	break;
+		case STANDARD_NTSC_M_JP	: returnvalue = QStringLiteral("NTSC-M(JP)");	break;
+		case STANDARD_NTSC_443	: returnvalue = QStringLiteral("NTSC-443");	break;
+		case STANDARD_NTSC_M_KR	: returnvalue = QStringLiteral("NTSC-M(KR)");	break;
 
-		case STANDARD_SECAM_B	: returnvalue = "SECAM-B";	break;
-		case STANDARD_SECAM_D	: returnvalue = "SECAM-D";	break;
-		case STANDARD_SECAM_G	: returnvalue = "SECAM-G";	break;
-		case STANDARD_SECAM_H	: returnvalue = "SECAM-H";	break;
-		case STANDARD_SECAM_K	: returnvalue = "SECAM-K";	break;
-		case STANDARD_SECAM_K1	: returnvalue = "SECAM-K1";	break;
-		case STANDARD_SECAM_L	: returnvalue = "SECAM-L";	break;
-		case STANDARD_SECAM_LC	: returnvalue = "SECAM-LC";	break;
+		case STANDARD_SECAM_B	: returnvalue = QStringLiteral("SECAM-B");	break;
+		case STANDARD_SECAM_D	: returnvalue = QStringLiteral("SECAM-D");	break;
+		case STANDARD_SECAM_G	: returnvalue = QStringLiteral("SECAM-G");	break;
+		case STANDARD_SECAM_H	: returnvalue = QStringLiteral("SECAM-H");	break;
+		case STANDARD_SECAM_K	: returnvalue = QStringLiteral("SECAM-K");	break;
+		case STANDARD_SECAM_K1	: returnvalue = QStringLiteral("SECAM-K1");	break;
+		case STANDARD_SECAM_L	: returnvalue = QStringLiteral("SECAM-L");	break;
+		case STANDARD_SECAM_LC	: returnvalue = QStringLiteral("SECAM-LC");	break;
 
-		case STANDARD_ATSC_8_VSB: returnvalue = "ATSC-8-VSB";	break;
-		case STANDARD_ATSC_16_VSB:returnvalue = "ATSC-16-VSB";	break;
+		case STANDARD_ATSC_8_VSB: returnvalue = QStringLiteral("ATSC-8-VSB");	break;
+		case STANDARD_ATSC_16_VSB:returnvalue = QStringLiteral("ATSC-16-VSB");	break;
 
-		case STANDARD_PAL_BG	: returnvalue = "PAL-BG";	break;
-		case STANDARD_PAL_DK	: returnvalue = "PAL-DK";	break;
-		case STANDARD_PAL	: returnvalue = "PAL";		break;
-		case STANDARD_NTSC	: returnvalue = "NTSC";		break;
-		case STANDARD_SECAM_DK  : returnvalue = "SECAM-DK";	break;
-		case STANDARD_SECAM	: returnvalue = "SECAM";	break;
+		case STANDARD_PAL_BG	: returnvalue = QStringLiteral("PAL-BG");	break;
+		case STANDARD_PAL_DK	: returnvalue = QStringLiteral("PAL-DK");	break;
+		case STANDARD_PAL	: returnvalue = QStringLiteral("PAL");		break;
+		case STANDARD_NTSC	: returnvalue = QStringLiteral("NTSC");		break;
+		case STANDARD_SECAM_DK  : returnvalue = QStringLiteral("SECAM-DK");	break;
+		case STANDARD_SECAM	: returnvalue = QStringLiteral("SECAM");	break;
 
-		case STANDARD_MN	: returnvalue = "DK";		break;
-		case STANDARD_B		: returnvalue = "B";		break;
-		case STANDARD_GH	: returnvalue = "GH";		break;
-		case STANDARD_DK	: returnvalue = "DK";		break;
+		case STANDARD_MN	: returnvalue = QStringLiteral("DK");		break;
+		case STANDARD_B		: returnvalue = QStringLiteral("B");		break;
+		case STANDARD_GH	: returnvalue = QStringLiteral("GH");		break;
+		case STANDARD_DK	: returnvalue = QStringLiteral("DK");		break;
 
-		case STANDARD_525_60	: returnvalue = "525 lines 60Hz";break;
-		case STANDARD_625_50	: returnvalue = "625 lines 50Hz";break;
-		case STANDARD_ATSC	: returnvalue = "ATSC"; 	break;
+		case STANDARD_525_60	: returnvalue = QStringLiteral("525 lines 60Hz");break;
+		case STANDARD_625_50	: returnvalue = QStringLiteral("625 lines 50Hz");break;
+		case STANDARD_ATSC	: returnvalue = QStringLiteral("ATSC"); 	break;
 
-		case STANDARD_UNKNOWN	: returnvalue = "Unknown";	break;
-		case STANDARD_ALL	: returnvalue = "All";		break;
+		case STANDARD_UNKNOWN	: returnvalue = QStringLiteral("Unknown");	break;
+		case STANDARD_ALL	: returnvalue = QStringLiteral("All");		break;
 	}
 	return returnvalue;
 }
@@ -2666,7 +2666,7 @@ QString VideoDevice::signalStandardName(signal_standard standard)
 QString VideoDevice::signalStandardName(int standard)
 {
 	QString returnvalue;
-	returnvalue = "None";
+	returnvalue = QStringLiteral("None");
 	switch(m_driver)
 	{
 #if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)

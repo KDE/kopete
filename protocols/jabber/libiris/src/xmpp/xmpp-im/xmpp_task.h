@@ -64,12 +64,12 @@ namespace XMPP {
 		virtual void onDisconnect();
 		virtual void onTimeout();
 		void send(const QDomElement &);
-		void setSuccess(int code=0, const QString &str="");
+		void setSuccess(int code=0, const QString &str=QLatin1String(""));
 		void setError(const QDomElement &);
-		void setError(int code=0, const QString &str="");
+		void setError(int code=0, const QString &str=QLatin1String(""));
 		void debug(const char *, ...);
 		void debug(const QString &);
-		bool iqVerify(const QDomElement &x, const Jid &to, const QString &id, const QString &xmlns="");
+		bool iqVerify(const QDomElement &x, const Jid &to, const QString &id, const QString &xmlns=QLatin1String(""));
 
 	private slots:
 		void clientDisconnected();

@@ -43,7 +43,7 @@ void GetChatSearchResultsTask::poll( int queryHandle )
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( Field::NM_A_UD_OBJECT_ID, 0, NMFIELD_TYPE_UDWORD, queryHandle ) );
 	lst.append( new Field::SingleField( Field::NM_A_UD_QUERY_COUNT, 0, NMFIELD_TYPE_UDWORD, 10 ) );
-	createTransfer( "getchatsearchresults", lst );
+	createTransfer( QStringLiteral("getchatsearchresults"), lst );
 }
 
 bool GetChatSearchResultsTask::take( Transfer * transfer )

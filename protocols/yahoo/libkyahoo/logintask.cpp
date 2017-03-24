@@ -81,7 +81,7 @@ bool LoginTask::take(Transfer* transfer)
 	switch (mState)
 	{
 		case (InitialState):
-			client()->notifyError( "Error in login procedure.", "take called while in initial state", Client::Debug );
+			client()->notifyError( QStringLiteral("Error in login procedure."), QStringLiteral("take called while in initial state"), Client::Debug );
 			return false;
 		break;
 		case (SentVerify):
@@ -146,7 +146,7 @@ void LoginTask::onGo()
 	if (mState == InitialState)
 		sendVerify();
 	else
-		client()->notifyError( "Error in login procedure.", "onGo called while not in initial state", Client::Debug );
+		client()->notifyError( QStringLiteral("Error in login procedure."), QStringLiteral("onGo called while not in initial state"), Client::Debug );
 }
 
 void LoginTask::reset()
@@ -209,7 +209,7 @@ void LoginTask::sendAuthResp(YMSGTransfer* t)
 
 void LoginTask::sendAuthSixteenStage1(const QString& sn, const QString& seed)
 {
-	const QString YahooTokenUrl = "https://login.yahoo.com/config/pwtoken_get?src=ymsgr&ts=&login=%1&passwd=%2&chal=%3";
+	const QString YahooTokenUrl = QStringLiteral("https://login.yahoo.com/config/pwtoken_get?src=ymsgr&ts=&login=%1&passwd=%2&chal=%3");
 	kDebug(YAHOO_RAW_DEBUG) << "seed:" << seed;
 	m_stage1Data.clear();
 	/* construct a URL from the seed and request tokens */
@@ -238,12 +238,12 @@ void LoginTask::handleAuthSixteenStage1Result(KJob* job)
 	kDebug(YAHOO_RAW_DEBUG) << "error:" << error;
 	if (error == 0)
 	{
-		QStringList responses = m_stage1Data.split("\r\n");
+		QStringList responses = m_stage1Data.split(QStringLiteral("\r\n"));
 		responseNumber = responses[0].toInt();
 		if (responses.count() >= 3)
 		{
 			token = responses[1];
-			token.remove("ymsgr=");
+			token.remove(QStringLiteral("ymsgr="));
 			kDebug(YAHOO_RAW_DEBUG) << "response is:" << responseNumber;
 			kDebug(YAHOO_RAW_DEBUG) << "token is:" << token;
 		}
@@ -292,7 +292,7 @@ void LoginTask::handleAuthSixteenStage1Result(KJob* job)
 
 void LoginTask::sendAuthSixteenStage2(const QString& token)
 {
-	const QString YahooLoginUrl = "https://login.yahoo.com/config/pwtoken_login?src=ymsgr&ts=&token=%1";
+	const QString YahooLoginUrl = QStringLiteral("https://login.yahoo.com/config/pwtoken_login?src=ymsgr&ts=&token=%1");
 	kDebug(YAHOO_RAW_DEBUG) << "token:" << token;
 	m_stage2Data.clear();
 	QString fullUrl = YahooLoginUrl.arg(token);
@@ -318,13 +318,13 @@ void LoginTask::handleAuthSixteenStage2Result(KJob* job)
 	kDebug(YAHOO_RAW_DEBUG) << "error:" << error;
 	if (error == 0)
 	{
-		QStringList responses = m_stage2Data.split("\r\n");
+		QStringList responses = m_stage2Data.split(QStringLiteral("\r\n"));
 		kDebug(YAHOO_RAW_DEBUG) << responses;
 		responseNumber = responses[0].toInt();
 		if (responseNumber == 0)
 		{
 			crumb = responses[1];
-			crumb.remove("crumb=");
+			crumb.remove(QStringLiteral("crumb="));
 			m_yCookie = responses[2].remove(0,2); /* remove Y= */
 			m_tCookie = responses[3].remove(0,2); /* remove T= */
 		}

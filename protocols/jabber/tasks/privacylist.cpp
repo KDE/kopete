@@ -121,8 +121,8 @@ bool PrivacyList::onlyBlockItems() const
 
 QDomElement PrivacyList::toXml(QDomDocument& doc) const
 {
-	QDomElement list = doc.createElement("list");
-	list.setAttribute("name",name()); 
+	QDomElement list = doc.createElement(QStringLiteral("list"));
+	list.setAttribute(QStringLiteral("name"),name()); 
 	
 	for (QList<PrivacyListItem>::ConstIterator it = items_.constBegin() ; it != items_.constEnd(); ++it) {
 		list.appendChild((*it).toXml(doc));
@@ -134,12 +134,12 @@ QDomElement PrivacyList::toXml(QDomDocument& doc) const
 void PrivacyList::fromXml(const QDomElement& el)
 {
 	//kDebug (JABBER_DEBUG_GLOBAL) << "Parsing privacy list";
-	if (el.isNull() || el.tagName() != "list") {
+	if (el.isNull() || el.tagName() != QLatin1String("list")) {
 		kWarning (JABBER_DEBUG_GLOBAL) << "Invalid root tag for privacy list.";
 		return;
 	}
 
-	setName(el.attribute("name"));
+	setName(el.attribute(QStringLiteral("name")));
 	for(QDomNode n = el.firstChild(); !n.isNull(); n = n.nextSibling()) {
 		QDomElement e = n.toElement();
 		if (!e.isNull())
@@ -153,7 +153,7 @@ QString PrivacyList::toString() const
 {
 	QString s;
 	for (QList<PrivacyListItem>::ConstIterator it = items_.begin() ; it != items_.end(); it++) {
-		s += QString("%1 (%2)\n").arg((*it).toString()).arg((*it).order());
+		s += QStringLiteral("%1 (%2)\n").arg((*it).toString()).arg((*it).order());
 	}
 	return s;
 }

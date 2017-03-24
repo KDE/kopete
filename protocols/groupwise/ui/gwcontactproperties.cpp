@@ -109,19 +109,19 @@ void GroupWiseContactProperties::setupProperties( QMap< QString, QVariant > serv
 		QString key = i.key();
 		kDebug() << " adding property: " << key << ", " << i.value();
 		QString localised;
-		if ( key == "telephoneNumber" )
+		if ( key == QLatin1String("telephoneNumber") )
 			localised = i18n( "Telephone Number" );
-		else if ( key == "OU" )
+		else if ( key == QLatin1String("OU") )
 			localised = i18n( "Department" );
-		else if ( key == "L" )
+		else if ( key == QLatin1String("L") )
 			localised = i18n( "Location" );
-		else if ( key == "mailstop" )
+		else if ( key == QLatin1String("mailstop") )
 			localised = i18n( "Mailstop" );
-		else if ( key == "personalTitle" )
+		else if ( key == QLatin1String("personalTitle") )
 			localised = i18n( "Personal Title" );
-		else if ( key == "title" )
+		else if ( key == QLatin1String("title") )
 			localised = i18n( "Title" );
-		else if ( key == "Internet EMail Address" )
+		else if ( key == QLatin1String("Internet EMail Address") )
 			localised = i18n( "Email Address" );
 		else
 			localised = key;

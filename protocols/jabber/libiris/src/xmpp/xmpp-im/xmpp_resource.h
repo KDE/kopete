@@ -29,7 +29,7 @@ namespace XMPP
 	class Resource
 	{
 	public:
-		Resource(const QString &name="", const Status &s=Status());
+		Resource(const QString &name=QLatin1String(""), const Status &s=Status());
 		~Resource();
 
 		const QString & name() const;

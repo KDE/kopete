@@ -51,9 +51,9 @@
 KopeteDBusInterface::KopeteDBusInterface(QObject *parent) :
 	QObject(parent), d(new KopeteDBusInterfacePrivate())
 {
-	setObjectName("KopeteDBusInterface");
+	setObjectName(QStringLiteral("KopeteDBusInterface"));
 	new KopeteAdaptor(this);
-	QDBusConnection::sessionBus().registerObject("/Kopete", this);
+	QDBusConnection::sessionBus().registerObject(QStringLiteral("/Kopete"), this);
 
 	QObject::connect(d, SIGNAL(contactChanged(QString)), this, SIGNAL(contactChanged(QString)));
 }
@@ -174,7 +174,7 @@ void KopeteDBusInterface::setIdentityAvatar(const QString &avatarUrl,
 	{
 		// Add the avatar using AvatarManager
 		Kopete::AvatarManager::AvatarEntry avatarEntry;
-		avatarEntry.name = "D-Bus Avatar";
+		avatarEntry.name = QStringLiteral("D-Bus Avatar");
 		avatarEntry.path = QUrl(avatarUrl).path();
 		avatarEntry.category = Kopete::AvatarManager::User;
 
@@ -318,7 +318,7 @@ QString KopeteDBusInterface::getDisplayName(const QString &contactId)
 	if (contact)
 		return contact->displayName();
 	else
-		return "";
+		return QLatin1String("");
 }
 
 bool KopeteDBusInterface::isContactOnline(const QString &contactId)
@@ -335,7 +335,7 @@ bool KopeteDBusInterface::addContact(const QString &protocolName,
 		const QString &displayName, const QString &groupName)
 {
 	QString protocolId = protocolName;
-	if (!protocolName.contains("Protocol"))
+	if (!protocolName.contains(QLatin1String("Protocol")))
 	{
 		protocolId += QLatin1String("Protocol");
 	}
@@ -388,7 +388,7 @@ bool KopeteDBusInterface::isConnected(const QString &protocolName,
 		const QString &accountId)
 {
 	QString protocolId = protocolName;
-	if (!protocolName.contains("Protocol"))
+	if (!protocolName.contains(QLatin1String("Protocol")))
 	{
 		protocolId += QLatin1String("Protocol");
 	}
@@ -402,7 +402,7 @@ void KopeteDBusInterface::connect(const QString &protocolName,
 		const QString &accountId)
 {
 	QString protocolId = protocolName;
-	if (!protocolName.contains("Protocol"))
+	if (!protocolName.contains(QLatin1String("Protocol")))
 	{
 		protocolId += QLatin1String("Protocol");
 	}
@@ -419,7 +419,7 @@ void KopeteDBusInterface::disconnect(const QString &protocolName,
 		const QString &accountId)
 {
 	QString protocolId = protocolName;
-	if (!protocolName.contains("Protocol"))
+	if (!protocolName.contains(QLatin1String("Protocol")))
 	{
 		protocolId += QLatin1String("Protocol");
 	}
@@ -439,25 +439,25 @@ QVariantMap KopeteDBusInterface::contactProperties(const QString &contactId)
 
 	if (contact)
 	{
-		properties["status"] = Kopete::OnlineStatus::statusTypeToString(
+		properties[QStringLiteral("status")] = Kopete::OnlineStatus::statusTypeToString(
 				contact->status());
-		properties["message_reachable"] = contact->isReachable();
-		properties["file_reachable"] = contact->canAcceptFiles();
-		properties["display_name"] = contact->displayName();
-		properties["id"] = contact->metaContactId().toString();
+		properties[QStringLiteral("message_reachable")] = contact->isReachable();
+		properties[QStringLiteral("file_reachable")] = contact->canAcceptFiles();
+		properties[QStringLiteral("display_name")] = contact->displayName();
+		properties[QStringLiteral("id")] = contact->metaContactId().toString();
 		if (contact->photoSource() == Kopete::MetaContact::SourceCustom)
 		{
-			properties["picture"] = contact->customPhoto().toDisplayString();
+			properties[QStringLiteral("picture")] = contact->customPhoto().toDisplayString();
 		}
 		else
 		{
-			properties["picture"] = contact->picture().path();
+			properties[QStringLiteral("picture")] = contact->picture().path();
 		}
-		properties["idle_time"] = qulonglong(contact->idleTime());
+		properties[QStringLiteral("idle_time")] = qulonglong(contact->idleTime());
 		if (contact->preferredContact())
 		{
 			/** @todo: export status message title as well or merge both? */
-			properties["status_message"]
+			properties[QStringLiteral("status_message")]
 					= contact->preferredContact()->statusMessage().message();
 		}
 		
@@ -470,7 +470,7 @@ QVariantMap KopeteDBusInterface::contactProperties(const QString &contactId)
 	        	messages << event->message().parsedBody();
 	        }
 		}
-		properties["pending_messages"] = messages;
+		properties[QStringLiteral("pending_messages")] = messages;
 	}
 
 	return properties;

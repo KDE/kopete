@@ -174,7 +174,7 @@ public:
 Client::Client( QObject* parent )
 :QObject( parent )
 {
-	setObjectName( "oscarclient" );
+	setObjectName( QStringLiteral("oscarclient") );
 
 	d = new ClientPrivate;
 	d->tzoffset = 0;
@@ -658,9 +658,9 @@ void Client::receivedMessage( const Oscar::Message& msg )
 					using namespace Xtraz;
 					XtrazNotify xNotify;
 					xNotify.handle( msg.plugin() );
-					if ( xNotify.type() == XtrazNotify::Request && xNotify.pluginId() == "srvMng" )
+					if ( xNotify.type() == XtrazNotify::Request && xNotify.pluginId() == QLatin1String("srvMng") )
 					{
-						if ( xNotify.findService( "cAwaySrv" ) )
+						if ( xNotify.findService( QStringLiteral("cAwaySrv") ) )
 						{
 							XtrazNotify xNotifyResponse;
 							xNotifyResponse.setSenderUni( userId() );
@@ -718,7 +718,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 					xNotify.handle( msg.plugin() );
 					if ( xNotify.type() == XtrazNotify::Response )
 					{
-						const Xtraz::XAwayService* service = dynamic_cast<const XAwayService*>(xNotify.findService( "cAwaySrv" ));
+						const Xtraz::XAwayService* service = dynamic_cast<const XAwayService*>(xNotify.findService( QStringLiteral("cAwaySrv") ));
 						if ( service )
 							emit receivedXStatusMessage( service->senderId(), service->iconIndex(),
 							                             service->description(), service->message() );
@@ -1253,7 +1253,7 @@ void Client::requestICQAwayMessage( const QString& contact, ICQStatus contactSta
 			break;
 		default:
 			// may be a good way to deal with possible error and lack of online status message?
-			emit receivedAwayMessage( contact, "Sorry, this protocol does not support this type of status message" );
+			emit receivedAwayMessage( contact, QStringLiteral("Sorry, this protocol does not support this type of status message") );
 			return;
 		}
 
@@ -1293,7 +1293,7 @@ void Client::requestICQAwayMessage( const QString& contact, ICQStatus contactSta
 			break;
 		default:
 			// may be a good way to deal with possible error and lack of online status message?
-			emit receivedAwayMessage( contact, "Sorry, this protocol does not support this type of status message" );
+			emit receivedAwayMessage( contact, QStringLiteral("Sorry, this protocol does not support this type of status message") );
 			return;
 		}
 	}
@@ -1553,7 +1553,7 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 	if ( colonPos != -1 )
 	{
 		realHost = host.left( colonPos );
-		realPort = host.right(4).toUInt(); //we only need 4 bytes
+		realPort = host.rightRef(4).toUInt(); //we only need 4 bytes
 	}
 	else
 	{

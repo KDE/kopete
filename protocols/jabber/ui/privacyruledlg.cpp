@@ -39,16 +39,16 @@ void PrivacyRuleDlg::setRule(const PrivacyListItem& item)
 	// Type
 	if (item.type() == PrivacyListItem::SubscriptionType) {
 		ui_.cb_type->setCurrentIndex(ui_.cb_type->findText(i18n("Subscription")));
-		if (item.value() == "both") {
+		if (item.value() == QLatin1String("both")) {
 			ui_.cb_value->setCurrentIndex(ui_.cb_value->findText(i18n("Both")));
 		}
-		else if (item.value() == "none") {
+		else if (item.value() == QLatin1String("none")) {
 			ui_.cb_value->setCurrentIndex(ui_.cb_value->findText(i18n("None")));
 		}
-		else if (item.value() == "from") {
+		else if (item.value() == QLatin1String("from")) {
 			ui_.cb_value->setCurrentIndex(ui_.cb_value->findText(i18n("From")));
 		}
-		else if (item.value() == "to") {
+		else if (item.value() == QLatin1String("to")) {
 			ui_.cb_value->setCurrentIndex(ui_.cb_value->findText(i18n("To")));
 		}
 	}
@@ -88,13 +88,13 @@ PrivacyListItem PrivacyRuleDlg::rule() const
 	if(ui_.cb_type->currentText() == i18n("Subscription")) {
 		item.setType(PrivacyListItem::SubscriptionType);
 		if (ui_.cb_value->currentText() == i18n("To")) 
-			item.setValue("to");
+			item.setValue(QStringLiteral("to"));
 		else if (ui_.cb_value->currentText() == i18n("From")) 
-			item.setValue("from");
+			item.setValue(QStringLiteral("from"));
 		else if (ui_.cb_value->currentText() == i18n("Both")) 
-			item.setValue("both");
+			item.setValue(QStringLiteral("both"));
 		else if (ui_.cb_value->currentText() == i18n("None")) 
-			item.setValue("none");
+			item.setValue(QStringLiteral("none"));
 	}
 	else {
 		if (ui_.cb_type->currentText() == i18n("JID")) {
@@ -129,7 +129,7 @@ PrivacyListItem PrivacyRuleDlg::rule() const
 void PrivacyRuleDlg::type_selected(const QString& type)
 {
 	ui_.cb_value->clear();
-	ui_.cb_value->setItemText(ui_.cb_value->currentIndex(), "");
+	ui_.cb_value->setItemText(ui_.cb_value->currentIndex(), QLatin1String(""));
 	if (type == i18n("Subscription")) {
 		ui_.cb_value->addItem(i18n("None"));
 		ui_.cb_value->addItem(i18n("Both"));

@@ -32,7 +32,7 @@ struct Kopete::PasswordedAccount::Private
 };
 
 Kopete::PasswordedAccount::PasswordedAccount( Kopete::Protocol *parent, const QString &acctId, bool allowBlankPassword )
- : Kopete::Account( parent, acctId ), d( new Private( QString::fromLatin1("Account_")+ parent->pluginId() + QString::fromLatin1("_") + acctId , allowBlankPassword  ) )
+ : Kopete::Account( parent, acctId ), d( new Private( QLatin1String("Account_")+ parent->pluginId() + QLatin1String("_") + acctId , allowBlankPassword  ) )
 {
 }
 

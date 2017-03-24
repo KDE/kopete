@@ -49,7 +49,7 @@ BonjourAccount::BonjourAccount( BonjourProtocol *parent, const QString& accountI
 	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
 
 	// All Contacts Go To The Bonjour Group
-	bonjourGroup = Kopete::ContactList::self()->findGroup("Bonjour");
+	bonjourGroup = Kopete::ContactList::self()->findGroup(QStringLiteral("Bonjour"));
 
 	// Clean out Contacts from last time when kopete starts up
 	wipeOutAllContacts();
@@ -141,7 +141,7 @@ void BonjourAccount::startBrowse()
 	// Delete All Contacts Before we start looking for new ones
 	wipeOutAllContacts();
 
-	browser = new KDNSSD::ServiceBrowser("_presence._tcp");
+	browser = new KDNSSD::ServiceBrowser(QStringLiteral("_presence._tcp"));
 	
 	QObject::connect(browser,SIGNAL(serviceAdded(KDNSSD::RemoteService::Ptr)),
 			this,SLOT(comingOnline(KDNSSD::RemoteService::Ptr)));
@@ -159,18 +159,18 @@ void BonjourAccount::startPublish()
 		username.append(KDNSSD::ServiceBrowser::getLocalHostName().toUtf8());
 	}
 
-	service = new KDNSSD::PublicService(username, "_presence._tcp", listeningPort);
+	service = new KDNSSD::PublicService(username, QStringLiteral("_presence._tcp"), listeningPort);
 
         QMap <QString, QByteArray> map;
-        map.insert("1st",  firstName);
-        map.insert("email", emailAddress);
-        map.insert("last", lastName);
-        map.insert("node", "kopete");
-        map.insert("port.p2pj", QByteArray::number(listeningPort));	// This Number Actually Ignored
-        map.insert("status", AvailabilityStatusAvailId);
-        map.insert("txtvers", "1");
-        map.insert("vc", "!");
-        map.insert("ver", "0.0.1");
+        map.insert(QStringLiteral("1st"),  firstName);
+        map.insert(QStringLiteral("email"), emailAddress);
+        map.insert(QStringLiteral("last"), lastName);
+        map.insert(QStringLiteral("node"), "kopete");
+        map.insert(QStringLiteral("port.p2pj"), QByteArray::number(listeningPort));	// This Number Actually Ignored
+        map.insert(QStringLiteral("status"), AvailabilityStatusAvailId);
+        map.insert(QStringLiteral("txtvers"), "1");
+        map.insert(QStringLiteral("vc"), "!");
+        map.insert(QStringLiteral("ver"), "0.0.1");
 
         service->setTextData(map);
 
@@ -225,8 +225,8 @@ void BonjourAccount::comingOnline(KDNSSD::RemoteService::Ptr pointer)
 		return;
 
         QMap <QString, QByteArray> map = pointer->textData();
-	QString cfirst = QString::fromLocal8Bit(map["1st"]);
-	QString clast = QString::fromLocal8Bit(map["last"]);
+	QString cfirst = QString::fromLocal8Bit(map[QStringLiteral("1st")]);
+	QString clast = QString::fromLocal8Bit(map[QStringLiteral("last")]);
 	
 	QString display;
 	if (! cfirst.isEmpty() && ! clast.isEmpty())
@@ -333,7 +333,7 @@ void BonjourAccount::slotGoOnline ()
 	else {
 		if (service) {
 			QMap <QString, QByteArray> map = service->textData();
-			map["status"] = AvailabilityStatusAvailId;
+			map[QStringLiteral("status")] = AvailabilityStatusAvailId;
 			service->setTextData(map);
 		}
 		myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOnline );
@@ -349,7 +349,7 @@ void BonjourAccount::slotGoAway ()
 
 	if (service) {
 		QMap <QString, QByteArray> map = service->textData();
-		map["status"] = AvailabilityStatusAwayId; // "dnd" would be another option here
+		map[QStringLiteral("status")] = AvailabilityStatusAwayId; // "dnd" would be another option here
 		service->setTextData(map);
 	}
 

@@ -96,9 +96,9 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 
 
 
-	if( from.startsWith( "FILE_TRANSFER_SYSTEM" ) )
+	if( from.startsWith( QLatin1String("FILE_TRANSFER_SYSTEM") ) )
 	{
-		client()->notifyError( "Fileupload result received.", msg, Client::Notice );
+		client()->notifyError( QStringLiteral("Fileupload result received."), msg, Client::Notice );
 		return;
 	}	
 	

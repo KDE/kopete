@@ -53,7 +53,7 @@ void PropertyContainer::serializeProperties(QMap<QString, QString> &serializedDa
 			continue;
 
 		QVariant val = it.value().value();
-		QString key = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(val.typeName()), it.key());
+		QString key = QStringLiteral("prop_%1_%2").arg(QString::fromLatin1(val.typeName()), it.key());
 
 		serializedData[key] = val.toString();
 
@@ -67,7 +67,7 @@ void PropertyContainer::deserializeProperties( const QMap<QString, QString> &ser
 	{
 		QString key = it.key();
 
-		if ( !key.startsWith( QString::fromLatin1("prop_") ) ) // avoid parsing other serialized data
+		if ( !key.startsWith( QLatin1String("prop_") ) ) // avoid parsing other serialized data
 			continue;
 
 		QStringList keyList = key.split( QChar('_'), QString::SkipEmptyParts );

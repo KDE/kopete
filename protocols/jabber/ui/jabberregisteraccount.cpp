@@ -76,8 +76,8 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	connect ( jabberClient, SIGNAL (connected()), this, SLOT (slotConnected()) );
 	connect ( jabberClient, SIGNAL (debugMessage(QString)), this, SLOT (slotDebugMessage(QString)) );
 
-	jidRegExp.setPattern ( "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
-	hintPixmap = SmallIcon ( "jabber_online" );
+	jidRegExp.setPattern ( QStringLiteral("[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}") );
+	hintPixmap = SmallIcon ( QStringLiteral("jabber_online") );
 
 	mSuccess = false;
 
@@ -153,7 +153,7 @@ void JabberRegisterAccount::validateData ()
 	}
 	else
 	{
-		mMainWidget->pixJID->setText ( "" );
+		mMainWidget->pixJID->setText ( QLatin1String("") );
 	}
 
 	if ( valid &&
@@ -178,14 +178,14 @@ void JabberRegisterAccount::validateData ()
 		mMainWidget->pixPasswordVerify->setPixmap ( hintPixmap );
 	}
 	else {
-		mMainWidget->pixPassword->setText ( "" );
-		mMainWidget->pixPasswordVerify->setText ( "" );
+		mMainWidget->pixPassword->setText ( QLatin1String("") );
+		mMainWidget->pixPasswordVerify->setText ( QLatin1String("") );
 	}
 
 	if ( valid )
 	{
 		// clear status message if we have valid data
-		mMainWidget->lblStatusMessage->setText ( "" );
+		mMainWidget->lblStatusMessage->setText ( QLatin1String("") );
 	}
 
 	enableButtonOk ( valid );
@@ -205,7 +205,7 @@ void JabberRegisterAccount::slotJIDInformation ()
 	}
 	else
 	{
-		mMainWidget->lblJIDInformation->setText ( "" );
+		mMainWidget->lblJIDInformation->setText ( QLatin1String("") );
 	}
 
 }
@@ -254,14 +254,14 @@ void JabberRegisterAccount::setServer ( const QString &server )
 {
 
 	mMainWidget->leServer->setText ( server );
-	mMainWidget->leJID->setText ( QString ( "@%1" ).arg ( server ) );
+	mMainWidget->leJID->setText ( QStringLiteral ( "@%1" ).arg ( server ) );
 
 }
 
 void JabberRegisterAccount::slotOk ()
 {
 
-	mMainWidget->lblStatusMessage->setText ( "" );
+	mMainWidget->lblStatusMessage->setText ( QLatin1String("") );
 
 	kDebug ( JABBER_DEBUG_GLOBAL ) << "Registering a new Jabber account.";
 

@@ -76,9 +76,9 @@ AuthenticationWizard::AuthenticationWizard(QWidget *parent, ConnContext *context
 	show();
 
 	if ( !session->view()->mainWidget() || !session->view()->mainWidget()->isActiveWindow() ) {
-		KNotification *notification = new KNotification( "kopete_info_event", KNotification::CloseWhenWidgetActivated | KNotification::CloseOnTimeout );
+		KNotification *notification = new KNotification( QStringLiteral("kopete_info_event"), KNotification::CloseWhenWidgetActivated | KNotification::CloseOnTimeout );
 		notification->setText( i18n( "Incoming authentication request from %1", OtrlChatInterface::self()->formatContact( session->members().first()->contactId() ) ) );
-		notification->setPixmap( SmallIcon( "kopete" ) );
+		notification->setPixmap( SmallIcon( QStringLiteral("kopete") ) );
 		notification->setWidget( this );
 		notification->setActions( QStringList() << i18n( "View" ) << i18n( "Close" ) );
 		connect( notification, SIGNAL(activated(uint)), SLOT(notificationActivated(uint)) );

@@ -36,8 +36,8 @@ bool StatusTask::take( Transfer * transfer )
 	if ( forMe( transfer ) )
 	{
 		EventTransfer * event = static_cast<EventTransfer *>(transfer);
-		client()->debug( "Got a status change!" );
-		client()->debug( QString( "%1 changed status to %2, message: %3" ).arg( event->source() ).arg( event->status() ).arg( event->statusText() ) );
+		client()->debug( QStringLiteral("Got a status change!") );
+		client()->debug( QStringLiteral( "%1 changed status to %2, message: %3" ).arg( event->source() ).arg( event->status() ).arg( event->statusText() ) );
 		emit gotStatus( event->source().toLower(), event->status(), event->statusText() );
 		return true;
 	}

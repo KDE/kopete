@@ -67,7 +67,7 @@ bool InputProtocolBase::okToProceed()
 		if ( m_din.atEnd() )
 		{
 			m_state = NeedMore;
-			debug( "InputProtocol::okToProceed() - Server message ended prematurely!" );
+			debug( QStringLiteral("InputProtocol::okToProceed() - Server message ended prematurely!") );
 		}
 		else
 			return true;
@@ -100,7 +100,7 @@ bool InputProtocolBase::safeReadBytes( QByteArray & data, uint & len )
 		// if ( (quint8)( * ( temp.data() + ( temp.length() - 1 ) ) ) == 0xFF )
 		if ( (quint32)temp.length() < ( val - 1 ) )
 		{
-			debug( QString( "InputProtocol::safeReadBytes() - string broke, giving up, only got: %1 bytes out of %2" ).arg( temp.length() ).arg( val ) );
+			debug( QStringLiteral( "InputProtocol::safeReadBytes() - string broke, giving up, only got: %1 bytes out of %2" ).arg( temp.length() ).arg( val ) );
 			m_state = NeedMore;
 			return false;
 		}

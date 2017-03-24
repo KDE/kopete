@@ -56,28 +56,28 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const XMPP::Ros
 	setColor( account()->color() );
 
 	QString cIcon;
-	if(gateway_type=="msn")
-		cIcon="jabber_gateway_msn";
-	else if(gateway_type=="icq")
-		cIcon="jabber_gateway_icq";
-	else if(gateway_type=="aim")
-		cIcon="jabber_gateway_aim";
-	else if(gateway_type=="yahoo")
-		cIcon="jabber_gateway_yahoo";
-	else if(gateway_type=="sms")
-		cIcon="jabber_gateway_sms";
-	else if(gateway_type=="gadu-gadu")
-		cIcon="jabber_gateway_gadu";
-	else if(gateway_type=="smtp")
-		cIcon="jabber_gateway_smtp";
-	else if(gateway_type=="http-ws") 
-		cIcon="jabber_gateway_http-ws";
-	else if(gateway_type=="qq")
-		cIcon="jabber_gateway_qq";
-	else if(gateway_type=="tlen")
-		cIcon="jabber_gateway_tlen";
-	else if(gateway_type=="irc")  //NOTE: this is not official 
-		cIcon="irc_protocol";
+	if(gateway_type==QLatin1String("msn"))
+		cIcon=QStringLiteral("jabber_gateway_msn");
+	else if(gateway_type==QLatin1String("icq"))
+		cIcon=QStringLiteral("jabber_gateway_icq");
+	else if(gateway_type==QLatin1String("aim"))
+		cIcon=QStringLiteral("jabber_gateway_aim");
+	else if(gateway_type==QLatin1String("yahoo"))
+		cIcon=QStringLiteral("jabber_gateway_yahoo");
+	else if(gateway_type==QLatin1String("sms"))
+		cIcon=QStringLiteral("jabber_gateway_sms");
+	else if(gateway_type==QLatin1String("gadu-gadu"))
+		cIcon=QStringLiteral("jabber_gateway_gadu");
+	else if(gateway_type==QLatin1String("smtp"))
+		cIcon=QStringLiteral("jabber_gateway_smtp");
+	else if(gateway_type==QLatin1String("http-ws")) 
+		cIcon=QStringLiteral("jabber_gateway_http-ws");
+	else if(gateway_type==QLatin1String("qq"))
+		cIcon=QStringLiteral("jabber_gateway_qq");
+	else if(gateway_type==QLatin1String("tlen"))
+		cIcon=QStringLiteral("jabber_gateway_tlen");
+	else if(gateway_type==QLatin1String("irc"))  //NOTE: this is not official 
+		cIcon=QStringLiteral("irc_protocol");
 
 	if( !cIcon.isEmpty() )
 		setCustomIcon( cIcon );

@@ -732,7 +732,7 @@ int QJDns::Private::cb_udp_bind(jdns_session_t *, void *app, const jdns_address_
 		{
 			delete sock;
 
-			self->debug_strings += QString("failed to setup multicast on the socket (errorCode=%1)").arg(errorCode);
+			self->debug_strings += QStringLiteral("failed to setup multicast on the socket (errorCode=%1)").arg(errorCode);
 			self->processDebug();
 			return 0;
 		}

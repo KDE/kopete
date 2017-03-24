@@ -77,7 +77,7 @@ void ChatTextEditPart::init( Kopete::ChatSession *session, QWidget *parent)
 	setWidget( editor );
 
 	// TODO: Rename rc file
-	setXMLFile( "kopeterichtexteditpart/kopeterichtexteditpartfull.rc" );
+	setXMLFile( QStringLiteral("kopeterichtexteditpart/kopeterichtexteditpartfull.rc") );
 	
 	historyPos = -1;
 
@@ -93,9 +93,9 @@ void ChatTextEditPart::init( Kopete::ChatSession *session, QWidget *parent)
 
 	// timers for typing notifications
 	m_typingRepeatTimer = new QTimer(this);
-	m_typingRepeatTimer->setObjectName("m_typingRepeatTimer");
+	m_typingRepeatTimer->setObjectName(QStringLiteral("m_typingRepeatTimer"));
 	m_typingStopTimer   = new QTimer(this);
-	m_typingStopTimer->setObjectName("m_typingStopTimer");
+	m_typingStopTimer->setObjectName(QStringLiteral("m_typingStopTimer"));
 
 	connect( m_typingRepeatTimer, SIGNAL(timeout()), this, SLOT(slotRepeatTypingTimer()) );
 	connect( m_typingStopTimer,   SIGNAL(timeout()), this, SLOT(slotStoppedTypingTimer()) );
@@ -264,7 +264,7 @@ void ChatTextEditPart::sendMessage()
 {
 	QString txt = this->text( Qt::PlainText );
 	// avoid sending emtpy messages or enter keys (see bug 100334)
-	if ( txt.isEmpty() || txt == "\n" )
+	if ( txt.isEmpty() || txt == QLatin1String("\n") )
 		return;
 
 	if ( m_lastMatch.isNull() && ( txt.indexOf( QRegExp( QLatin1String("^\\w+:\\s") ) ) > -1 ) )
@@ -468,7 +468,7 @@ void ChatTextEditPart::slotAppearanceChanged()
 
 	editor->setDefaultPlainCharFormat(format);
 	editor->setDefaultRichCharFormat(format);
-	QString styleSheet = QLatin1String("QTextEdit { color: %1; }");
+	QString styleSheet = QStringLiteral("QTextEdit { color: %1; }");
 	editor->setStyleSheet(styleSheet.arg(settings->chatTextColor().name()));
 }
 

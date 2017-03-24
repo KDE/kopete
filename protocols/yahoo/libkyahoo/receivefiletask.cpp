@@ -230,16 +230,16 @@ void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 		send( t );
 		// The server expects a HTTP HEAD command prior to the GET
 		m_mimetypeJob = KIO::mimetype(QString(
-				QString::fromLatin1("http://%1/relay?token=")
+				QStringLiteral("http://%1/relay?token=")
 					.arg( QString(transfer->firstParam( 250 )) ) 
 				+
 				QString(QUrl::toPercentEncoding(QString(transfer->firstParam( 251 )))) +
-				QString::fromLatin1("&sender=%1&recver=%2")
+				QStringLiteral("&sender=%1&recver=%2")
 					.arg(m_userId)
 					.arg(client()->userId()))
 				, 
 				KIO::HideProgressInfo);
-		m_mimetypeJob->addMetaData("cookies", "manual");
+		m_mimetypeJob->addMetaData(QStringLiteral("cookies"), QStringLiteral("manual"));
 		setCommonTransferMetaData(m_mimetypeJob);
 		QObject::connect( m_mimetypeJob, SIGNAL(result(KJob*)), this, SLOT(slotHeadComplete(KJob*)) );
 
@@ -249,12 +249,12 @@ void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 
 void ReceiveFileTask::setCommonTransferMetaData(KIO::TransferJob* job)
 {
-	job->addMetaData(QString::fromLatin1("accept"), "*/*"); // Accept header
-	job->addMetaData(QString::fromLatin1("UserAgent"), "Mozilla/5.0");
-	job->addMetaData(QString::fromLatin1("cache"), "reload");
+	job->addMetaData(QStringLiteral("accept"), QStringLiteral("*/*")); // Accept header
+	job->addMetaData(QStringLiteral("UserAgent"), QStringLiteral("Mozilla/5.0"));
+	job->addMetaData(QStringLiteral("cache"), QStringLiteral("reload"));
 
-	job->addMetaData("cookies", "manual");
- 	job->addMetaData("setcookies", QString::fromLatin1("Cookie: T=%1; Y=%2;")
+	job->addMetaData(QStringLiteral("cookies"), QStringLiteral("manual"));
+ 	job->addMetaData(QStringLiteral("setcookies"), QStringLiteral("Cookie: T=%1; Y=%2;")
  				.arg(client()->tCookie()).arg(client()->yCookie()) );
 }
 

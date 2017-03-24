@@ -50,7 +50,7 @@ class KopeteCommandGUIClient : public QObject, public KXMLGUIClient
 	public:
 		KopeteCommandGUIClient( Kopete::ChatSession *manager ) : QObject(manager), KXMLGUIClient(manager)
 		{
-			setXMLFile( QString::fromLatin1("kopetecommandui.rc") );
+			setXMLFile( QStringLiteral("kopetecommandui.rc") );
 
 			QDomDocument doc = domDocument();
 			QDomNode menu = doc.documentElement().firstChild().firstChild().firstChild();
@@ -63,14 +63,14 @@ class KopeteCommandGUIClient : public QObject, public KXMLGUIClient
 			{
 				QAction *a = static_cast<QAction*>( it.value() );
 				actionCollection()->addAction( a->objectName(), a );
-				QDomElement newNode = doc.createElement( QString::fromLatin1("Action") );
-				newNode.setAttribute( QString::fromLatin1("name"), a->objectName() );
+				QDomElement newNode = doc.createElement( QStringLiteral("Action") );
+				newNode.setAttribute( QStringLiteral("name"), a->objectName() );
 
 				bool added = false;
 				for( QDomElement n = menu.firstChild().toElement();
 					!n.isNull(); n = n.nextSibling().toElement() )
 				{
-					if( a->objectName() < n.attribute(QString::fromLatin1("name")))
+					if( a->objectName() < n.attribute(QStringLiteral("name")))
 					{
 						menu.insertBefore( newNode, n );
 						added = true;
@@ -108,36 +108,36 @@ Kopete::CommandHandler::CommandHandler() : QObject( qApp )
 	mCommands.reserve(31);
 	p->pluginCommands.insert( this, mCommands );
 
-	registerCommand( this, QString::fromLatin1("help"), SLOT(slotHelpCommand(QString,Kopete::ChatSession*)),
+	registerCommand( this, QStringLiteral("help"), SLOT(slotHelpCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /help [<command>] - Used to list available commands, or show help for a specified command." ), 0, 1 );
 
-	registerCommand( this, QString::fromLatin1("url"), SLOT(slotOpenLastUrl(QString,Kopete::ChatSession*)),
+	registerCommand( this, QStringLiteral("url"), SLOT(slotOpenLastUrl(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /url - Opens last URL for current chat in default browser." ) );
 
-	registerCommand( this, QString::fromLatin1("close"), SLOT(slotCloseCommand(QString,Kopete::ChatSession*)),
+	registerCommand( this, QStringLiteral("close"), SLOT(slotCloseCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /close - Closes the current view." ) );
 
 	// FIXME: What's the difference with /close? The help doesn't explain it - Martijn
-	registerCommand( this, QString::fromLatin1("part"), SLOT(slotPartCommand(QString,Kopete::ChatSession*)),
+	registerCommand( this, QStringLiteral("part"), SLOT(slotPartCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /part - Closes the current view." ) );
 
-	registerCommand( this, QString::fromLatin1("clear"), SLOT(slotClearCommand(QString,Kopete::ChatSession*)),
+	registerCommand( this, QStringLiteral("clear"), SLOT(slotClearCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /clear - Clears the active view's chat buffer." ) );
 
 	//registerCommand( this, QString::fromLatin1("me"), SLOT(slotMeCommand(QString,Kopete::ChatSession*)),
 	//	i18n( "USAGE: /me <text> - Formats message as in '<nickname> went to the store'." ) );
 
-	registerCommand( this, QString::fromLatin1("away"), SLOT(slotAwayCommand(QString,Kopete::ChatSession*)),
+	registerCommand( this, QStringLiteral("away"), SLOT(slotAwayCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /away [<reason>] - Marks you as away/back for the current account only." ) );
 
-	registerCommand( this, QString::fromLatin1("awayall"), SLOT(slotAwayAllCommand(QString,Kopete::ChatSession*)),
+	registerCommand( this, QStringLiteral("awayall"), SLOT(slotAwayAllCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /awayall [<reason>] - Marks you as away/back for all accounts." ) );
 
-	registerCommand( this, QString::fromLatin1("say"), SLOT(slotSayCommand(QString,Kopete::ChatSession*)),
+	registerCommand( this, QStringLiteral("say"), SLOT(slotSayCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /say <text> - Say text in this chat. This is the same as just typing a message, but is very "
 			"useful for scripts." ), 1 );
 
-	registerCommand( this, QString::fromLatin1("exec"), SLOT(slotExecCommand(QString,Kopete::ChatSession*)),
+	registerCommand( this, QStringLiteral("exec"), SLOT(slotExecCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /exec [-o] <command> - Executes the specified command and displays the output in the chat buffer. "
 		"If -o is specified, the output is sent to all members of the chat."), 1 );
 
@@ -208,7 +208,7 @@ bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::ChatSes
 {
 	if( p->inCommand )
 		return false;
-	QRegExp splitRx( QString::fromLatin1("^/([\\S]+)(.*)") );
+	QRegExp splitRx( QLatin1String("^/([\\S]+)(.*)") );
 	QString command;
 	QString args;
 	if(splitRx.indexIn(msg) != -1)
@@ -296,17 +296,17 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatS
 	if( !args.isEmpty() )
 	{
 		KProcess *proc = 0L;
-		if ( KAuthorized::authorizeKAction( "shell_access" ) )
+		if ( KAuthorized::authorizeKAction( QStringLiteral("shell_access") ) )
 				proc = new KProcess(manager);
 		if( proc )
 		{
-			*proc << QString::fromLatin1("sh") << QString::fromLatin1("-c");
+			*proc << QStringLiteral("sh") << QStringLiteral("-c");
 
 			QStringList argsList = parseArguments( args );
-			if( argsList.front() == QString::fromLatin1("-o") )
+			if( argsList.front() == QLatin1String("-o") )
 			{
 				p->processMap.insert( proc, ManagerPair(manager, Kopete::Message::Outbound) );
-				*proc << args.section(QRegExp(QString::fromLatin1("\\s+")), 1);
+				*proc << args.section(QRegExp(QLatin1String("\\s+")), 1);
 			}
 			else
 			{
@@ -429,7 +429,7 @@ void Kopete::CommandHandler::slotExecSendMessage( KProcess *proc, const QString 
 QStringList Kopete::CommandHandler::parseArguments( const QString &args )
 {
 	QStringList arguments;
-	QRegExp quotedArgs( QString::fromLatin1("\"(.*)\"") );
+	QRegExp quotedArgs( QLatin1String("\"(.*)\"") );
 	quotedArgs.setMinimal( true );
 
 	if ( quotedArgs.indexIn( args ) != -1 )
@@ -438,7 +438,7 @@ QStringList Kopete::CommandHandler::parseArguments( const QString &args )
 			arguments.append( quotedArgs.cap(i) );
 	}
 
-	const QStringList otherArgs = args.section( quotedArgs, 0 ).split( QRegExp(QString::fromLatin1("\\s+")), QString::SkipEmptyParts);
+	const QStringList otherArgs = args.section( quotedArgs, 0 ).split( QRegExp(QLatin1String("\\s+")), QString::SkipEmptyParts);
 	for( QStringList::ConstIterator it = otherArgs.constBegin(); it != otherArgs.constEnd(); ++it )
 		arguments.append( *it );
 

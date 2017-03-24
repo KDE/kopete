@@ -47,5 +47,5 @@ void SendMessageTask::message( const QStringList & recipientDNList, const Outgoi
 	QStringList::ConstIterator end = recipientDNList.end();
 	for ( QStringList::ConstIterator it = recipientDNList.begin(); it != end; ++it )
 		lst.append( new Field::SingleField( Field::NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, *it ) );
-	createTransfer( "sendmessage", lst );
+	createTransfer( QStringLiteral("sendmessage"), lst );
 }

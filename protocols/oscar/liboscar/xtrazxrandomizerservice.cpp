@@ -28,7 +28,7 @@ XRandomizerService::XRandomizerService()
 
 QString XRandomizerService::serviceId() const
 {
-	return QString::fromUtf8( "cRandomizerSrv" );
+	return QStringLiteral( "cRandomizerSrv" );
 }
 
 }

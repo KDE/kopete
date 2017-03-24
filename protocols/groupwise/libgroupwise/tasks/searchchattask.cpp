@@ -54,7 +54,7 @@ void SearchChatTask::search( SearchType type )
 	Field::FieldList lst;
 	// object Id identifies the search for later reference
 	lst.append( new Field::SingleField( Field::NM_A_B_ONLY_MODIFIED, 0, NMFIELD_TYPE_BOOL, ( type == FetchAll ? 0 : 1 ) ) );
-	createTransfer( "chatsearch", lst );
+	createTransfer( QStringLiteral("chatsearch"), lst );
 }
 
 bool SearchChatTask::take( Transfer * transfer )

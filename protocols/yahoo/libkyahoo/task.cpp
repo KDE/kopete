@@ -202,7 +202,7 @@ void Task::setError(int code, const QString &str)
 
 void Task::done()
 {
-	debug("Task::done()");
+	debug(QStringLiteral("Task::done()"));
 	if(d->done || d->insignificant)
 		return;
 	d->done = true;
@@ -211,7 +211,7 @@ void Task::done()
 		d->deleteme = true;
 
 	d->insignificant = true;
-	debug("emitting finished");
+	debug(QStringLiteral("emitting finished"));
 	finished();
 	d->insignificant = false;
 
@@ -251,7 +251,7 @@ void Task::clientDisconnected()
 
 void Task::debug(const QString &str)
 {
-	client()->debug(QString("%1: ").arg(metaObject()->className()) + str);
+	client()->debug(QStringLiteral("%1: ").arg(metaObject()->className()) + str);
 }
 
 bool Task::forMe( const Transfer * transfer ) const

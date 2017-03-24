@@ -142,7 +142,7 @@ bool JabberAddContactPage::apply ( Kopete::Account *account, Kopete::MetaContact
 			// send a subscription request.
 			XMPP::JT_Presence *presenceTask = new XMPP::JT_Presence ( jaccount->client()->rootTask () );
 
-			presenceTask->sub ( jid, "subscribe" );
+			presenceTask->sub ( jid, QStringLiteral("subscribe") );
 			presenceTask->go ( true );
 
 			return true;
@@ -227,7 +227,7 @@ void JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND::slot
 			// send a subscription request.
 		XMPP::JT_Presence *presenceTask = new XMPP::JT_Presence ( jaccount->client()->rootTask () );
 
-		presenceTask->sub ( jid, "subscribe" );
+		presenceTask->sub ( jid, QStringLiteral("subscribe") );
 		presenceTask->go ( true );
 
 		return;

@@ -573,7 +573,7 @@ int VideoDevicePool::getSavedDevice()
 	{
 		KConfigGroup config(KSharedConfig::openConfig(), "Video Device Settings");
 		QString currentdevice = config.readEntry("Current Device", QString());
-		qDebug() << "Device name:" << config.readEntry( QString::fromLocal8Bit( "Device %1 Name" ).arg( currentdevice ), QString("NOT SAVED") );
+		qDebug() << "Device name:" << config.readEntry( QString::fromLocal8Bit( "Device %1 Name" ).arg( currentdevice ), QStringLiteral("NOT SAVED") );
 		if (!currentdevice.isEmpty())
 		{
 			qDebug() << "Saved device:" << currentdevice;

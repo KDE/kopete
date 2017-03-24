@@ -91,7 +91,7 @@ namespace XMPP
 		BoBData append(const QByteArray &data, const QString &type,
 							unsigned int maxAge = 0);
 		QString append(QFile &file,
-							 const QString &type = "application/octet-stream");
+							 const QString &type = QStringLiteral("application/octet-stream"));
 		void append(const BoBData &);
 
 	private:

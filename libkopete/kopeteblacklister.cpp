@@ -43,7 +43,7 @@ BlackLister::BlackLister(const QString &protocolId, const QString &accountId, QO
 	
 	d->owner = accountId;
 	d->protocol = protocolId;
-	d->blacklist = config.readEntry( d->protocol + QString::fromLatin1("_") + d->owner, QStringList() );
+	d->blacklist = config.readEntry( d->protocol + QLatin1String("_") + d->owner, QStringList() );
 }
 
 BlackLister::~BlackLister()
@@ -89,7 +89,7 @@ void BlackLister::removeContact(Contact *contact)
 void BlackLister::saveToDisk()
 {
 	KConfigGroup config = KSharedConfig::openConfig()->group("BlackLister");
-	config.writeEntry( d->protocol + QString::fromLatin1("_") + d->owner, d->blacklist );
+	config.writeEntry( d->protocol + QLatin1String("_") + d->owner, d->blacklist );
 	config.sync();
 }
 

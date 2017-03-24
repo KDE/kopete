@@ -47,13 +47,13 @@ JT_PrivateStorage::~JT_PrivateStorage()
 void JT_PrivateStorage::get(const QString& tag, const QString& xmlns)
 {
 	d->type = 0;
-	d->iq = createIQ(doc(), "get" , QString() , id() );
-	QDomElement query = doc()->createElement("query");
-	query.setAttribute("xmlns", "jabber:iq:private");
+	d->iq = createIQ(doc(), QStringLiteral("get") , QString() , id() );
+	QDomElement query = doc()->createElement(QStringLiteral("query"));
+	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:private"));
 	d->iq.appendChild(query);
 	QDomElement s = doc()->createElement(tag);
 	if(!xmlns.isEmpty())
-		s.setAttribute("xmlns", xmlns);
+		s.setAttribute(QStringLiteral("xmlns"), xmlns);
 	query.appendChild(s);
 }
 
@@ -63,9 +63,9 @@ void JT_PrivateStorage::set(const QDomElement& element)
 	d->elem=element;
 	QDomNode n=doc()->importNode(element,true);
 
-	d->iq = createIQ(doc(), "set" , QString() , id() );
-	QDomElement query = doc()->createElement("query");
-	query.setAttribute("xmlns", "jabber:iq:private");
+	d->iq = createIQ(doc(), QStringLiteral("set") , QString() , id() );
+	QDomElement query = doc()->createElement(QStringLiteral("query"));
+	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:private"));
 	d->iq.appendChild(query);
 	query.appendChild(n);
 }
@@ -81,7 +81,7 @@ bool JT_PrivateStorage::take(const QDomElement &x)
 	if(!iqVerify(x, to, id()))
 		return false;
 
-	if(x.attribute("type") == "result") {
+	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
 		if(d->type == 0) {
 			QDomElement q = queryTag(x);
 			for(QDomNode n = q.firstChild(); !n.isNull(); n = n.nextSibling()) {

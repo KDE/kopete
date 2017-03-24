@@ -38,7 +38,7 @@ PresenceOverlay &PresenceOverlay::operator+=( const PresenceOverlay &other )
 	if ( mDescription.isEmpty() )
 		mDescription = other.mDescription;
 	else if ( !other.mDescription.isEmpty() )
-		mDescription += QString( ", " ) + other.mDescription;
+		mDescription += QStringLiteral( ", " ) + other.mDescription;
 
 	mIcons << other.mIcons;
 	return *this;

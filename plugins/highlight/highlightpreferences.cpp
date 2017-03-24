@@ -234,7 +234,7 @@ void HighlightPreferences::slotSomethingHasChanged()
 void HighlightPreferences::slotEditRegExp()
 {
 	// FIXME: Port editorDialog->qt_cast
- 	QDialog *editorDialog = KServiceTypeTrader::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor" );
+ 	QDialog *editorDialog = KServiceTypeTrader::createInstanceFromQuery<QDialog>( QStringLiteral("KRegExpEditor/KRegExpEditor") );
  	if ( editorDialog )
  	{
  		// kdeutils was installed, so the dialog was found fetch the editor interface
@@ -280,7 +280,7 @@ void HighlightPreferences::slotConfigureNotifications()
 	connect(dialog,SIGNAL(okClicked()),w,SLOT(save()));
 	connect(w,SIGNAL(changed(bool)) , dialog , SLOT(enableButtonApply(bool)));
 
-	w->setApplication(QString(), "class" , current->className() );
+	w->setApplication(QString(), QStringLiteral("class") , current->className() );
 	dialog->exec();
 	delete dialog;
 }

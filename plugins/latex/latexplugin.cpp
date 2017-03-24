@@ -57,7 +57,7 @@ LatexPlugin::LatexPlugin( QObject *parent, const QVariantList &/*args*/ )
 	connect( Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession*)),
 			 this, SLOT(slotNewChatSession(Kopete::ChatSession*)) );
 	
-	m_convScript = KStandardDirs::findExe("kopete_latexconvert.sh");
+	m_convScript = KStandardDirs::findExe(QStringLiteral("kopete_latexconvert.sh"));
 
 		//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
 	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
@@ -85,7 +85,7 @@ void LatexPlugin::slotNewChatSession( Kopete::ChatSession *KMM )
 
 void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 {
-	QString mMagick = KStandardDirs::findExe("convert");
+	QString mMagick = KStandardDirs::findExe(QStringLiteral("convert"));
 	if ( mMagick.isEmpty() )
 	{
 		// show just once
@@ -102,7 +102,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	}
 	
 	QString messageText = msg.plainBody();
-	if( !messageText.contains("$$"))
+	if( !messageText.contains(QLatin1String("$$")))
 		return;
 
 	//kDebug(14317) << " Using converter: " << m_convScript;
@@ -131,7 +131,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 
 			QString formul=match;
 			// first remove the $$ delimiters on start and end
-			formul.remove("$$");
+			formul.remove(QStringLiteral("$$"));
 			// then trim the result, so we can skip totally empty/whitespace-only formulas
 			formul = formul.trimmed();
 			if (formul.isEmpty() || !securityCheck(formul))
@@ -172,7 +172,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 			continue;
 		imagePxWidth = theImage.width();
 		imagePxHeight = theImage.height();
-		QString escapedLATEX=Qt::escape(it.key()).replace('\"',"&quot;");  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
+		QString escapedLATEX=Qt::escape(it.key()).replace('\"',QLatin1String("&quot;"));  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
 		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" align=\"middle\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 
@@ -222,17 +222,17 @@ void LatexPlugin::slotMessageAboutToSend( Kopete::Message& msg)
 QString LatexPlugin::handleLatex(const QString &latexFormula)
 {
 	KTemporaryFile *tempFile=new KTemporaryFile();
-	tempFile->setPrefix("kopetelatex-");
-	tempFile->setSuffix(".png");
+	tempFile->setPrefix(QStringLiteral("kopetelatex-"));
+	tempFile->setSuffix(QStringLiteral(".png"));
 	tempFile->open();
 	m_tempFiles.append(tempFile);
 	QString fileName = tempFile->fileName();
 
 	KProcess p;
 	
-	QString argumentRes = QString("-r %1x%2").arg(LatexConfig::horizontalDPI()).arg(LatexConfig::verticalDPI());
-	QString argumentOut = QString("-o %1").arg(fileName);
-	QString argumentInclude ("-x %1");
+	QString argumentRes = QStringLiteral("-r %1x%2").arg(LatexConfig::horizontalDPI()).arg(LatexConfig::verticalDPI());
+	QString argumentOut = QStringLiteral("-o %1").arg(fileName);
+	QString argumentInclude (QStringLiteral("-x %1"));
 	//QString argumentFormat = "-fgif";  //we uses gif format because MSN only handle gif
 	LatexConfig::self()->readConfig();
 	QString includePath = LatexConfig::latexIncludeFile();

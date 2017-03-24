@@ -95,7 +95,7 @@ void AccountSelector::initUI()
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	d->lv = new QTreeWidget(this);
 	d->lv->header()->setResizeMode( QHeaderView::ResizeToContents );
-	d->lv->setHeaderLabel(QString::fromLatin1(""));
+	d->lv->setHeaderLabel(QStringLiteral(""));
 	d->lv->headerItem()->setHidden(true);
 	layout->addWidget(d->lv);
 	setLayout(layout);

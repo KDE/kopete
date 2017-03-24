@@ -139,26 +139,26 @@ QList<QAction *> *JabberContact::customContextMenuActions ()
 
 	QList<QAction *> *actions = new QList<QAction*>();
 
-    KActionMenu *actionAuthorization = new KActionMenu ( QIcon::fromTheme("network-connect"), i18n ("Authorization"), this);
+    KActionMenu *actionAuthorization = new KActionMenu ( QIcon::fromTheme(QStringLiteral("network-connect")), i18n ("Authorization"), this);
 
 	QAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
 	
 	resendAuthAction = new QAction( this );
-    resendAuthAction->setIcon( QIcon::fromTheme("mail-forward") );
+    resendAuthAction->setIcon( QIcon::fromTheme(QStringLiteral("mail-forward")) );
 	resendAuthAction->setText( i18n ("(Re)send Authorization To") );
 	resendAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::To || mRosterItem.subscription().type() == XMPP::Subscription::None );
 	connect(resendAuthAction, SIGNAL(triggered(bool)), SLOT(slotSendAuth()));
 	actionAuthorization->addAction(resendAuthAction);
 
 	requestAuthAction = new QAction( this );
-    requestAuthAction->setIcon( QIcon::fromTheme("mail-reply-sender") );
+    requestAuthAction->setIcon( QIcon::fromTheme(QStringLiteral("mail-reply-sender")) );
 	requestAuthAction->setText( i18n ("(Re)request Authorization From") );
 	requestAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::From || mRosterItem.subscription().type() == XMPP::Subscription::None );
 	connect(requestAuthAction, SIGNAL(triggered(bool)), SLOT(slotRequestAuth()));
 	actionAuthorization->addAction(requestAuthAction);
 	
 	removeAuthAction = new QAction( this );
-    removeAuthAction->setIcon( QIcon::fromTheme("edit-delete") );
+    removeAuthAction->setIcon( QIcon::fromTheme(QStringLiteral("edit-delete")) );
 	removeAuthAction->setText( i18n ("Remove Authorization From") );
 	removeAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From );
 	connect(removeAuthAction, SIGNAL(triggered(bool)), SLOT(slotRemoveAuth()));
@@ -180,7 +180,7 @@ QList<QAction *> *JabberContact::customContextMenuActions ()
 
 #endif
 
-    KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n ("Set Availability"), this );
+    KActionMenu *actionSetAvailability = new KActionMenu ( KIcon(QStringLiteral("user-identity"), 0, QStringList() << QString() << QStringLiteral("user-online")), i18n ("Set Availability"), this );
 
 #define QAction(status, text, name, slot) \
 	{ QAction *tmp = new QAction(this); \
@@ -236,7 +236,7 @@ QList<QAction *> *JabberContact::customContextMenuActions ()
 			if( i == activeItem )
 			{
 				QAction *tmp = new QAction( this );
-                tmp->setIcon( QIcon::fromTheme("dialog-ok") );
+                tmp->setIcon( QIcon::fromTheme(QStringLiteral("dialog-ok")) );
 				tmp->setText( str);
 				tmp->setObjectName( QString::number(i) );
 				connect(tmp, SIGNAL(triggered(bool)), SLOT(slotSelectResource()));
@@ -291,12 +291,12 @@ QList<QAction *> *JabberContact::customContextMenuActions ()
 
 	// temporary action collection, used to apply Kiosk policy to the actions
 	KActionCollection tempCollection((QObject*)0);
-	tempCollection.addAction(QLatin1String("jabberContactAuthorizationMenu"), actionAuthorization);
-	tempCollection.addAction(QLatin1String("contactSendAuth"), resendAuthAction);
-	tempCollection.addAction(QLatin1String("contactRequestAuth"), requestAuthAction);
-	tempCollection.addAction(QLatin1String("contactRemoveAuth"), removeAuthAction);
-	tempCollection.addAction(QLatin1String("jabberContactSetAvailabilityMenu"), actionSetAvailability);
-	tempCollection.addAction(QLatin1String("jabberContactSelectResource"), actionSelectResource);
+	tempCollection.addAction(QStringLiteral("jabberContactAuthorizationMenu"), actionAuthorization);
+	tempCollection.addAction(QStringLiteral("contactSendAuth"), resendAuthAction);
+	tempCollection.addAction(QStringLiteral("contactRequestAuth"), requestAuthAction);
+	tempCollection.addAction(QStringLiteral("contactRemoveAuth"), removeAuthAction);
+	tempCollection.addAction(QStringLiteral("jabberContactSetAvailabilityMenu"), actionSetAvailability);
+	tempCollection.addAction(QStringLiteral("jabberContactSelectResource"), actionSelectResource);
 	return actions;
 }
 
@@ -311,7 +311,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	JabberChatSession *mManager = manager ( message.from().resource (), Kopete::Contact::CanCreate );
 
 	// evaluate notifications
-	if ( message.type () != "error" )
+	if ( message.type () != QLatin1String("error") )
 	{
 		if (!message.invite().isEmpty())
 		{
@@ -397,16 +397,16 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		return;
 
 	// determine message type
-	if (message.type () == "chat")
-		viewPlugin = "kopete_chatwindow";
+	if (message.type () == QLatin1String("chat"))
+		viewPlugin = QStringLiteral("kopete_chatwindow");
 	else
-		viewPlugin = "kopete_emailwindow";
+		viewPlugin = QStringLiteral("kopete_emailwindow");
 
 	Kopete::ContactPtrList contactList;
 	contactList.append ( account()->myself () );
 
 	// check for errors
-	if ( message.type () == "error" )
+	if ( message.type () == QLatin1String("error") )
 	{
 		mManager->receivedMessageState( message.id().toUInt(), Kopete::Message::StateError );
 		newMessage = new Kopete::Message( this, contactList );
@@ -428,19 +428,19 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		if( !message.xencrypted().isEmpty() )
 		{
 			kDebug ( JABBER_DEBUG_GLOBAL ) << "Received encrypted message";
-			if (Kopete::PluginManager::self()->plugin("kopete_cryptography"))
+			if (Kopete::PluginManager::self()->plugin(QStringLiteral("kopete_cryptography")))
 			{
 				kDebug( JABBER_DEBUG_GLOBAL ) << "Kopete cryptography plugin loaded";
-				body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
+				body = QStringLiteral ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QStringLiteral ("\n-----END PGP MESSAGE-----\n");
 			}
 		}
 		else if( !message.xsigned().isEmpty() )
 		{
 			kDebug ( JABBER_DEBUG_GLOBAL ) << "Received signed message";
-			if (Kopete::PluginManager::self()->plugin("kopete_cryptography"))
+			if (Kopete::PluginManager::self()->plugin(QStringLiteral("kopete_cryptography")))
 			{
 				kDebug( JABBER_DEBUG_GLOBAL ) << "Kopete cryptography plugin loaded";
-				body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xsigned () + QString ("\n-----END PGP MESSAGE-----\n");
+				body = QStringLiteral ("-----BEGIN PGP MESSAGE-----\n\n") + message.xsigned () + QStringLiteral ("\n-----END PGP MESSAGE-----\n");
 			}
 		}
 
@@ -488,7 +488,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 
 		Kopete::Message msg ( this, contactList );
 		msg.setTimestamp( message.timeStamp() );
-		msg.setHtmlBody( QString ( "<a href=\"%1\">%2</a>" ).arg ( xurl.url(), description ) );
+		msg.setHtmlBody( QStringLiteral ( "<a href=\"%1\">%2</a>" ).arg ( xurl.url(), description ) );
 		msg.setSubject( message.subject() );
 		msg.setDirection( Kopete::Message::Inbound );
 		msg.setRequestedPlugin( viewPlugin );
@@ -800,8 +800,8 @@ void JabberContact::slotSendVCard()
 		vCard.setPhoto( ba );
 	}
 
-	vCard.setVersion("3.0");
-	vCard.setProdId("Kopete");
+	vCard.setVersion(QStringLiteral("3.0"));
+	vCard.setProdId(QStringLiteral("Kopete"));
 
 	XMPP::JT_VCard *task = new XMPP::JT_VCard (account()->client()->rootTask ());
 	// signal to ourselves when the vCard data arrived
@@ -1009,7 +1009,7 @@ void JabberContact::deleteContact ()
 		int result = KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget(),
 		 				i18n ( "Do you also want to remove user %1's authorization to see your status?" , 
 						  mRosterItem.jid().bare () ), i18n ("Notification"),
-						KStandardGuiItem::del (), KGuiItem( i18n("Keep") ),KStandardGuiItem::cancel(), "JabberRemoveAuthorizationOnDelete" );
+						KStandardGuiItem::del (), KGuiItem( i18n("Keep") ),KStandardGuiItem::cancel(), QStringLiteral("JabberRemoveAuthorizationOnDelete") );
 		if(result == KMessageBox::Yes )
 			remove_from_roster = true;
 		else if( result == KMessageBox::Cancel)
@@ -1026,7 +1026,7 @@ void JabberContact::deleteContact ()
 	}
 	else
 	{
-		sendSubscription("unsubscribe");
+		sendSubscription(QStringLiteral("unsubscribe"));
 
 		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
 		rosterTask->set ( mRosterItem.jid (), QString() , QStringList() );
@@ -1113,7 +1113,7 @@ void JabberContact::sendFile ( const QUrl &sourceURL, const QString &/*fileName*
 
 	// if the file location is null, then get it from a file open dialog
 	if ( !sourceURL.isValid () )
-		filePath = KFileDialog::getOpenFileName( QUrl(), "*", 0L, i18n ( "Kopete File Transfer" ) );
+		filePath = KFileDialog::getOpenFileName( QUrl(), QStringLiteral("*"), 0L, i18n ( "Kopete File Transfer" ) );
 	else
 		filePath = sourceURL.adjusted(QUrl::StripTrailingSlash).path();
 
@@ -1133,7 +1133,7 @@ void JabberContact::slotSendAuth ()
 
 	kDebug (JABBER_DEBUG_GLOBAL) << "(Re)send auth " << contactId ();
 
-	sendSubscription ("subscribed");
+	sendSubscription (QStringLiteral("subscribed"));
 
 }
 
@@ -1142,7 +1142,7 @@ void JabberContact::slotRequestAuth ()
 
 	kDebug (JABBER_DEBUG_GLOBAL) << "(Re)request auth " << contactId ();
 
-	sendSubscription ("subscribe");
+	sendSubscription (QStringLiteral("subscribe"));
 
 }
 
@@ -1151,7 +1151,7 @@ void JabberContact::slotRemoveAuth ()
 
 	kDebug (JABBER_DEBUG_GLOBAL) << "Remove auth " << contactId ();
 
-	sendSubscription ("unsubscribed");
+	sendSubscription (QStringLiteral("unsubscribed"));
 
 }
 
@@ -1235,7 +1235,7 @@ void JabberContact::slotStatusOnline ()
 {
 
 	XMPP::Status status;
-	status.setShow("");
+	status.setShow(QLatin1String(""));
 
 	sendPresence ( status );
 
@@ -1245,7 +1245,7 @@ void JabberContact::slotStatusChatty ()
 {
 
 	XMPP::Status status;
-	status.setShow ("chat");
+	status.setShow (QStringLiteral("chat"));
 
 	sendPresence ( status );
 
@@ -1255,7 +1255,7 @@ void JabberContact::slotStatusAway ()
 {
 
 	XMPP::Status status;
-	status.setShow ("away");
+	status.setShow (QStringLiteral("away"));
 
 	sendPresence ( status );
 
@@ -1265,7 +1265,7 @@ void JabberContact::slotStatusXA ()
 {
 
 	XMPP::Status status;
-	status.setShow ("xa");
+	status.setShow (QStringLiteral("xa"));
 
 	sendPresence ( status );
 
@@ -1275,7 +1275,7 @@ void JabberContact::slotStatusDND ()
 {
 
 	XMPP::Status status;
-	status.setShow ("dnd");
+	status.setShow (QStringLiteral("dnd"));
 
 	sendPresence ( status );
 
@@ -1333,7 +1333,7 @@ void JabberContact::slotDiscoFinished( )
 		for ( it = identities.begin(); it != identities.end(); ++it )
 		{
 			XMPP::DiscoItem::Identity ident=*it;
-			if(ident.category == "gateway")
+			if(ident.category == QLatin1String("gateway"))
 			{
 				is_transport=true;
 				tr_type=ident.type;
@@ -1341,11 +1341,11 @@ void JabberContact::slotDiscoFinished( )
 		
 				break;  //(we currently only support gateway)
 			}
-			else if (ident.category == "service")
+			else if (ident.category == QLatin1String("service"))
 			{
 				//The ApaSMSAgent is reporting itself as service (instead of gateway) which is broken.
 				//we anyway support it.  See bug  127811
-				if(ident.type == "sms")
+				if(ident.type == QLatin1String("sms"))
 				{
 					is_transport=true;
 					tr_type=ident.type;

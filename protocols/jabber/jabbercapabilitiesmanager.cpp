@@ -179,7 +179,7 @@ void JabberCapabilitiesManager::CapabilitiesInformation::addJid(const Jid& jid, 
 
 void JabberCapabilitiesManager::CapabilitiesInformation::removeJid(const Jid& jid)
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << "Unregistering " << QString(jid.full()).replace('%',"%%");
+	kDebug(JABBER_DEBUG_GLOBAL) << "Unregistering " << QString(jid.full()).replace('%',QLatin1String("%%"));
 
 	JidList::Iterator it = m_jids.begin();
 	while( it != m_jids.end() ) 
@@ -250,24 +250,24 @@ void JabberCapabilitiesManager::CapabilitiesInformation::updateLastSeen()
 
 QDomElement JabberCapabilitiesManager::CapabilitiesInformation::toXml(QDomDocument *doc) const
 {
-	QDomElement info = doc->createElement("info");
+	QDomElement info = doc->createElement(QStringLiteral("info"));
 	//info.setAttribute("last-seen",lastSeen_.toString(Qt::ISODate));
 
 	// Identities
 	foreach(DiscoItem::Identities::const_reference ident, m_identities)
 	{
-		QDomElement identity = doc->createElement("identity");
-		identity.setAttribute("category", ident.category);
-		identity.setAttribute("name",     ident.name);
-		identity.setAttribute("type",     ident.type);
+		QDomElement identity = doc->createElement(QStringLiteral("identity"));
+		identity.setAttribute(QStringLiteral("category"), ident.category);
+		identity.setAttribute(QStringLiteral("name"),     ident.name);
+		identity.setAttribute(QStringLiteral("type"),     ident.type);
 		info.appendChild(identity);
 	}
 
 	// Features
 	foreach(QStringList::const_reference feat, m_features)
 	{
-		QDomElement feature = doc->createElement("feature");
-		feature.setAttribute("node", feat);
+		QDomElement feature = doc->createElement(QStringLiteral("feature"));
+		feature.setAttribute(QStringLiteral("node"), feat);
 		info.appendChild(feature);
 	}
 
@@ -276,7 +276,7 @@ QDomElement JabberCapabilitiesManager::CapabilitiesInformation::toXml(QDomDocume
 
 void JabberCapabilitiesManager::CapabilitiesInformation::fromXml(const QDomElement &element)
 {
-	if( element.tagName() != "info") 
+	if( element.tagName() != QLatin1String("info")) 
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << "Invalid info element";
 		return;
@@ -294,17 +294,17 @@ void JabberCapabilitiesManager::CapabilitiesInformation::fromXml(const QDomEleme
 			continue;
 		}
 
-		if( infoElement.tagName() == "identity") 
+		if( infoElement.tagName() == QLatin1String("identity")) 
 		{
 			DiscoItem::Identity id;
-			id.category = infoElement.attribute("category");
-			id.name = infoElement.attribute("name");
-			id.type = infoElement.attribute("type");
+			id.category = infoElement.attribute(QStringLiteral("category"));
+			id.name = infoElement.attribute(QStringLiteral("name"));
+			id.type = infoElement.attribute(QStringLiteral("type"));
 			m_identities += id;
 		}
-		else if( infoElement.tagName() == "feature" ) 
+		else if( infoElement.tagName() == QLatin1String("feature") ) 
 		{
-			m_features += infoElement.attribute("node");
+			m_features += infoElement.attribute(QStringLiteral("node"));
 		}
 		else 
 		{
@@ -360,7 +360,7 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 
 	const QString &node = status.caps().node();
 	const QString &version = status.caps().version();
-	const QString &extensions = status.caps().ext().join(" ");
+	const QString &extensions = status.caps().ext().join(QStringLiteral(" "));
 	const QString &hash = XMPP::CapsSpec::cryptoMap().key(status.caps().hashAlgorithm());
 
 	Capabilities capabilities( node, version, extensions, hash );
@@ -400,7 +400,7 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 			{
 				if( !d->capabilitiesInformationMap[*newCapsIt].discovered() && d->capabilitiesInformationMap[*newCapsIt].pendingRequests() == 0 ) 
 				{
-					kDebug(JABBER_DEBUG_GLOBAL) << QString("Sending disco request to %1, node=%2").arg(QString(jid.full()).replace('%',"%%")).arg(node + '#' + (*newCapsIt).extensions());
+					kDebug(JABBER_DEBUG_GLOBAL) << QStringLiteral("Sending disco request to %1, node=%2").arg(QString(jid.full()).replace('%',QLatin1String("%%"))).arg(node + '#' + (*newCapsIt).extensions());
 
 					d->capabilitiesInformationMap[*newCapsIt].setPendingRequests(1);
 					requestDiscoInfo(account, jid, node + '#' + (*newCapsIt).extensions());
@@ -410,7 +410,7 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 		else 
 		{
 			// Remove all caps specifications
-			kDebug(JABBER_DEBUG_GLOBAL) << QString("Illegal caps info from %1: node=%2, ver=%3").arg(QString(jid.full()).replace('%',"%%")).arg(node).arg(version);
+			kDebug(JABBER_DEBUG_GLOBAL) << QStringLiteral("Illegal caps info from %1: node=%2, ver=%3").arg(QString(jid.full()).replace('%',QLatin1String("%%"))).arg(node).arg(version);
 
 			d->jidCapabilitiesMap.remove( jid.full() );
 		}
@@ -448,7 +448,7 @@ void JabberCapabilitiesManager::discoRequestFinished()
 
 	DiscoItem item = discoInfo->item();
 	Jid jid = discoInfo->jid();
-	kDebug(JABBER_DEBUG_GLOBAL) << QString("Disco response from %1, node=%2, success=%3").arg(QString(jid.full()).replace('%',"%%")).arg(discoInfo->node()).arg(discoInfo->success());
+	kDebug(JABBER_DEBUG_GLOBAL) << QStringLiteral("Disco response from %1, node=%2, success=%3").arg(QString(jid.full()).replace('%',QLatin1String("%%"))).arg(discoInfo->node()).arg(discoInfo->success());
 
 	const QString &tokens = discoInfo->node();
 	int idx = tokens.lastIndexOf('#');
@@ -489,7 +489,7 @@ void JabberCapabilitiesManager::discoRequestFinished()
 			QPair<Jid,JabberAccount*> jidAccountPair = d->capabilitiesInformationMap[capabilities].nextJid(jid,discoInfo->parent());
 			if( jidAccountPair.second ) 
 			{
-				kDebug(JABBER_DEBUG_GLOBAL) << QString("Falling back on %1.").arg(QString(jidAccountPair.first.full()).replace('%',"%%"));
+				kDebug(JABBER_DEBUG_GLOBAL) << QStringLiteral("Falling back on %1.").arg(QString(jidAccountPair.first.full()).replace('%',QLatin1String("%%")));
 				requestDiscoInfo( jidAccountPair.second, jidAccountPair.first, discoInfo->node() );
 			}
 			else 
@@ -500,7 +500,7 @@ void JabberCapabilitiesManager::discoRequestFinished()
 		}
 	}
 	else 
-		kDebug(JABBER_DEBUG_GLOBAL) << QString("Current client node '%1' does not match response '%2'").arg(jidCapabilities.node()).arg(node);
+		kDebug(JABBER_DEBUG_GLOBAL) << QStringLiteral("Current client node '%1' does not match response '%2'").arg(jidCapabilities.node()).arg(node);
 
 	//for (unsigned int i = 0; i < item.features().list().count(); i++) 
 	//	printf("    Feature: %s\n",item.features().list()[i].toLatin1());
@@ -516,7 +516,7 @@ void JabberCapabilitiesManager::discoRequestFinished()
 void JabberCapabilitiesManager::loadCachedInformation()
 {
 	QString capsFileName;
-	capsFileName = KStandardDirs::locateLocal("appdata", QString::fromUtf8("jabber-capabilities-cache.xml"));
+	capsFileName = KStandardDirs::locateLocal("appdata", QStringLiteral("jabber-capabilities-cache.xml"));
 
 	// Load settings
 	QDomDocument doc;
@@ -534,7 +534,7 @@ void JabberCapabilitiesManager::loadCachedInformation()
 	cacheFile.close();
 
 	QDomElement caps = doc.documentElement();
-	if( caps.tagName() != "capabilities" ) 
+	if( caps.tagName() != QLatin1String("capabilities") ) 
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << "Invalid capabilities element.";
 		return;
@@ -550,11 +550,11 @@ void JabberCapabilitiesManager::loadCachedInformation()
 			continue;
 		}
 
-		if( element.tagName() == "info" ) 
+		if( element.tagName() == QLatin1String("info") ) 
 		{
 			CapabilitiesInformation info;
 			info.fromXml(element);
-			Capabilities entityCaps( element.attribute("node"),element.attribute("ver"),element.attribute("ext"),element.attribute("hash") );
+			Capabilities entityCaps( element.attribute(QStringLiteral("node")),element.attribute(QStringLiteral("ver")),element.attribute(QStringLiteral("ext")),element.attribute(QStringLiteral("hash")) );
 			d->capabilitiesInformationMap[entityCaps] = info;
 		}
 		else 
@@ -596,7 +596,7 @@ QString JabberCapabilitiesManager::clientName(const Jid& jid) const
 
 		for ( int i = 0; i < identities.size(); ++i )
 		{
-			if ( identities[i].category == "client" && ! identities[i].name.isEmpty() )
+			if ( identities[i].category == QLatin1String("client") && ! identities[i].name.isEmpty() )
 			{
 				name = identities[i].name;
 				break;
@@ -636,21 +636,21 @@ QString JabberCapabilitiesManager::clientVersion(const Jid& jid) const
 void JabberCapabilitiesManager::saveInformation()
 {
 	QString capsFileName;
-	capsFileName = KStandardDirs::locateLocal("appdata", QString::fromUtf8("jabber-capabilities-cache.xml"));
+	capsFileName = KStandardDirs::locateLocal("appdata", QStringLiteral("jabber-capabilities-cache.xml"));
 
 	// Generate XML
 	QDomDocument doc;
-	QDomElement capabilities = doc.createElement("capabilities");
+	QDomElement capabilities = doc.createElement(QStringLiteral("capabilities"));
 	doc.appendChild(capabilities);
 
 	QMap<Capabilities,CapabilitiesInformation>::ConstIterator it = d->capabilitiesInformationMap.constBegin(), itEnd = d->capabilitiesInformationMap.constEnd();
 	for( ; it != itEnd; ++it ) 
 	{
 		QDomElement info = it.value().toXml(&doc);
-		info.setAttribute("node",it.key().node());
-		info.setAttribute("ver",it.key().version());
-		info.setAttribute("ext",it.key().extensions());
-		info.setAttribute("hash",it.key().hash());
+		info.setAttribute(QStringLiteral("node"),it.key().node());
+		info.setAttribute(QStringLiteral("ver"),it.key().version());
+		info.setAttribute(QStringLiteral("ext"),it.key().extensions());
+		info.setAttribute(QStringLiteral("hash"),it.key().hash());
 		capabilities.appendChild(info);
 	}
 

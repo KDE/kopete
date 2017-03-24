@@ -64,7 +64,7 @@ namespace XMPP
 		virtual QString errorText() const=0;
 		virtual QDomElement errorAppSpec() const=0;
 
-		Stanza createStanza(Stanza::Kind k, const Jid &to="", const QString &type="", const QString &id="");
+		Stanza createStanza(Stanza::Kind k, const Jid &to="", const QString &type=QLatin1String(""), const QString &id=QLatin1String(""));
 		Stanza createStanza(const QDomElement &e);
 
 		static QString xmlToString(const QDomElement &e, bool clip=false);

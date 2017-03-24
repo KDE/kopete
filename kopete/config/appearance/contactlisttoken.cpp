@@ -25,8 +25,8 @@
 
 #include "kopeteitemdelegate.h"
 
-const QString ActionSmallName = QLatin1String( "ActionSmall" );
-const QString ActionOptimalSizeName = QLatin1String( "ActionOptimalSize" );
+const QString ActionSmallName = QStringLiteral( "ActionSmall" );
+const QString ActionOptimalSizeName = QStringLiteral( "ActionOptimalSize" );
 
 Token * ContactListTokenFactory::createToken(const QString &text, const QString &iconName, int value, QWidget *parent)
 {
@@ -48,7 +48,7 @@ void ContactListToken::fillMenu( QMenu * menu )
 
 	menu->addSeparator();
 
-	QAction *smallAction = new QAction( QIcon::fromTheme( "format-font-size-less"), i18n( "Small" ), menu );
+	QAction *smallAction = new QAction( QIcon::fromTheme( QStringLiteral("format-font-size-less")), i18n( "Small" ), menu );
 	smallAction->setObjectName( ActionSmallName );
 	smallAction->setCheckable( true );
 	smallAction->setChecked( m_small );

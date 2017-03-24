@@ -39,7 +39,7 @@ void ChatPropertiesTask::setChat( const QString &displayName )
 	Field::FieldList lst;
 	m_chat = displayName;
 	lst.append( new Field::SingleField( Field::NM_A_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, m_chat ) );
-	createTransfer( "chatproperties", lst );
+	createTransfer( QStringLiteral("chatproperties"), lst );
 }
 
 bool ChatPropertiesTask::take( Transfer * transfer )

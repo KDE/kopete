@@ -62,7 +62,7 @@ namespace XMPP
 	{
 	public:
 		enum { username, nick, password, name, first, last, email, address, city, state, zip, phone, url, date, misc };
-		FormField(const QString &type="", const QString &value="");
+		FormField(const QString &type=QLatin1String(""), const QString &value=QLatin1String(""));
 		~FormField();
 
 		int type() const;

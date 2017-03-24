@@ -50,9 +50,9 @@ InfoEventWidget::InfoEventWidget(QWidget *parent)
 
 	d->ui.setupUi(this);
 	static_cast<KSqueezedTextLabel*>(d->ui.lblTitle)->setTextElideMode( Qt::ElideRight );
-	d->ui.buttonPrev->setIcon( QIcon::fromTheme( "arrow-left" ) );
-	d->ui.buttonNext->setIcon( QIcon::fromTheme( "arrow-right" ) );
-	d->ui.buttonClose->setIcon( QIcon::fromTheme( "window-close" ) );
+	d->ui.buttonPrev->setIcon( QIcon::fromTheme( QStringLiteral("arrow-left") ) );
+	d->ui.buttonNext->setIcon( QIcon::fromTheme( QStringLiteral("arrow-right") ) );
+	d->ui.buttonClose->setIcon( QIcon::fromTheme( QStringLiteral("window-close") ) );
 	d->ui.lblInfo->setTextInteractionFlags(Qt::TextSelectableByMouse);
 	QWidget::setVisible( false );
 
@@ -163,7 +163,7 @@ void InfoEventWidget::updateInfo()
 		d->ui.lblActions->clear();
 		// Can't use clear
 		static_cast<KSqueezedTextLabel*>(d->ui.lblTitle)->setText(QString());
-		d->ui.lblEvent->setText( "0/0" );
+		d->ui.lblEvent->setText( QStringLiteral("0/0") );
 		d->ui.buttonPrev->setEnabled( false );
 		d->ui.buttonNext->setEnabled( false );
 		return;
@@ -188,14 +188,14 @@ void InfoEventWidget::updateInfo()
 	}
 
 	static_cast<KSqueezedTextLabel*>(d->ui.lblTitle)->setText( Qt::escape( event->title() ) );
-	d->ui.lblEvent->setText( QString("%1/%2").arg( d->currentEventIndex + 1 ).arg( ie->eventCount() ) );
+	d->ui.lblEvent->setText( QStringLiteral("%1/%2").arg( d->currentEventIndex + 1 ).arg( ie->eventCount() ) );
 
 	d->ui.lblInfo->setVisible( !event->text().isEmpty() );
 	if ( !event->text().isEmpty() )
 	{
-		QString text = QString( "<p>%1</p>" ).arg( event->text() );
+		QString text = QStringLiteral( "<p>%1</p>" ).arg( event->text() );
 		if ( !event->additionalText().isEmpty() )
-			text += QString( "<p>%1</p>" ).arg( event->additionalText() );
+			text += QStringLiteral( "<p>%1</p>" ).arg( event->additionalText() );
 
 		d->ui.lblInfo->setText( text );
 	}
@@ -207,14 +207,14 @@ void InfoEventWidget::updateInfo()
 	d->ui.lblActions->setVisible( !event->actions().isEmpty() );
 	if ( !event->actions().isEmpty() )
 	{
-		QString linkCode = QString::fromLatin1( "<p align=\"right\">" );
+		QString linkCode = QStringLiteral( "<p align=\"right\">" );
 
 		QMap<uint, QString> actions = event->actions();
 		QMapIterator<uint, QString> it(actions);
 		while ( it.hasNext() )
 		{
 			it.next();
-			linkCode += QString::fromLatin1( "<a href=\"%1\">%2</a> " ).arg( it.key() ).arg( Qt::escape(it.value()) );
+			linkCode += QStringLiteral( "<a href=\"%1\">%2</a> " ).arg( it.key() ).arg( Qt::escape(it.value()) );
 		}
 
 		d->ui.lblActions->setText( linkCode );
@@ -230,7 +230,7 @@ void InfoEventWidget::eventAdded( Kopete::InfoEvent* event )
 {
 	if ( Kopete::StatusManager::self()->globalStatusCategory() != Kopete::OnlineStatusManager::Busy )
 	{
-		KNotification *notify = new KNotification( QString("kopete_info_event") , 0l );
+		KNotification *notify = new KNotification( QStringLiteral("kopete_info_event") , 0l );
 		notify->setActions( QStringList( i18n( "View" ) ) );
 		notify->setText( event->text() );
 

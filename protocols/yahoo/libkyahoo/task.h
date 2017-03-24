@@ -64,8 +64,8 @@ protected:
 	virtual void onGo();
 	virtual void onDisconnect();
 	void send( Transfer * request );
-	void setSuccess( int code=0, const QString &str="" );
-	void setError( int code=0, const QString &str="" );
+	void setSuccess( int code=0, const QString &str=QLatin1String("") );
+	void setError( int code=0, const QString &str=QLatin1String("") );
 // 	void debug( const char *, ... );
 	void debug( const QString & );
 	/**

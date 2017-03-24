@@ -31,22 +31,22 @@ XService::~XService()
 
 QDomElement XService::create( QDomDocument& doc, Type type ) const
 {
-	QDomElement e = doc.createElement( "srv" );
+	QDomElement e = doc.createElement( QStringLiteral("srv") );
 
-	QDomElement eId = doc.createElement( "id" );
+	QDomElement eId = doc.createElement( QStringLiteral("id") );
 	eId.appendChild( doc.createTextNode( serviceId() ) );
 	e.appendChild( eId );
 
 	if ( type == Request )
 	{
-		QDomElement eReq = doc.createElement( "req" );
+		QDomElement eReq = doc.createElement( QStringLiteral("req") );
 		createRequest( doc, eReq );
 		e.appendChild( eReq );
 	}
 	else if ( type == Response )
 	{
-		QDomElement eVal = doc.createElement( "val" );
-		eVal.setAttribute( "srv_id", serviceId() );
+		QDomElement eVal = doc.createElement( QStringLiteral("val") );
+		eVal.setAttribute( QStringLiteral("srv_id"), serviceId() );
 		createResponse( doc, eVal );
 		e.appendChild( eVal );
 	}
@@ -62,13 +62,13 @@ void XService::handle( QDomElement& eRoot )
 		QDomElement e = childNode.toElement();
 		if( !e.isNull() )
 		{
-			if ( e.tagName() == "id" )
+			if ( e.tagName() == QLatin1String("id") )
 			{
 				Q_ASSERT( e.text() == serviceId() );
 			}
-			else if ( e.tagName() == "val" )
+			else if ( e.tagName() == QLatin1String("val") )
 				handleResponse( e );
-			else if ( e.tagName() == "req" )
+			else if ( e.tagName() == QLatin1String("req") )
 				handleRequest( e );
 			
 		}
@@ -82,7 +82,7 @@ QString XService::serviceId() const
 
 void XService::createResponse( QDomDocument& doc, QDomElement &e ) const
 {
-	e.appendChild( doc.createTextNode( QString::fromUtf8( "undefined" ) ) );
+	e.appendChild( doc.createTextNode( QStringLiteral( "undefined" ) ) );
 }
 
 }

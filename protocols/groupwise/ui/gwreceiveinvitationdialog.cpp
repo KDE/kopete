@@ -55,7 +55,7 @@ ReceiveInvitationDialog::ReceiveInvitationDialog( GroupWiseAccount * account, co
 		m_ui.contactName->setText( event.user );
 		
 	m_ui.dateTime->setText( KGlobal::locale()->formatDateTime( event.timeStamp ) );
-	m_ui.message->setText( QString("<b>%1</b>").arg( event.message ) );
+	m_ui.message->setText( QStringLiteral("<b>%1</b>").arg( event.message ) );
 	
 	setMainWidget( wid );
 }

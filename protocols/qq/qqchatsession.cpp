@@ -65,22 +65,22 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 
 	// Set up the Invite menu
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), this );
-        actionCollection()->addAction( "qqInvite", m_actionInvite );
+        actionCollection()->addAction( QStringLiteral("qqInvite"), m_actionInvite );
 	connect( m_actionInvite->menu(), SIGNAL(aboutToShow()), this, SLOT(slotActionInviteAboutToShow()) ) ;
 
-	m_secure = actionCollection()->addAction( "qqSecureChat" );
+	m_secure = actionCollection()->addAction( QStringLiteral("qqSecureChat") );
 	m_secure->setText( i18n( "Security Status" ) );
         m_secure->setIcon( QIcon::fromTheme(QStringLiteral("security-high")) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
         connect( m_secure, SIGNAL(triggered()), this, SLOT(slotShowSecurity()) );
 
-	m_logging = actionCollection()->addAction( "qqLoggingChat" );
+	m_logging = actionCollection()->addAction( QStringLiteral("qqLoggingChat") );
 	m_logging->setText( i18n( "Archiving Status" ) );
         m_logging->setIcon( QIcon::fromTheme(QStringLiteral("utilities-log-viewer")) );
         connect( m_logging, SIGNAL(triggered()), this, SLOT(slotShowArchiving()) );
 	updateArchiving();
 
-	setXMLFile("qqchatui.rc");
+	setXMLFile(QStringLiteral("qqchatui.rc"));
 	setMayInvite( true );
 
 	// FIXME: do we need to delete it in the destructor ?
@@ -298,7 +298,7 @@ void QQChatSession::slotActionInviteAboutToShow()
 	}
 	// Invite someone off-list
     QAction *b=new QAction( QIcon(), i18n ("&Other..."), actionCollection() );
-        actionCollection()->addAction( "actionOther", b );
+        actionCollection()->addAction( QStringLiteral("actionOther"), b );
 	QObject::connect( b, SIGNAL(triggered(bool)),
 	                  this, SLOT(slotInviteOtherContact()) );
 	m_actionInvite->addAction( b );
@@ -321,7 +321,7 @@ void QQChatSession::slotInviteContact( Kopete::Contact * contact )
 		QRegExpValidator validator( rx, this );
 		QString inviteMessage = KInputDialog::getText( i18n( "Enter Invitation Message" ),
 		    i18n( "Enter the reason for the invitation, or leave blank for no reason:" ), QString(),
-				&ok, w ? w : Kopete::UI::Global::mainWidget(), &validator, QString(), "invitemessagedlg" );
+				&ok, w ? w : Kopete::UI::Global::mainWidget(), &validator, QString(), QStringLiteral("invitemessagedlg") );
 		if ( ok )
 		{
 			QQContact * qqc = static_cast< QQContact *>( contact );

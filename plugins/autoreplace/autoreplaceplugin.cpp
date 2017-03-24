@@ -77,7 +77,7 @@ void AutoReplacePlugin::slotInterceptMessage( Kopete::Message &msg )
 
 		// replaces all matched words --> try to find a more 'economic' way
 		// "\\b(%1)\\b" doesn't work when substituting /me.
-		const QString match = "(^|\\s|\\.|\\;|\\,|\\:)(%1)(\\b)";
+		const QString match = QStringLiteral("(^|\\s|\\.|\\;|\\,|\\:)(%1)(\\b)");
 		AutoReplaceConfig::WordsToReplace::Iterator it;
 		bool isReplaced=false;
 		for ( it = map.begin(); it != map.end(); ++it )
@@ -95,7 +95,7 @@ void AutoReplacePlugin::slotInterceptMessage( Kopete::Message &msg )
 		if ( m_prefs->dotEndSentence() )
 		{
 			// eventually add . at the end of the lines, sent lines only
-			replaced_message.replace( QRegExp( "([a-z])$" ), "\\1." );
+			replaced_message.replace( QRegExp( "([a-z])$" ), QStringLiteral("\\1.") );
 			// replaced_message.replace(QRegExp( "([\\w])$" ), "\\1." );
 			isReplaced=true;
 		}

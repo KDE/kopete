@@ -37,9 +37,9 @@ void JT_XSearch::setForm(const Form &frm, const XData &_form)
 {
 	JT_Search::set( frm );
 
-	_iq = createIQ(doc(), "set", frm.jid().full(), id());
-	QDomElement query = doc()->createElement("query");
-	query.setAttribute("xmlns", "jabber:iq:search");
+	_iq = createIQ(doc(), QStringLiteral("set"), frm.jid().full(), id());
+	QDomElement query = doc()->createElement(QStringLiteral("query"));
+	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:search"));
 	_iq.appendChild(query);
 
 	XData form( _form );

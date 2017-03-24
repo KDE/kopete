@@ -46,7 +46,7 @@ Kopete::Account* TestbedEditAccountWidget::apply()
 {
 	QString accountName;
 	if ( m_preferencesWidget->m_acctName->text().isEmpty() )
-		accountName = "Testbed Account";
+		accountName = QStringLiteral("Testbed Account");
 	else
 		accountName = m_preferencesWidget->m_acctName->text();
 	

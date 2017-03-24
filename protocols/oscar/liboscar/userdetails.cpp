@@ -174,7 +174,7 @@ QString UserDetails::clientName() const
 void UserDetails::parseCapabilities( Buffer &inbuf, int &xStatus )
 {
 	xStatus = -1;
-	QString dbgCaps = "CAPS: ";
+	QString dbgCaps = QStringLiteral("CAPS: ");
 	while ( inbuf.bytesAvailable() >= 16 )
 	{
 		bool found = false;
@@ -231,8 +231,8 @@ void UserDetails::parseCapabilities( Buffer &inbuf, int &xStatus )
 
 void UserDetails::parseNewCapabilities( Buffer &inbuf )
 {
-	QString dbgCaps = "NEW CAPS: ";
-	QByteArray cap = Guid( QLatin1String("094600004c7f11d18222444553540000"));
+	QString dbgCaps = QStringLiteral("NEW CAPS: ");
+	QByteArray cap = Guid( QStringLiteral("094600004c7f11d18222444553540000"));
 	while ( inbuf.bytesAvailable() >= 2 )
 	{
 		cap[2] = inbuf.getByte();
@@ -429,7 +429,7 @@ void UserDetails::fill( Buffer * buffer )
 						if ( length > 0 )
 						{
 							QString mood( b.getBlock( length ) );
-							m_statusMood = mood.mid( 7 ).toInt();
+							m_statusMood = mood.midRef( 7 ).toInt();
 						}
 						m_statusMoodSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
@@ -472,7 +472,7 @@ static QString mirandaVersionToString( Oscar::DWORD v )
 	QString ver;
 	ver.sprintf( "%d.%d.%d.%d", (v >> 0x18) & 0x7F, (v >> 0x10) & 0xFF, (v >> 0x08) & 0xFF, v & 0xFF );
 	if ( v & 0x80000000 )
-		ver += " alpha";
+		ver += QLatin1String(" alpha");
 	return ver;
 }
 
@@ -494,7 +494,7 @@ static QString getMirandaVersion( Oscar::DWORD iver, Oscar::DWORD mver, bool isU
 		if ( mver )
 			ver = mirandaVersionToString( mver );
 		if ( isUnicode )
-			ver += " Unicode";
+			ver += QLatin1String(" Unicode");
 		ver += " (ICQ v" + mirandaVersionToString( iver ) + ')';
 	}
 	return ver;
@@ -520,31 +520,31 @@ void UserDetails::detectClient()
 	/*
 		Most of this code is based on Miranda ICQ plugin code
 	*/
-	m_clientName = QString::fromLatin1("");
+	m_clientName = QStringLiteral("");
 	if ( m_dcLastInfoUpdateTime == 0xFFFFFFFF )
 	{
 		if ( m_dcLastExtInfoUpdateTime == 0xffffffff )
 		{
-			m_clientName = QString::fromLatin1( "Gaim" );
+			m_clientName = QStringLiteral( "Gaim" );
 		}
 		else if ( !m_dcLastExtInfoUpdateTime && m_dcProtoVersion == 7 )
 		{
-			m_clientName = QString::fromLatin1( "WebICQ" );
+			m_clientName = QStringLiteral( "WebICQ" );
 		}
 		else if ( !m_dcLastExtInfoUpdateTime && m_dcLastExtStatusUpdateTime == 0x3B7248ED )
 		{
-			m_clientName = QString::fromLatin1( "Spam Bot" );
+			m_clientName = QStringLiteral( "Spam Bot" );
 		}
 		else
 		{
-			m_clientName = QString::fromLatin1( "Miranda IM" );
+			m_clientName = QStringLiteral( "Miranda IM" );
 			m_clientName += ' ' + getMirandaVersion( m_dcLastExtInfoUpdateTime, 0, false );
 		}
 	}
 	else if ( m_dcLastInfoUpdateTime == 0x7FFFFFFF )
 	{
 		// Miranda with unicode core
-		m_clientName = QString::fromLatin1( "Miranda IM" );
+		m_clientName = QStringLiteral( "Miranda IM" );
 		m_clientName += ' ' + getMirandaVersion( m_dcLastExtInfoUpdateTime, 0, true );
 	}
 	else if ( ( m_dcLastInfoUpdateTime & 0xFF7F0000 ) == 0x7D000000 )
@@ -553,44 +553,44 @@ void UserDetails::detectClient()
 	}
 	else if ( m_dcLastInfoUpdateTime == 0xFFFFFF8F )
 	{
-		m_clientName = QString::fromLatin1( "StrICQ" );
+		m_clientName = QStringLiteral( "StrICQ" );
 	}
 	else if ( m_dcLastInfoUpdateTime == 0xFFFFFF42 )
 	{
-		m_clientName = QString::fromLatin1( "mICQ" );
+		m_clientName = QStringLiteral( "mICQ" );
 	}
 	else if ( m_dcLastInfoUpdateTime == 0xFFFFFFBE )
 	{
-		m_clientName = QString::fromLatin1("Alicq %1.%2.%3").arg((m_dcLastExtInfoUpdateTime >> 0x18) & 0xFF).arg((m_dcLastExtInfoUpdateTime >> 0x10) & 0xFF).arg((m_dcLastExtInfoUpdateTime >> 0x08) & 0xFF);
+		m_clientName = QStringLiteral("Alicq %1.%2.%3").arg((m_dcLastExtInfoUpdateTime >> 0x18) & 0xFF).arg((m_dcLastExtInfoUpdateTime >> 0x10) & 0xFF).arg((m_dcLastExtInfoUpdateTime >> 0x08) & 0xFF);
 	}
 	else if ( m_dcLastInfoUpdateTime == 0xFFFFFF7F )
 	{
-		m_clientName = QString::fromLatin1( "&RQ" );
+		m_clientName = QStringLiteral( "&RQ" );
 	}
 	else if ( m_dcLastInfoUpdateTime == 0xFFFFFFAB )
 	{
-		m_clientName = QString::fromLatin1( "YSM" );
+		m_clientName = QStringLiteral( "YSM" );
 	}
 	else if ( m_dcLastInfoUpdateTime == 0x04031980 )
 	{
-		m_clientName = QString::fromLatin1( "vICQ" );
+		m_clientName = QStringLiteral( "vICQ" );
 	}
 	else if ( m_dcLastInfoUpdateTime == 0x3AA773EE && m_dcLastExtInfoUpdateTime == 0x3AA66380 )
 	{
-		m_clientName = QString::fromLatin1( "libicq2000" );
+		m_clientName = QStringLiteral( "libicq2000" );
 	}
 	else if ( m_dcLastInfoUpdateTime == 0x3B75AC09 )
 	{
-		m_clientName = QString::fromLatin1( "Trillian" );
+		m_clientName = QStringLiteral( "Trillian" );
 	}
 	else if ( m_dcLastInfoUpdateTime == 0xFFFFFFFE && m_dcLastExtStatusUpdateTime == 0xFFFFFFFE )
 	{
-		m_clientName = QString::fromLatin1( "Jimm" );
+		m_clientName = QStringLiteral( "Jimm" );
 	}
 	else if ( m_dcLastInfoUpdateTime == 0xFFFFF666 && !m_dcLastExtStatusUpdateTime )
 	{
         // this is R&Q (Rapid Edition)
-		m_clientName = QString::fromLatin1( "R&Q" );
+		m_clientName = QStringLiteral( "R&Q" );
 		m_clientVersion.sprintf( "%u", m_dcLastExtInfoUpdateTime );
 		m_clientName += ' ' + m_clientVersion;
 	}
@@ -604,7 +604,7 @@ void UserDetails::detectClient()
 	}
 	if ( hasCap ( CAP_MIRANDA ) )
 	{
-		m_clientName = QString::fromLatin1( "Miranda IM" );
+		m_clientName = QStringLiteral( "Miranda IM" );
 		Oscar::DWORD iver = m_identCap.data().at(12) << 0x18 | m_identCap.data().at(13) << 0x10 | m_identCap.data().at(14) << 0x08 | m_identCap.data().at(15);
 		Oscar::DWORD mver = m_identCap.data().at(8) << 0x18 | m_identCap.data().at(9) << 0x10 | m_identCap.data().at(10) << 0x08 | m_identCap.data().at(11);
 		m_clientName += ' ' + getMirandaVersion( iver, mver, m_dcLastInfoUpdateTime == 0x7FFFFFFF );
@@ -612,9 +612,9 @@ void UserDetails::detectClient()
 	}
 	if  ( hasCap( CAP_QIP ) )
 	{
-		m_clientName = QString::fromLatin1( "QIP" );
+		m_clientName = QStringLiteral( "QIP" );
 		if ( m_dcLastExtStatusUpdateTime == 0x0F )
-			m_clientVersion = QString::fromLatin1( "2005" );
+			m_clientVersion = QStringLiteral( "2005" );
 		else
 			m_clientVersion = getVersionFromCap( m_identCap, 11 );
 		QString build;
@@ -627,7 +627,7 @@ void UserDetails::detectClient()
 	}
 	if ( hasCap( CAP_QIPINFIUM ) )
 	{
-		m_clientName = QString::fromLatin1( "QIP Infium" );
+		m_clientName = QStringLiteral( "QIP Infium" );
 		if ( m_dcLastInfoUpdateTime )
 		{
 			QString build;
@@ -635,45 +635,45 @@ void UserDetails::detectClient()
 			m_clientName += build;
 		}
 		if ( m_dcLastExtInfoUpdateTime == 0x0B )
-			m_clientName += " Beta";
+			m_clientName += QLatin1String(" Beta");
 		return;
 	}
 	if ( hasCap( CAP_QIPPDA ) )
 	{
-		m_clientName = QString::fromLatin1( "QIP PDA (Windows)" );
+		m_clientName = QStringLiteral( "QIP PDA (Windows)" );
 		return;
 	}
 	if ( hasCap( CAP_QIPSYMBIAN ) )
 	{
-		m_clientName = QString::fromLatin1( "QIP PDA (Symbian)" );
+		m_clientName = QStringLiteral( "QIP PDA (Symbian)" );
 		return;
 	}
 	if ( hasCap( CAP_QIPMOBILE ) )
 	{
-		m_clientName = QString::fromLatin1( "QIP Mobile (Java)" );
+		m_clientName = QStringLiteral( "QIP Mobile (Java)" );
 		return;
 	}
 	if ( hasCap( CAP_JIMM ) )
 	{
-		m_clientName = QString::fromLatin1( "Jimm" );
+		m_clientName = QStringLiteral( "Jimm" );
 		m_clientName += ' ' + getVersionFromCap( m_identCap, 5 );
 		return;
 	}
 	if ( hasCap( CAP_SIMNEW ) )
 	{
-		m_clientName = QString::fromLatin1( "SIM" );
+		m_clientName = QStringLiteral( "SIM" );
 		m_clientVersion.sprintf( "%d.%d.%d.%d", m_identCap.data().at(12), m_identCap.data().at(13), m_identCap.data().at(14), m_identCap.data().at(15) & 0x0F );
 		if ( m_identCap.data().at(15) & 0x80 )
-			m_clientVersion += QString::fromLatin1( " (Win32)" );
+			m_clientVersion += QLatin1String( " (Win32)" );
 		else if ( m_identCap.data().at(15) & 0x40 )
-			m_clientVersion += QString::fromLatin1( " (MacOS X)" );
+			m_clientVersion += QLatin1String( " (MacOS X)" );
         // Linux version? Fix last number
 		m_clientName += ' ' + m_clientVersion;
 		return;
 	}
 	if ( hasCap( CAP_SIMOLD ) )
 	{
-		m_clientName = QString::fromLatin1( "SIM" );
+		m_clientName = QStringLiteral( "SIM" );
         /*int hiVersion = (cap.data()[15] >> 6) - 1;
 					unsigned loVersion = cap.data()[15] & 0x1F;
 					kDebug(14150) << "OLD SIM version : <" <<
@@ -685,35 +685,35 @@ void UserDetails::detectClient()
 	}
 	if ( hasCap( CAP_VMICQ ) )
 	{
-		m_clientName = QString::fromLatin1( "VmICQ" );
+		m_clientName = QStringLiteral( "VmICQ" );
 		return;
 	}
 	if ( hasCap( CAP_LICQ ) )
 	{
-		m_clientName = QString::fromLatin1( "Licq" );
+		m_clientName = QStringLiteral( "Licq" );
 		m_clientVersion.sprintf( "%d.%d.%d", m_identCap.data().at(12), m_identCap.data().at(13) % 100, m_identCap.data().at(14) );
 		if ( m_identCap.data().at(15) )
-			m_clientVersion += " SSL";
+			m_clientVersion += QLatin1String(" SSL");
 		m_clientName += ' ' + m_clientVersion;
 		return;
 	}
 	if ( hasCap( CAP_ANDRQ ) )
 	{
-		m_clientName = QString::fromLatin1( "&RQ" );
+		m_clientName = QStringLiteral( "&RQ" );
 		m_clientVersion.sprintf( "%d.%d.%d.%d", m_identCap.data().at(12), m_identCap.data().at(11), m_identCap.data().at(10), m_identCap.data().at(9) );
 		m_clientName += ' ' + m_clientVersion;
 		return;
 	}
 	if ( hasCap( CAP_RANDQ ) )
 	{
-		m_clientName = QString::fromLatin1("R&Q");
+		m_clientName = QStringLiteral("R&Q");
 		m_clientVersion.sprintf("%d.%d.%d.%d", m_identCap.data().at(12), m_identCap.data().at(11), m_identCap.data().at(10), m_identCap.data().at(9));
 		m_clientName += ' ' + m_clientVersion;
 		return;
 	}
 	if ( hasCap( CAP_MCHAT ) )
 	{
-		m_clientName = QString::fromLatin1( "mChat" );
+		m_clientName = QStringLiteral( "mChat" );
 		m_clientVersion = getVersionFromCap( m_identCap, 10 );
 		m_clientName += ' ' + m_clientVersion;
 		return;
@@ -728,25 +728,25 @@ void UserDetails::detectClient()
 				if ( hasCap( CAP_TZERS ) )
 				{
 					if ( hasCap( CAP_HTMLMSGS ) )
-						m_clientName = QString::fromLatin1( "ICQ 6" );
+						m_clientName = QStringLiteral( "ICQ 6" );
 					else
-						m_clientName = QString::fromLatin1( "ICQ 5.1" );
+						m_clientName = QStringLiteral( "ICQ 5.1" );
 				}
 				else
 				{
-					m_clientName = QString::fromLatin1( "ICQ 5" );
+					m_clientName = QStringLiteral( "ICQ 5" );
 				}
 				if ( hasCap( CAP_ICQ_RAMBLER ) )
 				{
-					m_clientName += QString::fromLatin1( " (Rambler)" );
+					m_clientName += QLatin1String( " (Rambler)" );
 				}
 				if ( hasCap( CAP_ICQ_ABV ) )
 				{
-					m_clientName += QString::fromLatin1( " (Abv)" );
+					m_clientName += QLatin1String( " (Abv)" );
 				}
 				if ( hasCap( CAP_ICQ_NETVIGATOR ) )
 				{
-					m_clientName += QString::fromLatin1( " (Netvigator)" );
+					m_clientName += QLatin1String( " (Netvigator)" );
 				}
 				return;
 			}
@@ -755,7 +755,7 @@ void UserDetails::detectClient()
 		{
 			if ( hasCap( CAP_UTF8 ) && !hasCap( CAP_RTFMSGS ) )
 			{
-				m_clientName = QString::fromLatin1( "pyICQ" );
+				m_clientName = QStringLiteral( "pyICQ" );
 			}
 		}
 		
@@ -768,23 +768,23 @@ void UserDetails::detectClient()
 		return;
 	if ( m_dcProtoVersion == 6 )
 	{
-		m_clientName = QString::fromLatin1( "ICQ 99" );
+		m_clientName = QStringLiteral( "ICQ 99" );
 	}
 	else if ( m_dcProtoVersion == 7 )
 	{
-		m_clientName = QString::fromLatin1( "ICQ 2000/Icq2Go" );
+		m_clientName = QStringLiteral( "ICQ 2000/Icq2Go" );
 	}
 	else if ( m_dcProtoVersion == 8 )
 	{
-		m_clientName = QString::fromLatin1( "ICQ 2001-2003a" );
+		m_clientName = QStringLiteral( "ICQ 2001-2003a" );
 	}
 	else if ( m_dcProtoVersion == 9 )
 	{
-		m_clientName = QString::fromLatin1( "ICQ Lite" );
+		m_clientName = QStringLiteral( "ICQ Lite" );
 	}
 	else if ( m_dcProtoVersion == 10 )
 	{
-		m_clientName = QString::fromLatin1( "ICQ 2003b" );
+		m_clientName = QStringLiteral( "ICQ 2003b" );
 	}
 }
 

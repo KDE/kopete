@@ -54,10 +54,10 @@ Transfer * EventProtocol::parse( QByteArray & wire, uint& bytes )
 	m_din >> type;
 	m_bytes += sizeof( quint32 );
 	
-	debug( QString( "EventProtocol::parse() Reading event of type %1" ).arg( type ) );
+	debug( QStringLiteral( "EventProtocol::parse() Reading event of type %1" ).arg( type ) );
 	if ( type > Stop )
 	{
-		debug( QString ( "EventProtocol::parse() - found unexpected event type %1 - assuming out of sync" ).arg( type ) );
+		debug( QStringLiteral ( "EventProtocol::parse() - found unexpected event type %1 - assuming out of sync" ).arg( type ) );
 		m_state = OutOfSync;
 		return 0;
 	}
@@ -97,9 +97,9 @@ Transfer * EventProtocol::parse( QByteArray & wire, uint& bytes )
 				m_din.unsetDevice();
 				return 0;
 			}
-			debug( QString( "got status: %1").arg( status ) );
+			debug( QStringLiteral( "got status: %1").arg( status ) );
 			tentative->setStatus( status );
-			debug( QString( "tentative status: %1").arg( tentative->status() ) );
+			debug( QStringLiteral( "tentative status: %1").arg( tentative->status() ) );
 			tentative->setStatusText( statusText );
 			break;
 		case ConferenceJoined:		// 106 - GUID + FLAGS
@@ -192,7 +192,7 @@ Transfer * EventProtocol::parse( QByteArray & wire, uint& bytes )
 			tentative->setMessage( message );
 			break;
 		default:
-			debug( QString( "EventProtocol::parse() - found unexpected event type %1" ).arg( type ) );
+			debug( QStringLiteral( "EventProtocol::parse() - found unexpected event type %1" ).arg( type ) );
 			break;
 	}
 	// if we got this far, the parse succeeded, return the Transfer

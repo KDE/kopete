@@ -39,7 +39,7 @@
 CoreProtocol::CoreProtocol() : QObject()
 {
 	m_YMSGProtocol = new YMSGProtocol( this );
-	m_YMSGProtocol->setObjectName( QLatin1String("ymsgprotocol") );
+	m_YMSGProtocol->setObjectName( QStringLiteral("ymsgprotocol") );
 }
 
 CoreProtocol::~CoreProtocol() 
@@ -195,7 +195,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 			kDebug(YAHOO_RAW_DEBUG) << " - not a valid YMSG packet. Trying to recover.";
 			QTextStream s( wire, QIODevice::ReadOnly );
 			QString remaining = s.readAll();
-			int pos = remaining.indexOf( "YMSG", bytesParsed );
+			int pos = remaining.indexOf( QLatin1String("YMSG"), bytesParsed );
 			if( pos >= 0 )
 			{
 				kDebug(YAHOO_RAW_DEBUG) << "Recover successful.";

@@ -76,7 +76,7 @@ void QQAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 		return;
 	}
 	/* Hard-coded password for debug only */
-	m_password = "qqsucks";
+	m_password = QStringLiteral("qqsucks");
 	createNotificationServer(serverName(), serverPort());
 }
 
@@ -132,7 +132,7 @@ void QQAccount::fillActionMenu( KActionMenu *actionMenu )
 	actionMenu->addSeparator();
 
     QAction *action = new QAction (QIcon::fromTheme(QStringLiteral("qq_showvideo")), i18n ("Show my own video..."), actionMenu );
-        action->setObjectName("actionShowVideo");
+        action->setObjectName(QStringLiteral("actionShowVideo"));
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
 	actionMenu->addAction(action);
 	action->setEnabled( isConnected() );
@@ -336,9 +336,9 @@ void QQAccount::slotNewContactList()
 			c->setAllowed( false );
 			c->setReversed( false );
 			c->setDeleted( true );
-			c->setInfo( "PHH", QString() );
-			c->setInfo( "PHW", QString() );
-			c->setInfo( "PHM", QString() );
+			c->setInfo( QStringLiteral("PHH"), QString() );
+			c->setInfo( QStringLiteral("PHW"), QString() );
+			c->setInfo( QStringLiteral("PHM"), QString() );
 			// c->removeProperty( QQProtocol::protocol()->propGuid );
 		}
 		m_newContactList=true;

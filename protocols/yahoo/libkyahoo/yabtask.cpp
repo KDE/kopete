@@ -96,12 +96,12 @@ void YABTask::getAllEntries( long lastMerge, long lastRemoteRevision )
 {
 	kDebug(YAHOO_RAW_DEBUG) << "LastMerge: " << lastMerge << " LastRemoteRevision: " << lastRemoteRevision;
 	m_data.clear();
-	QString url = QString::fromLatin1("http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&diffs=1&t=%1&tags=short&rt=%2&prog-ver=%3")
+	QString url = QStringLiteral("http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&diffs=1&t=%1&tags=short&rt=%2&prog-ver=%3")
 		.arg( lastMerge ).arg( lastRemoteRevision ).arg( YMSG_PROGRAM_VERSION_STRING );
 
 	m_transferJob = KIO::get( url , KIO::NoReload, KIO::HideProgressInfo );
-	m_transferJob->addMetaData("cookies", "manual");
-	m_transferJob->addMetaData("setcookies", QString::fromLatin1("Cookie: Y=%1; T=%2; C=%3;")
+	m_transferJob->addMetaData(QStringLiteral("cookies"), QStringLiteral("manual"));
+	m_transferJob->addMetaData(QStringLiteral("setcookies"), QStringLiteral("Cookie: Y=%1; T=%2; C=%3;")
 				.arg(client()->yCookie()).arg(client()->tCookie()).arg(client()->cCookie()) );
 	connect( m_transferJob, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(slotData(KIO::Job*,QByteArray)) );
 	connect( m_transferJob, SIGNAL(result(KJob*)), this, SLOT(slotResult(KJob*)) );
@@ -131,20 +131,20 @@ void YABTask::slotResult( KJob* job )
 		kDebug(YAHOO_RAW_DEBUG) << m_data;
 		doc.setContent( m_data );
 		
-		list = doc.elementsByTagName( "ab" );			// Get the Addressbook
+		list = doc.elementsByTagName( QStringLiteral("ab") );			// Get the Addressbook
 		for( it = 0; it < list.count(); it++ )	{
 			if( !list.item( it ).isElement() )
 				continue;
 			e = list.item( it ).toElement();
 			
-			if( !e.attribute( "lm" ).isEmpty() )
-				emit gotRevision( e.attribute( "lm" ).toLong(), true );
+			if( !e.attribute( QStringLiteral("lm") ).isEmpty() )
+				emit gotRevision( e.attribute( QStringLiteral("lm") ).toLong(), true );
 
-			if( !e.attribute( "rt" ).isEmpty() )
-				emit gotRevision( e.attribute( "rt" ).toLong(), false );
+			if( !e.attribute( QStringLiteral("rt") ).isEmpty() )
+				emit gotRevision( e.attribute( QStringLiteral("rt") ).toLong(), false );
 		}
 		
-		list = doc.elementsByTagName( "ct" );			// Get records
+		list = doc.elementsByTagName( QStringLiteral("ct") );			// Get records
 		for( it = 0; it < list.count(); it++ )	{
 			if( !list.item( it ).isElement() )
 				continue;

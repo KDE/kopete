@@ -653,11 +653,11 @@ void SocksClient::processOutgoing(const QByteArray &block)
 
 			QString str;
 			if(s.method == 0x00) {
-				str = "None";
+				str = QStringLiteral("None");
 				d->authMethod = AuthNone;
 			}
 			else if(s.method == 0x02) {
-				str = "Username/Password";
+				str = QStringLiteral("Username/Password");
 				d->authMethod = AuthUsername;
 			}
 			else {

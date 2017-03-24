@@ -110,7 +110,7 @@ KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, 
 class FakeIdentity : public Kopete::Identity
 {
 	public:
-		FakeIdentity() : Kopete::Identity("Preview Identity") {};
+		FakeIdentity() : Kopete::Identity(QStringLiteral("Preview Identity")) {};
 };
 
 // This is for style preview.
@@ -174,9 +174,9 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 	//connect(m_styleUi.btnGetStyles, SIGNAL(clicked()),
 		//this, SLOT(slotGetChatStyles()));
 
-	m_styleUi.deleteButton->setIcon(QIcon::fromTheme("edit-delete"));
-	m_styleUi.installButton->setIcon(QIcon::fromTheme("document-import"));
-	m_styleUi.btnGetStyles->setIcon(QIcon::fromTheme("get-hot-new-stuff"));
+	m_styleUi.deleteButton->setIcon(QIcon::fromTheme(QStringLiteral("edit-delete")));
+	m_styleUi.installButton->setIcon(QIcon::fromTheme(QStringLiteral("document-import")));
+	m_styleUi.btnGetStyles->setIcon(QIcon::fromTheme(QStringLiteral("get-hot-new-stuff")));
 
 	// Show the available styles when the Manager has finish to load the styles.
 	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadChatStyles()));
@@ -391,7 +391,7 @@ void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 		return;
 
 	if ( m_styleUi.variantList->currentIndex() == 0 ) {
-		m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( "" ) );
+		m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( QLatin1String("") ) );
 	}
 	else {
 		m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( variantName ) );
@@ -403,7 +403,7 @@ void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 
 void ChatWindowConfig::slotInstallChatStyle()
 {
-	QUrl styleUrl = KFileDialog::getOpenUrl( QUrl(), QString::fromUtf8("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose Chat Window Style to Install") );
+	QUrl styleUrl = KFileDialog::getOpenUrl( QUrl(), QStringLiteral("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose Chat Window Style to Install") );
 
 	if ( styleUrl.isEmpty() ) // dialog got canceled
 		return;
@@ -553,8 +553,8 @@ void ChatWindowConfig::slotGetChatStyles()
 void ChatWindowConfig::createPreviewChatSession()
 {
 	m_previewProtocol = new FakeProtocol( 0 );
-	m_previewProtocol->setObjectName( QLatin1String("kopete-preview-chatwindowstyle") );
-	m_previewAccount = new FakeAccount(m_previewProtocol, QString("previewaccount"));
+	m_previewProtocol->setObjectName( QStringLiteral("kopete-preview-chatwindowstyle") );
+	m_previewAccount = new FakeAccount(m_previewProtocol, QStringLiteral("previewaccount"));
 
 	m_myself = new FakeContact(m_previewAccount, i18nc("This is the myself preview contact id", "myself@preview"), Kopete::ContactList::self()->myself());
 	m_myself->setNickName(i18nc("This is the myself preview contact nickname", "Myself"));
@@ -633,14 +633,14 @@ void ChatWindowConfig::createPreviewMessages()
 	msgFTRequest.setPlainBody( i18n( "Hello, this is an incoming file transfer request" ) );
 	msgFTRequest.setDirection( Kopete::Message::Inbound );
 	msgFTRequest.setType( Kopete::Message::TypeFileTransferRequest );
-	msgFTRequest.setFileName( "data.pdf" );
+	msgFTRequest.setFileName( QStringLiteral("data.pdf") );
 	msgFTRequest.setFileSize( 10000000 );
 
 	Kopete::Message msgFTRequestDisabled( m_jack, m_myself );
 	msgFTRequestDisabled.setPlainBody( i18n( "Hello, this is a disabled incoming file transfer request" ) );
 	msgFTRequestDisabled.setDirection( Kopete::Message::Inbound );
 	msgFTRequestDisabled.setType( Kopete::Message::TypeFileTransferRequest );
-	msgFTRequestDisabled.setFileName( "data.pdf" );
+	msgFTRequestDisabled.setFileName( QStringLiteral("data.pdf") );
 	msgFTRequestDisabled.setFileSize( 10000000 );
 	msgFTRequestDisabled.setFileTransferDisabled( true );
 
@@ -689,7 +689,7 @@ void ChatWindowConfig::updateEmoticonList()
 
 	m_emoticonsUi.icon_theme_list->clear(); // Wipe out old list
 	// Get a list of directories in our icon theme dir
-	QStringList themeDirs = KGlobal::dirs()->findDirs("emoticons", "");
+	QStringList themeDirs = KGlobal::dirs()->findDirs("emoticons", QLatin1String(""));
 	// loop adding themes from all dirs into theme-list
 	for( int x = 0;x < themeDirs.count();x++)
 	{
@@ -701,7 +701,7 @@ void ChatWindowConfig::updateEmoticonList()
 			QStringList themes = themeQDir.entryList(QDir::Dirs, QDir::Name);
 
 			// We don't care for '.' and '..'
-			if ( themeQDir[y] != "." && themeQDir[y] != ".." )
+			if ( themeQDir[y] != QLatin1String(".") && themeQDir[y] != QLatin1String("..") )
 			{
 				// Add ourselves to the list, using our directory name  FIXME:  use the first emoticon of the theme.
 				QListWidgetItem *item = new EmoticonThemeItem(themeQDir[y]);
@@ -732,7 +732,7 @@ void ChatWindowConfig::slotManageEmoticonThemes()
 
 	KCMultiDialog *kcm = new KCMultiDialog( this );
 	kcm->setWindowTitle( i18n( "Configure Emoticon Themes" ) );
-	kcm->addModule( "emoticons" );
+	kcm->addModule( QStringLiteral("emoticons") );
 	kcm->exec();
 	updateEmoticonList();
 }

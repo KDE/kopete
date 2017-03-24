@@ -102,7 +102,7 @@ void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 
 		if( !sysmsg.isEmpty() )
 		{
-			client()->notifyError( "Server message received: ", sysmsg, Client::Error );
+			client()->notifyError( QStringLiteral("Server message received: "), sysmsg, Client::Error );
 			continue;
 		}
 	
@@ -119,7 +119,7 @@ void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 			emit systemMessage( sysmsg );
 		else
 		{	
-			if( msg.startsWith( "<ding>" ) )
+			if( msg.startsWith( QLatin1String("<ding>") ) )
 				emit gotBuzz( from, timestamp.toLong() );
 			else
 				emit gotIm( from, msg, timestamp.toLong(), 0);
@@ -176,11 +176,11 @@ void MessageReceiverTask::parseNotify( YMSGTransfer *t )
 	QString stat = t->firstParam( 13 );
 	QString ind = t->firstParam( 14 );
 
-	if( type.startsWith( "TYPING" ) )
+	if( type.startsWith( QLatin1String("TYPING") ) )
 		emit gotTypingNotify( from, stat.toInt() );
-	else if( type.startsWith( "GAME" ) )
+	else if( type.startsWith( QLatin1String("GAME") ) )
 		;
-	else if( type.startsWith( "WEBCAMINVITE" ) )
+	else if( type.startsWith( QLatin1String("WEBCAMINVITE") ) )
 	{
 		if( ind.startsWith(' ') )
 		{

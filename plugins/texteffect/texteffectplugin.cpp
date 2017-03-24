@@ -82,8 +82,8 @@ void TextEffectPlugin::slotOutgoingMessage( Kopete::Message& msg )
 			if(f==0 || m_config->colorChar() || (m_config->colorWords() && x==' ' ))
 			{
 				if(f!=0)
-					resultat+="</font>";
-				resultat+="<font color=\"";
+					resultat+=QLatin1String("</font>");
+				resultat+=QLatin1String("<font color=\"");
 				resultat+=colors[c];
 				if(m_config->colorRandom())
 					c=rand()%colors.count();
@@ -93,21 +93,21 @@ void TextEffectPlugin::slotOutgoingMessage( Kopete::Message& msg )
 					if(c >= colors.count())
 						c=0;
 				}
-				resultat+="\">";
+				resultat+=QLatin1String("\">");
 			}
 			switch (x.toLatin1())
 			{
 				case '>':
-					resultat+="&gt;";
+					resultat+=QLatin1String("&gt;");
 					break;
 				case '<':
-					resultat+="&lt;";
+					resultat+=QLatin1String("&lt;");
 					break;
 				case '&':
-					resultat+="&amp;";
+					resultat+=QLatin1String("&amp;");
 					break;
 				case '\n':
-					resultat+="<br>";
+					resultat+=QLatin1String("<br>");
 				case 'a':
 				case 'A':
 					if(m_config->lamer())
@@ -169,7 +169,7 @@ void TextEffectPlugin::slotOutgoingMessage( Kopete::Message& msg )
 			}
 		}
 		if( m_config->colorChar() || m_config->colorWords() )
-			resultat+="</font>";
+			resultat+=QLatin1String("</font>");
 		msg.setHtmlBody(resultat);
 	}
 

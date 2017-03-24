@@ -499,7 +499,7 @@ QString attributeTypeToString(int type)
 
 static QString quoted(const QString &in)
 {
-	return QString("\"") + in + '\"';
+	return QStringLiteral("\"") + in + '\"';
 }
 
 QString attributeValueToString(int type, const QByteArray &val, const quint8 *magic, const quint8 *id)
@@ -533,7 +533,7 @@ QString attributeValueToString(int type, const QByteArray &val, const quint8 *ma
 			{
 				QString out = QString::number(code);
 				if(!reason.isEmpty())
-					out += QString(", ") + quoted(reason);
+					out += QStringLiteral(", ") + quoted(reason);
 				return out;
 			}
 			break;
@@ -548,10 +548,10 @@ QString attributeValueToString(int type, const QByteArray &val, const quint8 *ma
 					QStringList strList;
 					foreach(quint16 i, typeList)
 						strList += QString().sprintf("0x%04x", i);
-					return strList.join(", ");
+					return strList.join(QStringLiteral(", "));
 				}
 				else
-					return "(None)";
+					return QStringLiteral("(None)");
 			}
 			break;
 		}
@@ -597,7 +597,7 @@ QString attributeValueToString(int type, const QByteArray &val, const quint8 *ma
 		}
 		case DATA:
 		{
-			return QString("len=%1, ").arg(val.size()) + QCA::arrayToHex(val);
+			return QStringLiteral("len=%1, ").arg(val.size()) + QCA::arrayToHex(val);
 		}
 		case XOR_RELAYED_ADDRESS:
 		{
@@ -607,7 +607,7 @@ QString attributeValueToString(int type, const QByteArray &val, const quint8 *ma
 		{
 			bool reserve;
 			if(parseEvenPort(val, &reserve))
-				return QString("reserve=") + (reserve ? "true" : "false");
+				return QStringLiteral("reserve=") + (reserve ? "true" : "false");
 			break;
 		}
 		case REQUESTED_TRANSPORT:
@@ -617,16 +617,16 @@ QString attributeValueToString(int type, const QByteArray &val, const quint8 *ma
 			{
 				QString str = QString::number((int)proto);
 				if(proto == 17) // UDP
-					str += " (UDP)";
+					str += QLatin1String(" (UDP)");
 				else
-					str += " (Unknown)";
+					str += QLatin1String(" (Unknown)");
 				return str;
 			}
 			break;
 		}
 		case DONT_FRAGMENT:
 		{
-			return QString("");
+			return QLatin1String("");
 		}
 		case RESERVATION_TOKEN:
 		{
@@ -644,7 +644,7 @@ QString attributeValueToString(int type, const QByteArray &val, const quint8 *ma
 		}
 		case USE_CANDIDATE:
 		{
-			return QString("");
+			return QLatin1String("");
 		}
 		case SOFTWARE:
 		{
@@ -686,20 +686,20 @@ QString print_packet_str(const StunMessage &message)
 
 	QString mclass;
 	if(message.mclass() == StunMessage::Request)
-		mclass = "Request";
+		mclass = QStringLiteral("Request");
 	else if(message.mclass() == StunMessage::SuccessResponse)
-		mclass = "Response (Success)";
+		mclass = QStringLiteral("Response (Success)");
 	else if(message.mclass() == StunMessage::ErrorResponse)
-		mclass = "Response (Error)";
+		mclass = QStringLiteral("Response (Error)");
 	else if(message.mclass() == StunMessage::Indication)
-		mclass = "Indication";
+		mclass = QStringLiteral("Indication");
 	else
 		Q_ASSERT(0);
 
-	out += QString("Class: %1\n").arg(mclass);
-	out += QString("Method: %1\n").arg(methodToString(message.method()));
-	out += QString("Transaction id: %1\n").arg(QCA::arrayToHex(QByteArray((const char *)message.id(), 12)));
-	out += "Attributes:";
+	out += QStringLiteral("Class: %1\n").arg(mclass);
+	out += QStringLiteral("Method: %1\n").arg(methodToString(message.method()));
+	out += QStringLiteral("Transaction id: %1\n").arg(QCA::arrayToHex(QByteArray((const char *)message.id(), 12)));
+	out += QLatin1String("Attributes:");
 	QList<StunMessage::Attribute> attribs = message.attributes();
 	if(!attribs.isEmpty())
 	{
@@ -712,18 +712,18 @@ QString print_packet_str(const StunMessage &message)
 			{
 				QString val = attributeValueToString(a.type, a.value, message.magic(), message.id());
 				if(val.isNull())
-					val = QString("Unable to parse %1 bytes").arg(a.value.size());
+					val = QStringLiteral("Unable to parse %1 bytes").arg(a.value.size());
 
-				out += QString("  %1").arg(name);
+				out += QStringLiteral("  %1").arg(name);
 				if(!val.isEmpty())
-					out += QString(" = %1").arg(val);
+					out += QStringLiteral(" = %1").arg(val);
 			}
 			else
 				out += QString().sprintf("  Unknown attribute (0x%04x) of %d bytes", a.type, a.value.size());
 		}
 	}
 	else
-		out += "\n  (None)";
+		out += QLatin1String("\n  (None)");
 
 	return out;
 }

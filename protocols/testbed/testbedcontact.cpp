@@ -62,13 +62,13 @@ void TestbedContact::serialize( QMap< QString, QString > &serializedData, QMap< 
 	switch ( m_type )
 	{
 	case Null:
-		value = QLatin1String("null");
+		value = QStringLiteral("null");
 	case Echo:
-		value = QLatin1String("echo");
+		value = QStringLiteral("echo");
 	case Group:
-		value = QLatin1String("group");
+		value = QStringLiteral("group");
 	}
-	serializedData[ "contactType" ] = value;
+	serializedData[ QStringLiteral("contactType") ] = value;
 }
 
 Kopete::ChatSession* TestbedContact::manager( CanCreateFlags canCreateFlags )

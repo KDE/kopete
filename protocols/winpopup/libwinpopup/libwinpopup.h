@@ -29,7 +29,7 @@
 // KDE Includes
 #include <KFileItem>
 
-const QString WP_POPUP_DIR = QString::fromLatin1("/var/lib/winpopup");
+const QString WP_POPUP_DIR = QStringLiteral("/var/lib/winpopup");
 
 class KDirLister;
 

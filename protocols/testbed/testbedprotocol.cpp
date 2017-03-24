@@ -35,9 +35,9 @@ TestbedProtocol::TestbedProtocol( QObject* parent, const QVariantList &/*args*/ 
 	: Kopete::Protocol( parent ),
 	  testbedOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString()),
 			  i18n( "Online" ),   i18n( "O&nline" ), Kopete::OnlineStatusManager::Online ),
-	  testbedAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QLatin1String("msn_away")),
+	  testbedAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QStringLiteral("msn_away")),
 			  i18n( "Away" ),   i18n( "&Away" ), Kopete::OnlineStatusManager::Away ),
-	  testbedBusy(  Kopete::OnlineStatus::Busy, 25, this, 1, QStringList(QLatin1String("msn_busy")),
+	  testbedBusy(  Kopete::OnlineStatus::Busy, 25, this, 1, QStringList(QStringLiteral("msn_busy")),
 			  i18n( "Busy" ),   i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy ),
 	  testbedOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QStringList(QString()),
 			  i18n( "Offline" ),   i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline )
@@ -56,10 +56,10 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 	Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/* addressBookData */)
 {
-	QString contactId = serializedData[ "contactId" ];
-	QString accountId = serializedData[ "accountId" ];
-	QString type = serializedData[ "contactType" ];
-	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ "preferredNameType" ]);
+	QString contactId = serializedData[ QStringLiteral("contactId") ];
+	QString accountId = serializedData[ QStringLiteral("accountId") ];
+	QString type = serializedData[ QStringLiteral("contactType") ];
+	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ QStringLiteral("preferredNameType") ]);
 
 	TestbedContact::Type tbcType;
 	if ( type == QLatin1String( "group" ) )

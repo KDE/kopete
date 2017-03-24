@@ -266,31 +266,31 @@ void QQContact::setClientFlags( uint flags )
 
 void QQContact::setInfo(const  QString &type,const QString &data )
 {
-	if( type == "PHH" )
+	if( type == QLatin1String("PHH") )
 	{
 		m_phoneHome = data;
 		//setProperty(QQProtocol::protocol()->propPhoneHome, data);
 	}
-	else if( type == "PHW" )
+	else if( type == QLatin1String("PHW") )
 	{
 		m_phoneWork=data;
 		// setProperty(QQProtocol::protocol()->propPhoneWork, data);
 	}
-	else if( type == "PHM" )
+	else if( type == QLatin1String("PHM") )
 	{
 		m_phoneMobile = data;
 		// setProperty(QQProtocol::protocol()->propPhoneMobile, data);
 	}
-	else if( type == "MOB" )
+	else if( type == QLatin1String("MOB") )
 	{
-		if( data == "Y" )
+		if( data == QLatin1String("Y") )
 			m_phone_mob = true;
-		else if( data == "N" )
+		else if( data == QLatin1String("N") )
 			m_phone_mob = false;
 		else
 			kDebug( 14140 ) << "Unknown MOB " << data;
 	}
-	else if( type == "MFN" )
+	else if( type == QLatin1String("MFN") )
 	{
 		setNickName(data);
 	}
@@ -400,7 +400,7 @@ void QQContact::rename( const QString &newName )
 
 void QQContact::slotShowProfile()
 {
-	KToolInvocation::invokeBrowser( QString::fromLatin1("http://members.qq.com/default.qqw?mem=") + contactId()) ;
+	KToolInvocation::invokeBrowser( QLatin1String("http://members.qq.com/default.qqw?mem=") + contactId()) ;
 }
 
 
@@ -415,7 +415,7 @@ void QQContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uin
 
 	//If the file location is null, then get it from a file open dialog
 	if( !sourceURL.isValid() )
-		filePath = KFileDialog::getOpenFileName( KUrl(),"*", 0l  , i18n( "Kopete File Transfer" ));
+		filePath = KFileDialog::getOpenFileName( KUrl(),QStringLiteral("*"), 0l  , i18n( "Kopete File Transfer" ));
 	else
 		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 
@@ -446,7 +446,7 @@ void QQContact::setDisplayPicture(KTemporaryFile *f)
 	//copy the temp file somewere else.
 	// in a better world, the file could be dirrectly wrote at the correct location.
 	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
-	QString newlocation=KStandardDirs::locateLocal( "appdata", "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	QString newlocation=KStandardDirs::locateLocal( "appdata", "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png"  ) ;
 
 	QString fileName = f->fileName();
 	f->setAutoRemove(false);
@@ -461,7 +461,7 @@ void QQContact::setDisplayPicture(KTemporaryFile *f)
 
 void QQContact::slotEmitDisplayPictureChanged()
 {
-	QString newlocation=KStandardDirs::locateLocal( "appdata", "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	QString newlocation=KStandardDirs::locateLocal( "appdata", "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png"  ) ;
 	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 	emit displayPictureChanged();
 }

@@ -145,7 +145,7 @@ private slots:
 		{
 			if(!StunTypes::parseErrorCode(response.attribute(StunTypes::ERROR_CODE), &code, &reason))
 			{
-				errorString = "Unable to parse ERROR-CODE in error response.";
+				errorString = QStringLiteral("Unable to parse ERROR-CODE in error response.");
 				emit q->error(StunBinding::ErrorProtocol);
 				return;
 			}
@@ -172,7 +172,7 @@ private slots:
 		{
 			if(!StunTypes::parseXorMappedAddress(val, response.magic(), response.id(), &saddr, &sport))
 			{
-				errorString = "Unable to parse XOR-MAPPED-ADDRESS response.";
+				errorString = QStringLiteral("Unable to parse XOR-MAPPED-ADDRESS response.");
 				emit q->error(StunBinding::ErrorProtocol);
 				return;
 			}
@@ -184,14 +184,14 @@ private slots:
 			{
 				if(!StunTypes::parseMappedAddress(val, &saddr, &sport))
 				{
-					errorString = "Unable to parse MAPPED-ADDRESS response.";
+					errorString = QStringLiteral("Unable to parse MAPPED-ADDRESS response.");
 					emit q->error(StunBinding::ErrorProtocol);
 					return;
 				}
 			}
 			else
 			{
-				errorString = "Response does not contain XOR-MAPPED-ADDRESS or MAPPED-ADDRESS.";
+				errorString = QStringLiteral("Response does not contain XOR-MAPPED-ADDRESS or MAPPED-ADDRESS.");
 				emit q->error(StunBinding::ErrorProtocol);
 				return;
 			}
@@ -209,12 +209,12 @@ private slots:
 
 		if(e == StunTransaction::ErrorTimeout)
 		{
-			errorString = "Request timed out.";
+			errorString = QStringLiteral("Request timed out.");
 			emit q->error(StunBinding::ErrorTimeout);
 		}
 		else
 		{
-			errorString = "Generic transaction error.";
+			errorString = QStringLiteral("Generic transaction error.");
 			emit q->error(StunBinding::ErrorGeneric);
 		}
 	}

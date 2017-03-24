@@ -33,7 +33,7 @@ void UserDetailsManager::dump( const QStringList & list )
 {
 	for ( QStringList::ConstIterator it = list.begin(); it != list.end(); ++it )
 	{
-		m_client->debug( QString( " - %1" ).arg (*it) );
+		m_client->debug( QStringLiteral( " - %1" ).arg (*it) );
 	}
 }
 
@@ -87,7 +87,7 @@ void UserDetailsManager::requestDetails( const QStringList & dnList, bool onlyUn
 			break;
 		if ( !m_pendingDNs.contains( dn ) )
 		{
-			m_client->debug( QString( "UserDetailsManager::requestDetails - including %1" ).arg( dn ) );
+			m_client->debug( QStringLiteral( "UserDetailsManager::requestDetails - including %1" ).arg( dn ) );
 			requestList.append( dn);
 			m_pendingDNs.append( dn );
 		}
@@ -103,13 +103,13 @@ void UserDetailsManager::requestDetails( const QStringList & dnList, bool onlyUn
 	}
 	else
 	{
-		m_client->debug( "UserDetailsManager::requestDetails - all requested contacts are already available or pending" );
+		m_client->debug( QStringLiteral("UserDetailsManager::requestDetails - all requested contacts are already available or pending") );
 	}
 }
 
 void UserDetailsManager::requestDetails( const QString & dn, bool onlyUnknown )
 {
-	m_client->debug( QString( "UserDetailsManager::requestDetails for %1" ).arg( dn ) );
+	m_client->debug( QStringLiteral( "UserDetailsManager::requestDetails for %1" ).arg( dn ) );
 	QStringList list;
 	list.append( dn );
 	requestDetails( list, onlyUnknown );
@@ -117,7 +117,7 @@ void UserDetailsManager::requestDetails( const QString & dn, bool onlyUnknown )
 
 void UserDetailsManager::slotReceiveContactDetails( const GroupWise::ContactDetails & details )
 {
-	m_client->debug( "UserDetailsManager::slotReceiveContactDetails()" );
+	m_client->debug( QStringLiteral("UserDetailsManager::slotReceiveContactDetails()") );
 	m_pendingDNs.removeAll( details.dn );
 	/*client()->userDetailsManager()->*/
 	addDetails( details );

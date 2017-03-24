@@ -77,7 +77,7 @@ void WPUserInfo::startDetailsProcess(const QString &host)
 	connect(ipProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(slotDetailsProcess()));
 	ipProcess->setProperty("host", host);
 	ipProcess->setProcessChannelMode(QProcess::MergedChannels);
-	ipProcess->start("nmblookup", QStringList() << host);
+	ipProcess->start(QStringLiteral("nmblookup"), QStringList() << host);
 }
 
 void WPUserInfo::slotDetailsProcess(int i, QProcess::ExitStatus status)
@@ -90,7 +90,7 @@ void WPUserInfo::slotDetailsProcess(int i, QProcess::ExitStatus status)
 
 	if ( i == 0 && status != QProcess::CrashExit ) {
 		QStringList output = QString::fromUtf8(ipProcess->readAll()).split('\n');
-		if ( output.size() == 2 && ! output.contains("failed") )
+		if ( output.size() == 2 && ! output.contains(QStringLiteral("failed")) )
 			ip = output.at(1).split(' ').first();
 		if ( QHostAddress(ip).isNull() )
 			ip.clear();
@@ -103,15 +103,15 @@ void WPUserInfo::slotDetailsProcess(int i, QProcess::ExitStatus status)
 	KConfigGroup group = KGlobal::config()->group("WinPopup");
 	QString theSMBClientPath = group.readEntry("SMBClientPath", "/usr/bin/smbclient");
 
-	if ( host == "LOCALHOST" ) //do not cycle
+	if ( host == QLatin1String("LOCALHOST") ) //do not cycle
 		noComment = false;
 
 	detailsProcess = new QProcess(this);
 	QStringList args;
-	args << "-N" << "-g" << "-L" << host;
+	args << QStringLiteral("-N") << QStringLiteral("-g") << QStringLiteral("-L") << host;
 
 	if ( ! ip.isEmpty() )
-		args << "-I" << ip;
+		args << QStringLiteral("-I") << ip;
 
 	connect(detailsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int,QProcess::ExitStatus)));
 
@@ -151,7 +151,7 @@ void WPUserInfo::slotDetailsProcessFinished(int, QProcess::ExitStatus)
 	m_mainWidget->sServer->setText(Software);
 
 	if ( noComment )
-		startDetailsProcess("LOCALHOST"); //smbclient get comment sometime from localhost
+		startDetailsProcess(QStringLiteral("LOCALHOST")); //smbclient get comment sometime from localhost
 }
 
 void WPUserInfo::slotCloseClicked()

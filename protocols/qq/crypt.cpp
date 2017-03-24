@@ -31,7 +31,7 @@
 void TEA::encipher(unsigned int *const v, const unsigned int *const k, 
 			unsigned int *const w)
 {
-	register unsigned int 
+	unsigned int 
 		y     = ntohl(v[0]),
 		z     = ntohl(v[1]),
 		a     = ntohl(k[0]),
@@ -54,7 +54,7 @@ void TEA::encipher(unsigned int *const v, const unsigned int *const k,
 void TEA::decipher(unsigned int *const v, const unsigned int *const k, 
 			unsigned int *const w)
 {
-	register unsigned int
+	unsigned int
 		y     = ntohl(v[0]),
 		z     = ntohl(v[1]),
 		a     = ntohl(k[0]),

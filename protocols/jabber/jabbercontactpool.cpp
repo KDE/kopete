@@ -78,7 +78,7 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 			KMessageBox::error ( Kopete::UI::Global::mainWidget (),
 								 "Fatal error in the Jabber contact pool. Please restart Kopete and submit a debug log "
 								 "of your session to http://bugs.kde.org.",
-								 "Fatal Jabber Error" );
+								 QStringLiteral("Fatal Jabber Error") );
 			return 0;
 		}
 

@@ -102,7 +102,7 @@ void JabberBookmarks::accountConnected()
 		return;
 	
 	JT_PrivateStorage * task = new JT_PrivateStorage ( m_account->client()->rootTask ());
-	task->get( "storage" , "storage:bookmarks" );
+	task->get( QStringLiteral("storage") , QStringLiteral("storage:bookmarks") );
 	QObject::connect ( task, SIGNAL (finished()), this, SLOT (slotReceivedBookmarks()) );
 	task->go ( true );
 }
@@ -110,20 +110,20 @@ void JabberBookmarks::accountConnected()
 JabberBookmark::List JabberBookmarks::bookmarksFromStorage( const QDomElement &storageElement )
 {
 	JabberBookmark::List bookmarks;
-	if ( !storageElement.isNull() && storageElement.tagName() == "storage" ) {
+	if ( !storageElement.isNull() && storageElement.tagName() == QLatin1String("storage") ) {
 		for ( QDomElement element = storageElement.firstChildElement(); !element.isNull(); element = element.nextSiblingElement() ) {
 
-			if ( element.tagName() == "conference" ) {
+			if ( element.tagName() == QLatin1String("conference") ) {
 				JabberBookmark bookmark;
 
-				bookmark.setJId( element.attribute( "jid" ) );
-				bookmark.setName( element.attribute( "name" ) );
-				bookmark.setAutoJoin( element.attribute( "autojoin", "false" ) == "true" );
+				bookmark.setJId( element.attribute( QStringLiteral("jid") ) );
+				bookmark.setName( element.attribute( QStringLiteral("name") ) );
+				bookmark.setAutoJoin( element.attribute( QStringLiteral("autojoin"), QStringLiteral("false") ) == QLatin1String("true") );
 
 				for ( QDomElement childElement = element.firstChildElement(); !childElement.isNull(); childElement = childElement.nextSiblingElement() ) {
-					if ( childElement.tagName() == "nick" ) {
+					if ( childElement.tagName() == QLatin1String("nick") ) {
 						bookmark.setNickName( childElement.text() );
-					} else if ( childElement.tagName() == "password" ) {
+					} else if ( childElement.tagName() == QLatin1String("password") ) {
 						bookmark.setPassword( childElement.text() );
 					}
 				}
@@ -138,27 +138,27 @@ JabberBookmark::List JabberBookmarks::bookmarksFromStorage( const QDomElement &s
 
 QDomElement JabberBookmarks::bookmarksToStorage( const JabberBookmark::List &bookmarks, QDomDocument &document )
 {
-	QDomElement storageElement = document.createElement( "storage" );
-	storageElement.setAttribute( "xmlns", "storage:bookmarks" );
+	QDomElement storageElement = document.createElement( QStringLiteral("storage") );
+	storageElement.setAttribute( QStringLiteral("xmlns"), QStringLiteral("storage:bookmarks") );
 
 	foreach ( const JabberBookmark &bookmark, bookmarks ) {
-		QDomElement conferenceElement = document.createElement( "conference" );
-		conferenceElement.setAttribute( "jid", bookmark.jId() );
+		QDomElement conferenceElement = document.createElement( QStringLiteral("conference") );
+		conferenceElement.setAttribute( QStringLiteral("jid"), bookmark.jId() );
 
 		if ( !bookmark.name().isEmpty() )
-			conferenceElement.setAttribute( "name", bookmark.name() );
+			conferenceElement.setAttribute( QStringLiteral("name"), bookmark.name() );
 
 		if ( bookmark.autoJoin() )
-			conferenceElement.setAttribute( "autojoin", "true" );
+			conferenceElement.setAttribute( QStringLiteral("autojoin"), QStringLiteral("true") );
 
 		if ( !bookmark.nickName().isEmpty() ) {
-			QDomElement element = document.createElement( "nick" );
+			QDomElement element = document.createElement( QStringLiteral("nick") );
 			element.appendChild( document.createTextNode( bookmark.nickName() ) );
 			conferenceElement.appendChild( element );
 		}
 
 		if ( !bookmark.password().isEmpty() ) {
-			QDomElement element = document.createElement( "password" );
+			QDomElement element = document.createElement( QStringLiteral("password") );
 			element.appendChild( document.createTextNode( bookmark.password() ) );
 			conferenceElement.appendChild( element );
 		}
@@ -215,7 +215,7 @@ void JabberBookmarks::insertGroupChat(const XMPP::Jid &jid)
 
 	m_bookmarks.append( bookmark );
 
-	QDomDocument document( "storage" );
+	QDomDocument document( QStringLiteral("storage") );
 	const QDomElement element = bookmarksToStorage( m_bookmarks, document );
 
 	JT_PrivateStorage *task = new JT_PrivateStorage( m_account->client()->rootTask() );
@@ -259,7 +259,7 @@ void JabberBookmarks::slotJoinChatBookmark( const QString & _jid )
 		if ( editor->exec() && editor ) {
 			m_bookmarks = editor->bookmarks();
 
-			QDomDocument document( "storage" );
+			QDomDocument document( QStringLiteral("storage") );
 			const QDomElement element = bookmarksToStorage( m_bookmarks, document );
 
 			JT_PrivateStorage *task = new JT_PrivateStorage( m_account->client()->rootTask() );

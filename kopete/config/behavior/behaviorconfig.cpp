@@ -52,7 +52,7 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QVariantList &args) :
 	layout->setContentsMargins( 0, 0, 0, 0);
 
 	mBehaviorTabCtl = new QTabWidget(this);
-	mBehaviorTabCtl->setObjectName("mBehaviorTabCtl");
+	mBehaviorTabCtl->setObjectName(QStringLiteral("mBehaviorTabCtl"));
 	layout->addWidget( mBehaviorTabCtl );
 
 	// "General" TAB ============================================================
@@ -76,7 +76,7 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QVariantList &args) :
 	mBehaviorTabCtl->addTab(mPrfsChat, i18n("Cha&t"));
 
 	Kopete::PluginManager *pluginManager = Kopete::PluginManager::self();
-	viewPlugins = pluginManager->availablePlugins("Views");
+	viewPlugins = pluginManager->availablePlugins(QStringLiteral("Views"));
 
 	load();
 

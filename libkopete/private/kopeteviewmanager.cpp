@@ -63,7 +63,7 @@ static QString squashMessage( const Kopete::Message& msg, const int len = 30 )
 		//  Escape it after snipping it to not snip entities
 		msgText = msg.plainBody();
 		if( msgText.length() > len )
-			msgText = msgText.left( len ) + QString::fromLatin1( " ..." );
+			msgText = msgText.left( len ) + QLatin1String( " ..." );
 		msgText=Kopete::Emoticons::parseEmoticons(Qt::escape(msgText));
 	}
 	else
@@ -77,17 +77,17 @@ static QString squashMessage( const Kopete::Message& msg, const int len = 30 )
 			{
 				QString urlWithoutProtocol = rx.cap( 4 );
 				shorterUrl = urlWithoutProtocol.left( len - 3 )
-						+ QString::fromLatin1( "... " );
+						+ QLatin1String( "... " );
 			}
 			else
 			{
 				shorterUrl = fullUrl.left( len - 3 )
-						+ QString::fromLatin1( "... " );
+						+ QLatin1String( "... " );
 			}
 			// remove message text
-			msgText = QString::fromLatin1( "... " ) +
+			msgText = QLatin1String( "... " ) +
 					rx.cap( 1 ) +
-					QString::fromLatin1( " ..." );
+					QLatin1String( " ..." );
 			// find last occurrence of URL (the one inside the <a> tag)
 			int revUrlOffset = msgText.lastIndexOf( fullUrl );
 			msgText.replace( revUrlOffset,
@@ -211,7 +211,7 @@ KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString
 
         if( !viewPlugin )
         {
-            viewPlugin = (Kopete::ViewPlugin*)pluginManager->loadPlugin( QLatin1String("kopete_chatwindow") );
+            viewPlugin = (Kopete::ViewPlugin*)pluginManager->loadPlugin( QStringLiteral("kopete_chatwindow") );
         }
 
         if( viewPlugin )
@@ -374,7 +374,7 @@ void KopeteViewManager::createNotification( Kopete::Message &msg, const QString 
     QString bodyString = squashedMessage;
 	if ( msg.type() == Kopete::Message::TypeFileTransferRequest)
     {
-		eventId = QLatin1String( "kopete_incoming_file_transfer" );
+		eventId = QStringLiteral( "kopete_incoming_file_transfer" );
 		titleString = i18nc( "@title %1 is contact's name", "Incoming file transfer request from <i>%1</i>", Qt::escape( msgFrom ) );
 		if ( squashedMessage.isEmpty() )
         {
@@ -392,21 +392,21 @@ void KopeteViewManager::createNotification( Kopete::Message &msg, const QString 
         switch( msg.importance() )
         {
         case Kopete::Message::Low:
-            eventId = QLatin1String( "kopete_contact_lowpriority" );
+            eventId = QStringLiteral( "kopete_contact_lowpriority" );
             break;
         case Kopete::Message::Highlight:
-            eventId = QLatin1String( "kopete_contact_highlight" );
+            eventId = QStringLiteral( "kopete_contact_highlight" );
             title = ki18n( "A highlighted message arrived from <i>%1</i>" );
             break;
         default:
             if ( isActiveWindow || (d->queueOnlyMessagesOnAnotherDesktop
                  && isViewOnCurrentDesktop ) )
             {
-                eventId = QLatin1String( "kopete_contact_incoming_active_window" );
+                eventId = QStringLiteral( "kopete_contact_incoming_active_window" );
             }
             else
             {
-                eventId = QLatin1String( "kopete_contact_incoming" );
+                eventId = QStringLiteral( "kopete_contact_incoming" );
             }
         }
     }
@@ -433,16 +433,16 @@ void KopeteViewManager::createNotification( Kopete::Message &msg, const QString 
 	}
 
 	foreach ( const QString& cl , msg.classes() )
-		notify->addContext( qMakePair( QString::fromLatin1("class"), cl ) );
+		notify->addContext( qMakePair( QStringLiteral("class"), cl ) );
 
 	Kopete::MetaContact *mc= msg.from()->metaContact();
 	if ( mc )
 	{
-		notify->addContext( qMakePair( QString::fromLatin1("contact"),
+		notify->addContext( qMakePair( QStringLiteral("contact"),
 		                               mc->metaContactId().toString()) );
 		foreach( Kopete::Group *g , mc->groups() )
 		{
-			notify->addContext( qMakePair( QString::fromLatin1("group"),
+			notify->addContext( qMakePair( QStringLiteral("group"),
 			                               QString::number(g->groupId())) );
 		}
 	}

@@ -80,7 +80,7 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	/*Remove the Jingle tab*/
 	for (int i = 0; i < tabWidget10->count(); i++)
 	{
-		if (tabWidget10->tabText(i) == "&Jingle")
+		if (tabWidget10->tabText(i) == QLatin1String("&Jingle"))
 		{
 			tabWidget10->removeTab(i);
 			break;
@@ -92,7 +92,7 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	//Remove Libjingle tab
 	for ( int i=0; i<tabWidget10->count(); ++i )
 	{
-		if ( tabWidget10->tabText(i) == "&Libjingle" )
+		if ( tabWidget10->tabText(i) == QLatin1String("&Libjingle") )
 		{
 			tabWidget10->removeTab(i);
 			break;
@@ -178,7 +178,7 @@ void JabberEditAccountWidget::reopen ()
 	mPass->load (&account()->password ());
 	cbAutoConnect->setChecked (account()->excludeConnect());
 	
-	mResource->setText (account()->configGroup()->readEntry ("Resource", QString::fromLatin1("Kopete")));
+	mResource->setText (account()->configGroup()->readEntry ("Resource", QStringLiteral("Kopete")));
 	mPriority->setValue (account()->configGroup()->readEntry ("Priority", 5));
 	mServer->setText (account()->configGroup()->readEntry ("Server", QString()));
 

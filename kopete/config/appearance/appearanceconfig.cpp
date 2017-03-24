@@ -92,7 +92,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const QVariantList &args )
 	// it needs no margins of its own.
 	layout->setContentsMargins( 0, 0, 0, 0 );
 	d->mAppearanceTabCtl = new QTabWidget(this);
-	d->mAppearanceTabCtl->setObjectName("mAppearanceTabCtl");
+	d->mAppearanceTabCtl->setObjectName(QStringLiteral("mAppearanceTabCtl"));
 	layout->addWidget( d->mAppearanceTabCtl );
 
 	KConfigGroup config(KSharedConfig::openConfig(), "ChatWindowSettings");

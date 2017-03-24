@@ -110,7 +110,7 @@ public:
 
 Client::Client(QObject *par) :QObject(par)
 {
-	setObjectName( QLatin1String("yahooclient") );
+	setObjectName( QStringLiteral("yahooclient") );
 	d = new ClientPrivate;
 /*	d->tzoffset = 0;*/
 	d->active = false;
@@ -362,7 +362,7 @@ void Client::sendBuzz( const QString &to )
 {
 	SendMessageTask *smt = new SendMessageTask( d->root );
 	smt->setTarget( to );
-	smt->setText( QLatin1String( "<ding>" ) );
+	smt->setText( QStringLiteral( "<ding>" ) );
 	smt->setPicureFlag( pictureFlag() );
 	smt->go( true );
 }
@@ -397,7 +397,7 @@ void Client::receiveFile( unsigned int transferId, const QString &userId, KUrl r
 	rft->setLocalUrl( localURL );
 	rft->setTransferId( transferId );
 	rft->setUserId( userId );
-	if( remoteURL.url().startsWith( "http://" ) )
+	if( remoteURL.url().startsWith( QLatin1String("http://") ) )
 		rft->setType( ReceiveFileTask::FileTransferAccept );
 	else
 		rft->setType( ReceiveFileTask::FileTransfer7Accept );
@@ -406,7 +406,7 @@ void Client::receiveFile( unsigned int transferId, const QString &userId, KUrl r
 
 void Client::rejectFile( const QString &userId, KUrl remoteURL )
 {
-	if( remoteURL.url().startsWith( "http://" ) )
+	if( remoteURL.url().startsWith( QLatin1String("http://") ) )
 		return;
 
 	ReceiveFileTask *rft = new ReceiveFileTask( d->root );
@@ -739,7 +739,7 @@ void Client::leaveChat()
 // ***** other *****
 void Client::notifyError( const QString &info, const QString & errorString, LogLevel level )
 {
-	kDebug(YAHOO_RAW_DEBUG) << QString::fromLatin1("\nThe following error occurred: %1\n    Reason: %2\n    LogLevel: %3")
+	kDebug(YAHOO_RAW_DEBUG) << QStringLiteral("\nThe following error occurred: %1\n    Reason: %2\n    LogLevel: %3")
 		.arg(info).arg(errorString).arg(level) << endl;
 	d->errorString = errorString;
 	d->errorInformation = info;

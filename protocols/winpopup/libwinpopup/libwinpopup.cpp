@@ -108,10 +108,10 @@ bool WinPopupLib::checkMessageDir()
 													   "Install Into Samba (Configure... -> Account -> Edit) information\n"
 													   "on how to do this.\n"
 													   "Should the directory be created? (May require the root password)", WP_POPUP_DIR),
-		                                          QString::fromLatin1("Winpopup"), KGuiItem(i18n("Create Directory")), KGuiItem(i18n("Do Not Create")));
+		                                          QStringLiteral("Winpopup"), KGuiItem(i18n("Create Directory")), KGuiItem(i18n("Do Not Create")));
 		if (tmpYesNo == KMessageBox::Yes) {
 			QStringList kdesuArgs = QStringList(QString("-c mkdir -p -m 0777 " + WP_POPUP_DIR));
-			if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
+			if (KToolInvocation::kdeinitExecWait(QStringLiteral("kdesu"), kdesuArgs) == 0) return true;
 		}
 	} else {
 		KFileItem tmpFileItem = KFileItem(KFileItem::Unknown, KFileItem::Unknown, QUrl(WP_POPUP_DIR));
@@ -127,10 +127,10 @@ bool WinPopupLib::checkMessageDir()
 														   "You will not receive messages if choose No.\n"
 														   "You can also correct it manually (chmod 0777 %1), restart Kopete.\n"
 														   "Fix this (may require the root password)?", WP_POPUP_DIR),
-			                                          QString::fromLatin1("Winpopup"), KGuiItem(i18n("Fix")), KGuiItem(i18n("Do Not Fix")));
+			                                          QStringLiteral("Winpopup"), KGuiItem(i18n("Fix")), KGuiItem(i18n("Do Not Fix")));
 			if (tmpYesNo == KMessageBox::Yes) {
 				QStringList kdesuArgs = QStringList(QString("-c chmod 0777 " + WP_POPUP_DIR));
-				if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
+				if (KToolInvocation::kdeinitExecWait(QStringLiteral("kdesu"), kdesuArgs) == 0) return true;
 			}
 		} else {
 			return true;
@@ -148,7 +148,7 @@ void WinPopupLib::slotUpdateGroupData()
 	passedInitialHost = false;
 	todo.clear();
 	currentGroupsMap.clear();
-	currentHost = QString::fromLatin1("LOCALHOST");
+	currentHost = QStringLiteral("LOCALHOST");
 	startReadProcess();
 }
 
@@ -162,7 +162,7 @@ void WinPopupLib::startReadProcess()
 	connect(readIpProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotReadIpProcessExited(int,QProcess::ExitStatus)));
 	connect(readIpProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(slotReadIpProcessExited()));
 	readIpProcess->setProcessChannelMode(QProcess::MergedChannels);
-	readIpProcess->start("nmblookup", QStringList() << currentHost);
+	readIpProcess->start(QStringLiteral("nmblookup"), QStringList() << currentHost);
 }
 
 void WinPopupLib::slotReadIpProcessExited(int i, QProcess::ExitStatus status)
@@ -171,7 +171,7 @@ void WinPopupLib::slotReadIpProcessExited(int i, QProcess::ExitStatus status)
 
 	if (readIpProcess && i == 0 && status != QProcess::CrashExit) {
 		QStringList output = QString::fromUtf8(readIpProcess->readAll()).split('\n');
-		if ( output.size() == 2 && ! output.contains("failed") )
+		if ( output.size() == 2 && ! output.contains(QStringLiteral("failed")) )
 			Ip = output.at(1).split(' ').first();
 		if ( QHostAddress(Ip).isNull() )
 			Ip.clear();
@@ -183,10 +183,10 @@ void WinPopupLib::slotReadIpProcessExited(int i, QProcess::ExitStatus status)
 	// for Samba 3
 	readGroupsProcess = new QProcess;
 	QStringList args;
-	args << "-N" << "-g" << "-L" << currentHost;
+	args << QStringLiteral("-N") << QStringLiteral("-g") << QStringLiteral("-L") << currentHost;
 
 	if ( ! Ip.isEmpty() )
-		args << "-I" << Ip;
+		args << QStringLiteral("-I") << Ip;
 
 	connect(readGroupsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotReadProcessExited(int,QProcess::ExitStatus)));
 
@@ -247,7 +247,7 @@ void WinPopupLib::slotReadProcessExited(int i, QProcess::ExitStatus status)
 
 		} else {
 			passedInitialHost = true;
-			if ( currentGroups.isEmpty() && currentHost.toUpper() == "LOCALHOST" ) {
+			if ( currentGroups.isEmpty() && currentHost.toUpper() == QLatin1String("LOCALHOST") ) {
 				kDebug(14170) << "Cant get workgroup for localhost";
 				//Samba on localhost in up but does not receive workgroups or security in smb.conf in not share
 				//Sometimes samba receive workgroups in 2min.
@@ -265,21 +265,21 @@ void WinPopupLib::slotReadProcessExited(int i, QProcess::ExitStatus status)
 				}
 
 				if ( theHostName.isEmpty() )
-					theHostName = "LOCALHOST";
+					theHostName = QStringLiteral("LOCALHOST");
 
 				//add localhost to currentGroups with unknow workgroup
-				currentGroups["WORKGROUP"] = theHostName;
+				currentGroups[QStringLiteral("WORKGROUP")] = theHostName;
 			}
 			if (!currentGroups.isEmpty()) {
 				foreach (QString groupMaster, currentGroups) {
 					todo += groupMaster;
 				}
 			} else {
-				if (currentHost == QString::fromLatin1("failed"))
+				if (currentHost == QLatin1String("failed"))
 					KMessageBox::error(Kopete::UI::Global::mainWidget(),
 									i18n("Connection to localhost failed.\n"
 											"Is your samba server running?"),
-									QString::fromLatin1("Winpopup"));
+									QStringLiteral("Winpopup"));
 				else
 					kDebug(14170) << "Unknow error";
 			}
@@ -339,10 +339,10 @@ void WinPopupLib::slotReadMessages(const KFileItemList &items)
 															  i18n("A message file could not be removed; "
 																   "maybe the permissions are incorrect.\n"
 																   "Fix this (may require the root password)?"),
-					                                          QString::fromLatin1("Winpopup"), KGuiItem(i18n("Fix")), KGuiItem(i18n("Do Not Fix")));
+					                                          QStringLiteral("Winpopup"), KGuiItem(i18n("Fix")), KGuiItem(i18n("Do Not Fix")));
 					if (tmpYesNo == KMessageBox::Yes) {
 						QStringList kdesuArgs = QStringList(QString("-c chmod 0666 " + tmpItem.url().toLocalFile()));
-						if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) {
+						if (KToolInvocation::kdeinitExecWait(QStringLiteral("kdesu"), kdesuArgs) == 0) {
 							if (!messageFile.remove())
 								KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Still cannot remove it; please fix it manually."));
 						}
@@ -368,7 +368,7 @@ void WinPopupLib::sendMessage(const QString &Body, const QString &Destination)
 	ipProcess->setProperty("body", Body);
 	ipProcess->setProperty("destination", Destination);
 	ipProcess->setProcessChannelMode(QProcess::MergedChannels);
-	ipProcess->start("nmblookup", QStringList() << Destination);
+	ipProcess->start(QStringLiteral("nmblookup"), QStringList() << Destination);
 }
 
 void WinPopupLib::slotSendIpMessage(int i, QProcess::ExitStatus status)
@@ -381,7 +381,7 @@ void WinPopupLib::slotSendIpMessage(int i, QProcess::ExitStatus status)
 
 	if ( i == 0 && status != QProcess::CrashExit ) {
 		QStringList output = QString::fromUtf8(ipProcess->readAll()).split('\n');
-		if ( output.size() == 2 && ! output.contains("failed") )
+		if ( output.size() == 2 && ! output.contains(QStringLiteral("failed")) )
 			Ip = output.at(1).split(' ').first();
 		if ( QHostAddress(Ip).isNull() )
 			Ip.clear();
@@ -397,9 +397,9 @@ void WinPopupLib::slotSendIpMessage(int i, QProcess::ExitStatus status)
 
 	QProcess *sender = new QProcess(this);
 	QStringList args;
-	args << "-M" << Destination << "-N";
+	args << QStringLiteral("-M") << Destination << QStringLiteral("-N");
 	if ( ! Ip.isEmpty() )
-		args << "-I" << Ip;
+		args << QStringLiteral("-I") << Ip;
 	sender->start(smbClientBin, args);
 	sender->waitForStarted();
 	//TODO: check if we can write message

@@ -47,7 +47,7 @@ ModifyYABTask::~ModifyYABTask()
 void ModifyYABTask::onGo()
 {
 	kDebug(YAHOO_RAW_DEBUG) ;
-	m_socket = new KBufferedSocket( "address.yahoo.com", QString::number(80) );
+	m_socket = new KBufferedSocket( QStringLiteral("address.yahoo.com"), QString::number(80) );
 	connect( m_socket, SIGNAL(connected(KNetwork::KResolverEntry)), this, SLOT(connectSucceeded()) );
 	connect( m_socket, SIGNAL(gotError(int)), this, SLOT(connectFailed(int)) );
 
@@ -61,26 +61,26 @@ void ModifyYABTask::setAction( Action action )
 
 void ModifyYABTask::setEntry( const YABEntry &entry )
 {
-	QDomDocument doc("");
-	QDomElement root = doc.createElement( "ab" );
-	QDomProcessingInstruction instr = doc.createProcessingInstruction("xml","version=\"1.0\" encoding=\"UTF-8\" ");
+	QDomDocument doc(QLatin1String(""));
+	QDomElement root = doc.createElement( QStringLiteral("ab") );
+	QDomProcessingInstruction instr = doc.createProcessingInstruction(QStringLiteral("xml"),QStringLiteral("version=\"1.0\" encoding=\"UTF-8\" "));
   	doc.appendChild(instr);
-	root.setAttribute( "k", client()->userId() );
-	root.setAttribute( "cc", "1" );
+	root.setAttribute( QStringLiteral("k"), client()->userId() );
+	root.setAttribute( QStringLiteral("cc"), QStringLiteral("1") );
 	doc.appendChild( root );
 	
-	QDomElement contact = doc.createElement( "ct" );
+	QDomElement contact = doc.createElement( QStringLiteral("ct") );
 	entry.fillQDomElement( contact );
 	switch( m_action )
 	{
 	case EditEntry:
-		contact.setAttribute( "e", "1" );
+		contact.setAttribute( QStringLiteral("e"), QStringLiteral("1") );
 		break;
 	case AddEntry:
-		contact.setAttribute( "a", "1" );
+		contact.setAttribute( QStringLiteral("a"), QStringLiteral("1") );
 		break;
 	case DeleteEntry:
-		contact.setAttribute( "d", "1" );
+		contact.setAttribute( QStringLiteral("d"), QStringLiteral("1") );
 		break;
 	}
 	root.appendChild( contact );
@@ -93,7 +93,7 @@ void ModifyYABTask::connectFailed( int i)
 {
 	m_socket->close();
 	client()->notifyError( i18n( "An error occurred while saving the address book entry." ), 
-			QString( "%1 - %2").arg(i).arg(static_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
+			QStringLiteral( "%1 - %2").arg(i).arg(static_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
 }
 
 void ModifyYABTask::connectSucceeded()
@@ -135,9 +135,9 @@ void ModifyYABTask::slotRead()
 	ar.reserve( socket->bytesAvailable() );
 	socket->read( ar.data (), ar.size () );
 	QString data( ar );
-	data = data.right( data.length() - data.indexOf("<?xml") );
+	data = data.right( data.length() - data.indexOf(QLatin1String("<?xml")) );
 
-	if( m_data.indexOf("</ab>") < 0 )
+	if( m_data.indexOf(QLatin1String("</ab>")) < 0 )
 		return;						// Need more data
 
 	m_socket->close();
@@ -148,20 +148,20 @@ void ModifyYABTask::slotRead()
 	
 	doc.setContent( m_data );
 
-	list = doc.elementsByTagName( "ab" );			// Get the Addressbook
+	list = doc.elementsByTagName( QStringLiteral("ab") );			// Get the Addressbook
 	for( it = 0; it < list.count(); it++ )	{
 		if( !list.item( it ).isElement() )
 			continue;
 		e = list.item( it ).toElement();
 		
-		if( !e.attribute( "lm" ).isEmpty() )
-			emit gotRevision( e.attribute( "lm" ).toLong(), true );
+		if( !e.attribute( QStringLiteral("lm") ).isEmpty() )
+			emit gotRevision( e.attribute( QStringLiteral("lm") ).toLong(), true );
 
-		if( !e.attribute( "rt" ).isEmpty() )
-			emit gotRevision( e.attribute( "rt" ).toLong(), false );
+		if( !e.attribute( QStringLiteral("rt") ).isEmpty() )
+			emit gotRevision( e.attribute( QStringLiteral("rt") ).toLong(), false );
 	}
 
-	list = doc.elementsByTagName( "ct" );			// Get records
+	list = doc.elementsByTagName( QStringLiteral("ct") );			// Get records
 	for( it = 0; it < list.count(); it++ )	{
 		kDebug(YAHOO_RAW_DEBUG) << "Parsing entry...";
 		if( !list.item( it ).isElement() )
@@ -175,23 +175,23 @@ void ModifyYABTask::slotRead()
 		switch( m_action )
 		{
 		case EditEntry:
-			if( !e.attribute( "es" ).isEmpty() && e.attribute( "es" ) != "0" )		// Check for edit errors
+			if( !e.attribute( QStringLiteral("es") ).isEmpty() && e.attribute( QStringLiteral("es") ) != QLatin1String("0") )		// Check for edit errors
 			{
-				emit error( entry, i18n("The Yahoo Address Book entry could not be saved:\n%1 - %2", e.attribute("es"), e.attribute("ee") ) );
+				emit error( entry, i18n("The Yahoo Address Book entry could not be saved:\n%1 - %2", e.attribute(QStringLiteral("es")), e.attribute(QStringLiteral("ee")) ) );
 				continue;
 			}
 			break;
 		case AddEntry:
-			if( !e.attribute( "as" ).isEmpty() && e.attribute( "as" ) != "0" )		// Check for add errors
+			if( !e.attribute( QStringLiteral("as") ).isEmpty() && e.attribute( QStringLiteral("as") ) != QLatin1String("0") )		// Check for add errors
 			{
-				emit error( entry, i18n("The Yahoo Address Book entry could not be created:\n%1 - %2", e.attribute("as"), e.attribute("ae") ) );
+				emit error( entry, i18n("The Yahoo Address Book entry could not be created:\n%1 - %2", e.attribute(QStringLiteral("as")), e.attribute(QStringLiteral("ae")) ) );
 				continue;
 			}
 			break;
 		case DeleteEntry:
-			if( !e.attribute( "ds" ).isEmpty() && e.attribute( "ds" ) != "0" )		// Check for delete errors
+			if( !e.attribute( QStringLiteral("ds") ).isEmpty() && e.attribute( QStringLiteral("ds") ) != QLatin1String("0") )		// Check for delete errors
 			{
-				emit error( entry, i18n("The Yahoo Address Book entry could not be deleted:\n%1 - %2", e.attribute("ds"), e.attribute("de") ) );
+				emit error( entry, i18n("The Yahoo Address Book entry could not be deleted:\n%1 - %2", e.attribute(QStringLiteral("ds")), e.attribute(QStringLiteral("de")) ) );
 				continue;
 			}
 			break;

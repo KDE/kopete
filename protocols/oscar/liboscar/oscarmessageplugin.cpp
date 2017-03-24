@@ -76,23 +76,23 @@ Guid MessagePlugin::guid() const
 	switch ( d->type )
 	{
 	case Message:
-		return Guid( QLatin1String( GUID_MESSAGE ) );
+		return Guid( QStringLiteral( GUID_MESSAGE ) );
 	case StatusMsgExt:
-		return Guid( QLatin1String( GUID_STATUSMSGEXT ) );
+		return Guid( QStringLiteral( GUID_STATUSMSGEXT ) );
 	case File:
-		return Guid( QLatin1String( GUID_FILE ) );
+		return Guid( QStringLiteral( GUID_FILE ) );
 	case WebUrl:
-		return Guid( QLatin1String( GUID_WEBURL ) );
+		return Guid( QStringLiteral( GUID_WEBURL ) );
 	case Contacts:
-		return Guid( QLatin1String( GUID_CONTACTS ) );
+		return Guid( QStringLiteral( GUID_CONTACTS ) );
 	case GreetingCard:
-		return Guid( QLatin1String( GUID_GREETINGCARD ) );
+		return Guid( QStringLiteral( GUID_GREETINGCARD ) );
 	case Chat:
-		return Guid( QLatin1String( GUID_CHAT ) );
+		return Guid( QStringLiteral( GUID_CHAT ) );
 	case XtrazScript:
-		return Guid( QLatin1String( GUID_XTRAZSCRIPT ) );
+		return Guid( QStringLiteral( GUID_XTRAZSCRIPT ) );
 	default:
-		return Guid( QLatin1String( GUID_UNKNOWN ) );
+		return Guid( QStringLiteral( GUID_UNKNOWN ) );
 	}
 }
 
@@ -104,21 +104,21 @@ void MessagePlugin::setType( MessagePlugin::Types type )
 
 void MessagePlugin::setType( Guid guid )
 {
-	if ( guid == Guid( QLatin1String( GUID_MESSAGE ) ) )
+	if ( guid == Guid( QStringLiteral( GUID_MESSAGE ) ) )
 		d->type = Message;
-	else if ( guid == Guid( QLatin1String( GUID_STATUSMSGEXT ) ) )
+	else if ( guid == Guid( QStringLiteral( GUID_STATUSMSGEXT ) ) )
 		d->type = StatusMsgExt;
-	else if ( guid == Guid( QLatin1String( GUID_FILE ) ) )
+	else if ( guid == Guid( QStringLiteral( GUID_FILE ) ) )
 		d->type = File;
-	else if ( guid == Guid( QLatin1String( GUID_WEBURL ) ) )
+	else if ( guid == Guid( QStringLiteral( GUID_WEBURL ) ) )
 		d->type = WebUrl;
-	else if ( guid == Guid( QLatin1String( GUID_CONTACTS ) ) )
+	else if ( guid == Guid( QStringLiteral( GUID_CONTACTS ) ) )
 		d->type = Contacts;
-	else if ( guid == Guid( QLatin1String( GUID_GREETINGCARD ) ) )
+	else if ( guid == Guid( QStringLiteral( GUID_GREETINGCARD ) ) )
 		d->type = GreetingCard;
-	else if ( guid == Guid( QLatin1String( GUID_CHAT ) ) )
+	else if ( guid == Guid( QStringLiteral( GUID_CHAT ) ) )
 		d->type = Chat;
-	else if ( guid == Guid( QLatin1String( GUID_XTRAZSCRIPT ) ) )
+	else if ( guid == Guid( QStringLiteral( GUID_XTRAZSCRIPT ) ) )
 		d->type = XtrazScript;
 	else
 		d->type = Unknown;

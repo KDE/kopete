@@ -198,7 +198,7 @@ public:
 					if(!qsock->bind(la.addr, 0))
 					{
 						delete qsock;
-						emit q->debugLine("Warning: unable to bind to random port.");
+						emit q->debugLine(QStringLiteral("Warning: unable to bind to random port."));
 						continue;
 					}
 
@@ -225,7 +225,7 @@ public:
 				localLeap += lt;
 
 				lt->sock->start(qsock);
-				emit q->debugLine(QString("starting transport ") + la.addr.toString() + ';' + QString::number(port) + " for component " + QString::number(id));
+				emit q->debugLine(QStringLiteral("starting transport ") + la.addr.toString() + ';' + QString::number(port) + " for component " + QString::number(id));
 			}
 		}
 
@@ -308,7 +308,7 @@ public:
 
 				lt->sock->setClientSoftwareNameAndVersion(clientSoftware);
 				lt->sock->start(la.addr);
-				emit q->debugLine(QString("starting transport ") + la.addr.toString() + ";(dyn)" + " for component " + QString::number(id));
+				emit q->debugLine(QStringLiteral("starting transport ") + la.addr.toString() + ";(dyn)" + " for component " + QString::number(id));
 			}
 		}
 
@@ -335,7 +335,7 @@ public:
 			tt->setPassword(config.stunRelayTcpPass);
 			tt->start(config.stunRelayTcpAddr, config.stunRelayTcpPort);
 
-			emit q->debugLine(QString("starting TURN transport with server ") + config.stunRelayTcpAddr.toString() + ';' + QString::number(config.stunRelayTcpPort) + " for component " + QString::number(id));
+			emit q->debugLine(QStringLiteral("starting TURN transport with server ") + config.stunRelayTcpAddr.toString() + ';' + QString::number(config.stunRelayTcpPort) + " for component " + QString::number(id));
 		}
 
 		if(localLeap.isEmpty() && localStun.isEmpty() && !local_finished)

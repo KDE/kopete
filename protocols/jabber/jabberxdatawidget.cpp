@@ -43,7 +43,7 @@ public:
 
 	QString reqText() const
 	{
-		return "";
+		return QLatin1String("");
 	}
 
 	virtual XMPP::XData::Field field() const
@@ -74,7 +74,7 @@ public:
 		if(f.value().count() > 0)
 		{
 			QString s = f.value().first();
-			if(s == "1" || s == "true" || s == "yes")
+			if(s == QLatin1String("1") || s == QLatin1String("true") || s == QLatin1String("yes"))
 				check->setChecked(true);
 		}
 		layout->addWidget(check, row, 1, 1, 2);
@@ -115,7 +115,7 @@ public:
 		for(QStringList::ConstIterator it = val.begin(); it != val.end(); ++it)
 		{
 			if(!text.isEmpty())
-				text += "<br>";
+				text += QLatin1String("<br>");
 			text += *it;
 		}
 		QLabel *label = new QLabel("<qt>" + text + "</qt>", parent);

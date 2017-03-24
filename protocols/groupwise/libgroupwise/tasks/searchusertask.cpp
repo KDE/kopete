@@ -54,7 +54,7 @@ void SearchUserTask::search( const QList<UserSearchQueryTerm> & query )
 	Field::FieldList lst;
 	if ( query.isEmpty() )
 	{
-		setError( 1, "no query terms" );
+		setError( 1, QStringLiteral("no query terms") );
 		return;
 	}
 	// object Id identifies the search for later reference
@@ -69,7 +69,7 @@ void SearchUserTask::search( const QList<UserSearchQueryTerm> & query )
 	//lst.append( new Field::SingleField( "Given Name", 0, NMFIELD_TYPE_UTF8, [ NMFIELD_METHOD_EQUAL | NMFIELD_METHOD_MATCHBEGIN | NMFIELD_METHOD_MATCHEND | NMFIELD_METHOD_SEARCH ], searchTerm );
 	// Or "Surname", Field::NM_A_SZ_USERID, NM_A_SZ_TITLE, NM_A_SZ_DEPARTMENT in other fields
 	
-	createTransfer( "createsearch", lst );
+	createTransfer( QStringLiteral("createsearch"), lst );
 }
 
 bool SearchUserTask::take( Transfer * transfer )

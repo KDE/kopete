@@ -110,7 +110,7 @@ void SrvResolver::resolve(const QString &server, const QString &type, const QStr
 
 	d->failed = false;
 	d->srvonly = false;
-	d->srv = QString("_") + type + "._" + proto + '.' + server;
+	d->srv = QStringLiteral("_") + type + "._" + proto + '.' + server;
 	d->t.setSingleShot(true);
 	d->t.start(15000);
 	d->nndns_busy = true;
@@ -124,7 +124,7 @@ void SrvResolver::resolveSrvOnly(const QString &server, const QString &type, con
 
 	d->failed = false;
 	d->srvonly = true;
-	d->srv = QString("_") + type + "._" + proto + '.' + server;
+	d->srv = QStringLiteral("_") + type + "._" + proto + '.' + server;
 	d->t.setSingleShot(true);
 	d->t.start(15000);
 	d->nndns_busy = true;
@@ -155,7 +155,7 @@ void SrvResolver::stop()
 	d->resultAddress = QHostAddress();
 	d->resultPort = 0;
 	d->servers.clear();
-	d->srv = "";
+	d->srv = QLatin1String("");
 	d->failed = true;
 }
 

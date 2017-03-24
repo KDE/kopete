@@ -49,8 +49,8 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QVariantList &arg
 	connect( m_pluginSelector, SIGNAL(configCommitted(QByteArray)),
 		this, SLOT(reparseConfiguration(QByteArray)) );
 
-	m_pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ),
-	                               KPluginSelector::ReadConfigFile, i18n( "General Plugins" ), "Plugins" );
+	m_pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( QStringLiteral("Plugins") ),
+	                               KPluginSelector::ReadConfigFile, i18n( "General Plugins" ), QStringLiteral("Plugins") );
 	m_pluginSelector->load();
 }
 

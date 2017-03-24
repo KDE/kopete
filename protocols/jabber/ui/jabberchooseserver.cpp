@@ -52,7 +52,7 @@ JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent )
 	mMainWidget->lblStatus->setText ( i18n ( "Retrieving server list...") );
 
 	// retrieve server list
-	mTransferJob = KIO::get ( QUrl("https://xmpp.net/services.php") );
+	mTransferJob = KIO::get ( QUrl(QStringLiteral("https://xmpp.net/services.php")) );
 
 	connect ( mTransferJob, SIGNAL (result(KJob*)), this, SLOT (slotTransferResult(KJob*)) );
 	connect ( mTransferJob, SIGNAL (data(KIO::Job*,QByteArray)), this, SLOT (slotTransferData(KIO::Job*,QByteArray)) );
@@ -125,7 +125,7 @@ void JabberChooseServer::slotTransferResult ( KJob *kJob )
 		kDebug ( JABBER_DEBUG_GLOBAL ) << "Received server list ok!";
 
 		// clear status message
-		mMainWidget->lblStatus->setText ( "" );
+		mMainWidget->lblStatus->setText ( QLatin1String("") );
 
 		// parse XML list
 		QDomDocument doc;
@@ -145,9 +145,9 @@ void JabberChooseServer::slotTransferResult ( KJob *kJob )
 			mMainWidget->listServers->insertRow ( listIndex );
 			QDomNamedNodeMap attributes = node.attributes ();
 
-			newItem = new QTableWidgetItem ( attributes.namedItem ( "jid" ).nodeValue () );
+			newItem = new QTableWidgetItem ( attributes.namedItem ( QStringLiteral("jid") ).nodeValue () );
 			mMainWidget->listServers->setItem ( listIndex, 0, newItem );
-			newItem = new QTableWidgetItem ( attributes.namedItem ( "name" ).nodeValue () );
+			newItem = new QTableWidgetItem ( attributes.namedItem ( QStringLiteral("name") ).nodeValue () );
 			mMainWidget->listServers->setItem ( listIndex, 1, newItem );
 		}
 

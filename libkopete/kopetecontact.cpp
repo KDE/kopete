@@ -93,13 +93,13 @@ public:
 /* static */
 Kopete::Contact::NameType Kopete::Contact::nameTypeFromString(const QString &nameType)
 {
-	if (nameType == "nickName")
+	if (nameType == QLatin1String("nickName"))
 		return Kopete::Contact::NickName;
-	else if (nameType == "customName")
+	else if (nameType == QLatin1String("customName"))
 		return Kopete::Contact::CustomName;
-	else if (nameType == "formattedName")
+	else if (nameType == QLatin1String("formattedName"))
 		return Kopete::Contact::FormattedName;
-	else if (nameType == "contactId")
+	else if (nameType == QLatin1String("contactId"))
 		return Kopete::Contact::ContactId;
 	else // fallback to custom name
 		return Kopete::Contact::CustomName;
@@ -111,14 +111,14 @@ const QString Kopete::Contact::nameTypeToString(Kopete::Contact::NameType nameTy
 	switch (nameType)
 	{
 		case Kopete::Contact::NickName:
-			return QString("nickName");
+			return QStringLiteral("nickName");
 		case Kopete::Contact::FormattedName:
-			return QString("formattedName");
+			return QStringLiteral("formattedName");
 		case Kopete::Contact::ContactId:
-			return QString("contactId");
+			return QStringLiteral("contactId");
 		case Kopete::Contact::CustomName:
 		default: // fallback to custom name
-			return QString("customName");
+			return QStringLiteral("customName");
 	}
 }
 
@@ -288,14 +288,14 @@ QMenu* Contact::popupMenu()
 	QString titleText;
 	const QString nick = displayName();
 	if( nick == contactId() )
-		titleText = QString::fromLatin1( "%1 (%2)" ).arg( contactId(), onlineStatus().description() );
+		titleText = QStringLiteral( "%1 (%2)" ).arg( contactId(), onlineStatus().description() );
 	else
-		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( nick, contactId(), onlineStatus().description() );
+		titleText = QStringLiteral( "%1 <%2> (%3)" ).arg( nick, contactId(), onlineStatus().description() );
 	menu->addSection( titleText );
 
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
-		QAction *actionAddContact = new QAction( QIcon::fromTheme("list-add-user"), i18n( "&Add to Your Contact List" ), menu );
+		QAction *actionAddContact = new QAction( QIcon::fromTheme(QStringLiteral("list-add-user")), i18n( "&Add to Your Contact List" ), menu );
 		connect( actionAddContact, SIGNAL(triggered(bool)), this, SLOT(slotAddContact()) );
 
 		menu->addAction(actionAddContact);
@@ -487,14 +487,14 @@ bool Contact::isReachable()
 
 void Contact::startChat()
 {
-	KopeteView *v=manager( CanCreate )->view(true, QString::fromLatin1("kopete_chatwindow") );
+	KopeteView *v=manager( CanCreate )->view(true, QStringLiteral("kopete_chatwindow") );
 	if(v)
 		v->raise(true);
 }
 
 void Contact::sendMessage()
 {
-	KopeteView *v=manager( CanCreate )->view(true, QString::fromLatin1("kopete_emailwindow") );
+	KopeteView *v=manager( CanCreate )->view(true, QStringLiteral("kopete_emailwindow") );
 	if(v)
 		v->raise(true);
 }
@@ -520,8 +520,8 @@ void Contact::slotDelete()
 {
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" ,
-		 d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("list-remove-user") ), KStandardGuiItem::cancel(),
-		QString::fromLatin1("askRemoveContact"), KMessageBox::Notify)
+		 d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QLatin1String("list-remove-user") ), KStandardGuiItem::cancel(),
+		QStringLiteral("askRemoveContact"), KMessageBox::Notify)
 		== KMessageBox::Continue )
 	{
 		Kopete::DeleteContactTask *deleteTask = new Kopete::DeleteContactTask(this);
@@ -643,14 +643,14 @@ QString Contact::toolTip() const
 	QString iconName;
 	if ( this == account()->myself() )
 	{
-		iconName = QString::fromLatin1("kopete-account-icon:%1:%2")
+		iconName = QStringLiteral("kopete-account-icon:%1:%2")
 			.arg( QString(QUrl::toPercentEncoding( protocol()->pluginId() )),
 			      QString(QUrl::toPercentEncoding( account()->accountId() )) );
 
 	}
 	else
 	{
-		iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
+		iconName = QStringLiteral("kopete-contact-icon:%1:%2:%3")
 			.arg( QString(QUrl::toPercentEncoding( protocol()->pluginId() )),
 			      QString(QUrl::toPercentEncoding( account()->accountId() )),
 			      QString(QUrl::toPercentEncoding( contactId() )) );
@@ -697,7 +697,7 @@ QString Contact::toolTip() const
 					"<br /><b>Idle:</b>&nbsp;<nobr>%1</nobr>", time);
 			}
 		}
-		else if ((*it) == QString::fromLatin1("homePage"))
+		else if ((*it) == QLatin1String("homePage"))
 		{
 			const QString url = property(*it).value().toString();
 			if(!url.isEmpty())
@@ -765,7 +765,7 @@ QString Contact::toolTip() const
 
 				if (valueText.size() > 1000) {
 					valueText.truncate(997);
-					valueText += "...";
+					valueText += QLatin1String("...");
 				}
 
 				tip += i18nc("@label:textbox property label %2 is name, %1 is value",

@@ -32,14 +32,14 @@ BonjourContactConnection::TokenTable BonjourContactConnection::tokenTable;
 
 BonjourContactConnection::TokenTable::TokenTable()
 {
-	insert("", BonjourXmlTokenNone);
-	insert("stream:stream", BonjourXmlTokenStream);
-	insert("message", BonjourXmlTokenMessage);
-	insert("body", BonjourXmlTokenBody);
-	insert("html", BonjourXmlTokenHtml);
-	insert("x", BonjourXmlTokenX);
-	insert("iq", BonjourXmlTokenIq);
-	insert("query", BonjourXmlTokenQuery);
+	insert(QLatin1String(""), BonjourXmlTokenNone);
+	insert(QStringLiteral("stream:stream"), BonjourXmlTokenStream);
+	insert(QStringLiteral("message"), BonjourXmlTokenMessage);
+	insert(QStringLiteral("body"), BonjourXmlTokenBody);
+	insert(QStringLiteral("html"), BonjourXmlTokenHtml);
+	insert(QStringLiteral("x"), BonjourXmlTokenX);
+	insert(QStringLiteral("iq"), BonjourXmlTokenIq);
+	insert(QStringLiteral("query"), BonjourXmlTokenQuery);
 }
 
 void BonjourContactConnection::setSocket(QTcpSocket *aSocket)
@@ -219,8 +219,8 @@ void BonjourContactConnection::getStreamTag(BonjourXmlToken &token)
 	}
 
 	// From Now On, We are Guaranteed It it an Incoming Connection
-	remote = token.attributes.value("from").toString();
-	local = token.attributes.value("to").toString();
+	remote = token.attributes.value(QStringLiteral("from")).toString();
+	local = token.attributes.value(QStringLiteral("to")).toString();
 	qDebug()<<"Local: "<<local<<" Remote: "<<remote;
 
 	if (! local.isEmpty() && ! remote.isEmpty()) {
@@ -315,8 +315,8 @@ void BonjourContactConnection::readData(BonjourXmlToken &token)
 	switch (token.name) {
 
 		case BonjourXmlTokenMessage:
-			type = token.attributes.value("type").toString();
-			if (type == "chat" || type.isEmpty())
+			type = token.attributes.value(QStringLiteral("type")).toString();
+			if (type == QLatin1String("chat") || type.isEmpty())
 				readMessage(token);
 			break;
 

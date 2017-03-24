@@ -113,9 +113,9 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 	d->mainWidget.setupUi(this);
 
 	// use icons on buttons
-	d->mainWidget.buttonAddAvatar->setIcon( QIcon::fromTheme("list-add") );
-	d->mainWidget.buttonRemoveAvatar->setIcon( QIcon::fromTheme("edit-delete") );
-	d->mainWidget.buttonFromWebcam->setIcon( QIcon::fromTheme("camera-web") );
+	d->mainWidget.buttonAddAvatar->setIcon( QIcon::fromTheme(QStringLiteral("list-add")) );
+	d->mainWidget.buttonRemoveAvatar->setIcon( QIcon::fromTheme(QStringLiteral("edit-delete")) );
+	d->mainWidget.buttonFromWebcam->setIcon( QIcon::fromTheme(QStringLiteral("camera-web")) );
 
 #ifndef VIDEOSUPPORT_DISABLED
 	VideoDevicePool* devicePool = VideoDevicePool::self();
@@ -175,7 +175,7 @@ void AvatarSelectorWidget::setCurrentAvatar(const QString &path)
 	d->currentAvatar = path;
 
 	//try to find the avatar in the list
-	QList<QListWidgetItem*> itemList = d->mainWidget.listUserAvatar->findItems("", Qt::MatchContains);
+	QList<QListWidgetItem*> itemList = d->mainWidget.listUserAvatar->findItems(QLatin1String(""), Qt::MatchContains);
 	QList<QListWidgetItem*>::iterator it = itemList.begin();
 	
 	while (it != itemList.end())
@@ -263,7 +263,7 @@ void AvatarSelectorWidget::buttonFromWebcamClicked()
 	Kopete::UI::AvatarWebcamDialog *dialog = new Kopete::UI::AvatarWebcamDialog();
 	int result = dialog->exec();
 	if(result == QDialog::Accepted){
-		QString avatarName("Webcam");
+		QString avatarName(QStringLiteral("Webcam"));
 		int increment = 1;
 		qCDebug(LIBKOPETE_LOG) << "Trying with: " << avatarName;
 		while((Kopete::AvatarManager::self()->exists(avatarName))) {

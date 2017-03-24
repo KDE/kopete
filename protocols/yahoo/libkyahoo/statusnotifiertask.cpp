@@ -120,7 +120,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 		else
 			message = t->nthParamSeparated( 19, i, 7 );
 
-		if(state == 99 && message == "I'm on SMS")
+		if(state == 99 && message == QLatin1String("I'm on SMS"))
 			state = 10;
 
 		if( t->service() == Yahoo::ServiceLogoff )
@@ -161,7 +161,7 @@ void StatusNotifierTask::parseAuthorization( YMSGTransfer* t )
 		QString lname = t->firstParam( 254 );
 		QString name;
 		if( !fname.isEmpty() || !lname.isEmpty() )
-			name = QString("%1 %2").arg(fname).arg(lname);
+			name = QStringLiteral("%1 %2").arg(fname).arg(lname);
 
 		kDebug(YAHOO_RAW_DEBUG) << "Emitting gotAuthorizationRequest( " << nick<< ", " << msg << ", " << name << " )";
 		emit gotAuthorizationRequest( nick, msg, name );

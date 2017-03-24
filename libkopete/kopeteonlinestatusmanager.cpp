@@ -156,11 +156,11 @@ QString OnlineStatusManager::fingerprint( const OnlineStatus &statusFor, const Q
 {
 	// create a 'fingerprint' to use as a hash key
 	// fingerprint consists of description/icon name/color/overlay name/size/idle state
-	return QString::fromLatin1("%1/%2/%3/%4/%5/%6")
+	return QStringLiteral("%1/%2/%3/%4/%5/%6")
 	                           .arg( statusFor.description() )
 	                           .arg( icon )
 	                           .arg( color.name() )
-	                           .arg( statusFor.overlayIcons().join( QString::fromLatin1( "," ) ) )
+	                           .arg( statusFor.overlayIcons().join( QStringLiteral( "," ) ) )
 	                           .arg( size )
 	                           .arg( idle ? 'i' : 'a' );
 }
@@ -372,7 +372,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 				QImage basisImage = basis->toImage();
 				QImage overlayImage = overlay.toImage();
 				QPoint offset;
-				if ( (*it).endsWith( QString::fromLatin1( "_overlay" ) ) )
+				if ( (*it).endsWith( QLatin1String( "_overlay" ) ) )
 				{
 					// it is possible to have more than one overlay icon
 					// to avoid overlapping we place them in different corners

@@ -58,7 +58,7 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const QVariantList &/*args*
 	m_db = 0L;
 	QAction *viewMetaContactStatistics = new QAction( QIcon::fromTheme(QStringLiteral("view-statistics")), i18n("View &Statistics" ),
 		this );
-	actionCollection()->addAction ( "viewMetaContactStatistics", viewMetaContactStatistics );
+	actionCollection()->addAction ( QStringLiteral("viewMetaContactStatistics"), viewMetaContactStatistics );
 	connect(viewMetaContactStatistics, SIGNAL(triggered(bool)), this, SLOT(slotViewStatistics()));
 	viewMetaContactStatistics->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count() == 1);
 
@@ -74,7 +74,7 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const QVariantList &/*args*
 	connect(Kopete::ContactList::self(), SIGNAL(metaContactRemoved(Kopete::MetaContact*)),
 	        this, SLOT(slotMetaContactRemoved(Kopete::MetaContact*)));
 	
-	setXMLFile("statisticsui.rc");
+	setXMLFile(QStringLiteral("statisticsui.rc"));
 
 	/* Initialization reads the database, so it could be a bit time-consuming
 	due to disk access. This should overcome the problem and makes it non-blocking. */
@@ -83,7 +83,7 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const QVariantList &/*args*
 	
 	new StatisticsAdaptor(this);
 	QDBusConnection dbus = QDBusConnection::sessionBus();
-	dbus.registerObject("/Statistics", this);
+	dbus.registerObject(QStringLiteral("/Statistics"), this);
 }	
 
 void StatisticsPlugin::slotInitialize()
@@ -173,7 +173,7 @@ void StatisticsPlugin::slotViewStatistics()
 	if (sc)
 	{
 		StatisticsDialog* dialog = new StatisticsDialog(sc, db());
-		dialog->setObjectName( QLatin1String( "StatisticsDialog" ) );
+		dialog->setObjectName( QStringLiteral( "StatisticsDialog" ) );
 		dialog->show();
 	}
 }
@@ -238,7 +238,7 @@ void StatisticsPlugin::dbusStatisticsDialog(QString id)
 	if (sc)
 	{
 		StatisticsDialog* dialog = new StatisticsDialog(sc, db());
-		dialog->setObjectName( QLatin1String("StatisticsDialog") );
+		dialog->setObjectName( QStringLiteral("StatisticsDialog") );
 		dialog->show();
 	}	
 }
@@ -311,7 +311,7 @@ QString StatisticsPlugin::dbusStatus(QString id, QString dateTime)
 			return sc->statusAt(dt);
 	}
 
-	return "";
+	return QLatin1String("");
 }
 
 
@@ -326,7 +326,7 @@ QString StatisticsPlugin::dbusMainStatus(QString id, int timeStamp)
 			return sc->mainStatusDate(dt.date());
 	}
 	
-	return "";
+	return QLatin1String("");
 }
 
 void StatisticsPlugin::aboutToUnload()

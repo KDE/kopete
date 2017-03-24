@@ -45,7 +45,7 @@ void CreateConferenceTask::conference( const int confId, const QStringList &part
 	for ( QStringList::const_iterator it = participants.begin(); it != end; ++it )
 		lst.append( new Field::SingleField( Field::NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, *it ) );
 	lst.append( new Field::SingleField( Field::NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, client()->userDN() ) );
-	createTransfer( "createconf", lst );
+	createTransfer( QStringLiteral("createconf"), lst );
 }
 
 bool CreateConferenceTask::take( Transfer * transfer )

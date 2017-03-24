@@ -42,7 +42,7 @@ void PollSearchResultsTask::poll( const QString & queryHandle )
 {
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( Field::NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, queryHandle ) );
-	createTransfer( "getresults", lst );
+	createTransfer( QStringLiteral("getresults"), lst );
 }
 
 bool PollSearchResultsTask::take( Transfer * transfer )

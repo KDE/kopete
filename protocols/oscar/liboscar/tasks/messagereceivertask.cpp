@@ -336,11 +336,11 @@ void MessageReceiverTask::handleType4Message()
 	switch ( msgType )
 	{
 	case 0x0D:
-		msgSender = "ICQ Web Express";
+		msgSender = QStringLiteral("ICQ Web Express");
 		msg.addProperty( Oscar::Message::WWP );
 		break;
 	case 0x0E:
-		msgSender = "ICQ Email Express";
+		msgSender = QStringLiteral("ICQ Email Express");
 		msg.addProperty( Oscar::Message::EMail );
 		break;
 	default:

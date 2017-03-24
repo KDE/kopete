@@ -33,11 +33,11 @@
 #include <QSlider>
 #include <QLCDNumber>
 
-const QString ActionBoldName = QLatin1String( "ActionBold" );
-const QString ActionItalicName = QLatin1String( "ActionItalic" );
-const QString ActionAlignLeftName = QLatin1String( "ActionAlignLeft" );
-const QString ActionAlignCenterName = QLatin1String( "ActionAlignCenter" );
-const QString ActionAlignRightName = QLatin1String( "ActionAlignRight" );
+const QString ActionBoldName = QStringLiteral( "ActionBold" );
+const QString ActionItalicName = QStringLiteral( "ActionItalic" );
+const QString ActionAlignLeftName = QStringLiteral( "ActionAlignLeft" );
+const QString ActionAlignCenterName = QStringLiteral( "ActionAlignCenter" );
+const QString ActionAlignRightName = QStringLiteral( "ActionAlignRight" );
 
 Token * TokenWithLayoutFactory::createToken(const QString &text, const QString &iconName, int value, QWidget *parent)
 {
@@ -62,19 +62,19 @@ TokenWithLayout::~TokenWithLayout()
 
 void TokenWithLayout::fillMenu( QMenu * menu )
 {
-    QAction *boldAction = new QAction( QIcon::fromTheme( "format-text-bold"), i18n( "Bold" ), menu );
+    QAction *boldAction = new QAction( QIcon::fromTheme( QStringLiteral("format-text-bold")), i18n( "Bold" ), menu );
     boldAction->setObjectName( ActionBoldName );
     boldAction->setCheckable( true );
     boldAction->setChecked( m_bold );
 
-    QAction *italicAction = new QAction( QIcon::fromTheme( "format-text-italic"), i18n( "Italic" ), menu );
+    QAction *italicAction = new QAction( QIcon::fromTheme( QStringLiteral("format-text-italic")), i18n( "Italic" ), menu );
     italicAction->setObjectName( ActionItalicName );
     italicAction->setCheckable( true );
     italicAction->setChecked( m_italic );
 
-    QAction *alignLeftAction = new QAction( QIcon::fromTheme( "format-justify-left"), i18n( "Left" ), menu );
-    QAction *alignCenterAction = new QAction( QIcon::fromTheme( "format-justify-center"), i18n( "Center" ), menu );
-    QAction *alignRightAction = new QAction( QIcon::fromTheme( "format-justify-right"), i18n( "Right" ), menu );
+    QAction *alignLeftAction = new QAction( QIcon::fromTheme( QStringLiteral("format-justify-left")), i18n( "Left" ), menu );
+    QAction *alignCenterAction = new QAction( QIcon::fromTheme( QStringLiteral("format-justify-center")), i18n( "Center" ), menu );
+    QAction *alignRightAction = new QAction( QIcon::fromTheme( QStringLiteral("format-justify-right")), i18n( "Right" ), menu );
     alignLeftAction->setObjectName( ActionAlignLeftName );
     alignLeftAction->setCheckable( true );
     alignCenterAction->setObjectName( ActionAlignCenterName );

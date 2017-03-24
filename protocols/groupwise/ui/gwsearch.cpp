@@ -355,7 +355,7 @@ void GroupWiseContactSearch::slotShowDetails()
 		{
 			p = new GroupWiseContactProperties( detailsAtIndex( selectedIndex ), this );
 		}
-		p->setObjectName( "gwcontactproperties" );
+		p->setObjectName( QStringLiteral("gwcontactproperties") );
 	}
 
 }

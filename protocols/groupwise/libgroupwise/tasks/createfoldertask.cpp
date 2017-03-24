@@ -35,6 +35,6 @@ void CreateFolderTask::folder( const int parentId, const int sequence, const QSt
 	lst.append( new Field::SingleField( Field::NM_A_SZ_PARENT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( parentId ) ) );
 	lst.append( new Field::SingleField( Field::NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, displayName ) );
 	lst.append( new Field::SingleField( Field::NM_A_SZ_SEQUENCE_NUMBER, 0, NMFIELD_TYPE_UTF8, QString::number( sequence ) ) );
-	createTransfer( "createfolder", lst );
+	createTransfer( QStringLiteral("createfolder"), lst );
 }
 

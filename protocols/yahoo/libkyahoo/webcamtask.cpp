@@ -144,12 +144,12 @@ void WebcamTask::slotConnectionStage1Established()
 	if( socketMap[socket].direction == Incoming )
 	{
 		socket->write( QByteArray("<RVWCFG>") );
-		s = QString("g=%1\r\n").arg(socketMap[socket].sender);
+		s = QStringLiteral("g=%1\r\n").arg(socketMap[socket].sender);
 	}
 	else
 	{
 		socket->write( QByteArray("<RUPCFG>") );
-		s = QString("f=1\r\n");
+		s = QStringLiteral("f=1\r\n");
 	}
 
 	// Header: 08 00 01 00 00 00 00	
@@ -180,7 +180,7 @@ void WebcamTask::slotConnectionStage2Established()
 		// Send <REQIMG>-Packet
 		socket->write( QByteArray("<REQIMG>") );
 		// Send request information
-		s = QString("a=2\r\nc=us\r\ne=21\r\nu=%1\r\nt=%2\r\ni=\r\ng=%3\r\no=w-2-5-1\r\np=1")
+		s = QStringLiteral("a=2\r\nc=us\r\ne=21\r\nu=%1\r\nt=%2\r\ni=\r\ng=%3\r\no=w-2-5-1\r\np=1")
 			.arg(client()->userId()).arg(socketMap[socket].key).arg(socketMap[socket].sender);
 		// Header: 08 00 01 00 00 00 00	
 		stream << (qint8)0x08 << (qint8)0x00 << (qint8)0x01 << (qint8)0x00 << (qint32)s.length();
@@ -190,7 +190,7 @@ void WebcamTask::slotConnectionStage2Established()
 		// Send <REQIMG>-Packet
 		socket->write( QByteArray("<SNDIMG>") );
 		// Send request information
-		s = QString("a=2\r\nc=us\r\nu=%1\r\nt=%2\r\ni=%3\r\no=w-2-5-1\r\np=2\r\nb=KopeteWebcam\r\nd=\r\n")
+		s = QStringLiteral("a=2\r\nc=us\r\nu=%1\r\nt=%2\r\ni=%3\r\no=w-2-5-1\r\np=2\r\nb=KopeteWebcam\r\nd=\r\n")
 		.arg(client()->userId()).arg(socketMap[socket].key).arg(socket->localAddress().nodeName());
 		// Header: 08 00 05 00 00 00 00	01 00 00 00 01
 		stream << (qint8)0x0d << (qint8)0x00 << (qint8)0x05 << (qint8)0x00 << (qint32)s.length()
@@ -204,7 +204,7 @@ void WebcamTask::slotConnectionFailed( int error )
 {
 	KStreamSocket* socket = const_cast<KStreamSocket*>( dynamic_cast<const KStreamSocket*>( sender() ) );
 	kDebug(YAHOO_RAW_DEBUG) << "Webcam connection to the user " << socketMap[socket].sender << " failed. Error " << error << " - " << socket->errorString();
-	client()->notifyError( i18n("Webcam connection to the user %1 could not be established.\n\nPlease relogin and try again.", socketMap[socket].sender), QString("%1 - %2").arg(error).arg( socket->errorString()), Client::Error );
+	client()->notifyError( i18n("Webcam connection to the user %1 could not be established.\n\nPlease relogin and try again.", socketMap[socket].sender), QStringLiteral("%1 - %2").arg(error).arg( socket->errorString()), Client::Error );
 	socketMap.remove( socket );
 	socket->deleteLater();
 }
@@ -567,7 +567,7 @@ void WebcamTask::grantAccess( const QString &userId )
 	}
 	QByteArray ar;
 	QDataStream stream( &ar, QIODevice::WriteOnly );
-	QString user = QString("u=%1").arg(userId);
+	QString user = QStringLiteral("u=%1").arg(userId);
 
 	stream << (qint8)0x0d << (qint8)0x00 << (qint8)0x05 << (qint8)0x00 << (qint32)user.length()
 	<< (qint8)0x00 << (qint8)0x00 << (qint8)0x00 << (qint8)0x00 << (qint8)0x01;

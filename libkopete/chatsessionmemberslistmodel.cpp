@@ -199,9 +199,9 @@ QVariant ChatSessionMembersListModel::headerData(int section, Qt::Orientation or
 		return QVariant();
 
 	if (orientation == Qt::Horizontal)
-		return QString("Column %1").arg(section);
+		return QStringLiteral("Column %1").arg(section);
 	else
-		return QString("Row %1").arg(section);
+		return QStringLiteral("Row %1").arg(section);
 }
 
 void ChatSessionMembersListModel::slotContactAdded( const Kopete::Contact *contact )

@@ -93,16 +93,16 @@ void GroupWiseContact::updateDetails( const ContactDetails & details )
 	m_serverProperties = details.properties;
 	
 	// work phone number
-	if ( m_serverProperties.contains( "telephoneNumber" ) )
-		setProperty( protocol()->propPhoneWork, QVariant(m_serverProperties.value( "telephoneNumber" )) );
+	if ( m_serverProperties.contains( QStringLiteral("telephoneNumber") ) )
+		setProperty( protocol()->propPhoneWork, QVariant(m_serverProperties.value( QStringLiteral("telephoneNumber") )) );
 	
 	// mobile phone number
-	if ( m_serverProperties.contains( "mobile" ) )
-		setProperty( protocol()->propPhoneMobile, QVariant(m_serverProperties.value( "mobile" )) );
+	if ( m_serverProperties.contains( QStringLiteral("mobile") ) )
+		setProperty( protocol()->propPhoneMobile, QVariant(m_serverProperties.value( QStringLiteral("mobile") )) );
 	
 	// email
-	if ( m_serverProperties.contains( "Internet EMail Address" ) )
-		setProperty( protocol()->propEmail, QVariant(m_serverProperties.value( "Internet EMail Address" )) );
+	if ( m_serverProperties.contains( QStringLiteral("Internet EMail Address") ) )
+		setProperty( protocol()->propEmail, QVariant(m_serverProperties.value( QStringLiteral("Internet EMail Address") )) );
 		
 	if ( details.status != GroupWise::Invalid )
 	{	
@@ -139,7 +139,7 @@ bool GroupWiseContact::isReachable()
 
 void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap< QString, QString > & /* addressBookData */ )
 {
-	serializedData[ "DN" ] = m_dn;
+	serializedData[ QStringLiteral("DN") ] = m_dn;
 }
 
 Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags canCreate )
@@ -149,7 +149,7 @@ Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags
 	Kopete::ContactPtrList chatMembers;
 	chatMembers.append( this );
 
-	return account()->chatSession( chatMembers, QString("")/*FIXME Check this is right*/, canCreate );
+    return account()->chatSession( chatMembers, QString("")/*FIXME Check this is right*/, canCreate );
 }
 
 QList<QAction *> *GroupWiseContact::customContextMenuActions()
@@ -178,7 +178,7 @@ QList<QAction *> *GroupWiseContact::customContextMenuActions()
 void GroupWiseContact::slotUserInfo()
 {
 	GroupWiseContactProperties *p = new GroupWiseContactProperties( this, Kopete::UI::Global::mainWidget() );
-	p->setObjectName( "gwcontactproperties" );
+	p->setObjectName( QStringLiteral("gwcontactproperties") );
 }
 
 QMap< QString, QVariant > GroupWiseContact::serverProperties()
@@ -234,7 +234,7 @@ void GroupWiseContact::setOnlineStatus( const Kopete::OnlineStatus& status )
 	if ( account()->isContactBlocked( m_dn ) && status.internalStatus() < 15 )
 	{
 		Kopete::Contact::setOnlineStatus(Kopete::OnlineStatus(status.status(), (status.weight()==0) ? 0 : (status.weight() -1),
-			protocol() , status.internalStatus()+15 , QStringList("msn_blocked"),
+			protocol() , status.internalStatus()+15 , QStringList(QStringLiteral("msn_blocked")),
 			i18n("%1|Blocked", status.description() ) ) );
 	}
 	else

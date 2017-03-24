@@ -143,7 +143,7 @@ void SendFileTask::sendFileTransferInfo()
 {
 	kDebug(YAHOO_RAW_DEBUG);
 
-	KResolverResults results = KResolver::resolve("relay.msg.yahoo.com", QString::number(80));
+	KResolverResults results = KResolver::resolve(QStringLiteral("relay.msg.yahoo.com"), QString::number(80));
 	if(results.count() > 0)
 	{
 		m_relayHost = results.first().address().toString();
@@ -223,7 +223,7 @@ void SendFileTask::connectSucceeded()
 	}
 
 	kDebug(YAHOO_RAW_DEBUG) << "Sizes: File (" << m_url << "): " << m_file.size();
-	QString header = QString::fromLatin1("POST /relay?token=") + 
+	QString header = QLatin1String("POST /relay?token=") + 
 		QUrl::toPercentEncoding(m_token) +
 		QString::fromLatin1("&sender=%1&recver=%2 HTTP/1.1\r\n"
 					     "Cache-Control: no-cache\r\n"
@@ -429,7 +429,7 @@ QString SendFileTask::newYahooTransferId()
 			newId += j - 52 + '0';
 	}
 
-	newId += "$$";
+	newId += QLatin1String("$$");
 
 	kDebug() << "New Yahoo Transfer Id: " << newId;
 

@@ -37,7 +37,7 @@ namespace XMPP
 	public:
 		enum Action { Add, Delete, Modify };
 
-		RosterExchangeItem(const Jid& jid, const QString& name = "", const QStringList& groups = QStringList(), Action = Add);
+		RosterExchangeItem(const Jid& jid, const QString& name = QLatin1String(""), const QStringList& groups = QStringList(), Action = Add);
 		RosterExchangeItem(const QDomElement&);
 
 		const Jid& jid() const;

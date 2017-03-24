@@ -73,7 +73,7 @@ ChatWindowStyle::ChatWindowStyle(const QString &styleName, const QString &varian
 
 void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMode)
 {
-	QStringList styleDirs = KGlobal::dirs()->findDirs("appdata", QString("styles/%1/Contents/Resources/").arg(styleName));
+	QStringList styleDirs = KGlobal::dirs()->findDirs("appdata", QStringLiteral("styles/%1/Contents/Resources/").arg(styleName));
 	if(styleDirs.isEmpty())
 	{
 		kDebug(14000) << "Failed to find style" << styleName;
@@ -205,20 +205,20 @@ bool ChatWindowStyle::hasActionTemplate() const
 
 void ChatWindowStyle::listVariants()
 {
-	QString variantDirPath = d->baseHref + QString::fromUtf8("Variants/");
+	QString variantDirPath = d->baseHref + QLatin1String("Variants/");
 	QDir variantDir(variantDirPath);
 
-	QStringList variantList = variantDir.entryList( QStringList("*.css") );
+	QStringList variantList = variantDir.entryList( QStringList(QStringLiteral("*.css")) );
 	QStringList::ConstIterator it, itEnd = variantList.constEnd();
 	QLatin1String compactVersionPrefix("_compact_");
 	for(it = variantList.constBegin(); it != itEnd; ++it)
 	{
 		QString variantName = *it, variantPath;
 		// Retrieve only the file name.
-		variantName = variantName.left(variantName.lastIndexOf("."));
+		variantName = variantName.left(variantName.lastIndexOf(QLatin1String(".")));
 		if ( variantName.startsWith( compactVersionPrefix ) ) {
 			if ( variantName == compactVersionPrefix ) {
-				d->compactVariants.insert( "", true );
+				d->compactVariants.insert( QLatin1String(""), true );
 			}
 			continue;
 		}
@@ -228,28 +228,28 @@ void ChatWindowStyle::listVariants()
 			d->compactVariants.insert( variantName, true );
 		}
 		// variantPath is relative to baseHref.
-		variantPath = QString("Variants/%1").arg(*it);
+		variantPath = QStringLiteral("Variants/%1").arg(*it);
 		d->variantsList.insert(variantName, variantPath);
 	}
 }
 
 void ChatWindowStyle::readStyleFiles()
 {
-	QString headerFile = d->baseHref + QString("Header.html");
-	QString footerFile = d->baseHref + QString("Footer.html");
-	QString incomingFile = d->baseHref + QString("Incoming/Content.html");
-	QString nextIncomingFile = d->baseHref + QString("Incoming/NextContent.html");
-	QString outgoingFile = d->baseHref + QString("Outgoing/Content.html");
-	QString nextOutgoingFile = d->baseHref + QString("Outgoing/NextContent.html");
-	QString statusFile = d->baseHref + QString("Status.html");
-	QString actionIncomingFile = d->baseHref + QString("Incoming/Action.html");
-	QString actionOutgoingFile = d->baseHref + QString("Outgoing/Action.html");
-	QString fileTransferIncomingFile = d->baseHref + QString("Incoming/FileTransferRequest.html");
-	QString voiceClipIncomingFile = d->baseHref + QString("Incoming/voiceClipRequest.html");
-	QString outgoingStateUnknownFile = d->baseHref + QString("Outgoing/StateUnknown.html");
-	QString outgoingStateSendingFile = d->baseHref + QString("Outgoing/StateSending.html");
-	QString outgoingStateSentFile = d->baseHref + QString("Outgoing/StateSent.html");
-	QString outgoingStateErrorFile = d->baseHref + QString("Outgoing/StateError.html");
+	QString headerFile = d->baseHref + QStringLiteral("Header.html");
+	QString footerFile = d->baseHref + QStringLiteral("Footer.html");
+	QString incomingFile = d->baseHref + QStringLiteral("Incoming/Content.html");
+	QString nextIncomingFile = d->baseHref + QStringLiteral("Incoming/NextContent.html");
+	QString outgoingFile = d->baseHref + QStringLiteral("Outgoing/Content.html");
+	QString nextOutgoingFile = d->baseHref + QStringLiteral("Outgoing/NextContent.html");
+	QString statusFile = d->baseHref + QStringLiteral("Status.html");
+	QString actionIncomingFile = d->baseHref + QStringLiteral("Incoming/Action.html");
+	QString actionOutgoingFile = d->baseHref + QStringLiteral("Outgoing/Action.html");
+	QString fileTransferIncomingFile = d->baseHref + QStringLiteral("Incoming/FileTransferRequest.html");
+	QString voiceClipIncomingFile = d->baseHref + QStringLiteral("Incoming/voiceClipRequest.html");
+	QString outgoingStateUnknownFile = d->baseHref + QStringLiteral("Outgoing/StateUnknown.html");
+	QString outgoingStateSendingFile = d->baseHref + QStringLiteral("Outgoing/StateSending.html");
+	QString outgoingStateSentFile = d->baseHref + QStringLiteral("Outgoing/StateSent.html");
+	QString outgoingStateErrorFile = d->baseHref + QStringLiteral("Outgoing/StateError.html");
 
 	QFile fileAccess;
 	// First load header file.
@@ -365,8 +365,8 @@ void ChatWindowStyle::readStyleFiles()
 	}
 	
 	if ( d->fileTransferIncomingHtml.isEmpty() ||
-	     ( !d->fileTransferIncomingHtml.contains( "saveFileHandlerId" ) &&
-	       !d->fileTransferIncomingHtml.contains( "saveFileAsHandlerId" ) ) )
+	     ( !d->fileTransferIncomingHtml.contains( QLatin1String("saveFileHandlerId") ) &&
+	       !d->fileTransferIncomingHtml.contains( QLatin1String("saveFileAsHandlerId") ) ) )
 	{	// Create default html
 		d->fileTransferIncomingHtml = d->incomingHtml;
 		QString message = QString( "%message%\n"
@@ -399,8 +399,8 @@ void ChatWindowStyle::readStyleFiles()
 	}
 
 	if ( d->voiceClipIncomingHtml.isEmpty() ||
-	     ( !d->voiceClipIncomingHtml.contains( "playVoiceHandlerId" ) &&
-	       !d->voiceClipIncomingHtml.contains( "saveAsVoiceHandlerId" ) ) )
+	     ( !d->voiceClipIncomingHtml.contains( QLatin1String("playVoiceHandlerId") ) &&
+	       !d->voiceClipIncomingHtml.contains( QLatin1String("saveAsVoiceHandlerId") ) ) )
 	{	// Create default html
 		d->voiceClipIncomingHtml = d->incomingHtml;
 		QString message = QString( "%message%\n"
@@ -484,8 +484,8 @@ QString ChatWindowStyle::compact( const QString & styleVariant ) const
 {
 	QString compacted = styleVariant;
 	if ( styleVariant.isEmpty() ) {
-		return QLatin1String( "Variants/_compact_.css" );
+		return QStringLiteral( "Variants/_compact_.css" );
 	} else {
-		return compacted.insert( compacted.lastIndexOf('/') + 1, QString("_compact_") );
+		return compacted.insert( compacted.lastIndexOf('/') + 1, QStringLiteral("_compact_") );
 	}
 }

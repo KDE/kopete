@@ -36,9 +36,9 @@ StatusConfig_Manager::StatusConfig_Manager( QWidget *parent )
 {
 	setupUi( this );
 
-	pbAddStatus->setIcon( QIcon::fromTheme("list-add") );
-	pbRemove->setIcon( QIcon::fromTheme("edit-delete") );
-	pbAddGroup->setIcon( QIcon::fromTheme("folder-new") );
+	pbAddStatus->setIcon( QIcon::fromTheme(QStringLiteral("list-add")) );
+	pbRemove->setIcon( QIcon::fromTheme(QStringLiteral("edit-delete")) );
+	pbAddGroup->setIcon( QIcon::fromTheme(QStringLiteral("folder-new")) );
 
 	connect( pbAddStatus, SIGNAL(clicked()), SLOT(addStatus()) );
 	connect( pbRemove, SIGNAL(clicked()), SLOT(removeStatus()) );

@@ -35,7 +35,7 @@ public:
 		BlockedRole = Qt::UserRole + 0 
 	};
 
-	PrivacyListModel(const PrivacyList& list = PrivacyList(""), QObject* parent = NULL);
+	PrivacyListModel(const PrivacyList& list = PrivacyList(QLatin1String("")), QObject* parent = NULL);
 
 	// Overridden from QAbstractListModel
 	int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;

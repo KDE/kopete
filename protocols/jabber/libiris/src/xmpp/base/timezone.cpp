@@ -111,7 +111,7 @@ int TimeZone::tzdToInt(const QString &tzd)
 	if (tzd.startsWith('Z')) {
 		return 0;
 	} else if (tzd.startsWith('+') || tzd.startsWith('-')) {
-		QTime time = QTime::fromString(tzd.mid(1), "hh:mm");
+		QTime time = QTime::fromString(tzd.mid(1), QStringLiteral("hh:mm"));
 		if (time.isValid()) {
 			if (tzd[0] == '-') {
 				tzoSign = -1;

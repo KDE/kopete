@@ -31,8 +31,8 @@ public:
 	enum Action { NoAction, Execute, Prev, Next, Complete, Cancel };
 	enum Status { NoStatus, Completed, Executing, Canceled };
 
-	AHCommand(const QString &node, const QString &sessionId = "", Action action = Execute);
-	AHCommand(const QString &node, XMPP::XData data, const QString &sessionId = "", Action action = Execute);
+	AHCommand(const QString &node, const QString &sessionId = QLatin1String(QLatin1String("")), Action action = Execute);
+	AHCommand(const QString &node, XMPP::XData data, const QString &sessionId = QLatin1String(QLatin1String("")), Action action = Execute);
 	AHCommand(const QDomElement &e);
 
 	QString node() const {return mNode; }

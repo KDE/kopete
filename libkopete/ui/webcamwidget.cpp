@@ -38,14 +38,14 @@ WebcamWidget::~WebcamWidget()
 void WebcamWidget::updatePixmap(const QPixmap& pixmap)
 {
 	mPixmap = pixmap;
-	mText = "";
+	mText = QLatin1String("");
 
 	update();
 }
 
 void WebcamWidget::clear()
 {
-	mText = "";
+	mText = QLatin1String("");
 	if (!mPixmap.isNull())
 		mPixmap = QPixmap(0,0);
 	

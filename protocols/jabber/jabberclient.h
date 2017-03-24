@@ -197,7 +197,7 @@ public:
 	 * This only has an effect if the old protocol (@ref useXMPP09)
 	 * has been enabled. Default is false.
 	 */
-	void setOverrideHost ( bool flag, const QString &server = "", int port = 5222 );
+	void setOverrideHost ( bool flag, const QString &server = QLatin1String(""), int port = 5222 );
 	/**
 	 * Returns if the server name and port are overridden.
 	 */

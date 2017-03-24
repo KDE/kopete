@@ -230,7 +230,7 @@ void CollapsibleWidget::setInnerWidget(QWidget *w)
 
 void CollapsibleWidget::setWindowTitle(const QString& caption)
 {
-  d->label->setText(QString("<b>%1</b>").arg(caption));
+  d->label->setText(QStringLiteral("<b>%1</b>").arg(caption));
 }
 
 QString CollapsibleWidget::caption() const

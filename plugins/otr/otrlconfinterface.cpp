@@ -141,7 +141,7 @@ void OtrlConfInterface::verifyFingerprint( const QString &strFingerprint, bool t
 		} else {
 			otrl_context_set_trust( fingerprint, NULL );
 		}
-		otrl_privkey_write_fingerprints( userstate, QString(QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints").toLocal8Bit() );
+		otrl_privkey_write_fingerprints( userstate, QString(QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true )) + "fingerprints").toLocal8Bit() );
 	} else {
 		kDebug(14318) << "could not find fingerprint";
 	}
@@ -167,7 +167,7 @@ void OtrlConfInterface::forgetFingerprint( const QString &strFingerprint ){
 	
 	fingerprint = findFingerprint( strFingerprint );
 	otrl_context_forget_fingerprint( fingerprint, 1 );
-	otrl_privkey_write_fingerprints( userstate, QString(QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints").toLocal8Bit() );
+	otrl_privkey_write_fingerprints( userstate, QString(QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true )) + "fingerprints").toLocal8Bit() );
 }
 
 Fingerprint *OtrlConfInterface::findFingerprint( const QString &strFingerprint ){

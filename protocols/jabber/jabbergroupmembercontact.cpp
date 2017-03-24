@@ -104,7 +104,7 @@ void JabberGroupMemberContact::slotChatSessionDeleted ()
 void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &message )
 {
 	// message type is always chat in a groupchat
-	QString viewType = "kopete_chatwindow";
+	QString viewType = QStringLiteral("kopete_chatwindow");
 	Kopete::Message *newMessage = 0L;
 
 	kDebug (JABBER_DEBUG_GLOBAL) << "Received Message Type:" << message.type ();
@@ -113,7 +113,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	if(!kmm)
 		return;
 
-	if ( message.type () != "error" )
+	if ( message.type () != QLatin1String("error") )
 	{
 		if (!message.invite().isEmpty())
 		{
@@ -204,7 +204,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	Kopete::ContactPtrList contactList = kmm->members();
 
 	// check for errors
-	if ( message.type () == "error" )
+	if ( message.type () == QLatin1String("error") )
 	{
 		newMessage = new Kopete::Message( this, contactList );
 		newMessage->setTimestamp( message.timeStamp() );
@@ -224,11 +224,11 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 
 		if( !message.xencrypted().isEmpty () )
 		{
-			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
+			body = QStringLiteral ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QStringLiteral ("\n-----END PGP MESSAGE-----\n");
 		}
 		else if( !message.xsigned().isEmpty () )
 		{
-			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xsigned () + QString ("\n-----END PGP MESSAGE-----\n");
+			body = QStringLiteral ("-----BEGIN PGP MESSAGE-----\n\n") + message.xsigned () + QStringLiteral ("\n-----END PGP MESSAGE-----\n");
 		}
 
 		// convert XMPP::Message into Kopete::Message
@@ -297,7 +297,7 @@ void JabberGroupMemberContact::sendFile ( const QUrl &sourceURL, const QString &
 
 	// if the file location is null, then get it from a file open dialog
 	if ( !sourceURL.isValid () )
-		filePath = KFileDialog::getOpenFileName( QUrl(), "*", 0L, i18n ( "Kopete File Transfer" ) );
+		filePath = KFileDialog::getOpenFileName( QUrl(), QStringLiteral("*"), 0L, i18n ( "Kopete File Transfer" ) );
 	else
 		filePath = sourceURL.adjusted(QUrl::StripTrailingSlash).path();
 

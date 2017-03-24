@@ -42,7 +42,7 @@ JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const
 	mInviteAction->setDelayed(false);
 	connect( mInviteAction->menu(), SIGNAL(aboutToShow()), this, SLOT(showInviteMenu()) );
 	connect( mInviteAction->menu(), SIGNAL(aboutToHide()), this, SLOT(hideInviteMenu()) );
-	actionCollection()->addAction("jabberInvite", mInviteAction);
+	actionCollection()->addAction(QStringLiteral("jabberInvite"), mInviteAction);
 
 	setMayInvite( true );
 
@@ -54,7 +54,7 @@ JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const
 
 	updateDisplayName ();
 
-	setXMLFile("jabberchatui.rc");
+	setXMLFile(QStringLiteral("jabberchatui.rc"));
 }
 
 JabberGroupChatManager::~JabberGroupChatManager()
@@ -100,7 +100,7 @@ void JabberGroupChatManager::slotMessageSent ( Kopete::Message &message, Kopete:
 		jabberMessage.setSubject ( message.subject () );
 		jabberMessage.setTimeStamp ( message.timestamp () );
 
-		if ( ! account()->oldEncrypted() && message.plainBody().indexOf ( "-----BEGIN PGP MESSAGE-----" ) != -1 )
+		if ( ! account()->oldEncrypted() && message.plainBody().indexOf ( QLatin1String("-----BEGIN PGP MESSAGE-----") ) != -1 )
 		{
 			/*
 			 * This message is encrypted, so we need to set
@@ -111,22 +111,22 @@ void JabberGroupChatManager::slotMessageSent ( Kopete::Message &message, Kopete:
 			 */
 
 			// please don't translate the following string
-			bool xsigned = message.classes().contains ( "signed" );
-			bool xencrypted = message.classes().contains ( "encrypted" );
+			bool xsigned = message.classes().contains ( QStringLiteral("signed") );
+			bool xencrypted = message.classes().contains ( QStringLiteral("encrypted") );
 			if ( xsigned && xencrypted )
-				jabberMessage.setBody ( "This message is signed and encrypted." );
+				jabberMessage.setBody ( QStringLiteral("This message is signed and encrypted.") );
 			else if ( xsigned )
 				jabberMessage.setBody ( message.plainBody().trimmed() );
 			else if ( xencrypted )
-				jabberMessage.setBody ( "This message is encrypted." );
+				jabberMessage.setBody ( QStringLiteral("This message is encrypted.") );
 			else
-				jabberMessage.setBody ( "This message is signed or encrypted." );
+				jabberMessage.setBody ( QStringLiteral("This message is signed or encrypted.") );
 
 			QString encryptedBody = message.plainBody().trimmed();
 
 			// remove PGP header and footer from message
-			encryptedBody.truncate ( encryptedBody.length () - QString("-----END PGP MESSAGE-----").length () - 2 );
-			encryptedBody = encryptedBody.right ( encryptedBody.length () - encryptedBody.indexOf ( "\n\n" ) - 2 );
+			encryptedBody.truncate ( encryptedBody.length () - QStringLiteral("-----END PGP MESSAGE-----").length () - 2 );
+			encryptedBody = encryptedBody.right ( encryptedBody.length () - encryptedBody.indexOf ( QLatin1String("\n\n") ) - 2 );
 
 			// assign payload to message
 			if ( xsigned && ! xencrypted )
@@ -143,7 +143,7 @@ void JabberGroupChatManager::slotMessageSent ( Kopete::Message &message, Kopete:
 			{
 				QString xhtmlBody = message.escapedBody();
 				xhtmlBody.remove('\n');
-				xhtmlBody.replace("&nbsp;" , "&#160;");
+				xhtmlBody.replace(QLatin1String("&nbsp;") , QLatin1String("&#160;"));
 				xhtmlBody="<body xmlns=\"http://www.w3.org/1999/xhtml\">" + xhtmlBody + "</body>";
 				QDomDocument doc;
 				doc.setContent(xhtmlBody, true);
@@ -151,7 +151,7 @@ void JabberGroupChatManager::slotMessageSent ( Kopete::Message &message, Kopete:
 			}
 		}
 
-		jabberMessage.setType ( "groupchat" );
+		jabberMessage.setType ( QStringLiteral("groupchat") );
 
 		// send the message
 		account()->client()->sendMessage ( jabberMessage );

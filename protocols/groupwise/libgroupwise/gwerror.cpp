@@ -149,127 +149,127 @@ QString GroupWise::errorCodeToString( int errorCode )
 			errorString = i18n("Unrecognized error code: %1", errorCode );
 #else
 		case NMERR_ACCESS_DENIED:
-			errorString = "Access denied";
+			errorString = QStringLiteral("Access denied");
 			break;
 		case NMERR_NOT_SUPPORTED:
-			errorString = "Not supported";
+			errorString = QStringLiteral("Not supported");
 			break;
 		case NMERR_PASSWORD_EXPIRED:
-			errorString = "Password expired";
+			errorString = QStringLiteral("Password expired");
 			break;
 		case NMERR_PASSWORD_INVALID:
-			errorString = "Invalid password";
+			errorString = QStringLiteral("Invalid password");
 			break;
 		case NMERR_USER_NOT_FOUND:
-			errorString = "User not found";
+			errorString = QStringLiteral("User not found");
 			break;
 		case NMERR_ATTRIBUTE_NOT_FOUND:
-			errorString = "Attribute not found";
+			errorString = QStringLiteral("Attribute not found");
 			break;
 		case NMERR_USER_DISABLED:
-			errorString = "User is disabled";
+			errorString = QStringLiteral("User is disabled");
 			break;
 		case NMERR_DIRECTORY_FAILURE:
-			errorString = "Directory failure";
+			errorString = QStringLiteral("Directory failure");
 			break;
 		case NMERR_HOST_NOT_FOUND:
-			errorString = "Host not found";
+			errorString = QStringLiteral("Host not found");
 			break;
 		case NMERR_ADMIN_LOCKED:
-			errorString = "Locked by admin";
+			errorString = QStringLiteral("Locked by admin");
 			break;
 		case NMERR_DUPLICATE_PARTICIPANT:
-			errorString = "Duplicate participant";
+			errorString = QStringLiteral("Duplicate participant");
 			break;
 		case NMERR_SERVER_BUSY:
-			errorString = "Server busy";
+			errorString = QStringLiteral("Server busy");
 			break;
 		case NMERR_OBJECT_NOT_FOUND:
-			errorString = "Object not found";
+			errorString = QStringLiteral("Object not found");
 			break;
 		case NMERR_DIRECTORY_UPDATE:
-			errorString = "Directory update";
+			errorString = QStringLiteral("Directory update");
 			break;
 		case NMERR_DUPLICATE_FOLDER:
-			errorString = "Duplicate folder";
+			errorString = QStringLiteral("Duplicate folder");
 			break;
 		case NMERR_DUPLICATE_CONTACT:
-			errorString = "Contact list entry already exists";
+			errorString = QStringLiteral("Contact list entry already exists");
 			break;
 		case NMERR_USER_NOT_ALLOWED:
-			errorString = "User not allowed";
+			errorString = QStringLiteral("User not allowed");
 			break;
 		case NMERR_TOO_MANY_CONTACTS:
-			errorString = "Too many contacts";
+			errorString = QStringLiteral("Too many contacts");
 			break;
 		case NMERR_CONFERENCE_NOT_FOUND_2:
-			errorString = "Conference not found";
+			errorString = QStringLiteral("Conference not found");
 			break;
 		case NMERR_TOO_MANY_FOLDERS:
-			errorString = "Too many folders";
+			errorString = QStringLiteral("Too many folders");
 			break;
 		case NMERR_SERVER_PROTOCOL:
-			errorString = "Server protocol error";
+			errorString = QStringLiteral("Server protocol error");
 			break;
 		case NMERR_CONVERSATION_INVITE:
-			errorString = "Conversation invitation error";
+			errorString = QStringLiteral("Conversation invitation error");
 			break;
 		case NMERR_USER_BLOCKED:
-			errorString = "User is blocked";
+			errorString = QStringLiteral("User is blocked");
 			break;
 		case NMERR_MASTER_ARCHIVE_MISSING:
-			errorString = "Master archive is missing";
+			errorString = QStringLiteral("Master archive is missing");
 			break;
 		case NMERR_PASSWORD_EXPIRED_2:
-			errorString = "Expired password in use";
+			errorString = QStringLiteral("Expired password in use");
 			break;
 		case NMERR_CREDENTIALS_MISSING:
-			errorString = "Credentials missing";
+			errorString = QStringLiteral("Credentials missing");
 			break;
 		case NMERR_AUTHENTICATION_FAILED:
-			errorString = "Authentication failed";
+			errorString = QStringLiteral("Authentication failed");
 			break;
 		case NMERR_EVAL_CONNECTION_LIMIT:
-			errorString = "Eval connection limit";
+			errorString = QStringLiteral("Eval connection limit");
 			break;
 		case MSGPRES_ERR_UNSUPPORTED_CLIENT_VERSION:
-			errorString = "Unsupported client version";
+			errorString = QStringLiteral("Unsupported client version");
 			break;
 		case MSGPRES_ERR_DUPLICATE_CHAT:
-			errorString = "A duplicate chat was found";
+			errorString = QStringLiteral("A duplicate chat was found");
 			break;
 		case MSGPRES_ERR_CHAT_NOT_FOUND:
-			errorString = "Chat not found";
+			errorString = QStringLiteral("Chat not found");
 			break;
 		case MSGPRES_ERR_INVALID_NAME:
-			errorString = "Invalid chat name";
+			errorString = QStringLiteral("Invalid chat name");
 			break;
 		case MSGPRES_ERR_CHAT_ACTIVE:
-			errorString = "The chat is active";
+			errorString = QStringLiteral("The chat is active");
 			break;
 		case MSGPRES_ERR_CHAT_BUSY:
-			errorString = "Chat is busy; try again";
+			errorString = QStringLiteral("Chat is busy; try again");
 			break;
 		case MSGPRES_ERR_REQUEST_TOO_SOON:
-			errorString = "Tried request too soon after another; try again";
+			errorString = QStringLiteral("Tried request too soon after another; try again");
 			break;
 		case MSGPRES_ERR_CHAT_NOT_ACTIVE:
-			errorString = "Server's chat subsystem is not active";
+			errorString = QStringLiteral("Server's chat subsystem is not active");
 			break;
 		case MSGPRES_ERR_INVALID_CHAT_UPDATE:
-			errorString = "The chat update request is invalid";
+			errorString = QStringLiteral("The chat update request is invalid");
 			break;
 		case MSGPRES_ERR_DIRECTORY_MISMATCH:
-			errorString = "Write failed due to directory mismatch";
+			errorString = QStringLiteral("Write failed due to directory mismatch");
 			break;
 		case MSGPRES_ERR_RECIPIENT_TOO_OLD:
-			errorString = "Recipient's client version is too old";
+			errorString = QStringLiteral("Recipient's client version is too old");
 			break;
 		case MSGPRES_ERR_CHAT_NO_LONGER_VALID:
-			errorString = "Chat has been removed from server";
+			errorString = QStringLiteral("Chat has been removed from server");
 			break;
 		default:
-			errorString = QString("Unrecognized error code: %s").arg( errorCode );
+			errorString = QStringLiteral("Unrecognized error code: %s").arg( errorCode );
 #endif
 	}
 	return errorString;

@@ -42,7 +42,7 @@ KNetworkByteStream::KNetworkByteStream ( QObject *parent )
 bool KNetworkByteStream::connect ( QString host, QString service )
 {
 	kDebug () << "Connecting to " << host << ", service " << service;
-	mSocket = KSocketFactory::connectToHost( "gwims", host, service.toUInt(), this );
+	mSocket = KSocketFactory::connectToHost( QStringLiteral("gwims"), host, service.toUInt(), this );
 
 	Kopete::SocketTimeoutWatcher* timeoutWatcher = Kopete::SocketTimeoutWatcher::watch( mSocket );
 	if ( timeoutWatcher )

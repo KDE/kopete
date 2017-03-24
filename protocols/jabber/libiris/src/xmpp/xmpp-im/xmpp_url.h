@@ -27,7 +27,7 @@ namespace XMPP
 	class Url
 	{
 	public:
-		Url(const QString &url="", const QString &desc="");
+		Url(const QString &url=QLatin1String(""), const QString &desc=QLatin1String(""));
 		Url(const Url &);
 		Url & operator=(const Url &);
 		~Url();

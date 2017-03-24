@@ -161,47 +161,47 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 
 	QAction *actionCreateNewGroup = new QAction( i18n( "Create New Group..." ), ac );
-	actionCreateNewGroup->setIcon( QIcon::fromTheme( "user-group-new" ) );
+	actionCreateNewGroup->setIcon( QIcon::fromTheme( QStringLiteral("user-group-new") ) );
 	connect( actionCreateNewGroup, SIGNAL(triggered(bool)), this, SLOT(addGroup()) );
-	ac->addAction( "AddGroup", actionCreateNewGroup );
+	ac->addAction( QStringLiteral("AddGroup"), actionCreateNewGroup );
 
 	d->actionSendMessage = KopeteStdAction::sendMessage( this, SLOT(sendMessage()), ac );
-	ac->addAction( "contactSendMessage", d->actionSendMessage );
+	ac->addAction( QStringLiteral("contactSendMessage"), d->actionSendMessage );
 	d->actionStartChat = KopeteStdAction::chat( this, SLOT(startChat()), ac );
-	ac->addAction( "contactStartChat", d->actionStartChat );
+	ac->addAction( QStringLiteral("contactStartChat"), d->actionStartChat );
 
-	d->actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "edit-cut" ),
+	d->actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QStringLiteral( "edit-cut" ),
                                                 QKeySequence(), this, SLOT(moveToGroup()), ac );
-	ac->addAction( "contactMove", d->actionMove );
-	d->actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "edit-copy" ),
+	ac->addAction( QStringLiteral("contactMove"), d->actionMove );
+	d->actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QStringLiteral( "edit-copy" ),
                                                 QKeySequence(), this, SLOT(copyToGroup()), ac );
-	ac->addAction( "contactCopy", d->actionCopy );
+	ac->addAction( QStringLiteral("contactCopy"), d->actionCopy );
 
-	d->actionMakeMetaContact = new QAction(QIcon::fromTheme("list-add-user"), i18n("Merge Meta Contacts"), ac);
-	ac->addAction( "makeMetaContact", d->actionMakeMetaContact );
+	d->actionMakeMetaContact = new QAction(QIcon::fromTheme(QStringLiteral("list-add-user")), i18n("Merge Meta Contacts"), ac);
+	ac->addAction( QStringLiteral("makeMetaContact"), d->actionMakeMetaContact );
 	connect (d->actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(mergeMetaContact()));
 
 	d->actionRemove = KopeteStdAction::deleteContact( this, SLOT(removeGroupOrMetaContact()), ac );
-	ac->addAction( "contactRemove", d->actionRemove );
+	ac->addAction( QStringLiteral("contactRemove"), d->actionRemove );
 
-	d->actionSendEmail = new QAction( QIcon::fromTheme("mail-send"), i18n( "Send Email..." ), ac );
-	ac->addAction( "contactSendEmail", d->actionSendEmail );
+	d->actionSendEmail = new QAction( QIcon::fromTheme(QStringLiteral("mail-send")), i18n( "Send Email..." ), ac );
+	ac->addAction( QStringLiteral("contactSendEmail"), d->actionSendEmail );
 	connect( d->actionSendEmail, SIGNAL(triggered(bool)), this, SLOT(sendEmail()) );
 
-	d->actionRename = new QAction( QIcon::fromTheme("edit-rename"), i18nc( "verb, rename a contact", "Rename" ), ac );
+	d->actionRename = new QAction( QIcon::fromTheme(QStringLiteral("edit-rename")), i18nc( "verb, rename a contact", "Rename" ), ac );
     ac->setDefaultShortcut(d->actionRename, QKeySequence(Qt::Key_F2) );
-	ac->addAction( "contactRename", d->actionRename );
+	ac->addAction( QStringLiteral("contactRename"), d->actionRename );
 	connect( d->actionRename, SIGNAL(triggered(bool)), this, SLOT(rename()) );
 
 	d->actionSendFile = KopeteStdAction::sendFile( this, SLOT(sendFile()), ac );
-	ac->addAction( "contactSendFile", d->actionSendFile );
+	ac->addAction( QStringLiteral("contactSendFile"), d->actionSendFile );
 
-	d->actionAddContact = new KActionMenu( QIcon::fromTheme( QLatin1String("list-add-user") ), i18n( "&Add Contact" ), ac );
-	ac->addAction( "contactAddContact", d->actionAddContact );
+	d->actionAddContact = new KActionMenu( QIcon::fromTheme( QStringLiteral("list-add-user") ), i18n( "&Add Contact" ), ac );
+	ac->addAction( QStringLiteral("contactAddContact"), d->actionAddContact );
 	d->actionAddContact->menu()->setTitle( i18n("Select Account") );
 
-	d->actionAddTemporaryContact = new QAction( QIcon::fromTheme("list-add-user"), i18n( "Add to Your Contact List" ), ac );
-	ac->addAction( "contactAddTemporaryContact", d->actionAddTemporaryContact );
+	d->actionAddTemporaryContact = new QAction( QIcon::fromTheme(QStringLiteral("list-add-user")), i18n( "Add to Your Contact List" ), ac );
+	ac->addAction( QStringLiteral("contactAddTemporaryContact"), d->actionAddTemporaryContact );
 	connect( d->actionAddTemporaryContact, SIGNAL(triggered(bool)), this, SLOT(addTemporaryContact()) );
 
 // 	connect( Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), this, SLOT(slotMetaContactSelected(bool)) );
@@ -211,8 +211,8 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
 			this, SLOT(removeToAddContactMenu(const Kopete::Account*)) );
 
-	d->actionProperties = new QAction( QIcon::fromTheme("user-properties"), i18n( "&Properties" ), ac );
-	ac->addAction( "contactProperties", d->actionProperties );
+	d->actionProperties = new QAction( QIcon::fromTheme(QStringLiteral("user-properties")), i18n( "&Properties" ), ac );
+	ac->addAction( QStringLiteral("contactProperties"), d->actionProperties );
     ac->setDefaultShortcut(d->actionProperties, QKeySequence(Qt::Key_Alt + Qt::Key_Return) );
 	connect( d->actionProperties, SIGNAL(triggered(bool)), this, SLOT(showItemProperties()) );
 
@@ -402,8 +402,8 @@ void KopeteContactListView::removeGroupOrMetaContact()
 			            groupList.first()->displayName() );
 		}
 
-		if( KMessageBox::warningContinueCancel( this, msg, i18n( "Remove" ), KGuiItem( i18n( "Remove" ), "edit-delete" ),
-		                                        KStandardGuiItem::cancel(), "askRemovingContactOrGroup" ,
+		if( KMessageBox::warningContinueCancel( this, msg, i18n( "Remove" ), KGuiItem( i18n( "Remove" ), QStringLiteral("edit-delete") ),
+		                                        KStandardGuiItem::cancel(), QStringLiteral("askRemovingContactOrGroup") ,
 		                                        KMessageBox::Notify | KMessageBox::Dangerous ) != KMessageBox::Continue )
 		{
 			return;
@@ -417,8 +417,8 @@ void KopeteContactListView::removeGroupOrMetaContact()
 			i18n( "Are you sure you want to remove these groups and " \
 			      "contacts from your contact list?" );
 
-		if( KMessageBox::warningContinueCancelList( this, msg, displayNameList, i18n("Remove"), KGuiItem( i18n( "Remove" ), "edit-delete" ),
-		                                            KStandardGuiItem::cancel(), "askRemovingContactOrGroup",
+		if( KMessageBox::warningContinueCancelList( this, msg, displayNameList, i18n("Remove"), KGuiItem( i18n( "Remove" ), QStringLiteral("edit-delete") ),
+		                                            KStandardGuiItem::cancel(), QStringLiteral("askRemovingContactOrGroup"),
 		                                            KMessageBox::Notify | KMessageBox::Dangerous ) != KMessageBox::Continue )
 		{
 			return;
@@ -449,7 +449,7 @@ void KopeteContactListView::moveToGroup()
 			{ // Some accounts are offline we can't move it
 				const QString msg = i18n( "Account %1 is offline. Do you really want to move this metacontact?", c->account()->accountLabel() );
 				if ( KMessageBox::warningYesNo( this, msg, i18n( "Move contact" ), KStandardGuiItem::yes(), KStandardGuiItem::no(),
-				                                "askMoveMetaContactToGroup", KMessageBox::Notify | KMessageBox::Dangerous ) == KMessageBox::No )
+				                                QStringLiteral("askMoveMetaContactToGroup"), KMessageBox::Notify | KMessageBox::Dangerous ) == KMessageBox::No )
 					return;
 			}
 		}
@@ -669,7 +669,7 @@ void KopeteContactListView::dragMoveEvent ( QDragMoveEvent * event )
 	bool groupContactByGroup = as->groupContactByGroup();
 
 	bool accept = false;
-	if ( data->hasFormat( "application/kopete.metacontacts.list" ) )
+	if ( data->hasFormat( QStringLiteral("application/kopete.metacontacts.list") ) )
 	{
 		if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
 			accept = (event->proposedAction() & Qt::MoveAction); // MetaContact merge (copy&merge not supported)
@@ -680,7 +680,7 @@ void KopeteContactListView::dragMoveEvent ( QDragMoveEvent * event )
 		else
 			accept = false;
 	}
-	else if ( data->hasFormat( "application/kopete.group" ) )
+	else if ( data->hasFormat( QStringLiteral("application/kopete.group") ) )
 	{
 		if ( !groupContactByGroup )
 			accept = false; // Plain view doesn't support groups
@@ -840,7 +840,7 @@ void KopeteContactListView::updateActions()
 	if ( singleContactSelected )
 	{
 		QString kabcid = metaContact->kabcId();
-		inkabc = !kabcid.isEmpty() && !kabcid.contains(":");
+		inkabc = !kabcid.isEmpty() && !kabcid.contains(QLatin1String(":"));
 	}
 	d->actionSendEmail->setEnabled( inkabc );
 
@@ -1042,7 +1042,7 @@ void KopeteContactListView::groupPopup( Kopete::Group *group, const QPoint& pos 
 	if ( group == Kopete::Group::offline() )
 	    return;
 
-	QMenu *popup = dynamic_cast<QMenu *>( window->factory()->container( "group_popup", window ) );
+	QMenu *popup = dynamic_cast<QMenu *>( window->factory()->container( QStringLiteral("group_popup"), window ) );
 	if ( popup )
 	{
 		QString title = group->displayName();
@@ -1074,7 +1074,7 @@ void KopeteContactListView::metaContactPopup( Kopete::MetaContact *metaContact, 
 		return;
 	}
 
-	QMenu *popup = dynamic_cast<QMenu *>( window->factory()->container( "contact_popup", window ) );
+	QMenu *popup = dynamic_cast<QMenu *>( window->factory()->container( QStringLiteral("contact_popup"), window ) );
 	if ( popup )
 	{
 		QString title = i18nc( "Translators: format: '<nickname> (<online status>)'", "%1 (%2)",
@@ -1107,7 +1107,7 @@ void KopeteContactListView::metaContactPopup( Kopete::MetaContact *metaContact, 
 			QMenu *contactMenu = c->popupMenu();
 			connect( popup, SIGNAL(aboutToHide()), contactMenu, SLOT(deleteLater()) );
 			QString text = i18nc( "Translators: format: '<displayName> (<id>)'", "%2 <%1>", c->contactId(), c->nickName() );
-			text=text.replace('&',"&&"); // cf BUG 115449
+			text=text.replace('&',QLatin1String("&&")); // cf BUG 115449
 
 			if ( text.length() > 41 )
 				text = text.left( 38 ) + QLatin1String( "..." );
@@ -1143,7 +1143,7 @@ void KopeteContactListView::miscPopup( QModelIndexList indexes, const QPoint& po
 
 	QMenu *popup = 0;
 	if ( onlyMetaContacts )
-		popup = dynamic_cast<QMenu *>( window->factory()->container( "contactlistitems_popup", window ) );
+		popup = dynamic_cast<QMenu *>( window->factory()->container( QStringLiteral("contactlistitems_popup"), window ) );
 
 	if ( popup )
 		popup->popup( pos );

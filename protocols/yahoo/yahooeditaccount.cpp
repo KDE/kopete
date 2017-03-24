@@ -68,7 +68,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 
 		QString pagerServer = account()->configGroup()->readEntry("Server", "scsa.msg.yahoo.com");
 		int pagerPort = account()->configGroup()->readEntry("Port", 5050);
-		if( pagerServer != "scsa.msg.yahoo.com" || pagerPort != 5050 )
+		if( pagerServer != QLatin1String("scsa.msg.yahoo.com") || pagerPort != 5050 )
 			optionOverrideServer->setChecked( true );
 		else
 			optionOverrideServer->setChecked( false );
@@ -136,7 +136,7 @@ Kopete::Account *YahooEditAccount::apply()
 	}
 	else
 	{
-		yahooAccount->setServer( "scsa.msg.yahoo.com" );
+		yahooAccount->setServer( QStringLiteral("scsa.msg.yahoo.com") );
 		yahooAccount->setPort( 5050 );
 	}
 
@@ -156,7 +156,7 @@ Kopete::Account *YahooEditAccount::apply()
 
 void YahooEditAccount::slotOpenRegister()
 {
-	KToolInvocation::invokeBrowser( QLatin1String("http://edit.yahoo.com/config/eval_register?new=1") );
+	KToolInvocation::invokeBrowser( QStringLiteral("http://edit.yahoo.com/config/eval_register?new=1") );
 }
 
 void YahooEditAccount::slotSelectPicture()

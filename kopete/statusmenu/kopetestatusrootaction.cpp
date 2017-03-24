@@ -202,7 +202,7 @@ void StatusRootAction::editStatuses()
 	KCMultiDialog *kcm = new KCMultiDialog( Kopete::UI::Global::mainWidget() );
 	kcm->setFaceType( KCMultiDialog::Plain );
 	kcm->setWindowTitle(i18n("Configure Statuses"));
-	kcm->addModule( "kopete_statusconfig" );
+	kcm->addModule( QStringLiteral("kopete_statusconfig") );
 	kcm->exec();
 }
 

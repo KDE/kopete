@@ -93,7 +93,7 @@ void notifyConnectionLost( const Account *account, const QString caption, const 
 	if (!account)
 		return;
 
-	notify( account->accountIcon(KIconLoader::SizeMedium), QString::fromLatin1("connection_lost"), caption.isEmpty() ? defaultStrings->notifyConnectionLost_DefaultCaption : caption, message.isEmpty() ? defaultStrings->notifyConnectionLost_DefaultMessage : message, explanation.isEmpty() ? defaultStrings->notifyConnectionLost_DefaultExplanation : explanation, debugInfo);
+	notify( account->accountIcon(KIconLoader::SizeMedium), QStringLiteral("connection_lost"), caption.isEmpty() ? defaultStrings->notifyConnectionLost_DefaultCaption : caption, message.isEmpty() ? defaultStrings->notifyConnectionLost_DefaultMessage : message, explanation.isEmpty() ? defaultStrings->notifyConnectionLost_DefaultExplanation : explanation, debugInfo);
 }
 
 void notifyCannotConnect( const Account *account, const QString explanation, const QString debugInfo)
@@ -103,7 +103,7 @@ void notifyCannotConnect( const Account *account, const QString explanation, con
 	if (!account)
 		return;
 
-	notify( account->accountIcon(KIconLoader::SizeMedium), QString::fromLatin1("cannot_connect"), defaultStrings->notifyCannotConnect_DefaultCaption, defaultStrings->notifyCannotConnect_DefaultMessage, defaultStrings->notifyCannotConnect_DefaultExplanation, debugInfo);
+	notify( account->accountIcon(KIconLoader::SizeMedium), QStringLiteral("cannot_connect"), defaultStrings->notifyCannotConnect_DefaultCaption, defaultStrings->notifyCannotConnect_DefaultMessage, defaultStrings->notifyCannotConnect_DefaultExplanation, debugInfo);
 }
 
 } // end ns ErrorNotifier

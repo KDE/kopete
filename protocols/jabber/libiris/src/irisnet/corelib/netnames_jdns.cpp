@@ -291,7 +291,7 @@ public:
 		if(!uni_net)
 		{
 			uni_net = new QJDnsShared(QJDnsShared::UnicastInternet, this);
-			uni_net->setDebug(&db, "U");
+			uni_net->setDebug(&db, QStringLiteral("U"));
 			bool ok4 = uni_net->addInterface(QHostAddress::Any);
 			bool ok6 = uni_net->addInterface(QHostAddress::AnyIPv6);
 			if(!ok4 && !ok6)
@@ -308,7 +308,7 @@ public:
 		if(!uni_local)
 		{
 			uni_local = new QJDnsShared(QJDnsShared::UnicastLocal, this);
-			uni_local->setDebug(&db, "L");
+			uni_local->setDebug(&db, QStringLiteral("L"));
 			bool ok4 = uni_local->addInterface(QHostAddress::Any);
 			bool ok6 = uni_local->addInterface(QHostAddress::AnyIPv6);
 			if(!ok4 && !ok6)
@@ -325,7 +325,7 @@ public:
 		if(!mul)
 		{
 			mul = new QJDnsShared(QJDnsShared::Multicast, this);
-			mul->setDebug(&db, "M");
+			mul->setDebug(&db, QStringLiteral("M"));
 
 			connect(&netman, SIGNAL(interfaceAvailable(QString)), SLOT(iface_available(QString)));
 
@@ -1353,7 +1353,7 @@ private:
 		QString me = QHostInfo::localHostName();
 
 		// some hosts may already have ".local" in their name
-		if(me.endsWith(".local"))
+		if(me.endsWith(QLatin1String(".local")))
 			me.truncate(me.length() - 6);
 
 		// prefix our hostname so we don't conflict with a system
@@ -1361,7 +1361,7 @@ private:
 		me.prepend("jdns-");
 
 		if(counter > 1)
-			me += QString("-%1").arg(counter);
+			me += QStringLiteral("-%1").arg(counter);
 
 		host = escapeDomainPart(me.toUtf8()) + ".local.";
 
@@ -2215,8 +2215,8 @@ public:
 	int browse_start(const QString &_type, const QString &_domain) Q_DECL_OVERRIDE
 	{
 		QString domain;
-		if(_domain.isEmpty() || _domain == ".")
-			domain = "local.";
+		if(_domain.isEmpty() || _domain == QLatin1String("."))
+			domain = QStringLiteral("local.");
 		else
 			domain = _domain;
 
@@ -2228,7 +2228,7 @@ public:
 		int id = browseItemList.reserveId();
 
 		// no support for non-local domains
-		if(domain != "local.")
+		if(domain != QLatin1String("local."))
 		{
 			BrowseItem *i = new BrowseItem(id, 0);
 			i->sess = new ObjectSession(this);
@@ -2476,7 +2476,7 @@ private slots:
 		Q_ASSERT(i);
 
 		QByteArray name = instance + '.' + jb->typeAndDomain;
-		ServiceInstance si(QString::fromLatin1(instance), QString::fromLatin1(jb->type), "local.", QMap<QString,QByteArray>());
+		ServiceInstance si(QString::fromLatin1(instance), QString::fromLatin1(jb->type), QStringLiteral("local."), QMap<QString,QByteArray>());
 		items.insert(name, si);
 
 		emit browse_instanceAvailable(i->id, si);

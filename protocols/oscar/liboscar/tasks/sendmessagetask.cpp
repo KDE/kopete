@@ -56,7 +56,7 @@ void SendMessageTask::onGo()
 {
 	if ( m_message.textArray().isEmpty() && m_message.channel() == 1 )
 	{ //channel 1 shouldn't be sending blanks
-		setError(-1, "No message to send");
+		setError(-1, QStringLiteral("No message to send"));
 		return;
 	}
 
@@ -397,16 +397,16 @@ QByteArray SendMessageTask::encodeFileName( const QString &fileName, QString &en
 		{
 			if ( (unsigned char)data.at(i) >= 128 )
 			{
-				encodingType = QLatin1String( "iso-8859-1" );
+				encodingType = QStringLiteral( "iso-8859-1" );
 				return data;
 			}
 		}
-		encodingType = QLatin1String( "us-ascii" );
+		encodingType = QStringLiteral( "us-ascii" );
 		return data;
 	}
 	
 	codec = QTextCodec::codecForName( "UTF-8" );
-	encodingType = QLatin1String( "utf-8" );
+	encodingType = QStringLiteral( "utf-8" );
 	return codec->fromUnicode( fileName );
 }
 

@@ -187,7 +187,7 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 		toggleMode( Send );
 
 	KSharedConfig::Ptr config = KSharedConfig::openConfig();
-	applyMainWindowSettings( config->group( QLatin1String( "KopeteEmailWindow" )  ) );
+	applyMainWindowSettings( config->group( QStringLiteral( "KopeteEmailWindow" )  ) );
 
 	d->sendInProgress = false;
 
@@ -204,7 +204,7 @@ KopeteEmailWindow::~KopeteEmailWindow()
 	emit( closing( this ) );
 
 	// saves menubar, toolbar and statusbar setting
-	KConfigGroup cg( KSharedConfig::openConfig(), QLatin1String( "KopeteEmailWindow" ) );
+	KConfigGroup cg( KSharedConfig::openConfig(), QStringLiteral( "KopeteEmailWindow" ) );
         saveMainWindowSettings( cg );
 	cg.sync();
 
@@ -215,8 +215,8 @@ void KopeteEmailWindow::initActions(void)
 {
 	KActionCollection *coll = actionCollection();
 
-	d->chatSend = new QAction( QIcon::fromTheme("mail-send"), i18n( "&Send Message" ), this );
-        coll->addAction( "chat_send", d->chatSend );
+	d->chatSend = new QAction( QIcon::fromTheme(QStringLiteral("mail-send")), i18n( "&Send Message" ), this );
+        coll->addAction( QStringLiteral("chat_send"), d->chatSend );
 	//Default to 'Return' for sending messages
 	d->chatSend->setShortcut( QKeySequence( Qt::Key_Return ) );
 	connect( d->chatSend, SIGNAL(triggered()), this, SLOT(slotReplySend()) );
@@ -248,7 +248,7 @@ void KopeteEmailWindow::initActions(void)
 	setStandardToolBarMenuEnabled( true );
 
 	d->actionSmileyMenu = new KopeteEmoticonAction( coll );
-        coll->addAction( "format_smiley", d->actionSmileyMenu );
+        coll->addAction( QStringLiteral("format_smiley"), d->actionSmileyMenu );
 	d->actionSmileyMenu->setDelayed( false );
 	connect(d->actionSmileyMenu, SIGNAL(activated(QString)), this, SLOT(slotSmileyActivated(QString)));
 
@@ -259,25 +259,25 @@ void KopeteEmailWindow::initActions(void)
 	KopeteStdAction::preferences( coll , "settings_prefs" );
 
 	// The animated toolbarbutton
-	d->normalIcon = QPixmap( BarIcon( QLatin1String( "kopete" ) ) );
+	d->normalIcon = QPixmap( BarIcon( QStringLiteral( "kopete" ) ) );
 //	d->animIcon = KGlobal::iconLoader()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Toolbar);
 	d->animIcon.setPaused(true);
 
 	d->anim = new QLabel( this );
-	d->anim->setObjectName( QLatin1String("kde toolbar widget") );
+	d->anim->setObjectName( QStringLiteral("kde toolbar widget") );
 	d->anim->setMargin( 5 );
 	d->anim->setPixmap( d->normalIcon );
 
 	QAction *spacerAction = new KToolBarSpacerAction( this );
 	spacerAction->setText( i18n( "Spacer for Animation" ) );
-	coll->addAction( "toolbar_spacer", spacerAction );
+	coll->addAction( QStringLiteral("toolbar_spacer"), spacerAction );
 
 	QAction *animAction = new QAction( i18n("Toolbar Animation"), coll );
-	coll->addAction( "toolbar_animation", animAction );
+	coll->addAction( QStringLiteral("toolbar_animation"), animAction );
 	//FIXME: setDefaultWidget() is a method in QWidgetAction
 	//animAction->setDefaultWidget( d->anim );
 
-	setXMLFile( QLatin1String( "kopeteemailwindow.rc" ) );
+	setXMLFile( QStringLiteral( "kopeteemailwindow.rc" ) );
 	createGUI( d->editPart );
 	//createGUI( QLatin1String( "kopeteemailwindow.rc" ) );
 	guiFactory()->addClient(m_manager);
@@ -310,10 +310,10 @@ void KopeteEmailWindow::slotSmileyActivated(const QString &sm )
 
 void KopeteEmailWindow::slotConfToolbar()
 {
-        KConfigGroup cg( KSharedConfig::openConfig(), QLatin1String( "KopeteEmailWindow" ) );
+        KConfigGroup cg( KSharedConfig::openConfig(), QStringLiteral( "KopeteEmailWindow" ) );
 	saveMainWindowSettings( cg );
 	QPointer <KEditToolBar> dlg = new KEditToolBar(actionCollection());
-	dlg->setResourceFile("kopeteemailwindow.rc");
+	dlg->setResourceFile(QStringLiteral("kopeteemailwindow.rc"));
 	if (dlg->exec())
 	{
 		createGUI( d->editPart );
@@ -461,21 +461,21 @@ bool KopeteEmailWindow::closeView( bool force )
 
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You are about to leave the groupchat session <b>%1</b>.<br />"
 				"You will not receive future messages from this conversation.</qt>", shortCaption), i18n("Closing Group Chat"),
-				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QLatin1String("AskCloseGroupChat"));
+				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QStringLiteral("AskCloseGroupChat"));
 		}
 
 		if( !d->unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You have received a message from <b>%1</b> in the last "
 				"second. Are you sure you want to close this chat?</qt>", d->unreadMessageFrom), i18n("Unread Message"),
-				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QLatin1String("AskCloseChatRecentMessage"));
+				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QStringLiteral("AskCloseChatRecentMessage"));
 		}
 
 		if( d->sendInProgress  && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("You have a message send in progress, which will be "
 				"aborted if this chat is closed. Are you sure you want to close this chat?"), i18n("Message in Transit"),
-				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QLatin1String("AskCloseChatMessageInProgress") );
+				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QStringLiteral("AskCloseChatMessageInProgress") );
 		}
 	}
 

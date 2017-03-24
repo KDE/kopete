@@ -27,6 +27,7 @@
 #include <qstring.h>
 #include <QList>
 #include <QByteArray>
+#include <KLocalizedString>
 #include "kopete_export.h"
 #include "rtf2html.h"
 #include "transfer.h"
@@ -404,7 +405,7 @@ public:
 	 */
 	FileTransferHandler* createFileTransfer( const QString& contact, const QStringList& files );
 
-	void inviteToChatRoom( const QString& contact, Oscar::WORD exchange, const QString& room, QString msg="Join me in this Chat." );
+    void inviteToChatRoom( const QString& contact, Oscar::WORD exchange, const QString& room, QString msg= i18n("Join me in this Chat.") );
 
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS

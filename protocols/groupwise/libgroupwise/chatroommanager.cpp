@@ -124,7 +124,7 @@ void ChatroomManager::slotGotChatProperties()
 		room.description = cpt->m_description;
 		room.disclaimer = cpt->m_disclaimer;
 		room.query = cpt->m_query;
-		room.archive = ( cpt->m_archive == "0" );
+		room.archive = ( cpt->m_archive == QLatin1String("0") );
 		room.maxUsers = cpt->m_maxUsers.toInt();
 		room.topic = cpt->m_topic;
 		room.creatorDN = cpt->m_creatorDn;

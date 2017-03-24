@@ -87,155 +87,155 @@ const QString Oscar::capName( int capNumber )
 	switch ( capNumber )
 	{
 	case CAP_VOICE:
-		capString = "CAP_VOICE ";
+		capString = QStringLiteral("CAP_VOICE ");
 		break;
 	case CAP_BUDDYICON:
-		capString = "CAP_BUDDYICON ";
+		capString = QStringLiteral("CAP_BUDDYICON ");
 		break;
 	case CAP_IMIMAGE:
-		capString = "CAP_IMIMAGE ";
+		capString = QStringLiteral("CAP_IMIMAGE ");
 		break;
 	case CAP_CHAT:
-		capString = "CAP_CHAT ";
+		capString = QStringLiteral("CAP_CHAT ");
 		break;
 	case CAP_GETFILE:
-		capString = "CAP_GETFILE ";
+		capString = QStringLiteral("CAP_GETFILE ");
 		break;
 	case CAP_SENDFILE:
-		capString = "CAP_SENDFILE ";
+		capString = QStringLiteral("CAP_SENDFILE ");
 		break;
 	case CAP_GAMES2:
 	case CAP_GAMES:
-		capString = "CAP_GAMES ";
+		capString = QStringLiteral("CAP_GAMES ");
 		break;
 	case CAP_SAVESTOCKS:
-		capString = "CAP_SAVESTOCKS ";
+		capString = QStringLiteral("CAP_SAVESTOCKS ");
 		break;
 	case CAP_SENDBUDDYLIST:
-		capString = "CAP_SENDBUDDYLIST ";
+		capString = QStringLiteral("CAP_SENDBUDDYLIST ");
 		break;
 	case CAP_DIRECT_ICQ_COMMUNICATION:
-		capString = "CAP_DIRECT_ICQ_COMMUNICATION ";
+		capString = QStringLiteral("CAP_DIRECT_ICQ_COMMUNICATION ");
 		break;
 	case CAP_APINFO:
-		capString = "CAP_APINFO ";
+		capString = QStringLiteral("CAP_APINFO ");
 		break;
 	case CAP_RTFMSGS:
-		capString = "CAP_RTFMSGS ";
+		capString = QStringLiteral("CAP_RTFMSGS ");
 		break;
 	case CAP_ICQSERVERRELAY:
-		capString = "CAP_ICQSERVERRELAY ";
+		capString = QStringLiteral("CAP_ICQSERVERRELAY ");
 		break;
 	case CAP_IS_2001:
-		capString = "CAP_IS_2001 ";
+		capString = QStringLiteral("CAP_IS_2001 ");
 		break;
 	case CAP_TRILLIAN:
-		capString = "CAP_TRILLIAN ";
+		capString = QStringLiteral("CAP_TRILLIAN ");
 		break;
 	case CAP_TRILLIANCRYPT:
-		capString = "CAP_TRILLIANCRYPT ";
+		capString = QStringLiteral("CAP_TRILLIANCRYPT ");
 		break;
 	case CAP_UTF8:
-		capString = "CAP_UTF8 ";
+		capString = QStringLiteral("CAP_UTF8 ");
 		break;
 	case CAP_TYPING:
-		capString = "CAP_TYPING ";
+		capString = QStringLiteral("CAP_TYPING ");
 		break;
 	case CAP_INTEROPERATE:
-		capString = "CAP_INTEROPERATE ";
+		capString = QStringLiteral("CAP_INTEROPERATE ");
 		break;
 	case CAP_KOPETE:
-		capString = "CAP_KOPETE ";
+		capString = QStringLiteral("CAP_KOPETE ");
 		break;
 	case CAP_MIRANDA:
-		capString = "CAP_MIRANDA";
+		capString = QStringLiteral("CAP_MIRANDA");
 		break;
 	case CAP_QIP:
-		capString = "CAP_QIP";
+		capString = QStringLiteral("CAP_QIP");
 		break;
 	case CAP_QIPINFIUM:
-		capString = "CAP_QIPINFIUM";
+		capString = QStringLiteral("CAP_QIPINFIUM");
 		break;
 	case CAP_QIPPDA:
-		capString = "CAP_QIPPDA";
+		capString = QStringLiteral("CAP_QIPPDA");
 		break;
 	case CAP_QIPSYMBIAN:
-		capString = "CAP_QIPSYMBIAN";
+		capString = QStringLiteral("CAP_QIPSYMBIAN");
 		break;
 	case CAP_QIPMOBILE:
-		capString = "CAP_QIPMOBILE";
+		capString = QStringLiteral("CAP_QIPMOBILE");
 		break;
 	case CAP_JIMM:
-		capString = "CAP_JIMM";
+		capString = QStringLiteral("CAP_JIMM");
 		break;
 	case CAP_VMICQ:
-		capString = "CAP_VMICQ";
+		capString = QStringLiteral("CAP_VMICQ");
 		break;
 	case CAP_LICQ:
-		capString = "CAP_LICQ";
+		capString = QStringLiteral("CAP_LICQ");
 		break;
 	case CAP_ANDRQ:
-		capString = "CAP_ANDRQ";
+		capString = QStringLiteral("CAP_ANDRQ");
 		break;
 	case CAP_RANDQ:
-		capString = "CAP_RANDQ";
+		capString = QStringLiteral("CAP_RANDQ");
 		break;
 	case CAP_ICQ_RAMBLER:
-		capString = "CAP_ICQ_RAMBLER";
+		capString = QStringLiteral("CAP_ICQ_RAMBLER");
 		break;
 	case CAP_ICQ_ABV:
-		capString = "CAP_ICQ_ABV";
+		capString = QStringLiteral("CAP_ICQ_ABV");
 		break;
 	case CAP_ICQ_NETVIGATOR:
-		capString = "CAP_ICQ_NETVIGATOR";
+		capString = QStringLiteral("CAP_ICQ_NETVIGATOR");
 		break;
 	case CAP_TZERS:
-		capString = "CAP_TZERS";
+		capString = QStringLiteral("CAP_TZERS");
 		break;
 	case CAP_HTMLMSGS:
-		capString = "CAP_HTMLMSGS";
+		capString = QStringLiteral("CAP_HTMLMSGS");
 		break;
 	case CAP_MICQ:
-		capString = "CAP_MICQ ";
+		capString = QStringLiteral("CAP_MICQ ");
 		break;
 	case CAP_MACICQ:
-		capString = "CAP_MACICQ ";
+		capString = QStringLiteral("CAP_MACICQ ");
 		break;
 	case CAP_SIMOLD:
-		capString = "CAP_SIMOLD ";
+		capString = QStringLiteral("CAP_SIMOLD ");
 		break;
 	case CAP_SIMNEW:
-		capString = "CAP_SIMNEW ";
+		capString = QStringLiteral("CAP_SIMNEW ");
 		break;
 	case CAP_XTRAZ:
-		capString = "CAP_XTRAZ ";
+		capString = QStringLiteral("CAP_XTRAZ ");
 		break;
 	case CAP_STR_2001:
-		capString = "CAP_STR_2001 ";
+		capString = QStringLiteral("CAP_STR_2001 ");
 		break;
 	case CAP_STR_2002:
-		capString = "CAP_STR_2002 ";
+		capString = QStringLiteral("CAP_STR_2002 ");
 		break;
 	case CAP_XTRAZ_MULTIUSER_CHAT:
-		capString = "CAP_XTRAZ_MULTIUSER_CHAT ";
+		capString = QStringLiteral("CAP_XTRAZ_MULTIUSER_CHAT ");
 		break;
 	case CAP_DEVILS:
-		capString = "CAP_DEVILS ";
+		capString = QStringLiteral("CAP_DEVILS ");
 		break;
 	case CAP_NEWCAPS:
-		capString = "CAP_NEWCAPS ";
+		capString = QStringLiteral("CAP_NEWCAPS ");
 		break;
 	case CAP_UNKNOWN2:
-		capString = "CAP_UNKNOWN2 ";
+		capString = QStringLiteral("CAP_UNKNOWN2 ");
 		break;
 	case CAP_PUSH2TALK:
-		capString = "CAP_PUSH2TALK ";
+		capString = QStringLiteral("CAP_PUSH2TALK ");
 		break;
 	case CAP_VIDEO:
-		capString = "CAP_VIDEO ";
+		capString = QStringLiteral("CAP_VIDEO ");
 		break;
 	default:
-		capString = "UNKNOWN CAP ";
+		capString = QStringLiteral("UNKNOWN CAP ");
 	} // END switch
 
 	return capString;

@@ -528,7 +528,7 @@ public:
 	ServiceBrowser(QObject *parent = nullptr);
 	~ServiceBrowser();
 
-	void start(const QString &type, const QString &domain = "local");
+	void start(const QString &type, const QString &domain = QStringLiteral("local"));
 	void stop();
 
 signals:

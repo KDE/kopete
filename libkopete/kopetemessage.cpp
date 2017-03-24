@@ -305,7 +305,7 @@ QString Message::unescape( const QString &xml )
 		if ( elem == QLatin1String( "img" ) )
 		{
 			// Replace smileys with their original text'
-			const QString attrTitle  = QLatin1String( "title=\"" );
+			const QString attrTitle  = QStringLiteral( "title=\"" );
 			int titlePos    = match.indexOf( attrTitle, elemEndPos );
 			int titleEndPos = match.indexOf( '"',       titlePos + attrTitle.length() );
 			if( titlePos == -1 || titleEndPos == -1 )
@@ -358,7 +358,7 @@ QString Message::escape( const QString &text )
 
 	//Replace multiple spaces with &nbsp;
 	//do not replace every space so we break the linebreak
-	html.replace( QRegExp( QLatin1String( "\\s\\s" ) ), QLatin1String( "&nbsp; " ) );
+	html.replace( QRegExp( QLatin1String( "\\s\\s" ) ), QStringLiteral( "&nbsp; " ) );
 
 	return html;
 }
@@ -410,20 +410,20 @@ QString Message::parsedBody() const
 
 static QString makeRegExp( const char *pattern )
 {
-	const QString urlChar = QLatin1String( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
-	const QString boundaryStart = QString( "(^|[^%1])(" ).arg( urlChar );
-	const QString boundaryEnd = QString( ")([^%1]|$)" ).arg( urlChar );
+	const QString urlChar = QStringLiteral( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
+	const QString boundaryStart = QStringLiteral( "(^|[^%1])(" ).arg( urlChar );
+	const QString boundaryEnd = QStringLiteral( ")([^%1]|$)" ).arg( urlChar );
 
 	return boundaryStart + QLatin1String(pattern) + boundaryEnd;
 }
 
 const QStringList Message::regexpPatterns()
 {
-	const QString name = QLatin1String( "[\\w\\+\\-=_\\.]+" );
-	const QString userAndPassword = QString( "(?:%1(?::%1)?\\@)" ).arg( name );
-	const QString urlChar = QLatin1String( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
-	const QString urlSection = QString( "[%1]+" ).arg( urlChar );
-	const QString domain = QLatin1String( "[\\-\\w_]+(?:\\.[\\-\\w_]+)+" );
+	const QString name = QStringLiteral( "[\\w\\+\\-=_\\.]+" );
+	const QString userAndPassword = QStringLiteral( "(?:%1(?::%1)?\\@)" ).arg( name );
+	const QString urlChar = QStringLiteral( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
+	const QString urlSection = QStringLiteral( "[%1]+" ).arg( urlChar );
+	const QString domain = QStringLiteral( "[\\-\\w_]+(?:\\.[\\-\\w_]+)+" );
 	QStringList patternList;
 	patternList << makeRegExp("\\w+://%1?\\w%2").arg( userAndPassword, urlSection )
 	            << makeRegExp("%1?www\\.%2%3").arg( userAndPassword, domain, urlSection )
@@ -465,32 +465,32 @@ QString Message::parseLinks( const QString &message, Qt::TextFormat format )
 	QString result = message;
 
 	// common subpatterns - may not contain matching parens!
-	const QString name = QLatin1String( "[\\w\\+\\-=_\\.]+" );
-	const QString userAndPassword = QString( "(?:%1(?::%1)?\\@)" ).arg( name );
-	const QString urlChar = QLatin1String( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
-	const QString urlSection = QString( "[%1]+" ).arg( urlChar );
-	const QString domain = QLatin1String( "[\\-\\w_]+(?:\\.[\\-\\w_]+)+" );
+	const QString name = QStringLiteral( "[\\w\\+\\-=_\\.]+" );
+	const QString userAndPassword = QStringLiteral( "(?:%1(?::%1)?\\@)" ).arg( name );
+	const QString urlChar = QStringLiteral( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
+	const QString urlSection = QStringLiteral( "[%1]+" ).arg( urlChar );
+	const QString domain = QStringLiteral( "[\\-\\w_]+(?:\\.[\\-\\w_]+)+" );
 
 	//Replace http/https/ftp links:
 	// Replace (stuff)://[user:password@](linkstuff) with a link
 	result.replace(
 		QRegExp( makeRegExp("\\w+://%1?\\w%2").arg( userAndPassword, urlSection ) ),
-		QLatin1String("\\1<a href=\"\\2\" title=\"\\2\">\\2</a>\\3" ) );
+		QStringLiteral("\\1<a href=\"\\2\" title=\"\\2\">\\2</a>\\3" ) );
 
 	// Replace www.X.Y(linkstuff) with a http: link
 	result.replace(
 		QRegExp( makeRegExp("%1?www\\.%2%3").arg( userAndPassword, domain, urlSection ) ),
-		QLatin1String("\\1<a href=\"http://\\2\" title=\"http://\\2\">\\2</a>\\3" ) );
+		QStringLiteral("\\1<a href=\"http://\\2\" title=\"http://\\2\">\\2</a>\\3" ) );
 
 	//Replace Email Links
 	// Replace user@domain with a mailto: link
 	result.replace(
 		QRegExp( makeRegExp("%1@%2").arg( name, domain ) ),
-		QLatin1String("\\1<a href=\"mailto:\\2\" title=\"mailto:\\2\">\\2</a>\\3") );
+		QStringLiteral("\\1<a href=\"mailto:\\2\" title=\"mailto:\\2\">\\2</a>\\3") );
 
 	//Workaround for Bug 85061: Highlighted URLs adds a ' ' after the URL itself
 	// the trailing  &nbsp; is included in the url.
-	result.replace( QRegExp( QLatin1String("(<a href=\"[^\"]+)(&nbsp;)(\")")  ) , QLatin1String("\\1\\3") );
+	result.replace( QRegExp( QLatin1String("(<a href=\"[^\"]+)(&nbsp;)(\")")  ) , QStringLiteral("\\1\\3") );
 
 	return result;
 }
@@ -616,7 +616,7 @@ QString Message::getHtmlStyleAttribute() const
 {
 	QString styleAttribute;
 
-	styleAttribute = QString::fromUtf8("style=\"");
+	styleAttribute = QStringLiteral("style=\"");
 
 	if( !d->formattingOverride)
 	{
@@ -624,11 +624,11 @@ QString Message::getHtmlStyleAttribute() const
 		// we only do this if the formatting won't get stripped anyway
 		if( d->foregroundColor.isValid() )
 		{
-			styleAttribute += QString::fromUtf8("color: %1; ").arg(d->foregroundColor.name());
+			styleAttribute += QStringLiteral("color: %1; ").arg(d->foregroundColor.name());
 		}
 		if( d->backgroundColor.isValid() )
 		{
-			styleAttribute += QString::fromUtf8("background-color: %1; ").arg(d->backgroundColor.name());
+			styleAttribute += QStringLiteral("background-color: %1; ").arg(d->backgroundColor.name());
 		}
 
 		// Affect font parameters.
@@ -650,7 +650,7 @@ QString Message::getHtmlStyleAttribute() const
 		}
 	}
 
-	styleAttribute += QString::fromUtf8("\"");
+	styleAttribute += QLatin1String("\"");
 
 	return styleAttribute;
 }

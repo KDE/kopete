@@ -36,6 +36,6 @@ KeepAliveTask::~KeepAliveTask()
 void KeepAliveTask::setup()
 {
 	Field::FieldList lst;
-	createTransfer( "ping", lst );
+	createTransfer( QStringLiteral("ping"), lst );
 }
 

@@ -10,7 +10,7 @@ ClientStreamTest::ClientStreamTest(int argc, char ** argv) : QApplication( argc,
 	// set up client stream
 	myConnector = new KNetworkConnector( 0 );
 	//myConnector->setOptHostPort( "localhost", 8300 );
-	myConnector->setOptHostPort( "scs.msg.yahoo.com", 5050 );
+	myConnector->setOptHostPort( QStringLiteral("scs.msg.yahoo.com"), 5050 );
 	myTestObject = new ClientStream( myConnector, myConnector);
 	// notify when the transport layer is connected
 	connect( myTestObject, SIGNAL(connected()), SLOT(slotConnected()) );

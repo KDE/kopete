@@ -46,7 +46,7 @@ public:
 	{
 		m_popup = new QMenu(0L);
 		emoticonSelector = new EmoticonSelector( m_popup );
-		emoticonSelector->setObjectName( QLatin1String("KopeteEmoticonActionPrivate::emoticonSelector") );
+		emoticonSelector->setObjectName( QStringLiteral("KopeteEmoticonActionPrivate::emoticonSelector") );
 //FIXME do it the kde4 way
 //		m_popup->insertItem( static_cast<QObject*>(emoticonSelector) );
 		// TODO: Maybe connect to kopeteprefs and redo list only on config changes
@@ -78,7 +78,7 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
 	for( QHash<QString, QStringList>::const_iterator it = emoticonsMap.constBegin();
 		it != emoticonsMap.constEnd(); ++it )
 	{
-		if( ( *it ).contains( ":)" ) || ( *it ).contains( ":-)" ) )
+		if( ( *it ).contains( QStringLiteral(":)") ) || ( *it ).contains( QStringLiteral(":-)") ) )
 		{
 			icon = it.key();
 			break;
@@ -89,7 +89,7 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
 	setMenu( d->m_popup );
 
 	if ( icon.isNull() )
-		setIcon( QIcon::fromTheme("emoticon") );
+		setIcon( QIcon::fromTheme(QStringLiteral("emoticon")) );
 	else
 		setIcon( QIcon::fromTheme( icon ) );
 

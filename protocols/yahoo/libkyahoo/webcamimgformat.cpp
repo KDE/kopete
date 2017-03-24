@@ -98,19 +98,19 @@ WebcamImgFormat::WebcamImgFormat()
 	if (fmt_id >= 0)
 	{
 		// want to not loose time w/ intermediary conversions/compressions
-		formats = "PNM/PPM";
+		formats = QStringLiteral("PNM/PPM");
 		strncpy(forYahooFmtQt, "PPM", sizeof(forYahooFmtQt) / sizeof(forYahooFmtQt[0])); // QT format
 		fromYahooFmtID = fmt_id;
 	} else if ((fmt_id = jas_image_strtofmt(const_cast<char*>("png"))) >= 0)
 	{
 		// png, but we're going to use quality = 100 anyway, so that we don't loose time w/ compression alg.
-		formats = "PNG";
+		formats = QStringLiteral("PNG");
 		strncpy(forYahooFmtQt, "PNG", sizeof(forYahooFmtQt) / sizeof(forYahooFmtQt[0])); // QT format
 		fromYahooFmtID = fmt_id;
 	} else if ((fmt_id = jas_image_strtofmt(const_cast<char*>("jpg"))) >= 0)
 	{
 		// this one is also degrading the pic :-(
-		formats = "JPG";
+		formats = QStringLiteral("JPG");
 		strncpy(forYahooFmtQt, "JPG", sizeof(forYahooFmtQt) / sizeof(forYahooFmtQt[0])); // QT format
 		fromYahooFmtID = fmt_id;
 	} else
@@ -181,7 +181,7 @@ bool WebcamImgFormat::forYahoo(QByteArray& result, const QImage* src)
 	*/
 
 	bool r = jasperConvert(image, out, ba.constData(), ba.size(), jpcFmtID,
-				QString("cblkwidth=64 cblkheight=64 numrlvls=4 rate=%L1 prcheight=128 prcwidth=2048 mode=real").arg(0.0165).toAscii().constData());
+				QStringLiteral("cblkwidth=64 cblkheight=64 numrlvls=4 rate=%L1 prcheight=128 prcwidth=2048 mode=real").arg(0.0165).toAscii().constData());
 	if (!r)
 		return false;
 	unsigned size = ((jas_stream_memobj_t *)out->obj_)->bufsize_;

@@ -55,7 +55,7 @@ WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
 
 	mProtocol = WPProtocol::protocol();
 
-	QString tmpSmbcPath = KStandardDirs::findExe("smbclient");
+	QString tmpSmbcPath = KStandardDirs::findExe(QStringLiteral("smbclient"));
 
 	if(account()) {
 		mHostName->setText(account()->accountId());
@@ -81,7 +81,7 @@ WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
 		if (!theHostName.isEmpty())
 			mHostName->setText(theHostName);
 		else
-			mHostName->setText("LOCALHOST");
+			mHostName->setText(QStringLiteral("LOCALHOST"));
 
 		mHostCheckFreq->setValue(60);
 		mSmbcPath->setUrl(tmpSmbcPath);

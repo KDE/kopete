@@ -109,8 +109,8 @@ KopeteRichTextWidget::KopeteRichTextWidget(QWidget* parent, Kopete::Protocol::Ca
 
 KopeteRichTextWidget::~KopeteRichTextWidget()
 {
-    KConfigGroup configGroupMode( KSharedConfig::openConfig(), QLatin1String( "KopeteChatWindowGroupMode" ));
-    KConfigGroup configIndividual( KSharedConfig::openConfig(), QLatin1String( "KopeteChatWindowIndividualMode" ));
+    KConfigGroup configGroupMode( KSharedConfig::openConfig(), QStringLiteral( "KopeteChatWindowGroupMode" ));
+    KConfigGroup configIndividual( KSharedConfig::openConfig(), QStringLiteral( "KopeteChatWindowIndividualMode" ));
     configGroupMode.writeEntry( "AutoResize", d->autoResize->isChecked());
     configIndividual.writeEntry( "AutoResize", d->autoResize->isChecked());
     delete d;
@@ -162,19 +162,19 @@ void KopeteRichTextWidget::slotEnableAutoResize(bool enable)
 
 void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
 {
-    KConfigGroup config(KSharedConfig::openConfig(), QLatin1String("KopeteChatWindowIndividualMode"));
+    KConfigGroup config(KSharedConfig::openConfig(), QStringLiteral("KopeteChatWindowIndividualMode"));
 
     bool autoResizeEnabled = config.readEntry("AutoResize", true);
     d->autoResize = new KToggleAction( i18n("Input auto-resize"), actionCollection );
     connect( d->autoResize, SIGNAL(toggled(bool)), this, SLOT(slotEnableAutoResize(bool)) );
     d->autoResize->setChecked(autoResizeEnabled);
     slotEnableAutoResize(autoResizeEnabled);
-    actionCollection->addAction( "enable_autoresize", d->autoResize );
+    actionCollection->addAction( QStringLiteral("enable_autoresize"), d->autoResize );
 
     if (!d->checkSpelling)
     {
-        d->checkSpelling = new KToggleAction(QIcon::fromTheme("tools-check-spelling"), i18n("Automatic Spell Checking"), actionCollection);
-        actionCollection->addAction("enable_auto_spell_check", d->checkSpelling);
+        d->checkSpelling = new KToggleAction(QIcon::fromTheme(QStringLiteral("tools-check-spelling")), i18n("Automatic Spell Checking"), actionCollection);
+        actionCollection->addAction(QStringLiteral("enable_auto_spell_check"), d->checkSpelling);
         d->checkSpelling->setChecked(true);
         connect(d->checkSpelling, SIGNAL(toggled(bool)), this, SLOT(slotCheckSpellingChanged(bool)));
     }
@@ -182,8 +182,8 @@ void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
     bool richTextSupport = (getProtocolRichTextSupport() != KopeteRichTextWidget::DisableRichText);
     if (!d->toggleRichText && richTextSupport)
     {
-        d->toggleRichText = new KToggleAction(QIcon::fromTheme("draw-freehand"), i18n("Enable &Rich Text"), actionCollection);
-        actionCollection->addAction("enable_richtext", d->toggleRichText);
+        d->toggleRichText = new KToggleAction(QIcon::fromTheme(QStringLiteral("draw-freehand")), i18n("Enable &Rich Text"), actionCollection);
+        actionCollection->addAction(QStringLiteral("enable_richtext"), d->toggleRichText);
         d->toggleRichText->setChecked(isRichTextEnabled());
         connect(d->toggleRichText, SIGNAL(toggled(bool)), this, SLOT(setRichTextEnabled(bool)));
     }
@@ -195,8 +195,8 @@ void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
 
     if (!d->reset && isRichTextEnabled())
     {
-        d->reset = new QAction(QIcon::fromTheme("format-stroke-color"), i18n("Reset Font And Color"), actionCollection);
-        actionCollection->addAction("format_font_and_color_reset", d->reset);
+        d->reset = new QAction(QIcon::fromTheme(QStringLiteral("format-stroke-color")), i18n("Reset Font And Color"), actionCollection);
+        actionCollection->addAction(QStringLiteral("format_font_and_color_reset"), d->reset);
         connect(d->reset, SIGNAL(triggered(bool)), this, SLOT(slotResetFontAndColor()));
     }
     else if (d->reset && !isRichTextEnabled())

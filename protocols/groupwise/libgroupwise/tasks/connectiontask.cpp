@@ -37,7 +37,7 @@ bool ConnectionTask::take( Transfer * transfer )
 	if ( forMe( transfer ) )
 	{
 		EventTransfer * incomingEvent = static_cast<EventTransfer *>(transfer);
-		client()->debug( "Got a connection event:" );
+		client()->debug( QStringLiteral("Got a connection event:") );
 		switch ( incomingEvent->eventType() )
 		{
 			case GroupWise::UserDisconnect:

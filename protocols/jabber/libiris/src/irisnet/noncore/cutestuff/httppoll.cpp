@@ -54,7 +54,7 @@ static QString hpk(int n, const QString &s)
 	if(n == 0)
 		return s;
 	else
-		return QCA::Base64().arrayToString( QCA::Hash("sha1").hash( hpk(n - 1, s).toLatin1() ).toByteArray() );
+		return QCA::Base64().arrayToString( QCA::Hash(QStringLiteral("sha1")).hash( hpk(n - 1, s).toLatin1() ).toByteArray() );
 }
 
 class HttpPoll::Private
@@ -135,7 +135,7 @@ void HttpPoll::setAuth(const QString &user, const QString &pass)
 
 void HttpPoll::connectToUrl(const QUrl &url)
 {
-	connectToHost("", 0, url);
+	connectToHost(QLatin1String(""), 0, url);
 }
 
 void HttpPoll::connectToHost(const QString &proxyHost, int proxyPort, const QUrl &url)
@@ -155,7 +155,7 @@ void HttpPoll::connectToHost(const QString &proxyHost, int proxyPort, const QUrl
 		d->host = url.host();
 		if(url.port() != -1)
 			d->port = url.port();
-		else if (url.scheme() == "https") {
+		else if (url.scheme() == QLatin1String("https")) {
 			d->port = 443;
 			useSsl = true;
 		}
@@ -186,7 +186,7 @@ void HttpPoll::connectToHost(const QString &proxyHost, int proxyPort, const QUrl
 	d->state = 1;
 	d->http.setUseSsl(useSsl);
 	d->http.setAuth(d->user, d->pass);
-	d->http.post(d->host, d->port, d->url, makePacket("0", key, "", QByteArray()), d->use_proxy);
+	d->http.post(d->host, d->port, d->url, makePacket(QStringLiteral("0"), key, QLatin1String(""), QByteArray()), d->use_proxy);
 }
 
 QByteArray HttpPoll::makePacket(const QString &ident, const QString &key, const QString &newkey, const QByteArray &block)
@@ -247,8 +247,8 @@ void HttpPoll::http_result()
 
 	// get id and packet
 	QString id;
-	QString cookie = d->http.getHeader("Set-Cookie");
-	int n = cookie.indexOf("ID=");
+	QString cookie = d->http.getHeader(QStringLiteral("Set-Cookie"));
+	int n = cookie.indexOf(QLatin1String("ID="));
 	if(n == -1) {
 		resetConnection();
 		setError(ErrRead);
@@ -263,8 +263,8 @@ void HttpPoll::http_result()
 	QByteArray block = d->http.body();
 
 	// session error?
-	if(id.right(2) == ":0") {
-		if(id == "0:0" && d->state == 2) {
+	if(id.right(2) == QLatin1String(":0")) {
+		if(id == QLatin1String("0:0") && d->state == 2) {
 			resetConnection();
 			connectionClosed();
 			return;
@@ -421,7 +421,7 @@ static QString extractLine(QByteArray *buf, bool *found)
 
 	if(found)
 		*found = false;
-	return "";
+	return QLatin1String("");
 }
 
 static bool extractMainHeader(const QString &line, QString *proto, int *code, QString *msg)
@@ -436,7 +436,7 @@ static bool extractMainHeader(const QString &line, QString *proto, int *code, QS
 	if(n2 == -1)
 		return false;
 	if(code)
-		*code = line.mid(n, n2-n).toInt();
+		*code = line.midRef(n, n2-n).toInt();
 	n = n2+1;
 	if(msg)
 		*msg = line.mid(n);
@@ -555,14 +555,14 @@ QByteArray HttpProxyPost::body() const
 QString HttpProxyPost::getHeader(const QString &var) const
 {
 	foreach (const QString &s, d->headerLines) {
-		int n = s.indexOf(": ");
+		int n = s.indexOf(QLatin1String(": "));
 		if(n == -1)
 			continue;
 		QString v = s.mid(0, n);
 		if(v.toLower() == var.toLower())
 			return s.mid(n+2);
 	}
-	return "";
+	return QLatin1String("");
 }
 
 void HttpProxyPost::sock_connected()
@@ -845,14 +845,14 @@ void HttpProxyGetStream::stop()
 QString HttpProxyGetStream::getHeader(const QString &var) const
 {
 	foreach (const QString &s, d->headerLines) {
-		int n = s.indexOf(": ");
+		int n = s.indexOf(QLatin1String(": "));
 		if(n == -1)
 			continue;
 		QString v = s.mid(0, n);
 		if(v.toLower() == var.toLower())
 			return s.mid(n+2);
 	}
-	return "";
+	return QLatin1String("");
 }
 
 int HttpProxyGetStream::length() const
@@ -880,19 +880,19 @@ void HttpProxyGetStream::sock_connected()
 
 	// connected, now send the request
 	QString s;
-	s += QString("GET ") + d->url + " HTTP/1.0\r\n";
+	s += QStringLiteral("GET ") + d->url + " HTTP/1.0\r\n";
 	if(d->asProxy) {
 		if(!d->user.isEmpty()) {
 			QString str = d->user + ':' + d->pass;
-			s += QString("Proxy-Authorization: Basic ") + QCA::Base64().encodeString(str) + "\r\n";
+			s += QStringLiteral("Proxy-Authorization: Basic ") + QCA::Base64().encodeString(str) + "\r\n";
 		}
-		s += "Pragma: no-cache\r\n";
-		s += QString("Host: ") + u.host() + "\r\n";
+		s += QLatin1String("Pragma: no-cache\r\n");
+		s += QStringLiteral("Host: ") + u.host() + "\r\n";
 	}
 	else {
-		s += QString("Host: ") + d->host + "\r\n";
+		s += QStringLiteral("Host: ") + d->host + "\r\n";
 	}
-	s += "\r\n";
+	s += QLatin1String("\r\n");
 
 	// write request
 	if(d->use_ssl)
@@ -974,7 +974,7 @@ void HttpProxyGetStream::processData(const QByteArray &block)
 #endif
 
 				bool ok;
-				int x = getHeader("Content-Length").toInt(&ok);
+				int x = getHeader(QStringLiteral("Content-Length")).toInt(&ok);
 				if(ok)
 					d->length = x;
 

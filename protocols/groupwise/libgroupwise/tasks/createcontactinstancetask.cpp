@@ -71,7 +71,7 @@ void CreateContactInstanceTask::contact( Field::SingleField * id, const QString 
 		lst.append( new Field::SingleField( Field::NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, m_dn ) );
 	else
 		lst.append( new Field::SingleField( Field::NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, displayName ) );
-	createTransfer( "createcontact", lst );
+	createTransfer( QStringLiteral("createcontact"), lst );
 }
 
 void CreateContactInstanceTask::onGo()

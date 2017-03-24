@@ -110,7 +110,7 @@ void StatusManager::saveXML()
 		QTextStream stream( &buf, QIODevice::WriteOnly );
 		stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
 
-		QDomDocument doc( QString::fromLatin1( "kopete-statuses" ) );
+		QDomDocument doc( QLatin1String( "kopete-statuses" ) );
 		doc.appendChild( StatusManager::storeStatusItem( d->root ) );
 		doc.doctype().save( stream, 4 );
 		doc.documentElement().save( stream, 4 ); // QDomDocument::save() override stream codec to UTF-8
@@ -196,12 +196,12 @@ const Status::StatusItem *StatusManager::itemForUid( const QString &uid ) const
 QDomElement StatusManager::storeStatusItem( const Status::StatusItem *item )
 {
 	QDomDocument statusDoc;
-	QString rootName = ( item->isGroup() ) ? QLatin1String( "group" ) : QLatin1String( "status" );
+	QString rootName = ( item->isGroup() ) ? QStringLiteral( "group" ) : QStringLiteral( "status" );
 	statusDoc.appendChild( statusDoc.createElement( rootName ) );
-	statusDoc.documentElement().setAttribute( "uid", item->uid() );
-	statusDoc.documentElement().setAttribute( "category", item->category() );
+	statusDoc.documentElement().setAttribute( QStringLiteral("uid"), item->uid() );
+	statusDoc.documentElement().setAttribute( QStringLiteral("category"), item->category() );
 
-	QDomElement title = statusDoc.createElement( QLatin1String( "title" ) );
+	QDomElement title = statusDoc.createElement( QStringLiteral( "title" ) );
 	title.appendChild( statusDoc.createTextNode( item->title() ) );
 	statusDoc.documentElement().appendChild( title );
 
@@ -215,7 +215,7 @@ QDomElement StatusManager::storeStatusItem( const Status::StatusItem *item )
 	else
 	{
 		const Status::Status *status = qobject_cast<const Kopete::Status::Status*>( item );
-		QDomElement message = statusDoc.createElement( QLatin1String( "message" ) );
+		QDomElement message = statusDoc.createElement( QStringLiteral( "message" ) );
 		message.appendChild( statusDoc.createTextNode( status->message() ) );
 		statusDoc.documentElement().appendChild( message );
 	}
@@ -228,10 +228,10 @@ Status::StatusItem *StatusManager::parseStatusItem( QDomElement element )
 	if ( element.isNull() )
 		return 0;
 		
-	if ( element.tagName() == QString::fromUtf8( "group" ) )
+	if ( element.tagName() == QLatin1String( "group" ) )
 	{
-		Status::StatusGroup* group = new Status::StatusGroup( element.attribute( "uid" ) );
-		group->setCategory( (OnlineStatusManager::Category)element.attribute( "category", "0" ).toInt() );
+		Status::StatusGroup* group = new Status::StatusGroup( element.attribute( QStringLiteral("uid") ) );
+		group->setCategory( (OnlineStatusManager::Category)element.attribute( QStringLiteral("category"), QStringLiteral("0") ).toInt() );
 
 		QDomNode childNode = element.firstChild();
 		while ( !childNode.isNull() )
@@ -249,10 +249,10 @@ Status::StatusItem *StatusManager::parseStatusItem( QDomElement element )
 		}
 		return group;
 	}
-	else if ( element.tagName() == QString::fromUtf8( "status" ) )
+	else if ( element.tagName() == QLatin1String( "status" ) )
 	{
-		Status::Status* status = new Status::Status( element.attribute( "uid" ) );
-		status->setCategory( (OnlineStatusManager::Category)element.attribute( "category", "0" ).toInt() );
+		Status::Status* status = new Status::Status( element.attribute( QStringLiteral("uid") ) );
+		status->setCategory( (OnlineStatusManager::Category)element.attribute( QStringLiteral("category"), QStringLiteral("0") ).toInt() );
 		
 		QDomNode childNode = element.firstChild();
 		while ( !childNode.isNull() )

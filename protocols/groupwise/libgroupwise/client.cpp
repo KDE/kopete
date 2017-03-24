@@ -75,21 +75,21 @@ public:
 Client::Client(QObject *par, uint protocolVersion )
 :QObject(par)
 {
-        setObjectName("groupwiseclient");
+        setObjectName(QStringLiteral("groupwiseclient"));
 	d = new ClientPrivate;
 /*	d->tzoffset = 0;*/
 	d->active = false;
-	d->osname = "N/A";
-	d->clientName = "N/A";
-	d->clientVersion = "0.0";
+	d->osname = QStringLiteral("N/A");
+	d->clientName = QStringLiteral("N/A");
+	d->clientVersion = QStringLiteral("0.0");
 	d->id_seed = 0xaaaa;
 	d->root = new Task(this, true);
 	d->chatroomMgr = 0;
 	d->requestFactory = new RequestFactory;
 	d->userDetailsMgr = new UserDetailsManager( this );
-	d->userDetailsMgr->setObjectName( "userdetailsmgr" );
+	d->userDetailsMgr->setObjectName( QStringLiteral("userdetailsmgr") );
 	d->privacyMgr = new PrivacyManager( this );
-	d->privacyMgr->setObjectName( "privacymgr" );
+	d->privacyMgr->setObjectName( QStringLiteral("privacymgr") );
 	d->stream = 0;
 	d->protocolVersion = protocolVersion;
 	// Sends regular keepalives so the server knows we are still running
@@ -173,7 +173,7 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 
 void Client::close()
 {
-	debug( "Client::close()" );
+	debug( QStringLiteral("Client::close()") );
 	d->keepAliveTimer->stop();
 	if(d->stream) {
 		d->stream->disconnect(this);
@@ -225,7 +225,7 @@ void Client::initialiseEventTasks()
 
 void Client::setStatus( GroupWise::Status status, const QString & reason, const QString & autoReply )
 {
-	debug( QString("Setting status to %1").arg( status ) );;
+	debug( QStringLiteral("Setting status to %1").arg( status ) );;
 	SetStatusTask * sst = new SetStatusTask( d->root );
 	sst->status( status, reason, autoReply );
 	connect( sst, SIGNAL(finished()), this, SLOT(sst_statusChanged()) );
@@ -313,12 +313,12 @@ void Client::sendInvitation( const GroupWise::ConferenceGuid & guid, const QStri
 // SLOTS //
 void Client::streamError( int error )
 {
-	debug( QString( "CLIENT ERROR (Error %1)" ).arg( error ) );
+	debug( QStringLiteral( "CLIENT ERROR (Error %1)" ).arg( error ) );
 }
 
 void Client::streamReadyRead()
 {
-	debug( "CLIENT STREAM READY READ" );
+	debug( QStringLiteral("CLIENT STREAM READY READ") );
 	// take the incoming transfer and distribute it to the task tree
 	Transfer * transfer = d->stream->read();
 	distribute( transfer );
@@ -326,11 +326,11 @@ void Client::streamReadyRead()
 
 void Client::lt_loginFinished()
 {
-	debug( "Client::lt_loginFinished()" );
+	debug( QStringLiteral("Client::lt_loginFinished()") );
 	const LoginTask * lt = (LoginTask *)sender();
 	if ( lt->success() )
 	{
-		debug( "Client::lt_loginFinished() LOGIN SUCCEEDED" );
+		debug( QStringLiteral("Client::lt_loginFinished() LOGIN SUCCEEDED") );
 		// set our initial status
 		SetStatusTask * sst = new SetStatusTask( d->root );
 		sst->status( GroupWise::Available, QString(), QString() );
@@ -344,7 +344,7 @@ void Client::lt_loginFinished()
 	}
 	else
 	{
-		debug( "Client::lt_loginFinished() LOGIN FAILED" );
+		debug( QStringLiteral("Client::lt_loginFinished() LOGIN FAILED") );
 		emit loginFailed();
 	}
 	// otherwise client should disconnect and signal failure that way??
@@ -361,7 +361,7 @@ void Client::sst_statusChanged()
 
 void Client::ct_messageReceived( const ConferenceEvent & messageEvent )
 {
-	debug( "parsing received message's RTF" );
+	debug( QStringLiteral("parsing received message's RTF") );
 	ConferenceEvent transformedEvent = messageEvent;
 	RTF2HTML parser;
 	QString rtf = messageEvent.message;
@@ -372,10 +372,10 @@ void Client::ct_messageReceived( const ConferenceEvent & messageEvent )
 	// we can drop these once the server reenables the sending of unformatted text
 	// redundant linebreak at the end of the message
 	QRegExp rx(" </span> </span> </span><br>$");
-	transformedEvent.message.replace( rx, "</span></span></span>" );
+	transformedEvent.message.replace( rx, QStringLiteral("</span></span></span>") );
 	// missing linebreak after first line of an encrypted message
 	QRegExp ry("-----BEGIN PGP MESSAGE----- </span> </span> </span>");
-	transformedEvent.message.replace( ry, "-----BEGIN PGP MESSAGE-----</span></span></span><br/>" );
+	transformedEvent.message.replace( ry, QStringLiteral("-----BEGIN PGP MESSAGE-----</span></span></span><br/>") );
 
 	emit messageReceived( transformedEvent );
 }
@@ -397,14 +397,14 @@ void Client::jct_joinConfCompleted()
 {
 	const JoinConferenceTask * jct = ( JoinConferenceTask * )sender();
 #ifdef LIBGW_DEBUG
-	debug( QString( "Joined conference %1, participants are: " ).arg( jct->guid() ) );
+	debug( QStringLiteral( "Joined conference %1, participants are: " ).arg( jct->guid() ) );
 	QStringList parts = jct->participants();
 	for ( QStringList::Iterator it = parts.begin(); it != parts.end(); ++it )
-		debug( QString( " - %1" ).arg(*it) );
-	debug( "invitees are: " );
+		debug( QStringLiteral( " - %1" ).arg(*it) );
+	debug( QStringLiteral("invitees are: ") );
 	QStringList invitees = jct->invitees();
 	for ( QStringList::Iterator it = invitees.begin(); it != invitees.end(); ++it )
-		debug( QString( " - %1" ).arg(*it) );
+		debug( QStringLiteral( " - %1" ).arg(*it) );
 #endif
 	emit conferenceJoined( jct->guid(), jct->participants(), jct->invitees() );
 }
@@ -438,7 +438,7 @@ QString Client::password()
 
 QString Client::userAgent()
 {
-	return QString::fromLatin1( "%1/%2 (%3)" ).arg( d->clientName, d->clientVersion, d->osname );
+	return QStringLiteral( "%1/%2 (%3)" ).arg( d->clientName, d->clientVersion, d->osname );
 }
 
 QByteArray Client::ipAddress()
@@ -450,17 +450,17 @@ QByteArray Client::ipAddress()
 void Client::distribute( Transfer * transfer )
 {
 	if( !rootTask()->take( transfer ) )
-		debug( "CLIENT: root task refused transfer" );
+		debug( QStringLiteral("CLIENT: root task refused transfer") );
 	// at this point the transfer is no longer needed
 	delete transfer;
 }
 
 void Client::send( Request * request )
 {
-	debug( "CLIENT::send()" );
+	debug( QStringLiteral("CLIENT::send()") );
 	if( !d->stream )
 	{	
-		debug( "CLIENT - NO STREAM TO SEND ON!");
+		debug( QStringLiteral("CLIENT - NO STREAM TO SEND ON!"));
 		return;
 	}
 // 	QString out = request.toString();
@@ -517,7 +517,7 @@ ChatroomManager * Client::chatroomManager()
 	if ( !d->chatroomMgr )
 	{
 		d->chatroomMgr = new ChatroomManager( this );
-		d->chatroomMgr->setObjectName( "chatroommgr" );
+		d->chatroomMgr->setObjectName( QStringLiteral("chatroommgr") );
 	}
 	return d->chatroomMgr;
 }
@@ -539,11 +539,11 @@ void Client::smt_messageSent()
 	const SendMessageTask * smt = ( SendMessageTask * )sender();
 	if ( smt->success() )
 	{
-		debug( "message sent OK" );
+		debug( QStringLiteral("message sent OK") );
 	}
 	else
 	{
-		debug( "message sending failed!" );
+		debug( QStringLiteral("message sending failed!") );
 		emit messageSendingFailed();
 	}
 }

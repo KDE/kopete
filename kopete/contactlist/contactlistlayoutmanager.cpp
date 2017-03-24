@@ -43,7 +43,7 @@ namespace ContactList {
 
 LayoutManager * LayoutManager::s_instance = 0;
 
-const QString DefaultStyleName = "Default";
+const QString DefaultStyleName = QStringLiteral("Default");
 
 LayoutManager * LayoutManager::instance()
 {
@@ -56,11 +56,11 @@ LayoutManager * LayoutManager::instance()
 LayoutManager::LayoutManager()
 	: QObject()
 {
-	m_tokens << ContactListTokenConfig( -1, "Placeholder", i18n("Placeholder"), "transform-move" );
-	m_tokens << ContactListTokenConfig( Qt::DisplayRole, "DisplayName", i18n("Display Name"), "user-identity" );
-	m_tokens << ContactListTokenConfig( Kopete::Items::StatusTitleRole, "StatusTitle", i18n("Status Title"), "im-status-message-edit" );
-	m_tokens << ContactListTokenConfig( Kopete::Items::StatusMessageRole, "StatusMessage", i18n("Status Message"), "im-status-message-edit" );
-	m_tokens << ContactListTokenConfig( -1, "ContactIcons", i18n("Contact Icons"), "user-online" );
+	m_tokens << ContactListTokenConfig( -1, QStringLiteral("Placeholder"), i18n("Placeholder"), QStringLiteral("transform-move") );
+	m_tokens << ContactListTokenConfig( Qt::DisplayRole, QStringLiteral("DisplayName"), i18n("Display Name"), QStringLiteral("user-identity") );
+	m_tokens << ContactListTokenConfig( Kopete::Items::StatusTitleRole, QStringLiteral("StatusTitle"), i18n("Status Title"), QStringLiteral("im-status-message-edit") );
+	m_tokens << ContactListTokenConfig( Kopete::Items::StatusMessageRole, QStringLiteral("StatusMessage"), i18n("Status Message"), QStringLiteral("im-status-message-edit") );
+	m_tokens << ContactListTokenConfig( -1, QStringLiteral("ContactIcons"), i18n("Contact Icons"), QStringLiteral("user-online") );
 
 	loadDefaultLayouts();
 	loadUserLayouts();
@@ -92,26 +92,26 @@ void LayoutManager::setActiveLayout( const QString &layout )
 
 void LayoutManager::setPreviewLayout( const ContactListLayout &layout )
 {
-	m_activeLayout = "%%PREVIEW%%";
+	m_activeLayout = QStringLiteral("%%PREVIEW%%");
 	m_previewLayout = layout;
 	emit( activeLayoutChanged() );
 }
 
 ContactListLayout LayoutManager::activeLayout()
 {
-	if ( m_activeLayout == "%%PREVIEW%%" )
+	if ( m_activeLayout == QLatin1String("%%PREVIEW%%") )
 		return m_previewLayout;
 	return m_layouts.value( m_activeLayout );
 }
 
 void LayoutManager::loadUserLayouts()
 {
-	QDir layoutsDir = QDir( KStandardDirs::locateLocal( "appdata", QString::fromUtf8("contactlistlayouts") ) );
+	QDir layoutsDir = QDir( KStandardDirs::locateLocal( "appdata", QStringLiteral("contactlistlayouts") ) );
 
 	layoutsDir.setSorting( QDir::Name );
 
 	QStringList filters;
-	filters << "*.xml" << "*.XML";
+	filters << QStringLiteral("*.xml") << QStringLiteral("*.XML");
 	layoutsDir.setNameFilters(filters);
 	layoutsDir.setSorting( QDir::Name );
 
@@ -127,14 +127,14 @@ void LayoutManager::loadUserLayouts()
 
 void LayoutManager::loadDefaultLayouts()
 {
-	loadLayouts( KStandardDirs::locate( "data", "kopete/DefaultContactListLayouts.xml" ), false );
-	loadLayouts( KStandardDirs::locate( "data", "kopete/CompactContactListLayouts.xml" ), false );
+	loadLayouts( KStandardDirs::locate( "data", QStringLiteral("kopete/DefaultContactListLayouts.xml") ), false );
+	loadLayouts( KStandardDirs::locate( "data", QStringLiteral("kopete/CompactContactListLayouts.xml") ), false );
 }
 
 
 void LayoutManager::loadLayouts( const QString &fileName, bool user )
 {
-	QDomDocument doc( "layouts" );
+	QDomDocument doc( QStringLiteral("layouts") );
 	if ( !QFile::exists( fileName ) )
 	{
 		qDebug() << "file " << fileName << "does not exist";
@@ -154,8 +154,8 @@ void LayoutManager::loadLayouts( const QString &fileName, bool user )
 	}
 	file.close();
 
-	QDomElement layouts_element = doc.firstChildElement( "contactlist_layouts" );
-	QDomNodeList layouts = layouts_element.elementsByTagName("layout");
+	QDomElement layouts_element = doc.firstChildElement( QStringLiteral("contactlist_layouts") );
+	QDomNodeList layouts = layouts_element.elementsByTagName(QStringLiteral("layout"));
 
 	int index = 0;
 	while ( index < layouts.size() )
@@ -163,7 +163,7 @@ void LayoutManager::loadLayouts( const QString &fileName, bool user )
 		QDomNode layout = layouts.item( index );
 		index++;
 
-		QString layoutName = layout.toElement().attribute( "name", "" );
+		QString layoutName = layout.toElement().attribute( QStringLiteral("name"), QLatin1String("") );
 		ContactListLayout currentLayout;
 		currentLayout.setIsEditable( user );
 
@@ -176,12 +176,12 @@ void LayoutManager::loadLayouts( const QString &fileName, bool user )
 
 LayoutItemConfig LayoutManager::parseItemConfig( const QDomElement &elem )
 {
-	const bool showMetaContactIcon = ( elem.attribute( "show_metacontact_icon", "false" ).compare( "true", Qt::CaseInsensitive ) == 0 );
+	const bool showMetaContactIcon = ( elem.attribute( QStringLiteral("show_metacontact_icon"), QStringLiteral("false") ).compare( QLatin1String("true"), Qt::CaseInsensitive ) == 0 );
 
 	LayoutItemConfig config;
 	config.setShowIcon( showMetaContactIcon );
 
-	QDomNodeList rows = elem.elementsByTagName("row");
+	QDomNodeList rows = elem.elementsByTagName(QStringLiteral("row"));
 
 	int index = 0;
 	while ( index < rows.size() )
@@ -191,7 +191,7 @@ LayoutItemConfig LayoutManager::parseItemConfig( const QDomElement &elem )
 
 		LayoutItemConfigRow row;
 
-		QDomNodeList elements = rowNode.toElement().elementsByTagName("element");
+		QDomNodeList elements = rowNode.toElement().elementsByTagName(QStringLiteral("element"));
 
 		int index2 = 0;
 		while ( index2 < elements.size() )
@@ -200,7 +200,7 @@ LayoutItemConfig LayoutManager::parseItemConfig( const QDomElement &elem )
 			index2++;
 
 			int value = 0; // Placeholder as default
-			QString configName = elementNode.toElement().attribute( "value" );
+			QString configName = elementNode.toElement().attribute( QStringLiteral("value") );
 			if ( !configName.isEmpty() )
 			{
 				for ( int i = 0; i < m_tokens.size(); i++)
@@ -214,20 +214,20 @@ LayoutItemConfig LayoutManager::parseItemConfig( const QDomElement &elem )
 			}
 
 
-			QString prefix = elementNode.toElement().attribute( "prefix", QString() );
-			QString sufix = elementNode.toElement().attribute( "suffix", QString() );
-			qreal size = elementNode.toElement().attribute( "size", "0.0" ).toDouble();
-			bool bold = ( elementNode.toElement().attribute( "bold", "false" ).compare( "true", Qt::CaseInsensitive ) == 0 );
-			bool italic = ( elementNode.toElement().attribute( "italic", "false" ).compare( "true", Qt::CaseInsensitive ) == 0 );
-			bool small = ( elementNode.toElement().attribute( "small", "false" ).compare( "true", Qt::CaseInsensitive ) == 0 );
-			bool optimalSize = ( elementNode.toElement().attribute( "optimalSize", "false" ).compare( "true", Qt::CaseInsensitive ) == 0 );
-			QString alignmentString = elementNode.toElement().attribute( "alignment", "left" );
+			QString prefix = elementNode.toElement().attribute( QStringLiteral("prefix"), QString() );
+			QString sufix = elementNode.toElement().attribute( QStringLiteral("suffix"), QString() );
+			qreal size = elementNode.toElement().attribute( QStringLiteral("size"), QStringLiteral("0.0") ).toDouble();
+			bool bold = ( elementNode.toElement().attribute( QStringLiteral("bold"), QStringLiteral("false") ).compare( QLatin1String("true"), Qt::CaseInsensitive ) == 0 );
+			bool italic = ( elementNode.toElement().attribute( QStringLiteral("italic"), QStringLiteral("false") ).compare( QLatin1String("true"), Qt::CaseInsensitive ) == 0 );
+			bool small = ( elementNode.toElement().attribute( QStringLiteral("small"), QStringLiteral("false") ).compare( QLatin1String("true"), Qt::CaseInsensitive ) == 0 );
+			bool optimalSize = ( elementNode.toElement().attribute( QStringLiteral("optimalSize"), QStringLiteral("false") ).compare( QLatin1String("true"), Qt::CaseInsensitive ) == 0 );
+			QString alignmentString = elementNode.toElement().attribute( QStringLiteral("alignment"), QStringLiteral("left") );
 			Qt::Alignment alignment;
 
 
-			if ( alignmentString.compare( "left", Qt::CaseInsensitive ) == 0 )
+			if ( alignmentString.compare( QLatin1String("left"), Qt::CaseInsensitive ) == 0 )
 				alignment = Qt::AlignLeft | Qt::AlignVCenter;
-			else if ( alignmentString.compare( "right", Qt::CaseInsensitive ) == 0 )
+			else if ( alignmentString.compare( QLatin1String("right"), Qt::CaseInsensitive ) == 0 )
 				alignment = Qt::AlignRight| Qt::AlignVCenter;
 			else
 				alignment = Qt::AlignCenter| Qt::AlignVCenter;
@@ -250,15 +250,15 @@ bool LayoutManager::addUserLayout( const QString &name, ContactListLayout layout
 {
 	layout.setIsEditable( true );
 
-	QDomDocument doc( "layouts" );
-	QDomElement layouts_element = doc.createElement( "contactlist_layouts" );
-	QDomElement newLayout = createItemElement( doc, "layout", layout.layout() );
-	newLayout.setAttribute( "name", name );
+	QDomDocument doc( QStringLiteral("layouts") );
+	QDomElement layouts_element = doc.createElement( QStringLiteral("contactlist_layouts") );
+	QDomElement newLayout = createItemElement( doc, QStringLiteral("layout"), layout.layout() );
+	newLayout.setAttribute( QStringLiteral("name"), name );
 
 	doc.appendChild( layouts_element );
 	layouts_element.appendChild( newLayout );
 
-	QString dirName = KStandardDirs::locateLocal( "appdata", QString::fromUtf8("contactlistlayouts") );
+	QString dirName = KStandardDirs::locateLocal( "appdata", QStringLiteral("contactlistlayouts") );
 	QDir layoutsDir = QDir( dirName );
 
 	//make sure that this dir exists
@@ -292,35 +292,35 @@ QDomElement LayoutManager::createItemElement( QDomDocument doc, const QString &n
 	QDomElement element = doc.createElement( name );
 
 	QString showIcon = item.showIcon() ? "true" : "false";
-	element.setAttribute ( "show_metacontact_icon", showIcon );
+	element.setAttribute ( QStringLiteral("show_metacontact_icon"), showIcon );
 
 	for( int i = 0; i < item.rows(); i++ )
 	{
 		LayoutItemConfigRow row = item.row( i );
 
-		QDomElement rowElement = doc.createElement( "row" );
+		QDomElement rowElement = doc.createElement( QStringLiteral("row") );
 		element.appendChild( rowElement );
 
 		for( int j = 0; j < row.count(); j++ ) {
 			LayoutItemConfigRowElement element = row.element( j );
-			QDomElement elementElement = doc.createElement( "element" );
+			QDomElement elementElement = doc.createElement( QStringLiteral("element") );
 
-			elementElement.setAttribute ( "value", m_tokens.at(element.value()).mConfigName );
-			elementElement.setAttribute ( "size", QString::number( element.size() ) );
-			elementElement.setAttribute ( "bold", element.bold() ? "true" : "false" );
-			elementElement.setAttribute ( "italic", element.italic() ? "true" : "false" );
-			elementElement.setAttribute ( "small", element.small() ? "true" : "false" );
-			elementElement.setAttribute ( "optimalSize", element.optimalSize() ? "true" : "false" );
+			elementElement.setAttribute ( QStringLiteral("value"), m_tokens.at(element.value()).mConfigName );
+			elementElement.setAttribute ( QStringLiteral("size"), QString::number( element.size() ) );
+			elementElement.setAttribute ( QStringLiteral("bold"), element.bold() ? "true" : "false" );
+			elementElement.setAttribute ( QStringLiteral("italic"), element.italic() ? "true" : "false" );
+			elementElement.setAttribute ( QStringLiteral("small"), element.small() ? "true" : "false" );
+			elementElement.setAttribute ( QStringLiteral("optimalSize"), element.optimalSize() ? "true" : "false" );
 
 			QString alignmentString;
 			if ( element.alignment() & Qt::AlignLeft )
-				alignmentString = "left";
+				alignmentString = QStringLiteral("left");
 			else  if ( element.alignment() & Qt::AlignRight )
-				alignmentString = "right";
+				alignmentString = QStringLiteral("right");
 			else
-				alignmentString = "center";
+				alignmentString = QStringLiteral("center");
 
-			elementElement.setAttribute ( "alignment", alignmentString );
+			elementElement.setAttribute ( QStringLiteral("alignment"), alignmentString );
 
 			rowElement.appendChild( elementElement );
 		}
@@ -347,7 +347,7 @@ bool LayoutManager::deleteLayout( const QString & layout )
 	//check if layout is editable
 	if ( m_layouts.value( layout ).isEditable() )
 	{
-		QDir layoutsDir = QDir( KStandardDirs::locateLocal( "appdata", QString::fromUtf8("contactlistlayouts") ) );
+		QDir layoutsDir = QDir( KStandardDirs::locateLocal( "appdata", QStringLiteral("contactlistlayouts") ) );
 		QString xmlFile = layoutsDir.path() + '/' + layout + ".xml";
 		qDebug() << "deleting file: " << xmlFile;
 

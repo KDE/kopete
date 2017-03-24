@@ -38,5 +38,5 @@ void SendInviteTask::invite( const GroupWise::ConferenceGuid & guid, const QStri
 		lst.append( new Field::SingleField( Field::NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, *it ) );
 	if ( !msg.message.isEmpty() )
 		lst.append( new Field::SingleField( Field::NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, msg.message ) );
-	createTransfer( "sendinvite", lst );
+	createTransfer( QStringLiteral("sendinvite"), lst );
 }

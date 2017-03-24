@@ -61,7 +61,7 @@ static QString extractLine(QByteArray *buf, bool *found)
 		// Newline not found
 		if (found)
 			*found = false;
-		return "";
+		return QLatin1String("");
 	}
 	else {
 		// Found newline
@@ -86,7 +86,7 @@ static bool extractMainHeader(const QString &line, QString *proto, int *code, QS
 	if(n2 == -1)
 		return false;
 	if(code)
-		*code = line.mid(n, n2-n).toInt();
+		*code = line.midRef(n, n2-n).toInt();
 	n = n2+1;
 	if(msg)
 		*msg = line.mid(n);
@@ -206,13 +206,13 @@ void HttpConnect::sock_connected()
 
 	// connected, now send the request
 	QString s;
-	s += QString("CONNECT ") + d->real_host + ':' + QString::number(d->real_port) + " HTTP/1.0\r\n";
+	s += QStringLiteral("CONNECT ") + d->real_host + ':' + QString::number(d->real_port) + " HTTP/1.0\r\n";
 	if(!d->user.isEmpty()) {
 		QString str = d->user + ':' + d->pass;
-		s += QString("Proxy-Authorization: Basic ") + QCA::Base64().encodeString(str) + "\r\n";
+		s += QStringLiteral("Proxy-Authorization: Basic ") + QCA::Base64().encodeString(str) + "\r\n";
 	}
-	s += "Pragma: no-cache\r\n";
-	s += "\r\n";
+	s += QLatin1String("Pragma: no-cache\r\n");
+	s += QLatin1String("\r\n");
 
 	QByteArray block = s.toUtf8();
 #ifdef PROX_DEBUG

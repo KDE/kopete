@@ -98,12 +98,12 @@ void YahooChatSelectorDialog::slotSetChatCategories( const QDomDocument &doc )
 void YahooChatSelectorDialog::parseChatCategory( const QDomNode &node, QTreeWidgetItem *parentItem )
 {
 	QTreeWidgetItem *newParent = parentItem;
-	if( node.nodeName().startsWith( "category" ) )
+	if( node.nodeName().startsWith( QLatin1String("category") ) )
 	{
 		QTreeWidgetItem *item = new QTreeWidgetItem( parentItem );
 	
-		item->setText( 0, node.toElement().attribute( "name" ) );
-		item->setData( 0, Qt::UserRole, node.toElement().attribute( "id" ) );
+		item->setText( 0, node.toElement().attribute( QStringLiteral("name") ) );
+		item->setData( 0, Qt::UserRole, node.toElement().attribute( QStringLiteral("id") ) );
 		parentItem->addChild( item );
 		newParent = item;
 	}
@@ -132,28 +132,28 @@ void YahooChatSelectorDialog::slotSetChatRooms( const Yahoo::ChatCategory &categ
 
 void YahooChatSelectorDialog::parseChatRoom( const QDomNode &node )
 {
-	if( node.nodeName().startsWith( "room" ) )
+	if( node.nodeName().startsWith( QLatin1String("room") ) )
 	{
 		QTreeWidgetItem *item = new QTreeWidgetItem( mUi->treeRooms );
 		QDomElement elem = node.toElement();
-		QString name = elem.attribute( "name" );
-		QString id = elem.attribute( "id" );
+		QString name = elem.attribute( QStringLiteral("name") );
+		QString id = elem.attribute( QStringLiteral("id") );
 		item->setText( 0, name );
-		item->setData( 0, Qt::ToolTipRole, elem.attribute( "topic" ) );
+		item->setData( 0, Qt::ToolTipRole, elem.attribute( QStringLiteral("topic") ) );
 		item->setData( 0, Qt::UserRole, id );
 		
 		QDomNode child;
 		for( child = node.firstChild(); !child.isNull(); child = child.nextSibling() )
 		{
-			if( child.nodeName().startsWith( "lobby" ) )
+			if( child.nodeName().startsWith( QLatin1String("lobby") ) )
 			{
 				QTreeWidgetItem *lobby = new QTreeWidgetItem( item );
 				QDomElement e = child.toElement();
-				QString voices = e.attribute( "voices" );
-				QString users = e.attribute( "users" );
-				QString webcams = e.attribute( "webcams" );
-				QString count = e.attribute( "count" );
-				lobby->setText( 0, name + QString( ":%1" )
+				QString voices = e.attribute( QStringLiteral("voices") );
+				QString users = e.attribute( QStringLiteral("users") );
+				QString webcams = e.attribute( QStringLiteral("webcams") );
+				QString count = e.attribute( QStringLiteral("count") );
+				lobby->setText( 0, name + QStringLiteral( ":%1" )
 						.arg( count ) );
 				lobby->setData( 0, Qt::ToolTipRole, i18n( "Users: %1 Webcams: %2 Voices: %3", users, webcams, voices ) );
 				lobby->setData( 0, Qt::UserRole, id );

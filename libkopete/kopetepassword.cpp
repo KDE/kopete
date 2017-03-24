@@ -275,8 +275,8 @@ public:
 			        i18n( "<qt>Kopete is unable to save your password securely in your wallet;<br />"
 			              "do you want to save the password in the <b>unsafe</b> configuration file instead?</qt>" ),
 			        i18n( "Unable to Store Secure Password" ),
-			        KGuiItem( i18n( "Store &Unsafe" ), QString::fromLatin1( "unlock" ) ), KStandardGuiItem::cancel(),
-			        QString::fromLatin1( "KWalletFallbackToKConfig" ) ) != KMessageBox::Continue )
+			        KGuiItem( i18n( "Store &Unsafe" ), QLatin1String( "unlock" ) ), KStandardGuiItem::cancel(),
+			        QStringLiteral( "KWalletFallbackToKConfig" ) ) != KMessageBox::Continue )
 			{
 				return false;
 			}

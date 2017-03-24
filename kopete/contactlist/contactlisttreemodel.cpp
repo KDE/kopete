@@ -48,7 +48,7 @@ ContactListTreeModel::ContactListTreeModel( QObject* parent )
 
 ContactListTreeModel::~ContactListTreeModel()
 {
-	saveModelSettings( "Tree" );
+	saveModelSettings( QStringLiteral("Tree") );
 }
 
 void ContactListTreeModel::addMetaContact( Kopete::MetaContact* contact )
@@ -390,7 +390,7 @@ bool ContactListTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction ac
 		return true;
 
 	// for now only accepting drop of metacontacts
-	if (!data->hasFormat("application/kopete.metacontacts.list") && !data->hasFormat("application/kopete.group") &&
+	if (!data->hasFormat(QStringLiteral("application/kopete.metacontacts.list")) && !data->hasFormat(QStringLiteral("application/kopete.group")) &&
 	    !data->hasUrls())
 		return false;
 
@@ -402,14 +402,14 @@ bool ContactListTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction ac
 	{
 		return dropUrl( data, row, parent, action );
 	}
-	else if ( data->hasFormat("application/kopete.group") )
+	else if ( data->hasFormat(QStringLiteral("application/kopete.group")) )
 	{
 		// we don't support dropping groups into another group or copying groups
 		if ( itemFor( parent ) != m_topLevelGroup || action != Qt::MoveAction )
 			return false;
 
 		// decode the mime data
-		QByteArray encodedData = data->data("application/kopete.group");
+		QByteArray encodedData = data->data(QStringLiteral("application/kopete.group"));
 		QDataStream stream(&encodedData, QIODevice::ReadOnly);
 		QList<Kopete::Group*> groups;
 
@@ -454,14 +454,14 @@ bool ContactListTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction ac
 			endInsertRows();
 		}
 	}
-	else if ( data->hasFormat("application/kopete.metacontacts.list") )
+	else if ( data->hasFormat(QStringLiteral("application/kopete.metacontacts.list")) )
 	{
 		// we don't support dropping things in an empty space
 		if ( !parent.isValid() )
 			return false;
 
 		// decode the mime data
-		QByteArray encodedData = data->data("application/kopete.metacontacts.list");
+		QByteArray encodedData = data->data(QStringLiteral("application/kopete.metacontacts.list"));
 		QDataStream stream(&encodedData, QIODevice::ReadOnly);
 		QList<GroupMetaContactPair> items;
 
@@ -470,7 +470,7 @@ bool ContactListTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction ac
 			QString line;
 			stream >> line;
 
-			QStringList entry = line.split("/");
+			QStringList entry = line.split(QStringLiteral("/"));
 
 			QString grp = entry[0];
 			QString id = entry[1];
@@ -618,10 +618,10 @@ void ContactListTreeModel::appearanceConfigChanged()
 
 	if ( m_manualGroupSorting != manualGroupSorting || m_manualMetaContactSorting != manualMetaContactSorting )
 	{
-		saveModelSettings( "Tree" );
+		saveModelSettings( QStringLiteral("Tree") );
 		m_manualGroupSorting = manualGroupSorting;
 		m_manualMetaContactSorting = manualMetaContactSorting;
-		loadModelSettings( "Tree" );
+		loadModelSettings( QStringLiteral("Tree") );
 	}
 }
 
@@ -639,7 +639,7 @@ void ContactListTreeModel::loadContactList()
 
 	if ( m_manualGroupSorting || m_manualMetaContactSorting )
 	{
-		loadModelSettings( "Tree" );
+		loadModelSettings( QStringLiteral("Tree") );
 		reset();
 	}
 }
@@ -651,11 +651,11 @@ void ContactListTreeModel::saveModelSettingsImpl( QDomDocument& doc, QDomElement
 
 	if ( m_manualGroupSorting )
 	{
-		QDomElement groupRootElement = rootElement.firstChildElement( "GroupPositions" );
+		QDomElement groupRootElement = rootElement.firstChildElement( QStringLiteral("GroupPositions") );
 		if ( !groupRootElement.isNull() )
 			rootElement.removeChild( groupRootElement );
 
-		groupRootElement = doc.createElement( "GroupPositions" );
+		groupRootElement = doc.createElement( QStringLiteral("GroupPositions") );
 		rootElement.appendChild( groupRootElement );
 
 		int index = 0;
@@ -665,9 +665,9 @@ void ContactListTreeModel::saveModelSettingsImpl( QDomDocument& doc, QDomElement
 			{
 				GroupModelItem* gmi = dynamic_cast<GroupModelItem*>( clmi );
 				if ( gmi->group() ) {
-					QDomElement groupElement = doc.createElement( "Group" );
-					groupElement.setAttribute( "uuid", gmi->group()->groupId() );
-					groupElement.setAttribute( "possition", index++ );
+					QDomElement groupElement = doc.createElement( QStringLiteral("Group") );
+					groupElement.setAttribute( QStringLiteral("uuid"), gmi->group()->groupId() );
+					groupElement.setAttribute( QStringLiteral("possition"), index++ );
 					groupRootElement.appendChild( groupElement );
 				}
 			}
@@ -676,20 +676,20 @@ void ContactListTreeModel::saveModelSettingsImpl( QDomDocument& doc, QDomElement
 
 	if ( m_manualMetaContactSorting )
 	{
-		QDomElement metaContactRootElement = rootElement.firstChildElement("MetaContactPositions");
+		QDomElement metaContactRootElement = rootElement.firstChildElement(QStringLiteral("MetaContactPositions"));
 		if ( !metaContactRootElement.isNull() )
 			rootElement.removeChild( metaContactRootElement );
 
-		metaContactRootElement = doc.createElement( "MetaContactPositions" );
+		metaContactRootElement = doc.createElement( QStringLiteral("MetaContactPositions") );
 		rootElement.appendChild( metaContactRootElement );
 
 		QHashIterator<Kopete::Group*, GroupModelItem*> it( m_groups );
 		while ( it.hasNext() )
 		{
 			GroupModelItem* gmi = it.next().value();
-			QDomElement groupElement = doc.createElement( "Group" );
+			QDomElement groupElement = doc.createElement( QStringLiteral("Group") );
 			if ( ! gmi->group() ) continue;
-			groupElement.setAttribute( "uuid", gmi->group()->groupId() );
+			groupElement.setAttribute( QStringLiteral("uuid"), gmi->group()->groupId() );
 			metaContactRootElement.appendChild( groupElement );
 
 			int index = 0;
@@ -699,9 +699,9 @@ void ContactListTreeModel::saveModelSettingsImpl( QDomDocument& doc, QDomElement
 				{
 					MetaContactModelItem* mcmi = dynamic_cast<MetaContactModelItem*>( clmi );
 					if ( mcmi->metaContact() ) {
-						QDomElement metaContactElement = doc.createElement( "MetaContact" );
-						metaContactElement.setAttribute( "uuid", mcmi->metaContact()->metaContactId().toString() );
-						metaContactElement.setAttribute( "possition", index++ );
+						QDomElement metaContactElement = doc.createElement( QStringLiteral("MetaContact") );
+						metaContactElement.setAttribute( QStringLiteral("uuid"), mcmi->metaContact()->metaContactId().toString() );
+						metaContactElement.setAttribute( QStringLiteral("possition"), index++ );
 						groupElement.appendChild( metaContactElement );
 					}
 				}
@@ -742,10 +742,10 @@ void ContactListTreeModel::loadModelSettingsImpl( QDomElement& rootElement )
 	_contactListModelItemPosition = new QHash<const ContactListModelItem*, int>();
 	if ( m_manualGroupSorting )
 	{
-		QDomElement groupRootElement = rootElement.firstChildElement( "GroupPositions" );
+		QDomElement groupRootElement = rootElement.firstChildElement( QStringLiteral("GroupPositions") );
 		if ( !groupRootElement.isNull() )
 		{
-			QDomNodeList groupList = groupRootElement.elementsByTagName("Group");
+			QDomNodeList groupList = groupRootElement.elementsByTagName(QStringLiteral("Group"));
 
 			for ( int index = 0; index < groupList.size(); ++index )
 			{
@@ -754,8 +754,8 @@ void ContactListTreeModel::loadModelSettingsImpl( QDomElement& rootElement )
 					continue;
 
 				// Put position into hash.
-				int uuid = groupElement.attribute( "uuid", "-1" ).toInt();
-				int groupPosition = groupElement.attribute( "possition", "-1" ).toInt();
+				int uuid = groupElement.attribute( QStringLiteral("uuid"), QStringLiteral("-1") ).toInt();
+				int groupPosition = groupElement.attribute( QStringLiteral("possition"), QStringLiteral("-1") ).toInt();
 				GroupModelItem* gmi = uuidToGroup.value( uuid, 0 );
 				if ( gmi )
 					_contactListModelItemPosition->insert( gmi, groupPosition );
@@ -765,10 +765,10 @@ void ContactListTreeModel::loadModelSettingsImpl( QDomElement& rootElement )
 
 	if ( m_manualMetaContactSorting )
 	{
-		QDomElement metaContactRootElement = rootElement.firstChildElement("MetaContactPositions");
+		QDomElement metaContactRootElement = rootElement.firstChildElement(QStringLiteral("MetaContactPositions"));
 		if ( !metaContactRootElement.isNull() )
 		{
-			QDomNodeList groupList = metaContactRootElement.elementsByTagName("Group");
+			QDomNodeList groupList = metaContactRootElement.elementsByTagName(QStringLiteral("Group"));
 
 			for ( int groupIndex = 0; groupIndex < groupList.size(); ++groupIndex )
 			{
@@ -776,7 +776,7 @@ void ContactListTreeModel::loadModelSettingsImpl( QDomElement& rootElement )
 				if ( groupElement.isNull() )
 					continue;
 
-				int gUuid = groupElement.attribute( "uuid", "-1" ).toInt();
+				int gUuid = groupElement.attribute( QStringLiteral("uuid"), QStringLiteral("-1") ).toInt();
 				GroupModelItem* gmi = uuidToGroup.value( gUuid, 0 );
 				if ( !gmi )
 					continue;
@@ -793,7 +793,7 @@ void ContactListTreeModel::loadModelSettingsImpl( QDomElement& rootElement )
 					}
 				}
 
-				QDomNodeList metaContactList = groupElement.elementsByTagName("MetaContact");
+				QDomNodeList metaContactList = groupElement.elementsByTagName(QStringLiteral("MetaContact"));
 				for ( int index = 0; index < metaContactList.size(); ++index )
 				{
 					QDomElement metaContactElement = metaContactList.item( index ).toElement();
@@ -801,8 +801,8 @@ void ContactListTreeModel::loadModelSettingsImpl( QDomElement& rootElement )
 						continue;
 
 					// Put position into hash.
-					QUuid uuid( metaContactElement.attribute( "uuid" ) );
-					int metaContactPosition = metaContactElement.attribute( "possition", "-1" ).toInt();
+					QUuid uuid( metaContactElement.attribute( QStringLiteral("uuid") ) );
+					int metaContactPosition = metaContactElement.attribute( QStringLiteral("possition"), QStringLiteral("-1") ).toInt();
 					MetaContactModelItem* mcmi = uuidToMetaContact.value( uuid, 0 );
 					if ( mcmi )
 						_contactListModelItemPosition->insert( mcmi, metaContactPosition );

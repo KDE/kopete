@@ -39,7 +39,7 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 	showButtonSeparator(true);
 
 	mMainWidget = new QWidget(this);
-	mMainWidget->setObjectName("TooltipEditDialog::mMainWidget");
+	mMainWidget->setObjectName(QStringLiteral("TooltipEditDialog::mMainWidget"));
 	setupUi(mMainWidget);
 
 	setMainWidget(mMainWidget);
@@ -95,12 +95,12 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 	connect(unusedItemsListView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slotAddButton()));
 	connect(usedItemsListView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slotRemoveButton()));
 
-	tbUp->setIcon(QIcon::fromTheme("go-up"));
+	tbUp->setIcon(QIcon::fromTheme(QStringLiteral("go-up")));
 	tbUp->setEnabled(false);
 	tbUp->setAutoRepeat(true);
 	connect(tbUp, SIGNAL(clicked()), SLOT(slotUpButton()));
 
-	tbDown->setIcon(QIcon::fromTheme("go-down"));
+	tbDown->setIcon(QIcon::fromTheme(QStringLiteral("go-down")));
 	tbDown->setEnabled(false);
 	tbDown->setAutoRepeat(true);
 	connect(tbDown, SIGNAL(clicked()), SLOT(slotDownButton()));

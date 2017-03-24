@@ -78,11 +78,11 @@ void HighlightConfig::load()
 {
 	m_filters.clear(); //clear filters
 
-	const QString filename = KStandardDirs::locateLocal( "appdata", QString::fromLatin1( "highlight.xml" ) );
+	const QString filename = KStandardDirs::locateLocal( "appdata", QStringLiteral( "highlight.xml" ) );
 	if( filename.isEmpty() )
 		return ;
 
-	QDomDocument filterList( QString::fromLatin1( "highlight-plugin" ) );
+	QDomDocument filterList( QLatin1String( "highlight-plugin" ) );
 
 	QFile filterListFile( filename );
 	filterListFile.open( QIODevice::ReadOnly );
@@ -106,35 +106,35 @@ void HighlightConfig::load()
 					QDomElement filterElement = filterNode.toElement();
 					if( !filterElement.isNull() )
 					{
-						if( filterElement.tagName() == QString::fromLatin1( "display-name" ) )
+						if( filterElement.tagName() == QLatin1String( "display-name" ) )
 						{
 							filtre->displayName = filterElement.text();
 						}
-						else if( filterElement.tagName() == QString::fromLatin1( "search" ) )
+						else if( filterElement.tagName() == QLatin1String( "search" ) )
 						{
 							filtre->search = filterElement.text();
 
-							filtre->caseSensitive= ( filterElement.attribute( QString::fromLatin1( "caseSensitive" ), QString::fromLatin1( "1" ) ) == QString::fromLatin1( "1" ) );
-							filtre->isRegExp= ( filterElement.attribute( QString::fromLatin1( "regExp" ), QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
+							filtre->caseSensitive= ( filterElement.attribute( QStringLiteral( "caseSensitive" ), QStringLiteral( "1" ) ) == QLatin1String( "1" ) );
+							filtre->isRegExp= ( filterElement.attribute( QStringLiteral( "regExp" ), QStringLiteral( "0" ) ) == QLatin1String( "1" ) );
 						}
-						else if( filterElement.tagName() == QString::fromLatin1( "FG" ) )
+						else if( filterElement.tagName() == QLatin1String( "FG" ) )
 						{
 							filtre->FG = filterElement.text();
-							filtre->setFG= ( filterElement.attribute( QString::fromLatin1( "set" ), QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
+							filtre->setFG= ( filterElement.attribute( QStringLiteral( "set" ), QStringLiteral( "0" ) ) == QLatin1String( "1" ) );
 						}
-						else if( filterElement.tagName() == QString::fromLatin1( "BG" ) )
+						else if( filterElement.tagName() == QLatin1String( "BG" ) )
 						{
 							filtre->BG = filterElement.text();
-							filtre->setBG= ( filterElement.attribute( QString::fromLatin1( "set" ), QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
+							filtre->setBG= ( filterElement.attribute( QStringLiteral( "set" ), QStringLiteral( "0" ) ) == QLatin1String( "1" ) );
 						}
-						else if( filterElement.tagName() == QString::fromLatin1( "importance" ) )
+						else if( filterElement.tagName() == QLatin1String( "importance" ) )
 						{
 							filtre->importance = filterElement.text().toUInt();
-							filtre->setImportance= ( filterElement.attribute( QString::fromLatin1( "set" ), QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
+							filtre->setImportance= ( filterElement.attribute( QStringLiteral( "set" ), QStringLiteral( "0" ) ) == QLatin1String( "1" ) );
 						}
-						else if( filterElement.tagName() == QString::fromLatin1( "raise" ) )
+						else if( filterElement.tagName() == QLatin1String( "raise" ) )
 						{
-							filtre->raiseView = ( filterElement.attribute( QString::fromLatin1( "set" ), QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
+							filtre->raiseView = ( filterElement.attribute( QStringLiteral( "set" ), QStringLiteral( "0" ) ) == QLatin1String( "1" ) );
 						}
 					}
 					filterNode = filterNode.nextSibling();
@@ -149,7 +149,7 @@ void HighlightConfig::load()
 void HighlightConfig::save()
 {
 
-	const QString fileName = KStandardDirs::locateLocal( "appdata", QString::fromLatin1( "highlight.xml" ) );
+	const QString fileName = KStandardDirs::locateLocal( "appdata", QStringLiteral( "highlight.xml" ) );
 
 	QSaveFile file( fileName );
 	if( file.open(QIODevice::WriteOnly) )
@@ -165,29 +165,29 @@ void HighlightConfig::save()
 			// Save metafilter information.
 		foreach(Filter *filtre , m_filters )
 		{
-			xml += QString::fromLatin1( "  <filter>\n    <display-name>" )
+			xml += QLatin1String( "  <filter>\n    <display-name>" )
 				+ Qt::escape(filtre->displayName)
-				+ QString::fromLatin1( "</display-name>\n" );
+				+ QLatin1String( "</display-name>\n" );
 
-			xml += QString::fromLatin1("    <search caseSensitive=\"") + QString::number( static_cast<int>( filtre->caseSensitive ) ) +
-				QString::fromLatin1("\" regExp=\"") + QString::number( static_cast<int>( filtre->isRegExp ) ) +
-				QString::fromLatin1( "\">" ) + Qt::escape( filtre->search ) + QString::fromLatin1( "</search>\n" );
+			xml += QLatin1String("    <search caseSensitive=\"") + QString::number( static_cast<int>( filtre->caseSensitive ) ) +
+				QLatin1String("\" regExp=\"") + QString::number( static_cast<int>( filtre->isRegExp ) ) +
+				QLatin1String( "\">" ) + Qt::escape( filtre->search ) + QLatin1String( "</search>\n" );
 
-			xml += QString::fromLatin1("    <BG set=\"") + QString::number( static_cast<int>( filtre->setBG ) ) +
-				QString::fromLatin1( "\">" ) + Qt::escape( filtre->BG.name() ) + QString::fromLatin1( "</BG>\n" );
-			xml += QString::fromLatin1("    <FG set=\"") + QString::number( static_cast<int>( filtre->setFG ) ) +
-				QString::fromLatin1( "\">" ) + Qt::escape( filtre->FG.name() ) + QString::fromLatin1( "</FG>\n" );
+			xml += QLatin1String("    <BG set=\"") + QString::number( static_cast<int>( filtre->setBG ) ) +
+				QLatin1String( "\">" ) + Qt::escape( filtre->BG.name() ) + QLatin1String( "</BG>\n" );
+			xml += QLatin1String("    <FG set=\"") + QString::number( static_cast<int>( filtre->setFG ) ) +
+				QLatin1String( "\">" ) + Qt::escape( filtre->FG.name() ) + QLatin1String( "</FG>\n" );
 
-			xml += QString::fromLatin1("    <importance set=\"") + QString::number( static_cast<int>( filtre->setImportance ) ) +
-				QString::fromLatin1( "\">" ) + QString::number( filtre->importance ) + QString::fromLatin1( "</importance>\n" );
+			xml += QLatin1String("    <importance set=\"") + QString::number( static_cast<int>( filtre->setImportance ) ) +
+				QLatin1String( "\">" ) + QString::number( filtre->importance ) + QLatin1String( "</importance>\n" );
 
-			xml += QString::fromLatin1("    <raise set=\"") + QString::number( static_cast<int>( filtre->raiseView ) ) +
-				QString::fromLatin1( "\"></raise>\n" );
+			xml += QLatin1String("    <raise set=\"") + QString::number( static_cast<int>( filtre->raiseView ) ) +
+				QLatin1String( "\"></raise>\n" );
 
-			xml += QString::fromLatin1( "  </filter>\n" );
+			xml += QLatin1String( "  </filter>\n" );
 		}
 
-		xml += QString::fromLatin1( "</highlight-plugin>\n" );
+		xml += QLatin1String( "</highlight-plugin>\n" );
 
 		stream << xml;
 	}

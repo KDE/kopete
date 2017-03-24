@@ -213,21 +213,21 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 
 	QDomDocument doc;
 
-	doc.appendChild( doc.createProcessingInstruction( "xml",
-				"version=\"1.0\" encoding=\"UTF-8\"" ) );
+	doc.appendChild( doc.createProcessingInstruction( QStringLiteral("xml"),
+				QStringLiteral("version=\"1.0\" encoding=\"UTF-8\"") ) );
 
-	QDomElement root = doc.createElement( "webpresence" );
+	QDomElement root = doc.createElement( QStringLiteral("webpresence") );
 	doc.appendChild( root );
 
 	// insert the current date/time
-	QDomElement date = doc.createElement( "listdate" );
+	QDomElement date = doc.createElement( QStringLiteral("listdate") );
 	QDomText t = doc.createTextNode(
 			KGlobal::locale()->formatDateTime( QDateTime::currentDateTime() ) );
 	date.appendChild( t );
 	root.appendChild( date );
 
 	// insert the user's name
-	QDomElement name = doc.createElement( "name" );
+	QDomElement name = doc.createElement( QStringLiteral("name") );
 	QDomText nameText;
 	const QString userName = WebPresenceConfig::self()->showThisName();
 	if ( !WebPresenceConfig::self()->showName() && !userName.isEmpty() )
@@ -238,7 +238,7 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 	root.appendChild( name );
 
 	// insert the list of the user's accounts
-	QDomElement accounts = doc.createElement( "accounts" );
+	QDomElement accounts = doc.createElement( QStringLiteral("accounts") );
 	root.appendChild( accounts );
 
 	QList<Kopete::Account*> list = Kopete::AccountManager::self()->accounts();
@@ -247,10 +247,10 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 	{
 		foreach(Kopete::Account *account, list)
 		{
-			QDomElement acc = doc.createElement( "account" );
+			QDomElement acc = doc.createElement( QStringLiteral("account") );
 			//output += h.openTag( "account" );
 
-			QDomElement protoName = doc.createElement( "protocol" );
+			QDomElement protoName = doc.createElement( QStringLiteral("protocol") );
 			QDomText protoNameText = doc.createTextNode(
 					account->protocol()->pluginId() );
 			protoName.appendChild( protoNameText );
@@ -258,14 +258,14 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 
 			Kopete::Contact* me = account->myself();
 			QString displayName = me->displayName();
-			QDomElement accName = doc.createElement( "accountname" );
+			QDomElement accName = doc.createElement( QStringLiteral("accountname") );
 			QDomText accNameText = doc.createTextNode( ( me )
 					? displayName
 					: notKnown );
 			accName.appendChild( accNameText );
 			acc.appendChild( accName );
 
-			QDomElement accStatus = doc.createElement( "accountstatus" );
+			QDomElement accStatus = doc.createElement( QStringLiteral("accountstatus") );
 			QDomText statusText = doc.createTextNode( ( me )
 					? statusAsString( me->onlineStatus() )
 					: notKnown ) ;
@@ -278,14 +278,14 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 				// Add away message as an attribute, if one exists.
 				if ( (me->onlineStatus().status() == Kopete::OnlineStatus::Away ||
 						me->onlineStatus().status() == Kopete::OnlineStatus::Busy) &&
-						!me->property("awayMessage").value().toString().isEmpty() ) {
-					accStatus.setAttribute( "awayreason",
-							me->property("awayMessage").value().toString() );
+						!me->property(QStringLiteral("awayMessage")).value().toString().isEmpty() ) {
+					accStatus.setAttribute( QStringLiteral("awayreason"),
+							me->property(QStringLiteral("awayMessage")).value().toString() );
 				}
 
 				// Add the online status description as an attribute, if one exits.
 				if ( !me->onlineStatus().description().isEmpty() ) {
-					accStatus.setAttribute( "statusdescription",
+					accStatus.setAttribute( QStringLiteral("statusdescription"),
 							me->onlineStatus().description() );
 				}
 			}
@@ -293,7 +293,7 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 
 			if ( WebPresenceConfig::self()->includeIMAddress() )
 			{
-				QDomElement accAddress = doc.createElement( "accountaddress" );
+				QDomElement accAddress = doc.createElement( QStringLiteral("accountaddress") );
 				QDomText addressText = doc.createTextNode( ( me )
 						? me->contactId()
 						: notKnown );
@@ -333,16 +333,16 @@ bool WebPresencePlugin::transform( KTemporaryFile * src, KTemporaryFile * dest )
 		return false;
 	case WEB_HTML:
 		if ( WebPresenceConfig::self()->useImagesHTML() ) {
-			sheet.setFileName( KStandardDirs::locate( "appdata", "webpresence/webpresence_html_images.xsl" ) );
+			sheet.setFileName( KStandardDirs::locate( "appdata", QStringLiteral("webpresence/webpresence_html_images.xsl") ) );
 		} else {
-			sheet.setFileName( KStandardDirs::locate( "appdata", "webpresence/webpresence_html.xsl" ) );
+			sheet.setFileName( KStandardDirs::locate( "appdata", QStringLiteral("webpresence/webpresence_html.xsl") ) );
 		}
 		break;
 	case WEB_XHTML:
 		if ( WebPresenceConfig::self()->useImagesHTML() ) {
-			sheet.setFileName( KStandardDirs::locate( "appdata", "webpresence/webpresence_xhtml_images.xsl" ) );
+			sheet.setFileName( KStandardDirs::locate( "appdata", QStringLiteral("webpresence/webpresence_xhtml_images.xsl") ) );
 		} else {
-			sheet.setFileName( KStandardDirs::locate( "appdata", "webpresence/webpresence_xhtml.xsl" ) );
+			sheet.setFileName( KStandardDirs::locate( "appdata", QStringLiteral("webpresence/webpresence_xhtml.xsl") ) );
 		}
 		break;
 	case WEB_CUSTOM:
@@ -409,7 +409,7 @@ ProtocolList WebPresencePlugin::allProtocols()
 {
 	kDebug( 14309 ) ;
 
-	Kopete::PluginList plugins = Kopete::PluginManager::self()->loadedPlugins( "Protocols" );
+	Kopete::PluginList plugins = Kopete::PluginManager::self()->loadedPlugins( QStringLiteral("Protocols") );
 	Kopete::PluginList::ConstIterator it;
 
 	ProtocolList result;
@@ -424,26 +424,26 @@ ProtocolList WebPresencePlugin::allProtocols()
 QString WebPresencePlugin::statusAsString( const Kopete::OnlineStatus &newStatus )
 {
 	if (shuttingDown)
-		return "OFFLINE";
+		return QStringLiteral("OFFLINE");
 
 	QString status;
 	switch ( newStatus.status() )
 	{
 	case Kopete::OnlineStatus::Online:
-		status = "ONLINE";
+		status = QStringLiteral("ONLINE");
 		break;
 	case Kopete::OnlineStatus::Away:
-		status = "AWAY";
+		status = QStringLiteral("AWAY");
 		break;
 	case Kopete::OnlineStatus::Busy:
-		status = "BUSY";
+		status = QStringLiteral("BUSY");
 		break;
 	case Kopete::OnlineStatus::Offline:
 	case Kopete::OnlineStatus::Invisible:
-		status = "OFFLINE";
+		status = QStringLiteral("OFFLINE");
 		break;
 	default:
-		status = "UNKNOWN";
+		status = QStringLiteral("UNKNOWN");
 	}
 
 	return status;

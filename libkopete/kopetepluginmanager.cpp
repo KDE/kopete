@@ -53,7 +53,7 @@ class PluginManagerPrivate
 public:
 	PluginManagerPrivate() : shutdownMode( StartingUp ), isAllPluginsLoaded(false)
 	{
-		plugins = KPluginInfo::fromServices( KServiceTypeTrader::self()->query( QLatin1String( "Kopete/Plugin" ), QLatin1String( "[X-Kopete-Version] == 1000900" ) ) );
+		plugins = KPluginInfo::fromServices( KServiceTypeTrader::self()->query( QStringLiteral( "Kopete/Plugin" ), QStringLiteral( "[X-Kopete-Version] == 1000900" ) ) );
 	}
 
 	~PluginManagerPrivate()
@@ -257,11 +257,11 @@ void PluginManager::loadAllPlugins()
 	// FIXME: We need session management here - Martijn
 
 	KSharedConfig::Ptr config = KSharedConfig::openConfig();
-	if ( config->hasGroup( QLatin1String( "Plugins" ) ) )
+	if ( config->hasGroup( QStringLiteral( "Plugins" ) ) )
 	{
 		QMap<QString, bool> pluginsMap;
 
-		QMap<QString, QString> entries = config->entryMap( QLatin1String( "Plugins" ) );
+		QMap<QString, QString> entries = config->entryMap( QStringLiteral( "Plugins" ) );
 		QMap<QString, QString>::Iterator it;
 		for ( it = entries.begin(); it != entries.end(); ++it )
 		{
@@ -373,7 +373,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 		return _kpmp->loadedPlugins[ info ];
 
 	QString error;
-        Plugin *plugin = KServiceTypeTrader::createInstanceFromQuery<Plugin>( QString::fromLatin1( "Kopete/Plugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( pluginId ), this, QVariantList(), &error );
+        Plugin *plugin = KServiceTypeTrader::createInstanceFromQuery<Plugin>( QStringLiteral( "Kopete/Plugin" ), QStringLiteral( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( pluginId ), this, QVariantList(), &error );
 
 	if ( plugin )
 	{
@@ -449,7 +449,7 @@ Plugin* PluginManager::plugin( const QString &_pluginId ) const
 	//        the handling - Martijn
 	QString pluginId = _pluginId;
 	if ( pluginId.endsWith( QLatin1String( "Protocol" ) ) )
-		pluginId = QLatin1String( "kopete_" ) + _pluginId.toLower().remove( QString::fromLatin1( "protocol" ) );
+		pluginId = QLatin1String( "kopete_" ) + _pluginId.toLower().remove( QStringLiteral( "protocol" ) );
 	// End hack
 
 	KPluginInfo info = infoForPluginId( pluginId );

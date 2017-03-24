@@ -51,27 +51,27 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QVariantList &/*arg
 			i18n( "Offline" ), i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline ),
 	  groupwiseAvailable  ( Kopete::OnlineStatus::Online,  25, this, GroupWise::Available, QStringList(), 
 			i18n( "Online" ), i18n( "A&vailable" ), Kopete::OnlineStatusManager::Online ),
-	  groupwiseBusy       ( Kopete::OnlineStatus::Busy,    18, this, GroupWise::Busy, QStringList( "contact_busy_overlay" ),
+	  groupwiseBusy       ( Kopete::OnlineStatus::Busy,    18, this, GroupWise::Busy, QStringList( QStringLiteral("contact_busy_overlay") ),
 			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasStatusMessage ),
-	  groupwiseAway       ( Kopete::OnlineStatus::Away,    20, this, GroupWise::Away, QStringList( "contact_away_overlay" ),
+	  groupwiseAway       ( Kopete::OnlineStatus::Away,    20, this, GroupWise::Away, QStringList( QStringLiteral("contact_away_overlay") ),
 			i18n( "Away" ), i18n( "&Away" ), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage ),
-	  groupwiseAwayIdle   ( Kopete::OnlineStatus::Away,    15, this, GroupWise::AwayIdle, QStringList( "contact_away_overlay" ),
-			i18n( "Idle" ), "FIXME: Make groupwiseAwayIdle unselectable", Kopete::OnlineStatusManager::Idle,
+	  groupwiseAwayIdle   ( Kopete::OnlineStatus::Away,    15, this, GroupWise::AwayIdle, QStringList( QStringLiteral("contact_away_overlay") ),
+			i18n( "Idle" ), QStringLiteral("FIXME: Make groupwiseAwayIdle unselectable"), Kopete::OnlineStatusManager::Idle,
 			Kopete::OnlineStatusManager::HideFromMenu ),
-	  groupwiseAppearOffline( Kopete::OnlineStatus::Invisible, 2, this, 98, QStringList( "contact_invisible_overlay" ),
+	  groupwiseAppearOffline( Kopete::OnlineStatus::Invisible, 2, this, 98, QStringList( QStringLiteral("contact_invisible_overlay") ),
 	  		i18n( "Appear Offline" ), i18n( "A&ppear Offline" ), Kopete::OnlineStatusManager::Invisible ),
 /* initialise Kopete::OnlineStatus used by the protocol, but that are not user selectable */
-	  groupwiseUnknown    ( Kopete::OnlineStatus::Unknown, 25, this, GroupWise::Unknown, QStringList( "status_unknown" ),
+	  groupwiseUnknown    ( Kopete::OnlineStatus::Unknown, 25, this, GroupWise::Unknown, QStringList( QStringLiteral("status_unknown") ),
 			i18n( "Unknown" ) ),
-	  groupwiseInvalid    ( Kopete::OnlineStatus::Unknown, 25, this, GroupWise::Invalid, QStringList( "status_unknown" ),
+	  groupwiseInvalid    ( Kopete::OnlineStatus::Unknown, 25, this, GroupWise::Invalid, QStringList( QStringLiteral("status_unknown") ),
 			i18n( "Invalid Status" ) ),
-	  groupwiseConnecting ( Kopete::OnlineStatus::Connecting, 25, this, 99, QStringList( "groupwise_connecting" ),
+	  groupwiseConnecting ( Kopete::OnlineStatus::Connecting, 25, this, 99, QStringList( QStringLiteral("groupwise_connecting") ),
 			i18n( "Connecting" ) ),
 	  propGivenName( Kopete::Global::Properties::self()->firstName() ),
 	  propLastName( Kopete::Global::Properties::self()->lastName() ),
 	  propFullName( Kopete::Global::Properties::self()->fullName() ),
-	  propAutoReply( "groupwiseAutoReply", i18n( "Auto Reply Message" ), QString() ),
-	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString(), Kopete::PropertyTmpl::PersistentProperty ),
+	  propAutoReply( QStringLiteral("groupwiseAutoReply"), i18n( "Auto Reply Message" ), QString() ),
+	  propCN( QStringLiteral("groupwiseCommonName"), i18n( "Common Name" ), QString(), Kopete::PropertyTmpl::PersistentProperty ),
 	  propPhoneWork( Kopete::Global::Properties::self()->workPhone() ),
 	  propPhoneMobile( Kopete::Global::Properties::self()->privateMobilePhone() ),
 	  propEmail( Kopete::Global::Properties::self()->emailAddress() )
@@ -81,7 +81,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QVariantList &/*arg
 
 	s_protocol = this;
 
-  addAddressBookField( "messaging/groupwise", Kopete::Plugin::MakeIndexField );
+  addAddressBookField( QStringLiteral("messaging/groupwise"), Kopete::Plugin::MakeIndexField );
 }
 
 GroupWiseProtocol::~GroupWiseProtocol()
@@ -92,12 +92,12 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 	Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/* addressBookData */)
 {
-	QString dn = serializedData[ "DN" ];
-	QString accountId = serializedData[ "accountId" ];
-	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ "preferredNameType" ]);
-	int objectId = serializedData[ "objectId" ].toInt();
-	int parentId = serializedData[ "parentId" ].toInt();
-	int sequence = serializedData[ "sequenceNumber" ].toInt();
+	QString dn = serializedData[ QStringLiteral("DN") ];
+	QString accountId = serializedData[ QStringLiteral("accountId") ];
+	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ QStringLiteral("preferredNameType") ]);
+	int objectId = serializedData[ QStringLiteral("objectId") ].toInt();
+	int parentId = serializedData[ QStringLiteral("parentId") ].toInt();
+	int sequence = serializedData[ QStringLiteral("sequenceNumber") ].toInt();
 	
 	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( this );
 
@@ -195,7 +195,7 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 				case '{':
 				case '}':
 				case '\\':
-					outputText.append( QString( "\\%1" ).arg( QChar( current ) ) );
+					outputText.append( QStringLiteral( "\\%1" ).arg( QChar( current ) ) );
 					break;
 				case '\n':
 					outputText.append( "\\par " );
@@ -258,7 +258,7 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 				bytesEncoded = 1;
 			}
 			index += bytesEncoded;
-			escapedUnicodeChar = QString("\\u%1?").arg( ucs4Char );
+			escapedUnicodeChar = QStringLiteral("\\u%1?").arg( ucs4Char );
 			kDebug() << "unicode escaped char: " << escapedUnicodeChar;
 			outputText.append( escapedUnicodeChar );
 		}
@@ -280,7 +280,7 @@ QString GroupWiseProtocol::dnToDotted( const QString & dn )
 		if ( rx.indexIn( *it ) != -1 )
 			*it = rx.cap( 1 );
 	}
-	QString dotted = elements.join( "." );
+	QString dotted = elements.join( QStringLiteral(".") );
 	// reassemble as dotted
 
 	return dotted;

@@ -93,7 +93,7 @@ void DeleteContactTask::slotResult(KJob *job)
 
 QString DeleteContactTask::taskType() const
 {
-	return QString("DeleteContactTask");
+	return QStringLiteral("DeleteContactTask");
 }
 
 } // namespace Kopete

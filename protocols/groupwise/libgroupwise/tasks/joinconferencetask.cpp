@@ -39,14 +39,14 @@ void JoinConferenceTask::join( const GroupWise::ConferenceGuid & guid )
 	Field::FieldList lst, tmp;
 	tmp.append( new Field::SingleField( Field::NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, guid ) );
 	lst.append( new Field::MultiField( Field::NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, tmp ) );
-	createTransfer( "joinconf", lst );
+	createTransfer( QStringLiteral("joinconf"), lst );
 }
 
 bool JoinConferenceTask::take( Transfer * transfer )
 {
 	if ( forMe( transfer ) )
 	{
-		client()->debug( "JoinConferenceTask::take()" );
+		client()->debug( QStringLiteral("JoinConferenceTask::take()") );
 		Response * response = dynamic_cast<Response *>( transfer );
 		Field::FieldList responseFields = response->fields();
 		// if the request was successful
@@ -106,12 +106,12 @@ bool JoinConferenceTask::take( Transfer * transfer )
 
 			if ( m_unknowns.empty() )	// ready to chat
 			{
-				client()->debug( "JoinConferenceTask::finished()" );
+				client()->debug( QStringLiteral("JoinConferenceTask::finished()") );
 				finished();
 			}
 			else								// need to get some more details first
 			{
-				client()->debug( "JoinConferenceTask::slotReceiveUserDetails(), requesting details" );
+				client()->debug( QStringLiteral("JoinConferenceTask::slotReceiveUserDetails(), requesting details") );
 				connect( client()->userDetailsManager(), 
 						SIGNAL(gotContactDetails(GroupWise::ContactDetails)),
 						SLOT(slotReceiveUserDetails(GroupWise::ContactDetails)) );
@@ -128,24 +128,24 @@ bool JoinConferenceTask::take( Transfer * transfer )
 
 void JoinConferenceTask::slotReceiveUserDetails( const ContactDetails & details )
 {
-	client()->debug( QString( "JoinConferenceTask::slotReceiveUserDetails() - got %1" ).arg( details.dn ) );
+	client()->debug( QStringLiteral( "JoinConferenceTask::slotReceiveUserDetails() - got %1" ).arg( details.dn ) );
 	QStringList::Iterator it = m_unknowns.begin();
 	QStringList::Iterator end = m_unknowns.end();
 	for( ; it != end; ++it )
 	{
 		QString current = *it;
-		client()->debug( QString( " - can we remove %1?" ).arg(current ) );
+		client()->debug( QStringLiteral( " - can we remove %1?" ).arg(current ) );
 		if ( current == details.dn )
 		{
-			client()->debug( " - it is gone!" );
+			client()->debug( QStringLiteral(" - it is gone!") );
 			m_unknowns.erase( it );
 			break;
 		}
 	}
-	client()->debug( QString( " - now %1 unknowns").arg( m_unknowns.count() ) );
+	client()->debug( QStringLiteral( " - now %1 unknowns").arg( m_unknowns.count() ) );
 	if ( m_unknowns.empty() )
 	{
-		client()->debug( " - finished()" );
+		client()->debug( QStringLiteral(" - finished()") );
 		finished();
 	}
 // would be better to count the number of received details and listen to the getdetails task's error signal.

@@ -43,7 +43,7 @@ YahooChatChatSession::YahooChatChatSession( Kopete::Protocol *protocol, const Ko
 
 	setDisplayName( i18n("Yahoo Chat: " ));
 
-	setXMLFile("yahoochatui.rc");
+	setXMLFile(QStringLiteral("yahoochatui.rc"));
 }
 
 YahooChatChatSession::~YahooChatChatSession()

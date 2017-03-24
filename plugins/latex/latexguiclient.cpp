@@ -42,12 +42,12 @@ LatexGUIClient::LatexGUIClient( Kopete::ChatSession *parent )
 
 	m_manager = parent;
 
-	QAction *previewAction = new QAction( KIcon("latex"), i18n( "Preview Latex Images" ), this );
-        actionCollection()->addAction( "latexPreview", previewAction );
+	QAction *previewAction = new QAction( KIcon(QStringLiteral("latex")), i18n( "Preview Latex Images" ), this );
+        actionCollection()->addAction( QStringLiteral("latexPreview"), previewAction );
     previewAction->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_L) );
 	connect(previewAction, SIGNAL(triggered(bool)), this, SLOT(slotPreview()) );
 
-	setXMLFile( "latexchatui.rc" );
+	setXMLFile( QStringLiteral("latexchatui.rc") );
 }
 
 LatexGUIClient::~LatexGUIClient()
@@ -61,7 +61,7 @@ void LatexGUIClient::slotPreview()
 
 	Kopete::Message msg = m_manager->view()->currentMessage();
 	const QString messageText = msg.plainBody();
-	if(!messageText.contains("$$")) //we haven't found any latex strings
+	if(!messageText.contains(QLatin1String("$$"))) //we haven't found any latex strings
 	{
 		KMessageBox::sorry(m_manager->view()->mainWidget() , i18n("The message you are typing does not contain any LaTeX.  A LaTeX formula must be enclosed within two pairs of dollar signs: $$formula$$ "), i18n("No LaTeX Formula") );
 		return;

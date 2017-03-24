@@ -43,7 +43,7 @@ void PrivacyItemTask::allow( const QString & dn )
 	m_dn = dn;
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( Field::NM_A_SZ_BLOCKING_ALLOW_ITEM, NMFIELD_METHOD_ADD, 0, NMFIELD_TYPE_UTF8, dn ) );
-	createTransfer( "createblock", lst );
+	createTransfer( QStringLiteral("createblock"), lst );
 }
 
 void PrivacyItemTask::deny( const QString & dn )
@@ -51,7 +51,7 @@ void PrivacyItemTask::deny( const QString & dn )
 	m_dn = dn;
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( Field::NM_A_SZ_BLOCKING_DENY_ITEM, NMFIELD_METHOD_ADD, 0, NMFIELD_TYPE_UTF8, dn ) );
-	createTransfer( "createblock", lst );
+	createTransfer( QStringLiteral("createblock"), lst );
 }
 
 void PrivacyItemTask::removeAllow( const QString & dn )
@@ -59,7 +59,7 @@ void PrivacyItemTask::removeAllow( const QString & dn )
 	m_dn = dn;
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( Field::NM_A_BLOCKING_ALLOW_LIST, NMFIELD_METHOD_DELETE, 0, NMFIELD_TYPE_UTF8, dn ) );
-	createTransfer( "updateblocks", lst );
+	createTransfer( QStringLiteral("updateblocks"), lst );
 
 }
 
@@ -68,7 +68,7 @@ void PrivacyItemTask::removeDeny( const QString & dn )
 	m_dn = dn;
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( Field::NM_A_BLOCKING_DENY_LIST, NMFIELD_METHOD_DELETE, 0, NMFIELD_TYPE_UTF8, dn ) );
-	createTransfer( "updateblocks", lst );
+	createTransfer( QStringLiteral("updateblocks"), lst );
 }
 	
 void PrivacyItemTask::defaultPolicy( bool defaultDeny )
@@ -76,6 +76,6 @@ void PrivacyItemTask::defaultPolicy( bool defaultDeny )
 	m_default = defaultDeny;
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( Field::NM_A_BLOCKING, NMFIELD_METHOD_UPDATE, 0, NMFIELD_TYPE_UTF8, ( defaultDeny ? "1" :"0" ) ) );
-	createTransfer( "updateblocks", lst );
+	createTransfer( QStringLiteral("updateblocks"), lst );
 }
 

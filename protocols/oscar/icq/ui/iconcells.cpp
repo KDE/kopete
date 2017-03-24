@@ -54,7 +54,7 @@ IconCells::IconCells( QWidget *parent )
 
 	// HACK: Looks like any antialiased font brakes grid and icon painting.
 	// We only have icons so we can set the font to one which isn't antialiased.
-	QFont timesFont( "Times", 10, QFont::Normal );
+	QFont timesFont( QStringLiteral("Times"), 10, QFont::Normal );
 	setFont( timesFont );
 
 	connect( this, SIGNAL(cellActivated(int,int)), this, SLOT(selected(int,int)) );

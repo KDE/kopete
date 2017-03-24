@@ -256,7 +256,7 @@ void ChatView::clear()
 	{
 		response = KMessageBox::warningContinueCancel( this, i18n("<qt>You have received a message from <b>%1</b> in the last "
 			"second. Are you sure you want to clear this chat?</qt>", unreadMessageFrom ), i18n( "Unread Message" ),
-			KGuiItem( i18nc( "@action:button", "Clear Chat" ) ), KStandardGuiItem::cancel(), QLatin1String("AskClearChatRecentMessage" ) );
+			KGuiItem( i18nc( "@action:button", "Clear Chat" ) ), KStandardGuiItem::cancel(), QStringLiteral("AskClearChatRecentMessage" ) );
 	}
 
 	if ( response == KMessageBox::Continue )
@@ -316,7 +316,7 @@ void ChatView::makeVisible()
 	if ( !m_mainWindow )
 	{
 		m_mainWindow = KopeteChatWindow::window( m_manager );
-		m_mainWindow->setObjectName( QLatin1String("KopeteChatWindow") );
+		m_mainWindow->setObjectName( QStringLiteral("KopeteChatWindow") );
 // 		if ( root )
 // 			root->repaint( true );
 		emit windowCreated();
@@ -357,21 +357,21 @@ bool ChatView::closeView( bool force )
 
 			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You are about to leave the groupchat session <b>%1</b>.<br />"
 				"You will not receive future messages from this conversation.</qt>", shortCaption ), i18n( "Closing Group Chat" ),
-				KGuiItem( i18nc( "@action:button", "Close Chat" ) ), KStandardGuiItem::cancel(), QLatin1String( "AskCloseGroupChat" ) );
+				KGuiItem( i18nc( "@action:button", "Close Chat" ) ), KStandardGuiItem::cancel(), QStringLiteral( "AskCloseGroupChat" ) );
 		}
 
 		if ( !unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You have received a message from <b>%1</b> in the last "
 				"second. Are you sure you want to close this chat?</qt>", unreadMessageFrom ), i18n( "Unread Message" ),
-				KGuiItem( i18nc( "@action:button", "Close Chat" ) ), KStandardGuiItem::cancel(), QLatin1String("AskCloseChatRecentMessage" ) );
+				KGuiItem( i18nc( "@action:button", "Close Chat" ) ), KStandardGuiItem::cancel(), QStringLiteral("AskCloseChatRecentMessage" ) );
 		}
 
 		if ( d->sendInProgress && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel( this, i18n( "You have a message send in progress, which will be "
 				"aborted if this chat is closed. Are you sure you want to close this chat?" ), i18n( "Message in Transit" ),
-				KGuiItem( i18nc( "@action:button", "Close Chat" ) ), KStandardGuiItem::cancel(), QLatin1String( "AskCloseChatMessageInProgress" ) );
+				KGuiItem( i18nc( "@action:button", "Close Chat" ) ), KStandardGuiItem::cancel(), QStringLiteral( "AskCloseChatMessageInProgress" ) );
 		}
 	}
 
@@ -672,7 +672,7 @@ void ChatView::setCaption( const QString &text, bool modified )
 	//Call the original set caption
 	QWidget::setWindowTitle( newCaption );
 
-	emit updateChatTooltip( this, QString::fromLatin1("<qt>%1</qt>").arg( d->captionText ) );
+	emit updateChatTooltip( this, QStringLiteral("<qt>%1</qt>").arg( d->captionText ) );
 	emit updateChatLabel( this, newCaption );
 	//Blink icon if modified and not active
 	if( !d->isActive && modified )
@@ -810,8 +810,8 @@ void ChatView::messageSentSuccessfully()
 void ChatView::saveOptions()
 {
 	KSharedConfig::Ptr config = KSharedConfig::openConfig();
-	KConfigGroup kopeteChatWindowMainWinSettings( config, ( msgManager()->form() == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) );
-	kopeteChatWindowMainWinSettings.writeEntry( QLatin1String("ChatViewSplitter"), d->splitter->saveState().toBase64() );
+	KConfigGroup kopeteChatWindowMainWinSettings( config, ( msgManager()->form() == Kopete::ChatSession::Chatroom ? QStringLiteral( "KopeteChatWindowGroupMode" ) : QStringLiteral( "KopeteChatWindowIndividualMode" ) ) );
+	kopeteChatWindowMainWinSettings.writeEntry( QStringLiteral("ChatViewSplitter"), d->splitter->saveState().toBase64() );
 	saveChatSettings();
 	config->sync();
 }
@@ -865,10 +865,10 @@ void ChatView::loadChatSettings()
 
 void ChatView::readOptions()
 {
-	KConfigGroup kopeteChatWindowMainWinSettings( KSharedConfig::openConfig(), ( msgManager()->form() == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) );
+	KConfigGroup kopeteChatWindowMainWinSettings( KSharedConfig::openConfig(), ( msgManager()->form() == Kopete::ChatSession::Chatroom ? QStringLiteral( "KopeteChatWindowGroupMode" ) : QStringLiteral( "KopeteChatWindowIndividualMode" ) ) );
 	//kDebug(14000) << "reading splitterpos from key: " << dockKey;
 	QByteArray state;
-	state = kopeteChatWindowMainWinSettings.readEntry( QLatin1String("ChatViewSplitter"), state );
+	state = kopeteChatWindowMainWinSettings.readEntry( QStringLiteral("ChatViewSplitter"), state );
 	d->splitter->restoreState( QByteArray::fromBase64( state ) );
 }
 
@@ -930,9 +930,9 @@ void ChatView::dragMoveEvent( QDragMoveEvent * event )
 
 bool ChatView::isDragEventAccepted( const QDragMoveEvent * event ) const
 {
-	if( event->mimeData()->hasFormat( "application/kopete.metacontacts.list" ) )
+	if( event->mimeData()->hasFormat( QStringLiteral("application/kopete.metacontacts.list") ) )
 	{
-		QByteArray encodedData = event->mimeData()->data( "application/kopete.metacontacts.list" );
+		QByteArray encodedData = event->mimeData()->data( QStringLiteral("application/kopete.metacontacts.list") );
 		QDataStream stream( &encodedData, QIODevice::ReadOnly );
 		QString metacontactID;
 		stream >> metacontactID;
@@ -968,9 +968,9 @@ void ChatView::dropEvent ( QDropEvent * event )
 {
 	Kopete::ContactPtrList contacts;
 
-	if( event->mimeData()->hasFormat("application/kopete.metacontacts.list") )
+	if( event->mimeData()->hasFormat(QStringLiteral("application/kopete.metacontacts.list")) )
 	{
-		QByteArray encodedData = event->mimeData()->data( "application/kopete.metacontacts.list" );
+		QByteArray encodedData = event->mimeData()->data( QStringLiteral("application/kopete.metacontacts.list") );
 		QDataStream stream( &encodedData, QIODevice::ReadOnly );
 		QString metacontactID;
 		stream >> metacontactID;
@@ -989,7 +989,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 			}
 		}
 	}
-	else if ( event->mimeData()->hasFormat( "text/uri-list") && m_manager->members().count() == 1 )
+	else if ( event->mimeData()->hasFormat( QStringLiteral("text/uri-list")) && m_manager->members().count() == 1 )
 	{
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();

@@ -177,13 +177,13 @@ void OscarVersionUpdater::slotTransferResult ( KJob *job )
 			
 			if ( !equal( tmpICQ, mICQVersion ) )
 			{
-				storeVersionInfo( "ICQVersion", mICQVersion );
+				storeVersionInfo( QStringLiteral("ICQVersion"), mICQVersion );
 				bUpdate = true;
 			}
 			
 			if ( !equal( tmpAIM, mAIMVersion ) )
 			{
-				storeVersionInfo( "AIMVersion", mAIMVersion );
+				storeVersionInfo( QStringLiteral("AIMVersion"), mAIMVersion );
 				bUpdate = true;
 			}
 		}
@@ -205,15 +205,15 @@ void OscarVersionUpdater::parseDocument( QDomDocument& doc )
 	kDebug(OSCAR_RAW_DEBUG) ;
 	
 	QDomElement root = doc.documentElement();
-	if ( root.tagName() != "oscar" )
+	if ( root.tagName() != QLatin1String("oscar") )
 		return;
 	
 	QDomElement versionElement = root.firstChild().toElement();
 	while( !versionElement.isNull() )
 	{
-		if ( versionElement.tagName() == "icq" )
+		if ( versionElement.tagName() == QLatin1String("icq") )
 			parseVersion( mICQVersion, versionElement );
-		else if ( versionElement.tagName() == "aim" )
+		else if ( versionElement.tagName() == QLatin1String("aim") )
 			parseVersion( mAIMVersion, versionElement );
 		
 		versionElement = versionElement.nextSibling().toElement();
@@ -238,23 +238,23 @@ bool OscarVersionUpdater::parseVersion( Oscar::ClientVersion& version, QDomEleme
 	QDomElement versionChild = element.firstChild().toElement();
 	while ( !versionChild.isNull() )
 	{
-		if ( versionChild.tagName() == "client" )
+		if ( versionChild.tagName() == QLatin1String("client") )
 			version.clientString = versionChild.text();
-		else if ( versionChild.tagName() == "clientId" )
+		else if ( versionChild.tagName() == QLatin1String("clientId") )
 			version.clientId = versionChild.text().toUShort( 0, 0);
-		else if ( versionChild.tagName() == "major" )
+		else if ( versionChild.tagName() == QLatin1String("major") )
 			version.major = versionChild.text().toUShort( 0, 0 );
-		else if ( versionChild.tagName() == "minor" )
+		else if ( versionChild.tagName() == QLatin1String("minor") )
 			version.minor = versionChild.text().toUShort( 0, 0 );
-		else if ( versionChild.tagName() == "point" )
+		else if ( versionChild.tagName() == QLatin1String("point") )
 			version.point = versionChild.text().toUShort( 0, 0 );
-		else if ( versionChild.tagName() == "build" )
+		else if ( versionChild.tagName() == QLatin1String("build") )
 			version.build = versionChild.text().toUShort( 0, 0 );
-		else if ( versionChild.tagName() == "other" )
+		else if ( versionChild.tagName() == QLatin1String("other") )
 			version.other = versionChild.text().toUInt( 0, 0 );
-		else if ( versionChild.tagName() == "country" )
+		else if ( versionChild.tagName() == QLatin1String("country") )
 			version.country = versionChild.text();
-		else if ( versionChild.tagName() == "lang" )
+		else if ( versionChild.tagName() == QLatin1String("lang") )
 			version.lang = versionChild.text();
 		
 		versionChild = versionChild.nextSibling().toElement();

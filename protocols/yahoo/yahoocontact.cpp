@@ -119,7 +119,7 @@ void YahooContact::setOnlineStatus(const Kopete::OnlineStatus &status)
 			(status.weight()==0) ? 0 : (status.weight() -1)  ,
 			protocol() ,
 			status.internalStatus()+1000 ,
-			status.overlayIcons() + QStringList("yahoo_stealthed") ,
+			status.overlayIcons() + QStringList(QStringLiteral("yahoo_stealthed")) ,
 			i18n("%1|Stealthed", status.description() ) ) );
 	}
 	else if( !isStealthed && status.internalStatus() > 999 )// Stealthed -> Not Stealthed
@@ -230,113 +230,113 @@ QString YahooContact::prepareMessage( const QString &messageText )
 	int pos = 0;
 	regExp.setMinimal( true );
 	// find and replace <p>-formattings
-	regExp.setPattern( "<p style=\"([^\"]*)\">(.*)</p>" );
+	regExp.setPattern( QStringLiteral("<p style=\"([^\"]*)\">(.*)</p>") );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QLatin1String("\\2" ) );
+			newMsg.replace( regExp, QStringLiteral("\\2" ) );
 		}
 	}
 
 
 	// find and replace Bold-formattings
-	regExp.setPattern( "<span([^>]*)font-weight:600([^>]*)>(.*)</span>" );
+	regExp.setPattern( QStringLiteral("<span([^>]*)font-weight:600([^>]*)>(.*)</span>") );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QLatin1String("<span\\1font-weight:600\\2>\033[1m\\3\033[x1m</span>" ) );
+			newMsg.replace( regExp, QStringLiteral("<span\\1font-weight:600\\2>\033[1m\\3\033[x1m</span>" ) );
 		}
 	}
 
 	// find and replace Underline-formattings
-	regExp.setPattern( "<span([^>]*)text-decoration:underline([^>]*)>(.*)</span>" );
+	regExp.setPattern( QStringLiteral("<span([^>]*)text-decoration:underline([^>]*)>(.*)</span>") );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QLatin1String("<span\\1text-decoration:underline\\2>\033[4m\\3\033[x4m</span>" ) );
+			newMsg.replace( regExp, QStringLiteral("<span\\1text-decoration:underline\\2>\033[4m\\3\033[x4m</span>" ) );
 		}
 	}
 
 	// find and replace Italic-formattings
-	regExp.setPattern( "<span([^>]*)font-style:italic([^>]*)>(.*)</span>" );
+	regExp.setPattern( QStringLiteral("<span([^>]*)font-style:italic([^>]*)>(.*)</span>") );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QLatin1String("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
+			newMsg.replace( regExp, QStringLiteral("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
 		}
 	}
 
 	// find and remove background color formattings (not supported)
-	regExp.setPattern( "<span([^>]*)background-color:#([0-9a-zA-Z]*)([^>]*)>(.*)</span>" );
+	regExp.setPattern( QStringLiteral("<span([^>]*)background-color:#([0-9a-zA-Z]*)([^>]*)>(.*)</span>") );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QLatin1String("<span\\1\\3>\\4</span>" ) );
+			newMsg.replace( regExp, QStringLiteral("<span\\1\\3>\\4</span>" ) );
 		}
 	}
 
 	// find and replace Color-formattings
-	regExp.setPattern( "<span([^>]*)color:#([0-9a-zA-Z]*)([^>]*)>(.*)</span>" );
+	regExp.setPattern( QStringLiteral("<span([^>]*)color:#([0-9a-zA-Z]*)([^>]*)>(.*)</span>") );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QLatin1String("<span\\1\\3>\033[#\\2m\\4\033[#000000m</span>" ) );
+			newMsg.replace( regExp, QStringLiteral("<span\\1\\3>\033[#\\2m\\4\033[#000000m</span>" ) );
 		}
 	}
 
 	// find and replace Font-formattings
-	regExp.setPattern( "<span([^>]*)font-family:([^;\"]*)([^>]*)>(.*)</span>" );
+	regExp.setPattern( QStringLiteral("<span([^>]*)font-family:([^;\"]*)([^>]*)>(.*)</span>") );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QLatin1String("<span\\1\\3><font face=\"\\2\">\\4</span>" ) );
+			newMsg.replace( regExp, QStringLiteral("<span\\1\\3><font face=\"\\2\">\\4</span>" ) );
 		}
 	}
 
 	// find and replace Size-formattings
-	regExp.setPattern( "<span([^>]*)font-size:([0-9]*)pt([^>]*)>(.*)</span>" );
+	regExp.setPattern( QStringLiteral("<span([^>]*)font-size:([0-9]*)pt([^>]*)>(.*)</span>") );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QLatin1String("<span\\1\\3><font size=\"\\2\">\\4</span>" ) );
+			newMsg.replace( regExp, QStringLiteral("<span\\1\\3><font size=\"\\2\">\\4</span>" ) );
 		}
 	}
 
 	// remove span-tags
-	regExp.setPattern( "<span([^>]*)>(.*)</span>" );
+	regExp.setPattern( QStringLiteral("<span([^>]*)>(.*)</span>") );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QLatin1String("\\2") );
+			newMsg.replace( regExp, QStringLiteral("\\2") );
 		}
 	}
 
 	// remove p-tags
-	regExp.setPattern( "<p([^>]*)>(.*)</p>" );
+	regExp.setPattern( QStringLiteral("<p([^>]*)>(.*)</p>") );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.indexIn( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsg.replace( regExp, QLatin1String("\\2") );
+			newMsg.replace( regExp, QStringLiteral("\\2") );
 		}
 	}
 
@@ -346,7 +346,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 	newMsg.replace( QLatin1String( "&quot;" ), QLatin1String( "\"" ) );
 	newMsg.replace( QLatin1String( "&nbsp;" ), QLatin1String( " " ) );
 	newMsg.replace( QLatin1String( "&amp;" ), QLatin1String( "&" ) );
-	newMsg.replace( QRegExp( QString::fromLatin1("<br[ /]*>") ), QLatin1String( "\r" ) );
+	newMsg.replace( QRegExp( QLatin1String("<br[ /]*>") ), QStringLiteral( "\r" ) );
 
 	return newMsg;
 }
@@ -472,12 +472,12 @@ QList<QAction*> *YahooContact::customContextMenuActions()
 
 	// temporary action collection, used to apply Kiosk policy to the actions
     KActionCollection tempCollection((QObject*)0);
-	tempCollection.addAction(QLatin1String("contactViewWebcam"), m_webcamAction);
-	tempCollection.addAction(QLatin1String("contactInviteToViewWebcam"), m_inviteWebcamAction);
-	tempCollection.addAction(QLatin1String("contactBuzz"), m_buzzAction);
-	tempCollection.addAction(QLatin1String("yahooContactStealth"), m_stealthAction);
-	tempCollection.addAction(QLatin1String("yahooContactInviteConference"), m_inviteConferenceAction);
-	tempCollection.addAction(QLatin1String("contactViewProfile"), m_profileAction);
+	tempCollection.addAction(QStringLiteral("contactViewWebcam"), m_webcamAction);
+	tempCollection.addAction(QStringLiteral("contactInviteToViewWebcam"), m_inviteWebcamAction);
+	tempCollection.addAction(QStringLiteral("contactBuzz"), m_buzzAction);
+	tempCollection.addAction(QStringLiteral("yahooContactStealth"), m_stealthAction);
+	tempCollection.addAction(QStringLiteral("yahooContactInviteConference"), m_inviteConferenceAction);
+	tempCollection.addAction(QStringLiteral("contactViewProfile"), m_profileAction);
 	return actions;
 }
 

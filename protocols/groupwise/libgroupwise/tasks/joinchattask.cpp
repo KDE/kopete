@@ -39,14 +39,14 @@ void JoinChatTask::join( const QString & displayName )
 	Field::FieldList lst, tmp;
 	tmp.append( new Field::SingleField( Field::NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, displayName ) );
 	lst.append( new Field::MultiField( Field::NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, tmp ) );
-	createTransfer( "joinchat", lst );
+	createTransfer( QStringLiteral("joinchat"), lst );
 }
 
 bool JoinChatTask::take( Transfer * transfer )
 {
 	if ( forMe( transfer ) )
 	{
-		client()->debug( "JoinChatTask::take()" );
+		client()->debug( QStringLiteral("JoinChatTask::take()") );
 		Response * response = dynamic_cast<Response *>( transfer );
 		Field::FieldList responseFields = response->fields();
 		// if the request was successful
@@ -102,7 +102,7 @@ bool JoinChatTask::take( Transfer * transfer )
 			else 
 				setError( GroupWise::Protocol );
 
-			client()->debug( "JoinChatTask::finished()" );
+			client()->debug( QStringLiteral("JoinChatTask::finished()") );
 			finished();	
 		}
 		else

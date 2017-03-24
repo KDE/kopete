@@ -68,7 +68,7 @@ public:
 	bool isIncoming() const;
 
 	// outgoing
-	void setAuth(const QString &user, const QString &pass="");
+	void setAuth(const QString &user, const QString &pass=QLatin1String(QLatin1String("")));
 	void connectToHost(const QString &proxyHost, int proxyPort, const QString &host, int port, bool udpMode=false);
 
 	// incoming

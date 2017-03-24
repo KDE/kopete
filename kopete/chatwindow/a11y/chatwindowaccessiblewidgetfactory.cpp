@@ -38,6 +38,6 @@ ChatWindowAccessibleWidgetFactory::ChatWindowAccessibleWidgetFactory( QObject *p
 QStringList ChatWindowAccessibleWidgetFactory::keys() const
 {
     QStringList l;
-    l.append( QLatin1String( "KHTMLView" ) );
+    l.append( QStringLiteral( "KHTMLView" ) );
     return l;
 }

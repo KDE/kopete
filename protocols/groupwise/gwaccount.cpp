@@ -348,15 +348,15 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 
 	struct utsname utsBuf;
 	uname (&utsBuf);
-	m_client->setClientName ("Kopete");
+	m_client->setClientName (QStringLiteral("Kopete"));
 	m_client->setClientVersion ( KAboutData::applicationData().version () );
-	m_client->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
+	m_client->setOSName (QStringLiteral ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
 
 	kDebug () << "Connecting to GroupWise server " << server() << ':' << port();
 
 	NovellDN dn;
-	dn.dn = "maeuschen";
-	dn.server = "reiser.suse.de";
+	dn.dn = QStringLiteral("maeuschen");
+	dn.server = QStringLiteral("reiser.suse.de");
 	m_serverListModel = new GWContactList( this );
 	myself()->setOnlineStatus( protocol()->groupwiseConnecting );
 	m_client->connectToServer( m_clientStream, dn, true );
@@ -733,15 +733,15 @@ int GroupWiseAccount::handleTLSWarning ( QCA::TLS::IdentityResult identityResult
 			break;
 		case QCA::TLS::HostMismatch:
 			idString = i18n("The host name does not match the one in the certificate.");
-			idCode   = "HostMismatch";
+			idCode   = QStringLiteral("HostMismatch");
 			break;
 		case QCA::TLS::InvalidCertificate:
 			idString = i18n("The certificate is invalid.");
-			idCode   = "InvalidCert";
+			idCode   = QStringLiteral("InvalidCert");
 			break;
 		case QCA::TLS::NoCertificate:
 			idString = i18n("No certificate was presented.");
-			idCode   = "NoCert";
+			idCode   = QStringLiteral("NoCert");
 			break;
 	}
 
@@ -751,47 +751,47 @@ int GroupWiseAccount::handleTLSWarning ( QCA::TLS::IdentityResult identityResult
 			break;
 		case QCA::ErrorRejected:
 			validityString = i18n("The Certificate Authority rejected the certificate.");
-			code = "Rejected";
+			code = QStringLiteral("Rejected");
 			break;
 		case QCA::ErrorUntrusted:
 			validityString = i18n("The certificate is not trusted.");
-			code = "Untrusted";
+			code = QStringLiteral("Untrusted");
 			break;
 		case QCA::ErrorSignatureFailed:
 			validityString = i18n("The signature is invalid.");
-			code = "SignatureFailed";
+			code = QStringLiteral("SignatureFailed");
 			break;
 		case QCA::ErrorInvalidCA:
 			validityString = i18n("The Certificate Authority is invalid.");
-			code = "InvalidCA";
+			code = QStringLiteral("InvalidCA");
 			break;
 		case QCA::ErrorInvalidPurpose:
 			validityString = i18n("Invalid certificate purpose.");
-			code = "InvalidPurpose";
+			code = QStringLiteral("InvalidPurpose");
 			break;
 		case QCA::ErrorSelfSigned:
 			validityString = i18n("The certificate is self-signed.");
-			code = "SelfSigned";
+			code = QStringLiteral("SelfSigned");
 			break;
 		case QCA::ErrorRevoked:
 			validityString = i18n("The certificate has been revoked.");
-			code = "Revoked";
+			code = QStringLiteral("Revoked");
 			break;
 		case QCA::ErrorPathLengthExceeded:
 			validityString = i18n("Maximum certificate chain length was exceeded.");
-			code = "PathLengthExceeded";
+			code = QStringLiteral("PathLengthExceeded");
 			break;
 		case QCA::ErrorExpired:
 			validityString = i18n("The certificate has expired.");
-			code = "Expired";
+			code = QStringLiteral("Expired");
 			break;
 		case QCA::ErrorExpiredCA:
 			validityString = i18n("The Certificate Authority has expired.");
-			code = "ExpiredCA";
+			code = QStringLiteral("ExpiredCA");
 			break;
 		case QCA::ErrorValidityUnknown:
 			validityString = i18n("Validity is unknown.");
-			code = "ValidityUnknown";
+			code = QStringLiteral("ValidityUnknown");
 			break;
 	}
 
@@ -822,7 +822,7 @@ int GroupWiseAccount::handleTLSWarning ( QCA::TLS::IdentityResult identityResult
 					  i18n("GroupWise Connection Certificate Problem"),
 					  KStandardGuiItem::cont(),
 					  KStandardGuiItem::cancel(),
-					  QString("KopeteTLSWarning") + server + idCode + code) == KMessageBox::Continue );
+					  QStringLiteral("KopeteTLSWarning") + server + idCode + code) == KMessageBox::Continue );
 }
 
 void GroupWiseAccount::slotTLSReady( int secLayerCode )
@@ -835,15 +835,15 @@ void GroupWiseAccount::slotTLSReady( int secLayerCode )
 
 void GroupWiseAccount::handleIncomingMessage( const ConferenceEvent & message )
 {
-	QString typeName = "UNKNOWN";
+	QString typeName = QStringLiteral("UNKNOWN");
 	if ( message.type == ReceiveMessage )
-		typeName = "message";
+		typeName = QStringLiteral("message");
 	else if ( message.type == ReceiveAutoReply )
-		typeName = "autoreply";
+		typeName = QStringLiteral("autoreply");
 	else if ( message.type == ReceivedBroadcast )
-		typeName = "broadcast";
+		typeName = QStringLiteral("broadcast");
 	else if ( message.type == ReceivedSystemBroadcast )
-		typeName = "system broadcast";
+		typeName = QStringLiteral("system broadcast");
 
 	kDebug() << " received a " <<  typeName << " from " << message.user << ", to conference: " << message.guid << ", message: " << message.message;
 

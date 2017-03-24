@@ -138,7 +138,7 @@ void ContactManager::setParameters( Oscar::WORD maxContacts, Oscar::WORD maxGrou
 {
 	//I'm not using k_funcinfo for these debug statements because of
 	//the function's long signature
-	QString funcName = QString::fromLatin1( "[void ContactManager::setParameters] " );
+	QString funcName = QStringLiteral( "[void ContactManager::setParameters] " );
 	kDebug(OSCAR_RAW_DEBUG) << funcName << "Max number of contacts allowed in SSI: "
 		<< maxContacts << endl;
 	kDebug(OSCAR_RAW_DEBUG) << funcName << "Max number of groups allowed in SSI: "

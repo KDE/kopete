@@ -33,9 +33,9 @@
 
 StatisticsDB::StatisticsDB()
 {
-	QString path = KStandardDirs::locateLocal ( "appdata", "kopete_statistics-0.1.db" );
+	QString path = KStandardDirs::locateLocal ( "appdata", QStringLiteral("kopete_statistics-0.1.db") );
 	kDebug ( 14315 ) << "DB path:" << path;
-	m_db = QSqlDatabase::addDatabase ( "QSQLITE", "kopete-statistics" );
+	m_db = QSqlDatabase::addDatabase ( QStringLiteral("QSQLITE"), QStringLiteral("kopete-statistics") );
 	m_db.setDatabaseName(path);
 	if (! m_db.open()){
 		kError ( 14315 ) << "Unable to open database" << path;
@@ -50,14 +50,14 @@ StatisticsDB::StatisticsDB()
 	// On bigger database it cause big slowdown and changing status from online to offline can take ages...
 	// When synchronous mode is off it dramatically speed up writes to database.
 	// Synchronous mode has more disadvantages, so turn it off.
-	query ( "PRAGMA synchronous = OFF" );
+	query ( QStringLiteral("PRAGMA synchronous = OFF") );
 
 	has_transaction = m_db.driver()->hasFeature(QSqlDriver::Transactions);
 
 	// Creates the tables if they do not exist.
-	QStringList result = query ( "SELECT name FROM sqlite_master WHERE type='table'" );
+	QStringList result = query ( QStringLiteral("SELECT name FROM sqlite_master WHERE type='table'") );
 
-	if ( !result.contains ( "contactstatus" ) )
+	if ( !result.contains ( QStringLiteral("contactstatus") ) )
 	{
 		kDebug ( 14315 ) << "Database empty";
 		query ( QString ( "CREATE TABLE contactstatus "
@@ -69,7 +69,7 @@ StatisticsDB::StatisticsDB()
 		                  ");" ) );
 	}
 
-	if ( !result.contains ( "commonstats" ) )
+	if ( !result.contains ( QStringLiteral("commonstats") ) )
 	{
 		// To store things like the contact answer time etc.
 		query ( QString ( "CREATE TABLE commonstats"
@@ -81,7 +81,7 @@ StatisticsDB::StatisticsDB()
 		                  ");" ) );
 	}
 
-	if ( !result.contains ( "statsgroup" ) )
+	if ( !result.contains ( QStringLiteral("statsgroup") ) )
 	{
 		query ( QString ( "CREATE TABLE statsgroup"
 		                  "(id INTEGER PRIMARY KEY,"

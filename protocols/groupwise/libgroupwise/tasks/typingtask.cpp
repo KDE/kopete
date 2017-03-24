@@ -38,6 +38,6 @@ void TypingTask::typing( const GroupWise::ConferenceGuid & conferenceGuid, const
 	typingNotification.append( new Field::SingleField( Field::NM_A_SZ_TYPE, 0, NMFIELD_TYPE_UTF8, 
 				QString::number( typing ? GroupWise::UserTyping : GroupWise::UserNotTyping ) ) );
 	outgoingList.append( new Field::MultiField( Field::NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, typingNotification ) );
-	createTransfer( "sendtyping", outgoingList );
+	createTransfer( QStringLiteral("sendtyping"), outgoingList );
 }
 

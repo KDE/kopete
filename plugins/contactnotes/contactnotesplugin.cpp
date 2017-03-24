@@ -39,14 +39,14 @@ ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const QVariantList & /*
 	else
 		pluginStatic_ = this;
 
-	QAction *m_actionEdit=new QAction( KIcon("user-identity"), i18n("&Notes"), this );
-        actionCollection()->addAction( "editContactNotes", m_actionEdit );
+	QAction *m_actionEdit=new QAction( KIcon(QStringLiteral("user-identity")), i18n("&Notes"), this );
+        actionCollection()->addAction( QStringLiteral("editContactNotes"), m_actionEdit );
 	connect(m_actionEdit, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()));
 
 	connect ( Kopete::ContactList::self() , SIGNAL(metaContactSelected(bool)) , m_actionEdit , SLOT(setEnabled(bool)));
 	m_actionEdit->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count()==1 );
 
-	setXMLFile("contactnotesui.rc");
+	setXMLFile(QStringLiteral("contactnotesui.rc"));
 }
 
 ContactNotesPlugin::~ContactNotesPlugin()
@@ -76,12 +76,12 @@ void ContactNotesPlugin::slotEditInfo()
 
 QString ContactNotesPlugin::notes(Kopete::MetaContact *m)
 {
-	return m->pluginData( this, "notes" );
+	return m->pluginData( this, QStringLiteral("notes") );
 }
 
 void ContactNotesPlugin::setNotes( const QString &n, Kopete::MetaContact *m )
 {
-	m->setPluginData( this, "notes", n );
+	m->setPluginData( this, QStringLiteral("notes"), n );
 }
 
 #include "contactnotesplugin.moc"

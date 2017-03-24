@@ -35,15 +35,15 @@ PrivacyListListener::PrivacyListListener ( Task* parent ) : Task ( parent ) {
 }
 
 bool PrivacyListListener::take ( const QDomElement &e ) {
-	if ( e.tagName() != "iq" || e.attribute ( "type" ) != "set" )
+	if ( e.tagName() != QLatin1String("iq") || e.attribute ( QStringLiteral("type") ) != QLatin1String("set") )
 		return false;
 
 	QString ns = queryNS ( e );
-	if ( ns == "jabber:iq:privacy" ) {
+	if ( ns == QLatin1String("jabber:iq:privacy") ) {
 		// TODO: Do something with update
 
 		// Confirm receipt
-		QDomElement iq = createIQ ( doc(), "result", e.attribute ( "from" ), e.attribute ( "id" ) );
+		QDomElement iq = createIQ ( doc(), QStringLiteral("result"), e.attribute ( QStringLiteral("from") ), e.attribute ( QStringLiteral("id") ) );
 		send ( iq );
 		return true;
 	}
@@ -54,9 +54,9 @@ bool PrivacyListListener::take ( const QDomElement &e ) {
 // -----------------------------------------------------------------------------
 
 GetPrivacyListsTask::GetPrivacyListsTask ( Task* parent ) : Task ( parent ) {
-	iq_ = createIQ ( doc(), "get", "", id() );
-	QDomElement query = doc()->createElement ( "query" );
-	query.setAttribute ( "xmlns",PRIVACY_NS );
+	iq_ = createIQ ( doc(), QStringLiteral("get"), QLatin1String(""), id() );
+	QDomElement query = doc()->createElement ( QStringLiteral("query") );
+	query.setAttribute ( QStringLiteral("xmlns"),PRIVACY_NS );
 	iq_.appendChild ( query );
 }
 
@@ -69,17 +69,17 @@ bool GetPrivacyListsTask::take ( const QDomElement &x ) {
 		return false;
 
 	//kDebug (JABBER_DEBUG_GLOBAL) << "Got reply for privacy lists.";
-	if ( x.attribute ( "type" ) == "result" ) {
+	if ( x.attribute ( QStringLiteral("type") ) == QLatin1String("result") ) {
 		QDomElement tag, q = queryTag ( x );
 
 		for ( QDomNode n = q.firstChild(); !n.isNull(); n = n.nextSibling() ) {
 			QDomElement e = n.toElement();
-			if ( e.tagName() == "active" )
-				active_ = e.attribute ( "name" );
-			else if ( e.tagName() == "default" )
-				default_ = e.attribute ( "name" );
-			else if ( e.tagName() == "list" )
-				lists_.append ( e.attribute ( "name" ) );
+			if ( e.tagName() == QLatin1String("active") )
+				active_ = e.attribute ( QStringLiteral("name") );
+			else if ( e.tagName() == QLatin1String("default") )
+				default_ = e.attribute ( QStringLiteral("name") );
+			else if ( e.tagName() == QLatin1String("list") )
+				lists_.append ( e.attribute ( QStringLiteral("name") ) );
 			else
 				kWarning (JABBER_DEBUG_GLOBAL) << "Unknown tag in privacy lists.";
 
@@ -107,27 +107,27 @@ const QString& GetPrivacyListsTask::activeList() {
 // -----------------------------------------------------------------------------
 
 
-SetPrivacyListsTask::SetPrivacyListsTask ( Task* parent ) : Task ( parent ), changeDefault_ ( false ), changeActive_ ( false ), changeList_ ( false ), list_ ( "" ) {
+SetPrivacyListsTask::SetPrivacyListsTask ( Task* parent ) : Task ( parent ), changeDefault_ ( false ), changeActive_ ( false ), changeList_ ( false ), list_ ( QLatin1String("") ) {
 }
 
 void SetPrivacyListsTask::onGo() {
-	QDomElement iq_ = createIQ ( doc(), "set", "", id() );
-	QDomElement query = doc()->createElement ( "query" );
-	query.setAttribute ( "xmlns",PRIVACY_NS );
+	QDomElement iq_ = createIQ ( doc(), QStringLiteral("set"), QLatin1String(""), id() );
+	QDomElement query = doc()->createElement ( QStringLiteral("query") );
+	query.setAttribute ( QStringLiteral("xmlns"),PRIVACY_NS );
 	iq_.appendChild ( query );
 
 	QDomElement e;
 	if ( changeDefault_ ) {
 		//kDebug (JABBER_DEBUG_GLOBAL) << "Changing default privacy list.";
-		e = doc()->createElement ( "default" );
+		e = doc()->createElement ( QStringLiteral("default") );
 		if ( !value_.isEmpty() )
-			e.setAttribute ( "name",value_ );
+			e.setAttribute ( QStringLiteral("name"),value_ );
 	}
 	else if ( changeActive_ ) {
 		//kDebug (JABBER_DEBUG_GLOBAL) << "Changing active privacy list.";
-		e = doc()->createElement ( "active" );
+		e = doc()->createElement ( QStringLiteral("active") );
 		if ( !value_.isEmpty() )
-			e.setAttribute ( "name",value_ );
+			e.setAttribute ( QStringLiteral("name"),value_ );
 	}
 	else if ( changeList_ ) {
 		//kDebug (JABBER_DEBUG_GLOBAL) << "Changing privacy list.";
@@ -168,7 +168,7 @@ bool SetPrivacyListsTask::take ( const QDomElement &x ) {
 	if ( !iqVerify ( x, "", id() ) )
 		return false;
 
-	if ( x.attribute ( "type" ) == "result" ) {
+	if ( x.attribute ( QStringLiteral("type") ) == QLatin1String("result") ) {
 		//kDebug (JABBER_DEBUG_GLOBAL) << "Got successful reply for list change.";
 		setSuccess();
 	}
@@ -182,13 +182,13 @@ bool SetPrivacyListsTask::take ( const QDomElement &x ) {
 
 // -----------------------------------------------------------------------------
 
-GetPrivacyListTask::GetPrivacyListTask ( Task* parent, const QString& name ) : Task ( parent ), name_ ( name ), list_ ( PrivacyList ( "" ) ) {
-	iq_ = createIQ ( doc(), "get", "", id() );
-	QDomElement query = doc()->createElement ( "query" );
-	query.setAttribute ( "xmlns",PRIVACY_NS );
+GetPrivacyListTask::GetPrivacyListTask ( Task* parent, const QString& name ) : Task ( parent ), name_ ( name ), list_ ( PrivacyList ( QLatin1String("") ) ) {
+	iq_ = createIQ ( doc(), QStringLiteral("get"), QLatin1String(""), id() );
+	QDomElement query = doc()->createElement ( QStringLiteral("query") );
+	query.setAttribute ( QStringLiteral("xmlns"),PRIVACY_NS );
 	iq_.appendChild ( query );
-	QDomElement list = doc()->createElement ( "list" );
-	list.setAttribute ( "name",name );
+	QDomElement list = doc()->createElement ( QStringLiteral("list") );
+	list.setAttribute ( QStringLiteral("name"),name );
 	query.appendChild ( list );
 }
 
@@ -202,9 +202,9 @@ bool GetPrivacyListTask::take ( const QDomElement &x ) {
 		return false;
 
 	//kDebug (JABBER_DEBUG_GLOBAL) << qPrintable (QString("Got privacy list %1 reply.").arg(name_));
-	if ( x.attribute ( "type" ) == "result" ) {
+	if ( x.attribute ( QStringLiteral("type") ) == QLatin1String("result") ) {
 		QDomElement q = queryTag ( x );
-		QDomElement listTag = q.firstChildElement ( "list" );
+		QDomElement listTag = q.firstChildElement ( QStringLiteral("list") );
 		if ( !listTag.isNull() ) {
 			list_ = PrivacyList ( listTag );
 		}
@@ -300,7 +300,7 @@ void PrivacyManager::getDefault_listsReceived ( const QString& defaultList, cons
 		requestList ( defaultList );
 	}
 	else {
-		emit defaultListAvailable ( PrivacyList ( "" ) );
+		emit defaultListAvailable ( PrivacyList ( QLatin1String("") ) );
 	}
 }
 

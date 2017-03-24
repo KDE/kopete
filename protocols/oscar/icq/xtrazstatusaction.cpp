@@ -24,7 +24,7 @@ StatusAction::StatusAction( const Xtraz::Status &status, QObject *parent )
 {
 	this->setText( mStatus.description() );
 
-	this->setIcon( QIcon::fromTheme( QString( "icq_xstatus%1" ).arg( mStatus.status() ) ) );
+	this->setIcon( QIcon::fromTheme( QStringLiteral( "icq_xstatus%1" ).arg( mStatus.status() ) ) );
 	this->setToolTip( mStatus.message() );
 
 	QObject::connect( this, SIGNAL(triggered(bool)), this, SLOT(triggered()) );

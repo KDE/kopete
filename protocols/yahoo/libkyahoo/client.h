@@ -165,7 +165,7 @@ Q_OBJECT
 		 * @param group the group where the buddy will be placed
 		 * @param message the message that will be sent to the buddy along the authorization request
 		 */
-		void addBuddy( const QString &userId, const QString &group, const QString &message = QLatin1String("Please add me")  );
+		void addBuddy( const QString &userId, const QString &group, const QString &message = QStringLiteral("Please add me")  );
 
 		/**
 		 * Remove a buddy from the contact list

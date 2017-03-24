@@ -37,7 +37,7 @@ public:
 
 	QAbstractSocket* abstractSocket() const Q_DECL_OVERRIDE;
 
-	void setAuth(const QString &user, const QString &pass="");
+	void setAuth(const QString &user, const QString &pass=QLatin1String(QLatin1String("")));
 	void connectToUrl(const QUrl &url);
 	void connectToHost(const QString &proxyHost, int proxyPort, const QUrl &url);
 
@@ -82,7 +82,7 @@ public:
 	QAbstractSocket* abstractSocket() const;
 
 	void setUseSsl(bool state);
-	void setAuth(const QString &user, const QString &pass="");
+	void setAuth(const QString &user, const QString &pass=QLatin1String(QLatin1String("")));
 	bool isActive() const;
 	void post(const QString &proxyHost, int proxyPort, const QUrl &url, const QByteArray &data, bool asProxy=true);
 	void stop();
@@ -118,7 +118,7 @@ public:
 	HttpProxyGetStream(QObject *parent=0);
 	~HttpProxyGetStream();
 
-	void setAuth(const QString &user, const QString &pass="");
+	void setAuth(const QString &user, const QString &pass=QLatin1String(QLatin1String("")));
 	bool isActive() const;
 	void get(const QString &proxyHost, int proxyPort, const QString &url, bool ssl=false, bool asProxy=false);
 	void stop();

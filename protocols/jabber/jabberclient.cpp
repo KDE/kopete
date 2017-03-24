@@ -199,7 +199,7 @@ void JabberClient::cleanUp ()
 	setClientVersion ( QString() );
 	setOSName ( QString() );
 
-	setTimeZone ( "UTC", 0 );
+	setTimeZone ( QStringLiteral("UTC"), 0 );
 
 	setIgnoreTLSWarnings ( false );
 
@@ -706,7 +706,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 		 */
 		bool loaded = false;
 		foreach ( QCA::Provider *p, QCA::providers() ) {
-			if ( p->name() == "xoauth2sasl" ) {
+			if ( p->name() == QLatin1String("xoauth2sasl") ) {
 				loaded = true;
 				break;
 			}
@@ -714,9 +714,9 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 		if ( ! loaded ) {
 			/* install with higher priority as simplesasl to prevent loading xoauth2sasl automatically */
 			QCA::insertProvider(createProviderXOAuth2());
-			QCA::setProviderPriority("xoauth2sasl", 11);
+			QCA::setProviderPriority(QStringLiteral("xoauth2sasl"), 11);
 		}
-		d->jabberClientStream->setSaslMechanismProvider("X-OAUTH2", "xoauth2sasl");
+		d->jabberClientStream->setSaslMechanismProvider(QStringLiteral("X-OAUTH2"), QStringLiteral("xoauth2sasl"));
 	}
 
 	/*
@@ -837,21 +837,21 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 
 	// Additional features supported by Kopete:
 	XMPP::Features features;
-	features.addFeature("http://jabber.org/protocol/chatstates");  // XEP-0085: Chat State Notifications
-	features.addFeature("http://jabber.org/protocol/mood");        // XEP-0107: User Mood
-	features.addFeature("http://jabber.org/protocol/muc");         // XEP-0045: Multi-User Chat
-	features.addFeature("http://jabber.org/protocol/xhtml-im");    // XEP-0071: XHTML-IM
-	features.addFeature("jabber:iq:oob");                          // XEP-0066: Out of Band Data
-	features.addFeature("jabber:iq:version");                      // XEP-0092: Software Version
-	features.addFeature("jabber:x:conference");                    // XEP-0249: Direct MUC Invitations
-	features.addFeature("jabber:x:data");                          // XEP-0004: Data Forms
-	features.addFeature("jabber:x:delay");                         // XEP-0091: Legacy Delayed Delivery
-	features.addFeature("jabber:x:encrypted");                     // XEP-0027: Current OpenPGP Usage
-	features.addFeature("jabber:x:event");                         // XEP-0022: Message Events
-	features.addFeature("jabber:x:signed");                        // XEP-0027: Current OpenPGP Usage
-	features.addFeature("urn:xmpp:delay");                         // XEP-0203: Delayed Delivery
-	features.addFeature("urn:xmpp:receipts");                      // XEP-0184: Message Delivery Receipts
-	features.addFeature("urn:xmpp:thumbs:0");                      // XEP-0264: File Transfer Thumbnails
+	features.addFeature(QStringLiteral("http://jabber.org/protocol/chatstates"));  // XEP-0085: Chat State Notifications
+	features.addFeature(QStringLiteral("http://jabber.org/protocol/mood"));        // XEP-0107: User Mood
+	features.addFeature(QStringLiteral("http://jabber.org/protocol/muc"));         // XEP-0045: Multi-User Chat
+	features.addFeature(QStringLiteral("http://jabber.org/protocol/xhtml-im"));    // XEP-0071: XHTML-IM
+	features.addFeature(QStringLiteral("jabber:iq:oob"));                          // XEP-0066: Out of Band Data
+	features.addFeature(QStringLiteral("jabber:iq:version"));                      // XEP-0092: Software Version
+	features.addFeature(QStringLiteral("jabber:x:conference"));                    // XEP-0249: Direct MUC Invitations
+	features.addFeature(QStringLiteral("jabber:x:data"));                          // XEP-0004: Data Forms
+	features.addFeature(QStringLiteral("jabber:x:delay"));                         // XEP-0091: Legacy Delayed Delivery
+	features.addFeature(QStringLiteral("jabber:x:encrypted"));                     // XEP-0027: Current OpenPGP Usage
+	features.addFeature(QStringLiteral("jabber:x:event"));                         // XEP-0022: Message Events
+	features.addFeature(QStringLiteral("jabber:x:signed"));                        // XEP-0027: Current OpenPGP Usage
+	features.addFeature(QStringLiteral("urn:xmpp:delay"));                         // XEP-0203: Delayed Delivery
+	features.addFeature(QStringLiteral("urn:xmpp:receipts"));                      // XEP-0184: Message Delivery Receipts
+	features.addFeature(QStringLiteral("urn:xmpp:thumbs:0"));                      // XEP-0264: File Transfer Thumbnails
 	d->jabberClient->setFeatures(features);
 
 	// Additional features supported by libiris, but not yet by Kopete:
@@ -969,8 +969,8 @@ void JabberClient::slotPsiDebug ( const QString & _msg )
 {
 	QString msg = _msg;
 
-	msg = msg.replace( QRegExp( "<password>[^<]*</password>\n" ), "<password>[Filtered]</password>\n" );
-	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
+	msg = msg.replace( QRegExp( "<password>[^<]*</password>\n" ), QStringLiteral("<password>[Filtered]</password>\n") );
+	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), QStringLiteral("<digest>[Filtered]</digest>\n") );
 
 	emit debugMessage ( "Psi: " + msg );
 
@@ -980,8 +980,8 @@ void JabberClient::slotIncomingXML ( const QString & _msg )
 {
 	QString msg = _msg;
 
-	msg = msg.replace( QRegExp( "<password>[^<]*</password>\n" ), "<password>[Filtered]</password>\n" );
-	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
+	msg = msg.replace( QRegExp( "<password>[^<]*</password>\n" ), QStringLiteral("<password>[Filtered]</password>\n") );
+	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), QStringLiteral("<digest>[Filtered]</digest>\n") );
 
 	emit debugMessage ( "XML IN: " + msg );
 	emit incomingXML ( msg );
@@ -991,8 +991,8 @@ void JabberClient::slotOutgoingXML ( const QString & _msg )
 {
 	QString msg = _msg;
 
-	msg = msg.replace( QRegExp( "<password>[^<]*</password>\n" ), "<password>[Filtered]</password>\n" );
-	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
+	msg = msg.replace( QRegExp( "<password>[^<]*</password>\n" ), QStringLiteral("<password>[Filtered]</password>\n") );
+	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), QStringLiteral("<digest>[Filtered]</digest>\n") );
 
 	emit debugMessage ( "XML OUT: " + msg );
 	emit outgoingXML ( msg );
@@ -1001,7 +1001,7 @@ void JabberClient::slotOutgoingXML ( const QString & _msg )
 void JabberClient::slotTLSHandshaken ()
 {
 
-	emit debugMessage ( "TLS handshake done, testing certificate validity..." );
+	emit debugMessage ( QStringLiteral("TLS handshake done, testing certificate validity...") );
 
 	// FIXME: in the future, this should be handled by KDE, not QCA
 
@@ -1010,19 +1010,19 @@ void JabberClient::slotTLSHandshaken ()
 
 	if ( identityResult == QCA::TLS::Valid && validityResult == QCA::ValidityGood )
 	{
-		emit debugMessage ( "Identity and certificate valid, continuing." );
+		emit debugMessage ( QStringLiteral("Identity and certificate valid, continuing.") );
 
 		// valid certificate, continue
 		d->jabberTLSHandler->continueAfterHandshake ();
 	}
 	else
 	{
-		emit debugMessage ( "Certificate is not valid, asking user what to do next." );
+		emit debugMessage ( QStringLiteral("Certificate is not valid, asking user what to do next.") );
 
 		// certificate is not valid, query the user
 		if ( ignoreTLSWarnings () )
 		{
-			emit debugMessage ( "We are supposed to ignore TLS warnings, continuing." );
+			emit debugMessage ( QStringLiteral("We are supposed to ignore TLS warnings, continuing.") );
 			d->jabberTLSHandler->continueAfterHandshake ();
 		}
 
@@ -1043,7 +1043,7 @@ void JabberClient::continueAfterTLSWarning ()
 
 void JabberClient::slotCSNeedAuthParams ( bool user, bool pass, bool realm )
 {
-	emit debugMessage ( "Sending auth credentials..." );
+	emit debugMessage ( QStringLiteral("Sending auth credentials...") );
 
 	if ( user )
 	{
@@ -1066,7 +1066,7 @@ void JabberClient::slotCSNeedAuthParams ( bool user, bool pass, bool realm )
 
 void JabberClient::slotCSAuthenticated ()
 {
-	emit debugMessage ( "Connected to Jabber server." );
+	emit debugMessage ( QStringLiteral("Connected to Jabber server.") );
 
 	/*
 	 * Determine local IP address.
@@ -1126,7 +1126,7 @@ void JabberClient::slotCSDisconnected ()
 	 * not like to be deleted from a slot).
 	 */
 
-	emit debugMessage ( "Disconnected, freeing up file transfer port..." );
+	emit debugMessage ( QStringLiteral("Disconnected, freeing up file transfer port...") );
 
 	// delete local address from S5B server
 	removeS5BServerAddress ( localAddress () );
@@ -1138,7 +1138,7 @@ void JabberClient::slotCSDisconnected ()
 void JabberClient::slotCSWarning ( int warning )
 {
 
-	emit debugMessage ( "Client stream warning." );
+	emit debugMessage ( QStringLiteral("Client stream warning.") );
 
 	/*
 	 * FIXME: process all other warnings
@@ -1163,7 +1163,7 @@ void JabberClient::slotCSWarning ( int warning )
 void JabberClient::slotCSError ( int error )
 {
 
-	emit debugMessage ( "Client stream error." );
+	emit debugMessage ( QStringLiteral("Client stream error.") );
 
 	emit csError ( error );
 

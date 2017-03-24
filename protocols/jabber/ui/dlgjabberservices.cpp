@@ -82,7 +82,7 @@ dlgJabberServices::~dlgJabberServices()
 void dlgJabberServices::initTree()
 {
 	ui.trServices->clear();
-	mRootItem = new ServiceItem(mAccount, ui.leServer->text() , ui.leNode->text(), "");
+	mRootItem = new ServiceItem(mAccount, ui.leServer->text() , ui.leNode->text(), QLatin1String(""));
 	ui.trServices->addTopLevelItem(mRootItem);
 	mRootItem->setExpanded(true);
 }

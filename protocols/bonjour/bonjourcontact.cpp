@@ -35,7 +35,7 @@
 // This shouldn't be necessary
 BonjourContact::BonjourContact( Kopete::Account* _account, const QString &uniqueName,
 		Kopete::MetaContact *parent )
-: Kopete::Contact( _account, uniqueName, parent, QString("bonjour_protocol") ), connection(NULL), 
+: Kopete::Contact( _account, uniqueName, parent, QStringLiteral("bonjour_protocol") ), connection(NULL), 
 	remoteHostName(), remoteAddress(), remotePort(0), m_msgManager(NULL)
 {
 	qDebug()<< " uniqueName: " << uniqueName;

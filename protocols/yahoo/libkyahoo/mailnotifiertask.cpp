@@ -69,7 +69,7 @@ void MailNotifierTask::parseMail( YMSGTransfer *t )
 	QString subject = t->firstParam( 18 );
 
 	if( !mail.isEmpty() && !from.isEmpty() && !subject.isEmpty() )
-		emit mailNotify( QString::fromLatin1( "%1 <%2>").arg( from, mail ), subject, count.toInt() );
+		emit mailNotify( QStringLiteral( "%1 <%2>").arg( from, mail ), subject, count.toInt() );
 	else
 		emit mailNotify( QString(), QString(), count.toInt());
 }

@@ -69,7 +69,7 @@ void OscarStatusManager::initialize( uint firstUsableWeight )
 				status = Kopete::OnlineStatus( data.onlineStatusType(), weight,
 				                               d->protocol, internalStatus,
 				                               data.overlayIcons() + overlay.icons(),
-				                               data.name() + QString(" (%1)").arg( overlay.description() ) );
+				                               data.name() + QStringLiteral(" (%1)").arg( overlay.description() ) );
 			}
 			else
 			{
@@ -111,7 +111,7 @@ Kopete::OnlineStatus OscarStatusManager::onlineStatusOf( const Oscar::Presence &
 		const Oscar::PresenceType &type = pscTypeForType( pres.type() );
 
 		QString desc = kosDescription( pres );
-		QString xtrazIcon = QString( "icq_xstatus%1" ).arg( pres.xtrazStatus() );
+		QString xtrazIcon = QStringLiteral( "icq_xstatus%1" ).arg( pres.xtrazStatus() );
 		return Kopete::OnlineStatus( type.onlineStatusType(), 0, d->protocol, pres.internalStatus(),
 		                             QStringList( xtrazIcon ) + overlay.icons(), desc );
 	}
@@ -269,7 +269,7 @@ QString OscarStatusManager::kosDescription( const Oscar::Presence &presence ) co
 	QString desc = type.name();
 	
 	if ( !overlay.description().isEmpty() )
-		desc += QString(" (%1)").arg( overlay.description() );
+		desc += QStringLiteral(" (%1)").arg( overlay.description() );
 	
 	return desc;
 }

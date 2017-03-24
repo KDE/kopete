@@ -134,7 +134,7 @@ KBookmarkGroup BookmarksPlugin::getKopeteFolder()
 {
 	KBookmarkManager *mgr = KBookmarkManager::userBookmarksManager();
 
-	return getFolder( mgr->root(), "kopete" );
+	return getFolder( mgr->root(), QStringLiteral("kopete") );
 }
 
 bool BookmarksPlugin::isURLInGroup(const KUrl &url, KBookmarkGroup group)
@@ -179,7 +179,7 @@ QTextCodec* BookmarksPlugin::getPageEncoding( const QByteArray &data )
 	}
 	//kDebug(14501) << temp.mid(pos, rx.matchedLength());
 	temp = temp.mid(pos, rx.matchedLength()-1);
-	temp = temp.mid( temp.indexOf("charset", 0, Qt::CaseInsensitive)+7);
+	temp = temp.mid( temp.indexOf(QLatin1String("charset"), 0, Qt::CaseInsensitive)+7);
 	temp = temp.remove('=').simplified();
 	for( pos = 0 ; temp[pos].isLetterOrNumber() || temp[pos] == '-' ; ++pos ) {};
 	temp = temp.left( pos );

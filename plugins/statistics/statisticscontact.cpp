@@ -43,13 +43,13 @@ StatisticsContact::StatisticsContact(Kopete::MetaContact *mc, StatisticsDB *db) 
 	m_messageLength = 0;
 	m_messageLengthOn = 0;
 
-	commonStatsCheck("timebetweentwomessages", m_timeBetweenTwoMessages, m_timeBetweenTwoMessagesOn, 0, -1);
-	commonStatsCheck("messagelength", m_messageLength, m_messageLengthOn, 0, 0);
+	commonStatsCheck(QStringLiteral("timebetweentwomessages"), m_timeBetweenTwoMessages, m_timeBetweenTwoMessagesOn, 0, -1);
+	commonStatsCheck(QStringLiteral("messagelength"), m_messageLength, m_messageLengthOn, 0, 0);
 	
 	// Check for last talk
 	QString lastTalk;
-	QString dummy = "";
-	commonStatsCheck("lasttalk", lastTalk, dummy);
+	QString dummy = QLatin1String("");
+	commonStatsCheck(QStringLiteral("lasttalk"), lastTalk, dummy);
 	if (lastTalk.isEmpty())
 	{
 		m_lastTalk.setTime_t(0);
@@ -64,8 +64,8 @@ StatisticsContact::StatisticsContact(Kopete::MetaContact *mc, StatisticsDB *db) 
 
 
 	// Check for lastPresent
-	QString lastPresent = "";
-	commonStatsCheck("lastpresent", lastPresent, dummy);
+	QString lastPresent = QLatin1String("");
+	commonStatsCheck(QStringLiteral("lastpresent"), lastPresent, dummy);
 	if (lastPresent.isEmpty())
 	{
 		m_lastPresent.setTime_t(0);
@@ -80,11 +80,11 @@ StatisticsContact::StatisticsContact(Kopete::MetaContact *mc, StatisticsDB *db) 
  */
 StatisticsContact::~StatisticsContact()
 {
-	commonStatsSave("timebetweentwomessages",QString::number(m_timeBetweenTwoMessages), 
+	commonStatsSave(QStringLiteral("timebetweentwomessages"),QString::number(m_timeBetweenTwoMessages), 
 	QString::number(m_timeBetweenTwoMessagesOn), m_timeBetweenTwoMessagesChanged);	 
-	commonStatsSave("messagelength",QString::number(m_messageLength), QString::number(m_messageLengthOn), m_messageLengthChanged); 
-	commonStatsSave("lasttalk", m_lastTalk.toString(), "", m_lastTalkChanged);
-	commonStatsSave("lastpresent", m_lastPresent.toString(), "", m_lastPresentChanged);
+	commonStatsSave(QStringLiteral("messagelength"),QString::number(m_messageLength), QString::number(m_messageLengthOn), m_messageLengthChanged); 
+	commonStatsSave(QStringLiteral("lasttalk"), m_lastTalk.toString(), QLatin1String(""), m_lastTalkChanged);
+	commonStatsSave(QStringLiteral("lastpresent"), m_lastPresent.toString(), QLatin1String(""), m_lastPresentChanged);
 }
 
 void StatisticsContact::commonStatsSave(const QString &name, const QString &statVar1, const QString &statVar2, const bool statVarChanged)
@@ -110,7 +110,7 @@ void StatisticsContact::commonStatsCheck(const QString &name, int& statVar1, int
 
 void StatisticsContact::commonStatsCheck(const QString &name, QString& statVar1, QString& statVar2, const QString &defaultValue1, const QString &defaultValue2)
 {
-	QStringList buffer = m_db->query(QString("SELECT statvalue1,statvalue2 FROM commonstats WHERE statname LIKE '%1' AND metacontactid LIKE '%2';").arg(name, m_metaContactId));
+	QStringList buffer = m_db->query(QStringLiteral("SELECT statvalue1,statvalue2 FROM commonstats WHERE statname LIKE '%1' AND metacontactid LIKE '%2';").arg(name, m_metaContactId));
 	if (!buffer.isEmpty())
 	{
 		statVar1 = buffer[0];
@@ -118,7 +118,7 @@ void StatisticsContact::commonStatsCheck(const QString &name, QString& statVar1,
 	}
 	else
 	{
-		m_db->query(QString("INSERT INTO commonstats (metacontactid, statname, statvalue1, statvalue2) VALUES('%1', '%2', 0, 0);").arg(m_metaContactId, name));
+		m_db->query(QStringLiteral("INSERT INTO commonstats (metacontactid, statname, statvalue1, statvalue2) VALUES('%1', '%2', 0, 0);").arg(m_metaContactId, name));
 		statVar1 = defaultValue1;
 		statVar2 = defaultValue2;
 	}
@@ -228,7 +228,7 @@ QString StatisticsContact::statusAt(QDateTime dt)
 			).arg(m_metaContactId).arg(dt.toTime_t()).arg(dt.toTime_t()));	
 	
 	if (!values.isEmpty()) return Kopete::OnlineStatus(Kopete::OnlineStatus::statusStringToType(values[0])).description();
-	else return "";
+	else return QLatin1String("");
 }
 
 QString StatisticsContact::mainStatusDate(const QDate& date)
@@ -295,7 +295,7 @@ QList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::StatusTyp
 	
 	
 	QDateTime currentDateTime = QDateTime::currentDateTime();
-	buffer = m_db->query(QString("SELECT datetimebegin, datetimeend, status FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin").arg(m_metaContactId));
+	buffer = m_db->query(QStringLiteral("SELECT datetimebegin, datetimeend, status FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin").arg(m_metaContactId));
 	
 	
 	// Only select the events for which the previous is not Unknown AND the status is status.

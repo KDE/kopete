@@ -36,7 +36,7 @@ ICQStatusDialog::ICQStatusDialog( QWidget *parent )
 
 	QList<QIcon> icons;
 	for ( int i = 0; i < Oscar::XSTAT_LAST; ++i )
-		icons << QIcon::fromTheme( QString( "icq_xstatus%1" ).arg( i ) );
+		icons << QIcon::fromTheme( QStringLiteral( "icq_xstatus%1" ).arg( i ) );
 
 	mXtrazStatusUI->iconsWidget->setColumnCount( 11 );
 	mXtrazStatusUI->iconsWidget->setIcons( icons );

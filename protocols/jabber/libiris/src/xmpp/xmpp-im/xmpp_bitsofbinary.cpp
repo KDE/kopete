@@ -113,20 +113,20 @@ void BoBData::setMaxAge(unsigned int maxAge)
 
 void BoBData::fromXml(const QDomElement &data)
 {
-	d->cid = data.attribute("cid");
-	d->maxAge = data.attribute("max-age").toInt();
-	d->type = data.attribute("type");
-	d->data = QCA::Base64().stringToArray(data.text().replace("\n",""))
+	d->cid = data.attribute(QStringLiteral("cid"));
+	d->maxAge = data.attribute(QStringLiteral("max-age")).toInt();
+	d->type = data.attribute(QStringLiteral("type"));
+	d->data = QCA::Base64().stringToArray(data.text().replace(QLatin1String("\n"),QLatin1String("")))
 			.toByteArray();
 }
 
 QDomElement BoBData::toXml(QDomDocument *doc) const
 {
-	QDomElement data = doc->createElement("data");
-	data.setAttribute("xmlns", "urn:xmpp:bob");
-	data.setAttribute("cid", d->cid);
-	data.setAttribute("max-age", d->maxAge);
-	data.setAttribute("type", d->type);
+	QDomElement data = doc->createElement(QStringLiteral("data"));
+	data.setAttribute(QStringLiteral("xmlns"), QStringLiteral("urn:xmpp:bob"));
+	data.setAttribute(QStringLiteral("cid"), d->cid);
+	data.setAttribute(QStringLiteral("max-age"), d->maxAge);
+	data.setAttribute(QStringLiteral("type"), d->type);
 	data.appendChild(doc->createTextNode(QCA::Base64().arrayToString(d->data)));
 	return data;
 }
@@ -181,7 +181,7 @@ BoBData BoBManager::append(const QByteArray &data, const QString &type,
 								unsigned int maxAge)
 {
 	BoBData b;
-	b.setCid(QString("sha1+%1@bob.xmpp.org").arg(QString(
+	b.setCid(QStringLiteral("sha1+%1@bob.xmpp.org").arg(QString(
 		QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex())));
 	b.setData(data);
 	b.setMaxAge(maxAge);
@@ -196,7 +196,7 @@ QString BoBManager::append(QFile &file, const QString &type)
 {
 	bool isOpen = file.isOpen();
 	if (isOpen || file.open(QIODevice::ReadOnly)) {
-		QString cid = QString("sha1+%1@bob.xmpp.org").arg(
+		QString cid = QStringLiteral("sha1+%1@bob.xmpp.org").arg(
 			QString(QCryptographicHash::hash(file.readAll(),
 											QCryptographicHash::Sha1).toHex()));
 		_localFiles[cid] = QPair<QString,QString>(file.fileName(), type);

@@ -37,7 +37,7 @@ void GetStatusTask::userDN( const QString & dn )
 	Field::FieldList lst;
 	// changed from USERID to DN as per Gaim/GWIM
 	lst.append( new Field::SingleField( Field::NM_A_SZ_DN, 0, NMFIELD_TYPE_UTF8, m_userDN ) );
-	createTransfer( "getstatus", lst );
+	createTransfer( QStringLiteral("getstatus"), lst );
 }
 
 bool GetStatusTask::take( Transfer * transfer )

@@ -38,7 +38,7 @@ LoginTask::~LoginTask()
 
 void LoginTask::initialise()
 {
-	QString command = QString::fromLatin1("login:%1:%2").arg( client()->host() ).arg( client()->port() );
+	QString command = QStringLiteral("login:%1:%2").arg( client()->host() ).arg( client()->port() );
 	
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( Field::NM_A_SZ_USERID, 0, NMFIELD_TYPE_UTF8, client()->userId() ) );
@@ -125,7 +125,7 @@ void LoginTask::extractFolder( Field::MultiField * folderContainer )
 	current = fl.findSingleField( Field::NM_A_SZ_PARENT_ID );
 	folder.parentId = current->value().toInt();
 	
-	client()->debug( QString( "Got folder: %1, obj: %2, parent: %3, seq: %4." ).arg( folder.name ).arg(  folder.id ).arg( folder.parentId ).arg( folder.sequence ) );
+	client()->debug( QStringLiteral( "Got folder: %1, obj: %2, parent: %3, seq: %4." ).arg( folder.name ).arg(  folder.id ).arg( folder.parentId ).arg( folder.sequence ) );
 	// tell the world about it
 	emit gotFolder( folder );
 }

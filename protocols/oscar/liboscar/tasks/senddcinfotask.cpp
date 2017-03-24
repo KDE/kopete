@@ -128,7 +128,7 @@ void SendDCInfoTask::onGo()
 
 		if ( mSendMood )
 		{
-			QString mood = QString( "icqmood%1" ).arg( mMood );
+			QString mood = QStringLiteral( "icqmood%1" ).arg( mMood );
 			tlv1D.addTLV( 0x000E, mood.toLatin1() );
 		}
 

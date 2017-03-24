@@ -116,10 +116,10 @@ void Kopete::WalletManager::slotWalletChangedStatus()
 
 	if( d->wallet->isOpen() )
 	{
-		if ( !d->wallet->hasFolder( QString::fromLatin1( "Kopete" ) ) )
-			d->wallet->createFolder( QString::fromLatin1( "Kopete" ) );
+		if ( !d->wallet->hasFolder( QStringLiteral( "Kopete" ) ) )
+			d->wallet->createFolder( QStringLiteral( "Kopete" ) );
 
-		if ( d->wallet->setFolder( QString::fromLatin1( "Kopete" ) ) )
+		if ( d->wallet->setFolder( QStringLiteral( "Kopete" ) ) )
 		{
 			qCDebug(LIBKOPETE_LOG) << "Successfully opened the wallet !";
 			// success!

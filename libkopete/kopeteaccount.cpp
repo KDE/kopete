@@ -108,7 +108,7 @@ public:
 Account::Account( Protocol *parent, const QString &accountId )
  : QObject( parent ), d( new Private( parent, accountId ) )
 {
-	d->configGroup=new KConfigGroup(KSharedConfig::openConfig(), QString::fromLatin1( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
+	d->configGroup=new KConfigGroup(KSharedConfig::openConfig(), QStringLiteral( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
 
 	d->excludeconnect = d->configGroup->readEntry( "ExcludeConnect", false );
 	d->color = d->configGroup->readEntry( "Color" , QColor() );

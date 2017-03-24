@@ -112,7 +112,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
 
-	m_initialPresence = XMPP::Status ( "", "", 5, true );
+	m_initialPresence = XMPP::Status ( QLatin1String(""), QLatin1String(""), 5, true );
 
 	// instantiate new client backend
 	QObject::connect ( m_jabberClient, SIGNAL (csDisconnected()), this, SLOT (slotCSDisconnected()) );
@@ -331,7 +331,7 @@ bool JabberAccount::isConnecting ()
 	XMPP::Jid jid ( myself()->contactId () );
 
 	// see if we are currently trying to connect
-	return resourcePool()->bestResource ( jid ).status().show () == QString("connecting");
+	return resourcePool()->bestResource ( jid ).status().show () == QStringLiteral("connecting");
 
 }
 
@@ -390,9 +390,9 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 		uname (&utsBuf);
 
-		m_jabberClient->setClientName ("Kopete");
+		m_jabberClient->setClientName (QStringLiteral("Kopete"));
 		m_jabberClient->setClientVersion (KAboutData::applicationData().version ());
-		m_jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
+		m_jabberClient->setOSName (QStringLiteral ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
 	}
 
 	// Set caps node information
@@ -401,9 +401,9 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	
 	// Set Disco Identity information
 	DiscoItem::Identity identity;
-	identity.category = "client";
-	identity.type = "pc";
-	identity.name = "Kopete";
+	identity.category = QStringLiteral("client");
+	identity.type = QStringLiteral("pc");
+	identity.name = QStringLiteral("Kopete");
 	m_jabberClient->setDiscoIdentity(identity);
 
 	//BEGIN TIMEZONE INFORMATION
@@ -443,9 +443,9 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 	kDebug (JABBER_DEBUG_GLOBAL) << "Connecting to Jabber server " << server() << ":" << port();
 
-	setPresence( XMPP::Status ("connecting", "", 0, true) );
+	setPresence( XMPP::Status (QStringLiteral("connecting"), QLatin1String(""), 0, true) );
 
-	switch ( m_jabberClient->connect ( XMPP::Jid ( accountId () + QString("/") + resource () ), password ) )
+	switch ( m_jabberClient->connect ( XMPP::Jid ( accountId () + QStringLiteral("/") + resource () ), password ) )
 	{
 		case JabberClient::NoTLS:
 			// no SSL support, at the connecting stage this means the problem is client-side
@@ -491,15 +491,15 @@ bool JabberAccount::handleTLSWarning (
 			break;
 		case QCA::TLS::HostMismatch:
 			idString = i18n("The host name does not match the one in the certificate.");
-			idCode   = "HostMismatch";
+			idCode   = QStringLiteral("HostMismatch");
 			break;
 		case QCA::TLS::InvalidCertificate:
 			idString = i18n("The certificate is invalid.");
-			idCode   = "InvalidCert";
+			idCode   = QStringLiteral("InvalidCert");
 			break;
 		case QCA::TLS::NoCertificate:
 			idString = i18n("No certificate was presented.");
-			idCode   = "NoCert";
+			idCode   = QStringLiteral("NoCert");
 			break;
 	}
 
@@ -509,47 +509,47 @@ bool JabberAccount::handleTLSWarning (
 			break;
 		case QCA::ErrorRejected:
 			validityString = i18n("The Certificate Authority rejected the certificate.");
-			code = "Rejected";
+			code = QStringLiteral("Rejected");
 			break;
 		case QCA::ErrorUntrusted:
 			validityString = i18n("The certificate is not trusted.");
-			code = "Untrusted";
+			code = QStringLiteral("Untrusted");
 			break;
 		case QCA::ErrorSignatureFailed:
 			validityString = i18n("The signature is invalid.");
-			code = "SignatureFailed";
+			code = QStringLiteral("SignatureFailed");
 			break;
 		case QCA::ErrorInvalidCA:
 			validityString = i18n("The Certificate Authority is invalid.");
-			code = "InvalidCA";
+			code = QStringLiteral("InvalidCA");
 			break;
 		case QCA::ErrorInvalidPurpose:
 			validityString = i18n("Invalid certificate purpose.");
-			code = "InvalidPurpose";
+			code = QStringLiteral("InvalidPurpose");
 			break;
 		case QCA::ErrorSelfSigned:
 			validityString = i18n("The certificate is self-signed.");
-			code = "SelfSigned";
+			code = QStringLiteral("SelfSigned");
 			break;
 		case QCA::ErrorRevoked:
 			validityString = i18n("The certificate has been revoked.");
-			code = "Revoked";
+			code = QStringLiteral("Revoked");
 			break;
 		case QCA::ErrorPathLengthExceeded:
 			validityString = i18n("Maximum certificate chain length was exceeded.");
-			code = "PathLengthExceeded";
+			code = QStringLiteral("PathLengthExceeded");
 			break;
 		case QCA::ErrorExpired:
 			validityString = i18n("The certificate has expired.");
-			code = "Expired";
+			code = QStringLiteral("Expired");
 			break;
 		case QCA::ErrorExpiredCA:
 			validityString = i18n("The Certificate Authority has expired.");
-			code = "ExpiredCA";
+			code = QStringLiteral("ExpiredCA");
 			break;
 		case QCA::ErrorValidityUnknown:
 			validityString = i18n("Validity is unknown.");
-			code = "ValidityUnknown";
+			code = QStringLiteral("ValidityUnknown");
 			break;
 	}
 
@@ -579,7 +579,7 @@ bool JabberAccount::handleTLSWarning (
 					  message,
 					  i18n("Jabber Connection Certificate Problem"),
 					  KStandardGuiItem::cont(),KStandardGuiItem::cancel(),
-					  QString("KopeteTLSWarning") + server + idCode + code) == KMessageBox::Continue );
+					  QStringLiteral("KopeteTLSWarning") + server + idCode + code) == KMessageBox::Continue );
 
 }
 
@@ -719,8 +719,8 @@ void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 
 	// make sure that the connection animation gets stopped if we're still
 	// in the process of connecting
-	setPresence ( XMPP::Status ("", "", 0, false) );
-	m_initialPresence = XMPP::Status ("", "", 5, true);
+	setPresence ( XMPP::Status (QLatin1String(""), QLatin1String(""), 0, false) );
+	m_initialPresence = XMPP::Status (QLatin1String(""), QLatin1String(""), 5, true);
 
 	/* FIXME:
 	 * We should delete the JabberClient instance here,
@@ -1033,9 +1033,9 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			errorText += "\n" + additionalErrMsg;
 		}
 
-		KNotification::event( QLatin1String("connection_error"), i18n("Kopete: Connection problem with Jabber server %1", server),
+		KNotification::event( QStringLiteral("connection_error"), i18n("Kopete: Connection problem with Jabber server %1", server),
 		                      errorText,
-		                      KIconLoader::global()->iconPath( "jabber_protocol", KIconLoader::Dialog ),
+		                      KIconLoader::global()->iconPath( QStringLiteral("jabber_protocol"), KIconLoader::Dialog ),
 		                      Kopete::UI::Global::mainWidget() );
 	}
 }
@@ -1136,7 +1136,7 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 	/*
 	 * Unless we are in the connecting status, send a presence packet to the server
 	 */
-	if(status.show () != QString("connecting") )
+	if(status.show () != QStringLiteral("connecting") )
 	{
 		/*
 		 * Make sure we are actually connected before sending out a packet.
@@ -1194,8 +1194,8 @@ void JabberAccount::slotSetMood()
 	QAction *action = (QAction *)sender();
 	Mood::Type type = (Mood::Type)action->data().toInt();
 
-    PubSubItem psi("current", Mood(type).toXml(*client()->client()->rootTask()->doc()));
-    JT_PubSubPublish *task = new JT_PubSubPublish(client()->client()->rootTask(), QString("http://jabber.org/protocol/mood"), psi);
+    PubSubItem psi(QStringLiteral("current"), Mood(type).toXml(*client()->client()->rootTask()->doc()));
+    JT_PubSubPublish *task = new JT_PubSubPublish(client()->client()->rootTask(), QStringLiteral("http://jabber.org/protocol/mood"), psi);
     task->go(true);
 
 }
@@ -1204,7 +1204,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 {
 	kDebug (JABBER_DEBUG_GLOBAL) << jid.full () << ", " << type;
 
-	if (type == "subscribe")
+	if (type == QLatin1String("subscribe"))
 	{
 		/*
 		 * A user wants to subscribe to our presence.
@@ -1230,7 +1230,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 		event->showActions( actions );
 		event->sendEvent();
 	}
-	else if (type == "unsubscribed")
+	else if (type == QLatin1String("unsubscribed"))
 	{
 		/*
 		 * Someone else removed our authorization to see them.
@@ -1287,7 +1287,7 @@ void JabberAccount::slotAddedInfoEventActionActivated ( uint actionId )
 		* Authorize user.
 		*/
 		XMPP::JT_Presence *task = new XMPP::JT_Presence ( client()->rootTask () );
-		task->sub ( jid, "subscribed" );
+		task->sub ( jid, QStringLiteral("subscribed") );
 		task->go ( true );
 	}
 	else if ( actionId == Kopete::AddedInfoEvent::BlockAction )
@@ -1296,7 +1296,7 @@ void JabberAccount::slotAddedInfoEventActionActivated ( uint actionId )
 		* Reject subscription.
 		*/
 		XMPP::JT_Presence *task = new XMPP::JT_Presence ( client()->rootTask () );
-		task->sub ( jid, "unsubscribed" );
+		task->sub ( jid, QStringLiteral("unsubscribed") );
 		task->go ( true );
 	}
 	else if( actionId == Kopete::AddedInfoEvent::AddContactAction )
@@ -1332,7 +1332,7 @@ void JabberAccount::slotAddedInfoEventActionActivated ( uint actionId )
 			// send a subscription request.
 			XMPP::JT_Presence *presenceTask = new XMPP::JT_Presence ( client()->rootTask () );
 	
-			presenceTask->sub ( jid, "subscribe" );
+			presenceTask->sub ( jid, QStringLiteral("subscribe") );
 			presenceTask->go ( true );
 		}
 	}
@@ -1466,7 +1466,7 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 
 	JabberBaseContact *contactFrom;
 
-	if ( message.type() == "groupchat" )
+	if ( message.type() == QLatin1String("groupchat") )
 	{
 		// this is a groupchat message, forward it to the group contact
 		// (the one without resource name)
@@ -1762,8 +1762,8 @@ bool JabberAccount::removeAccount( )
 				   			    "If you unregister, your whole contact list may be removed from the server,"
 							    " and you will never be able to connect to this account with any client", accountLabel() ),
 					i18n("Unregister"),
-					KGuiItem(i18n( "Remove and Unregister" ), "edit-delete"),
-					KGuiItem(i18n( "Remove only from Kopete"), "user-trash"),KStandardGuiItem::cancel(),
+					KGuiItem(i18n( "Remove and Unregister" ), QStringLiteral("edit-delete")),
+					KGuiItem(i18n( "Remove only from Kopete"), QStringLiteral("user-trash")),KStandardGuiItem::cancel(),
 					QString(), KMessageBox::Notify | KMessageBox::Dangerous );
 		if(result == KMessageBox::Cancel)
 		{

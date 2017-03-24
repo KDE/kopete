@@ -79,7 +79,7 @@ BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Acc
 		// Split the names array into firstName and lastName
 		if (! names.isEmpty()) {
 			firstName = names.takeFirst();
-			lastName = names.join(" ");
+			lastName = names.join(QStringLiteral(" "));
 		}
 
 		if (! login.isEmpty())

@@ -42,7 +42,7 @@ ContactListPlainModel::ContactListPlainModel( QObject* parent )
 
 ContactListPlainModel::~ContactListPlainModel()
 {
-	saveModelSettings( "Plain" );
+	saveModelSettings( QStringLiteral("Plain") );
 }
 
 void ContactListPlainModel::addMetaContact( Kopete::MetaContact *mc )
@@ -190,7 +190,7 @@ bool ContactListPlainModel::dropMimeData(const QMimeData *data, Qt::DropAction a
 
 	// for now only accepting drop of metacontacts
 	// TODO: support dropping of files in metacontacts to allow file transfers
-	if ( !data->hasFormat("application/kopete.metacontacts.list") && !data->hasUrls() )
+	if ( !data->hasFormat(QStringLiteral("application/kopete.metacontacts.list")) && !data->hasUrls() )
 		return false;
 
 	// contactlist has only one column
@@ -201,10 +201,10 @@ bool ContactListPlainModel::dropMimeData(const QMimeData *data, Qt::DropAction a
 	{
 		return dropUrl( data, row, parent, action );
 	}
-	else if ( data->hasFormat("application/kopete.metacontacts.list") )
+	else if ( data->hasFormat(QStringLiteral("application/kopete.metacontacts.list")) )
 	{
 		// decode the mime data
-		QByteArray encodedData = data->data("application/kopete.metacontacts.list");
+		QByteArray encodedData = data->data(QStringLiteral("application/kopete.metacontacts.list"));
 		QDataStream stream(&encodedData, QIODevice::ReadOnly);
 		QList<GroupMetaContactPair> items;
 
@@ -213,7 +213,7 @@ bool ContactListPlainModel::dropMimeData(const QMimeData *data, Qt::DropAction a
 			QString line;
 			stream >> line;
 
-			QStringList entry = line.split("/");
+			QStringList entry = line.split(QStringLiteral("/"));
 
 			QString grp = entry[0];
 			QString id = entry[1];
@@ -298,10 +298,10 @@ void ContactListPlainModel::appearanceConfigChanged()
 
 	if ( m_manualMetaContactSorting != manualMetaContactSorting )
 	{
-		saveModelSettings( "Plain" );
+		saveModelSettings( QStringLiteral("Plain") );
 		m_manualGroupSorting = manualGroupSorting;
 		m_manualMetaContactSorting = manualMetaContactSorting;
-		loadModelSettings( "Plain" );
+		loadModelSettings( QStringLiteral("Plain") );
 	}
 }
 
@@ -314,7 +314,7 @@ void ContactListPlainModel::loadContactList()
 
 	if ( m_manualMetaContactSorting )
 	{
-		loadModelSettings( "Plain" );
+		loadModelSettings( QStringLiteral("Plain") );
 		reset();
 	}
 }
@@ -323,19 +323,19 @@ void ContactListPlainModel::saveModelSettingsImpl( QDomDocument& doc, QDomElemen
 {
 	if ( m_manualMetaContactSorting )
 	{
-		QDomElement metaContactRootElement = rootElement.firstChildElement( "MetaContactPositions" );
+		QDomElement metaContactRootElement = rootElement.firstChildElement( QStringLiteral("MetaContactPositions") );
 		if ( !metaContactRootElement.isNull() )
 			rootElement.removeChild( metaContactRootElement );
 
-		metaContactRootElement = doc.createElement( "MetaContactPositions" );
+		metaContactRootElement = doc.createElement( QStringLiteral("MetaContactPositions") );
 		rootElement.appendChild( metaContactRootElement );
 
 		for ( int i = 0; i < m_contacts.count(); ++i )
 		{
 			Kopete::MetaContact* mc = m_contacts.value( i );
-			QDomElement metaContactElement = doc.createElement( "MetaContact" );
-			metaContactElement.setAttribute( "uuid", mc->metaContactId().toString() );
-			metaContactElement.setAttribute( "possition", i );
+			QDomElement metaContactElement = doc.createElement( QStringLiteral("MetaContact") );
+			metaContactElement.setAttribute( QStringLiteral("uuid"), mc->metaContactId().toString() );
+			metaContactElement.setAttribute( QStringLiteral("possition"), i );
 			metaContactRootElement.appendChild( metaContactElement );
 		}
 	}
@@ -356,7 +356,7 @@ void ContactListPlainModel::loadModelSettingsImpl( QDomElement& rootElement )
 
 	if ( m_manualMetaContactSorting )
 	{
-		QDomElement metaContactRootElement = rootElement.firstChildElement( "MetaContactPositions" );
+		QDomElement metaContactRootElement = rootElement.firstChildElement( QStringLiteral("MetaContactPositions") );
 		if ( !metaContactRootElement.isNull() )
 		{
 			// Temporary hash for faster item lookup
@@ -365,7 +365,7 @@ void ContactListPlainModel::loadModelSettingsImpl( QDomElement& rootElement )
 				uuidToMetaContact.insert( mc->metaContactId(), mc );
 
 			_metaContactPositionPlain = new QHash<const Kopete::MetaContact*, int>();
-			QDomNodeList metaContactList = metaContactRootElement.elementsByTagName( "MetaContact" );
+			QDomNodeList metaContactList = metaContactRootElement.elementsByTagName( QStringLiteral("MetaContact") );
 
 			for ( int index = 0; index < metaContactList.size(); ++index )
 			{
@@ -374,8 +374,8 @@ void ContactListPlainModel::loadModelSettingsImpl( QDomElement& rootElement )
 					continue;
 
 				// Put position into hash.
-				QUuid uuid( metaContactElement.attribute( "uuid" ) );
-				int metaContactPosition = metaContactElement.attribute( "possition", "-1" ).toInt();
+				QUuid uuid( metaContactElement.attribute( QStringLiteral("uuid") ) );
+				int metaContactPosition = metaContactElement.attribute( QStringLiteral("possition"), QStringLiteral("-1") ).toInt();
 				const Kopete::MetaContact* mc = uuidToMetaContact.value( uuid, 0 );
 				if ( mc )
 					_metaContactPositionPlain->insert( mc, metaContactPosition );

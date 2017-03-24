@@ -56,7 +56,7 @@ AccountIdentityDialog::AccountIdentityDialog( QWidget *parent )
 	setButtons(KDialog::Ok | KDialog::Cancel);
 	d->ui.setupUi(mainWidget());
 	d->ui.identityList->setColumnCount( 1 );
-	d->ui.title->setPixmap(QIcon::fromTheme("identity").pixmap(22,22), KTitleWidget::ImageRight);
+	d->ui.title->setPixmap(QIcon::fromTheme(QStringLiteral("identity")).pixmap(22,22), KTitleWidget::ImageRight);
 
 	QHeaderView *header = d->ui.identityList->header(); 
 	header->setVisible(false);
@@ -135,7 +135,7 @@ void AccountIdentityDialog::slotLoadAccounts()
 		if (account->identity() != d->currentIdentity)
 			d->currentIdentity = account->identity();
 
-		text += QString("<nobr><img src=\"kopete-account-icon:%3:%4\"> <b>%1:</b> %2 <br/>")
+		text += QStringLiteral("<nobr><img src=\"kopete-account-icon:%3:%4\"> <b>%1:</b> %2 <br/>")
 					.arg(account->protocol()->displayName())
 					.arg(account->accountLabel())
 				    .arg(QString(QUrl::toPercentEncoding( account->protocol()->pluginId() )))

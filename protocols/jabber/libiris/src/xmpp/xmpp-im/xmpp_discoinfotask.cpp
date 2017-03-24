@@ -112,20 +112,20 @@ void DiscoInfoTask::onGo ()
 		}
 	}
 
-	QDomElement iq = createIQ(doc(), "get", d->jid.full(), id());
-	QDomElement query = doc()->createElement("query");
-	query.setAttribute("xmlns", "http://jabber.org/protocol/disco#info");
+	QDomElement iq = createIQ(doc(), QStringLiteral("get"), d->jid.full(), id());
+	QDomElement query = doc()->createElement(QStringLiteral("query"));
+	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://jabber.org/protocol/disco#info"));
 
 	if ( !d->node.isEmpty() )
-		query.setAttribute("node", d->node);
+		query.setAttribute(QStringLiteral("node"), d->node);
 
 	if ( !d->ident.category.isEmpty() && !d->ident.type.isEmpty() ) {
-		QDomElement i = doc()->createElement("item");
+		QDomElement i = doc()->createElement(QStringLiteral("item"));
 
-		i.setAttribute("category", d->ident.category);
-		i.setAttribute("type", d->ident.type);
+		i.setAttribute(QStringLiteral("category"), d->ident.category);
+		i.setAttribute(QStringLiteral("type"), d->ident.type);
 		if ( !d->ident.name.isEmpty() )
-			i.setAttribute("name", d->ident.name);
+			i.setAttribute(QStringLiteral("name"), d->ident.name);
 
 		query.appendChild( i );
 
@@ -146,7 +146,7 @@ bool DiscoInfoTask::take(const QDomElement &x)
 	if(!iqVerify(x, d->jid, id()))
 		return false;
 
-	if(x.attribute("type") == "result") {
+	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
 		d->item = DiscoItem::fromDiscoInfoResult(queryTag(x));
 		d->item.setJid( d->jid );
 		if (d->allowCache && client()->capsManager()->isEnabled()) {

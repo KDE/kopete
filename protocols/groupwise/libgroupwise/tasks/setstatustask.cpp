@@ -34,7 +34,7 @@ void SetStatusTask::status( Status newStatus, const QString &awayMessage, const 
 {
 	if ( newStatus > GroupWise::Invalid )
 	{
-		setError( 1, "Invalid Status" );
+		setError( 1, QStringLiteral("Invalid Status") );
 		return;
 	}
 	
@@ -48,7 +48,7 @@ void SetStatusTask::status( Status newStatus, const QString &awayMessage, const 
 		lst.append( new Field::SingleField( Field::NM_A_SZ_STATUS_TEXT, 0, NMFIELD_TYPE_UTF8, awayMessage ) );
 	if ( !autoReply.isNull() )
 		lst.append( new Field::SingleField( Field::NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, autoReply ) );
-	createTransfer( "setstatus", lst );
+	createTransfer( QStringLiteral("setstatus"), lst );
 }
 
 Status SetStatusTask::requestedStatus() const

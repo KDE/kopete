@@ -43,7 +43,7 @@ static QString toString( const QByteArray& buffer )
 	//00 03 00 0b 00 00 90 b8 f5 9f 09 31 31 33 37 38   |;tJ�..........|
 
 	int i = 0;
-	QString output = "\n";
+	QString output = QStringLiteral("\n");
 	QString hex, ascii;
 
 	QByteArray::ConstIterator it;
@@ -55,7 +55,7 @@ static QString toString( const QByteArray& buffer )
 
 		if ( c < 0x10 )
 			hex.append("0");
-		hex.append(QString("%1 ").arg(c, 0, 16));
+		hex.append(QStringLiteral("%1 ").arg(c, 0, 16));
 
 		ascii.append(isprint(c) ? c : '.');
 

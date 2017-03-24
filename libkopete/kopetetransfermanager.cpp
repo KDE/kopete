@@ -146,11 +146,11 @@ const Kopete::FileTransferInfo &Kopete::Transfer::info() const
 QUrl Kopete::Transfer::displayURL( const Kopete::Contact *contact, const QString &file )
 {
 	QUrl url;
-	url.setScheme( QString::fromLatin1("kopete") );
+	url.setScheme( QStringLiteral("kopete") );
 
 	QString host;
 	if( !contact )
-		host = QString::fromLatin1("unknown origin");
+		host = QStringLiteral("unknown origin");
 	else if( contact->metaContact() )
 		host = contact->metaContact()->displayName();
 	else
@@ -324,7 +324,7 @@ bool Kopete::Transfer::showHtmlMessage( QString text ) const
 QString Kopete::Transfer::fileForMessage() const
 {
 	if( d->info.direction() == Kopete::FileTransferInfo::Incoming )
-		return QString( "<a href=\"%1\">%2</a>" ).arg( d->localUrl.url(), Qt::escape( d->localUrl.toLocalFile() ) );
+		return QStringLiteral( "<a href=\"%1\">%2</a>" ).arg( d->localUrl.url(), Qt::escape( d->localUrl.toLocalFile() ) );
 	else
 		return Qt::escape( d->info.file() );
 }
@@ -493,7 +493,7 @@ void Kopete::TransferManager::sendFile( const QUrl &file, const QString &fname, 
 
 	//If the file location is null, then get it from a file open dialog
 	if( !url.isValid() )
-		url = KFileDialog::getOpenUrl( QUrl(), QString::fromLatin1("*"), 0l, i18n( "Kopete File Transfer" ));
+		url = KFileDialog::getOpenUrl( QUrl(), QStringLiteral("*"), 0l, i18n( "Kopete File Transfer" ));
 	else
 	{
 		filename = fname;
@@ -537,7 +537,7 @@ QUrl Kopete::TransferManager::getSaveFile( const QUrl &startDir ) const
 	QUrl url = startDir;
 	for ( ;; )
 	{
-		url = KFileDialog::getSaveUrl( url, QLatin1String( "*" ), 0, i18n( "File Transfer" ) );
+		url = KFileDialog::getSaveUrl( url, QStringLiteral( "*" ), 0, i18n( "File Transfer" ) );
 		if ( !url.isValid() )
 			return url;
 

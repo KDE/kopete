@@ -658,7 +658,7 @@ void FileTransferTask::doConnect()
 
 	QString host;
 	if ( m_proxyRequester )
-		host = "ars.oscar.aol.com";
+		host = QStringLiteral("ars.oscar.aol.com");
 	else
 	{
 		if ( m_ip.length() != 4 || ! m_port )
@@ -891,7 +891,7 @@ QString FileTransferTask::parseDescription( const QByteArray &description ) cons
 		return QString::fromUtf8( description );
 	}
 	
-	QDomNodeList descList = xmlDocument.elementsByTagName( "DESC" );
+	QDomNodeList descList = xmlDocument.elementsByTagName( QStringLiteral("DESC") );
 	if ( descList.count() == 1 )
 		return descList.at( 0 ).toElement().text();
 	else

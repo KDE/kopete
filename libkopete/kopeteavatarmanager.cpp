@@ -78,9 +78,9 @@ public:
 	QImage scaleImage(const QImage &source);
 };
 
-static const QString UserDir("User");
-static const QString ContactDir("Contacts");
-static const QString AvatarConfig("avatarconfig.rc");
+static const QString UserDir(QStringLiteral("User"));
+static const QString ContactDir(QStringLiteral("Contacts"));
+static const QString AvatarConfig(QStringLiteral("avatarconfig.rc"));
 
 
 AvatarManager::AvatarManager(QObject *parent)

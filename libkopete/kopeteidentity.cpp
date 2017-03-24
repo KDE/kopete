@@ -44,7 +44,7 @@ public:
 	{
 		id = i;
 		label = l;
-		configGroup = new KConfigGroup(KSharedConfig::openConfig(), QString::fromLatin1( "Identity_%1" ).arg( id ));
+		configGroup = new KConfigGroup(KSharedConfig::openConfig(), QStringLiteral( "Identity_%1" ).arg( id ));
 	}
 	QList<Kopete::Account*> accounts;
 	QString id;
@@ -153,7 +153,7 @@ Kopete::StatusMessage Identity::statusMessage() const
 QString Identity::toolTip() const
 {
 
-	QString tt = QLatin1String("<qt>");
+	QString tt = QStringLiteral("<qt>");
 
 	QString nick;
 	if ( hasProperty(Kopete::Global::Properties::self()->nickName().key()) )
@@ -183,7 +183,7 @@ QString Identity::customIcon() const
 	if (hasProperty( Kopete::Global::Properties::self()->photo().key() ))
 		return property(Kopete::Global::Properties::self()->photo()).value().toString();
 	else
-		return "user-identity";
+		return QStringLiteral("user-identity");
 }
 
 
@@ -280,7 +280,7 @@ void Identity::slotSaveProperty( Kopete::PropertyContainer *container, const QSt
 	Q_UNUSED(container);
 	if ( !newValue.isValid() ) // the property was removed, remove the config entry also
 	{
-		QString cfgGrpKey = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(oldValue.typeName()), key );
+		QString cfgGrpKey = QStringLiteral("prop_%1_%2").arg(QString::fromLatin1(oldValue.typeName()), key );
 		d->configGroup->deleteEntry(cfgGrpKey);
 	}
 	save();

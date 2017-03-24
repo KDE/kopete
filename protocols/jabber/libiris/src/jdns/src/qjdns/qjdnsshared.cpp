@@ -623,7 +623,7 @@ bool QJDnsSharedPrivate::addInterface(const QHostAddress &addr)
 	}
 
 	int index = getNewIndex();
-	addDebug(index, QString("attempting to use interface %1").arg(addr.toString()));
+	addDebug(index, QStringLiteral("attempting to use interface %1").arg(addr.toString()));
 
 	QJDns *jdns;
 
@@ -642,9 +642,9 @@ bool QJDnsSharedPrivate::addInterface(const QHostAddress &addr)
 		{
 			QJDns::NameServer host;
 			if(addr.protocol() == QAbstractSocket::IPv6Protocol)
-				host.address = QHostAddress("FF02::FB");
+				host.address = QHostAddress(QStringLiteral("FF02::FB"));
 			else
-				host.address = QHostAddress("224.0.0.251");
+				host.address = QHostAddress(QStringLiteral("224.0.0.251"));
 			host.port = 5353;
 			jdns->setNameServers(QList<QJDns::NameServer>() << host);
 		}
@@ -668,13 +668,13 @@ bool QJDnsSharedPrivate::addInterface(const QHostAddress &addr)
 
 		if(is_v6 && have_v6)
 		{
-			addDebug(index, "already have an ipv6 interface");
+			addDebug(index, QStringLiteral("already have an ipv6 interface"));
 			return false;
 		}
 
 		if(!is_v6 && have_v4)
 		{
-			addDebug(index, "already have an ipv4 interface");
+			addDebug(index, QStringLiteral("already have an ipv4 interface"));
 			return false;
 		}
 
@@ -701,7 +701,7 @@ bool QJDnsSharedPrivate::addInterface(const QHostAddress &addr)
 	instances += i;
 	instanceForQJDns.insert(i->jdns, i);
 
-	addDebug(index, "interface ready");
+	addDebug(index, QStringLiteral("interface ready"));
 
 	if(mode == QJDnsShared::Multicast)
 	{
@@ -814,7 +814,7 @@ void QJDnsSharedPrivate::removeInterface(const QHostAddress &addr)
 		}
 	}
 
-	addDebug(index, QString("removing from %1").arg(addr.toString()));
+	addDebug(index, QStringLiteral("removing from %1").arg(addr.toString()));
 }
 
 void QJDnsSharedPrivate::queryStart(QJDnsSharedRequest *obj, const QByteArray &name, int qType)
@@ -1188,7 +1188,7 @@ void QJDnsSharedPrivate::jdns_shutdownFinished()
 {
 	QJDns *jdns = (QJDns *)sender();
 
-	addDebug(instanceForQJDns.value(jdns)->index, "jdns_shutdownFinished, removing interface");
+	addDebug(instanceForQJDns.value(jdns)->index, QStringLiteral("jdns_shutdownFinished, removing interface"));
 
 	Instance *instance = instanceForQJDns.value(jdns);
 	delete instance->jdns;

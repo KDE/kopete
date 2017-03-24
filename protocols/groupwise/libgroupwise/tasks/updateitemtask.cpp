@@ -33,6 +33,6 @@ void UpdateItemTask::item( Field::FieldList updateItemFields )
 {
 	Field::FieldList lst;
 	lst.append( new Field::MultiField( Field::NM_A_FA_CONTACT_LIST, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, updateItemFields ) );
-	createTransfer( "updateitem", lst );
+	createTransfer( QStringLiteral("updateitem"), lst );
 }
 

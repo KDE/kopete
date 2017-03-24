@@ -236,7 +236,7 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 
 			QVariant metaContactPicture;
 			if ( index.data( Kopete::Items::HasNewMessageRole ).toBool() )
-				metaContactPicture = QString::fromUtf8( "mail-unread" );
+				metaContactPicture = QLatin1String( "mail-unread" );
 			else
 				metaContactPicture = index.data( Kopete::Items::MetaContactImageRole );
 

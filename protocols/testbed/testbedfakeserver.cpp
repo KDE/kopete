@@ -37,7 +37,7 @@ void TestbedFakeServer::sendMessage( const QString &contactId, const QString &me
 	kDebug( 14210 ) << "recipient is echo, coming back at you.";
 	// put the message in a map and start a timer to tell it to deliver itself.
 	//emit messageReceived( QString::fromLatin1( "echo: " ) + message );
-	QString messageId = contactId + QString::fromLatin1(": ");
+	QString messageId = contactId + QLatin1String(": ");
 	TestbedIncomingMessage* msg = new TestbedIncomingMessage( this, messageId + message );
 	m_incomingMessages.append( msg );
 	QTimer::singleShot( 1000, msg, SLOT(deliver()) );

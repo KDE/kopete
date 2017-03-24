@@ -42,7 +42,7 @@
 JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
 : JabberBaseContact ( XMPP::RosterItem ( rosterItem.jid().bare() ), account, mc) , mNick( rosterItem.jid().resource() ), mLeaveGroupChat( false )
 {
-	setIcon( "jabber_group" );
+	setIcon( QStringLiteral("jabber_group") );
 
 	// initialize here, we need it set before we instantiate the manager below
 	mManager = 0;
@@ -85,7 +85,7 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	 *   it will be deleted and we will be out of the channel
 	 * In all case, there are no reason to don't show it.
 	 */
-	mManager->view( true , "kopete_chatwindow" );
+	mManager->view( true , QStringLiteral("kopete_chatwindow") );
 }
 
 JabberGroupContact::~JabberGroupContact ()
@@ -159,7 +159,7 @@ Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFla
 void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 {
 	// message type is always chat in a groupchat
-	QString viewType = "kopete_chatwindow";
+	QString viewType = QStringLiteral("kopete_chatwindow");
 	Kopete::Message *newMessage = 0L;
 
 	kDebug (JABBER_DEBUG_GLOBAL) << "Received a message";
@@ -176,7 +176,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	Kopete::ContactPtrList contactList = manager()->members();
 
 	// check for errors
-	if ( message.type () == "error" )
+	if ( message.type () == QLatin1String("error") )
 	{
 		newMessage = new Kopete::Message( this, contactList );
 		newMessage->setPlainBody( i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"",
@@ -193,18 +193,18 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 
 		if( !message.xencrypted().isEmpty () )
 		{
-			if (Kopete::PluginManager::self()->plugin("kopete_cryptography"))
+			if (Kopete::PluginManager::self()->plugin(QStringLiteral("kopete_cryptography")))
 			{
 				kDebug( JABBER_DEBUG_GLOBAL ) << "Kopete cryptography plugin loaded";
-				body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
+				body = QStringLiteral ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QStringLiteral ("\n-----END PGP MESSAGE-----\n");
 			}
 		}
 		else if( !message.xsigned().isEmpty () )
 		{
-			if (Kopete::PluginManager::self()->plugin("kopete_cryptography"))
+			if (Kopete::PluginManager::self()->plugin(QStringLiteral("kopete_cryptography")))
 			{
 				kDebug( JABBER_DEBUG_GLOBAL ) << "Kopete cryptography plugin loaded";
-				body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xsigned () + QString ("\n-----END PGP MESSAGE-----\n");
+				body = QStringLiteral ("-----BEGIN PGP MESSAGE-----\n\n") + message.xsigned () + QStringLiteral ("\n-----END PGP MESSAGE-----\n");
 			}
 		}
 
@@ -354,7 +354,7 @@ void JabberGroupContact::sendFile ( const QUrl &sourceURL, const QString &/*file
 
 	// if the file location is null, then get it from a file open dialog
 	if ( !sourceURL.isValid () )
-		filePath = KFileDialog::getOpenFileName( QUrl(), "*", 0L, i18n ( "Kopete File Transfer" ) );
+		filePath = KFileDialog::getOpenFileName( QUrl(), QStringLiteral("*"), 0L, i18n ( "Kopete File Transfer" ) );
 	else
 		filePath = sourceURL.adjusted(QUrl::StripTrailingSlash).path();
 

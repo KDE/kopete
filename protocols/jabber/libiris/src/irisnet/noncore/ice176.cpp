@@ -339,7 +339,7 @@ public:
 			connect(c.ic, SIGNAL(stopped()), SLOT(ic_stopped()));
 			connect(c.ic, SIGNAL(debugLine(QString)), SLOT(ic_debugLine(QString)));
 
-			c.ic->setClientSoftwareNameAndVersion("Iris");
+			c.ic->setClientSoftwareNameAndVersion(QStringLiteral("Iris"));
 			c.ic->setProxy(proxy);
 			if(portReserver)
 				c.ic->setPortReserver(portReserver);
@@ -650,10 +650,10 @@ private:
 		QString out;
 		switch(type)
 		{
-			case IceComponent::HostType: out = "host"; break;
-			case IceComponent::PeerReflexiveType: out = "prflx"; break;
-			case IceComponent::ServerReflexiveType: out = "srflx"; break;
-			case IceComponent::RelayedType: out = "relay"; break;
+			case IceComponent::HostType: out = QStringLiteral("host"); break;
+			case IceComponent::PeerReflexiveType: out = QStringLiteral("prflx"); break;
+			case IceComponent::ServerReflexiveType: out = QStringLiteral("srflx"); break;
+			case IceComponent::RelayedType: out = QStringLiteral("relay"); break;
 			default: Q_ASSERT(0);
 		}
 		return out;
@@ -661,13 +661,13 @@ private:
 
 	static int string_to_candidateType(const QString &in)
 	{
-		if(in == "host")
+		if(in == QLatin1String("host"))
 			return IceComponent::HostType;
-		else if(in == "prflx")
+		else if(in == QLatin1String("prflx"))
 			return IceComponent::PeerReflexiveType;
-		else if(in == "srflx")
+		else if(in == QLatin1String("srflx"))
 			return IceComponent::ServerReflexiveType;
-		else if(in == "relay")
+		else if(in == QLatin1String("relay"))
 			return IceComponent::RelayedType;
 		else
 			return -1;
@@ -700,7 +700,7 @@ private slots:
 	{
 		IceComponent::Candidate cc = _cc;
 		cc.info.id = randomCredential(10); // FIXME: ensure unique
-		cc.info.foundation = "0"; // FIXME
+		cc.info.foundation = QStringLiteral("0"); // FIXME
 		// TODO
 		localCandidates += cc;
 
@@ -728,7 +728,7 @@ private slots:
 			c.network = cc.info.network;
 			c.port = cc.info.addr.port;
 			c.priority = cc.info.priority;
-			c.protocol = "udp";
+			c.protocol = QStringLiteral("udp");
 			if(cc.info.type != IceComponent::HostType)
 			{
 				c.rel_addr = cc.info.base.addr;
@@ -854,7 +854,7 @@ private slots:
 				c.network = cc.info.network;
 				c.port = cc.info.addr.port;
 				c.priority = cc.info.priority;
-				c.protocol = "udp";
+				c.protocol = QStringLiteral("udp");
 				if(cc.info.type != IceComponent::HostType)
 				{
 					c.rel_addr = cc.info.base.addr;
@@ -927,7 +927,7 @@ private slots:
 			c.network = cc.info.network;
 			c.port = cc.info.addr.port;
 			c.priority = cc.info.priority;
-			c.protocol = "udp";
+			c.protocol = QStringLiteral("udp");
 			if(cc.info.type != IceComponent::HostType)
 			{
 				c.rel_addr = cc.info.base.addr;

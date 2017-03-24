@@ -49,7 +49,7 @@ void TextEffectConfig::load()
 QStringList TextEffectConfig::defaultColorList()
 {
     
-    return QString(QLatin1String("#00BBDD,#0088DD,#0000DD,#8800DD,#DD00DD,#DD0088,#DD0000,#DD8800,#DDBB00,#88BB00,#00BB00" )).split(',');
+    return QStringLiteral("#00BBDD,#0088DD,#0000DD,#8800DD,#DD00DD,#DD0088,#DD0000,#DD8800,#DDBB00,#88BB00,#00BB00" ).split(',');
 }
 
 void TextEffectConfig::save()

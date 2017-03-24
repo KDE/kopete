@@ -190,7 +190,7 @@ void Kopete::ChatSession::slotUpdateDisplayName()
 	{
 		Kopete::Contact * c = d->contacts[i];
 		if(! d->displayName.isNull() )
-			d->displayName.append( QString::fromLatin1( ", " ) ) ;
+			d->displayName.append( QLatin1String( ", " ) ) ;
 
 		if ( c->metaContact() )
 			d->displayName.append( c->metaContact()->displayName() );
@@ -203,7 +203,7 @@ void Kopete::ChatSession::slotUpdateDisplayName()
 	//If we have only 1 contact, add the status of him
 	if ( d->contacts.count() == 1 )
 	{
-		d->displayName.append( QString::fromLatin1( " (%1)" ).arg( d->contacts.first()->onlineStatus().description() ) );
+		d->displayName.append( QStringLiteral( " (%1)" ).arg( d->contacts.first()->onlineStatus().description() ) );
 	}
 
 	emit displayNameChanged();
@@ -289,7 +289,7 @@ void Kopete::ChatSession::sendMessage( Kopete::Message &message )
 		emit messageSent( sentMessage, this );
 		if ( ( !account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() ) && !account()->isBusy() )
 		{
-			KNotification::event(QString::fromLatin1( "kopete_outgoing" ),	i18n( "Outgoing Message Sent" ) );
+			KNotification::event(QStringLiteral( "kopete_outgoing" ),	i18n( "Outgoing Message Sent" ) );
 		}
 	}
 	else
@@ -306,7 +306,7 @@ void Kopete::ChatSession::messageSucceeded()
 void Kopete::ChatSession::emitNudgeNotification()
 {
 	if ( !account()->isBusy() )
-		KNotification::event( QString::fromLatin1("buzz_nudge"), i18n("A contact sent you a buzz/nudge.") );
+		KNotification::event( QStringLiteral("buzz_nudge"), i18n("A contact sent you a buzz/nudge.") );
 }
 
 void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
@@ -318,7 +318,7 @@ void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
 		const QString nick = myself()->displayName();
 		if ( Kopete::BehaviorSettings::self()->highlightEnabled() && !nick.isEmpty() )
 		{
-			const QString nickNameRegExp = QString::fromLatin1( "(^|[\\W])(%1)([\\W]|$)" ).arg( QRegExp::escape( nick ) );
+			const QString nickNameRegExp = QStringLiteral( "(^|[\\W])(%1)([\\W]|$)" ).arg( QRegExp::escape( nick ) );
 			if ( msg.plainBody().contains( QRegExp( nickNameRegExp, Qt::CaseInsensitive ) ) )
 			{
 				msg.setImportance( Kopete::Message::Highlight );
@@ -382,9 +382,9 @@ QStringList Kopete::ChatSession::findUrls(const Kopete::Message &msg )
 	QStringList lasturllist;
 	QMapIterator< int, QString > i(mapUrl);
 	while (i.hasNext()) { i.next(); lasturllist << i.value(); }
-	lasturllist.replaceInStrings(" ", "");
+	lasturllist.replaceInStrings(QStringLiteral(" "), QLatin1String(""));
 	//add "http://" to link if needed to open it with a browser
-	lasturllist.replaceInStrings(QRegExp( regexppatterns[1] ), QLatin1String("\\1http://\\2\\3" ));
+	lasturllist.replaceInStrings(QRegExp( regexppatterns[1] ), QStringLiteral("\\1http://\\2\\3" ));
 
 	return lasturllist;
 }
@@ -408,25 +408,25 @@ QString Kopete::ChatSession::initLastUrl( const Kopete::Contact* c )
 		}
 		if ( !lastUrl.isEmpty() )
 			return lastUrl;
-		else return "";
+		else return QLatin1String("");
 	}
 	else
 	{
 		kDebug(14310) << "cant find lasturls file for " << c->contactId();
-		return "";
+		return QLatin1String("");
 	}
 }
 
 QString Kopete::ChatSession::getUrlsFileName(const Kopete::Contact* c)
 {
-	QString name = c->protocol()->pluginId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
-		QString::fromLatin1( "/" ) +
-		c->account()->accountId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
-		QString::fromLatin1( "/" ) +
-	c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
-		QString::fromLatin1( ".lasturls" );
+	QString name = c->protocol()->pluginId().replace( QRegExp( QLatin1String( "[./~?*]" ) ), QLatin1String( "-" ) ) +
+		QLatin1String( "/" ) +
+		c->account()->accountId().replace( QRegExp( QLatin1String( "[./~?*]" ) ), QLatin1String( "-" ) ) +
+		QLatin1String( "/" ) +
+	c->contactId().replace( QRegExp( QLatin1String( "[./~?*]" ) ), QLatin1String( "-" ) ) +
+		QLatin1String( ".lasturls" );
 
-	QString filename = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString::fromLatin1( "kopete/urls/" ) + name + QString::fromLatin1( ".txt" )  ;
+	QString filename = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QLatin1String( "kopete/urls/" ) + name + QLatin1String( ".txt" )  ;
 
 	return filename;
 }
@@ -562,7 +562,7 @@ void Kopete::ChatSession::receivedTypingMsg( const Kopete::Contact *c, bool t )
 		return;
 	}
 
-	KNotification *notification = new KNotification( "user_is_typing_message", viewWidget );
+	KNotification *notification = new KNotification( QStringLiteral("user_is_typing_message"), viewWidget );
 	const QString msgBody = i18n( "User <i>%1</i> is typing a message", c->displayName() );
 	notification->setText( msgBody );
 	notification->setPixmap( QPixmap::fromImage( c->metaContact()->picture().image() ) );
@@ -571,16 +571,16 @@ void Kopete::ChatSession::receivedTypingMsg( const Kopete::Contact *c, bool t )
 	new Kopete::ActiveNotification( notification,
 							c->account()->accountLabel() + c->contactId(),
 							d->typingNotifications,
-							"",
+							QLatin1String(""),
 							msgBody );
 
 	Kopete::MetaContact *mc = c->metaContact();
 	if ( mc )
 	{
-		notification->addContext( qMakePair( QString::fromLatin1("contact"), mc->metaContactId().toString() ) );
+		notification->addContext( qMakePair( QStringLiteral("contact"), mc->metaContactId().toString() ) );
 		foreach( Kopete::Group *g , mc->groups() )
 		{
-			notification->addContext( qMakePair( QString::fromLatin1("group") , QString::number( g->groupId() ) ) );
+			notification->addContext( qMakePair( QStringLiteral("group") , QString::number( g->groupId() ) ) );
 		}
 	}
 	connect( notification, SIGNAL(activated(uint)) , c, SLOT(execute()) );

@@ -123,7 +123,7 @@ QString Picture::path()
 		context.addData(tempArray);
 		// Save the image to a file.
 		localPhotoPath = context.result() + QLatin1String(".png");
-		localPhotoPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QString::fromUtf8("metacontactpicturecache/%1").arg( localPhotoPath) ;
+		localPhotoPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("metacontactpicturecache/%1").arg( localPhotoPath) ;
 		if( image().save(localPhotoPath, "PNG") )
 		{
 			d->picturePath = localPhotoPath;

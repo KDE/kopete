@@ -38,7 +38,7 @@ bool ModifyContactListTask::take( Transfer * transfer )
 	Response * response = dynamic_cast<Response *>( transfer );
 	if ( !response )
 		return false;
-	client()->debug( "ModifyContactListTask::take()" );
+	client()->debug( QStringLiteral("ModifyContactListTask::take()") );
 
 	// scan the contact list received
 	// emit each add and delete as a signal
@@ -83,7 +83,7 @@ void ModifyContactListTask::processContactChange( Field::MultiField * container 
 			|| container->method() == NMFIELD_METHOD_DELETE ) )
 		return;
 
-	client()->debug( "ModifyContactListTask::processContactChange()" );
+	client()->debug( QStringLiteral("ModifyContactListTask::processContactChange()") );
 	Field::SingleField * current;
 	Field::FieldList fl = container->fields();
 	ContactItem contact;
@@ -110,7 +110,7 @@ void ModifyContactListTask::processFolderChange( Field::MultiField * container )
 			|| container->method() == NMFIELD_METHOD_DELETE ) )
 		return;
 
-	client()->debug( "ModifyContactListTask::processFolderChange()" );
+	client()->debug( QStringLiteral("ModifyContactListTask::processFolderChange()") );
 	FolderItem folder;
 	Field::SingleField * current;
 	Field::FieldList fl = container->fields();

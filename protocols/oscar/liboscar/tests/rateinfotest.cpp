@@ -24,7 +24,7 @@ OSCAR_TEST_MAIN( RateInfoTest )
 
 void RateInfoTest::testRateClasses()
 {
-	if ( ! loadFile("snac0107.buffer") )
+	if ( ! loadFile(QStringLiteral("snac0107.buffer")) )
 	{
 		QFAIL("couldn't load test data file");
 	}

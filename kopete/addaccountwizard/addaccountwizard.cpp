@@ -92,7 +92,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, bool firstRun )
 	addPage(d->finish,d->finish->windowTitle());
 
 	// add the available messenger services to the dialogs list
-	QList<KPluginInfo> protocols = Kopete::PluginManager::self()->availablePlugins("Protocols");
+	QList<KPluginInfo> protocols = Kopete::PluginManager::self()->availablePlugins(QStringLiteral("Protocols"));
 	qSort(protocols);
 	for (QList<KPluginInfo>::Iterator it = protocols.begin(); it != protocols.end(); ++it)
 	{
@@ -244,7 +244,7 @@ void AddAccountWizard::accept()
 	}
 
 	// Make sure the protocol is correctly enabled.  This is not really needed, but still good
-	const QString PROTO_NAME = d->proto->pluginId().remove("Protocol").toLower();
+	const QString PROTO_NAME = d->proto->pluginId().remove(QStringLiteral("Protocol")).toLower();
 	Kopete::PluginManager::self()->setPluginEnabled(PROTO_NAME , true);
 
 	// setup the custom colour
@@ -278,7 +278,7 @@ void AddAccountWizard::reject()
 		}
 		if(hasAccount)
 		{
-			const QString PROTO_NAME = d->proto->pluginId().remove("Protocol").toLower();
+			const QString PROTO_NAME = d->proto->pluginId().remove(QStringLiteral("Protocol")).toLower();
 			Kopete::PluginManager::self()->unloadPlugin(PROTO_NAME);
 		}
 	}

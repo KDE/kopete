@@ -69,20 +69,20 @@ QString XAwayService::message() const
 
 QString XAwayService::serviceId() const
 {
-	return QString::fromUtf8( "cAwaySrv" );
+	return QStringLiteral( "cAwaySrv" );
 }
 
 void XAwayService::createRequest( QDomDocument& doc, QDomElement &e ) const
 {
-	QDomElement eId = doc.createElement( "id" );
-	eId.appendChild( doc.createTextNode( "AwayStat" ) );
+	QDomElement eId = doc.createElement( QStringLiteral("id") );
+	eId.appendChild( doc.createTextNode( QStringLiteral("AwayStat") ) );
 	e.appendChild( eId );
 
-	QDomElement eTrans = doc.createElement( "trans" );
-	eTrans.appendChild( doc.createTextNode( "1" ) );
+	QDomElement eTrans = doc.createElement( QStringLiteral("trans") );
+	eTrans.appendChild( doc.createTextNode( QStringLiteral("1") ) );
 	e.appendChild( eTrans );
 
-	QDomElement eSenderId = doc.createElement( "senderId" );
+	QDomElement eSenderId = doc.createElement( QStringLiteral("senderId") );
 	eSenderId.appendChild( doc.createTextNode( m_senderId ) );
 	e.appendChild( eSenderId );
 }
@@ -90,23 +90,23 @@ void XAwayService::createRequest( QDomDocument& doc, QDomElement &e ) const
 
 void XAwayService::createResponse( QDomDocument& doc, QDomElement &e ) const
 {
-	QDomElement eRoot = doc.createElement( "Root" );
+	QDomElement eRoot = doc.createElement( QStringLiteral("Root") );
 
-	eRoot.appendChild( doc.createElement( "CASXtraSetAwayMessage" ) );
+	eRoot.appendChild( doc.createElement( QStringLiteral("CASXtraSetAwayMessage") ) );
 
-	QDomElement eSenderId = doc.createElement( "uin" );
+	QDomElement eSenderId = doc.createElement( QStringLiteral("uin") );
 	eSenderId.appendChild( doc.createTextNode( m_senderId ) );
 	eRoot.appendChild( eSenderId );
 
-	QDomElement eIndex = doc.createElement( "index" );
+	QDomElement eIndex = doc.createElement( QStringLiteral("index") );
 	eIndex.appendChild( doc.createTextNode( QString::number( m_iconIndex ) ) );
 	eRoot.appendChild( eIndex );
 
-	QDomElement eTitle = doc.createElement( "title" );
+	QDomElement eTitle = doc.createElement( QStringLiteral("title") );
 	eTitle.appendChild( doc.createTextNode( m_description ) );
 	eRoot.appendChild( eTitle );
 
-	QDomElement eDesc = doc.createElement( "desc" );
+	QDomElement eDesc = doc.createElement( QStringLiteral("desc") );
 	eDesc.appendChild( doc.createTextNode( m_message ) );
 	eRoot.appendChild( eDesc );
 
@@ -121,12 +121,12 @@ void XAwayService::handleRequest( QDomElement& eRoot )
 		QDomElement e = childNode.toElement();
 		if( !e.isNull() )
 		{
-			if ( e.tagName() == "id" )
+			if ( e.tagName() == QLatin1String("id") )
 			{
 				Q_ASSERT( e.text() == "AwayStat" );
 			}
 // 			else if ( e.tagName() == "trans" )
-			else if ( e.tagName() == "senderId" )
+			else if ( e.tagName() == QLatin1String("senderId") )
 				m_senderId = e.text();
 		}
 	}
@@ -135,7 +135,7 @@ void XAwayService::handleRequest( QDomElement& eRoot )
 void XAwayService::handleResponse( QDomElement& eRoot )
 {
 	QDomElement rootElement = eRoot.firstChild().toElement();
-	if ( !rootElement.isNull() && rootElement.tagName() == "Root" )
+	if ( !rootElement.isNull() && rootElement.tagName() == QLatin1String("Root") )
 	{
 		QDomNode childNode;
 		for ( childNode = rootElement.firstChild(); !childNode.isNull(); childNode = childNode.nextSibling() )
@@ -143,13 +143,13 @@ void XAwayService::handleResponse( QDomElement& eRoot )
 			QDomElement e = childNode.toElement();
 			if( !e.isNull() )
 			{
-				if ( e.tagName() == "title" )
+				if ( e.tagName() == QLatin1String("title") )
 					m_description = e.text();
-				else if ( e.tagName() == "desc" )
+				else if ( e.tagName() == QLatin1String("desc") )
 					m_message = e.text();
-				else if ( e.tagName() == "index" )
+				else if ( e.tagName() == QLatin1String("index") )
 					m_iconIndex = e.text().toInt();
-				else if ( e.tagName() == "uin" )
+				else if ( e.tagName() == QLatin1String("uin") )
 					m_senderId = e.text();
 			}
 		}

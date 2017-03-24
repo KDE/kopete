@@ -31,7 +31,7 @@ public:
 	Playful, Proud, Relieved, Remorseful, Restless, Sad, Sarcastic, Serious, Shocked, Shy, Sick, Sleepy, Stressed,
 	Surprised, Thirsty, Worried};
 
-	Mood(Type aType, const QString &aText = "");
+	Mood(Type aType, const QString &aText = QLatin1String(QLatin1String("")));
 	Mood(const QDomElement &mood);
 
 	QDomElement toXml(QDomDocument &doc);

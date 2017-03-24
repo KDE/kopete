@@ -54,14 +54,14 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 {
 	kDebug(14010) ;
     setCategory(Communications);
-	setToolTip("kopete", "Kopete", KGlobal::mainComponent().aboutData()->shortDescription());
+	setToolTip(QStringLiteral("kopete"), QStringLiteral("Kopete"), KGlobal::mainComponent().aboutData()->shortDescription());
 	setStatus(Passive);
 
 	mIsBlinkIcon = false;
 	mBlinkTimer = new QTimer(this);
-	mBlinkTimer->setObjectName("mBlinkTimer");
+	mBlinkTimer->setObjectName(QStringLiteral("mBlinkTimer"));
 
-	mKopeteIcon = "kopete";
+	mKopeteIcon = QStringLiteral("kopete");
 
 	connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(slotAboutToShowMenu()));
 
@@ -85,13 +85,13 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	QList<QAction *> actionList = actionCollection();
 	KActionCollection *newActionList = new KActionCollection(parent);
 	newActionList->addActions(actionList);
-	QAction *quit = newActionList->action( "file_quit" );
+	QAction *quit = newActionList->action( QStringLiteral("file_quit") );
 	quit->disconnect();
 	KopeteWindow *myParent = static_cast<KopeteWindow *>( parent );
 	connect( quit, SIGNAL(activated()), myParent, SLOT(slotQuit()) );
 
 	setIconByName(mKopeteIcon);
-	setAttentionMovieByName( QLatin1String( "newmessage" ) );
+	setAttentionMovieByName( QStringLiteral( "newmessage" ) );
 	slotReevaluateAccountStates();
 	slotConfigChanged();
 }
@@ -216,26 +216,26 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 		case Kopete::OnlineStatus::Offline:
 		case Kopete::OnlineStatus::Connecting:
 		{
-			setIconByName("kopete-offline");
-			setOverlayIconByName("user-offline");
+			setIconByName(QStringLiteral("kopete-offline"));
+			setOverlayIconByName(QStringLiteral("user-offline"));
 			break;
 		}
 		case Kopete::OnlineStatus::Invisible:
 		{
 			setIconByName(mKopeteIcon);
-			setOverlayIconByName("user-invisible");
+			setOverlayIconByName(QStringLiteral("user-invisible"));
 			break;
 		}
 		case Kopete::OnlineStatus::Away:
 		{
 			setIconByName(mKopeteIcon);
-			setOverlayIconByName("user-away");
+			setOverlayIconByName(QStringLiteral("user-away"));
 			break;
 		}
 		case Kopete::OnlineStatus::Busy:
 		{
 			setIconByName(mKopeteIcon);
-			setOverlayIconByName("user-busy");
+			setOverlayIconByName(QStringLiteral("user-busy"));
 			break;
 		}
 		case Kopete::OnlineStatus::Online:

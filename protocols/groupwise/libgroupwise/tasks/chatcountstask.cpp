@@ -27,7 +27,7 @@
 ChatCountsTask::ChatCountsTask(Task* parent): RequestTask(parent)
 {
 	Field::FieldList lst;
-	createTransfer( "chatcounts", lst );
+	createTransfer( QStringLiteral("chatcounts"), lst );
 }
 
 

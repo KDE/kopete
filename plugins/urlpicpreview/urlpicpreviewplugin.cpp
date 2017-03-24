@@ -102,7 +102,7 @@ QString URLPicPreviewPlugin::prepareBody ( const QString& parsedBody, uint previ
 
 	kDebug ( 14314 ) << "Searching for URLs to pictures";
 
-	static const QString rex = "(<a href=\")([^\"]*)(\" )?([^<]*)(</a>)(.*)$";
+	static const QString rex = QStringLiteral("(<a href=\")([^\"]*)(\" )?([^<]*)(</a>)(.*)$");
 	//             Caps:          1           2        3     4      5    6
 
 	QRegExp ex ( rex );
@@ -188,7 +188,7 @@ QString URLPicPreviewPlugin::createPreviewPicture ( const KUrl& url )
 	QString tmpFile;
 
 	if ( !url.fileName ( ).isEmpty() &&
-	        KIO::NetAccess::mimetype ( url, Kopete::UI::Global::mainWidget() ).startsWith ( "image/" ) )
+	        KIO::NetAccess::mimetype ( url, Kopete::UI::Global::mainWidget() ).startsWith ( QLatin1String("image/") ) )
 	{
 		if ( !KIO::NetAccess::download ( url, tmpFile, Kopete::UI::Global::mainWidget() ) )
 		{

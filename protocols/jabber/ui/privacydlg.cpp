@@ -221,7 +221,7 @@ void PrivacyDlg::active_selected(int i)
 {
 	if (i != previousActive_) {
 		setWidgetsEnabled(false);
-		acc_->client()->privacyManager()->changeActiveList((i == 0 ? "" : ui_.cb_active->itemText(i)));
+		acc_->client()->privacyManager()->changeActiveList((i == 0 ? QLatin1String("") : ui_.cb_active->itemText(i)));
 	}
 }
 
@@ -229,7 +229,7 @@ void PrivacyDlg::default_selected(int i)
 {
 	if (i != previousDefault_) {
 		setWidgetsEnabled(false);
-		acc_->client()->privacyManager()->changeDefaultList((i == 0 ? "" : ui_.cb_active->itemText(i)));
+		acc_->client()->privacyManager()->changeDefaultList((i == 0 ? QLatin1String("") : ui_.cb_active->itemText(i)));
 	}
 }
 

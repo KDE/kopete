@@ -65,7 +65,7 @@ void SendPictureTask::onGo()
 void SendPictureTask::initiateUpload()
 {	
 	kDebug(YAHOO_RAW_DEBUG) ;
-	m_socket = new KBufferedSocket( "filetransfer.msg.yahoo.com", QString::number(80) );
+	m_socket = new KBufferedSocket( QStringLiteral("filetransfer.msg.yahoo.com"), QString::number(80) );
 	connect( m_socket, SIGNAL(connected(KNetwork::KResolverEntry)), this, SLOT(connectSucceeded()) );
 	connect( m_socket, SIGNAL(gotError(int)), this, SLOT(connectFailed(int)) );
 	connect( m_socket, SIGNAL(readyRead()), this, SLOT(readResult()) );
@@ -77,7 +77,7 @@ void SendPictureTask::connectFailed( int i)
 {
 	kDebug(YAHOO_RAW_DEBUG) << i << ": " << static_cast<const KBufferedSocket*>( sender() )->errorString();
 
-	client()->notifyError(i18n("The picture was not successfully uploaded"), QString("%1 - %2").arg(i).arg(static_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
+	client()->notifyError(i18n("The picture was not successfully uploaded"), QStringLiteral("%1 - %2").arg(i).arg(static_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
 	setError();
 }
 

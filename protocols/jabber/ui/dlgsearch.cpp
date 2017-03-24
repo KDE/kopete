@@ -93,7 +93,7 @@ void dlgSearch::slotGotForm()
 		QDomElement e = n.toElement();
 		if(e.isNull())
 			continue;
-		if(e.attribute("xmlns") == "jabber:x:data")
+		if(e.attribute(QStringLiteral("xmlns")) == QLatin1String("jabber:x:data"))
 		{
 			XMPP::XData form;
 			form.fromXml(e);
@@ -159,7 +159,7 @@ void dlgSearch::slotSentForm()
 			QDomElement e = n.toElement();
 			if(e.isNull())
 				continue;
-			if(e.attribute("xmlns") == "jabber:x:data")
+			if(e.attribute(QStringLiteral("xmlns")) == QLatin1String("jabber:x:data"))
 			{
 				form.fromXml(e);
 				break;
