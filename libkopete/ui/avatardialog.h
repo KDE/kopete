@@ -33,10 +33,10 @@ namespace UI
 /**
  * @brief Dialog to manage and select user avatar
  *
- * Using AvatarDialog is very simple, if you only want to retrieve an avatar, use 
+ * Using AvatarDialog is very simple, if you only want to retrieve an avatar, use
  * the @ref AvatarDialog::getAvatar() static method.
  *
- * If you want the operation to be asynchronous, you can use it like the following 
+ * If you want the operation to be asynchronous, you can use it like the following
  * example:
  * @code
 Kopete::UI::AvatarDialog *avatarDialog = new Kopete::UI::AvatarDialog(parent);
@@ -48,8 +48,8 @@ avatarDialog->show();
  * @code
 void SpamEgg::avatarDialogResult(Kopete::UI::AvatarDialog *dialog)
 {
-	// Set avatar to Myself metacontact
-	Kopete::ContactList::self()->myself()->setPhoto( KUrl(dialog->selectedAvatarPath()) );
+    // Set avatar to Myself metacontact
+    Kopete::ContactList::self()->myself()->setPhoto( KUrl(dialog->selectedAvatarPath()) );
 }
  * @endcode
  *
@@ -57,56 +57,52 @@ void SpamEgg::avatarDialogResult(Kopete::UI::AvatarDialog *dialog)
  */
 class KOPETE_EXPORT AvatarDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	/**
-	 * Create a new AvatarDialog
-	 * @param parent Parent widget
-	 */
-	AvatarDialog(QWidget *parent = nullptr);
-	/**
-	 * Clean-up resource of AvatarDialog
-	 */
-	virtual ~AvatarDialog();
+    /**
+     * Create a new AvatarDialog
+     * @param parent Parent widget
+     */
+    AvatarDialog(QWidget *parent = nullptr);
+    /**
+     * Clean-up resource of AvatarDialog
+     */
+    virtual ~AvatarDialog();
 
-	/**
-	 * @brief Get the selected avatar in dialog
-	 *
-	 * This method return the path of the selected avatar in
-	 * dialog. Call this method in the resulting slot of 
-	 * signal result().
-	 * @return the absolute path to the avatar
-	 */
-	QString selectedAvatarPath() const;
+    /**
+     * @brief Get the selected avatar in dialog
+     *
+     * This method return the path of the selected avatar in
+     * dialog. Call this method in the resulting slot of
+     * signal result().
+     * @return the absolute path to the avatar
+     */
+    QString selectedAvatarPath() const;
 
-	/**
-	 * @brief Gets an avatar from the AvatarManager
-	 *
-	 * This method will open the avatar dialog for the user to choose
-	 * an avatar.
-	 * @param parent Parent widget
-	 * @return The path of the selected avatar, or QString() if no avatar
-	 * was chosen or if the Cancel button was pressed.
-	 */
-	static QString getAvatar(QWidget *parent = nullptr, const QString &currentAvatar = QString(), bool * ok = 0 );
+    /**
+     * @brief Gets an avatar from the AvatarManager
+     *
+     * This method will open the avatar dialog for the user to choose
+     * an avatar.
+     * @param parent Parent widget
+     * @return The path of the selected avatar, or QString() if no avatar
+     * was chosen or if the Cancel button was pressed.
+     */
+    static QString getAvatar(QWidget *parent = nullptr, const QString &currentAvatar = QString(), bool * ok = 0 );
 
 Q_SIGNALS:
-	/**
-	 * This signal is emitted when Ok has been clicked
-	 * before the dialog is closed
-	 */
-	void result();
+    /**
+     * This signal is emitted when Ok has been clicked
+     * before the dialog is closed
+     */
+    void result();
 
-protected Q_SLOTS:
-	/**
-	 * @internal
-	 * A button has been clicked. Reimplemented from @ref QDialog::slotButtonClicked()
-	 */
-	virtual void slotButtonClicked(int button);
+private Q_SLOTS:
+    void slotOkClicked();
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private * const d;
 };
 
 } // namespace UI
