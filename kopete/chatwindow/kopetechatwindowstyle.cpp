@@ -30,6 +30,7 @@
 #include <kdebug.h>
 #include <KLocalizedString>
 #include <kstandarddirs.h>
+#include <QStandardPaths>
 
 class ChatWindowStyle::Private
 {
@@ -75,7 +76,7 @@ ChatWindowStyle::ChatWindowStyle(const QString &styleName, const QString &varian
 
 void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMode)
 {
-    QStringList styleDirs = KGlobal::dirs()->findDirs("appdata", QStringLiteral("styles/%1/Contents/Resources/").arg(styleName));
+    QStringList styleDirs = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("styles/%1/Contents/Resources/").arg(styleName));
     if (styleDirs.isEmpty()) {
         kDebug(14000) << "Failed to find style" << styleName;
         return;

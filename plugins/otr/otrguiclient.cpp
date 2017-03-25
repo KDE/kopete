@@ -29,7 +29,7 @@
 #include <ui/kopeteview.h>
 #include <kopetemessage.h>
 #include <kdebug.h>
-#include <kstandarddirs.h>
+
 #include <kmessagebox.h>
 #include <qicon.h>
 #include <kactioncollection.h>

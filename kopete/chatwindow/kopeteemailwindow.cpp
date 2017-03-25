@@ -68,6 +68,7 @@
 #include <QIcon>
 #include <QMenu>
 #include <QAction>
+#include <KSharedConfig>
 
 K_PLUGIN_FACTORY(EmailWindowPluginFactory, registerPlugin<EmailWindowPlugin>();
                  )

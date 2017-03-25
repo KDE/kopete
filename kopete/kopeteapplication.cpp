@@ -30,6 +30,7 @@
 #include <kcmdlineargs.h>
 #include <kmessagebox.h>
 #include <solid/networking.h>
+#include <KSharedConfig>
 
 #include "addaccountwizard.h"
 #include "kabcpersistence.h"

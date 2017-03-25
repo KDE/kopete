@@ -28,6 +28,7 @@
 #include <qfile.h>
 #include <qcolor.h>
 
+#include <KStandardDirs>
 #include <kdebug.h>
 #include <qaction.h>
 #include <kconfig.h>

@@ -31,6 +31,7 @@
 #include <KDebug>
 #include <KEmoticonsTheme>
 #include <kmessagebox_queued.h>
+#include <QStandardPaths>
 
 #include "kopeteaccount.h"
 #include "kopetepicture.h"
@@ -47,7 +48,7 @@
 #include "kopetemessageevent.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
-#include <KStandardDirs>
+
 
 namespace Kopete {
 namespace UI {
@@ -176,7 +177,7 @@ bool ContactListModel::loadModelSettings(const QString &modelType)
 {
     QDomDocument doc;
 
-    QString fileName = KStandardDirs::locateLocal("appdata", QStringLiteral("contactlistmodel.xml"));
+    QString fileName = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("contactlistmodel.xml");
     if (QFile::exists(fileName)) {
         QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly) || !doc.setContent(&file)) {
@@ -214,7 +215,7 @@ bool ContactListModel::saveModelSettings(const QString &modelType)
 {
     QDomDocument doc;
 
-    QString fileName = KStandardDirs::locateLocal("appdata", QStringLiteral("contactlistmodel.xml"));
+    QString fileName = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("contactlistmodel.xml");
     if (QFile::exists(fileName)) {
         QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly) || !doc.setContent(&file)) {

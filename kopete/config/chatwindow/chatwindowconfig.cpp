@@ -74,6 +74,7 @@
 #include <kopetechatsessionmanager.h>
 #include <kopetestatusmessage.h>
 #include <kopeteappearancesettings.h>
+#include <KSharedConfig>
 
 #include "kopeteemoticons.h"
 

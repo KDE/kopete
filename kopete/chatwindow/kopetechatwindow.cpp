@@ -86,6 +86,7 @@
 #include <qtoolbutton.h>
 #include <kxmlguifactory.h>
 #include <KTabBar>
+#include <KSharedConfig>
 
 typedef QMap<Kopete::Account *, KopeteChatWindow *> AccountMap;
 typedef QMap<Kopete::Group *, KopeteChatWindow *> GroupMap;

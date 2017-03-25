@@ -21,14 +21,14 @@
 #include "contactlistlayoutmanager.h"
 
 #include <KMessageBox>
-#include <KStandardDirs>
+
 #include <QUrl>
 #include <KGlobal>
 #include <KConfig>
 #include <KConfigGroup>
 #include <KDebug>
 #include <KLocale>
-#include <KStandardDirs>
+
 #include <kio/global.h>
 #include <kio/job.h>
 
@@ -36,6 +36,8 @@
 #include <QDomDocument>
 #include <QFile>
 #include <QStringList>
+#include <QStandardPaths>
+#include <KSharedConfig>
 
 #include "kopeteitembase.h"
 
@@ -109,7 +111,7 @@ ContactListLayout LayoutManager::activeLayout()
 
 void LayoutManager::loadUserLayouts()
 {
-    QDir layoutsDir = QDir(KStandardDirs::locateLocal("appdata", QStringLiteral("contactlistlayouts")));
+    QDir layoutsDir = QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("contactlistlayouts"));
 
     layoutsDir.setSorting(QDir::Name);
 
@@ -129,8 +131,8 @@ void LayoutManager::loadUserLayouts()
 
 void LayoutManager::loadDefaultLayouts()
 {
-    loadLayouts(KStandardDirs::locate("data", QStringLiteral("kopete/DefaultContactListLayouts.xml")), false);
-    loadLayouts(KStandardDirs::locate("data", QStringLiteral("kopete/CompactContactListLayouts.xml")), false);
+    loadLayouts(QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kopete/DefaultContactListLayouts.xml")), false);
+    loadLayouts(QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kopete/CompactContactListLayouts.xml")), false);
 }
 
 void LayoutManager::loadLayouts(const QString &fileName, bool user)
@@ -253,7 +255,7 @@ bool LayoutManager::addUserLayout(const QString &name, ContactListLayout layout)
     doc.appendChild(layouts_element);
     layouts_element.appendChild(newLayout);
 
-    QString dirName = KStandardDirs::locateLocal("appdata", QStringLiteral("contactlistlayouts"));
+    QString dirName = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("contactlistlayouts");
     QDir layoutsDir = QDir(dirName);
 
     //make sure that this dir exists
@@ -339,7 +341,7 @@ bool LayoutManager::deleteLayout(const QString &layout)
 {
     //check if layout is editable
     if (m_layouts.value(layout).isEditable()) {
-        QDir layoutsDir = QDir(KStandardDirs::locateLocal("appdata", QStringLiteral("contactlistlayouts")));
+        QDir layoutsDir = QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("contactlistlayouts"));
         QString xmlFile = layoutsDir.path() + '/' + layout + ".xml";
         qDebug() << "deleting file: " << xmlFile;
 

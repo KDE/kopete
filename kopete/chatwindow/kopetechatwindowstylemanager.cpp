@@ -34,6 +34,7 @@
 #include <kio/netaccess.h>
 #include <ksharedconfig.h>
 #include <kconfiggroup.h>
+#include <QStandardPaths>
 
 #include "kopetechatwindowstyle.h"
 
@@ -86,9 +87,9 @@ ChatWindowStyleManager::~ChatWindowStyleManager()
 void ChatWindowStyleManager::loadStyles()
 {
     // Make sure there exists a directory where chat styles can be installed to and it will be watched for changes
-    KStandardDirs::locateLocal("appdata", QStringLiteral("styles/"));
+    QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("styles/");
 
-    QStringList chatStyles = KGlobal::dirs()->findDirs("appdata", QStringLiteral("styles"));
+    QStringList chatStyles = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("styles"));
     foreach (const QString &styleDir, chatStyles) {
         kDebug(14000) << styleDir;
         d->styleDirs.push(QUrl::fromLocalFile(styleDir));
@@ -113,7 +114,7 @@ QStringList ChatWindowStyleManager::getAvailableStyles() const
 int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 {
     QString localStyleDir;
-    QStringList chatStyles = KGlobal::dirs()->findDirs("appdata", QStringLiteral("styles"));
+    QStringList chatStyles = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("styles"));
     // findDirs returns preferred paths first, let's check if one of them is writable
     foreach (const QString &styleDir, chatStyles) {
         if (QFileInfo(styleDir).isWritable()) {
@@ -266,7 +267,7 @@ bool ChatWindowStyleManager::removeStyle(const QString &styleName)
             delete deletedStyle;
         }
 
-        QStringList styleDirs = KGlobal::dirs()->findDirs("appdata", QStringLiteral("styles/%1").arg(styleName));
+        QStringList styleDirs = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("styles/%1").arg(styleName));
         if (styleDirs.isEmpty()) {
             kDebug(14000) << "Failed to find style" << styleName;
             return false;

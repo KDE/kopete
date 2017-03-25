@@ -25,7 +25,7 @@
 #include <kxmlguiclient.h>
 
 #include <kglobal.h>
-#include <kstandarddirs.h>
+
 #include <kiconloader.h>
 
 #include <kopetemessage.h>

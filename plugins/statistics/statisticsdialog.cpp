@@ -34,7 +34,7 @@
 #include <kdialog.h>
 #include <klocalizedstring.h>
 #include <khtml_part.h>
-#include <kstandarddirs.h>
+
 
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"

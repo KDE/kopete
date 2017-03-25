@@ -40,7 +40,7 @@
 #include <kapplication.h>
 #include <kpassivepopup.h>
 #include <kiconloader.h>
-#include <kstandarddirs.h>
+
 #include <kcomponentdata.h>
 
 #include <kopeteaccountmanager.h>

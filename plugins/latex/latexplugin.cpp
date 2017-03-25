@@ -31,6 +31,7 @@
 #include <kcodecs.h>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
+#include <KSharedConfig>
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"

@@ -71,6 +71,7 @@
 #include <solid/networking.h>
 #include <kstatusbarofflineindicator.h>
 #include <kfilterproxysearchline.h>
+#include <KSharedConfig>
 
 #include "addcontactpage.h"
 #include "addressbooklinkwidget.h"

@@ -43,6 +43,7 @@
 #include <kopeteaccount.h>
 #include <kopetecontact.h>
 #include <kopetemessage.h>
+#include <QStandardPaths>
 
 #include "history2logger.h"
 
@@ -271,7 +272,7 @@ int History2Import::countLogs(QDir dir, int depth)
 void History2Import::importKopete()
 {
     cancel = false;
-    QString logDir = KStandardDirs::locateLocal("data", QString("kopete/logs/"));
+    QString logDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString("kopete/logs/");
     QDir dd(logDir);
     if (selectByHand->isChecked() || !dd.exists()) {
         logDir = QFileDialog::getExistingDirectory(mainWidget(), i18n("Select Log Directory"), QDir::homePath());

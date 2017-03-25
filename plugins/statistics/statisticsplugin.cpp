@@ -28,7 +28,7 @@
 #include <QAction>
 #include <kactioncollection.h>
 #include <kmessagebox.h>
-#include <kstandarddirs.h>
+
 
 #include <kapplication.h>
 

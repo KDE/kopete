@@ -48,7 +48,7 @@ void PipesConfig::setPipes(PipesPlugin::PipeOptionsList pipes)
 
 void PipesConfig::save()
 {
-    KConfigGroup config(KGlobal::config(), "PipesPlugin_Pipes");
+    KConfigGroup config(KSharedConfig::openConfig(), "PipesPlugin_Pipes");
     config.deleteGroup();
 
     QStringList uids;
@@ -64,7 +64,7 @@ void PipesConfig::save()
 
 void PipesConfig::load()
 {
-    KConfigGroup config(KGlobal::config(), "PipesPlugin_Pipes");
+    KConfigGroup config(KSharedConfig::openConfig(), "PipesPlugin_Pipes");
     const QStringList uidList = config.readEntry("Pipes", QStringList());
 
     PipesPlugin::PipeOptions pipeOptions;

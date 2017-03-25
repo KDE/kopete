@@ -18,15 +18,16 @@
 #include <qtextstream.h>
 #include <qdom.h>
 
-#include <kstandarddirs.h>
+
 #include <kcomponentdata.h>
+#include <QStandardPaths>
 
 static QTextStream qcerr(stderr, QIODevice::WriteOnly);
 
 int main()
 {
     KComponentData inst("Update script");
-    QString filename = KStandardDirs::locateLocal("data", QLatin1String("kopete/contactlist.xml"));
+    QString filename = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/kopete/contactlist.xml");
 
     // Load contact list & save backup.
     QFile contactListFile(filename);

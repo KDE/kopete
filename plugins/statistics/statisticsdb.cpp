@@ -26,13 +26,14 @@
 
 #include <kdebug.h>
 #include <kmessagebox.h>
-#include <kstandarddirs.h>
+
 
 #include <time.h>
+#include <QStandardPaths>
 
 StatisticsDB::StatisticsDB()
 {
-    QString path = KStandardDirs::locateLocal("appdata", QStringLiteral("kopete_statistics-0.1.db"));
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("kopete_statistics-0.1.db");
     kDebug(14315) << "DB path:" << path;
     m_db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), QStringLiteral("kopete-statistics"));
     m_db.setDatabaseName(path);

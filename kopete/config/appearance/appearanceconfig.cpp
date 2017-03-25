@@ -44,7 +44,7 @@
 #include <KLocalizedString>
 #include <kmessagebox.h>
 #include <QPushButton>
-#include <kstandarddirs.h>
+
 #include <kurlrequesterdialog.h>
 #include <krun.h>
 #include <kfiledialog.h>
@@ -53,6 +53,7 @@
 #include "kopeteglobal.h"
 
 #include <qtabwidget.h>
+#include <KSharedConfig>
 
 #include "kopeteappearancesettings.h"
 #include "contactlistlayoutwidget.h"

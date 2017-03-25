@@ -35,8 +35,9 @@
 #include <QHash>
 
 #include <kdebug.h>
-#include <kstandarddirs.h>
+
 #include <QSaveFile>
+#include <QStandardPaths>
 
 #include "kopeteglobal.h"
 #include "kopetecontact.h"
@@ -54,7 +55,7 @@ History2Logger *History2Logger::m_Instance = 0;
 
 History2Logger::History2Logger()
 {
-    QString path = KStandardDirs::locateLocal("appdata", "kopete_history.db");
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "kopete_history.db";
     m_db = QSqlDatabase::addDatabase("QSQLITE", "kopete-history");
     m_db.setDatabaseName(path);
     if (!m_db.open()) {

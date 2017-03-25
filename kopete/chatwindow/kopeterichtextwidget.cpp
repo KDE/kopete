@@ -40,6 +40,7 @@
 #include <QTextCursor>
 #include <QTextCharFormat>
 #include <QTextDocumentFragment>
+#include <KSharedConfig>
 
 // TODO: Add i18n context
 

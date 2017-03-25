@@ -54,6 +54,7 @@
 #include <QSplitter>
 #include <QMimeData>
 #include <QScrollBar>
+#include <KSharedConfig>
 
 K_PLUGIN_FACTORY(ChatWindowPluginFactory, registerPlugin<ChatWindowPlugin>();
                  )
