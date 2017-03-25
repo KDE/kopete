@@ -26,41 +26,40 @@
 
 #include <Q3HBoxLayout>
 
-ChannelListDialog::ChannelListDialog(KIRC::Engine *engine, const QString &caption, QObject *target, const char* slotJoinChan)
-	: KDialog(Kopete::UI::Global::mainWidget())
+ChannelListDialog::ChannelListDialog(KIRC::Engine *engine, const QString &caption, QObject *target, const char *slotJoinChan)
+    : KDialog(Kopete::UI::Global::mainWidget())
 {
-	m_engine = engine;
-	setCaption(caption);
-	setButtons(Close);
-	setDefaultButton(Close);
-	setModal(false);
-	m_list = new ChannelList( this, engine );
+    m_engine = engine;
+    setCaption(caption);
+    setButtons(Close);
+    setDefaultButton(Close);
+    setModal(false);
+    m_list = new ChannelList(this, engine);
 
-	connect( m_list, SIGNAL(channelDoubleClicked(QString)),
-		target, slotJoinChan );
+    connect(m_list, SIGNAL(channelDoubleClicked(QString)),
+            target, slotJoinChan);
 
-	connect( m_list, SIGNAL(channelDoubleClicked(QString)),
-		this, SLOT(slotChannelDoubleClicked(QString)) );
+    connect(m_list, SIGNAL(channelDoubleClicked(QString)),
+            this, SLOT(slotChannelDoubleClicked(QString)));
 
-	new Q3HBoxLayout( m_list, 0, spacingHint() );
+    new Q3HBoxLayout(m_list, 0, spacingHint());
 
-	setInitialSize( QSize( 500, 400 ) );
-	setMainWidget( m_list );
-	show();
+    setInitialSize(QSize(500, 400));
+    setMainWidget(m_list);
+    show();
 }
 
 void ChannelListDialog::clear()
 {
-	m_list->clear();
+    m_list->clear();
 }
 
 void ChannelListDialog::search()
 {
-	m_list->search();
+    m_list->search();
 }
 
-void ChannelListDialog::slotChannelDoubleClicked( const QString & )
+void ChannelListDialog::slotChannelDoubleClicked(const QString &)
 {
-	close();
+    close();
 }
-

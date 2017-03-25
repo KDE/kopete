@@ -47,92 +47,94 @@
 #include "wpprotocol.h"
 
 WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
-	: QWidget(parent), KopeteEditAccountWidget(theAccount)
+    : QWidget(parent)
+    , KopeteEditAccountWidget(theAccount)
 {
-	setupUi(this);
-	kDebug(14170) << "WPEditAccount::WPEditAccount(<parent>, <theAccount>)";
+    setupUi(this);
+    kDebug(14170) << "WPEditAccount::WPEditAccount(<parent>, <theAccount>)";
 
-	mProtocol = WPProtocol::protocol();
+    mProtocol = WPProtocol::protocol();
 
-	QString tmpSmbcPath = KStandardDirs::findExe(QStringLiteral("smbclient"));
+    QString tmpSmbcPath = KStandardDirs::findExe(QStringLiteral("smbclient"));
 
-	if(account()) {
-		mHostName->setText(account()->accountId());
+    if (account()) {
+        mHostName->setText(account()->accountId());
 //		mAutoConnect->setChecked(account()->excludeConnect());
-		mHostName->setReadOnly(true);
-		KConfigGroup group = KSharedConfig::openConfig()->group("WinPopup");
-		mHostCheckFreq->setValue(group.readEntry("HostCheckFreq", 60));
-		mSmbcPath->setUrl(group.readEntry("SmbcPath", tmpSmbcPath));
+        mHostName->setReadOnly(true);
+        KConfigGroup group = KSharedConfig::openConfig()->group("WinPopup");
+        mHostCheckFreq->setValue(group.readEntry("HostCheckFreq", 60));
+        mSmbcPath->setUrl(group.readEntry("SmbcPath", tmpSmbcPath));
+    } else {
+        // no QT/KDE function? GF
+        QString theHostName;
+        char *tmp = new char[255];
 
-	}
-	else {
-		// no QT/KDE function? GF
-		QString theHostName;
-		char *tmp = new char[255];
+        if (tmp != 0) {
+            gethostname(tmp, 255);
+            theHostName = tmp;
+            if (theHostName.contains('.') != 0) {
+                theHostName.remove(theHostName.indexOf('.'), theHostName.length());
+            }
+            theHostName = theHostName.toUpper();
+        }
 
-		if (tmp != 0) {
-			gethostname(tmp, 255);
-			theHostName = tmp;
-			if (theHostName.contains('.') != 0) theHostName.remove(theHostName.indexOf('.'), theHostName.length());
-			theHostName = theHostName.toUpper();
-		}
+        if (!theHostName.isEmpty()) {
+            mHostName->setText(theHostName);
+        } else {
+            mHostName->setText(QStringLiteral("LOCALHOST"));
+        }
 
-		if (!theHostName.isEmpty())
-			mHostName->setText(theHostName);
-		else
-			mHostName->setText(QStringLiteral("LOCALHOST"));
+        mHostCheckFreq->setValue(60);
+        mSmbcPath->setUrl(tmpSmbcPath);
+    }
 
-		mHostCheckFreq->setValue(60);
-		mSmbcPath->setUrl(tmpSmbcPath);
-	}
+    connect(doInstallSamba, SIGNAL(clicked()), this, SLOT(installSamba()));
 
-	connect ( doInstallSamba, SIGNAL(clicked()), this, SLOT(installSamba()) );
-
-	show();
+    show();
 }
 
 void WPEditAccount::installSamba()
 {
-	mProtocol->installSamba();
+    mProtocol->installSamba();
 }
 
 bool WPEditAccount::validateData()
 {
-	kDebug(14170) << "WPEditAccount::validateData()";
+    kDebug(14170) << "WPEditAccount::validateData()";
 
-	if(mHostName->text().isEmpty()) {
-		KMessageBox::sorry(this, i18n("<qt>You must enter a valid screen name.</qt>"), i18n("WinPopup"));
-		return false;
-	}
+    if (mHostName->text().isEmpty()) {
+        KMessageBox::sorry(this, i18n("<qt>You must enter a valid screen name.</qt>"), i18n("WinPopup"));
+        return false;
+    }
 
-	QFile smbc(mSmbcPath->url().toLocalFile());
-	if (!smbc.exists()) {
-		KMessageBox::sorry(this, i18n("<qt>You must enter a valid smbclient path.</qt>"), i18n("WinPopup"));
-		return false;
-	}
+    QFile smbc(mSmbcPath->url().toLocalFile());
+    if (!smbc.exists()) {
+        KMessageBox::sorry(this, i18n("<qt>You must enter a valid smbclient path.</qt>"), i18n("WinPopup"));
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 void WPEditAccount::writeConfig()
 {
-	KConfigGroup group = KSharedConfig::openConfig()->group("WinPopup");
-	group.writeEntry("SmbcPath", mSmbcPath->url().toLocalFile());
-	group.writeEntry("HostCheckFreq", mHostCheckFreq->text());
+    KConfigGroup group = KSharedConfig::openConfig()->group("WinPopup");
+    group.writeEntry("SmbcPath", mSmbcPath->url().toLocalFile());
+    group.writeEntry("HostCheckFreq", mHostCheckFreq->text());
 }
 
 Kopete::Account *WPEditAccount::apply()
 {
-	kDebug(14170) << "WPEditAccount::apply()";
+    kDebug(14170) << "WPEditAccount::apply()";
 
-	if(!account())
-		setAccount(new WPAccount(mProtocol, mHostName->text()));
+    if (!account()) {
+        setAccount(new WPAccount(mProtocol, mHostName->text()));
+    }
 
 //	account()->setExcludeConnect(mAutoConnect->isChecked());
-	writeConfig();
+    writeConfig();
 
-	mProtocol->settingsChanged();
+    mProtocol->settingsChanged();
 
-	return account();
+    return account();
 }
-

@@ -28,36 +28,36 @@ class K3Process;
 
 class SMSClient : public SMSService
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	SMSClient(Kopete::Account* account);
-	~SMSClient();
+    SMSClient(Kopete::Account *account);
+    ~SMSClient();
 
-	void send(const Kopete::Message& msg);
-	void setWidgetContainer(QWidget* parent, QGridLayout* container);
+    void send(const Kopete::Message &msg);
+    void setWidgetContainer(QWidget *parent, QGridLayout *container);
 
-	int maxSize();
-	const QString& description();
+    int maxSize();
+    const QString &description();
 
 public slots:
-	void savePreferences();
+    void savePreferences();
 
 private slots:
-	void slotReceivedOutput(K3Process*, char  *buffer, int  buflen);
-	void slotSendFinished(K3Process* p);
+    void slotReceivedOutput(K3Process *, char *buffer, int buflen);
+    void slotSendFinished(K3Process *p);
 signals:
-	void messageSent(const Kopete::Message &);
+    void messageSent(const Kopete::Message &);
 
 private:
-	QWidget* configureWidget(QWidget* parent);
+    QWidget *configureWidget(QWidget *parent);
 
-	SMSClientPrefsUI* prefWidget;
-	QStringList providers();
-	QStringList output;
+    SMSClientPrefsUI *prefWidget;
+    QStringList providers();
+    QStringList output;
 
-	Kopete::Message m_msg;
+    Kopete::Message m_msg;
 
-	QString m_description;
-} ;
+    QString m_description;
+};
 
 #endif //SMSCLIENT_H

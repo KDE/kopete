@@ -26,18 +26,14 @@
 
 class QTextCodec;
 
-namespace KIrc
-{
-
+namespace KIrc {
 class Context;
 class EntityPrivate;
 
-class KIRC_EXPORT Entity
-	: public QObject
-	, public QSharedData
+class KIRC_EXPORT Entity : public QObject, public QSharedData
 {
-	Q_OBJECT
-	Q_DECLARE_PRIVATE(Entity)
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(Entity)
 
 //	Q_PROPERTY(QTextCodec *codec READ codec WRITE setCodec)
 
@@ -49,67 +45,65 @@ class KIRC_EXPORT Entity
 //	Q_ENUMS(Type)
 
 public:
-	friend class KIrc::Context;
+    friend class KIrc::Context;
 
-	enum Type
-	{
-		// From lower to higher importance
-		Unknown,
-		User,
-		Service,
-		Channel,
-		Server
-	};
+    enum Type
+    {
+        // From lower to higher importance
+        Unknown,
+        User,
+        Service,
+        Channel,
+        Server
+    };
 /*
-	static EntityType guessType(const QByteArray &name);
-	static bool isChannel( const QByteArray &name );
-	static bool isUser( const QByteArray &name );
+    static EntityType guessType(const QByteArray &name);
+    static bool isChannel( const QByteArray &name );
+    static bool isUser( const QByteArray &name );
 */
-	Entity(KIrc::Context *context);
-	virtual ~Entity();
+    Entity(KIrc::Context *context);
+    virtual ~Entity();
 
 public: // Read attributes accessors
-	QByteArray awayMessage() const;
-	QByteArray host() const;
-	QByteArray modes() const;
-	QByteArray name() const;
+    QByteArray awayMessage() const;
+    QByteArray host() const;
+    QByteArray modes() const;
+    QByteArray name() const;
 //	QByteArray nick() const;
-	QByteArray topic() const;
+    QByteArray topic() const;
 //	QByteArray user() const;
 
 public slots: // Write attributes accessors
-	void setAwayMessage(const QByteArray &);
-	QByteArray setModes(const QByteArray &);
-	void setName(const QByteArray &);
+    void setAwayMessage(const QByteArray &);
+    QByteArray setModes(const QByteArray &);
+    void setName(const QByteArray &);
 //	void setNick(const QByteArray &);
 //	void setTopic(const QByteArray &);
 //	void setUser(const QByteArray &);
 
 public:
-	Entity::Type type() const;
-	bool isChannel() const;
-	bool isUser() const;
-	void setType(Entity::Type type);
+    Entity::Type type() const;
+    bool isChannel() const;
+    bool isUser() const;
+    void setType(Entity::Type type);
 
 //	EntityType guessType();
 
-	QTextCodec *codec() const;
-	void setCodec(QTextCodec *);
+    QTextCodec *codec() const;
+    void setCodec(QTextCodec *);
 
 signals:
-	void destroyed(Entity *self);
+    void destroyed(Entity *self);
 
-	void updated();
+    void updated();
 
 private:
-	static QByteArray userInfo(const QByteArray &s, int num_cap);
+    static QByteArray userInfo(const QByteArray &s, int num_cap);
 
-	Q_DISABLE_COPY(Entity)
+    Q_DISABLE_COPY(Entity)
 
-	EntityPrivate * const d_ptr;
+    EntityPrivate * const d_ptr;
 };
-
 }
 
 #endif
-

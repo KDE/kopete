@@ -22,4 +22,3 @@ HandlerPlugin::HandlerPlugin()
 HandlerPlugin::~HandlerPlugin()
 {
 }
-

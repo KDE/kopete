@@ -19,9 +19,7 @@
 #include "kirchandler.h"
 #include "kircmessage.h"
 
-namespace KIrc
-{
-
+namespace KIrc {
 class ClientPingPongHandlerPrivate;
 
 /**
@@ -29,26 +27,22 @@ class ClientPingPongHandlerPrivate;
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
  * @author Jason Keirstead <jason@keirstead.org>
  */
-class KIRCCLIENT_EXPORT ClientPingPongHandler
-	: public KIrc::Handler
+class KIRCCLIENT_EXPORT ClientPingPongHandler : public KIrc::Handler
 {
-	Q_OBJECT
-	Q_DECLARE_PRIVATE(KIrc::ClientPingPongHandler)
-	
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(KIrc::ClientPingPongHandler)
+
 private:
-	Q_DISABLE_COPY(ClientPingPongHandler)
+    Q_DISABLE_COPY(ClientPingPongHandler)
 
 public:
-	explicit ClientPingPongHandler(QObject* parent=0);
-	~ClientPingPongHandler();
+    explicit ClientPingPongHandler(QObject *parent = 0);
+    ~ClientPingPongHandler();
 
 private Q_SLOTS:
-	Handler::Handled PING(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled PONG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-
+    Handler::Handled PING(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+    Handler::Handled PONG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 };
-
 }
 
 #endif
-

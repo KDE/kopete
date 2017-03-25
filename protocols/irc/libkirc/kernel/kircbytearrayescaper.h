@@ -24,42 +24,37 @@
 #include <QtCore/QList>
 #include <QtCore/QPair>
 
-namespace KIrc
-{
-
+namespace KIrc {
 class KIRC_EXPORT ByteArrayEscaper
 {
 public:
-	typedef QPair<char, char> Escape;
-	typedef QList<Escape> EscapeList;
+    typedef QPair<char, char> Escape;
+    typedef QList<Escape> EscapeList;
 
-	explicit ByteArrayEscaper(char escape_char = '\0',
-		const ByteArrayEscaper::EscapeList &escapes = ByteArrayEscaper::EscapeList());
-	~ByteArrayEscaper();
+    explicit ByteArrayEscaper(char escape_char = '\0', const ByteArrayEscaper::EscapeList &escapes = ByteArrayEscaper::EscapeList());
+    ~ByteArrayEscaper();
 
-	void reset(char escape_char = '\0');
-	void addEscape(char escaped, char replacement);
-	void addEscape(const KIrc::ByteArrayEscaper::EscapeList &escapes);
-	void removeEscape(char escape);
+    void reset(char escape_char = '\0');
+    void addEscape(char escaped, char replacement);
+    void addEscape(const KIrc::ByteArrayEscaper::EscapeList &escapes);
+    void removeEscape(char escape);
 
-	QByteArray escape(const QByteArray &buffer) const;
-	QList<QByteArray> escape(const QList<QByteArray> &buffers) const;
+    QByteArray escape(const QByteArray &buffer) const;
+    QList<QByteArray> escape(const QList<QByteArray> &buffers) const;
 
-	QByteArray unescape(const QByteArray &buffer) const;
-	QList<QByteArray> unescape(const QList<QByteArray> &buffers) const;
+    QByteArray unescape(const QByteArray &buffer) const;
+    QList<QByteArray> unescape(const QList<QByteArray> &buffers) const;
 
-	QByteArray join(const QList<QByteArray> &buffers, char sep) const;
+    QByteArray join(const QList<QByteArray> &buffers, char sep) const;
 //	QByteArray join(const QList<QByteArray> &buffers, const char *sep) const;
 //	QByteArray join(const QList<QByteArray> &buffers, const QByteArray &sep) const;
 
 //	QList<QByteArray> split(const QByteArray &buffer, char sep) const;
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
-};
+}
 
 #endif
-

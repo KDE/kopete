@@ -18,43 +18,40 @@
 #ifndef IRCTRANSFERHANDLER_H
 #define IRCTRANSFERHANDLER_H
 
-namespace Kopete
-{
-	class Transfer;
-	class FileTransferInfo;
+namespace Kopete {
+class Transfer;
+class FileTransferInfo;
 }
 
-namespace KIRC
-{
+namespace KIRC {
 class Transfer;
 class TransferHandler;
 }
 
-class IRCTransferHandler
-	: public QObject
+class IRCTransferHandler : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	static IRCTransferHandler *self();
+    static IRCTransferHandler *self();
 
 private slots:
-	void transferCreated(KIRC::Transfer *);
-	void transferAccepted(Kopete::Transfer *kt, const QString&file);
-	void transferRefused(const Kopete::FileTransferInfo &info);
+    void transferCreated(KIRC::Transfer *);
+    void transferAccepted(Kopete::Transfer *kt, const QString &file);
+    void transferRefused(const Kopete::FileTransferInfo &info);
 
-	void kioresult(KJob *job);
+    void kioresult(KJob *job);
 
 private:
-	IRCTransferHandler();
+    IRCTransferHandler();
 
-	void connectKopeteTransfer(Kopete::Transfer *kt, KIRC::Transfer *t);
+    void connectKopeteTransfer(Kopete::Transfer *kt, KIRC::Transfer *t);
 
-	/* warning: After calling this method the KIRC::Transfer is removed from the m_idMap.
-	 */
-	KIRC::Transfer *getKIRCTransfer(const Kopete::FileTransferInfo &info);
+    /* warning: After calling this method the KIRC::Transfer is removed from the m_idMap.
+     */
+    KIRC::Transfer *getKIRCTransfer(const Kopete::FileTransferInfo &info);
 
-	KIRC::TransferHandler *handler();
+    KIRC::TransferHandler *handler();
 
 //	QIntDict<KIRC::Transfer> m_idMap;
 };

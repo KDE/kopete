@@ -30,26 +30,27 @@
 #include "wpaccount.h"
 #include "ui_wpeditaccountbase.h"
 
-namespace Kopete { class Account; }
+namespace Kopete {
+class Account;
+}
 
-class WPEditAccount: public QWidget, private Ui::WPEditAccountBase, public KopeteEditAccountWidget
+class WPEditAccount : public QWidget, private Ui::WPEditAccountBase, public KopeteEditAccountWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 private:
-	WPProtocol *mProtocol;
-	WPAccount *mAccount;
+    WPProtocol *mProtocol;
+    WPAccount *mAccount;
 
 public:
-	WPEditAccount(QWidget *parent, Kopete::Account *theAccount);
+    WPEditAccount(QWidget *parent, Kopete::Account *theAccount);
 
-	bool validateData() Q_DECL_OVERRIDE;
-	void writeConfig();
+    bool validateData() Q_DECL_OVERRIDE;
+    void writeConfig();
 
 public slots:
-	Kopete::Account *apply() Q_DECL_OVERRIDE;
-	virtual void installSamba();
+    Kopete::Account *apply() Q_DECL_OVERRIDE;
+    virtual void installSamba();
 };
 
 #endif
-

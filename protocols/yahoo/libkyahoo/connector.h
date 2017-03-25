@@ -28,31 +28,31 @@ class ByteStream;
 
 class Connector : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	Connector(QObject *parent=0);
-	virtual ~Connector();
+    Connector(QObject *parent = 0);
+    virtual ~Connector();
 
-	virtual void connectToServer(const QString &server)=0;
-	virtual ByteStream *stream() const=0;
-	virtual void done()=0;
+    virtual void connectToServer(const QString &server) = 0;
+    virtual ByteStream *stream() const = 0;
+    virtual void done() = 0;
 
-	bool havePeerAddress() const;
-	QHostAddress peerAddress() const;
-	quint16 peerPort() const;
+    bool havePeerAddress() const;
+    QHostAddress peerAddress() const;
+    quint16 peerPort() const;
 
 signals:
-	void connected();
-	void error();
+    void connected();
+    void error();
 
 protected:
-	void setPeerAddressNone();
-	void setPeerAddress(const QHostAddress &addr, quint16 port);
+    void setPeerAddressNone();
+    void setPeerAddress(const QHostAddress &addr, quint16 port);
 
 private:
-	bool haveaddr;
-	QHostAddress addr;
-	quint16 port;
+    bool haveaddr;
+    QHostAddress addr;
+    quint16 port;
 };
 
 #endif

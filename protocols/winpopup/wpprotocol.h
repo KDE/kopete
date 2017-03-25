@@ -34,53 +34,68 @@
 #include "libwinpopup.h"
 #include "wpaddcontact.h"
 
-namespace Kopete { class Account; }
+namespace Kopete {
+class Account;
+}
 
 /**
  * The actual Protocol class used by Kopete.
  */
 class WPProtocol : public Kopete::Protocol
 {
-	Q_OBJECT
+    Q_OBJECT
 
 // Kopete::Protocol overloading
 public:
-	WPProtocol( QObject *parent, const QVariantList & );
-	~WPProtocol();
+    WPProtocol(QObject *parent, const QVariantList &);
+    ~WPProtocol();
 
-	AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *theAccount) Q_DECL_OVERRIDE;
-	KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent) Q_DECL_OVERRIDE;
-	Kopete::Account *createNewAccount(const QString &accountId) Q_DECL_OVERRIDE;
+    AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *theAccount) Q_DECL_OVERRIDE;
+    KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent) Q_DECL_OVERRIDE;
+    Kopete::Account *createNewAccount(const QString &accountId) Q_DECL_OVERRIDE;
 
-	const QStringList getGroups() {return popupClient->getGroups(); }
-	const QStringList getHosts(const QString &Group) { return popupClient->getHosts(Group); }
-	bool checkHost(const QString &Name) { return popupClient->checkHost(Name); }
+    const QStringList getGroups()
+    {
+        return popupClient->getGroups();
+    }
+
+    const QStringList getHosts(const QString &Group)
+    {
+        return popupClient->getHosts(Group);
+    }
+
+    bool checkHost(const QString &Name)
+    {
+        return popupClient->checkHost(Name);
+    }
 
 // Kopete::Plugin overloading
 public:
-	Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData) Q_DECL_OVERRIDE;
+    Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData) Q_DECL_OVERRIDE;
 
 // Stuff used internally & by colleague classes
 public:
-	static WPProtocol *protocol() { return sProtocol; }
+    static WPProtocol *protocol()
+    {
+        return sProtocol;
+    }
 
-	const Kopete::OnlineStatus WPOnline;
-	const Kopete::OnlineStatus WPAway;
-	const Kopete::OnlineStatus WPOffline;
-	void sendMessage(const QString &Body, const QString &Destination);
-	void settingsChanged(void);			// Callback when settings changed
+    const Kopete::OnlineStatus WPOnline;
+    const Kopete::OnlineStatus WPAway;
+    const Kopete::OnlineStatus WPOffline;
+    void sendMessage(const QString &Body, const QString &Destination);
+    void settingsChanged(void);         // Callback when settings changed
 
 public slots:
-	void installSamba();				// Modify smb.conf to use winpopup-send script
-	void slotReceivedMessage(const QString &Body, const QDateTime &Time, const QString &From);
+    void installSamba();                // Modify smb.conf to use winpopup-send script
+    void slotReceivedMessage(const QString &Body, const QDateTime &Time, const QString &From);
 
 private:
-	QString smbClientBin;
-	int groupCheckFreq;
-	void readConfig();
-	WinPopupLib *popupClient;
-	static WPProtocol *sProtocol;			// Singleton
+    QString smbClientBin;
+    int groupCheckFreq;
+    void readConfig();
+    WinPopupLib *popupClient;
+    static WPProtocol *sProtocol;           // Singleton
 };
 
 #endif
-

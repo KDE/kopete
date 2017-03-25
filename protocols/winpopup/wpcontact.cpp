@@ -30,100 +30,102 @@
 #include "wpaccount.h"
 
 WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const QString &nickName, Kopete::MetaContact *metaContact)
-	: Kopete::Contact(account, newHostName, metaContact)
+    : Kopete::Contact(account, newHostName, metaContact)
 {
 //	kDebug(14170) << "WPContact::WPContact(<account>, " << newHostName << ", " << nickName << ", <parent>)";
-	kDebug(14170) << "WPContact::WPContact: " << this;
+    kDebug(14170) << "WPContact::WPContact: " << this;
 
-	QString theNickName = nickName;
+    QString theNickName = nickName;
 
-	if (theNickName.isEmpty()) {
-		// Construct nickname from hostname with first letter to upper. GF
-		theNickName = newHostName.toLower();
-		theNickName = theNickName.replace(0, 1, theNickName[0].toUpper());
-	}
+    if (theNickName.isEmpty()) {
+        // Construct nickname from hostname with first letter to upper. GF
+        theNickName = newHostName.toLower();
+        theNickName = theNickName.replace(0, 1, theNickName[0].toUpper());
+    }
 
-	setNickName(theNickName);
-	myWasConnected = false;
+    setNickName(theNickName);
+    myWasConnected = false;
 
-	m_manager = 0;
-	m_infoDialog = 0;
+    m_manager = 0;
+    m_infoDialog = 0;
 
-	// Initialise and start the periodical checking for contact's status
-	setOnlineStatus(static_cast<WPProtocol *>(protocol())->WPOffline);
+    // Initialise and start the periodical checking for contact's status
+    setOnlineStatus(static_cast<WPProtocol *>(protocol())->WPOffline);
 
-	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
-	checkStatus.setSingleShot(false);
-	checkStatus.start(1000);
+    connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
+    checkStatus.setSingleShot(false);
+    checkStatus.start(1000);
 }
 
 QList<QAction *> *WPContact::customContextMenuActions()
 {
-	//myActionCollection = new KActionCollection(parent);
-	return 0;
+    //myActionCollection = new KActionCollection(parent);
+    return 0;
 }
 
 void WPContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
 {
 //	kDebug(14170) << "WP::serialize(...)";
 
-	Kopete::Contact::serialize(serializedData, addressBookData);
+    Kopete::Contact::serialize(serializedData, addressBookData);
 }
 
-Kopete::ChatSession* WPContact::manager( Kopete::Contact::CanCreateFlags /*canCreate*/ )	// TODO: use the parameter as canCreate
+Kopete::ChatSession *WPContact::manager(Kopete::Contact::CanCreateFlags /*canCreate*/)      // TODO: use the parameter as canCreate
 {
-	if (m_manager == 0) {
-		// Set up the message managers
-		QList<Kopete::Contact*> singleContact;
-		singleContact.append(this);
+    if (m_manager == 0) {
+        // Set up the message managers
+        QList<Kopete::Contact *> singleContact;
+        singleContact.append(this);
 
-		m_manager = Kopete::ChatSessionManager::self()->create( account()->myself(), singleContact, protocol() );
+        m_manager = Kopete::ChatSessionManager::self()->create(account()->myself(), singleContact, protocol());
 
-		connect(m_manager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)), this, SLOT(slotSendMessage(Kopete::Message&)));
-		connect(m_manager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)), m_manager, SLOT(appendMessage(Kopete::Message&)));
-		connect(m_manager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
-	}
+        connect(m_manager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession *)), this, SLOT(slotSendMessage(Kopete::Message&)));
+        connect(m_manager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession *)), m_manager, SLOT(appendMessage(Kopete::Message&)));
+        connect(m_manager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
+    }
 
-	return m_manager;
+    return m_manager;
 }
 
 /*
 bool WPContact::isOnline() const
 {
-	kDebug(14170) << "[WPContact::isOnline()]";
-	return onlineStatus().status() != Kopete::OnlineStatus::Offline && onlineStatus().status() != Kopete::OnlineStatus::Unknown;
+    kDebug(14170) << "[WPContact::isOnline()]";
+    return onlineStatus().status() != Kopete::OnlineStatus::Offline && onlineStatus().status() != Kopete::OnlineStatus::Unknown;
 }
 */
 
 bool WPContact::isReachable()
 {
 //	kDebug(14170) << "[WPContact::isReachable()]";
-	return onlineStatus().status() != Kopete::OnlineStatus::Offline && onlineStatus().status() != Kopete::OnlineStatus::Unknown;
+    return onlineStatus().status() != Kopete::OnlineStatus::Offline && onlineStatus().status() != Kopete::OnlineStatus::Unknown;
 }
 
 void WPContact::slotChatSessionDestroyed()
 {
-	m_manager = 0;
+    m_manager = 0;
 }
 
 void WPContact::slotUserInfo()
 {
-	kDebug( 14170 ) ;
+    kDebug(14170);
 
-	if (!m_infoDialog) {
-		m_infoDialog = new WPUserInfo( this );
-		if (!m_infoDialog) return;
-		connect( m_infoDialog, SIGNAL(closing()), this, SLOT(slotCloseUserInfoDialog()) );
-		m_infoDialog->show();
-	} else {
-		m_infoDialog->raise();
-	}
+    if (!m_infoDialog) {
+        m_infoDialog = new WPUserInfo(this);
+        if (!m_infoDialog) {
+            return;
+        }
+        connect(m_infoDialog, SIGNAL(closing()), this, SLOT(slotCloseUserInfoDialog()));
+        m_infoDialog->show();
+    } else {
+        m_infoDialog->raise();
+    }
 }
 
 void WPContact::slotCloseUserInfoDialog()
 {
-	m_infoDialog->deleteLater();
-	m_infoDialog = 0;
+    m_infoDialog->deleteLater();
+    m_infoDialog = 0;
 }
 
 /*
@@ -135,57 +137,57 @@ void deleteContact()
 
 void WPContact::slotCheckStatus()
 {
-	bool oldWasConnected = myWasConnected;
-	bool newIsOnline = false;
+    bool oldWasConnected = myWasConnected;
+    bool newIsOnline = false;
 
-	myWasConnected = protocol() != 0 && account() != 0;
-	WPAccount *acct = dynamic_cast<WPAccount *>(account());
-	if (acct) newIsOnline = acct->checkHost(contactId());
+    myWasConnected = protocol() != 0 && account() != 0;
+    WPAccount *acct = dynamic_cast<WPAccount *>(account());
+    if (acct) {
+        newIsOnline = acct->checkHost(contactId());
+    }
 
-	if(newIsOnline != isOnline() || myWasConnected != oldWasConnected) {
-		Kopete::OnlineStatus tmpStatus = WPProtocol::protocol()->WPOffline;
-		if (myWasConnected && newIsOnline) {
-				tmpStatus = WPProtocol::protocol()->WPOnline;
-		}
-		setOnlineStatus(tmpStatus);
-	}
+    if (newIsOnline != isOnline() || myWasConnected != oldWasConnected) {
+        Kopete::OnlineStatus tmpStatus = WPProtocol::protocol()->WPOffline;
+        if (myWasConnected && newIsOnline) {
+            tmpStatus = WPProtocol::protocol()->WPOnline;
+        }
+        setOnlineStatus(tmpStatus);
+    }
 }
 
 void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 {
-	kDebug(14170) << "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ')';
+    kDebug(14170) << "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ')';
 
-	QList<Kopete::Contact*> contactList;
-	contactList.append(account()->myself());
+    QList<Kopete::Contact *> contactList;
+    contactList.append(account()->myself());
 
-	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
-	Kopete::Message msg(this, contactList);
-	msg.setDirection( Kopete::Message::Inbound );
-	msg.setTimestamp(Arrival);
+    QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
+    Kopete::Message msg(this, contactList);
+    msg.setDirection(Kopete::Message::Inbound);
+    msg.setTimestamp(Arrival);
 
-	if(subj.indexIn(Body) == -1) {
-		msg.setPlainBody( Body );
+    if (subj.indexIn(Body) == -1) {
+        msg.setPlainBody(Body);
+    } else {
+        msg.setPlainBody(subj.cap(2));
+        msg.setSubject(subj.cap(1));
+    }
 
-	} else {
-		msg.setPlainBody( subj.cap(2) );
-		msg.setSubject( subj.cap(1) );
-	}
-
-	manager(Kopete::Contact::CannotCreate)->appendMessage(msg);
+    manager(Kopete::Contact::CannotCreate)->appendMessage(msg);
 }
 
-void WPContact::slotSendMessage( Kopete::Message& message )
+void WPContact::slotSendMessage(Kopete::Message &message)
 {
 //	kDebug(14170) << "WPContact::slotSendMessage(<message>)";
-	// Warning: this could crash
-	kDebug(14170) << message.to().first() << " is " << dynamic_cast<WPContact *>( message.to().first() )->contactId();
+    // Warning: this could crash
+    kDebug(14170) << message.to().first() << " is " << dynamic_cast<WPContact *>(message.to().first())->contactId();
 
-	QString Message = QString((!message.subject().isEmpty() ? "Subject: " + message.subject() + '\n' : QString()) + message.plainBody()).trimmed();
-	WPAccount *acct = dynamic_cast<WPAccount *>(account());
-	WPContact *contact = dynamic_cast<WPContact *>( message.to().first() );
-	if (acct && contact) {
-		acct->slotSendMessage( Message, contact->contactId() );
-		m_manager->messageSucceeded();
-	}
+    QString Message = QString((!message.subject().isEmpty() ? "Subject: " + message.subject() + '\n' : QString()) + message.plainBody()).trimmed();
+    WPAccount *acct = dynamic_cast<WPAccount *>(account());
+    WPContact *contact = dynamic_cast<WPContact *>(message.to().first());
+    if (acct && contact) {
+        acct->slotSendMessage(Message, contact->contactId());
+        m_manager->messageSucceeded();
+    }
 }
-

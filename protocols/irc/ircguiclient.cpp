@@ -30,52 +30,52 @@
 #include <QList>
 
 IRCGUIClient::IRCGUIClient(Kopete::ChatSession *parent)
-	: QObject(parent)
-	, KXMLGUIClient(parent)
+    : QObject(parent)
+    , KXMLGUIClient(parent)
 //	, m_contact(static_cast<IRCContact*>(parent->myself()))
 {
-	Q_ASSERT(m_contact);
+    Q_ASSERT(m_contact);
 
 #ifdef __GNUC__
-	#warning FIXME: Why does not this work???? Have to use DOM hack below now...
+    #warning FIXME: Why does not this work???? Have to use DOM hack below now...
 #endif
 /*
-	setXMLFile("ircchatui.rc");
+    setXMLFile("ircchatui.rc");
 
-	// setup();
-	unplugActionList( "irccontactactionlist" );
-	plugActionList( "irccontactactionlist", m_contact->customContextMenuActions( parent ) );
+    // setup();
+    unplugActionList( "irccontactactionlist" );
+    plugActionList( "irccontactactionlist", m_contact->customContextMenuActions( parent ) );
 */
 /*
-	setXMLFile("ircchatui.rc");
+    setXMLFile("ircchatui.rc");
 
-	QDomDocument doc = domDocument();
-	QDomNode menu = doc.documentElement().firstChild().firstChild();
-	QList<QAction *> *actions = m_contact->customContextMenuActions( parent );
-	for( QAction *actions, m_contact->customContextMenuActions( parent ))
-	{
-		actionCollection()->insert(action);
-		QDomElement newNode = doc.createElement( "Action" );
-		newNode.setAttribute( "name", action->name() );
-		menu.appendChild( newNode );
-	}
-	setDOMDocument( doc );
+    QDomDocument doc = domDocument();
+    QDomNode menu = doc.documentElement().firstChild().firstChild();
+    QList<QAction *> *actions = m_contact->customContextMenuActions( parent );
+    for( QAction *actions, m_contact->customContextMenuActions( parent ))
+    {
+        actionCollection()->insert(action);
+        QDomElement newNode = doc.createElement( "Action" );
+        newNode.setAttribute( "name", action->name() );
+        menu.appendChild( newNode );
+    }
+    setDOMDocument( doc );
 */
 }
 
 IRCGUIClient::~IRCGUIClient()
 {
 }
+
 /*
 void IRCGUIClient::updateMenu()
 {
-	unplugActionList( "irccontactactionlist" );
+    unplugActionList( "irccontactactionlist" );
 
-	plugActionList( "irccontactactionlist", m_contact->customContextMenuActions( parent ) );
+    plugActionList( "irccontactactionlist", m_contact->customContextMenuActions( parent ) );
 }
 */
 void IRCGUIClient::slotSelectCodec(QTextCodec *codec)
 {
 //	m_contact->setCodec(codec);
 }
-

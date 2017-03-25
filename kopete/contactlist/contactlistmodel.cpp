@@ -47,6 +47,7 @@
 #include "kopetemessageevent.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
+#include <KStandardDirs>
 
 namespace Kopete {
 namespace UI {

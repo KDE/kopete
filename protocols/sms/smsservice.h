@@ -21,51 +21,53 @@
 
 #include "kopetemessage.h"
 
-namespace Kopete { class Account; }
+namespace Kopete {
+class Account;
+}
 class QGridLayout;
 class QWidget;
 
 class SMSService : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	SMSService(Kopete::Account* account = 0);
-	virtual ~SMSService();
+    SMSService(Kopete::Account *account = 0);
+    virtual ~SMSService();
 
-	/**
-	 * Reimplement to do extra stuff when the account is dynamically changed
-	 * (other than just changing m_account).
-	 *
-	 * Don't forget to call SMSService::setAccount(...) after you've finished.
-	 */
-	virtual void setAccount(Kopete::Account* account);
+    /**
+     * Reimplement to do extra stuff when the account is dynamically changed
+     * (other than just changing m_account).
+     *
+     * Don't forget to call SMSService::setAccount(...) after you've finished.
+     */
+    virtual void setAccount(Kopete::Account *account);
 
-	/**
-	 * Called when the settings widget has a place to be. @param parent is the
-	 * settings widget's parent and @param layout is the 2xn grid layout it may
-	 * use.
-	 */
-	virtual void setWidgetContainer(QWidget* parent, QGridLayout* layout) = 0;
+    /**
+     * Called when the settings widget has a place to be. @param parent is the
+     * settings widget's parent and @param layout is the 2xn grid layout it may
+     * use.
+     */
+    virtual void setWidgetContainer(QWidget *parent, QGridLayout *layout) = 0;
 
-	virtual void send(const Kopete::Message& msg) = 0;
-	virtual int maxSize() = 0;
-	virtual const QString& description() = 0;
+    virtual void send(const Kopete::Message &msg) = 0;
+    virtual int maxSize() = 0;
+    virtual const QString &description() = 0;
 
 public slots:
-	virtual void savePreferences() = 0;
-	virtual void connect();
-	virtual void disconnect();
+    virtual void savePreferences() = 0;
+    virtual void connect();
+    virtual void disconnect();
 
 signals:
-	void messageSent(const Kopete::Message &);
-	void messageNotSent(const Kopete::Message &, const QString &);
-	void connected();
-	void disconnected();
+    void messageSent(const Kopete::Message &);
+    void messageNotSent(const Kopete::Message &, const QString &);
+    void connected();
+    void disconnected();
 
 protected:
-	Kopete::Account* m_account;
-	QGridLayout* m_layout;
-	QWidget* m_parent;
+    Kopete::Account *m_account;
+    QGridLayout *m_layout;
+    QWidget *m_parent;
 };
 
 #endif //SMSSERVICE_H
@@ -75,4 +77,3 @@ protected:
  * indent-tabs-mode: t
  * End:
  */
-

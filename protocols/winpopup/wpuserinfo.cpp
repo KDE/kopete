@@ -35,129 +35,138 @@
 #include "wpcontact.h"
 #include "ui_wpuserinfowidget.h"
 
-WPUserInfo::WPUserInfo( WPContact *contact, QWidget *parent )
-	: KDialog( parent ), m_contact(contact),
-	  Comment(i18n("N/A")), Workgroup(i18n("N/A")), OS(i18n("N/A")), Software(i18n("N/A"))
+WPUserInfo::WPUserInfo(WPContact *contact, QWidget *parent)
+    : KDialog(parent)
+    , m_contact(contact)
+    , Comment(i18n("N/A"))
+    , Workgroup(i18n("N/A"))
+    , OS(i18n("N/A"))
+    , Software(i18n("N/A"))
 {
-	setButtons( KDialog::Close );
-	setDefaultButton(KDialog::Close);
+    setButtons(KDialog::Close);
+    setDefaultButton(KDialog::Close);
 //	kDebug( 14170 ) ;
 
-	setCaption( i18n( "User Info for %1", m_contact->displayName() ) );
+    setCaption(i18n("User Info for %1", m_contact->displayName()));
 
-	QWidget* w = new QWidget( this );
-	m_mainWidget = new Ui::WPUserInfoWidget();
-	m_mainWidget->setupUi( w );
-	setMainWidget( w );
+    QWidget *w = new QWidget(this);
+    m_mainWidget = new Ui::WPUserInfoWidget();
+    m_mainWidget->setupUi(w);
+    setMainWidget(w);
 
-	m_mainWidget->sComputerName->setText( m_contact->contactId() );
+    m_mainWidget->sComputerName->setText(m_contact->contactId());
 
 //	m_mainWidget->sComment->setText(i18n("Looking"));
 //	m_mainWidget->sWorkgroup->setText(i18n("Looking"));
 //	m_mainWidget->sOS->setText(i18n("Looking"));
 //	m_mainWidget->sServer->setText(i18n("Looking"));
 
-	connect( this, SIGNAL(closeClicked()), this, SLOT(slotCloseClicked()) );
+    connect(this, SIGNAL(closeClicked()), this, SLOT(slotCloseClicked()));
 
-	noComment = true;
-	startDetailsProcess(m_contact->contactId());
+    noComment = true;
+    startDetailsProcess(m_contact->contactId());
 }
 
 WPUserInfo::~WPUserInfo()
 {
-	delete m_mainWidget;
+    delete m_mainWidget;
 }
 
 // I decided to do this direct here to avoid "Handstände" with signals and stuff
 // if we would do this in libwinpopup. GF
 void WPUserInfo::startDetailsProcess(const QString &host)
 {
-	QProcess *ipProcess = new QProcess;
-	connect(ipProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotDetailsProcess(int,QProcess::ExitStatus)));
-	connect(ipProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(slotDetailsProcess()));
-	ipProcess->setProperty("host", host);
-	ipProcess->setProcessChannelMode(QProcess::MergedChannels);
-	ipProcess->start(QStringLiteral("nmblookup"), QStringList() << host);
+    QProcess *ipProcess = new QProcess;
+    connect(ipProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotDetailsProcess(int,QProcess::ExitStatus)));
+    connect(ipProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(slotDetailsProcess()));
+    ipProcess->setProperty("host", host);
+    ipProcess->setProcessChannelMode(QProcess::MergedChannels);
+    ipProcess->start(QStringLiteral("nmblookup"), QStringList() << host);
 }
 
 void WPUserInfo::slotDetailsProcess(int i, QProcess::ExitStatus status)
 {
-	QProcess *ipProcess = dynamic_cast<QProcess *>(sender());
-	QString ip;
+    QProcess *ipProcess = dynamic_cast<QProcess *>(sender());
+    QString ip;
 
-	if ( ! ipProcess )
-		return;
+    if (!ipProcess) {
+        return;
+    }
 
-	if ( i == 0 && status != QProcess::CrashExit ) {
-		QStringList output = QString::fromUtf8(ipProcess->readAll()).split('\n');
-		if ( output.size() == 2 && ! output.contains(QStringLiteral("failed")) )
-			ip = output.at(1).split(' ').first();
-		if ( QHostAddress(ip).isNull() )
-			ip.clear();
-	}
+    if (i == 0 && status != QProcess::CrashExit) {
+        QStringList output = QString::fromUtf8(ipProcess->readAll()).split('\n');
+        if (output.size() == 2 && !output.contains(QStringLiteral("failed"))) {
+            ip = output.at(1).split(' ').first();
+        }
+        if (QHostAddress(ip).isNull()) {
+            ip.clear();
+        }
+    }
 
-	QString host = ipProcess->property("host").toString();
+    QString host = ipProcess->property("host").toString();
 
-	delete ipProcess;
+    delete ipProcess;
 
-	KConfigGroup group = KSharedConfig::openConfig()->group("WinPopup");
-	QString theSMBClientPath = group.readEntry("SMBClientPath", "/usr/bin/smbclient");
+    KConfigGroup group = KSharedConfig::openConfig()->group("WinPopup");
+    QString theSMBClientPath = group.readEntry("SMBClientPath", "/usr/bin/smbclient");
 
-	if ( host == QLatin1String("LOCALHOST") ) //do not cycle
-		noComment = false;
+    if (host == QLatin1String("LOCALHOST")) { //do not cycle
+        noComment = false;
+    }
 
-	detailsProcess = new QProcess(this);
-	QStringList args;
-	args << QStringLiteral("-N") << QStringLiteral("-g") << QStringLiteral("-L") << host;
+    detailsProcess = new QProcess(this);
+    QStringList args;
+    args << QStringLiteral("-N") << QStringLiteral("-g") << QStringLiteral("-L") << host;
 
-	if ( ! ip.isEmpty() )
-		args << QStringLiteral("-I") << ip;
+    if (!ip.isEmpty()) {
+        args << QStringLiteral("-I") << ip;
+    }
 
-	connect(detailsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int,QProcess::ExitStatus)));
+    connect(detailsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int,QProcess::ExitStatus)));
 
-	detailsProcess->setProcessChannelMode(QProcess::MergedChannels);
-	detailsProcess->start(theSMBClientPath, args);
+    detailsProcess->setProcessChannelMode(QProcess::MergedChannels);
+    detailsProcess->start(theSMBClientPath, args);
 }
 
 void WPUserInfo::slotDetailsProcessFinished(int, QProcess::ExitStatus)
 {
-	QByteArray outputData = detailsProcess->readAll();
-	QRegExp info("Domain=\\[(.[^\\]]+)\\]\\sOS=\\[(.[^\\]]+)\\]\\sServer=\\[(.[^\\]]+)\\]"),
-			host("Server\\|" + m_contact->contactId() + "\\|(.*)");
+    QByteArray outputData = detailsProcess->readAll();
+    QRegExp info("Domain=\\[(.[^\\]]+)\\]\\sOS=\\[(.[^\\]]+)\\]\\sServer=\\[(.[^\\]]+)\\]"),
+    host("Server\\|" + m_contact->contactId() + "\\|(.*)");
 
-	if (!outputData.isEmpty()) {
-		QString output = QString::fromUtf8(outputData.data());
-		QStringList outputList = output.split('\n');
-		foreach (QString line, outputList) {
-			if (info.indexIn(line) != -1 && noComment) {
-				Workgroup = info.cap(1);
-				OS = info.cap(2);
-				Software = info.cap(3);
-			}
-			if (host.indexIn(line) != -1) {
-				Comment = host.cap(1);
-				noComment = false;
-			}
-		}
-	}
+    if (!outputData.isEmpty()) {
+        QString output = QString::fromUtf8(outputData.data());
+        QStringList outputList = output.split('\n');
+        foreach (QString line, outputList) {
+            if (info.indexIn(line) != -1 && noComment) {
+                Workgroup = info.cap(1);
+                OS = info.cap(2);
+                Software = info.cap(3);
+            }
+            if (host.indexIn(line) != -1) {
+                Comment = host.cap(1);
+                noComment = false;
+            }
+        }
+    }
 
-	disconnect(detailsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int,QProcess::ExitStatus)));
-	delete detailsProcess;
-	detailsProcess = 0;
+    disconnect(detailsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int,QProcess::ExitStatus)));
+    delete detailsProcess;
+    detailsProcess = 0;
 
-	m_mainWidget->sComment->setText(Comment);
-	m_mainWidget->sWorkgroup->setText(Workgroup);
-	m_mainWidget->sOS->setText(OS);
-	m_mainWidget->sServer->setText(Software);
+    m_mainWidget->sComment->setText(Comment);
+    m_mainWidget->sWorkgroup->setText(Workgroup);
+    m_mainWidget->sOS->setText(OS);
+    m_mainWidget->sServer->setText(Software);
 
-	if ( noComment )
-		startDetailsProcess(QStringLiteral("LOCALHOST")); //smbclient get comment sometime from localhost
+    if (noComment) {
+        startDetailsProcess(QStringLiteral("LOCALHOST")); //smbclient get comment sometime from localhost
+    }
 }
 
 void WPUserInfo::slotCloseClicked()
 {
-	kDebug( 14170 ) ;
+    kDebug(14170);
 
-	emit closing();
+    emit closing();
 }
-

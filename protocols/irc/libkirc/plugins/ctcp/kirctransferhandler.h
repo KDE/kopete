@@ -23,29 +23,22 @@
 #include "kirctransfer.h"
 #include "kirctransferserver.h"
 
-namespace KIrc
+namespace KIrc {
+class TransferHandler : public QObject
 {
-
-class TransferHandler
-	: public QObject
-{
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	static TransferHandler *self();
+    static TransferHandler *self();
 
-	TransferServer *server();
-	TransferServer *server( quint16 port, int backlog  = 1 );
+    TransferServer *server();
+    TransferServer *server(quint16 port, int backlog = 1);
 
-	TransferServer *createServer(KIrc::Engine *engine, QString m_userName,
-			Transfer::Type type,
-			QString fileName, quint32 fileSize);
+    TransferServer *createServer(KIrc::Engine *engine, QString m_userName, Transfer::Type type, QString fileName, quint32 fileSize);
 
-	Transfer *createClient(
-		KIrc::Engine *engine, QString nick,// QString nick_peer_adress,
-		QHostAddress peer_address, quint16 peer_port,
-		Transfer::Type type,
-		QString file = QString(), quint32 fileSize = 0 );
+    Transfer *createClient(
+        KIrc::Engine *engine, QString nick,// QString nick_peer_adress,
+        QHostAddress peer_address, quint16 peer_port, Transfer::Type type, QString file = QString(), quint32 fileSize = 0);
 
 //	void registerServer( DCCServer * );
 //	QPtrList<DCCServer> getRegisteredServers();
@@ -58,17 +51,16 @@ public:
 //	void unregisterClient( DCCClient * );
 
 signals:
-	void transferServerCreated(KIrc::TransferServer *server);
-	void transferCreated(KIrc::Transfer *transfer);
+    void transferServerCreated(KIrc::TransferServer *server);
+    void transferCreated(KIrc::Transfer *transfer);
 
 private:
 //	TransferHandler();
 
-	TransferServer *m_server;
+    TransferServer *m_server;
 //	QPtrList<TransferServer> m_servers;
 //	QPtrList<Transfer> m_clients;
 };
-
 }
 
 #endif

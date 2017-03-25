@@ -24,15 +24,15 @@
 class KIrc::HandlerPrivate
 {
 public:
-	HandlerPrivate()
-		: enabled(true)
-	{
-	}
+    HandlerPrivate()
+        : enabled(true)
+    {
+    }
 
-	bool enabled;
-	QList<KIrc::Handler*> eventHandlers;
-	QMultiHash<QByteArray, QByteArray> commandAliases;
-	QMultiHash<QByteArray, QByteArray> messageAliases;
+    bool enabled;
+    QList<KIrc::Handler *> eventHandlers;
+    QMultiHash<QByteArray, QByteArray> commandAliases;
+    QMultiHash<QByteArray, QByteArray> messageAliases;
 };
 
 #endif // KIRCHANDLER_P_H

@@ -21,9 +21,8 @@
 #include <qobject.h>
 #include <kxmlguiclient.h>
 
-namespace Kopete
-{
-	class ChatSession;
+namespace Kopete {
+class ChatSession;
 }
 
 class IRCContact;
@@ -31,21 +30,19 @@ class IRCContact;
 /**
  *@author Jason Keirstead
  */
-class IRCGUIClient
-	: public QObject,
-	  public KXMLGUIClient
+class IRCGUIClient : public QObject, public KXMLGUIClient
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit IRCGUIClient(Kopete::ChatSession *parent = 0);
-	~IRCGUIClient();
+    explicit IRCGUIClient(Kopete::ChatSession *parent = 0);
+    ~IRCGUIClient();
 
 private slots:
-	void slotSelectCodec(QTextCodec *codec);
+    void slotSelectCodec(QTextCodec *codec);
 
 private:
-	IRCContact *m_contact;
+    IRCContact *m_contact;
 };
 
 #endif

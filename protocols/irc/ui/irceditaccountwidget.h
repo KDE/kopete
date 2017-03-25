@@ -27,31 +27,30 @@ class IRCAccount;
 class K3ListView;
 class Q3ListViewItem;
 
-class IRCEditAccountWidget 
-	: public QWidget, public Ui::IRCEditAccountBase, public KopeteEditAccountWidget
+class IRCEditAccountWidget : public QWidget, public Ui::IRCEditAccountBase, public KopeteEditAccountWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit IRCEditAccountWidget(IRCAccount *account, QWidget *parent=0);
-	~IRCEditAccountWidget();
+    explicit IRCEditAccountWidget(IRCAccount *account, QWidget *parent = 0);
+    ~IRCEditAccountWidget();
 
-	IRCAccount *account();
-	virtual bool validateData();
-	virtual Kopete::Account *apply();
+    IRCAccount *account();
+    virtual bool validateData();
+    virtual Kopete::Account *apply();
 
 private slots:
-	void slotCommandContextMenu( K3ListView*, Q3ListViewItem*, const QPoint & );
-	void slotCtcpContextMenu( K3ListView*, Q3ListViewItem*, const QPoint & );
-	void slotAddCommand();
-	void slotAddCtcp();
-	void slotEditNetworks();
-	void slotUpdateNetworks( const QString & );
-	void slotUpdateNetworkDescription( const QString & );
+    void slotCommandContextMenu(K3ListView *, Q3ListViewItem *, const QPoint &);
+    void slotCtcpContextMenu(K3ListView *, Q3ListViewItem *, const QPoint &);
+    void slotAddCommand();
+    void slotAddCtcp();
+    void slotEditNetworks();
+    void slotUpdateNetworks(const QString &);
+    void slotUpdateNetworkDescription(const QString &);
 
 private:
-	void readNetworks();
-	QString generateAccountId( const QString &network );
+    void readNetworks();
+    QString generateAccountId(const QString &network);
 };
 
 #endif // IRCEDITACCOUNTWIDGET_H

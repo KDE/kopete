@@ -24,55 +24,50 @@
 
 class KExtendedSocket;
 
-namespace KIrc
+namespace KIrc {
+class TransferServer : public QObject
 {
-
-class TransferServer
-	: public QObject
-{
-	Q_OBJECT
+    Q_OBJECT
 
 public:
 //	explicit TransferServer(QObject *parent = 0);
-	explicit TransferServer(quint16 port, int backlog = 1, QObject *parent = 0);
-	TransferServer(KIrc::Engine *engine, QString nick,// QString nick_peer_adress,
-			Transfer::Type type,
-			QString fileName, quint32 fileSize,
-			QObject *parent = 0);
+    explicit TransferServer(quint16 port, int backlog = 1, QObject *parent = 0);
+    TransferServer(KIrc::Engine *engine, QString nick,// QString nick_peer_adress,
+                   Transfer::Type type, QString fileName, quint32 fileSize, QObject *parent = 0);
 
-	~TransferServer();
+    ~TransferServer();
 
-	int port()
-	{ return m_port; }
+    int port()
+    {
+        return m_port;
+    }
 
 protected:
-	bool initServer();
-	bool initServer( quint16 port, int backlog = 1 );
+    bool initServer();
+    bool initServer(quint16 port, int backlog = 1);
 
 signals:
-	void incomingNewTransfer(Transfer *transfer);
+    void incomingNewTransfer(Transfer *transfer);
 
 protected slots:
-	void readyAccept();
-	void connectionFailed(int error);
+    void readyAccept();
+    void connectionFailed(int error);
 
 private:
-	KExtendedSocket *m_socket;
-	quint16 m_port;
-	int m_backlog;
+    KExtendedSocket *m_socket;
+    quint16 m_port;
+    int m_backlog;
 
-	// The following will be deprecated ...
-	KIrc::Engine *		m_engine;
-	QString			m_nick;
-	Transfer::Type	m_type;
-	QString			m_fileName;
-	quint32		m_fileSize;
-	// by
-	// QPtrList<Transfer> m_pendingTransfers;
-	// QPtrList<Transfer> m_activeTransfers;
-
+    // The following will be deprecated ...
+    KIrc::Engine *m_engine;
+    QString m_nick;
+    Transfer::Type m_type;
+    QString m_fileName;
+    quint32 m_fileSize;
+    // by
+    // QPtrList<Transfer> m_pendingTransfers;
+    // QPtrList<Transfer> m_activeTransfers;
 };
-
 }
 
 #endif

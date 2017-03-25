@@ -27,10 +27,9 @@
  * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
  */
 
-const QRegExp KIrc::sm_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
+const QRegExp KIrc::sm_RemoveLinefeeds(QString::fromLatin1("[\\r\\n]*$"));
 
 const QString KIrc::URL_NICKNAME("nickname");
 const QString KIrc::URL_REALNAME("realname");
 
 QTextCodec *KIrc::UTF8 = QTextCodec::codecForName("UTF-8");
-

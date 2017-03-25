@@ -22,9 +22,7 @@
 
 #include "kircmessage.h"
 
-namespace KIrc
-{
-
+namespace KIrc {
 class Socket;
 
 /**
@@ -32,16 +30,14 @@ class Socket;
  * @author Michel Hermier <michel.hermier@gmail.com>
  * @author Jason Keirstead <jason@keirstead.org>
  */
-namespace CtcpMessages
-{
-	/* CTCP commands */
-	Message CtcpRequestCommand(Socket *socket, QString contact, QString command);
-	Message action(QString contact, QString message);
+namespace CtcpMessages {
+/* CTCP commands */
+Message CtcpRequestCommand(Socket *socket, QString contact, QString command);
+Message action(QString contact, QString message);
 //	KIrc::Message dcc(QString, QString, unsigned int port, KIrc::Transfer::Type type);
-	Message ping(QString target);
-	KIrc version(QString target);
+Message ping(QString target);
+KIrc version(QString target);
 }
-
 }
 
 #endif // KIRCCTCPMESSAGES_H

@@ -24,13 +24,13 @@ class smsAddUI;
 
 class SMSAddContactPage : public AddContactPage
 {
-   Q_OBJECT
+    Q_OBJECT
 public:
-	SMSAddContactPage(QWidget *parent=0);
-	~SMSAddContactPage();
-	smsAddUI *smsdata;
-	virtual bool validateData();
-	virtual bool apply( Kopete::Account*, Kopete::MetaContact* );
+    SMSAddContactPage(QWidget *parent = 0);
+    ~SMSAddContactPage();
+    smsAddUI *smsdata;
+    virtual bool validateData();
+    virtual bool apply(Kopete::Account *, Kopete::MetaContact *);
 };
 
 #endif
@@ -41,4 +41,3 @@ public:
  * indent-tabs-mode: t
  * End:
  */
-

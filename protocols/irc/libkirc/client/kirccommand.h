@@ -20,74 +20,70 @@
 
 #include "kircmessage.h"
 
-namespace KIrc
-{
-
+namespace KIrc {
 class Message;
 
-class Command
-	: public QObject
+class Command : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 //	Q_PROPERTY(int min READ min WRITE setMin)
 //	Q_PROPERTY(int max READ max WRITE setMax)
 //	Q_PROPERTY(QString help READ help WRITE setHelp)
 
 public:
-	static QString expand(QString command, QString args);
+    static QString expand(QString command, QString args);
 
 public:
-	enum {
-		Unknown = -1,
-		Unlimited = -2
-	};
+    enum {
+        Unknown = -1,
+        Unlimited = -2
+    };
 /*
-	typedef enum {
-		CHECK_CONNECTED = 0x01
-	} CheckFlag;
+    typedef enum {
+        CHECK_CONNECTED = 0x01
+    } CheckFlag;
 
-	typdef QFlags<CheckFlag> CheckFlags;
+    typdef QFlags<CheckFlag> CheckFlags;
 */
-	explicit Command(QObject *parent = 0);
-	~Command();
+    explicit Command(QObject *parent = 0);
+    ~Command();
 
 public: // READ properties accessors.
 //	int min() const;
 //	int max() const;
-	QString help() const;
+    QString help() const;
 
 public slots: // WRITE properties accessors.
 //	void setMin();
 //	void setMax();
-	void setHelp(const QString &help);
+    void setHelp(const QString &help);
 
 public slots:
 //	void setMinMax(int minMax);
 //	void setMinMax(int min, int max);
 
-	/**
-	 * Attempt to send the message.
-	 */
-	virtual void handleMessage(KIrc::Message msg);
+    /**
+     * Attempt to send the message.
+     */
+    virtual void handleMessage(KIrc::Message msg);
 
 signals:
-	void redirect(KIrc::Message);
+    void redirect(KIrc::Message);
 
 protected:
-	/**
-	 * Check that the given message can be send.
-	 * @return true if the message can be send.
-	 */
-	bool checkValidity(const Message &msg);
+    /**
+     * Check that the given message can be send.
+     * @return true if the message can be send.
+     */
+    bool checkValidity(const Message &msg);
 
 private:
-	Q_DISABLE_COPY(Command)
+    Q_DISABLE_COPY(Command)
 
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
 }
 
 #endif

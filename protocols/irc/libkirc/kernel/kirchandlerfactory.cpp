@@ -19,11 +19,10 @@ using namespace KIrc;
 
 QStringList HandlerFactory::keys()
 {
-	return QStringList();
+    return QStringList();
 }
 
 KIrc::Handler *HandlerFactory::create(const QString &key, QObject *parent)
 {
-	return 0;
+    return 0;
 }
-

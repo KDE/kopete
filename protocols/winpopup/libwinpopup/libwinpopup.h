@@ -37,54 +37,60 @@ typedef QMap<QString, QString> stringMap;
 
 class WorkGroup
 {
-	QStringList groupHosts;
+    QStringList groupHosts;
 
 public:
-	QStringList Hosts() const { return groupHosts; }
-	void addHosts(const QStringList &newHosts) { groupHosts = newHosts; }
+    QStringList Hosts() const
+    {
+        return groupHosts;
+    }
+
+    void addHosts(const QStringList &newHosts)
+    {
+        groupHosts = newHosts;
+    }
 };
 
 class WinPopupLib : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	WinPopupLib(const QString &smbClient,int groupFreq);
-	~WinPopupLib();
+    WinPopupLib(const QString &smbClient, int groupFreq);
+    ~WinPopupLib();
 
-	QStringList getGroups() const;
-	QStringList getHosts(const QString &Group) const;
-	bool checkHost(const QString &Name) const;
-	void settingsChanged(const QString &smbClient, int groupFreq);
-	void sendMessage(const QString &Body, const QString &Destination);
+    QStringList getGroups() const;
+    QStringList getHosts(const QString &Group) const;
+    bool checkHost(const QString &Name) const;
+    void settingsChanged(const QString &smbClient, int groupFreq);
+    void sendMessage(const QString &Body, const QString &Destination);
 
 private:
-	bool passedInitialHost;
-	QMap<QString, WorkGroup> theGroups, currentGroupsMap;
-	QString currentGroup, currentHost;
-	QStringList todo, done, currentHosts;
-	stringMap currentGroups;
-	QTimer updateGroupDataTimer;
-	QString smbClientBin;
-	int groupCheckFreq;
-	KDirLister *dirLister;
-	QProcess *readIpProcess;
-	QProcess *readGroupsProcess;
+    bool passedInitialHost;
+    QMap<QString, WorkGroup> theGroups, currentGroupsMap;
+    QString currentGroup, currentHost;
+    QStringList todo, done, currentHosts;
+    stringMap currentGroups;
+    QTimer updateGroupDataTimer;
+    QString smbClientBin;
+    int groupCheckFreq;
+    KDirLister *dirLister;
+    QProcess *readIpProcess;
+    QProcess *readGroupsProcess;
 
-	bool checkMessageDir();
+    bool checkMessageDir();
 
 private slots:
-	void slotUpdateGroupData();
-	void startReadProcess();
-	void slotReadIpProcessExited(int i = 1, QProcess::ExitStatus status = QProcess::CrashExit);
-	void slotSendIpMessage(int i = 1, QProcess::ExitStatus status = QProcess::CrashExit);
-	void slotReadProcessExited(int, QProcess::ExitStatus);
-	void slotStartDirLister();
-	void slotReadMessages(const KFileItemList &items);
+    void slotUpdateGroupData();
+    void startReadProcess();
+    void slotReadIpProcessExited(int i = 1, QProcess::ExitStatus status = QProcess::CrashExit);
+    void slotSendIpMessage(int i = 1, QProcess::ExitStatus status = QProcess::CrashExit);
+    void slotReadProcessExited(int, QProcess::ExitStatus);
+    void slotStartDirLister();
+    void slotReadMessages(const KFileItemList &items);
 
 signals:
-	void signalNewMessage(const QString &, const QDateTime &, const QString &);
+    void signalNewMessage(const QString &, const QDateTime &, const QString &);
 };
 
 #endif
-

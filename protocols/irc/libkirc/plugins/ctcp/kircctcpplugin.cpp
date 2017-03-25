@@ -41,8 +41,8 @@ public:
 using namespace KIrc;
 
 CtcpPlugin::CtcpPlugin(QObject *parent)
-	: QObject(parent)
-	, d(0)
+    : QObject(parent)
+    , d(0)
 {
 }
 
@@ -59,48 +59,49 @@ CtcpPlugin::~CtcpPlugin()
 /*
 bool Message::extractCtcpCommand()
 {
-	if (d->suffix.isEmpty())
-		return false;
+    if (d->suffix.isEmpty())
+        return false;
 
-	uint len = message.length();
+    uint len = message.length();
 
-	if (message[0] == 1 && message[len-1] == 1)
-	{
-		ctcpline = ctcpUnquote(unquote(message.mid(1,len-2)));
-		message.truncate(0);
+    if (message[0] == 1 && message[len-1] == 1)
+    {
+        ctcpline = ctcpUnquote(unquote(message.mid(1,len-2)));
+        message.truncate(0);
 
-				msg.d->ctcpMessage = new Message(msg.d->engine);
-				msg.d->ctcpMessage->d->raw = msg.d->ctcpRaw.latin1();
+                msg.d->ctcpMessage = new Message(msg.d->engine);
+                msg.d->ctcpMessage->d->raw = msg.d->ctcpRaw.latin1();
 
-				int space = msg.d->ctcpRaw.find(' ');
-				if (!matchForIRCRegExp(msg.d->ctcpMessage->d->raw, codec, *msg.d->ctcpMessage))
-				{
-					if (space > 0)
-						msg.d->ctcpMessage->d->command = msg.d->ctcpRaw.mid(0, space).upper();
-					else
-						msg.d->ctcpMessage->d->command = msg.d->ctcpRaw.upper();
-				}
+                int space = msg.d->ctcpRaw.find(' ');
+                if (!matchForIRCRegExp(msg.d->ctcpMessage->d->raw, codec, *msg.d->ctcpMessage))
+                {
+                    if (space > 0)
+                        msg.d->ctcpMessage->d->command = msg.d->ctcpRaw.mid(0, space).upper();
+                    else
+                        msg.d->ctcpMessage->d->command = msg.d->ctcpRaw.upper();
+                }
 
-				if (space > 0)
-					msg.d->ctcpMessage->d->ctcpRaw = msg.d->ctcpRaw.mid(space).latin1();
+                if (space > 0)
+                    msg.d->ctcpMessage->d->ctcpRaw = msg.d->ctcpRaw.mid(space).latin1();
 
-		return true;
-	}
-	return false;
+        return true;
+    }
+    return false;
 }
 */
 
 void CtcpPlugin::postEvent(const Message &msg, Message::Type messageType, const QString &message)
 {
-	Event event;
+    Event event;
 //	event.setMessageType(messageType);
 //	event.setFrom(msg.prefix());
 //	event.setCc(msg.socket().owner()); // server instead ?
 
-	if (message.isEmpty())
-		event.setText(msg.suffix());
-	else
-		event.setText(message);
+    if (message.isEmpty()) {
+        event.setText(msg.suffix());
+    } else {
+        event.setText(message);
+    }
 
 //	post the message here ... still dunno where, socket ?
 }
@@ -112,7 +113,7 @@ void CtcpPlugin::postErrorEvent(const Message &msg, const QString &message)
 
 void CtcpPlugin::postInfoEvent(const Message &msg, const QString &message)
 {
-	postEvent(msg, Event::InfoMessage, message);
+    postEvent(msg, Event::InfoMessage, message);
 }
 
 void CtcpPlugin::postMOTDEvent(const Message &msg, const QString &message)
@@ -122,7 +123,7 @@ void CtcpPlugin::postMOTDEvent(const Message &msg, const QString &message)
 
 void CtcpPlugin::receivedServerMessage(Message msg)
 {
-	receivedServerMessage(msg, msg.suffix());
+    receivedServerMessage(msg, msg.suffix());
 }
 
 void CtcpPlugin::receivedServerMessage(Message msg, const QString &message)
@@ -136,41 +137,41 @@ void CtcpPlugin::receivedServerMessage(Message msg, const QString &message)
 /*
 void CtcpPlugin::bindCtcp()
 {
-	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(Message&)),
-		-1,	-1);
-	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(Message&)),
-		-1,	1);
-	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(Message&)),
-		4,	5);
-	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(Message&)),
-		-1,	0);
-	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(Message&)),
-		1,	1);
-	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(Message&)),
-		-1,	0);
-	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(Message&)),
-		-1,	0);
-	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(Message&)),
-		-1,	0);
-	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(Message&)),
-		-1,	0);
+    bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(Message&)),
+        -1,	-1);
+    bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(Message&)),
+        -1,	1);
+    bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(Message&)),
+        4,	5);
+    bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(Message&)),
+        -1,	0);
+    bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(Message&)),
+        1,	1);
+    bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(Message&)),
+        -1,	0);
+    bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(Message&)),
+        -1,	0);
+    bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(Message&)),
+        -1,	0);
+    bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(Message&)),
+        -1,	0);
 
-	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(Message&)),
-		1,	-1);
-	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(Message&)),
-		1,	1,	"");
-	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(Message&)),
-		-1,	-1,	"");
+    bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(Message&)),
+        1,	-1);
+    bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(Message&)),
+        1,	1,	"");
+    bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(Message&)),
+        -1,	-1,	"");
 }
 */
 
 void CtcpPlugin::CtcpQuery_action(Message msg)
 {
 /*	QString target = msg.arg(0);
-	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
-		emit incomingAction(target, msg, msg.ctcpMessage().ctcpRaw());
-	else
-		emit incomingPrivAction(msg, target, msg.ctcpMessage().ctcpRaw());*/
+    if (target[0] == '#' || target[0] == '!' || target[0] == '&')
+        emit incomingAction(target, msg, msg.ctcpMessage().ctcpRaw());
+    else
+        emit incomingPrivAction(msg, target, msg.ctcpMessage().ctcpRaw());*/
 }
 
 /*
@@ -183,9 +184,9 @@ bool CtcpPlugin::CtcpReply_action(Message msg)
 //	FIXME: the API can now answer to help commands.
 void CtcpPlugin::CtcpQuery_clientinfo(Message msg)
 {
-	QString clientinfo = QString::fromLatin1("The following commands are supported, but "
-			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
-			"ACTION.");
+    QString clientinfo = QString::fromLatin1("The following commands are supported, but "
+                                             "without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
+                                             "ACTION.");
 
 //	writeCtcpReplyMessage(	msg.prefix(), QString::null,
 //				msg.ctcpMessage().command(), QString::null, clientinfo);
@@ -194,59 +195,54 @@ void CtcpPlugin::CtcpQuery_clientinfo(Message msg)
 void CtcpPlugin::CtcpQuery_dcc(Message msg)
 {
 //	Message &ctcpMsg = msg.ctcpMessage();
-	Message ctcpMsg;
+    Message ctcpMsg;
 
-	QString dccCommand = ctcpMsg.arg(0).upper();
+    QString dccCommand = ctcpMsg.arg(0).upper();
 
-	if (dccCommand == QString::fromLatin1("CHAT"))
-	{
+    if (dccCommand == QString::fromLatin1("CHAT")) {
 //		if(ctcpMsg.argsSize()!=4) return false;
 
-		/* DCC CHAT type longip port
-		 *
-		 *  type   = Either Chat or Talk, but almost always Chat these days
-		 *  longip = 32-bit Internet address of originator's machine
-		 *  port   = Port on which the originator is waitng for a DCC chat
-		 */
-		bool okayHost, okayPort;
-		// should ctctMsg.arg(1) be tested?
-		QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
-		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
-		if (okayHost && okayPort)
-		{
-			kDebug(14120) << "Starting DCC chat window." << endl;
+        /* DCC CHAT type longip port
+         *
+         *  type   = Either Chat or Talk, but almost always Chat these days
+         *  longip = 32-bit Internet address of originator's machine
+         *  port   = Port on which the originator is waitng for a DCC chat
+         */
+        bool okayHost, okayPort;
+        // should ctctMsg.arg(1) be tested?
+        QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
+        unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
+        if (okayHost && okayPort) {
+            kDebug(14120) << "Starting DCC chat window." << endl;
 //			TransferHandler::self()->createClient(
 //				this, msg.prefix(),
 //				address, port,
 //				Transfer::Chat );
-		}
-	}
-	else if (dccCommand == QString::fromLatin1("SEND"))
-	{
+        }
+    } else if (dccCommand == QString::fromLatin1("SEND")) {
 //		if(ctcpMsg.argsSize()!=5) return false;
 
-		/* DCC SEND (filename) (longip) (port) (filesize)
-		 *
-		 *  filename = Name of file being sent
-		 *  longip   = 32-bit Internet address of originator's machine
-		 *  port     = Port on which the originator is waiitng for a DCC chat
-		 *  filesize = Size of file being sent
-		 */
-		bool okayHost, okayPort, okaySize;
+        /* DCC SEND (filename) (longip) (port) (filesize)
+         *
+         *  filename = Name of file being sent
+         *  longip   = 32-bit Internet address of originator's machine
+         *  port     = Port on which the originator is waiitng for a DCC chat
+         *  filesize = Size of file being sent
+         */
+        bool okayHost, okayPort, okaySize;
 //		QFileInfo realfile(msg.arg(1));
-		QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
-		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
-		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
-		if (okayHost && okayPort && okaySize)
-		{
-			kDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
+        QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
+        unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
+        unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
+        if (okayHost && okayPort && okaySize) {
+            kDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
 //			TransferHandler::self()->createClient(
 //				this, msg.prefix(),
 //				address, port,
 //				Transfer::FileIncoming,
 //				ctcpMsg.arg(1), size );
-		}
-	}
+        }
+    }
 //	else
 //		((MessageRedirector *)sender())->error("Unknow dcc command");
 }
@@ -260,12 +256,12 @@ bool CtcpPlugin::CtcpReply_dcc(Message msg)
 
 void CtcpPlugin::CtcpReply_errmsg(Message /*msg*/)
 {
-	// should emit one signal
+    // should emit one signal
 }
 
-void CtcpPlugin::CtcpQuery_finger( Message /*msg*/)
+void CtcpPlugin::CtcpQuery_finger(Message /*msg*/)
 {
-	// To be implemented
+    // To be implemented
 }
 
 void CtcpPlugin::CtcpQuery_ping(Message msg)
@@ -277,34 +273,34 @@ void CtcpPlugin::CtcpQuery_ping(Message msg)
 void CtcpPlugin::CtcpReply_ping(Message msg)
 {
 /*	timeval time;
-	if (gettimeofday(&time, 0) == 0)
-	{
-		// FIXME: the time code is wrong for usec
-		QString timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
-		double newTime = timeReply.toDouble();
-		double oldTime = msg.suffix().section(' ',0, 0).toDouble();
-		double difference = newTime - oldTime;
-		QString diffString;
+    if (gettimeofday(&time, 0) == 0)
+    {
+        // FIXME: the time code is wrong for usec
+        QString timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
+        double newTime = timeReply.toDouble();
+        double oldTime = msg.suffix().section(' ',0, 0).toDouble();
+        double difference = newTime - oldTime;
+        QString diffString;
 
-		if (difference < 1)
-		{
-			diffString = QString::number(difference);
-			diffString.remove((diffString.find('.') -1), 2);
-			diffString.truncate(3);
-			diffString.append("milliseconds");
-		}
-		else
-		{
-			diffString = QString::number(difference);
-			QString seconds = diffString.section('.', 0, 0);
-			QString millSec = diffString.section('.', 1, 1);
-			millSec.remove(millSec.find('.'), 1);
-			millSec.truncate(3);
-			diffString = QString::fromLatin1("%1 seconds, %2 milliseconds").arg(seconds).arg(millSec);
-		}
+        if (difference < 1)
+        {
+            diffString = QString::number(difference);
+            diffString.remove((diffString.find('.') -1), 2);
+            diffString.truncate(3);
+            diffString.append("milliseconds");
+        }
+        else
+        {
+            diffString = QString::number(difference);
+            QString seconds = diffString.section('.', 0, 0);
+            QString millSec = diffString.section('.', 1, 1);
+            millSec.remove(millSec.find('.'), 1);
+            millSec.truncate(3);
+            diffString = QString::fromLatin1("%1 seconds, %2 milliseconds").arg(seconds).arg(millSec);
+        }
 
-		emit incomingCtcpReply(QString::fromLatin1("PING"), msg.prefix(), diffString);
-	}
+        emit incomingCtcpReply(QString::fromLatin1("PING"), msg.prefix(), diffString);
+    }
 //	else
 //		((MessageRedirector *)sender())->error("failed to get current time");*/
 }

@@ -20,19 +20,15 @@
 
 #include <QtCore/QStringList>
 
-namespace KIrc
-{
-
+namespace KIrc {
 class Handler;
 
 class KIRC_EXPORT HandlerFactory
 {
 public:
-	static QStringList keys();
-	static KIrc::Handler *create(const QString &key, QObject *parent);
+    static QStringList keys();
+    static KIrc::Handler *create(const QString &key, QObject *parent);
 };
-
 }
 
 #endif
-

@@ -20,9 +20,7 @@
 
 #include "kirchandler.h"
 
-namespace KIrc
-{
-
+namespace KIrc {
 class Entity;
 
 class ContextPrivate;
@@ -30,61 +28,58 @@ class ContextPrivate;
 /**
  * @author Michel Hermier <michel.hermier@gmail.com>
  */
-class KIRC_EXPORT Context
-	: public KIrc::Handler
+class KIRC_EXPORT Context : public KIrc::Handler
 {
-	Q_OBJECT
-	Q_DECLARE_PRIVATE(KIrc::Context)
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(KIrc::Context)
 
 //	Q_INTERFACES(KIrc::CommandHandlerInterface KIrc::MessageHandlerInterface)
 
 private:
-	Q_DISABLE_COPY(Context)
+    Q_DISABLE_COPY(Context)
 
 public:
-	explicit Context(QObject *parent = 0);
-	~Context();
+    explicit Context(QObject *parent = 0);
+    ~Context();
 
 public:
-	QTextCodec *defaultCodec() const;
-	void setDefaultCodec(QTextCodec *codec);
+    QTextCodec *defaultCodec() const;
+    void setDefaultCodec(QTextCodec *codec);
 
 //	Entity::List anonymous();
 
-	KIrc::EntityList entities() const;
+    KIrc::EntityList entities() const;
 //	Entity::List entitiesByHost(...) const;
 //	Entity::List entitiesByServer(...) const;
 //	Entity::List entitiesByType(...) const;
 
-	KIrc::EntityPtr entityFromName(const QByteArray &name);
+    KIrc::EntityPtr entityFromName(const QByteArray &name);
 
-	KIrc::EntityList entitiesFromNames(const QList<QByteArray> &names);
+    KIrc::EntityList entitiesFromNames(const QList<QByteArray> &names);
 
-	KIrc::EntityList entitiesFromNames(const QByteArray &names, char sep = ',');
+    KIrc::EntityList entitiesFromNames(const QByteArray &names, char sep = ',');
 
 public Q_SLOTS:
-	void add(EntityPtr entity);
-	void remove(EntityPtr entity);
+    void add(EntityPtr entity);
+    void remove(EntityPtr entity);
 
 public:
-	void postEvent(QEvent *event);
+    void postEvent(QEvent *event);
 
 Q_SIGNALS:
-	void ircEvent(QEvent *event);
+    void ircEvent(QEvent *event);
 
 public:
-	/* This command allow to set and get values.
-	 * Syntax: SET variable [new_value]
-	 */
+    /* This command allow to set and get values.
+     * Syntax: SET variable [new_value]
+     */
 //	Status SET();
 
 //	Status execute();
 
 protected:
-	ContextPrivate * const d_ptr;
+    ContextPrivate *const d_ptr;
 };
-
 }
 
 #endif
-

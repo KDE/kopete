@@ -35,20 +35,20 @@ class IRCChannelContact;
 
 struct IRCUserInfo
 {
-	QString userName;
-	QString hostName;
-	QString realName;
-	QString serverName;
-	QString serverInfo;
-	QString flags;
-	QStringList channels;
-	unsigned long idle;
-	bool isOperator;
-	bool isIdentified;
-	bool away;
-	uint hops;
-	QDateTime lastOnline;
-	QTime lastUpdate;
+    QString userName;
+    QString hostName;
+    QString realName;
+    QString serverName;
+    QString serverInfo;
+    QString flags;
+    QStringList channels;
+    unsigned long idle;
+    bool isOperator;
+    bool isIdentified;
+    bool away;
+    uint hops;
+    QDateTime lastOnline;
+    QTime lastUpdate;
 };
 
 /**
@@ -60,77 +60,74 @@ struct IRCUserInfo
 class IRCUserContact : public IRCContact
 {
 public:
-	// This class provides a Kopete::Contact for each user on the channel.
-	IRCUserContact(IRCContactManager *, const QString &nickname, Kopete::MetaContact *mc);
+    // This class provides a Kopete::Contact for each user on the channel.
+    IRCUserContact(IRCContactManager *, const QString &nickname, Kopete::MetaContact *mc);
 
-	// Kopete::Contact stuff
-	virtual QList<QAction *> *customContextMenuActions( Kopete::ChatSession *manager );
-	virtual const QString caption() const;
+    // Kopete::Contact stuff
+    virtual QList<QAction *> *customContextMenuActions(Kopete::ChatSession *manager);
+    virtual const QString caption() const;
 
-	void setAway(bool isAway);
+    void setAway(bool isAway);
 
-	QString formattedName() const;
+    QString formattedName() const;
 
-	//Methods handled by the signal mapper
-	void incomingUserIsAway(const QString &message );
-	void userOnline();
-	void newWhoIsUser(const QString &username, const QString &hostname, const QString &realname);
-	void newWhoIsServer(const QString &server, const QString &serverInfo);
-	void newWhoIsOperator();
-	void newWhoIsIdentified();
-	void newWhoIsIdle(unsigned long seconds);
-	void newWhoIsChannels(const QString &channel);
-	void whoIsComplete();
-	void whoWasComplete();
-	void newWhoReply( const QString &channel, const QString &user, const QString &host,
-		const QString &server, bool away, const QString &flags, uint hops,
-		const QString &realName );
+    //Methods handled by the signal mapper
+    void incomingUserIsAway(const QString &message);
+    void userOnline();
+    void newWhoIsUser(const QString &username, const QString &hostname, const QString &realname);
+    void newWhoIsServer(const QString &server, const QString &serverInfo);
+    void newWhoIsOperator();
+    void newWhoIsIdentified();
+    void newWhoIsIdle(unsigned long seconds);
+    void newWhoIsChannels(const QString &channel);
+    void whoIsComplete();
+    void whoWasComplete();
+    void newWhoReply(const QString &channel, const QString &user, const QString &host, const QString &server, bool away, const QString &flags, uint hops, const QString &realName);
 
 public slots:
-	virtual void updateStatus();
+    virtual void updateStatus();
 
-	virtual void sendFile(const KUrl &sourceURL, const QString&, unsigned int);
+    virtual void sendFile(const KUrl &sourceURL, const QString &, unsigned int);
 
 protected slots:
-	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
+    virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
 
 private slots:
-	void slotOp();
-	void slotDeop();
-	void slotVoice();
-	void slotDevoice();
-	void slotCtcpPing();
-	void slotCtcpVersion();
-	void slotBanHost();
-	void slotBanUserHost();
-	void slotBanDomain();
-	void slotBanUserDomain();
-	void slotKick();
-	void slotUserOffline();
+    void slotOp();
+    void slotDeop();
+    void slotVoice();
+    void slotDevoice();
+    void slotCtcpPing();
+    void slotCtcpVersion();
+    void slotBanHost();
+    void slotBanUserHost();
+    void slotBanDomain();
+    void slotBanUserDomain();
+    void slotKick();
+    void slotUserOffline();
 
-	virtual void slotUserInfo();
+    virtual void slotUserInfo();
 
-	//This can't be handled by the contact manager since
-	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
+    //This can't be handled by the contact manager since
+    void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 
 private:
-	void setManagerStatus(IRCChannelContact *channel, int statusAdjustment );
+    void setManagerStatus(IRCChannelContact *channel, int statusAdjustment);
 
-	KActionMenu *actionModeMenu;
-	KActionMenu *actionCtcpMenu;
-	QAction *actionKick;
-	KActionMenu *actionBanMenu;
-	KCodecAction *codecAction;
-	Kopete::ChatSession *mActiveManager;
-	QTimer *mOnlineTimer;
-	IRCUserInfo mInfo;
+    KActionMenu *actionModeMenu;
+    KActionMenu *actionCtcpMenu;
+    QAction *actionKick;
+    KActionMenu *actionBanMenu;
+    KCodecAction *codecAction;
+    Kopete::ChatSession *mActiveManager;
+    QTimer *mOnlineTimer;
+    IRCUserInfo mInfo;
 
-	bool m_isAway;
-	bool m_isOnline;
+    bool m_isAway;
+    bool m_isOnline;
 
-	void contactMode(const QString &mode);
-	void updateInfo();
+    void contactMode(const QString &mode);
+    void updateInfo();
 };
 
 #endif // IRCCONTACT_USER_H
-

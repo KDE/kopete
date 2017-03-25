@@ -22,35 +22,30 @@
 
 #include "kircsocket.h"
 
-namespace KIrc
-{
-
+namespace KIrc {
 class Context;
 class Handler;
 
-class KIRC_EXPORT SocketPrivate
-	: public QObject
+class KIRC_EXPORT SocketPrivate : public QObject
 {
-	Q_OBJECT
-	Q_DECLARE_PUBLIC(KIrc::Socket)
+    Q_OBJECT
+    Q_DECLARE_PUBLIC(KIrc::Socket)
 
 public:
-	explicit SocketPrivate(KIrc::Socket *socket);
+    explicit SocketPrivate(KIrc::Socket *socket);
 
 public Q_SLOTS:
-	void socketGotError(QAbstractSocket::SocketError);
-	void socketReadyRead();
+    void socketGotError(QAbstractSocket::SocketError);
+    void socketReadyRead();
 
 public:
-	KIrc::Socket *q_ptr;
+    KIrc::Socket *q_ptr;
 
-	KIrc::Context *context;
-	QAbstractSocket *socket;
-	KIrc::Socket::ConnectionState state;
-	KIrc::EntityPtr owner;
+    KIrc::Context *context;
+    QAbstractSocket *socket;
+    KIrc::Socket::ConnectionState state;
+    KIrc::EntityPtr owner;
 };
-
 }
 
 #endif
-

@@ -23,42 +23,43 @@
 #include "smssend.h"
 #include "smsclient.h"
 #ifdef INCLUDE_SMSGSM
-#	include "gsmlib.h"
+#   include "gsmlib.h"
 #endif
 #include "kopeteuiglobal.h"
 
-SMSService* ServiceLoader::loadService(const QString& name, Kopete::Account* account)
+SMSService *ServiceLoader::loadService(const QString &name, Kopete::Account *account)
 {
-	kWarning( 14160 ) ;
+    kWarning(14160);
 
-	SMSService* s;
-	if (name == "SMSSend")
-		s = new SMSSend(account);
-	else if (name == "SMSClient")
-		s = new SMSClient(account);
+    SMSService *s;
+    if (name == "SMSSend") {
+        s = new SMSSend(account);
+    } else if (name == "SMSClient") {
+        s = new SMSClient(account);
+    }
 #ifdef INCLUDE_SMSGSM
-	else if (name == "GSMLib")
-		s = new GSMLib(account);
+    else if (name == "GSMLib") {
+        s = new GSMLib(account);
+    }
 #endif
-	else
-	{
-		KMessageBox::sorry(Kopete::UI::Global::mainWidget(), i18n("Could not load service %1.", name),
-			i18n("Error Loading Service"));
-		s = 0L;
-	}
+    else {
+        KMessageBox::sorry(Kopete::UI::Global::mainWidget(), i18n("Could not load service %1.", name),
+                           i18n("Error Loading Service"));
+        s = 0L;
+    }
 
-	return s;
+    return s;
 }
 
 QStringList ServiceLoader::services()
 {
-	QStringList toReturn;
-	toReturn.append("SMSSend");
-	toReturn.append("SMSClient");
+    QStringList toReturn;
+    toReturn.append("SMSSend");
+    toReturn.append("SMSClient");
 #ifdef INCLUDE_SMSGSM
-	toReturn.append("GSMLib");
+    toReturn.append("GSMLib");
 #endif
-	return toReturn;
+    return toReturn;
 }
 
 /*
@@ -67,4 +68,3 @@ QStringList ServiceLoader::services()
  * indent-tabs-mode: t
  * End:
  */
-

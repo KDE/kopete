@@ -24,40 +24,40 @@
 #include "smsuserprefs.h"
 #include "smscontact.h"
 
-SMSUserPreferences::SMSUserPreferences( SMSContact* contact )
-	: KDialog( 0L)
+SMSUserPreferences::SMSUserPreferences(SMSContact *contact)
+    : KDialog(0L)
 {
-	m_contact = contact;
-	setCaption(i18n("User Preferences"));
-	setButtons(Ok|Cancel);
-	setDefaultButton(Ok);
-	setModal(true);
-	showButtonSeparator(true);
-	topWidget = new KVBox(this);
-	setMainWidget(topWidget);
-	userPrefs = new SMSUserPrefsUI( topWidget );
+    m_contact = contact;
+    setCaption(i18n("User Preferences"));
+    setButtons(Ok|Cancel);
+    setDefaultButton(Ok);
+    setModal(true);
+    showButtonSeparator(true);
+    topWidget = new KVBox(this);
+    setMainWidget(topWidget);
+    userPrefs = new SMSUserPrefsUI(topWidget);
 
-	userPrefs->telNumber->setText(m_contact->phoneNumber());
-	userPrefs->title->setText(m_contact->displayName());
-	connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
-	connect(this,SIGNAL(cancelClicked()),this,SLOT(slotCancel()));
+    userPrefs->telNumber->setText(m_contact->phoneNumber());
+    userPrefs->title->setText(m_contact->displayName());
+    connect(this, SIGNAL(okClicked()), this, SLOT(slotOk()));
+    connect(this, SIGNAL(cancelClicked()), this, SLOT(slotCancel()));
 }
 
 SMSUserPreferences::~SMSUserPreferences()
 {
-
 }
 
 void SMSUserPreferences::slotOk()
 {
-	if (userPrefs->telNumber->text() != m_contact->phoneNumber())
-		m_contact->setPhoneNumber(userPrefs->telNumber->text());
-	slotCancel();
+    if (userPrefs->telNumber->text() != m_contact->phoneNumber()) {
+        m_contact->setPhoneNumber(userPrefs->telNumber->text());
+    }
+    slotCancel();
 }
 
 void SMSUserPreferences::slotCancel()
 {
-	deleteLater();
+    deleteLater();
 }
 
 /*
@@ -66,4 +66,3 @@ void SMSUserPreferences::slotCancel()
  * indent-tabs-mode: t
  * End:
  */
-

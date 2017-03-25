@@ -31,8 +31,7 @@
 
 #include <QMap>
 
-namespace Kopete
-{
+namespace Kopete {
 class Account;
 class MetaContact;
 }
@@ -48,79 +47,83 @@ class KopeteView;
 
 class IRCProtocolHandler : public Kopete::MimeTypeHandler
 {
-	public:
+public:
 
-		IRCProtocolHandler();
+    IRCProtocolHandler();
 
-		void handleURL( const QString &, const KUrl &url ) const;
+    void handleURL(const QString &, const KUrl &url) const;
 };
 
-static const QString CHAT_VIEW( QString::fromLatin1("kopete_chatwindow") );
+static const QString CHAT_VIEW(QString::fromLatin1("kopete_chatwindow"));
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
  */
-class IRCProtocol
-	: public Kopete::Protocol
+class IRCProtocol : public Kopete::Protocol
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	static IRCProtocol *self();
+    static IRCProtocol *self();
 
-	IRCProtocol(QObject *parent, const QVariantList &args);
-	~IRCProtocol();
+    IRCProtocol(QObject *parent, const QVariantList &args);
+    ~IRCProtocol();
 
-	/**
-	 * Kopete::Protocol reimplementation
-	 */
-	virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
+    /**
+     * Kopete::Protocol reimplementation
+     */
+    virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
 
-	/**
-	 * Deserialize contact data
-	 */
-	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
-		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
+    /**
+     * Deserialize contact data
+     */
+    virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData);
 
-	virtual KopeteEditAccountWidget* createEditAccountWidget(Kopete::Account *account, QWidget *parent);
+    virtual KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
 
-	virtual Kopete::Account* createNewAccount(const QString &accountId);
+    virtual Kopete::Account *createNewAccount(const QString &accountId);
 
 //	virtual QList<QAction *> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
 
-	Kopete::OnlineStatus onlineStatusFor(KIrc::EntityPtr entity);
+    Kopete::OnlineStatus onlineStatusFor(KIrc::EntityPtr entity);
 
-	bool commandInProgress(){ return m_commandInProgress; }
-	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
+    bool commandInProgress()
+    {
+        return m_commandInProgress;
+    }
+
+    void setCommandInProgress(bool ip)
+    {
+        m_commandInProgress = ip;
+    }
 
 public slots:
-	void editNetworks(const QString &networkName);
+    void editNetworks(const QString &networkName);
 
 private slots:
-	void slotMessageFilter(Kopete::Message &msg);
+    void slotMessageFilter(Kopete::Message &msg);
 
-	void slotAllCommand(const QString &args, Kopete::ChatSession *manager );
-	void slotCtcpCommand(const QString &args, Kopete::ChatSession *manager );
-	void slotQuoteCommand(const QString &args, Kopete::ChatSession *manager );
-	void slotRawCommand(const QString &args, Kopete::ChatSession *manager );
+    void slotAllCommand(const QString &args, Kopete::ChatSession *manager);
+    void slotCtcpCommand(const QString &args, Kopete::ChatSession *manager);
+    void slotQuoteCommand(const QString &args, Kopete::ChatSession *manager);
+    void slotRawCommand(const QString &args, Kopete::ChatSession *manager);
 
-	void slotViewCreated(KopeteView *);
+    void slotViewCreated(KopeteView *);
 
 private:
-	void initOnlineStatus();
-	void simpleModeChange(const QString &, Kopete::ChatSession *, const QString &mode);
+    void initOnlineStatus();
+    void simpleModeChange(const QString &, Kopete::ChatSession *, const QString &mode);
 
-	//QMap<KIrc::EntityStatus, Kopete::OnlineStatus> m_statusMap;
+    //QMap<KIrc::EntityStatus, Kopete::OnlineStatus> m_statusMap;
 //	const Kopete::OnlineStatus m_connecting;
-	const Kopete::OnlineStatus m_StatusUnknown;
+    const Kopete::OnlineStatus m_StatusUnknown;
 
 //	DOM::Node activeNode;
-	IRCAccount *activeAccount;
+    IRCAccount *activeAccount;
 
-	bool m_commandInProgress;
+    bool m_commandInProgress;
 
-	IRCProtocolHandler *m_protocolHandler;
+    IRCProtocolHandler *m_protocolHandler;
 };
 
 #endif
-

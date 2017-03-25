@@ -24,53 +24,55 @@
 #include "client.h"
 #include "yahoo_protocol_debug.h"
 
-MailNotifierTask::MailNotifierTask(Task* parent) : Task(parent)
+MailNotifierTask::MailNotifierTask(Task *parent) : Task(parent)
 {
-	qCDebug(YAHOO_PROTOCOL_LOG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG);
 }
 
 MailNotifierTask::~MailNotifierTask()
 {
-
 }
 
-bool MailNotifierTask::take( Transfer* transfer )
+bool MailNotifierTask::take(Transfer *transfer)
 {
-	if ( !forMe( transfer ) )
-		return false;
+    if (!forMe(transfer)) {
+        return false;
+    }
 
-	YMSGTransfer *t = static_cast<YMSGTransfer *>(transfer);
+    YMSGTransfer *t = static_cast<YMSGTransfer *>(transfer);
 
-	parseMail( t );
+    parseMail(t);
 
-	return true;
+    return true;
 }
 
-bool MailNotifierTask::forMe( const Transfer* transfer ) const
+bool MailNotifierTask::forMe(const Transfer *transfer) const
 {
-	const YMSGTransfer *t = 0L;
-	t = dynamic_cast<const YMSGTransfer*>(transfer);
-	if (!t)
-		return false;
+    const YMSGTransfer *t = 0L;
+    t = dynamic_cast<const YMSGTransfer *>(transfer);
+    if (!t) {
+        return false;
+    }
 
-	if ( t->service() == Yahoo::ServiceNewMail )
-		return true;
-	else
-		return false;
+    if (t->service() == Yahoo::ServiceNewMail) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
-void MailNotifierTask::parseMail( YMSGTransfer *t )
+void MailNotifierTask::parseMail(YMSGTransfer *t)
 {
-	qCDebug(YAHOO_PROTOCOL_LOG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG);
 
-	QString count = t->firstParam( 9 );
-	QString mail = t->firstParam( 42 );
-	QString from = t->firstParam( 43 );
-	QString subject = t->firstParam( 18 );
+    QString count = t->firstParam(9);
+    QString mail = t->firstParam(42);
+    QString from = t->firstParam(43);
+    QString subject = t->firstParam(18);
 
-	if( !mail.isEmpty() && !from.isEmpty() && !subject.isEmpty() )
-		emit mailNotify( QStringLiteral( "%1 <%2>").arg( from, mail ), subject, count.toInt() );
-	else
-		emit mailNotify( QString(), QString(), count.toInt());
+    if (!mail.isEmpty() && !from.isEmpty() && !subject.isEmpty()) {
+        emit mailNotify(QStringLiteral("%1 <%2>").arg(from, mail), subject, count.toInt());
+    } else {
+        emit mailNotify(QString(), QString(), count.toInt());
+    }
 }
-

@@ -24,9 +24,7 @@
 
 #include <QtCore/QUrl>
 
-namespace KIrc
-{
-
+namespace KIrc {
 class ClientSocketPrivate;
 
 /**
@@ -34,42 +32,40 @@ class ClientSocketPrivate;
  * @author Michel Hermier <michel.hermier@gmail.com>
  * @author Jason Keirstead <jason@keirstead.org>
  */
-class KIRCCLIENT_EXPORT ClientSocket
-	: public KIrc::Socket
+class KIRCCLIENT_EXPORT ClientSocket : public KIrc::Socket
 {
-	Q_OBJECT
-	Q_DECLARE_PRIVATE(ClientSocket)
-	Q_PROPERTY(QUrl url READ url)
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(ClientSocket)
+    Q_PROPERTY(QUrl url READ url)
 //	Q_PROPERTY(KIrc::Entity *server READ server)
 
 private:
-	Q_DISABLE_COPY(ClientSocket)
+    Q_DISABLE_COPY(ClientSocket)
 
 public:
-	explicit ClientSocket(Context *context = 0);
-	~ClientSocket();
+    explicit ClientSocket(Context *context = 0);
+    ~ClientSocket();
 
 public: // READ properties accessors.
-	KIrc::EntityPtr server() const;
+    KIrc::EntityPtr server() const;
 
-	QUrl url() const;
+    QUrl url() const;
 
 public slots: // WRITE properties accessors.
-	void setAuthentified();
-	KIrc::EntityPtr joinChannel(const QByteArray& channelName);
+    void setAuthentified();
+    KIrc::EntityPtr joinChannel(const QByteArray &channelName);
 
 public:
 
 public Q_SLOTS:
-	virtual void connectToServer(const QUrl &url);
+    virtual void connectToServer(const QUrl &url);
 
 protected:
-	void connectToServer(const QUrl &url, QAbstractSocket *socket);
+    void connectToServer(const QUrl &url, QAbstractSocket *socket);
 
 protected Q_SLOTS:
-	void socketStateChanged(QAbstractSocket::SocketState newstate);
+    void socketStateChanged(QAbstractSocket::SocketState newstate);
 };
-
 }
 
 #endif

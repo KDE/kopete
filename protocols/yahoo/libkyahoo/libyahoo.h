@@ -45,16 +45,16 @@
 #define LIB_YAHOO_UTILS_H
 
 #ifndef MIN
-#define MIN(x,y) ((x)<(y)?(x):(y))
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
 #endif
 
 #ifndef MAX
-#define MAX(x,y) ((x)>(y)?(x):(y))
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
 #endif
-#define FREE(x)                if(x) {free(x); x=NULL;}
+#define FREE(x)                if (x) {free(x); x = NULL;}
 
-void authresp_0x0b(const char *seed, const char *sn, const char *password, char *resp_6, char *resp_96 );
+void authresp_0x0b(const char *seed, const char *sn, const char *password, char *resp_6, char *resp_96);
 void yahooBase64(unsigned char *out, const unsigned char *in, int inlen);
-char * getlcookie(const char *cookie);
-char * getcookie(const char *rawcookie);
+char *getlcookie(const char *cookie);
+char *getcookie(const char *rawcookie);
 #endif

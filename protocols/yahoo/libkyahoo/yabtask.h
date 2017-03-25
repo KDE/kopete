@@ -24,9 +24,9 @@
 class KJob;
 class YMSGTransfer;
 
-namespace KIO	{ 
-	class Job;
-	class TransferJob; 
+namespace KIO   {
+class Job;
+class TransferJob;
 }
 
 /**
@@ -34,27 +34,27 @@ namespace KIO	{
 */
 class YABTask : public Task
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	YABTask(Task *parent);
-	~YABTask();
-	
-	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+    YABTask(Task *parent);
+    ~YABTask();
 
-	void getAllEntries( long lastMerge, long lastRemoteRevision );
-	void saveEntry( const YABEntry & );
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+
+    void getAllEntries(long lastMerge, long lastRemoteRevision);
+    void saveEntry(const YABEntry &);
 signals:
-	void gotEntry( YABEntry * );
-	void gotRevision( long rev, bool merged );
+    void gotEntry(YABEntry *);
+    void gotRevision(long rev, bool merged);
 protected:
-	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
-	void parseContactDetails( YMSGTransfer* t );
+    bool forMe(const Transfer *transfer) const Q_DECL_OVERRIDE;
+    void parseContactDetails(YMSGTransfer *t);
 private slots:
-	void slotData( KIO::Job*, const QByteArray & );
-	void slotResult( KJob* );
+    void slotData(KIO::Job *, const QByteArray &);
+    void slotResult(KJob *);
 private:
-	KIO::TransferJob *m_transferJob;
-	QString m_data;
+    KIO::TransferJob *m_transferJob;
+    QString m_data;
 };
 
 #endif

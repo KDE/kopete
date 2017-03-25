@@ -3,7 +3,7 @@
 
   Copyright (c) 2003      by Richard Lärkäng        <nouseforaname@home.se>
   Copyright (c) 2003      by Gav Wood               <gav@kde.org>
- 
+
   *************************************************************************
   *                                                                       *
   * This program is free software; you can redistribute it and/or modify  *
@@ -26,19 +26,19 @@ class SMSContact;
 
 class SMSUserPreferences : public KDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	SMSUserPreferences(SMSContact* contact);
-	~SMSUserPreferences();
+    SMSUserPreferences(SMSContact *contact);
+    ~SMSUserPreferences();
 private:
-	SMSPreferencesBase* prefBase;
-	SMSUserPrefsUI* userPrefs;
-	KVBox* topWidget;
+    SMSPreferencesBase *prefBase;
+    SMSUserPrefsUI *userPrefs;
+    KVBox *topWidget;
 
-	SMSContact* m_contact;
+    SMSContact *m_contact;
 public slots:
-	void slotOk();
-	void slotCancel();
-} ;
+    void slotOk();
+    void slotCancel();
+};
 
 #endif //SMSUSERPREFERENCES_H

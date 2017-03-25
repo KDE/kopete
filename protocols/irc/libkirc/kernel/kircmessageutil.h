@@ -22,7 +22,6 @@
 
 namespace KIrc {
 namespace MessageUtil {
-
 extern QByteArray quote(const QByteArray &buffer);
 extern QByteArray unquote(const QByteArray &buffer);
 
@@ -37,9 +36,7 @@ extern QByteArray unquoteCtcp(const QByteArray &buffer);
 //extern void writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg, QTextCodec *codec = 0);
 
 #endif
-
 } // MessageUtil
 }
 
 #endif
-

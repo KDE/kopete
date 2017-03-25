@@ -25,45 +25,44 @@
 
 #include "ircnetwork.h"
 
-class IRCNetworkConfigWidget
-	: public QDialog, public Ui::NetworkConfig
+class IRCNetworkConfigWidget : public QDialog, public Ui::NetworkConfig
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit IRCNetworkConfigWidget(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-	~IRCNetworkConfigWidget();
+    explicit IRCNetworkConfigWidget(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    ~IRCNetworkConfigWidget();
 
-	void editNetworks( const QString &networkName = QString() );
+    void editNetworks(const QString &networkName = QString());
 
 signals:
-	void networkSelected(const IRC::Network &network);
+    void networkSelected(const IRC::Network &network);
 
-	void networkConfigUpdated(const QString &selectedNetwork);
+    void networkConfigUpdated(const QString &selectedNetwork);
 
 private slots:
-	// FIXME: All the code for managing the networks list should be in another class - Will
-	void slotUpdateNetworkConfig();
-	void slotUpdateNetworkHostConfig();
-	void slotMoveServerUp();
-	void slotMoveServerDown();
-	void slotDeleteNetwork();
-	void slotDeleteHost();
-	void slotNewNetwork();
-	void slotRenameNetwork();
-	void slotNewHost();
-	void slotHostPortChanged( int value );
-	// end of network list specific code
-	
-	// copies the altered information to the global IRCNetworks List
-	void slotSaveNetworkConfig();
+    // FIXME: All the code for managing the networks list should be in another class - Will
+    void slotUpdateNetworkConfig();
+    void slotUpdateNetworkHostConfig();
+    void slotMoveServerUp();
+    void slotMoveServerDown();
+    void slotDeleteNetwork();
+    void slotDeleteHost();
+    void slotNewNetwork();
+    void slotRenameNetwork();
+    void slotNewHost();
+    void slotHostPortChanged(int value);
+    // end of network list specific code
+
+    // copies the altered information to the global IRCNetworks List
+    void slotSaveNetworkConfig();
 
 private:
-	void storeCurrentNetwork();
-	void storeCurrentHost();
+    void storeCurrentNetwork();
+    void storeCurrentHost();
 
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
 
 #endif

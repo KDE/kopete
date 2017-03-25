@@ -1,4 +1,4 @@
- /*
+/*
     channellist.h - IRC Channel Search Widget
 
     Copyright (c) 2004      by Jason Keirstead <jason@keirstead.org>
@@ -22,24 +22,23 @@
 
 #include "kdialog.h"
 
-class ChannelListDialog
-	: public KDialog
+class ChannelListDialog : public KDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-		ChannelListDialog(KIRC::Engine *engine, const QString &caption, QObject *target, const char* slotJoinChan);
+public:
+    ChannelListDialog(KIRC::Engine *engine, const QString &caption, QObject *target, const char *slotJoinChan);
 
-		void clear();
+    void clear();
 
-		void search();
+    void search();
 
-	private slots:
-		void slotChannelDoubleClicked( const QString & );
+private slots:
+    void slotChannelDoubleClicked(const QString &);
 
-	private:
-		KIRC::Engine *m_engine;
-		ChannelList *m_list;
+private:
+    KIRC::Engine *m_engine;
+    ChannelList *m_list;
 };
 
 #endif

@@ -21,9 +21,9 @@
 #include "connector.h"
 
 Connector::Connector(QObject *parent)
-:QObject(parent)
+    : QObject(parent)
 {
-	setPeerAddressNone();
+    setPeerAddressNone();
 }
 
 Connector::~Connector()
@@ -32,30 +32,29 @@ Connector::~Connector()
 
 bool Connector::havePeerAddress() const
 {
-	return haveaddr;
+    return haveaddr;
 }
 
 QHostAddress Connector::peerAddress() const
 {
-	return addr;
+    return addr;
 }
 
 quint16 Connector::peerPort() const
 {
-	return port;
+    return port;
 }
 
 void Connector::setPeerAddressNone()
 {
-	haveaddr = false;
-	addr = QHostAddress();
-	port = 0;
+    haveaddr = false;
+    addr = QHostAddress();
+    port = 0;
 }
 
 void Connector::setPeerAddress(const QHostAddress &_addr, quint16 _port)
 {
-	haveaddr = true;
-	addr = _addr;
-	port = _port;
+    haveaddr = true;
+    addr = _addr;
+    port = _port;
 }
-

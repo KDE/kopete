@@ -27,18 +27,18 @@ class YMSGTransfer;
 */
 class MailNotifierTask : public Task
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	MailNotifierTask(Task *parent);
-	~MailNotifierTask();
-	
-	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+    MailNotifierTask(Task *parent);
+    ~MailNotifierTask();
+
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 
 protected:
-	bool forMe( const Transfer *transfer ) const Q_DECL_OVERRIDE;
-	void parseMail( YMSGTransfer *transfer );
+    bool forMe(const Transfer *transfer) const Q_DECL_OVERRIDE;
+    void parseMail(YMSGTransfer *transfer);
 signals:
-	void mailNotify(const QString&, const QString&, int);
+    void mailNotify(const QString &, const QString &, int);
 };
 
 #endif

@@ -38,41 +38,42 @@
 class KIrc::ClientListHandlerPrivate
 {
 public:
-	KIrc::Context *context;
+    KIrc::Context *context;
 };
 
 using namespace KIrc;
 
 ClientListHandler::ClientListHandler(Context *context)
-	: Handler(context)
-	, d_ptr(new ClientListHandlerPrivate)
+    : Handler(context)
+    , d_ptr(new ClientListHandlerPrivate)
 {
-	Q_D(ClientListHandler);
+    Q_D(ClientListHandler);
 
-	d->context = context;
+    d->context = context;
 }
 
 ClientListHandler::~ClientListHandler()
 {
-	delete d_ptr;
+    delete d_ptr;
 }
 
 #if 0
 void ClientListHandler::LIST(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
-	Q_D(ClientListHandler);
+    Q_D(ClientListHandler);
 
-	CHECK_ARGS(0, 0);
+    CHECK_ARGS(0, 0);
 
 #if 0
-	MessageEvent *reply;
+    MessageEvent *reply;
 //	reply.setCommand(PONG);
 //	reply.setArgs(msg.rawArg(0));
-	reply.setSuffix(msg.rawSuffix());
+    reply.setSuffix(msg.rawSuffix());
 
 //	msg->client->writeMessage(reply);
 #endif
 }
+
 #endif
 
 /* 321: "Channel :Users  Name"
@@ -89,7 +90,7 @@ void ClientListHandler::RPL_LISTSTART(KIrc::Context *context, const KIrc::Messag
  */
 void ClientListHandler::RPL_LIST(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
-	CHECK_ARGS(2, 2);
+    CHECK_ARGS(2, 2);
 
 //	emit incomingListedChan(msg.arg(1), msg.arg(2).toUInt(), msg.suffix());
 }
@@ -99,7 +100,7 @@ void ClientListHandler::RPL_LIST(KIrc::Context *context, const KIrc::Message &me
  */
 void ClientListHandler::RPL_LISTEND(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
-	CHECK_ARGS(2, 2);
+    CHECK_ARGS(2, 2);
 
 //	emit receivedServerMessage(msg);
 }
@@ -110,7 +111,7 @@ void ClientListHandler::RPL_LISTEND(KIrc::Context *context, const KIrc::Message 
  */
 void ClientListHandler::ERR_NOSUCHSERVER(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
-	CHECK_ARGS(2, 2);
+    CHECK_ARGS(2, 2);
 
 //	i18n("The server \"%1\" does not exist").arg(nick)
 }

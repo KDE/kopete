@@ -21,29 +21,24 @@
 #include <QtCore/QList>
 #include <QtCore/QtPlugin>
 
-namespace KIrc
-{
-
+namespace KIrc {
 class Handler;
 
-class KIRC_EXPORT HandlerPlugin
-	: public QObject
+class KIRC_EXPORT HandlerPlugin : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	HandlerPlugin();
-	virtual ~HandlerPlugin();
+    HandlerPlugin();
+    virtual ~HandlerPlugin();
 
 public:
-	virtual QStringList keys() = 0;
-	virtual KIrc::Handler *create(const QString &key, QObject *parent) = 0;
+    virtual QStringList keys() = 0;
+    virtual KIrc::Handler *create(const QString &key, QObject *parent) = 0;
 
 private:
-	Q_DISABLE_COPY(HandlerPlugin)
+    Q_DISABLE_COPY(HandlerPlugin)
 };
-
 }
 
 #endif
-

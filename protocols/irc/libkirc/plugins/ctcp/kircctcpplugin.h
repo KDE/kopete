@@ -23,9 +23,7 @@
 #include "kircmessage.h"
 #include "kircevent.h"
 
-namespace KIrc
-{
-
+namespace KIrc {
 class Event;
 
 /**
@@ -33,53 +31,48 @@ class Event;
  * @author Michel Hermier <michel.hermier@gmail.com>
  * @author Jason Keirstead <jason@keirstead.org>
  */
-class CtcpPlugin
-	: public QObject
-	, public KIrc::CommandHandlerInterface
-	, public KIrc::MessageHandlerInterface
+class CtcpPlugin : public QObject, public KIrc::CommandHandlerInterface, public KIrc::MessageHandlerInterface
 {
-	Q_OBJECT
-	Q_INTERFACES(Kirc::CommandHandlerInterface Kirc::MessageHandlerInterface)
+    Q_OBJECT
+    Q_INTERFACES(Kirc::CommandHandlerInterface Kirc::MessageHandlerInterface)
 
 public:
-	explicit CtcpPlugin(QObject *parent = 0);
-	~CtcpPlugin();
+    explicit CtcpPlugin(QObject *parent = 0);
+    ~CtcpPlugin();
 
 private slots:
-	void postEvent(const KIrc::Message &msg, KIrc::Message::Type messageType, const QString &message);
-	void postErrorEvent(const KIrc::Message &msg, const QString &message = QString());
-	void postInfoEvent(const KIrc::Message &msg, const QString &message = QString());
-	void postMOTDEvent(const KIrc::Message &msg, const QString &message = QString());
+    void postEvent(const KIrc::Message &msg, KIrc::Message::Type messageType, const QString &message);
+    void postErrorEvent(const KIrc::Message &msg, const QString &message = QString());
+    void postInfoEvent(const KIrc::Message &msg, const QString &message = QString());
+    void postMOTDEvent(const KIrc::Message &msg, const QString &message = QString());
 
-	void receivedServerMessage(KIrc::Message msg) KDE_DEPRECATED; // emit the suffix of the message.
-	void receivedServerMessage(KIrc::Message msg, const QString &message) KDE_DEPRECATED;
+    void receivedServerMessage(KIrc::Message msg) KDE_DEPRECATED; // emit the suffix of the message.
+    void receivedServerMessage(KIrc::Message msg, const QString &message) KDE_DEPRECATED;
 
 private slots:
 
 #if 0
-	void CtcpQuery_action(KIrc::Message msg);
-	void CtcpQuery_clientinfo(KIrc::Message msg);
-	void CtcpQuery_finger(KIrc::Message msg);
-	void CtcpQuery_dcc(KIrc::Message msg);
-	void CtcpQuery_ping(KIrc::Message msg);
-	void CtcpQuery_source(KIrc::Message msg);
-	void CtcpQuery_time(KIrc::Message msg);
-	void CtcpQuery_userinfo(KIrc::Message msg);
-	void CtcpQuery_version(KIrc::Message msg);
+    void CtcpQuery_action(KIrc::Message msg);
+    void CtcpQuery_clientinfo(KIrc::Message msg);
+    void CtcpQuery_finger(KIrc::Message msg);
+    void CtcpQuery_dcc(KIrc::Message msg);
+    void CtcpQuery_ping(KIrc::Message msg);
+    void CtcpQuery_source(KIrc::Message msg);
+    void CtcpQuery_time(KIrc::Message msg);
+    void CtcpQuery_userinfo(KIrc::Message msg);
+    void CtcpQuery_version(KIrc::Message msg);
 
-	void CtcpReply_errmsg(KIrc::Message msg);
-	void CtcpReply_ping(KIrc::Message msg);
-	void CtcpReply_version(KIrc::Message msg);
+    void CtcpReply_errmsg(KIrc::Message msg);
+    void CtcpReply_ping(KIrc::Message msg);
+    void CtcpReply_version(KIrc::Message msg);
 #endif
 
 private:
-	Q_DISABLE_COPY(CtcpPlugin)
+    Q_DISABLE_COPY(CtcpPlugin)
 
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
-
 }
 
 #endif
-

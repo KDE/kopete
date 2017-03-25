@@ -21,35 +21,33 @@
 #include <qlineedit.h>
 
 SMSAddContactPage::SMSAddContactPage(QWidget *parent)
-				  : AddContactPage(parent)
+    : AddContactPage(parent)
 {
-	QVBoxLayout* layout = new QVBoxLayout( this );
-	smsdata = new smsAddUI(this);
-	layout->addWidget( smsdata );
-	smsdata->addNr->setFocus();
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    smsdata = new smsAddUI(this);
+    layout->addWidget(smsdata);
+    smsdata->addNr->setFocus();
 }
 
 SMSAddContactPage::~SMSAddContactPage()
 {
-
 }
 
-bool SMSAddContactPage::apply(Kopete::Account* a, Kopete::MetaContact* m)
+bool SMSAddContactPage::apply(Kopete::Account *a, Kopete::MetaContact *m)
 {
-	if ( validateData() )
-	{
-		QString nr = smsdata->addNr->text();
-		QString name = smsdata->addName->text();
+    if (validateData()) {
+        QString nr = smsdata->addNr->text();
+        QString name = smsdata->addName->text();
 
-		return a->addContact( nr, m, Kopete::Account::ChangeKABC );
-	}
+        return a->addContact(nr, m, Kopete::Account::ChangeKABC);
+    }
 
-	return false;
+    return false;
 }
 
 bool SMSAddContactPage::validateData()
 {
-	return true;
+    return true;
 }
 
 /*
@@ -58,4 +56,3 @@ bool SMSAddContactPage::validateData()
  * indent-tabs-mode: t
  * End:
  */
-

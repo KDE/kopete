@@ -29,17 +29,15 @@ using namespace Kopete;
 namespace IRC {
 /*
 const QString Version = I18N_NOOP("Kopete IRC Plugin %1 [http://kopete.kde.org]",
-				KGlobal::mainComponent().aboutData()->version());
+                KGlobal::mainComponent().aboutData()->version());
 */
 namespace Config {
-
 //const QLatin1String AUTOSHOWSERVERWINDOW("AutoShowServerWindow");
 const QLatin1String CODECMIB("Codec");
 const QLatin1String NETWORKNAME("NetworkName");
 const QLatin1String NICKNAME("NickName");
 const QLatin1String USERNAME("UserName");
 const QLatin1String REALNAME("RealName");
-
 } // IRC::Config
 
 namespace Properties {
@@ -57,5 +55,4 @@ const ContactPropertyTmpl FullName(QLatin1String("FormattedName"), i18n("Full Na
 const ContactPropertyTmpl IsIdentified(QLatin1String("identifiedUser"), i18n("User Is Authenticated"));
 */
 } // IRC::Properties
-
 } // IRC

@@ -41,42 +41,43 @@
 class QTimer;
 class Q3ListView;
 class QAction;
-namespace Kopete { class MetaContact; }
+namespace Kopete {
+class MetaContact;
+}
 
-class WPContact: public Kopete::Contact
+class WPContact : public Kopete::Contact
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	WPContact(Kopete::Account *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact);
+    WPContact(Kopete::Account *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact);
 
 //	virtual bool isOnline() const;
-	bool isReachable() Q_DECL_OVERRIDE;
-	QList<QAction *> *customContextMenuActions() Q_DECL_OVERRIDE;
-	using Kopete::Contact::customContextMenuActions;
-	Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate) Q_DECL_OVERRIDE;
-	void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData) Q_DECL_OVERRIDE;
+    bool isReachable() Q_DECL_OVERRIDE;
+    QList<QAction *> *customContextMenuActions() Q_DECL_OVERRIDE;
+    using Kopete::Contact::customContextMenuActions;
+    Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate) Q_DECL_OVERRIDE;
+    void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData) Q_DECL_OVERRIDE;
 
 public slots:
-	void slotUserInfo() Q_DECL_OVERRIDE;
-	void slotCheckStatus();	// the call back for the checkStatus timer
-	void slotNewMessage(const QString &Body, const QDateTime &Arrival);
+    void slotUserInfo() Q_DECL_OVERRIDE;
+    void slotCheckStatus(); // the call back for the checkStatus timer
+    void slotNewMessage(const QString &Body, const QDateTime &Arrival);
 
 private slots:
-	void slotChatSessionDestroyed();
-	void slotSendMessage(Kopete::Message &message);
-	void slotCloseUserInfoDialog(); // Called when the userinfo dialog is getting closed
+    void slotChatSessionDestroyed();
+    void slotSendMessage(Kopete::Message &message);
+    void slotCloseUserInfoDialog(); // Called when the userinfo dialog is getting closed
 
 private:
-	bool myWasConnected;	// true if protocol connected at last check
+    bool myWasConnected;    // true if protocol connected at last check
 
-	QTimer checkStatus;		// checks the status of this contact every second or so
+    QTimer checkStatus;     // checks the status of this contact every second or so
 //	KActionCollection *myActionCollection;
-							// holds all the protocol specific actions (not many!)
-	Kopete::ChatSession *m_manager;
-							// holds the two message managers - one for email and one for chat
-	WPUserInfo *m_infoDialog;
+    // holds all the protocol specific actions (not many!)
+    Kopete::ChatSession *m_manager;
+    // holds the two message managers - one for email and one for chat
+    WPUserInfo *m_infoDialog;
 };
 
 #endif
-

@@ -31,13 +31,11 @@
 
 class IRCAccount;
 
-namespace KIrc
-{
+namespace KIrc {
 class ClientSocket;
 }
 
-namespace Kopete
-{
+namespace Kopete {
 class ChatSession;
 class MetaContact;
 }
@@ -48,78 +46,76 @@ class QTextCodec;
  * @author Jason Keirstead <jason@keirstead.org>
  * @author Michel Hermier <michel.hermier@gmail.com>
  */
-class IRCContact
-	: public Kopete::Contact
+class IRCContact : public Kopete::Contact
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	typedef QList<IRCContact *> List;
+    typedef QList<IRCContact *> List;
 
-	IRCContact(IRCAccount *account, const KIrc::EntityPtr &entity,
-		Kopete::MetaContact *metac = 0, const QString& icon = QString());
-	~IRCContact();
+    IRCContact(IRCAccount *account, const KIrc::EntityPtr &entity, Kopete::MetaContact *metac = 0, const QString &icon = QString());
+    ~IRCContact();
 
-	IRCAccount *ircAccount() const;
-	KIrc::ClientSocket *kircClient() const;
+    IRCAccount *ircAccount() const;
+    KIrc::ClientSocket *kircClient() const;
 
-	QString caption() const;
+    QString caption() const;
 
-	KIrc::EntityPtr entity() const;
+    KIrc::EntityPtr entity() const;
 
-	/**
-	 * This function attempts to find the nickname specified within the current chat
-	 * session. Returns a pointer to that IRCUserContact, or 0L if the user does not
-	 * exist in this session. More useful for channels. Calling IRCChannelContact::locateUser()
-	 * for example tells you if a user is in a certain channel.
-	 */
-	Kopete::Contact *locateUser(const QString &nickName);
+    /**
+     * This function attempts to find the nickname specified within the current chat
+     * session. Returns a pointer to that IRCUserContact, or 0L if the user does not
+     * exist in this session. More useful for channels. Calling IRCChannelContact::locateUser()
+     * for example tells you if a user is in a certain channel.
+     */
+    Kopete::Contact *locateUser(const QString &nickName);
 
-	bool isReachable();
+    bool isReachable();
 
-	/**
-	 * return true if the contact is in a chat. false if the contact is in no chats
-	 * that loop over all manager, and checks the presence of the user
-	 */
-	bool isChatting( Kopete::ChatSession *avoid = 0L ) const;
+    /**
+     * return true if the contact is in a chat. false if the contact is in no chats
+     * that loop over all manager, and checks the presence of the user
+     */
+    bool isChatting(Kopete::ChatSession *avoid = 0L) const;
 
-	Kopete::ChatSession *manager(CanCreateFlags cancreate = CannotCreate);
-	Kopete::ChatSession *chatSession(IRC::ChatSessionType type = IRC::SERVER, CanCreateFlags cancreate = CannotCreate);
+    Kopete::ChatSession *manager(CanCreateFlags cancreate = CannotCreate);
+    Kopete::ChatSession *chatSession(IRC::ChatSessionType type = IRC::SERVER, CanCreateFlags cancreate = CannotCreate);
 
-	void appendMessage(Kopete::Message &);
+    void appendMessage(Kopete::Message &);
 
-	QTextCodec *codec();
+    QTextCodec *codec();
 
-	/**
-	 * We serialise the contactId and the server group in 'contactId'
-	 * so that other IRC programs reading this from KAddressBook have a chance of figuring
-	 * which server the contact relates to
-	 */
-	void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
+    /**
+     * We serialise the contactId and the server group in 'contactId'
+     * so that other IRC programs reading this from KAddressBook have a chance of figuring
+     * which server the contact relates to
+     */
+    void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
 signals:
-	void destroyed(IRCContact *self);
+    void destroyed(IRCContact *self);
 
 public slots:
-	void updateStatus();
+    void updateStatus();
 
-	void setCodec(QTextCodec *codec);
+    void setCodec(QTextCodec *codec);
 
 private slots:
-	void entityUpdated();
+    void entityUpdated();
 
-	void slotSendMsg(Kopete::Message &message, Kopete::ChatSession *chatSession);
-	QString sendMessage( const QString &msg );
+    void slotSendMsg(Kopete::Message &message, Kopete::ChatSession *chatSession);
+    QString sendMessage(const QString &msg);
 
-	void chatSessionDestroyed(Kopete::ChatSession *chatSession);
+    void chatSessionDestroyed(Kopete::ChatSession *chatSession);
 
-	void deleteContact();
+    void deleteContact();
 
 private:
-	Q_DISABLE_COPY(IRCContact)
+    Q_DISABLE_COPY(IRCContact)
 
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
 
 #endif

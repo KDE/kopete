@@ -23,43 +23,39 @@
 #include <QtCore/QMultiHash>
 #include <QtCore/QObject>
 
-namespace KIrc
-{
-
+namespace KIrc {
 class Command;
 
-class CommandHandler
-	: public QObject
+class CommandHandler : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	CommandHandler(QObject *parent = 0);
-	~CommandHandler();
+    CommandHandler(QObject *parent = 0);
+    ~CommandHandler();
 
 public slots:
-	Command *registerCommand(const char *name, Command *command);
+    Command *registerCommand(const char *name, Command *command);
 
-	/**
-	 * Connects the given object member signal/slot to this message redirector.
-	 * The member signal slot should be looking like:
-	 * SIGNAL(mysignal(KIrc::Message msg))
-	 * or
-	 * SIGNAL(myslot(KIrc::Message msg))
-	 */
-	Command *registerCommand(const char *name, QObject *object);
+    /**
+     * Connects the given object member signal/slot to this message redirector.
+     * The member signal slot should be looking like:
+     * SIGNAL(mysignal(KIrc::Message msg))
+     * or
+     * SIGNAL(myslot(KIrc::Message msg))
+     */
+    Command *registerCommand(const char *name, QObject *object);
 
-	virtual void handleMessage(KIrc::Message msg);
+    virtual void handleMessage(KIrc::Message msg);
 
-	void unregisterCommand(const char *name);
+    void unregisterCommand(const char *name);
 
 protected:
-	QMultiHash<QString, Command*> m_commands;
+    QMultiHash<QString, Command *> m_commands;
 
 private:
-	Q_DISABLE_COPY(CommandHandler)
+    Q_DISABLE_COPY(CommandHandler)
 };
-
 }
 
 #endif

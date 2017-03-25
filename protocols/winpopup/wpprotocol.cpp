@@ -46,31 +46,32 @@ class QMenu;
 
 WPProtocol *WPProtocol::sProtocol = 0;
 
-K_PLUGIN_FACTORY( WPProtocolFactory, registerPlugin<WPProtocol>(); )
-K_EXPORT_PLUGIN( WPProtocolFactory( "kopete_wp" ) )
+K_PLUGIN_FACTORY(WPProtocolFactory, registerPlugin<WPProtocol>();
+                 )
+K_EXPORT_PLUGIN(WPProtocolFactory("kopete_wp"))
 
 // WP Protocol
-WPProtocol::WPProtocol( QObject *parent, const QVariantList & /* args */ )
-: Kopete::Protocol( parent ),
-	WPOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QStringList(), i18n("Online"),  i18n("Online")),
-	WPAway(    Kopete::OnlineStatus::Away,    20, this, 1,  QStringList(QLatin1String("wp_away")),     i18n("Away"),    i18n("Away")),
-	WPOffline( Kopete::OnlineStatus::Offline, 0,  this, 2,  QStringList(), i18n("Offline"), i18n("Offline"))
+WPProtocol::WPProtocol(QObject *parent, const QVariantList & /* args */)
+    : Kopete::Protocol(parent)
+    , WPOnline(Kopete::OnlineStatus::Online, 25, this, 0, QStringList(), i18n("Online"), i18n("Online"))
+    , WPAway(Kopete::OnlineStatus::Away, 20, this, 1, QStringList(QLatin1String("wp_away")), i18n("Away"), i18n("Away"))
+    , WPOffline(Kopete::OnlineStatus::Offline, 0, this, 2, QStringList(), i18n("Offline"), i18n("Offline"))
 {
 //	kDebug(14170) << "WPProtocol::WPProtocol()";
 
-	sProtocol = this;
+    sProtocol = this;
 
-	// Load Status Actions
+    // Load Status Actions
 //	initActions();
-	// TODO: Maybe use this in the future?
+    // TODO: Maybe use this in the future?
 
-	addAddressBookField( QStringLiteral("messaging/winpopup"), Kopete::Plugin::MakeIndexField );
+    addAddressBookField(QStringLiteral("messaging/winpopup"), Kopete::Plugin::MakeIndexField);
 
-	readConfig();
+    readConfig();
 
-	popupClient = new WinPopupLib(smbClientBin, groupCheckFreq);
-	QObject::connect(popupClient, SIGNAL(signalNewMessage(QString,QDateTime,QString)),
-		this, SLOT(slotReceivedMessage(QString,QDateTime,QString)));
+    popupClient = new WinPopupLib(smbClientBin, groupCheckFreq);
+    QObject::connect(popupClient, SIGNAL(signalNewMessage(QString,QDateTime,QString)),
+                     this, SLOT(slotReceivedMessage(QString,QDateTime,QString)));
 }
 
 // Destructor
@@ -78,81 +79,81 @@ WPProtocol::~WPProtocol()
 {
 //	kDebug(14170) <<  "WPProtocol::~WPProtocol()";
 
-	sProtocol = 0;
+    sProtocol = 0;
 }
 
 AddContactPage *WPProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *theAccount)
 {
 //	kDebug(14170) << "WPProtocol::createAddContactWidget(<parent>, " << theAccount << ")";
 
-	return new WPAddContact(parent, dynamic_cast<WPAccount *>(theAccount));
+    return new WPAddContact(parent, dynamic_cast<WPAccount *>(theAccount));
 }
 
-Kopete::Contact *WPProtocol::deserializeContact( Kopete::MetaContact *metaContact,
-	const QMap<QString, QString> &serializedData,
-	const QMap<QString, QString> & /* addressBookData */ )
+Kopete::Contact *WPProtocol::deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> & /* addressBookData */)
 {
-	QString contactId = serializedData[ QStringLiteral("contactId") ];
-	QString accountId = serializedData[ QStringLiteral("accountId") ];
-	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ QStringLiteral("preferredNameType") ]);
+    QString contactId = serializedData[ QStringLiteral("contactId") ];
+    QString accountId = serializedData[ QStringLiteral("accountId") ];
+    Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ QStringLiteral("preferredNameType") ]);
 
-	WPAccount *theAccount = static_cast<WPAccount *>(Kopete::AccountManager::self()->findAccount(protocol()->pluginId(), accountId));
-	if(!theAccount)	{
-		kDebug(14170) <<  "Account " << accountId << " not found";
-		return 0;
-	}
+    WPAccount *theAccount = static_cast<WPAccount *>(Kopete::AccountManager::self()->findAccount(protocol()->pluginId(), accountId));
+    if (!theAccount) {
+        kDebug(14170) <<  "Account " << accountId << " not found";
+        return 0;
+    }
 
-	if(theAccount->contacts().value(contactId)) {
-		kDebug(14170) << "User " << contactId << " already in contacts map";
-		return 0;
-	}
+    if (theAccount->contacts().value(contactId)) {
+        kDebug(14170) << "User " << contactId << " already in contacts map";
+        return 0;
+    }
 
-	theAccount->addContact(contactId, metaContact, Kopete::Account::DontChangeKABC);
+    theAccount->addContact(contactId, metaContact, Kopete::Account::DontChangeKABC);
 
-	Kopete::Contact *c = theAccount->contacts().value(contactId);
-	if (!c)
-		return 0;
+    Kopete::Contact *c = theAccount->contacts().value(contactId);
+    if (!c) {
+        return 0;
+    }
 
-	c->setPreferredNameType(nameType);
-	return c;
+    c->setPreferredNameType(nameType);
+    return c;
 }
 
 KopeteEditAccountWidget *WPProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
-	return new WPEditAccount(parent, account);
+    return new WPEditAccount(parent, account);
 }
 
 Kopete::Account *WPProtocol::createNewAccount(const QString &accountId)
 {
-	return new WPAccount(this, accountId);
+    return new WPAccount(this, accountId);
 }
 
 void WPProtocol::settingsChanged()
 {
-	kDebug(14170) <<  "WPProtocol::slotSettingsChanged()";
+    kDebug(14170) <<  "WPProtocol::slotSettingsChanged()";
 
-	readConfig();
-	popupClient->settingsChanged(smbClientBin, groupCheckFreq);
+    readConfig();
+    popupClient->settingsChanged(smbClientBin, groupCheckFreq);
 }
 
 void WPProtocol::readConfig()
 {
-	KConfigGroup group = KSharedConfig::openConfig()->group("WinPopup");
-	smbClientBin = group.readEntry("SmbcPath", "/usr/bin/smbclient");
-	groupCheckFreq = group.readEntry("HostCheckFreq", 60);
+    KConfigGroup group = KSharedConfig::openConfig()->group("WinPopup");
+    smbClientBin = group.readEntry("SmbcPath", "/usr/bin/smbclient");
+    groupCheckFreq = group.readEntry("HostCheckFreq", 60);
 }
 
 void WPProtocol::installSamba()
 {
 //	kDebug(14170) <<  "WPProtocol::installSamba()" endl;
 
-	QStringList args;
-	args += KStandardDirs::findExe(QStringLiteral("winpopup-install"));
-	args += KStandardDirs::findExe(QStringLiteral("winpopup-send"));
-	if (KToolInvocation::kdeinitExecWait(QStringLiteral("kdesu"), args) == 0)
-		KMessageBox::information(Kopete::UI::Global::mainWidget(), i18n("The Samba configuration file has been modified."), i18n("Configuration Successful"));
-	else
-		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Updating the Samba configuration file failed."), i18n("Configuration Failed"));
+    QStringList args;
+    args += KStandardDirs::findExe(QStringLiteral("winpopup-install"));
+    args += KStandardDirs::findExe(QStringLiteral("winpopup-send"));
+    if (KToolInvocation::kdeinitExecWait(QStringLiteral("kdesu"), args) == 0) {
+        KMessageBox::information(Kopete::UI::Global::mainWidget(), i18n("The Samba configuration file has been modified."), i18n("Configuration Successful"));
+    } else {
+        KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Updating the Samba configuration file failed."), i18n("Configuration Failed"));
+    }
 }
 
 /**
@@ -160,33 +161,33 @@ void WPProtocol::installSamba()
  */
 void WPProtocol::slotReceivedMessage(const QString &Body, const QDateTime &Time, const QString &From)
 {
-	bool foundContact = false;
-	QList<Kopete::Account*> Accounts = Kopete::AccountManager::self()->accounts(protocol());
-	Kopete::Account *theAccount = 0;
-	foreach(Kopete::Account *account, Accounts) {
-		Kopete::Contact *theContact = account->contacts().value(From);
-		if (theContact) {
-			foundContact = true;
-			theAccount = account;
-			dynamic_cast<WPAccount *>(account)->slotGotNewMessage(Body, Time, From);
-			break;
-		}
-	}
+    bool foundContact = false;
+    QList<Kopete::Account *> Accounts = Kopete::AccountManager::self()->accounts(protocol());
+    Kopete::Account *theAccount = 0;
+    foreach (Kopete::Account *account, Accounts) {
+        Kopete::Contact *theContact = account->contacts().value(From);
+        if (theContact) {
+            foundContact = true;
+            theAccount = account;
+            dynamic_cast<WPAccount *>(account)->slotGotNewMessage(Body, Time, From);
+            break;
+        }
+    }
 
-	// What to do with messages with no contact?
-	// Maybe send them to the next online account? GF
-	if (!foundContact) {
-		if (theAccount)
-			dynamic_cast<WPAccount *>(theAccount)->slotGotNewMessage(Body, Time, From);
-		else
-			kDebug(14170) << "No contact or connected account found!";
-	}
+    // What to do with messages with no contact?
+    // Maybe send them to the next online account? GF
+    if (!foundContact) {
+        if (theAccount) {
+            dynamic_cast<WPAccount *>(theAccount)->slotGotNewMessage(Body, Time, From);
+        } else {
+            kDebug(14170) << "No contact or connected account found!";
+        }
+    }
 }
 
 void WPProtocol::sendMessage(const QString &Body, const QString &Destination)
 {
-	popupClient->sendMessage(Body, Destination);
+    popupClient->sendMessage(Body, Destination);
 }
 
 #include "wpprotocol.moc"
-

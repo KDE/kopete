@@ -29,38 +29,44 @@
 
 class QAction;
 
-namespace Kopete { class Contact; }
-namespace Kopete { class MetaContact; }
-namespace Kopete { class Message; }
-namespace Kopete { class ChatSession; }
+namespace Kopete {
+class Contact;
+}
+namespace Kopete {
+class MetaContact;
+}
+namespace Kopete {
+class Message;
+}
+namespace Kopete {
+class ChatSession;
+}
 
 class SMSProtocol : public Kopete::Protocol
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	SMSProtocol(QObject *parent, const QVariantList &args);
-	~SMSProtocol();
+    SMSProtocol(QObject *parent, const QVariantList &args);
+    ~SMSProtocol();
 
-	static SMSProtocol *protocol();
+    static SMSProtocol *protocol();
 
-	/**
-	 * Deserialize contact data
-	 */
-	virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact,
-		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
+    /**
+     * Deserialize contact data
+     */
+    virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData);
 
-	virtual AddContactPage *createAddContactWidget(QWidget *parent , Kopete::Account *i);
-	virtual KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
-	virtual Kopete::Account *createNewAccount(const QString &accountId);
+    virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *i);
+    virtual KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
+    virtual Kopete::Account *createNewAccount(const QString &accountId);
 
-	const Kopete::OnlineStatus SMSOnline;
-	const Kopete::OnlineStatus SMSOffline;
-	const Kopete::OnlineStatus SMSConnecting;
+    const Kopete::OnlineStatus SMSOnline;
+    const Kopete::OnlineStatus SMSOffline;
+    const Kopete::OnlineStatus SMSConnecting;
 
 private:
-	static SMSProtocol *s_protocol;
+    static SMSProtocol *s_protocol;
 };
 
 #endif
-

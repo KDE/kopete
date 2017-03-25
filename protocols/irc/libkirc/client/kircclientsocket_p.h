@@ -23,21 +23,19 @@
 
 #include "kircsocket_p.h"
 
-class KIrc::ClientSocketPrivate
-	: public KIrc::SocketPrivate
+class KIrc::ClientSocketPrivate : public KIrc::SocketPrivate
 {
-	Q_OBJECT
-	Q_DECLARE_PUBLIC(KIrc::ClientSocket)
+    Q_OBJECT
+    Q_DECLARE_PUBLIC(KIrc::ClientSocket)
 
 public:
-	ClientSocketPrivate(ClientSocket *socket);
+    ClientSocketPrivate(ClientSocket *socket);
 
 public:
-	QUrl url;
-	KIrc::EntityPtr server;
+    QUrl url;
+    KIrc::EntityPtr server;
 
-	bool failedNickOnLogin : 1;
+    bool failedNickOnLogin : 1;
 };
 
 #endif
-

@@ -25,91 +25,92 @@ using namespace KIRC;
 /*
 void Client::registerStandardCommands(CommandManager *cm)
 {
-	cm->registerCommand(ERROR,	this, SLOT(error(KIRC::Message&));
+    cm->registerCommand(ERROR,	this, SLOT(error(KIRC::Message&));
 //		setMinMax(0, 0);
 
-	bind(JOIN,	this, SLOT(join(KIRC::Message&)),	0, 1);
+    bind(JOIN,	this, SLOT(join(KIRC::Message&)),	0, 1);
 
-	bind(KICK,	this, SLOT(kick(KIRC::Message&)),	2, 2);
+    bind(KICK,	this, SLOT(kick(KIRC::Message&)),	2, 2);
 
-	bind(MODE,	this, SLOT(mode(KIRC::Message&)),	1, 1);
+    bind(MODE,	this, SLOT(mode(KIRC::Message&)),	1, 1);
 
-	bind(NICK,	this, SLOT(nick(KIRC::Message&)),	0, 0);
+    bind(NICK,	this, SLOT(nick(KIRC::Message&)),	0, 0);
 
-	bind(NOTICE,	this, SLOT(notice(KIRC::Message&)),	1, 1);
+    bind(NOTICE,	this, SLOT(notice(KIRC::Message&)),	1, 1);
 
-	bind(PART,	this, SLOT(part(KIRC::Message&)),	1, 1);
+    bind(PART,	this, SLOT(part(KIRC::Message&)),	1, 1);
 
-	bind(PING,	this, SLOT(ping(KIRC::Message&)),	0, 0);
+    bind(PING,	this, SLOT(ping(KIRC::Message&)),	0, 0);
 
-	bind(PONG,	this, SLOT(pong(KIRC::Message&)),	0, 0);
+    bind(PONG,	this, SLOT(pong(KIRC::Message&)),	0, 0);
 
-	bind(PRIVMSG,	this, SLOT(privmsg(KIRC::Message&)),	1, 1);
+    bind(PRIVMSG,	this, SLOT(privmsg(KIRC::Message&)),	1, 1);
 
-	bind(QUIT,	this, SLOT(quit(KIRC::Message&)),	0, 0);
+    bind(QUIT,	this, SLOT(quit(KIRC::Message&)),	0, 0);
 
 //	bind(SQUIT,	this, SLOT(squit(KIRC::Message&)),	1, 1);
 
-	bind(TOPIC,	this, SLOT(topic(KIRC::Message&)),	1, 1);
+    bind(TOPIC,	this, SLOT(topic(KIRC::Message&)),	1, 1);
 }
 */
 void Client::away(bool isAway, const QString &awayMessage)
 {
-	Message msg();
-	msg.setCommand(AWAY);
+    Message msg();
+    msg.setCommand(AWAY);
 
-	if (isAway)
-	{
-		if (!awayMessage.isEmpty())
-			msg.setSuffix(awayMessage);
-		else
-			msg.setSuffix(QString::fromLatin1("I am away."));
-	}
+    if (isAway) {
+        if (!awayMessage.isEmpty()) {
+            msg.setSuffix(awayMessage);
+        } else {
+            msg.setSuffix(QString::fromLatin1("I am away."));
+        }
+    }
 
-	writeMessage(msg);
+    writeMessage(msg);
 }
 
 // FIXME: Really handle this message
 void Client::error(Message &)
 {
-	close();
+    close();
 }
 
 void Engine::ison(const QStringList &nickList)
 {
 #ifdef __GNUC__
-	#warning FIXME bogus length check
+    #warning FIXME bogus length check
 #endif
 /*
-	if (!nickList.isEmpty())
-	{
-		QString statement = ISON;
-		for (QStringList::ConstIterator it = nickList.begin(); it != nickList.end(); ++it)
-		{
-			if ((statement.length()+(*it).length())>509) // 512(max buf)-2("\r\n")-1(<space separator>)
-			{
-				writeMessage(statement);
-				statement = QString::fromLatin1("ISON ") +  (*it);
-			}
-			else
-				statement.append(QChar(' ') + (*it));
-		}
-		writeMessage(statement);
-	}
+    if (!nickList.isEmpty())
+    {
+        QString statement = ISON;
+        for (QStringList::ConstIterator it = nickList.begin(); it != nickList.end(); ++it)
+        {
+            if ((statement.length()+(*it).length())>509) // 512(max buf)-2("\r\n")-1(<space separator>)
+            {
+                writeMessage(statement);
+                statement = QString::fromLatin1("ISON ") +  (*it);
+            }
+            else
+                statement.append(QChar(' ') + (*it));
+        }
+        writeMessage(statement);
+    }
 */
 }
 
 void Engine::join(const QString &name, const QString &key)
 {
-	QStringList args(name);
-	if (!key.isNull())
-		args << key;
+    QStringList args(name);
+    if (!key.isNull()) {
+        args << key;
+    }
 
-	writeMessage(
-		Message::format(
-			JOIN,
-			args)
-		);
+    writeMessage(
+        Message::format(
+            JOIN,
+            args)
+        );
 }
 
 /* RFC say: "( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0""
@@ -121,27 +122,27 @@ void Engine::join(const QString &name, const QString &key)
 void Engine::join(Message &msg)
 {
 /*
-	if (msg.argsSize()==1)
-		emit incomingJoinedChannel(msg.arg(0), msg.prefix());
-	else
-		emit incomingJoinedChannel(msg.suffix(), msg.prefix());
+    if (msg.argsSize()==1)
+        emit incomingJoinedChannel(msg.arg(0), msg.prefix());
+    else
+        emit incomingJoinedChannel(msg.suffix(), msg.prefix());
 
-	emit receivedMessage(
-		JoinMessage,
-		fromEntity,
-		toEntity,
-		i18n(""));
+    emit receivedMessage(
+        JoinMessage,
+        fromEntity,
+        toEntity,
+        i18n(""));
 */
 }
 
 void Engine::kick(const QString &user, const QString &channel, const QString &reason)
 {
-	writeMessage(
-		Message::format(
-			KICK,
-			QStringList(channel) << user,
-			reason)
-		);
+    writeMessage(
+        Message::format(
+            KICK,
+            QStringList(channel) << user,
+                reason)
+        );
 }
 
 /* The given user is kicked.
@@ -150,27 +151,27 @@ void Engine::kick(const QString &user, const QString &channel, const QString &re
 void Engine::kick(Message &msg)
 {
 /*
-	emit incomingKick(msg.arg(0), msg.prefix(), msg.arg(1), msg.suffix());
-	emit receivedMessage(
-		PartMessage,
-		fromEntity,
-		toEntity,
-		i18n(""));
+    emit incomingKick(msg.arg(0), msg.prefix(), msg.arg(1), msg.suffix());
+    emit receivedMessage(
+        PartMessage,
+        fromEntity,
+        toEntity,
+        i18n(""));
 */
 }
 
 void Engine::list()
 {
-	writeMessage(LIST);
+    writeMessage(LIST);
 }
 
 void Engine::mode(const QString &target, const QString &mode)
 {
-	writeMessage(
-		Message::format(
-			MODE,
-			QStringList(target) << mode)
-		);
+    writeMessage(
+        Message::format(
+            MODE,
+            QStringList(target) << mode)
+        );
 }
 
 /* Change the mode of a user.
@@ -178,42 +179,42 @@ void Engine::mode(const QString &target, const QString &mode)
  */
 void Engine::mode(Message &msg)
 {
-	QStringList args = msg.argList();
-	args.pop_front();
+    QStringList args = msg.argList();
+    args.pop_front();
 /*
-	EntityPtr *fromEntity = msg.entityFromPrefix();
-	EntityPtr *toEntity = msg.entityFromArg(0)
+    EntityPtr *fromEntity = msg.entityFromPrefix();
+    EntityPtr *toEntity = msg.entityFromArg(0)
 
-	emit receivedMessage(
-		Info,
-		fromEntity,
-		KIRC::EntityPtrList::null,
-		i18n(""));
+    emit receivedMessage(
+        Info,
+        fromEntity,
+        KIRC::EntityPtrList::null,
+        i18n(""));
 
-	toEntity->setModes(args.join(" "));
+    toEntity->setModes(args.join(" "));
 */
 }
 
 void Engine::motd(const QString &server)
 {
 /*
-	writeMessage(
-		Message::format(
-			MOTD,
-			server)
-		);
+    writeMessage(
+        Message::format(
+            MOTD,
+            server)
+        );
 */
 }
 
 void Engine::nick(const QString &newNickname)
 {
-	m_PendingNick = newNickname;
+    m_PendingNick = newNickname;
 /*
-	writeMessage(
-		Message::format(
-			NICK,
-			newNickname)
-		);
+    writeMessage(
+        Message::format(
+            NICK,
+            newNickname)
+        );
 */
 }
 
@@ -223,68 +224,68 @@ void Engine::nick(const QString &newNickname)
 void Engine::nick(Message &msg)
 {
 /*
-	// FIXME: Find better i18n strings
+    // FIXME: Find better i18n strings
 
-	QString message;
+    QString message;
 
-	if (oldNick.toLower() == m_Nickname.toLower())
-	{
-		m_Nickname = msg.suffix();
-		message = i18n("Your nick has changed from %1 to %2");
-	}
-	else
-		message = i18n("User nick has changed from %1 to %2");
+    if (oldNick.toLower() == m_Nickname.toLower())
+    {
+        m_Nickname = msg.suffix();
+        message = i18n("Your nick has changed from %1 to %2");
+    }
+    else
+        message = i18n("User nick has changed from %1 to %2");
 
-	emit receivedMessage(
-		InfoMessage,
-		msg.entityFromPrefix(),
-		KIRC::EntityPtrList::null,
-		message);
+    emit receivedMessage(
+        InfoMessage,
+        msg.entityFromPrefix(),
+        KIRC::EntityPtrList::null,
+        message);
 
-	fromEntity->rename();
+    fromEntity->rename();
 */
 }
 
 void Engine::notice(const QString &target, const QString &message)
 {
-	writeMessage(
-		Message::format(
-			NOTICE,
-			target,
-			message)
-		// FIXME: target->codec()
-		);
+    writeMessage(
+        Message::format(
+            NOTICE,
+            target,
+            message)
+        // FIXME: target->codec()
+        );
 }
 
 void Engine::notice(Message &msg)
 {
-	if (!msg.suffix().isEmpty())
-	{
+    if (!msg.suffix().isEmpty()) {
 /*
-		emit receivedMessage(
-			NoticeMessage,
-			msg.entityFromPrefix(),
-			msg.entityFromArg(0), // should always return myself
-			msg.suffix()
-		);
+        emit receivedMessage(
+            NoticeMessage,
+            msg.entityFromPrefix(),
+            msg.entityFromArg(0), // should always return myself
+            msg.suffix()
+        );
 */
-	}
+    }
 
-	if(msg.hasCtcpMessage())
-		invokeCtcpCommandOfMessage(m_ctcpReplies, msg);
+    if (msg.hasCtcpMessage()) {
+        invokeCtcpCommandOfMessage(m_ctcpReplies, msg);
+    }
 }
 
 /* This will part a channel with 'reason' as the reason for parting
  */
 void Engine::part(const QString &channel, const QString &reason)
 {
-	writeMessage(
-		Message::format(
-			PART,
-			channel,
-			reason)
-		// FIXME: channel->codec()
-		);
+    writeMessage(
+        Message::format(
+            PART,
+            channel,
+            reason)
+        // FIXME: channel->codec()
+        );
 }
 
 /* This signal emits when a user parts a channel
@@ -293,105 +294,103 @@ void Engine::part(const QString &channel, const QString &reason)
 void Engine::part(Message &msg)
 {
 /*
-	emit receivedMessage(
-		PartMessage,
-		msg.entityFromPrefix(),
-		msg.entityFromArg(0),
-		msg.suffix());
+    emit receivedMessage(
+        PartMessage,
+        msg.entityFromPrefix(),
+        msg.entityFromArg(0),
+        msg.suffix());
 */
 }
 
 void Engine::pass(const QString &password)
 {
-	writeMessage(
-		Message::format(
-			PASS,
-			password)
-		);
+    writeMessage(
+        Message::format(
+            PASS,
+            password)
+        );
 }
 
 void Engine::ping(Message &msg)
 {
-	writeMessage(
-		Message::format(
-			PONG,
-			msg.arg(0),
-			msg.suffix())
-		// FIXME: entityFromPrefix()->codec();
-		);
+    writeMessage(
+        Message::format(
+            PONG,
+            msg.arg(0),
+            msg.suffix())
+        // FIXME: entityFromPrefix()->codec();
+        );
 }
 
-void Engine::pong(Message &/*msg*/)
+void Engine::pong(Message & /*msg*/)
 {
 }
 
 void Engine::privmsg(const QString &contact, const QString &message)
 {
-	writeMessage(
-		Message::format(
-			PRIVMSG,
-			contact,
-			message)
-		// FIXME: contact->codec()
-		);
+    writeMessage(
+        Message::format(
+            PRIVMSG,
+            contact,
+            message)
+        // FIXME: contact->codec()
+        );
 }
 
 void Engine::privmsg(Message &msg)
 {
-	if (!msg.suffix().isEmpty())
-	{
+    if (!msg.suffix().isEmpty()) {
 /*
-		emit receivedMessage(
-			PrivateMessage,
-			msg.entityFromPrefix(),
-			msg.entityFromArg(0),
-			msg.suffix());
+        emit receivedMessage(
+            PrivateMessage,
+            msg.entityFromPrefix(),
+            msg.entityFromArg(0),
+            msg.suffix());
 */
-	}
+    }
 
-	if (msg.hasCtcpMessage())
-	{
-		invokeCtcpCommandOfMessage(m_ctcpQueries, msg);
-	}
+    if (msg.hasCtcpMessage()) {
+        invokeCtcpCommandOfMessage(m_ctcpQueries, msg);
+    }
 }
 
 void Engine::quit(const QString &reason, bool /*now*/)
 {
-	kDebug(14120) << reason;
+    kDebug(14120) << reason;
 
 //	if (isDisconnected())
 //		return;
 
-	writeMessage(
-		Message::format(
-			QUIT,
-			QStringList(),
-			reason)
-		);
+    writeMessage(
+        Message::format(
+            QUIT,
+            QStringList(),
+            reason)
+        );
 
-	close();
+    close();
 }
 
 void Engine::quit(Message &msg)
 {
 /*
-	emit receivedMessage(
-		QuitMessage,
-		msg.prefixEntity(),
-		m_server,
-		msg.suffix());
+    emit receivedMessage(
+        QuitMessage,
+        msg.prefixEntity(),
+        m_server,
+        msg.suffix());
 */
 }
 
 void Engine::topic(const QString &channel, const QString &topic)
 {
-	writeMessage(
-		Message::format(
-			TOPIC,
-			channel,
-			topic)
-		// FIXME: channel->codec();
-		);
+    writeMessage(
+        Message::format(
+            TOPIC,
+            channel,
+            topic)
+        // FIXME: channel->codec();
+        );
 }
 
 /* "<channel> [ <topic> ]"
@@ -400,12 +399,12 @@ void Engine::topic(const QString &channel, const QString &topic)
 void Engine::topic(Message &msg)
 {
 /*
-	emit incomingTopicChange(msg.arg(0), msg.prefix(), msg.suffix());
-	emit receivedMessage(
-		QuitMessage,
-		msg.prefixEntity(),
-		m_server,
-		msg.suffix());
+    emit incomingTopicChange(msg.arg(0), msg.prefix(), msg.suffix());
+    emit receivedMessage(
+        QuitMessage,
+        msg.prefixEntity(),
+        m_server,
+        msg.suffix());
 */
 }
 
@@ -416,15 +415,15 @@ void Engine::topic(Message &msg)
  */
 void Engine::user(const QString &newUserName, const QString &hostname, const QString &newRealName)
 {
-	m_Username = newUserName;
-	m_realName = newRealName;
+    m_Username = newUserName;
+    m_realName = newRealName;
 
-	writeMessage(
-		Message::format(
-			USER,
-			QStringList(m_Username) << hostname << m_Host,
-			m_realName)
-		);
+    writeMessage(
+        Message::format(
+            USER,
+            QStringList(m_Username) << hostname << m_Host,
+                m_realName)
+        );
 }
 
 /* RFC2812: "<user> <mode> <unused> <realname>"
@@ -435,23 +434,23 @@ void Engine::user(const QString &newUserName, const QString &hostname, const QSt
  */
 void Engine::user(const QString &newUserName, quint8 mode, const QString &newRealName)
 {
-	m_Username = newUserName;
-	m_realName = newRealName;
+    m_Username = newUserName;
+    m_realName = newRealName;
 /*
-	writeMessage(
-		Message::format(
-			USER,
-			QStringList(m_Username) << QString::number(mode) << QChar('*'),
-			m_realName)
-		);
+    writeMessage(
+        Message::format(
+            USER,
+            QStringList(m_Username) << QString::number(mode) << QChar('*'),
+            m_realName)
+        );
 */
 }
 
 void Engine::whois(const QString &user)
 {
-	writeMessage(
-		Message::format(
-			WHOIS,
-			user)
-		);
+    writeMessage(
+        Message::format(
+            WHOIS,
+            user)
+        );
 }

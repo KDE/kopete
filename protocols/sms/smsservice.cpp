@@ -18,34 +18,38 @@
 #include <qlayout.h>
 #include <kdebug.h>
 
-SMSService::SMSService(Kopete::Account* account)
-	: QObject(), m_account(account), m_layout(NULL), m_parent(NULL)
+SMSService::SMSService(Kopete::Account *account)
+    : QObject()
+    , m_account(account)
+    , m_layout(NULL)
+    , m_parent(NULL)
 {
 }
 
 SMSService::~SMSService()
 {
-
 }
 
-void SMSService::setAccount(Kopete::Account* account)
+void SMSService::setAccount(Kopete::Account *account)
 {
-	if(!m_account)
-		m_account = account;
-	if(account)
-		savePreferences();
+    if (!m_account) {
+        m_account = account;
+    }
+    if (account) {
+        savePreferences();
+    }
 }
 
 // The Default impl simply flips a signal back
 void SMSService::connect()
 {
-	emit connected();
+    emit connected();
 }
 
 // The Default impl simply flips a signal back
 void SMSService::disconnect()
 {
-	emit disconnected();
+    emit disconnected();
 }
 
 /*
@@ -54,4 +58,3 @@ void SMSService::disconnect()
  * indent-tabs-mode: t
  * End:
  */
-

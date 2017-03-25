@@ -18,46 +18,41 @@
 
 #include "kirchandler.h"
 
-namespace KIrc
-{
-
+namespace KIrc {
 class ClientMotdHandlerPrivate;
 
-class KIRCCLIENT_EXPORT ClientMotdHandler
-	: public KIrc::Handler
+class KIRCCLIENT_EXPORT ClientMotdHandler : public KIrc::Handler
 {
-	Q_OBJECT
-	Q_DECLARE_PRIVATE(KIrc::ClientMotdHandler)
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(KIrc::ClientMotdHandler)
 
 public:
-	explicit ClientMotdHandler(QObject* parent=0);
-	explicit ClientMotdHandler(KIrc::Handler *handler);
-	~ClientMotdHandler();
+    explicit ClientMotdHandler(QObject *parent = 0);
+    explicit ClientMotdHandler(KIrc::Handler *handler);
+    ~ClientMotdHandler();
 
 private:
-	void registerAliases();
+    void registerAliases();
 #if 0
-	void postEvent(QEvent *event);
+    void postEvent(QEvent *event);
 
-	bool postEvent(MessageEvent *ev, const QByteArray &eventId, Entity::Ptr &from, QString &text = QString());
-	bool postEvent(MessageEvent *ev, const QByteArray &eventId, Entity::Ptr &from, Entity::List &to, QString &text = QString());
-	bool postEvent(MessageEvent *ev, const QByteArray &eventId, Entity::Ptr &from, Entity::List &to, Entity::List &victims, QString &text = QString());
+    bool postEvent(MessageEvent *ev, const QByteArray &eventId, Entity::Ptr &from, QString &text = QString());
+    bool postEvent(MessageEvent *ev, const QByteArray &eventId, Entity::Ptr &from, Entity::List &to, QString &text = QString());
+    bool postEvent(MessageEvent *ev, const QByteArray &eventId, Entity::Ptr &from, Entity::List &to, Entity::List &victims, QString &text = QString());
 #endif
 
-	void receivedServerMessage(KIrc::Context *context, const KIrc::Message& msg, KIrc::Socket *socket);
+    void receivedServerMessage(KIrc::Context *context, const KIrc::Message &msg, KIrc::Socket *socket);
 private Q_SLOTS:
-	// Handler::Handled MOTD(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+    // Handler::Handled MOTD(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
-	Handler::Handled RPL_MOTDSTART(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled RPL_MOTD(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled RPL_ENDOFMOTD(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled ERR_NOMOTD(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+    Handler::Handled RPL_MOTDSTART(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+    Handler::Handled RPL_MOTD(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+    Handler::Handled RPL_ENDOFMOTD(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+    Handler::Handled ERR_NOMOTD(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 private:
-	Q_DISABLE_COPY(ClientMotdHandler)
+    Q_DISABLE_COPY(ClientMotdHandler)
 };
-
 }
 
 #endif
-

@@ -25,9 +25,7 @@ class QTextCodec;
 /**
  * @author Michel Hermier <michel.hermier@gmail.com>
  */
-namespace KIrc
-{
-
+namespace KIrc {
 // Static regular expressions
 extern const QRegExp sm_RemoveLinefeeds;
 
@@ -37,8 +35,6 @@ extern const QString URL_REALNAME;
 
 // Static codecs
 extern QTextCodec *UTF8;
-
 }
 
 #endif
-

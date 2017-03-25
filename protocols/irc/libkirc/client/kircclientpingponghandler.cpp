@@ -40,16 +40,15 @@
 // For now lets define it to be empty
 #define CHECK_ARGS(min, max)
 
-class KIrc::ClientPingPongHandlerPrivate
-	: public KIrc::HandlerPrivate
+class KIrc::ClientPingPongHandlerPrivate : public KIrc::HandlerPrivate
 {
 public:
 };
 
 using namespace KIrc;
 
-ClientPingPongHandler::ClientPingPongHandler(QObject* parent)
-	: Handler(new ClientPingPongHandlerPrivate, parent)
+ClientPingPongHandler::ClientPingPongHandler(QObject *parent)
+    : Handler(new ClientPingPongHandlerPrivate, parent)
 {
 }
 
@@ -59,27 +58,26 @@ ClientPingPongHandler::~ClientPingPongHandler()
 
 KIrc::Handler::Handled ClientPingPongHandler::PING(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
-	Q_D(ClientPingPongHandler);
+    Q_D(ClientPingPongHandler);
 
-	CHECK_ARGS(0, 0);
+    CHECK_ARGS(0, 0);
 
 #if 0
-	MessageEvent *reply;
+    MessageEvent *reply;
 //	reply.setCommand(PONG);
 //	reply.setArgs(message.rawArg(0));
-	reply.setSuffix(message.rawSuffix());
+    reply.setSuffix(message.rawSuffix());
 
 //	message->client->writeMessage(reply);
 #endif
-	return NotHandled;
+    return NotHandled;
 }
 
 KIrc::Handler::Handled ClientPingPongHandler::PONG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
-	Q_D(ClientPingPongHandler);
+    Q_D(ClientPingPongHandler);
 
-	CHECK_ARGS(0, 0);
+    CHECK_ARGS(0, 0);
 
-	return NotHandled;
+    return NotHandled;
 }
-

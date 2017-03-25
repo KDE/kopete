@@ -28,29 +28,32 @@
 // Local Includes
 
 class WPAccount;
-namespace Ui { class WPAddContactBase; }
-namespace Kopete { class MetaContact; }
+namespace Ui {
+class WPAddContactBase;
+}
+namespace Kopete {
+class MetaContact;
+}
 
-class WPAddContact: public AddContactPage
+class WPAddContact : public AddContactPage
 {
-	Q_OBJECT
+    Q_OBJECT
 
 private:
-	WPAccount *theAccount;
-	Ui::WPAddContactBase *theDialog;
+    WPAccount *theAccount;
+    Ui::WPAddContactBase *theDialog;
 
 public:
-	WPAddContact(QWidget *parent, WPAccount *newAccount);
-	~WPAddContact();
+    WPAddContact(QWidget *parent, WPAccount *newAccount);
+    ~WPAddContact();
 
-	bool validateData() Q_DECL_OVERRIDE;
+    bool validateData() Q_DECL_OVERRIDE;
 
 public slots:
-	bool apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact) Q_DECL_OVERRIDE;
+    bool apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact) Q_DECL_OVERRIDE;
 
-	void slotSelected(const QString &Group);
-	void slotUpdateGroups();
+    void slotSelected(const QString &Group);
+    void slotUpdateGroups();
 };
 
 #endif
-

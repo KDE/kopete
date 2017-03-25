@@ -23,32 +23,33 @@
 #include "addcontactpage.h"
 #include "ui_ircadd.h"
 
-namespace Kopete { class MetaContact; }
+namespace Kopete {
+class MetaContact;
+}
 
 class IRCAccount;
 
 /**
   *@author Nick Betcher <nbetcher@kde.org>
   */
-class IRCAddContactPage
-	: public AddContactPage, public Ui::ircAddUI
+class IRCAddContactPage : public AddContactPage, public Ui::ircAddUI
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	explicit IRCAddContactPage(QWidget *parent=0, IRCAccount* account = 0);
-	~IRCAddContactPage();
+    explicit IRCAddContactPage(QWidget *parent = 0, IRCAccount *account = 0);
+    ~IRCAddContactPage();
 
 public slots:
-	virtual bool apply(Kopete::Account *account, Kopete::MetaContact *m);
+    virtual bool apply(Kopete::Account *account, Kopete::MetaContact *m);
 
 private slots:
-	virtual bool validateData();
-	void slotChannelSelected( const QString &channel );
-	void slotChannelDoubleClicked( const QString &channel );
+    virtual bool validateData();
+    void slotChannelSelected(const QString &channel);
+    void slotChannelDoubleClicked(const QString &channel);
 
 private:
-	struct Private;
-	Private* d;
+    struct Private;
+    Private *d;
 };
 
 #endif

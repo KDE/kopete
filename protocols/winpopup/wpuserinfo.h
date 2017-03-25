@@ -26,34 +26,35 @@
 #include <KDialog>
 
 class WPContact;
-namespace Ui { class WPUserInfoWidget; }
+namespace Ui {
+class WPUserInfoWidget;
+}
 
 class WPUserInfo : public KDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-		explicit WPUserInfo( WPContact *, QWidget *parent = nullptr );
-		~WPUserInfo();
+public:
+    explicit WPUserInfo(WPContact *, QWidget *parent = nullptr);
+    ~WPUserInfo();
 
-		void startDetailsProcess(const QString &host);
+    void startDetailsProcess(const QString &host);
 
-	private slots:
-		void slotDetailsProcess(int i = 1, QProcess::ExitStatus status = QProcess::CrashExit);
-		void slotDetailsProcessFinished(int, QProcess::ExitStatus);
-		void slotCloseClicked();
+private slots:
+    void slotDetailsProcess(int i = 1, QProcess::ExitStatus status = QProcess::CrashExit);
+    void slotDetailsProcessFinished(int, QProcess::ExitStatus);
+    void slotCloseClicked();
 
-	signals:
-		void closing();
+signals:
+    void closing();
 
-	private:
-		WPContact *m_contact;
-		Ui::WPUserInfoWidget *m_mainWidget;
+private:
+    WPContact *m_contact;
+    Ui::WPUserInfoWidget *m_mainWidget;
 
-		QString Comment, Workgroup, OS, Software;
-		QProcess *detailsProcess;
-		bool noComment;
+    QString Comment, Workgroup, OS, Software;
+    QProcess *detailsProcess;
+    bool noComment;
 };
 
 #endif
-

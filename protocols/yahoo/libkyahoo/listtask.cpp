@@ -24,87 +24,85 @@
 #include "client.h"
 #include "yahoo_protocol_debug.h"
 
-ListTask::ListTask(Task* parent) : Task(parent)
+ListTask::ListTask(Task *parent) : Task(parent)
 {
-	qCDebug(YAHOO_PROTOCOL_LOG) ;
-	
+    qCDebug(YAHOO_PROTOCOL_LOG);
 }
 
 ListTask::~ListTask()
 {
-
 }
 
-bool ListTask::take( Transfer* transfer )
+bool ListTask::take(Transfer *transfer)
 {
-	if ( !forMe( transfer ) )
-		return false;
-	
-	YMSGTransfer *t = static_cast<YMSGTransfer *>(transfer);
+    if (!forMe(transfer)) {
+        return false;
+    }
 
-	parseBuddyList( t );
+    YMSGTransfer *t = static_cast<YMSGTransfer *>(transfer);
 
-	return true;
+    parseBuddyList(t);
+
+    return true;
 }
 
-bool ListTask::forMe( const Transfer* transfer ) const
+bool ListTask::forMe(const Transfer *transfer) const
 {
-	const YMSGTransfer *t = 0L;
-	t = dynamic_cast<const YMSGTransfer*>(transfer);
-	if (!t)
-		return false;
+    const YMSGTransfer *t = 0L;
+    t = dynamic_cast<const YMSGTransfer *>(transfer);
+    if (!t) {
+        return false;
+    }
 
-	if ( t->service() == Yahoo::ServiceBuddyList )
-		return true;
-	else
-		return false;
+    if (t->service() == Yahoo::ServiceBuddyList) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
-void ListTask::parseBuddyList( YMSGTransfer *t )
+void ListTask::parseBuddyList(YMSGTransfer *t)
 {
-	qCDebug(YAHOO_PROTOCOL_LOG) ;
-	QString group;
-	QString buddy;
-	// We need some low-level parsing here
-	
-	foreach( const Param &p, t->paramList() )
-	{
-		qCDebug(YAHOO_PROTOCOL_LOG) << "1:" << p.first ;
-		qCDebug(YAHOO_PROTOCOL_LOG) << "2:" << p.second ;
-		switch( p.first )
-		{
-		case 65:
-			group = p.second;
-			break;
-		case 7:
-			buddy = p.second;
-			break;
-		case 301:
-			if( p.second == "319"){
-				emit gotBuddy( buddy, QString(), group );
-			}
-			break;
-		case 317:
-			if( p.second == "2"){
-				qCDebug(YAHOO_PROTOCOL_LOG) << "Stealthed setting on" << buddy ;
-				emit stealthStatusChanged( buddy, Yahoo::StealthActive );
-			};
-			break;
-			/**
-			* Note: michaelacole
-			* Other buddy codes are here for add to list and blacklist
-			* I will need to capute more codes for addition here.
-			* Blacklist is done on the server at Yahoo whereas
-			* Kopete has its own plugin for blacklisting.
-			*/
-		}
-	}
-	/**
-	* Note: michaelacole
-	* Since you can log in from other places and remove or add Perm Offline status
-	* We have to reset both conditions at login
-	* Yahoo sends this data at this time,
-	* so better to compile list of both now then notify kopete client.
-	*/
-}
+    qCDebug(YAHOO_PROTOCOL_LOG);
+    QString group;
+    QString buddy;
+    // We need some low-level parsing here
 
+    foreach (const Param &p, t->paramList()) {
+        qCDebug(YAHOO_PROTOCOL_LOG) << "1:" << p.first;
+        qCDebug(YAHOO_PROTOCOL_LOG) << "2:" << p.second;
+        switch (p.first) {
+        case 65:
+            group = p.second;
+            break;
+        case 7:
+            buddy = p.second;
+            break;
+        case 301:
+            if (p.second == "319") {
+                emit gotBuddy(buddy, QString(), group);
+            }
+            break;
+        case 317:
+            if (p.second == "2") {
+                qCDebug(YAHOO_PROTOCOL_LOG) << "Stealthed setting on" << buddy;
+                emit stealthStatusChanged(buddy, Yahoo::StealthActive);
+            }
+            break;
+            /**
+            * Note: michaelacole
+            * Other buddy codes are here for add to list and blacklist
+            * I will need to capute more codes for addition here.
+            * Blacklist is done on the server at Yahoo whereas
+            * Kopete has its own plugin for blacklisting.
+            */
+        }
+    }
+    /**
+    * Note: michaelacole
+    * Since you can log in from other places and remove or add Perm Offline status
+    * We have to reset both conditions at login
+    * Yahoo sends this data at this time,
+    * so better to compile list of both now then notify kopete client.
+    */
+}

@@ -24,25 +24,27 @@ using namespace KIrc;
 class KIrc::ContextPrivate
 {
 public:
-	ContextPrivate()
-		: defaultCodec(0)
-	{ }
+    ContextPrivate()
+        : defaultCodec(0)
+    {
+    }
 
-	KIrc::EntityList entities;
+    KIrc::EntityList entities;
 
-	QTextCodec *defaultCodec;
+    QTextCodec *defaultCodec;
 };
 
 Context::Context(QObject *parent)
-	: Handler(parent)
-	, d_ptr(new ContextPrivate)
+    : Handler(parent)
+    , d_ptr(new ContextPrivate)
 {
 }
 
 Context::~Context()
 {
-	delete d_ptr;
+    delete d_ptr;
 }
+
 /*
 QList<KIrc::Entity *> Context::anonymous() const
 {
@@ -51,103 +53,101 @@ QList<KIrc::Entity *> Context::anonymous() const
 */
 KIrc::EntityList Context::entities() const
 {
-	#warning implement me
-	//return findChildren<EntityPtr>();
-	return EntityList();
+    #warning implement me
+    //return findChildren<EntityPtr>();
+    return EntityList();
 }
 
 KIrc::EntityPtr Context::entityFromName(const QByteArray &name)
 {
-	Q_D(Context);
-	EntityPtr entity;
+    Q_D(Context);
+    EntityPtr entity;
 
-	QByteArray nick=name;
+    QByteArray nick = name;
 
-	if (nick.isEmpty())
-		return entity;
+    if (nick.isEmpty()) {
+        return entity;
+    }
 
-	if (nick.contains( '!' ) ) //Its the extended format, containing hostname and stuff. only search for the nick
-	  nick=name.left( nick.indexOf( '!' ) );
+    if (nick.contains('!')) {  //Its the extended format, containing hostname and stuff. only search for the nick
+        nick = name.left(nick.indexOf('!'));
+    }
 
-	//TODO: optimize this using Hash or something
-	foreach( EntityPtr e, d->entities )
-	{
-		if ( e->name()==nick )
-		{
-			entity=e;
-			break;
-		}
-	}
+    //TODO: optimize this using Hash or something
+    foreach (EntityPtr e, d->entities) {
+        if (e->name() == nick) {
+            entity = e;
+            break;
+        }
+    }
 
-	if (!entity)
-	{
-		entity = new Entity(this);
-		entity->setName(nick);
-		add( entity );
-	}
+    if (!entity) {
+        entity = new Entity(this);
+        entity->setName(nick);
+        add(entity);
+    }
 
-	return entity;
+    return entity;
 }
 
 KIrc::EntityList Context::entitiesFromNames(const QList<QByteArray> &names)
 {
-	EntityList entities;
-	EntityPtr entity;
+    EntityList entities;
+    EntityPtr entity;
 
-	// This is slow and can easily be optimised with sorted lists
-	foreach (const QByteArray &name, names)
-	{
-		entity = entityFromName(name);
-		if (entity)
-			entities.append(entity);
+    // This is slow and can easily be optimised with sorted lists
+    foreach (const QByteArray &name, names) {
+        entity = entityFromName(name);
+        if (entity) {
+            entities.append(entity);
+        }
 //		else
 //			warn the user
-	}
+    }
 
-	return entities;
+    return entities;
 }
 
 KIrc::EntityList Context::entitiesFromNames(const QByteArray &names, char sep)
 {
-	return entitiesFromNames(names.split(sep));
+    return entitiesFromNames(names.split(sep));
 }
 
 QTextCodec *Context::defaultCodec() const
 {
-	Q_D(const Context);
+    Q_D(const Context);
 
-	return d->defaultCodec;
+    return d->defaultCodec;
 }
 
 void Context::setDefaultCodec(QTextCodec *defaultCodec)
 {
-	Q_D(Context);
+    Q_D(Context);
 
-	d->defaultCodec = defaultCodec;
+    d->defaultCodec = defaultCodec;
 }
 
 void Context::postEvent(QEvent *event)
 {
-	// FIXME: use the Qt event system here
-	emit ircEvent( event );
-	delete event;
+    // FIXME: use the Qt event system here
+    emit ircEvent(event);
+    delete event;
 }
 
 void Context::add(EntityPtr entity)
 {
-	Q_D(Context);
-	if (!d->entities.contains(entity))
-	{
-		d->entities.append(entity);
-		connect(entity.data(), SIGNAL(destroyed(KIrc::Entity*)),
-			this, SLOT(remove(KIrc::Entity*)));
-	}
+    Q_D(Context);
+    if (!d->entities.contains(entity)) {
+        d->entities.append(entity);
+        connect(entity.data(), SIGNAL(destroyed(KIrc::Entity *)),
+                this, SLOT(remove(KIrc::Entity *)));
+    }
 }
 
 void Context::remove(EntityPtr entity)
 {
-	Q_D(Context);
-	d->entities.removeAll(entity);
+    Q_D(Context);
+    d->entities.removeAll(entity);
 //	disconnect(entity);
 }
 
@@ -155,4 +155,5 @@ void Context::remove(EntityPtr entity)
 Status Context::SET()
 {
 }
+
 #endif

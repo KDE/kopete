@@ -33,153 +33,158 @@
 #include "smsclientprefs.h"
 #include "smsprotocol.h"
 
-SMSClient::SMSClient(Kopete::Account* account)
-	: SMSService(account)
+SMSClient::SMSClient(Kopete::Account *account)
+    : SMSService(account)
 {
-	prefWidget = 0L;
+    prefWidget = 0L;
 }
 
 SMSClient::~SMSClient()
 {
 }
 
-void SMSClient::setWidgetContainer(QWidget* parent, QGridLayout* layout)
+void SMSClient::setWidgetContainer(QWidget *parent, QGridLayout *layout)
 {
-	kWarning( 14160 ) << "ml: " << layout << ", " << "mp: " << parent;
-	m_parent = parent;
-	m_layout = layout;
-	QWidget *configWidget = configureWidget(parent);
-	layout->addWidget(configWidget, 0, 0, 1, 1);
-	configWidget->show();
+    kWarning(14160) << "ml: " << layout << ", " << "mp: " << parent;
+    m_parent = parent;
+    m_layout = layout;
+    QWidget *configWidget = configureWidget(parent);
+    layout->addWidget(configWidget, 0, 0, 1, 1);
+    configWidget->show();
 }
 
-void SMSClient::send(const Kopete::Message& msg)
+void SMSClient::send(const Kopete::Message &msg)
 {
-	kWarning( 14160 ) << "m_account = " << m_account << " (should be non-zero!!)";
-	if (!m_account) return;
+    kWarning(14160) << "m_account = " << m_account << " (should be non-zero!!)";
+    if (!m_account) {
+        return;
+    }
 
-	m_msg = msg;
-	
-	KConfigGroup* c = m_account->configGroup();
-	QString provider = c->readEntry(QString("%1:%2").arg("SMSClient").arg("ProviderName"), QString());
+    m_msg = msg;
 
-	if (provider.isNull())
-	{
-		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("No provider configured"), i18n("Could Not Send Message"));
-		return;
-	}
+    KConfigGroup *c = m_account->configGroup();
+    QString provider = c->readEntry(QString("%1:%2").arg("SMSClient").arg("ProviderName"), QString());
 
-	QString programName = c->readEntry(QString("%1:%2").arg("SMSClient").arg("ProgramName"), QString());
-	if (programName.isNull())
-		programName = "/usr/bin/sms_client";
+    if (provider.isNull()) {
+        KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("No provider configured"), i18n("Could Not Send Message"));
+        return;
+    }
 
-	K3Process* p = new K3Process;
+    QString programName = c->readEntry(QString("%1:%2").arg("SMSClient").arg("ProgramName"), QString());
+    if (programName.isNull()) {
+        programName = "/usr/bin/sms_client";
+    }
 
-	QString message = msg.plainBody();
-	QString nr = msg.to().first()->contactId();
+    K3Process *p = new K3Process;
 
-	*p << programName;
-	*p << provider + ':' + nr;
-	*p << message;
+    QString message = msg.plainBody();
+    QString nr = msg.to().first()->contactId();
 
-	QObject::connect(p, SIGNAL(processExited(K3Process*)), this, SLOT(slotSendFinished(K3Process*)));
-	QObject::connect(p, SIGNAL(receivedStdout(K3Process*,char*,int)), this, SLOT(slotReceivedOutput(K3Process*,char*,int)));
-	QObject::connect(p, SIGNAL(receivedStderr(K3Process*,char*,int)), this, SLOT(slotReceivedOutput(K3Process*,char*,int)));
+    *p << programName;
+    *p << provider + ':' + nr;
+    *p << message;
 
-	p->start(K3Process::Block, K3Process::AllOutput);
+    QObject::connect(p, SIGNAL(processExited(K3Process *)), this, SLOT(slotSendFinished(K3Process *)));
+    QObject::connect(p, SIGNAL(receivedStdout(K3Process *,char *,int)), this, SLOT(slotReceivedOutput(K3Process *,char *,int)));
+    QObject::connect(p, SIGNAL(receivedStderr(K3Process *,char *,int)), this, SLOT(slotReceivedOutput(K3Process *,char *,int)));
+
+    p->start(K3Process::Block, K3Process::AllOutput);
 }
 
-QWidget* SMSClient::configureWidget(QWidget* parent)
+QWidget *SMSClient::configureWidget(QWidget *parent)
 {
-	kWarning( 14160 ) << "m_account = " << m_account << " (should be ok if zero!!)";
+    kWarning(14160) << "m_account = " << m_account << " (should be ok if zero!!)";
 
-	if (prefWidget == 0L)
-		prefWidget = new SMSClientPrefsUI(parent);
+    if (prefWidget == 0L) {
+        prefWidget = new SMSClientPrefsUI(parent);
+    }
 
-	prefWidget->configDir->setMode(KFile::Directory);
-	QString configDir;
-	if (m_account)
-		configDir = m_account->configGroup()->readEntry(QString("%1:%2").arg("SMSClient").arg("ConfigDir"), QString());
-	if (configDir.isNull())
-		configDir = "/etc/sms";
-	prefWidget->configDir->setUrl(configDir);
+    prefWidget->configDir->setMode(KFile::Directory);
+    QString configDir;
+    if (m_account) {
+        configDir = m_account->configGroup()->readEntry(QString("%1:%2").arg("SMSClient").arg("ConfigDir"), QString());
+    }
+    if (configDir.isNull()) {
+        configDir = "/etc/sms";
+    }
+    prefWidget->configDir->setUrl(configDir);
 
-	QString programName;
-	if (m_account)
-		programName = m_account->configGroup()->readEntry(QString("%1:%2").arg("SMSClient").arg("ProgramName"),
-		                                                  QString());
-	if (programName.isNull())
-		programName = "/usr/bin/sms_client";
-	prefWidget->program->setUrl(programName);
+    QString programName;
+    if (m_account) {
+        programName = m_account->configGroup()->readEntry(QString("%1:%2").arg("SMSClient").arg("ProgramName"),
+                                                          QString());
+    }
+    if (programName.isNull()) {
+        programName = "/usr/bin/sms_client";
+    }
+    prefWidget->program->setUrl(programName);
 
-	prefWidget->provider->addItems(providers());
+    prefWidget->provider->addItems(providers());
 
-	if (m_account)
-	{
-		QString pName = m_account->configGroup()->readEntry(QString("%1:%2").arg("SMSClient").arg("ProviderName"), QString());
-		for (int i=0; i < prefWidget->provider->count(); i++)
-		{
-			if (prefWidget->provider->itemText(i) == pName)
-			{
-				prefWidget->provider->setCurrentIndex(i);
-				break;
-			}
-		}
-	}
+    if (m_account) {
+        QString pName = m_account->configGroup()->readEntry(QString("%1:%2").arg("SMSClient").arg("ProviderName"), QString());
+        for (int i = 0; i < prefWidget->provider->count(); i++) {
+            if (prefWidget->provider->itemText(i) == pName) {
+                prefWidget->provider->setCurrentIndex(i);
+                break;
+            }
+        }
+    }
 
-	return prefWidget;
+    return prefWidget;
 }
 
 void SMSClient::savePreferences()
 {
-	kWarning( 14160 ) << "m_account = " << m_account << " (should be work if zero!!)";
+    kWarning(14160) << "m_account = " << m_account << " (should be work if zero!!)";
 
-	if (prefWidget != 0L && m_account != 0L)
-	{
-		KConfigGroup* c = m_account->configGroup();
+    if (prefWidget != 0L && m_account != 0L) {
+        KConfigGroup *c = m_account->configGroup();
 
-		c->writeEntry(QString("%1:%2").arg("SMSClient").arg("ProgramName"), prefWidget->program->url().url());
-		c->writeEntry(QString("%1:%2").arg("SMSClient").arg("ConfigDir"), prefWidget->configDir->url().url());
-		c->writeEntry(QString("%1:%2").arg("SMSClient").arg("ProviderName"), prefWidget->provider->currentText());
-	}
+        c->writeEntry(QString("%1:%2").arg("SMSClient").arg("ProgramName"), prefWidget->program->url().url());
+        c->writeEntry(QString("%1:%2").arg("SMSClient").arg("ConfigDir"), prefWidget->configDir->url().url());
+        c->writeEntry(QString("%1:%2").arg("SMSClient").arg("ProviderName"), prefWidget->provider->currentText());
+    }
 }
 
 QStringList SMSClient::providers()
 {
-	QStringList p;
+    QStringList p;
 
-	QDir d;
-	d.setPath(QString("%1/services/").arg(prefWidget->configDir->url().url()));
-	p += d.entryList(QStringList(QLatin1String("*")), QDir::Files);
+    QDir d;
+    d.setPath(QString("%1/services/").arg(prefWidget->configDir->url().url()));
+    p += d.entryList(QStringList(QLatin1String("*")), QDir::Files);
 
-	return p;
+    return p;
 }
 
-void SMSClient::slotReceivedOutput(K3Process*, char  *buffer, int  buflen)
+void SMSClient::slotReceivedOutput(K3Process *, char *buffer, int buflen)
 {
-	QStringList lines = QString::fromLocal8Bit(buffer, buflen).split('\n');
-	for (QStringList::Iterator it = lines.begin(); it != lines.end(); ++it)
-		output.append(*it);
+    QStringList lines = QString::fromLocal8Bit(buffer, buflen).split('\n');
+    for (QStringList::Iterator it = lines.begin(); it != lines.end(); ++it) {
+        output.append(*it);
+    }
 }
 
-void SMSClient::slotSendFinished(K3Process* p)
+void SMSClient::slotSendFinished(K3Process *p)
 {
-	if (p->exitStatus() == 0)
-		emit messageSent(m_msg);
-	else
-		emit messageNotSent(m_msg, output.join("\n"));
+    if (p->exitStatus() == 0) {
+        emit messageSent(m_msg);
+    } else {
+        emit messageNotSent(m_msg, output.join("\n"));
+    }
 }
 
 int SMSClient::maxSize()
 {
-	return 160;
+    return 160;
 }
 
-const QString& SMSClient::description()
+const QString &SMSClient::description()
 {
-	QString url = "http://www.smsclient.org";
-	m_description = i18n("<qt>SMSClient is a program for sending SMS with the modem. The program can be found on <a href=\"%1\">%1</a></qt>", url);
-	return m_description;
+    QString url = "http://www.smsclient.org";
+    m_description = i18n("<qt>SMSClient is a program for sending SMS with the modem. The program can be found on <a href=\"%1\">%1</a></qt>", url);
+    return m_description;
 }
 
 /*
@@ -188,4 +193,3 @@ const QString& SMSClient::description()
  * indent-tabs-mode: t
  * End:
  */
-

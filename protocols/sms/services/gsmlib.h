@@ -44,85 +44,86 @@ class GSMLib : public SMSService
 {
     Q_OBJECT
 public:
-    GSMLib(Kopete::Account* account);
+    GSMLib(Kopete::Account *account);
     ~GSMLib();
 
-    void send(const Kopete::Message& msg);
-    void setWidgetContainer(QWidget* parent, QGridLayout* container);
+    void send(const Kopete::Message &msg);
+    void setWidgetContainer(QWidget *parent, QGridLayout *container);
 
     int maxSize();
-    const QString& description();
+    const QString &description();
 
 public slots:
     void savePreferences();
-	virtual void connect();
-	virtual void disconnect();
+    virtual void connect();
+    virtual void disconnect();
 
 //signals:
 //	void messageSent(const Kopete::Message &);
 protected:
-	virtual void customEvent(QCustomEvent* e);
+    virtual void customEvent(QCustomEvent *e);
 
-    QWidget* configureWidget(QWidget* parent);
-	void saveConfig();
-	void loadConfig();
+    QWidget *configureWidget(QWidget *parent);
+    void saveConfig();
+    void loadConfig();
 
-    GSMLibPrefsUI* prefWidget;
+    GSMLibPrefsUI *prefWidget;
     QStringList output;
 
-	QString m_device;
+    QString m_device;
 
     QString m_description;
 
-	GSMLibThread* m_thread;
-
-} ;
+    GSMLibThread *m_thread;
+};
 
 /// Custom event for async-events
 class GSMLibEvent : public QCustomEvent
 {
 public:
-	enum SubType { CONNECTED, DISCONNECTED, NEW_MESSAGE, MSG_SENT, MSG_NOT_SENT };
+    enum SubType {
+        CONNECTED, DISCONNECTED, NEW_MESSAGE, MSG_SENT, MSG_NOT_SENT
+    };
 
-	GSMLibEvent(SubType t);
+    GSMLibEvent(SubType t);
 
-	SubType subType();
-	void setSubType(SubType t);
+    SubType subType();
+    void setSubType(SubType t);
 
-	QString Text;
-	QString Number;
+    QString Text;
+    QString Number;
 
-	QString Reason;
+    QString Reason;
 
-	Kopete::Message Message;
+    Kopete::Message Message;
 protected:
-	SubType m_subType;
+    SubType m_subType;
 };
 
 /// Thread to deal with GsmLib's blocking
 class GSMLibThread : public QThread, gsmlib::GsmEvent
 {
 public:
-	GSMLibThread(QString dev, GSMLib* parent);
-	virtual ~GSMLibThread();
+    GSMLibThread(QString dev, GSMLib *parent);
+    virtual ~GSMLibThread();
 
-	virtual void run();
-	void stop();
-	void send(const Kopete::Message& msg);
+    virtual void run();
+    void stop();
+    void send(const Kopete::Message &msg);
 protected:
-	bool doConnect();
-	void pollForMessages();
-	void sendMessageQueue();
-	void sendMessage(const Kopete::Message& msg);
+    bool doConnect();
+    void pollForMessages();
+    void sendMessageQueue();
+    void sendMessage(const Kopete::Message &msg);
     void SMSReception(gsmlib::SMSMessageRef newMessage, SMSMessageType messageType);
     void SMSReceptionIndication(std::string storeName, unsigned int index, SMSMessageType messageType);
 
-	GSMLib* m_parent;
-	QString m_device;
+    GSMLib *m_parent;
+    QString m_device;
 
-    gsmlib::MeTa* m_MeTa;
+    gsmlib::MeTa *m_MeTa;
 
-	bool m_run;
+    bool m_run;
 
     struct IncomingMessage
     {
@@ -132,15 +133,16 @@ protected:
         GsmEvent::SMSMessageType Type;
 
         IncomingMessage() :   Index(-1)
-        {}
+        {
+        }
     };
 
     typedef QList<IncomingMessage> MessageList;
     MessageList m_newMessages;
 
-	typedef QList<Kopete::Message> KopeteMessageList;
-	KopeteMessageList m_outMessages;
-	QMutex m_outMessagesMutex;
+    typedef QList<Kopete::Message> KopeteMessageList;
+    KopeteMessageList m_outMessages;
+    QMutex m_outMessagesMutex;
 };
 
 #endif

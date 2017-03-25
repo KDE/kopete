@@ -22,51 +22,52 @@
 
 #include <qstring.h>
 
-namespace Kopete { class ChatSession; }
-namespace Kopete { class MetaContact; }
+namespace Kopete {
+class ChatSession;
+}
+namespace Kopete {
+class MetaContact;
+}
 
 class KActionCollection;
 class QAction;
 
 class SMSContact : public Kopete::Contact
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	SMSContact( Kopete::Account* _account, const QString &phoneNumber,
-		Kopete::MetaContact *parent );
+    SMSContact(Kopete::Account *_account, const QString &phoneNumber, Kopete::MetaContact *parent);
 
-	virtual QList<QAction *>* customContextMenuActions();
-	using Kopete::Contact::customContextMenuActions;
+    virtual QList<QAction *> *customContextMenuActions();
+    using Kopete::Contact::customContextMenuActions;
 
-	const QString &phoneNumber();
-	void setPhoneNumber( const QString phoneNumber );
-	const QString qualifiedNumber();
+    const QString &phoneNumber();
+    void setPhoneNumber(const QString phoneNumber);
+    const QString qualifiedNumber();
 
-	/**
-	 * Serialize contact
-	 */
-	virtual void serialize( QMap<QString, QString> &serializedData,
-		QMap<QString, QString> &addressBookData );
+    /**
+     * Serialize contact
+     */
+    virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
-	Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate );
+    Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate);
 
 public slots:
-	virtual void slotUserInfo();
-	virtual void deleteContact();
-	void slotSendingSuccess(const Kopete::Message &msg);
-	void slotSendingFailure(const Kopete::Message &msg, const QString &error);
+    virtual void slotUserInfo();
+    virtual void deleteContact();
+    void slotSendingSuccess(const Kopete::Message &msg);
+    void slotSendingFailure(const Kopete::Message &msg, const QString &error);
 
 private slots:
-	void userPrefs();
-	void slotChatSessionDestroyed();
+    void userPrefs();
+    void slotChatSessionDestroyed();
 
 private:
-	QAction * m_actionPrefs;
+    QAction *m_actionPrefs;
 
-	QString m_phoneNumber;
+    QString m_phoneNumber;
 
-	Kopete::ChatSession* m_msgManager;
+    Kopete::ChatSession *m_msgManager;
 };
 
 #endif
-

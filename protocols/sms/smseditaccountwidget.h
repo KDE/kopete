@@ -23,30 +23,32 @@
 class SMSProtocol;
 class SMSService;
 class smsActPrefsUI;
-namespace Kopete { class Account; }
+namespace Kopete {
+class Account;
+}
 class QGridLayout;
 
 class SMSEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0);
-	~SMSEditAccountWidget();
+    SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0);
+    ~SMSEditAccountWidget();
 
-	bool validateData();
-	Kopete::Account* apply();
+    bool validateData();
+    Kopete::Account *apply();
 public slots:
-	void setServicePreferences(const QString& serviceName);
-	void showDescription();
+    void setServicePreferences(const QString &serviceName);
+    void showDescription();
 protected:
-	smsActPrefsUI *preferencesDialog;
-	QWidget *configWidget;
-	SMSService *service;
-	SMSProtocol *m_protocol;
-	QGridLayout *middleFrameLayout;
+    smsActPrefsUI *preferencesDialog;
+    QWidget *configWidget;
+    SMSService *service;
+    SMSProtocol *m_protocol;
+    QGridLayout *middleFrameLayout;
 
 signals:
-	void saved();
+    void saved();
 };
 
 #endif
@@ -57,4 +59,3 @@ signals:
  * indent-tabs-mode: t
  * End:
  */
-

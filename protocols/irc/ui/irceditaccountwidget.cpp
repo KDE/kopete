@@ -42,242 +42,237 @@
 #include <kconfiggroup.h>
 
 IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
-	: QWidget(parent), KopeteEditAccountWidget(ident)
+    : QWidget(parent)
+    , KopeteEditAccountWidget(ident)
 {
-	setupUi(this);
+    setupUi(this);
 
-	int currentCodec = 4;
+    int currentCodec = 4;
 
-	if( account() )
-	{
-		QString nickName = account()->mySelf()->nickName();
-		QString serverInfo = account()->accountId();
+    if (account()) {
+        QString nickName = account()->mySelf()->nickName();
+        QString serverInfo = account()->accountId();
 
-		nickNames->setText( nickName );
-		userName->setText( account()->userName() );
-		realName->setText( account()->realName() );
+        nickNames->setText(nickName);
+        userName->setText(account()->userName());
+        realName->setText(account()->realName());
 
-		partMessage->setText( account()->partMessage() );
-		quitMessage->setText( account()->quitMessage() );
-		if( account()->codec() )
-			currentCodec = account()->codec()->mibEnum();
+        partMessage->setText(account()->partMessage());
+        quitMessage->setText(account()->quitMessage());
+        if (account()->codec()) {
+            currentCodec = account()->codec()->mibEnum();
+        }
 
 //		mPasswordWidget->load ( &account()->password() );
 
-		preferSSL->setChecked(account()->configGroup()->readEntry("PreferSSL",false));
-		autoShowServerWindow->setChecked( account()->configGroup()->readEntry("AutoShowServerWindow", false) );
-		autoConnect->setChecked( static_cast<Kopete::Account*>(account())->excludeConnect() );
+        preferSSL->setChecked(account()->configGroup()->readEntry("PreferSSL", false));
+        autoShowServerWindow->setChecked(account()->configGroup()->readEntry("AutoShowServerWindow", false));
+        autoConnect->setChecked(static_cast<Kopete::Account *>(account())->excludeConnect());
 
-		//KConfigGroup *config = account()->configGroup();
+        //KConfigGroup *config = account()->configGroup();
 /*
-		QStringList cmds = account()->connectCommands();
-		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
-			new QListViewItem( commandList, *i );
+        QStringList cmds = account()->connectCommands();
+        for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
+            new QListViewItem( commandList, *i );
 
-		const QMap< QString, QString > replies = account()->customCtcpReplies();
-		for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
-			new QListViewItem( ctcpList, it.key(), it.data() );
+        const QMap< QString, QString > replies = account()->customCtcpReplies();
+        for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
+            new QListViewItem( ctcpList, it.key(), it.data() );
 */
-	}
+    }
 
 //	mUserName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^\\s]*$"), mUserName ) );
 //	mNickName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mNickName ) );
 //	mAltNickname->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mAltNickname ) );
 
-	KCharsets *c = KGlobal::charsets();
-	charset->addItems( c->availableEncodingNames() );
+    KCharsets *c = KGlobal::charsets();
+    charset->addItems(c->availableEncodingNames());
 
-	for( int i = 0; i < charset->count(); ++i )
-	{
-		// codecForName can return NULL
-		if( c->codecForName( charset->itemText(i) )->mibEnum() == currentCodec )
-		{
-			charset->setCurrentIndex( i );
-			break;
-		}
-	}
+    for (int i = 0; i < charset->count(); ++i) {
+        // codecForName can return NULL
+        if (c->codecForName(charset->itemText(i))->mibEnum() == currentCodec) {
+            charset->setCurrentIndex(i);
+            break;
+        }
+    }
 /*
-	connect( commandList, SIGNAL(contextMenu(K3ListView*,QListViewItem*,QPoint)),
-		this, SLOT(slotCommandContextMenu(K3ListView*,QListViewItem*,QPoint)) );
+    connect( commandList, SIGNAL(contextMenu(K3ListView*,QListViewItem*,QPoint)),
+        this, SLOT(slotCommandContextMenu(K3ListView*,QListViewItem*,QPoint)) );
 
-	connect( ctcpList, SIGNAL(contextMenu(K3ListView*,QListViewItem*,QPoint)),
-		this, SLOT(slotCtcpContextMenu(K3ListView*,QListViewItem*,QPoint)) );
+    connect( ctcpList, SIGNAL(contextMenu(K3ListView*,QListViewItem*,QPoint)),
+        this, SLOT(slotCtcpContextMenu(K3ListView*,QListViewItem*,QPoint)) );
 
 */
-	connect( addButton, SIGNAL(clicked()), this, SLOT(slotAddCommand()) );
-	connect( editButton, SIGNAL(clicked()), this, SLOT(slotEditNetworks()) );
-	connect( addReply, SIGNAL(clicked()), this, SLOT(slotAddCtcp()) );
+    connect(addButton, SIGNAL(clicked()), this, SLOT(slotAddCommand()));
+    connect(editButton, SIGNAL(clicked()), this, SLOT(slotEditNetworks()));
+    connect(addReply, SIGNAL(clicked()), this, SLOT(slotAddCtcp()));
 
-        connect( network, SIGNAL(activated(QString)),
-		this, SLOT(slotUpdateNetworkDescription(QString)) );
+    connect(network, SIGNAL(activated(QString)),
+            this, SLOT(slotUpdateNetworkDescription(QString)));
 //TODO: signal doesn't exist anymore
 #if 0
-	connect( IRCProtocol::self(), SIGNAL(networkConfigUpdated(QString)),
-		this, SLOT(slotUpdateNetworks(QString)) );
+    connect(IRCProtocol::self(), SIGNAL(networkConfigUpdated(QString)),
+            this, SLOT(slotUpdateNetworks(QString)));
 #endif
-	slotUpdateNetworks( QString() );
+    slotUpdateNetworks(QString());
 }
 
 IRCEditAccountWidget::~IRCEditAccountWidget()
 {
 }
 
-IRCAccount *IRCEditAccountWidget::account ()
+IRCAccount *IRCEditAccountWidget::account()
 {
-	return dynamic_cast<IRCAccount *>(KopeteEditAccountWidget::account () );
+    return dynamic_cast<IRCAccount *>(KopeteEditAccountWidget::account());
 }
 
 struct NetNameComparator {
-	bool operator()(const IRC::Network& a, const IRC::Network& b) const {
-		return a.name < b.name;
-	}
+    bool operator()(const IRC::Network &a, const IRC::Network &b) const
+    {
+        return a.name < b.name;
+    }
 };
 
-void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
+void IRCEditAccountWidget::slotUpdateNetworks(const QString &selectedNetwork)
 {
+    network->clear();
+    kDebug()<<"updating networks. selected="<<selectedNetwork<<endl;
 
-	network->clear();
-	kDebug()<<"updating networks. selected="<<selectedNetwork<<endl;
+    IRC::NetworkList networks = IRC::Networks::self()->networks();
+    std::sort(networks.begin(), networks.end(), NetNameComparator());
 
-	IRC::NetworkList networks = IRC::Networks::self()->networks();
-	std::sort(networks.begin(), networks.end(), NetNameComparator());
+    kDebug()<<"got "<<networks.size()<<" networks"<<endl;
+    uint i = 0;
+    foreach (const IRC::Network &net, networks) {
+        network->addItem(net.name);
 
-	kDebug()<<"got "<<networks.size()<<" networks"<<endl;
-	uint i = 0;
-	foreach(const IRC::Network& net, networks) {
-		network->addItem(net.name);
-
-		if ((account() && account()->networkName() == net.name)
-				|| net.name == selectedNetwork)
-		{
-			network->setCurrentIndex( i );
-		}
-		++i;
-	}
+        if ((account() && account()->networkName() == net.name)
+            || net.name == selectedNetwork) {
+            network->setCurrentIndex(i);
+        }
+        ++i;
+    }
 }
 
 void IRCEditAccountWidget::slotEditNetworks()
 {
-	IRCProtocol::self()->editNetworks(network->currentText());
+    IRCProtocol::self()->editNetworks(network->currentText());
 }
 
-void IRCEditAccountWidget::slotUpdateNetworkDescription( const QString &network )
+void IRCEditAccountWidget::slotUpdateNetworkDescription(const QString &network)
 {
 //	description->setText(
 //		IRCProtocol::self()->networks()[ network ]->description
 //	);
 }
 
-void IRCEditAccountWidget::slotCommandContextMenu( K3ListView *, Q3ListViewItem *item, const QPoint &p )
+void IRCEditAccountWidget::slotCommandContextMenu(K3ListView *, Q3ListViewItem *item, const QPoint &p)
 {
 /*
-	QPopupMenu popup;
-	popup.insertItem( i18n("Remove Command"), 1 );
-	if( popup.exec( p ) == 1 )
-		delete item;
+    QPopupMenu popup;
+    popup.insertItem( i18n("Remove Command"), 1 );
+    if( popup.exec( p ) == 1 )
+        delete item;
 */
 }
 
-void IRCEditAccountWidget::slotCtcpContextMenu( K3ListView *, Q3ListViewItem *item, const QPoint &p )
+void IRCEditAccountWidget::slotCtcpContextMenu(K3ListView *, Q3ListViewItem *item, const QPoint &p)
 {
 /*
-	QPopupMenu popup;
-	popup.insertItem( i18n("Remove CTCP Reply"), 1 );
-	if( popup.exec( p ) == 1 )
-		delete item;
+    QPopupMenu popup;
+    popup.insertItem( i18n("Remove CTCP Reply"), 1 );
+    if( popup.exec( p ) == 1 )
+        delete item;
 */
 }
 
 void IRCEditAccountWidget::slotAddCommand()
 {
 /*
-	if ( !commandEdit->text().isEmpty() )
-	{
-		new QListViewItem( commandList, commandEdit->text() );
-		commandEdit->clear();
-	}
+    if ( !commandEdit->text().isEmpty() )
+    {
+        new QListViewItem( commandList, commandEdit->text() );
+        commandEdit->clear();
+    }
 */
 }
 
 void IRCEditAccountWidget::slotAddCtcp()
 {
 /*
-	if (  !newCTCP->text().isEmpty() && !newReply->text().isEmpty() )
-	{
-		new QListViewItem( ctcpList, newCTCP->text(), newReply->text() );
-		newCTCP->clear();
-		newReply->clear();
-	}
+    if (  !newCTCP->text().isEmpty() && !newReply->text().isEmpty() )
+    {
+        new QListViewItem( ctcpList, newCTCP->text(), newReply->text() );
+        newCTCP->clear();
+        newReply->clear();
+    }
 */
 }
 
-QString IRCEditAccountWidget::generateAccountId( const QString &network )
+QString IRCEditAccountWidget::generateAccountId(const QString &network)
 {
-	KSharedConfig::Ptr config = KGlobal::config();
-	QString nextId = network;
+    KSharedConfig::Ptr config = KGlobal::config();
+    QString nextId = network;
 
-	uint accountNumber = 1;
-	while( config->hasGroup( QString("Account_%1_%2").arg( IRCProtocol::self()->pluginId() ).arg( nextId ) ) )
-	{
-		nextId = QString::fromLatin1("%1_%2").arg( network ).arg( ++accountNumber );
-	}
-	kDebug( 14120 ) << " ID IS: " << nextId;
-	return nextId;
+    uint accountNumber = 1;
+    while (config->hasGroup(QString("Account_%1_%2").arg(IRCProtocol::self()->pluginId()).arg(nextId)))
+    {
+        nextId = QString::fromLatin1("%1_%2").arg(network).arg(++accountNumber);
+    }
+    kDebug(14120) << " ID IS: " << nextId;
+    return nextId;
 }
 
 Kopete::Account *IRCEditAccountWidget::apply()
 {
-	QString nickName = nickNames->text();
-	QString networkName = network->currentText();
+    QString nickName = nickNames->text();
+    QString networkName = network->currentText();
 
-	if( !account() )
-	{
-		setAccount( new IRCAccount( generateAccountId(networkName), QString(), networkName, nickName ) );
-	}
-	else
-	{
-		account()->setNickName( nickName );
-		account()->setNetworkByName( networkName );
-	}
+    if (!account()) {
+        setAccount(new IRCAccount(generateAccountId(networkName), QString(), networkName, nickName));
+    } else {
+        account()->setNickName(nickName);
+        account()->setNetworkByName(networkName);
+    }
 
-	//mPasswordWidget->save( &account()->password() );
+    //mPasswordWidget->save( &account()->password() );
 
-	account()->setNickName( nickNames->text() );
-	account()->setUserName( userName->text() );
-	account()->setRealName( realName->text() );
-	account()->setPartMessage( partMessage->text() );
-	account()->setQuitMessage( quitMessage->text() );
-	account()->setAutoShowServerWindow( autoShowServerWindow->isChecked() );
-	account()->setExcludeConnect( autoConnect->isChecked() );
+    account()->setNickName(nickNames->text());
+    account()->setUserName(userName->text());
+    account()->setRealName(realName->text());
+    account()->setPartMessage(partMessage->text());
+    account()->setQuitMessage(quitMessage->text());
+    account()->setAutoShowServerWindow(autoShowServerWindow->isChecked());
+    account()->setExcludeConnect(autoConnect->isChecked());
 
-	account()->configGroup()->writeEntry("PreferSSL", preferSSL->isChecked());
+    account()->configGroup()->writeEntry("PreferSSL", preferSSL->isChecked());
 
-	/*
-	QStringList cmds;
-	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
-		cmds.append( i->text(0) );
+    /*
+    QStringList cmds;
+    for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
+        cmds.append( i->text(0) );
 
-	QMap< QString, QString > replies;
-	for( QListViewItem *i = ctcpList->firstChild(); i; i = i->nextSibling() )
-		replies[ i->text(0) ] = i->text(1);
+    QMap< QString, QString > replies;
+    for( QListViewItem *i = ctcpList->firstChild(); i; i = i->nextSibling() )
+        replies[ i->text(0) ] = i->text(1);
 
-	account()->setCustomCtcpReplies( replies );
-	account()->setConnectCommands( cmds );
-	*/
+    account()->setCustomCtcpReplies( replies );
+    account()->setConnectCommands( cmds );
+    */
 
-	KCharsets *c = KGlobal::charsets();
-	account()->setCodec( c->codecForName( c->encodingForName( charset->currentText() ) ) );
+    KCharsets *c = KGlobal::charsets();
+    account()->setCodec(c->codecForName(c->encodingForName(charset->currentText())));
 
-	return account();
+    return account();
 }
 
 bool IRCEditAccountWidget::validateData()
 {
-	if( nickNames->text().isEmpty() )
-		KMessageBox::sorry(this, i18n("<qt>You must enter a nickname.</qt>"), i18n("Kopete"));
-	else
-		return true;
+    if (nickNames->text().isEmpty()) {
+        KMessageBox::sorry(this, i18n("<qt>You must enter a nickname.</qt>"), i18n("Kopete"));
+    } else {
+        return true;
+    }
 
-	return false;
+    return false;
 }
-

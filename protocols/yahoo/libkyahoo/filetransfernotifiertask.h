@@ -29,23 +29,22 @@ class QPixmap;
 */
 class FileTransferNotifierTask : public Task
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	FileTransferNotifierTask(Task *parent);
-	~FileTransferNotifierTask();
-	
-	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+    FileTransferNotifierTask(Task *parent);
+    ~FileTransferNotifierTask();
+
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 
 protected:
-	bool forMe( const Transfer *transfer ) const Q_DECL_OVERRIDE;
+    bool forMe(const Transfer *transfer) const Q_DECL_OVERRIDE;
 signals:
-	void incomingFileTransfer( const QString &who, const QString &url, long expires, const QString &msg ,
-	const QString &fname, unsigned long size, const QPixmap &preview );
+    void incomingFileTransfer(const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long size, const QPixmap &preview);
 private:
-	void parseFileTransfer( YMSGTransfer *transfer );
-	void parseFileTransfer7( YMSGTransfer *transfer );
-	void acceptFileTransfer( YMSGTransfer *t );
-	void parseFileTransfer7Info( YMSGTransfer *YMSGtransfer );
+    void parseFileTransfer(YMSGTransfer *transfer);
+    void parseFileTransfer7(YMSGTransfer *transfer);
+    void acceptFileTransfer(YMSGTransfer *t);
+    void parseFileTransfer7Info(YMSGTransfer *YMSGtransfer);
 };
 
 #endif

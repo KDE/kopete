@@ -24,9 +24,9 @@
 class ServiceLoader
 {
 public:
-	static SMSService* loadService(const QString& name, Kopete::Account* account);
-	static QStringList services();
-} ;
+    static SMSService *loadService(const QString &name, Kopete::Account *account);
+    static QStringList services();
+};
 
 #endif //SERVICELOADER_H
 /*
@@ -35,4 +35,3 @@ public:
  * indent-tabs-mode: t
  * End:
  */
-

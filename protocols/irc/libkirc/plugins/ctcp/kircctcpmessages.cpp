@@ -43,24 +43,24 @@ using namespace KIrc;
 void StdCommands::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage, QTextCodec *codec)
 {
 #ifdef __GNUC__
-	#warning FIXME CTCP MESSAGE NOT SENT
+    #warning FIXME CTCP MESSAGE NOT SENT
 #endif
 //	writeRawMessage(command, to, ctcpMessage, codec);
 }
 
 void StdCommands::writeCtcpQueryMessage(const QString &to, const QString &ctcpQueryMessage, QTextCodec *codec)
 {
-	writeCtcpMessage("PRIVMSG", to, ctcpQueryMessage, codec);
+    writeCtcpMessage("PRIVMSG", to, ctcpQueryMessage, codec);
 }
 
 void StdCommands::writeCtcpReplyMessage(const QString &to, const QString &ctcpReplyMessage, QTextCodec *codec)
 {
-	writeCtcpMessage("NOTICE", to, ctcpReplyMessage, codec);
+    writeCtcpMessage("NOTICE", to, ctcpReplyMessage, codec);
 }
 
 void StdCommands::writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg, QTextCodec *codec)
 {
-	writeCtcpReplyMessage(to, "ERRMSG", ctcpLine, errorMsg);
+    writeCtcpReplyMessage(to, "ERRMSG", ctcpLine, errorMsg);
 }
 
 // Normal order for a ctcp command:
@@ -80,68 +80,68 @@ void StdCommands::CtcpRequest_action(const QString &contact, const QString &mess
 
 void StdCommands::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uint port, Transfer::Type type)
 {
-	if(	m_status != Connected ||
-		m_socket->localAddress() == 0 ||
-		m_socket->localAddress()->nodeName().isNull())
-		return;
+    if(	m_status != Connected ||
+        m_socket->localAddress() == 0 ||
+        m_socket->localAddress()->nodeName().isNull())
+        return;
 
-	switch(type)
-	{
-		case Transfer::Chat:
-		{
-			writeCtcpQueryMessage(nickname, QString(),
-				QString::fromLatin1("DCC"),
-				QStringList(QString::fromLatin1("CHAT")) << QString::fromLatin1("chat") <<
-					m_sock->localAddress()->nodeName() << QString::number(port)
-			);
-			break;
-		}
+    switch(type)
+    {
+        case Transfer::Chat:
+        {
+            writeCtcpQueryMessage(nickname, QString(),
+                QString::fromLatin1("DCC"),
+                QStringList(QString::fromLatin1("CHAT")) << QString::fromLatin1("chat") <<
+                    m_sock->localAddress()->nodeName() << QString::number(port)
+            );
+            break;
+        }
 
-		case Transfer::FileOutgoing:
-		{
-			QFileInfo file(fileName);
-			QString noWhiteSpace = file.fileName();
-			if (noWhiteSpace.contains(' ') > 0)
-				noWhiteSpace.replace(QRegExp("\\s+"), "_");
+        case Transfer::FileOutgoing:
+        {
+            QFileInfo file(fileName);
+            QString noWhiteSpace = file.fileName();
+            if (noWhiteSpace.contains(' ') > 0)
+                noWhiteSpace.replace(QRegExp("\\s+"), "_");
 
-			TransferServer *server = TransferHandler::self()->createServer(this, nickname, type, fileName, file.size());
+            TransferServer *server = TransferHandler::self()->createServer(this, nickname, type, fileName, file.size());
 
-			QString ip = m_sock->localAddress()->nodeName();
-			QString ipNumber = QString::number( ntohl( inet_addr( ip.toLatin1() ) ) );
+            QString ip = m_sock->localAddress()->nodeName();
+            QString ipNumber = QString::number( ntohl( inet_addr( ip.toLatin1() ) ) );
 
-			kDebug(14120) << "Starting DCC file outgoing transfer.";
+            kDebug(14120) << "Starting DCC file outgoing transfer.";
 
-			writeCtcpQueryMessage(nickname, QString(),
-				QString::fromLatin1("DCC"),
-				QStringList(QString::fromLatin1("SEND")) << noWhiteSpace << ipNumber <<
-					QString::number(server->port()) << QString::number(file.size())
-			);
-			break;
-		}
+            writeCtcpQueryMessage(nickname, QString(),
+                QString::fromLatin1("DCC"),
+                QStringList(QString::fromLatin1("SEND")) << noWhiteSpace << ipNumber <<
+                    QString::number(server->port()) << QString::number(file.size())
+            );
+            break;
+        }
 
-		case Transfer::FileIncoming:
-		case Transfer::Unknown:
-		default:
-			break;
-	}
+        case Transfer::FileIncoming:
+        case Transfer::Unknown:
+        default:
+            break;
+    }
 }
 
 void StdCommands::CtcpRequest_ping(const QString &target)
 {
-	kDebug(14120) ;
+    kDebug(14120) ;
 
-	timeval time;
-	if (gettimeofday(&time, 0) == 0)
-	{
-		QString timeReply;
+    timeval time;
+    if (gettimeofday(&time, 0) == 0)
+    {
+        QString timeReply;
 
-		if( Entity::isChannel(target) )
-			timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
-		else
-		 	timeReply = QString::number( time.tv_sec );
+        if( Entity::isChannel(target) )
+            timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
+        else
+            timeReply = QString::number( time.tv_sec );
 
-		writeCtcpQueryMessage(target, QString(), "PING", timeReply);
-	}
+        writeCtcpQueryMessage(target, QString(), "PING", timeReply);
+    }
 //	else
 //		((MessageRedirector *)sender())->error("failed to get current time");
 }

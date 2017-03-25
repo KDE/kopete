@@ -33,69 +33,69 @@ using namespace KIRC;
 
 void Engine::bindNumericReplies()
 {
-	bind(1, this, SLOT(numericReply_001(KIRC::Message&)), 1, 1);
-	bind(2, this, SLOT(numericReply_002(KIRC::Message&)), 1, 1);
-	bind(3, this, SLOT(numericReply_003(KIRC::Message&)), 1, 1);
-	bind(4, this, SLOT(numericReply_004(KIRC::Message&)), 5, 5);
-	bind(5, this, SLOT(numericReply_004(KIRC::Message&)), 1, 1);
+    bind(1, this, SLOT(numericReply_001(KIRC::Message&)), 1, 1);
+    bind(2, this, SLOT(numericReply_002(KIRC::Message&)), 1, 1);
+    bind(3, this, SLOT(numericReply_003(KIRC::Message&)), 1, 1);
+    bind(4, this, SLOT(numericReply_004(KIRC::Message&)), 5, 5);
+    bind(5, this, SLOT(numericReply_004(KIRC::Message&)), 1, 1);
 
-	bind(250, this, SLOT(numericReply_250(KIRC::Message&)));
-	bind(251, this, SLOT(numericReply_251(KIRC::Message&)));
-	bind(252, this, SLOT(numericReply_252(KIRC::Message&)), 2, 2);
-	bind(253, this, SLOT(numericReply_253(KIRC::Message&)), 2, 2);
-	bind(254, this, SLOT(numericReply_254(KIRC::Message&)), 2, 2);
-	bind(255, this, SLOT(numericReply_255(KIRC::Message&)), 1, 1);
+    bind(250, this, SLOT(numericReply_250(KIRC::Message&)));
+    bind(251, this, SLOT(numericReply_251(KIRC::Message&)));
+    bind(252, this, SLOT(numericReply_252(KIRC::Message&)), 2, 2);
+    bind(253, this, SLOT(numericReply_253(KIRC::Message&)), 2, 2);
+    bind(254, this, SLOT(numericReply_254(KIRC::Message&)), 2, 2);
+    bind(255, this, SLOT(numericReply_255(KIRC::Message&)), 1, 1);
 
-	bind(263, this, SLOT(numericReply_263(KIRC::Message&)));
-	bind(265, this, SLOT(numericReply_265(KIRC::Message&)));
-	bind(266, this, SLOT(numericReply_266(KIRC::Message&)));
+    bind(263, this, SLOT(numericReply_263(KIRC::Message&)));
+    bind(265, this, SLOT(numericReply_265(KIRC::Message&)));
+    bind(266, this, SLOT(numericReply_266(KIRC::Message&)));
 
-	bind(301, this, SLOT(numericReply_301(KIRC::Message&)), 2, 2);
-	bind(303, this, SLOT(numericReply_303(KIRC::Message&)), 1, 1);
+    bind(301, this, SLOT(numericReply_301(KIRC::Message&)), 2, 2);
+    bind(303, this, SLOT(numericReply_303(KIRC::Message&)), 1, 1);
 //	bind(305, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
 //	bind(306, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
-	bind(307, this, SLOT(numericReply_307(KIRC::Message&)), 1, 1);
-	bind(311, this, SLOT(numericReply_311(KIRC::Message&)), 5, 5);
-	bind(312, this, SLOT(numericReply_312(KIRC::Message&)), 3, 3);
-	bind(313, this, SLOT(numericReply_313(KIRC::Message&)), 2, 2);
-	bind(314, this, SLOT(numericReply_314(KIRC::Message&)), 5, 5);
-	bind(315, this, SLOT(numericReply_315(KIRC::Message&)), 2, 2);
-	bind(317, this, SLOT(numericReply_317(KIRC::Message&)), 3, 4);
-	bind(318, this, SLOT(numericReply_318(KIRC::Message&)), 2, 2);
-	bind(319, this, SLOT(numericReply_319(KIRC::Message&)), 2, 2);
-	bind(320, this, SLOT(numericReply_320(KIRC::Message&)), 2, 2);
+    bind(307, this, SLOT(numericReply_307(KIRC::Message&)), 1, 1);
+    bind(311, this, SLOT(numericReply_311(KIRC::Message&)), 5, 5);
+    bind(312, this, SLOT(numericReply_312(KIRC::Message&)), 3, 3);
+    bind(313, this, SLOT(numericReply_313(KIRC::Message&)), 2, 2);
+    bind(314, this, SLOT(numericReply_314(KIRC::Message&)), 5, 5);
+    bind(315, this, SLOT(numericReply_315(KIRC::Message&)), 2, 2);
+    bind(317, this, SLOT(numericReply_317(KIRC::Message&)), 3, 4);
+    bind(318, this, SLOT(numericReply_318(KIRC::Message&)), 2, 2);
+    bind(319, this, SLOT(numericReply_319(KIRC::Message&)), 2, 2);
+    bind(320, this, SLOT(numericReply_320(KIRC::Message&)), 2, 2);
 //	bind(321, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
-	bind(322, this, SLOT(numericReply_322(KIRC::Message&)), 3, 3);
-	bind(323, this, SLOT(numericReply_323(KIRC::Message&)), 1, 1);
-	bind(324, this, SLOT(numericReply_324(KIRC::Message&)), 2, 4);
-	bind(328, this, SLOT(numericReply_328(KIRC::Message&)), 2, 2);
-	bind(329, this, SLOT(numericReply_329(KIRC::Message&)), 3, 3);
+    bind(322, this, SLOT(numericReply_322(KIRC::Message&)), 3, 3);
+    bind(323, this, SLOT(numericReply_323(KIRC::Message&)), 1, 1);
+    bind(324, this, SLOT(numericReply_324(KIRC::Message&)), 2, 4);
+    bind(328, this, SLOT(numericReply_328(KIRC::Message&)), 2, 2);
+    bind(329, this, SLOT(numericReply_329(KIRC::Message&)), 3, 3);
 //	bind(330, this, SLOT(ignoreMessage(KIRC::Message&)), 3, 3); // ???
-	bind(331, this, SLOT(numericReply_331(KIRC::Message&)), 2, 2);
-	bind(332, this, SLOT(numericReply_332(KIRC::Message&)), 2, 2);
-	bind(333, this, SLOT(numericReply_333(KIRC::Message&)), 4, 4);
-	bind(352, this, SLOT(numericReply_352(KIRC::Message&)), 5, 10);
-	bind(353, this, SLOT(numericReply_353(KIRC::Message&)), 3, 3);
-	bind(366, this, SLOT(numericReply_366(KIRC::Message&)), 2, 2);
-	bind(369, this, SLOT(numericReply_369(KIRC::Message&)), 2, 2);
-	bind(372, this, SLOT(numericReply_372(KIRC::Message&)), 1, 1);
-	bind(375, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
-	bind(376, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
+    bind(331, this, SLOT(numericReply_331(KIRC::Message&)), 2, 2);
+    bind(332, this, SLOT(numericReply_332(KIRC::Message&)), 2, 2);
+    bind(333, this, SLOT(numericReply_333(KIRC::Message&)), 4, 4);
+    bind(352, this, SLOT(numericReply_352(KIRC::Message&)), 5, 10);
+    bind(353, this, SLOT(numericReply_353(KIRC::Message&)), 3, 3);
+    bind(366, this, SLOT(numericReply_366(KIRC::Message&)), 2, 2);
+    bind(369, this, SLOT(numericReply_369(KIRC::Message&)), 2, 2);
+    bind(372, this, SLOT(numericReply_372(KIRC::Message&)), 1, 1);
+    bind(375, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0);
+    bind(376, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0);
 
-	bind(401, this, SLOT(numericReply_401(KIRC::Message&)), 2, 2);
-	bind(404, this, SLOT(numericReply_404(KIRC::Message&)), 2, 2);
-	bind(406, this, SLOT(numericReply_406(KIRC::Message&)), 2, 2);
-	bind(422, this, SLOT(numericReply_422(KIRC::Message&)), 1, 1);
-	bind(433, this, SLOT(numericReply_433(KIRC::Message&)), 2, 2);
-	bind(442, this, SLOT(numericReply_442(KIRC::Message&)), 2, 2);
-	bind(464, this, SLOT(numericReply_464(KIRC::Message&)), 1, 1);
-	bind(471, this, SLOT(numericReply_471(KIRC::Message&)), 2, 2);
-	bind(473, this, SLOT(numericReply_473(KIRC::Message&)), 2, 2);
-	bind(474, this, SLOT(numericReply_474(KIRC::Message&)), 2, 2);
-	bind(475, this, SLOT(numericReply_475(KIRC::Message&)), 2, 2);
+    bind(401, this, SLOT(numericReply_401(KIRC::Message&)), 2, 2);
+    bind(404, this, SLOT(numericReply_404(KIRC::Message&)), 2, 2);
+    bind(406, this, SLOT(numericReply_406(KIRC::Message&)), 2, 2);
+    bind(422, this, SLOT(numericReply_422(KIRC::Message&)), 1, 1);
+    bind(433, this, SLOT(numericReply_433(KIRC::Message&)), 2, 2);
+    bind(442, this, SLOT(numericReply_442(KIRC::Message&)), 2, 2);
+    bind(464, this, SLOT(numericReply_464(KIRC::Message&)), 1, 1);
+    bind(471, this, SLOT(numericReply_471(KIRC::Message&)), 2, 2);
+    bind(473, this, SLOT(numericReply_473(KIRC::Message&)), 2, 2);
+    bind(474, this, SLOT(numericReply_474(KIRC::Message&)), 2, 2);
+    bind(475, this, SLOT(numericReply_475(KIRC::Message&)), 2, 2);
 
-	//Freenode seems to use this for a non-RFC compliant purpose, as does Unreal
-	bind(477, this, SLOT(receivedServerMessage(KIRC::Message&)),0,0);
+    //Freenode seems to use this for a non-RFC compliant purpose, as does Unreal
+    bind(477, this, SLOT(receivedServerMessage(KIRC::Message&)), 0, 0);
 }
 
 /* 001: "Welcome to the Internet Relay Network <nick>!<user>@<host>"
@@ -103,14 +103,14 @@ void Engine::bindNumericReplies()
  */
 void Engine::numericReply_001(Message &msg)
 {
-	kDebug(14121) ;
+    kDebug(14121);
 
-	/* At this point we are connected and the server is ready for us to being taking commands
-	 * although the MOTD comes *after* this.
-	 */
-	receivedServerMessage(msg);
+    /* At this point we are connected and the server is ready for us to being taking commands
+     * although the MOTD comes *after* this.
+     */
+    receivedServerMessage(msg);
 
-	setConnectionState(Connected);
+    setConnectionState(Connected);
 }
 
 /* 002: ":Your host is <servername>, running version <ver>"
@@ -118,7 +118,7 @@ void Engine::numericReply_001(Message &msg)
  */
 void Engine::numericReply_002(Message &msg)
 {
-	receivedServerMessage(msg);
+    receivedServerMessage(msg);
 }
 
 /* 003: "This server was created <date>"
@@ -127,7 +127,7 @@ void Engine::numericReply_002(Message &msg)
  */
 void Engine::numericReply_003(Message &msg)
 {
-	receivedServerMessage(msg);
+    receivedServerMessage(msg);
 }
 
 /* 004: "<servername> <version> <available user modes> <available channel modes>"
@@ -143,7 +143,7 @@ void Engine::numericReply_004(Message &msg)
  */
 void Engine::numericReply_005(Message &msg)
 {
-	receivedServerMessage(msg);
+    receivedServerMessage(msg);
 }
 
 /* 250: ":Highest connection count: <integer> (<integer> clients)
@@ -153,7 +153,7 @@ void Engine::numericReply_005(Message &msg)
  */
 void Engine::numericReply_250(Message &msg)
 {
-	receivedServerMessage(msg);
+    receivedServerMessage(msg);
 }
 
 /* 251: ":There are <integer> users and <integer> services on <integer> servers"
@@ -161,7 +161,7 @@ void Engine::numericReply_250(Message &msg)
  */
 void Engine::numericReply_251(Message &msg)
 {
-	receivedServerMessage(msg);
+    receivedServerMessage(msg);
 }
 
 /* 252: "<integer> :operator(s) online"
@@ -169,7 +169,7 @@ void Engine::numericReply_251(Message &msg)
  */
 void Engine::numericReply_252(Message &msg)
 {
-	receivedServerMessage(msg, i18np("There is one operator online.", "There are %1 operators online.", msg.arg(1)));
+    receivedServerMessage(msg, i18np("There is one operator online.", "There are %1 operators online.", msg.arg(1)));
 }
 
 /* 253: "<integer> :unknown connection(s)"
@@ -177,7 +177,7 @@ void Engine::numericReply_252(Message &msg)
  */
 void Engine::numericReply_253(Message &msg)
 {
-	receivedServerMessage(msg, i18np("There is one unknown connection.", "There are %1 unknown connections.", msg.arg(1)));
+    receivedServerMessage(msg, i18np("There is one unknown connection.", "There are %1 unknown connections.", msg.arg(1)));
 }
 
 /* 254: "<integer> :channels formed"
@@ -185,7 +185,7 @@ void Engine::numericReply_253(Message &msg)
  *  */
 void Engine::numericReply_254(Message &msg)
 {
-	receivedServerMessage(msg, i18np("One channel has been formed.", "%1 channels have been formed.", msg.arg(1)));
+    receivedServerMessage(msg, i18np("One channel has been formed.", "%1 channels have been formed.", msg.arg(1)));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
@@ -193,7 +193,7 @@ void Engine::numericReply_254(Message &msg)
  */
 void Engine::numericReply_255(Message &msg)
 {
-	receivedServerMessage(msg);
+    receivedServerMessage(msg);
 }
 
 /* 263: "<command> :Please wait a while and try again."
@@ -201,7 +201,7 @@ void Engine::numericReply_255(Message &msg)
  */
 void Engine::numericReply_263(Message &msg)
 {
-	receivedServerMessage(msg, i18n("Server was too busy to execute %1.", msg.arg(1)));
+    receivedServerMessage(msg, i18n("Server was too busy to execute %1.", msg.arg(1)));
 }
 
 /* 265: ":Current local  users: <integer>  Max: <integer>"
@@ -210,7 +210,7 @@ void Engine::numericReply_263(Message &msg)
  */
 void Engine::numericReply_265(Message &msg)
 {
-	receivedServerMessage(msg);
+    receivedServerMessage(msg);
 }
 
 /* 266: ":Current global users: <integer>  Max: <integer>"
@@ -218,7 +218,7 @@ void Engine::numericReply_265(Message &msg)
  */
 void Engine::numericReply_266(Message &msg)
 {
-	receivedServerMessage(msg);
+    receivedServerMessage(msg);
 }
 
 /* 301: "<nick> :<away message>"
@@ -226,11 +226,11 @@ void Engine::numericReply_266(Message &msg)
 void Engine::numericReply_301(Message &msg)
 {
 /*
-	Entity entity = msg.entityFromArg(1);
-	entity->setAwayMessage(msg.suffix);
-	entity->setMode("+a");
+    Entity entity = msg.entityFromArg(1);
+    entity->setAwayMessage(msg.suffix);
+    entity->setMode("+a");
 
-	receivedServerMessage(msg);
+    receivedServerMessage(msg);
 */
 }
 
@@ -239,12 +239,12 @@ void Engine::numericReply_301(Message &msg)
 void Engine::numericReply_303(Message &msg)
 {
 /*
-	QStringList nicks = QStringList::split(QRegExp(QChar(' ')), msg.suffix());
-	for(QStringList::Iterator it = nicks.begin(); it != nicks.end(); ++it)
-	{
-		if (!(*it).trimmed().isEmpty())
-			emit incomingUserOnline(*it);
-	}
+    QStringList nicks = QStringList::split(QRegExp(QChar(' ')), msg.suffix());
+    for(QStringList::Iterator it = nicks.begin(); it != nicks.end(); ++it)
+    {
+        if (!(*it).trimmed().isEmpty())
+            emit incomingUserOnline(*it);
+    }
 */
 }
 
@@ -253,10 +253,10 @@ void Engine::numericReply_303(Message &msg)
 void Engine::numericReply_305(Message &msg)
 {
 /*
-	EntityPtr self = this->self();
-	self->setAwayMessage(QString());
+    EntityPtr self = this->self();
+    self->setAwayMessage(QString());
 //	self->setModes("-a");
-	receivedServerMessage(msg, i18n("You are no longer marked as being away."));
+    receivedServerMessage(msg, i18n("You are no longer marked as being away."));
 */
 }
 
@@ -264,9 +264,9 @@ void Engine::numericReply_305(Message &msg)
  */
 void Engine::numericReply_306(Message &msg)
 {
-	EntityPtr self = this->self();
+    EntityPtr self = this->self();
 //	self->setModes("+a");
-	receivedServerMessage(msg, i18n("You have been marked as being away."));
+    receivedServerMessage(msg, i18n("You have been marked as being away."));
 }
 
 /* 307: ":is a registered nick"
@@ -274,7 +274,7 @@ void Engine::numericReply_306(Message &msg)
  */
 void Engine::numericReply_307(Message &msg)
 {
-	receivedServerMessage(msg, i18n("%1 is a registered nick.", msg.arg(1)));
+    receivedServerMessage(msg, i18n("%1 is a registered nick.", msg.arg(1)));
 }
 
 /* 311: "<nick> <user> <host> * :<real name>"
@@ -298,7 +298,7 @@ void Engine::numericReply_312(Message &msg)
  */
 void Engine::numericReply_313(Message &msg)
 {
-	receivedServerMessage(msg, i18n("%1 is an IRC operator.", msg.arg(1)));
+    receivedServerMessage(msg, i18n("%1 is an IRC operator.", msg.arg(1)));
 }
 
 /* 314: "<nick> <user> <host> * :<real name>"
@@ -314,7 +314,7 @@ void Engine::numericReply_314(Message &msg)
  */
 void Engine::numericReply_315(Message &msg)
 {
-	receivedServerMessage(msg);
+    receivedServerMessage(msg);
 }
 
 /* RFC say: "<nick> <integer> :seconds idle"
@@ -324,9 +324,9 @@ void Engine::numericReply_315(Message &msg)
 void Engine::numericReply_317(Message &msg)
 {
 /*
-	emit incomingWhoIsIdle(msg.arg(1), msg.arg(2).toULong());
-	if (msg.argsSize()==4)
-		emit incomingSignOnTime(msg.arg(1),msg.arg(3).toULong());
+    emit incomingWhoIsIdle(msg.arg(1), msg.arg(2).toULong());
+    if (msg.argsSize()==4)
+        emit incomingSignOnTime(msg.arg(1),msg.arg(3).toULong());
 */
 }
 
@@ -335,7 +335,7 @@ void Engine::numericReply_317(Message &msg)
  */
 void Engine::numericReply_318(Message &msg)
 {
-	emit receivedServerMessage(msg);
+    emit receivedServerMessage(msg);
 }
 
 /* 319: "<nick> :{[@|+]<channel><space>}"
@@ -372,7 +372,7 @@ void Engine::numericReply_322(Message &msg)
  */
 void Engine::numericReply_323(Message &msg)
 {
-	emit receivedServerMessage(msg);
+    emit receivedServerMessage(msg);
 }
 
 /* 324: "<channel> <mode> <mode params>"
@@ -393,14 +393,14 @@ void Engine::numericReply_328(Message &msg)
  * NOTE: What is the meaning of this arguments. DAL-ircd say it's a RPL_CREATIONTIME
  * NOT IN RFC1459 NOR RFC2812
  */
-void Engine::numericReply_329( Message & )
+void Engine::numericReply_329(Message &)
 {
 }
 
 /* 331: "<channel> :No topic is set"
  * Gives the existing topic for a channel after a join.
  */
-void Engine::numericReply_331( Message & )
+void Engine::numericReply_331(Message &)
 {
 //	emit incomingExistingTopic(msg.arg(1), suffix);
 }
@@ -408,7 +408,7 @@ void Engine::numericReply_331( Message & )
 /* 332: "<channel> :<topic>"
  * Gives the existing topic for a channel after a join.
  */
-void Engine::numericReply_332( Message &msg )
+void Engine::numericReply_332(Message &msg)
 {
 //	emit incomingExistingTopic(msg.arg(1), msg.suffix());
 }
@@ -416,12 +416,12 @@ void Engine::numericReply_332( Message &msg )
 /* 333:
  * Gives the nickname and time who changed the topic
  */
-void Engine::numericReply_333( Message &msg )
+void Engine::numericReply_333(Message &msg)
 {
 /*
-	QDateTime d;
-	d.setTime_t( msg.arg(3).toLong() );
-	emit incomingTopicUser(msg.arg(1), msg.arg(2), d );
+    QDateTime d;
+    d.setTime_t( msg.arg(3).toLong() );
+    emit incomingTopicUser(msg.arg(1), msg.arg(2), d );
 */
 }
 
@@ -431,19 +431,19 @@ void Engine::numericReply_333( Message &msg )
 void Engine::numericReply_352(Message &msg)
 {
 /*
-	QStringList suffix = QStringList::split( ' ', msg.suffix() );
+    QStringList suffix = QStringList::split( ' ', msg.suffix() );
 
-	emit incomingWhoReply(
-		msg.arg(5),
-		msg.arg(1),
-		msg.arg(2),
-		msg.arg(3),
-		msg.arg(4),
-		msg.arg(6)[0] != 'H',
-		msg.arg(7),
-		msg.suffix().section(' ', 0, 1 ).toUInt(),
-		msg.suffix().section(' ', 1 )
-	);
+    emit incomingWhoReply(
+        msg.arg(5),
+        msg.arg(1),
+        msg.arg(2),
+        msg.arg(3),
+        msg.arg(4),
+        msg.arg(6)[0] != 'H',
+        msg.arg(7),
+        msg.suffix().section(' ', 0, 1 ).toUInt(),
+        msg.suffix().section(' ', 1 )
+    );
 */
 }
 
@@ -460,7 +460,7 @@ void Engine::numericReply_353(Message &msg)
  */
 void Engine::numericReply_366(Message &msg)
 {
-	emit receivedServerMessage(msg);
+    emit receivedServerMessage(msg);
 }
 
 /* 369: "<nick> :End of WHOWAS"
@@ -468,7 +468,7 @@ void Engine::numericReply_366(Message &msg)
  */
 void Engine::numericReply_369(Message &msg)
 {
-	emit receivedServerMessage(msg);
+    emit receivedServerMessage(msg);
 }
 
 /* 372: ":- <text>"
@@ -477,9 +477,9 @@ void Engine::numericReply_369(Message &msg)
 void Engine::numericReply_372(Message &msg)
 {
 #ifdef __GNUC__
-	#warning FIXME remove the "- " in front.
+    #warning FIXME remove the "- " in front.
 #endif
-	receivedServerMessage(msg);
+    receivedServerMessage(msg);
 }
 
 /* 375: ":- <server> Message of the day - "
@@ -491,7 +491,7 @@ void Engine::numericReply_372(Message &msg)
  */
 void Engine::numericReply_376(Message &msg)
 {
-	receivedServerMessage(msg);
+    receivedServerMessage(msg);
 }
 
 /* 401: "<nickname> :No such nick/channel"
@@ -508,7 +508,7 @@ void Engine::numericReply_401(Message &msg)
  */
 void Engine::numericReply_404(Message &msg)
 {
-	receivedServerMessage(msg, i18n("You cannot send messages to channel %1.", msg.arg(1)));
+    receivedServerMessage(msg, i18n("You cannot send messages to channel %1.", msg.arg(1)));
 }
 
 /* 406: "<nickname> :There was no such nickname"
@@ -517,7 +517,7 @@ void Engine::numericReply_404(Message &msg)
 void Engine::numericReply_406(Message &msg)
 {
 #ifdef __GNUC__
-	#warning FIXME 406 MEANS *NEVER*, unlike 401
+    #warning FIXME 406 MEANS *NEVER*, unlike 401
 #endif
 //	i18n("The channel \"%1\" does not exist").arg(nick)
 //	i18n("The nickname \"%1\" does not exist").arg(nick)
@@ -529,7 +529,7 @@ void Engine::numericReply_406(Message &msg)
  */
 void Engine::numericReply_422(Message &msg)
 {
-	receivedServerMessage(msg);
+    receivedServerMessage(msg);
 }
 
 /* 433: "<nick> :Nickname is already in use"
@@ -538,17 +538,17 @@ void Engine::numericReply_422(Message &msg)
 void Engine::numericReply_433(Message &msg)
 {
 //	if(m_status == Authentifying)
-	{
-		// This tells us that our nickname is, but we aren't logged in.
-		// This differs because the server won't send us a response back telling us our nick changed
-		// (since we aren't logged in).
+    {
+        // This tells us that our nickname is, but we aren't logged in.
+        // This differs because the server won't send us a response back telling us our nick changed
+        // (since we aren't logged in).
 //		m_FailedNickOnLogin = true;
 //		emit incomingFailedNickOnLogin(msg.arg(1));
-	}
+    }
 //	else
 //	{
-		// And this is the signal for if someone is trying to use the /nick command or such when already logged in,
-		// but it's already in use
+    // And this is the signal for if someone is trying to use the /nick command or such when already logged in,
+    // but it's already in use
 //		emit incomingNickInUse(msg.arg(1));
 //	}
 }
@@ -557,15 +557,15 @@ void Engine::numericReply_433(Message &msg)
  */
 void Engine::numericReply_442(Message &msg)
 {
-	receivedServerMessage(msg, i18n("You are not on channel %1.", msg.arg(1)));
+    receivedServerMessage(msg, i18n("You are not on channel %1.", msg.arg(1)));
 }
 
 /* 464: ":Password Incorrect"
  * Bad server password
  */
-void Engine::numericReply_464(Message &/*msg*/)
+void Engine::numericReply_464(Message & /*msg*/)
 {
-	/* Server need pass.. Call disconnect*/
+    /* Server need pass.. Call disconnect*/
 //	emit incomingFailedServerPassword();
 }
 
@@ -577,7 +577,7 @@ void Engine::numericReply_464(Message &/*msg*/)
  */
 void Engine::numericReply_471(Message &msg)
 {
-	receivedServerMessage(msg, i18n("Cannot join %1, channel is full.", msg.arg(1)) );
+    receivedServerMessage(msg, i18n("Cannot join %1, channel is full.", msg.arg(1)));
 }
 
 /* 472: "<char> :is unknown mode char to me for <channel>"
@@ -588,7 +588,7 @@ void Engine::numericReply_471(Message &msg)
  */
 void Engine::numericReply_473(Message &msg)
 {
-	receivedServerMessage(msg, i18n("Cannot join %1, channel is invite only.", msg.arg(1)) );
+    receivedServerMessage(msg, i18n("Cannot join %1, channel is invite only.", msg.arg(1)));
 }
 
 /* 474: "<channel> :Cannot join channel (+b)"
@@ -596,7 +596,7 @@ void Engine::numericReply_473(Message &msg)
  */
 void Engine::numericReply_474(Message &msg)
 {
-	receivedServerMessage(msg, i18n("Cannot join %1, you are banned from that channel.", msg.arg(1)) );
+    receivedServerMessage(msg, i18n("Cannot join %1, you are banned from that channel.", msg.arg(1)));
 }
 
 /* 475: "<channel> :Cannot join channel (+k)"
@@ -604,7 +604,7 @@ void Engine::numericReply_474(Message &msg)
  */
 void Engine::numericReply_475(Message &msg)
 {
-	receivedServerMessage(msg, i18n("Cannot join %1, wrong channel key was given.", msg.arg(1)) );
+    receivedServerMessage(msg, i18n("Cannot join %1, wrong channel key was given.", msg.arg(1)));
 }
 
 /* 476: "<channel> :Bad Channel Mask"
@@ -615,7 +615,7 @@ void Engine::numericReply_475(Message &msg)
  */
 // void Engine::numericReply_477(Message &msg)
 // {
-// 	emit incomingChannelNeedRegistration(msg.arg(2), msg.suffix());
+//  emit incomingChannelNeedRegistration(msg.arg(2), msg.suffix());
 // }
 
 /* 478: "<channel> <char> :Channel list is full"

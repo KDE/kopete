@@ -39,71 +39,75 @@ class KActionMenu;
 class QAction;
 class WPProtocol;
 
-namespace Kopete
-{
-	class StatusMessage;
+namespace Kopete {
+class StatusMessage;
 }
 /**
  * The actual Account class used by Kopete.
  */
 class WPAccount : public Kopete::Account
 {
-	Q_OBJECT
+    Q_OBJECT
 
 // Kopete::Account overloading
 public:
-	WPAccount(WPProtocol *parent, const QString& accountID);
-	~WPAccount();
+    WPAccount(WPProtocol *parent, const QString &accountID);
+    ~WPAccount();
 
-	virtual void fillActionMenu( KActionMenu *actionMenu );			// Per-protocol actions for the systray and the status bar
-	virtual bool hasCustomStatusMenu() const;		//Has custom status menu
-	virtual void setAway(bool status, const QString &);	// Set user away
+    virtual void fillActionMenu(KActionMenu *actionMenu);           // Per-protocol actions for the systray and the status bar
+    virtual bool hasCustomStatusMenu() const;       //Has custom status menu
+    virtual void setAway(bool status, const QString &); // Set user away
 
 public slots:
-	virtual void connect(const Kopete::OnlineStatus &);						// Connect to server
-	virtual void disconnect();					// Disconnect from server
+    virtual void connect(const Kopete::OnlineStatus &);                     // Connect to server
+    virtual void disconnect();                  // Disconnect from server
 
-	void goAvailable() { setAway(false, QString()); }		// Two convenience slots
-	void goAway() { setAway(true, QString()); }			// for available and away
+    void goAvailable()
+    {
+        setAway(false, QString());
+    }                                                       // Two convenience slots
+
+    void goAway()
+    {
+        setAway(true, QString());
+    }                                                   // for available and away
 
 // Stuff used internally & by colleague classes
 public:
-	const QStringList getGroups();
-	const QStringList getHosts(const QString &Group);
+    const QStringList getGroups();
+    const QStringList getHosts(const QString &Group);
 
 // Stuff used by WPContact
 public:
-	/**
-	 * Returns whether or not the named host is online.
-	 */
-	bool checkHost(const QString &Name);
+    /**
+     * Returns whether or not the named host is online.
+     */
+    bool checkHost(const QString &Name);
 
 public slots:
-	/**
-	 * Dispatches said message to the destination.
-	 */
-	void slotSendMessage(const QString &Body, const QString &Destination);
+    /**
+     * Dispatches said message to the destination.
+     */
+    void slotSendMessage(const QString &Body, const QString &Destination);
 
-	/**
-	 * Called when a new message arrives with the message's data.
-	 */
-	void slotGotNewMessage(const QString &Body, const QDateTime &Arrival, const QString &From);
+    /**
+     * Called when a new message arrives with the message's data.
+     */
+    void slotGotNewMessage(const QString &Body, const QDateTime &Arrival, const QString &From);
 
-	/* Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus &status , const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
-	                      const OnlineStatusOptions& options = None );
-	void setStatusMessage(const Kopete::StatusMessage& statusMessage);
+    /* Reimplemented from Kopete::Account */
+    void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(), const OnlineStatusOptions &options = None);
+    void setStatusMessage(const Kopete::StatusMessage &statusMessage);
 
 protected:
-	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentContact);
+    virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentContact);
 
 private slots:
 //	void updateAccountId();
 
 private:
-	WPProtocol *mProtocol;
-	QString theAwayMessage;			// The message to give when the user is away
+    WPProtocol *mProtocol;
+    QString theAwayMessage;         // The message to give when the user is away
 };
 
 #endif
-

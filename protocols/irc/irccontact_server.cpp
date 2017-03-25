@@ -31,46 +31,46 @@
 /*
 void IRCServerContact::slotSendMsg(Kopete::Message &, Kopete::ChatSession *manager)
 {
-	manager->messageSucceeded();
-	Kopete::Message msg( manager->myself(), manager->members(),
-		i18n("You cannot talk to the server, you can only issue commands here. Type /help for supported commands."), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
-	manager->appendMessage(msg);
+    manager->messageSucceeded();
+    Kopete::Message msg( manager->myself(), manager->members(),
+        i18n("You cannot talk to the server, you can only issue commands here. Type /help for supported commands."), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
+    manager->appendMessage(msg);
 }
 
 void IRCServerContact::appendMessage( const QString &message )
 {
-	Kopete::ContactPtrList members;
-	members.append( this );
-	Kopete::Message msg( this, members, message, Kopete::Message::Internal,
-		Kopete::Message::RichText, CHAT_VIEW );
-	appendMessage(msg);
+    Kopete::ContactPtrList members;
+    members.append( this );
+    Kopete::Message msg( this, members, message, Kopete::Message::Internal,
+        Kopete::Message::RichText, CHAT_VIEW );
+    appendMessage(msg);
 }
 
 void IRCServerContact::slotIncomingNotice( const QString &orig, const QString &notice )
 {
-	QString originator = orig.contains('!') ? orig.section('!',0,1) : orig;
-	ircAccount()->appendMessage(
-		i18n("NOTICE from %1: %2").arg(
-			originator == ircAccount()->mySelf()->nickName() ? kircEngine()->currentHost() : originator, notice
-		),
-		IRCAccount::NoticeReply
-	);
+    QString originator = orig.contains('!') ? orig.section('!',0,1) : orig;
+    ircAccount()->appendMessage(
+        i18n("NOTICE from %1: %2").arg(
+            originator == ircAccount()->mySelf()->nickName() ? kircEngine()->currentHost() : originator, notice
+        ),
+        IRCAccount::NoticeReply
+    );
 }
 
 void IRCServerContact::slotDumpMessages()
 {
-	if (!mMsgBuffer.isEmpty())
-	{
-		manager()->appendMessage( mMsgBuffer.front() );
-		mMsgBuffer.pop_front();
-		QTimer::singleShot( 0, this, SLOT(slotDumpMessages()) );
-	}
+    if (!mMsgBuffer.isEmpty())
+    {
+        manager()->appendMessage( mMsgBuffer.front() );
+        mMsgBuffer.pop_front();
+        QTimer::singleShot( 0, this, SLOT(slotDumpMessages()) );
+    }
 }
 
 void IRCServerContact::slotViewCreated( KopeteView *v )
 {
-	kDebug(14121) << "Created: " << v << ", mgr: " << v->msgManager() << ", Mine: " << m_chatSession;
-	if (m_chatSession && v->msgManager() == m_chatSession)
-		QTimer::singleShot(500, this, SLOT(slotDumpMessages()));
+    kDebug(14121) << "Created: " << v << ", mgr: " << v->msgManager() << ", Mine: " << m_chatSession;
+    if (m_chatSession && v->msgManager() == m_chatSession)
+        QTimer::singleShot(500, this, SLOT(slotDumpMessages()));
 }
 */

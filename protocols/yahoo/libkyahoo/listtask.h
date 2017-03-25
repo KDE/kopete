@@ -27,20 +27,20 @@ class YMSGTransfer;
 */
 class ListTask : public Task
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	ListTask(Task *parent);
-	~ListTask();
-	
-	bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+    ListTask(Task *parent);
+    ~ListTask();
+
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 
 protected:
-	bool forMe( const Transfer *transfer ) const Q_DECL_OVERRIDE;
-	void parseBuddyList( YMSGTransfer *transfer );
+    bool forMe(const Transfer *transfer) const Q_DECL_OVERRIDE;
+    void parseBuddyList(YMSGTransfer *transfer);
 
 signals:
-	void gotBuddy(const QString&, const QString&, const QString&);
-	void stealthStatusChanged( const QString&, Yahoo::StealthStatus );
+    void gotBuddy(const QString &, const QString &, const QString &);
+    void stealthStatusChanged(const QString &, Yahoo::StealthStatus);
 };
 
 #endif

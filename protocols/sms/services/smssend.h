@@ -29,34 +29,34 @@ class QLabel;
 
 class SMSSend : public SMSService
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	SMSSend(Kopete::Account* account);
-	~SMSSend();
+    SMSSend(Kopete::Account *account);
+    ~SMSSend();
 
-	virtual void setAccount(Kopete::Account* account);
+    virtual void setAccount(Kopete::Account *account);
 
-	void send(const Kopete::Message& msg);
-	void setWidgetContainer(QWidget* parent, QGridLayout* container);
+    void send(const Kopete::Message &msg);
+    void setWidgetContainer(QWidget *parent, QGridLayout *container);
 
-	int maxSize();
-	const QString& description();
+    int maxSize();
+    const QString &description();
 
 public slots:
-	void savePreferences();
+    void savePreferences();
 
 private slots:
-	void setOptions(const QString& name);
-	void loadProviders(const QString& prefix);
+    void setOptions(const QString &name);
+    void loadProviders(const QString &prefix);
 //signals:
 //	void messageSent(const Kopete::Message&);
 
 private:
-	SMSSendProvider* m_provider;
-	SMSSendPrefsUI* prefWidget;
-	QList<QLineEdit*> args;
-	QList<QLabel*> labels;
-	QString m_description;
-} ;
+    SMSSendProvider *m_provider;
+    SMSSendPrefsUI *prefWidget;
+    QList<QLineEdit *> args;
+    QList<QLabel *> labels;
+    QString m_description;
+};
 
 #endif //SMSSEND_H

@@ -24,9 +24,9 @@
 #include <qstring.h>
 #include "yahoo_protocol_debug.h"
 
-ChatSessionTask::ChatSessionTask(Task* parent) : Task(parent)
+ChatSessionTask::ChatSessionTask(Task *parent) : Task(parent)
 {
-	qCDebug(YAHOO_PROTOCOL_LOG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG);
 }
 
 ChatSessionTask::~ChatSessionTask()
@@ -35,32 +35,29 @@ ChatSessionTask::~ChatSessionTask()
 
 void ChatSessionTask::onGo()
 {
-	qCDebug(YAHOO_PROTOCOL_LOG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG);
 
-	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceChatSession );
-	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId().toLocal8Bit() );
-	t->setParam( 5, m_target.toLocal8Bit() );
-	if( m_type == RegisterSession )
-	{
-		t->setParam( 13, 1 );
-	}
-	else
-	{
-		t->setParam( 13, 2 );
-		t->setParam( 34, 1 );
-	}
-	send( t );
-	
-	setSuccess();
+    YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceChatSession);
+    t->setId(client()->sessionID());
+    t->setParam(1, client()->userId().toLocal8Bit());
+    t->setParam(5, m_target.toLocal8Bit());
+    if (m_type == RegisterSession) {
+        t->setParam(13, 1);
+    } else {
+        t->setParam(13, 2);
+        t->setParam(34, 1);
+    }
+    send(t);
+
+    setSuccess();
 }
 
-void ChatSessionTask::setTarget( const QString &to )
+void ChatSessionTask::setTarget(const QString &to)
 {
-	m_target = to;
+    m_target = to;
 }
 
-void ChatSessionTask::setType( Type type )
+void ChatSessionTask::setType(Type type)
 {
-	m_type = type;
+    m_type = type;
 }

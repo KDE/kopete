@@ -21,29 +21,25 @@
 #include "kopeteproperty.h"
 
 namespace IRC {
-
 enum ChatSessionType
 {
-	SERVER,
-	CHANNEL,
-	DCC
+    SERVER,
+    CHANNEL,
+    DCC
 };
 
 extern const QString Version;
 
 namespace Config {
-
 //extern const QLatin1String AUTOSHOWSERVERWINDOW;
 extern const QLatin1String CODECMIB;
 extern const QLatin1String NETWORKNAME;
 extern const QLatin1String NICKNAME;
 extern const QLatin1String USERNAME;
 extern const QLatin1String REALNAME;
-
 } // namespace IRC::Config
 
 namespace Properties {
-
 // irc channnel-contact properties
 extern const Kopete::PropertyTmpl ChannelHomepage;
 extern const Kopete::PropertyTmpl ChannelMembers;
@@ -57,10 +53,7 @@ extern const Kopete::PropertyTmpl Channels;
 extern const Kopete::PropertyTmpl Hops;
 extern const Kopete::PropertyTmpl FullName;
 extern const Kopete::PropertyTmpl IsIdentified;
-
 } // namespace IRC::Properties
-
 } // namespace IRC
 
 #endif
-

@@ -28,52 +28,54 @@
 #include "smsaccount.h"
 
 class K3Process;
-namespace Kopete { class Account; }
+namespace Kopete {
+class Account;
+}
 
 class SMSSendProvider : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	SMSSendProvider(const QString& providerName, const QString& prefixValue, Kopete::Account* account, QObject* parent = 0);
-	~SMSSendProvider();
+    SMSSendProvider(const QString &providerName, const QString &prefixValue, Kopete::Account *account, QObject *parent = 0);
+    ~SMSSendProvider();
 
-	void setAccount(Kopete::Account *account);
+    void setAccount(Kopete::Account *account);
 
-	int count();
-	QString name(int i);
-	const QString& value(int i);
-	const QString& description(int i);
-	bool isHidden(int i) const;
+    int count();
+    QString name(int i);
+    const QString &value(int i);
+    const QString &description(int i);
+    bool isHidden(int i) const;
 
-	void save(const QList<QLineEdit*>& args);
-	void send(const Kopete::Message& msg);
+    void save(const QList<QLineEdit *> &args);
+    void send(const Kopete::Message &msg);
 
-	int maxSize();
+    int maxSize();
 private slots:
-	void slotReceivedOutput(K3Process*, char  *buffer, int  buflen);
-	void slotSendFinished(K3Process*);
+    void slotReceivedOutput(K3Process *, char *buffer, int buflen);
+    void slotSendFinished(K3Process *);
 private:
-	QStringList names;
-	QStringList descriptions;
-	QStringList values;
-	QList<bool> isHiddens;
+    QStringList names;
+    QStringList descriptions;
+    QStringList values;
+    QList<bool> isHiddens;
 
-	int messagePos;
-	int telPos;
-	int m_maxSize;
+    int messagePos;
+    int telPos;
+    int m_maxSize;
 
-	QString provider;
-	QString prefix;
-	QByteArray output;
+    QString provider;
+    QString prefix;
+    QByteArray output;
 
-	Kopete::Account* m_account;
+    Kopete::Account *m_account;
 
-	Kopete::Message m_msg;
+    Kopete::Message m_msg;
 
-	bool canSend;
+    bool canSend;
 signals:
-	void messageSent(const Kopete::Message& msg);
-	void messageNotSent(const Kopete::Message& msg, const QString &error);
-} ;
+    void messageSent(const Kopete::Message &msg);
+    void messageNotSent(const Kopete::Message &msg, const QString &error);
+};
 
 #endif //SMSSENDPROVIDER_H

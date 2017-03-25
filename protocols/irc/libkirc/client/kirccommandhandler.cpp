@@ -21,7 +21,7 @@
 using namespace KIrc;
 
 CommandHandler::CommandHandler(QObject *parent)
-	: QObject(parent)
+    : QObject(parent)
 {
 }
 
@@ -31,16 +31,16 @@ CommandHandler::~CommandHandler()
 
 Command *CommandHandler::registerCommand(const QString &name, Command *command)
 {
-	if (name.isEmpty() || !command)
-		return 0;
+    if (name.isEmpty() || !command) {
+        return 0;
+    }
 
-	if (!m_commands.values(name).contains(command))
-	{
-		m_commands.insertMulti(name, command);
-		connect(command, SIGNAL(destroyed()),
-			this, SLOT(cleanup()));
-	}
-	return command;
+    if (!m_commands.values(name).contains(command)) {
+        m_commands.insertMulti(name, command);
+        connect(command, SIGNAL(destroyed()),
+                this, SLOT(cleanup()));
+    }
+    return command;
 }
 
 Command *CommandHandler::registerCommand(const QString &name, QObject *object, const char *member)
@@ -51,19 +51,16 @@ Command *CommandHandler::registerCommand(const QString &name, QObject *object, c
 
 void CommandHandler::handleMessage(Message msg)
 {
-	QList<Command *> commands = m_commands.values(msg.command());
-	if (commands.isEmpty())
-	{
+    QList<Command *> commands = m_commands.values(msg.command());
+    if (commands.isEmpty()) {
 //		emit unhandledMessage(msg);
-	}
-	else
-	{
-		foreach(Command *command, commands)
-			command->handleMessage(msg);
-	}
+    } else {
+        foreach (Command *command, commands) {
+            command->handleMessage(msg);
+        }
+    }
 }
 
 void CommandHandler::unregisterCommand(Command *command)
 {
 }
-

@@ -24,9 +24,7 @@
 
 #include <QtNetwork/QAbstractSocket>
 
-namespace KIrc
-{
-
+namespace KIrc {
 class Context;
 class Entity;
 class Handler;
@@ -37,66 +35,63 @@ class Handler;
 /**
  * @author Michel Hermier <michel.hermier@gmail.com>
  */
-class KIRC_EXPORT Socket
-	: public QObject
+class KIRC_EXPORT Socket : public QObject
 {
-	Q_OBJECT
-	Q_DECLARE_PRIVATE(KIrc::Socket)
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(KIrc::Socket)
 
-	Q_PROPERTY(ConnectionState connectionState READ connectionState)
+    Q_PROPERTY(ConnectionState connectionState READ connectionState)
 //	Q_PROPERTY(KIrc::Entity *owner READ owner)
-	Q_ENUMS(ConnectionState)
+    Q_ENUMS(ConnectionState)
 
 private:
-	Q_DISABLE_COPY(Socket)
+    Q_DISABLE_COPY(Socket)
 
 public:
-	enum ConnectionState
-	{
-		Idle,
-		HostLookup,
-		HostFound,
+    enum ConnectionState
+    {
+        Idle,
+        HostLookup,
+        HostFound,
 //		Bound, // For server socket
-		Connecting,
+        Connecting,
 //		Open, // For server socket
-		Authentifying,
-		Authentified,
-		Closing
-	};
+        Authentifying,
+        Authentified,
+        Closing
+    };
 
-	~Socket();
+    ~Socket();
 
 public: // READ properties accessors.
-	KIrc::Socket::ConnectionState connectionState() const;
+    KIrc::Socket::ConnectionState connectionState() const;
 
-	KIrc::EntityPtr owner() const;
+    KIrc::EntityPtr owner() const;
 
 public Q_SLOTS:
-	void writeMessage(const Message &message);
+    void writeMessage(const Message &message);
 
-	void close();
+    void close();
 
 Q_SIGNALS:
-	void connectionStateChanged(KIrc::Socket::ConnectionState newState);
+    void connectionStateChanged(KIrc::Socket::ConnectionState newState);
 
-	void receivedMessage(const KIrc::Message &message);
+    void receivedMessage(const KIrc::Message &message);
 
 protected:
-	Socket(KIrc::Context *context, KIrc::SocketPrivate *socketp);
+    Socket(KIrc::Context *context, KIrc::SocketPrivate *socketp);
 
-	QAbstractSocket *socket();
-	void setSocket(QAbstractSocket *socket);
+    QAbstractSocket *socket();
+    void setSocket(QAbstractSocket *socket);
 
-	void setConnectionState(Socket::ConnectionState newstate);
+    void setConnectionState(Socket::ConnectionState newstate);
 
 protected Q_SLOTS:
-	virtual void socketStateChanged(QAbstractSocket::SocketState newstate);
+    virtual void socketStateChanged(QAbstractSocket::SocketState newstate);
 
 protected:
-	KIrc::SocketPrivate * const d_ptr;
+    KIrc::SocketPrivate *const d_ptr;
 };
-
 }
 
 #endif
-
