@@ -30,6 +30,7 @@
 #include <kplugininfo.h>
 #include <kiconloader.h>
 #include <qpainter.h>
+#include <KSharedConfig>
 
 #include "kopetecommandhandler.h"
 #include "kopetepluginmanager.h"
@@ -161,7 +162,7 @@ AliasPreferences::~AliasPreferences()
 // reload configuration reading it from kopeterc
 void AliasPreferences::load()
 {
-    KConfigGroup config(KGlobal::config(), "AliasPlugin");
+    KConfigGroup config(KSharedConfig::openConfig(), "AliasPlugin");
     if (config.exists()) {
         QStringList aliases = config.readEntry("AliasNames", QStringList());
         for (QStringList::Iterator it = aliases.begin(); it != aliases.end(); ++it) {
@@ -186,7 +187,7 @@ void AliasPreferences::slotPluginLoaded(Kopete::Plugin *plugin)
 {
     Kopete::Protocol *protocol = static_cast<Kopete::Protocol *>(plugin);
     if (protocol) {
-        KConfigGroup config(KGlobal::config(), "AliasPlugin");
+        KConfigGroup config(KSharedConfig::openConfig(), "AliasPlugin");
         if (config.exists()) {
             QStringList aliases = config.readEntry("AliasNames", QStringList());
             for (QStringList::Iterator it = aliases.begin(); it != aliases.end(); ++it) {
@@ -228,7 +229,7 @@ void AliasPreferences::slotPluginLoaded(Kopete::Plugin *plugin)
 // save list to kopeterc and creates map out of it
 void AliasPreferences::save()
 {
-    KConfigGroup config = KGlobal::config()->group("AliasPlugin");
+    KConfigGroup config = KSharedConfig::openConfig()->group("AliasPlugin");
     config.deleteGroup();
 
     QStringList aliases;

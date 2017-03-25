@@ -33,7 +33,7 @@
 #include <kio/job.h>
 #include <kmessagebox.h>
 #include <ktemporaryfile.h>
-#include <kstandarddirs.h>
+
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -42,6 +42,7 @@
 #include <libxslt/xsltInternals.h>
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
+#include <QStandardPaths>
 
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
@@ -329,16 +330,16 @@ bool WebPresencePlugin::transform(KTemporaryFile *src, KTemporaryFile *dest)
         return false;
     case WEB_HTML:
         if (WebPresenceConfig::self()->useImagesHTML()) {
-            sheet.setFileName(KStandardDirs::locate("appdata", QStringLiteral("webpresence/webpresence_html_images.xsl")));
+            sheet.setFileName(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("webpresence/webpresence_html_images.xsl")));
         } else {
-            sheet.setFileName(KStandardDirs::locate("appdata", QStringLiteral("webpresence/webpresence_html.xsl")));
+            sheet.setFileName(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("webpresence/webpresence_html.xsl")));
         }
         break;
     case WEB_XHTML:
         if (WebPresenceConfig::self()->useImagesHTML()) {
-            sheet.setFileName(KStandardDirs::locate("appdata", QStringLiteral("webpresence/webpresence_xhtml_images.xsl")));
+            sheet.setFileName(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("webpresence/webpresence_xhtml_images.xsl")));
         } else {
-            sheet.setFileName(KStandardDirs::locate("appdata", QStringLiteral("webpresence/webpresence_xhtml.xsl")));
+            sheet.setFileName(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("webpresence/webpresence_xhtml.xsl")));
         }
         break;
     case WEB_CUSTOM:

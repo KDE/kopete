@@ -22,6 +22,7 @@
 #include <kglobal.h>
 #include <KLocalizedString>
 #include <kconfiggroup.h>
+#include <KSharedConfig>
 
 //TODO: Use KConfigXT
 AutoReplaceConfig::AutoReplaceConfig()
