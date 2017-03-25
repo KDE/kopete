@@ -256,7 +256,7 @@ However, the recommended way is to ask your administrator to create this directo
                <number>6</number>
               </property>
               <item>
-               <widget class="KIntSpinBox" name="mHostCheckFreq" >
+               <widget class="QSpinBox" name="mHostCheckFreq" >
                 <property name="sizePolicy" >
                  <sizepolicy>
                   <hsizetype>5</hsizetype>
@@ -378,7 +378,7 @@ However, the recommended way is to ask your administrator to create this directo
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KIntSpinBox</class>
+   <class>QSpinBox</class>
    <extends></extends>
    <header>knuminput.h</header>
    <container>0</container>

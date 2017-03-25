@@ -52,7 +52,7 @@ Otherwise, an unlimited number of previews are generated.</string>
        </widget>
       </item>
       <item>
-       <widget class="KIntSpinBox" name="previewAmount" >
+       <widget class="QSpinBox" name="previewAmount" >
         <property name="whatsThis" >
          <string>The maximum number of pictures to download and preview.</string>
         </property>
@@ -119,7 +119,7 @@ Otherwise, the images are not scaled at all and appear in their original size.</
        </widget>
       </item>
       <item>
-       <widget class="KIntSpinBox" name="previewScaleWidth" >
+       <widget class="QSpinBox" name="previewScaleWidth" >
         <property name="whatsThis" >
          <string>The width to which images should be scaled down. Smaller images will appear in their original size.</string>
         </property>
@@ -276,11 +276,6 @@ Use 0 seconds to never abort the creation.</string>
   <customwidget>
    <class>KIntNumInput</class>
    <extends>QWidget</extends>
-   <header>knuminput.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KIntSpinBox</class>
-   <extends>QSpinBox</extends>
    <header>knuminput.h</header>
   </customwidget>
  </customwidgets>

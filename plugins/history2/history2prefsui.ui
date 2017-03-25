@@ -31,7 +31,7 @@
        <number>6</number>
       </property>
       <item row="1" column="2">
-       <widget class="KIntSpinBox" name="Number_Auto_chatwindow">
+       <widget class="QSpinBox" name="Number_Auto_chatwindow">
         <property name="whatsThis">
          <string>This is the number of messages that will be added automatically in the chat window when opening a new chat.</string>
         </property>
@@ -129,7 +129,7 @@
        </widget>
       </item>
       <item row="3" column="2">
-       <widget class="KIntSpinBox" name="Number_ChatWindow">
+       <widget class="QSpinBox" name="Number_ChatWindow">
         <property name="whatsThis">
          <string>The number of message that are shown when borwsing history in the chat window</string>
         </property>
@@ -180,11 +180,6 @@
    <class>KColorButton</class>
    <extends>QPushButton</extends>
    <header>kcolorbutton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KIntSpinBox</class>
-   <extends>QSpinBox</extends>
-   <header>knuminput.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

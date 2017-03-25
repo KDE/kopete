@@ -51,7 +51,7 @@
     </layout>
    </item>
    <item row="8" column="2">
-    <widget class="KIntSpinBox" name="sbPort">
+    <widget class="QSpinBox" name="sbPort">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -297,11 +297,6 @@
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KIntSpinBox</class>
-   <extends>QSpinBox</extends>
-   <header>knuminput.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
