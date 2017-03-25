@@ -24,7 +24,7 @@
 #include <QMouseEvent>
 
 TokenPool::TokenPool(QWidget *parent)
-    : KListWidget(parent)
+    : QListWidget(parent)
 {
     setAcceptDrops(true);
 }
@@ -68,7 +68,7 @@ TokenPool::mousePressEvent(QMouseEvent *event)
     if (event->button() == Qt::LeftButton) {
         m_startPos = event->pos();            //store the start position
     }
-    KListWidget::mousePressEvent(event);      //feed it to parent's event
+    QListWidget::mousePressEvent(event);      //feed it to parent's event
 }
 
 //Executed on mouse move, handles start of drag.
@@ -81,7 +81,7 @@ TokenPool::mouseMoveEvent(QMouseEvent *event)
             performDrag(event);
         }
     }
-    KListWidget::mouseMoveEvent(event);
+    QListWidget::mouseMoveEvent(event);
 }
 
 //This doesn't do much since TokenPool doesn't accept objects.

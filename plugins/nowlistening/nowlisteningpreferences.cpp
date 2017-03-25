@@ -26,7 +26,7 @@
 #include <qradiobutton.h>
 #include <QVBoxLayout>
 
-#include <klistwidget.h>
+#include <QListWidget>
 #include <klocale.h>
 #include <kpluginfactory.h>
 

@@ -259,7 +259,7 @@ in place of your status message.</string>
           </widget>
          </item>
          <item>
-          <widget class="KListWidget" name="kcfg_SelectedMediaPlayer"/>
+          <widget class="QListWidget" name="kcfg_SelectedMediaPlayer"/>
          </item>
         </layout>
        </item>
@@ -303,7 +303,7 @@ in place of your status message.</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KListWidget</class>
+   <class>QListWidget</class>
    <extends>QListWidget</extends>
    <header>klistwidget.h</header>
   </customwidget>

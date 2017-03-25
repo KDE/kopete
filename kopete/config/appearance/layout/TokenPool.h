@@ -21,11 +21,11 @@
 
 #include "Token.h"
 
-#include <KListWidget>
+#include <QListWidget>
 #include <QMap>
 
 //Holds a number of icons representing parts of the filename that will become tokens when dropped on the TokenLayoutWidget.
-class TokenPool : public KListWidget
+class TokenPool : public QListWidget
 {
     Q_OBJECT
     Q_PROPERTY(QString mimeType READ mimeType WRITE setMimeType)

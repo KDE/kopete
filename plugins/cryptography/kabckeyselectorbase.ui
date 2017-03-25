@@ -22,7 +22,7 @@
     </widget>
    </item>
    <item>
-    <widget class="KListWidget" name="keyList" >
+    <widget class="QListWidget" name="keyList" >
      <property name="toolTip" >
       <string>Select Keys to Use</string>
      </property>
@@ -38,7 +38,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KListWidget</class>
+   <class>QListWidget</class>
    <extends>QListWidget</extends>
    <header>klistwidget.h</header>
   </customwidget>
