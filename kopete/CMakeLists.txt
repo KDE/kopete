@@ -8,42 +8,42 @@ add_subdirectory( chatwindow )
 add_subdirectory( kconf_update ) 
 
 include_directories( 
-${KOPETE_INCLUDES} 
-${CMAKE_CURRENT_SOURCE_DIR}/addaccountwizard 
-${CMAKE_CURRENT_BINARY_DIR}/addaccountwizard
-${CMAKE_CURRENT_SOURCE_DIR}/statusmenu/
-${CMAKE_CURRENT_BINARY_DIR}/statusmenu/
-${CMAKE_CURRENT_SOURCE_DIR}/identity 
-${CMAKE_CURRENT_BINARY_DIR}/identity
-${CMAKE_CURRENT_SOURCE_DIR}/contactlist/
-${CMAKE_CURRENT_BINARY_DIR}/contactlist/
-${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/
-${QIMAGEBLITZ_INCLUDES}
-)
+    ${KOPETE_INCLUDES}
+    ${CMAKE_CURRENT_SOURCE_DIR}/addaccountwizard
+    ${CMAKE_CURRENT_BINARY_DIR}/addaccountwizard
+    ${CMAKE_CURRENT_SOURCE_DIR}/statusmenu/
+    ${CMAKE_CURRENT_BINARY_DIR}/statusmenu/
+    ${CMAKE_CURRENT_SOURCE_DIR}/identity
+    ${CMAKE_CURRENT_BINARY_DIR}/identity
+    ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/
+    ${CMAKE_CURRENT_BINARY_DIR}/contactlist/
+    ${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/
+    ${QIMAGEBLITZ_INCLUDES}
+    )
 
 link_directories( 
-${KOPETE_BINARY_DIR}/libkopete
-${CMAKE_CURRENT_BINARY_DIR}/addaccountwizard 
-${CMAKE_CURRENT_BINARY_DIR}/identity
-${CMAKE_CURRENT_BINARY_DIR}/contactlist
-)
+    ${KOPETE_BINARY_DIR}/libkopete
+    ${CMAKE_CURRENT_BINARY_DIR}/addaccountwizard
+    ${CMAKE_CURRENT_BINARY_DIR}/identity
+    ${CMAKE_CURRENT_BINARY_DIR}/contactlist
+    )
 
 ########### next target ###############
 
 # Contact List
 
 set(kopete_SRCS 
-   ${kopetecontactlist_SRCS}
-   main.cpp
-   kopeteapplication.cpp
-   systemtray.cpp
-   kopetewindow.cpp
-   kopeteidentitystatusbaricon.cpp
-   kopeteaccountstatusbaricon.cpp
-   kopetedbusinterface.cpp
-   kopetedbusinterface_p.cpp
-   infoeventwidget.cpp
-   )
+    ${kopetecontactlist_SRCS}
+    main.cpp
+    kopeteapplication.cpp
+    systemtray.cpp
+    kopetewindow.cpp
+    kopeteidentitystatusbaricon.cpp
+    kopeteaccountstatusbaricon.cpp
+    kopetedbusinterface.cpp
+    kopetedbusinterface_p.cpp
+    infoeventwidget.cpp
+    )
 
 qt5_add_dbus_adaptor(kopete_SRCS org.kde.Kopete.xml kopetedbusinterface.h KopeteDBusInterface)
 
@@ -56,17 +56,17 @@ add_executable(kopete_bin ${kopete_SRCS})
 set_target_properties(kopete_bin PROPERTIES RUNTIME_OUTPUT_NAME kopete)
 
 target_link_libraries(kopete_bin
-	KF5::Contacts
-	KF5::TextEditor
-	KF5::NotifyConfig
-	${KDE4_SOLID_LIBRARY}
-	${QIMAGEBLITZ_LIBRARIES}
-	kopete
-	kopeteaddaccountwizard
-	kopetestatusmenu
-	kopetecontactlist
-	kopeteidentity
-)
+    KF5::Contacts
+    KF5::TextEditor
+    KF5::NotifyConfig
+    ${KDE4_SOLID_LIBRARY}
+    ${QIMAGEBLITZ_LIBRARIES}
+    kopete
+    kopeteaddaccountwizard
+    kopetestatusmenu
+    kopetecontactlist
+    kopeteidentity
+    )
 
 install(TARGETS kopete_bin  ${KDE_INSTALL_TARGETS_DEFAULT_ARGS} )
 
