@@ -443,9 +443,6 @@
   <tabstop>editAcl</tabstop>
   <tabstop>deleteAcl</tabstop>
  </tabstops>
- <includes>
-  <include location="local" >kpushbutton.h</include>
- </includes>
  <resources/>
  <connections/>
 </ui>
