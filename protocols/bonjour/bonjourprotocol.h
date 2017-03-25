@@ -32,7 +32,7 @@ class BonjourProtocol : public Kopete::Protocol
 {
     Q_OBJECT
 public:
-    BonjourProtocol(QObject *parent, const QStringList &args);
+    BonjourProtocol(QObject *parent, const QVariantList &args = QList<QVariant>());
     ~BonjourProtocol();
     /**
      * Convert the serialised data back into a BonjourContact and add this

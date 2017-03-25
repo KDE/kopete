@@ -26,12 +26,13 @@
 #include "bonjouraddcontactpage.h"
 #include "bonjoureditaccountwidget.h"
 
-typedef KGenericFactory<BonjourProtocol> BonjourProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY(kopete_bonjour, BonjourProtocolFactory("kopete_bonjour"))
+K_PLUGIN_FACTORY( BonjourProtocolFactory, registerPlugin<BonjourProtocol>(); )
+K_EXPORT_PLUGIN( BonjourProtocolFactory( "kopete_bonjour" ) )
+
 
 BonjourProtocol *BonjourProtocol::s_protocol = 0L;
 
-BonjourProtocol::BonjourProtocol(QObject *parent, const QStringList & /*args*/)
+BonjourProtocol::BonjourProtocol(QObject *parent, const QVariantList & /*args*/)
     : Kopete::Protocol(parent)
     , bonjourOnline(Kopete::OnlineStatus::Online, 25, this, 0, QStringList(QString()),
                     i18n("Online"), i18n("O&nline"), Kopete::OnlineStatusManager::Online)
@@ -101,3 +102,4 @@ BonjourProtocol *BonjourProtocol::protocol()
 {
     return s_protocol;
 }
+#include "bonjourprotocol.moc"
