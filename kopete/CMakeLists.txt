@@ -82,5 +82,6 @@ install( FILES kopete.notifyrc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete)
 install( FILES kopeterc DESTINATION ${KDE_INSTALL_CONFDIR} )
 install( FILES org.kde.Kopete.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR} )
 
-ecm_install_icons( ${KDE_INSTALL_ICONDIR}   )
+file(GLOB icons_png "*.png")
+ecm_install_icons(ICONS ${icons_png}  DESTINATION ${KDE_INSTALL_ICONDIR} THEME oxygen)
 
