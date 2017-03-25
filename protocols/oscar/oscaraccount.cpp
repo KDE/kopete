@@ -51,7 +51,7 @@
 #include <kmessagebox.h>
 #include <kdialog.h>
 #include <knotification.h>
-#include <kstandarddirs.h>
+
 #include <kprotocolmanager.h>
 
 #include "client.h"
@@ -72,6 +72,7 @@
 #include "oscarprotocol.h"
 #include "oscarstatusmanager.h"
 #include <kopetesockettimeoutwatcher.h>
+#include <QStandardPaths>
 
 using namespace Oscar;
 
@@ -787,7 +788,7 @@ void OscarAccount::updateBuddyIcon( const QString &path )
 		if( image.height() > size.height())
 			image = image.copy( 0, ( image.height() - size.height() ) / 2, image.width(), size.height() );
 
-		QString newlocation( KStandardDirs::locateLocal( "appdata", "oscarpictures/" + accountId() + ".jpg" ) );
+		QString newlocation( QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "oscarpictures/" + accountId() + ".jpg" ) ;
 
 		kDebug(OSCAR_RAW_DEBUG) << "Saving buddy icon: " << newlocation;
 		if ( !image.save( newlocation, "JPEG" ) )

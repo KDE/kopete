@@ -41,7 +41,7 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <ksimpleconfig.h>
-#include <kstandarddirs.h>
+
 #include <kuser.h>
 
 #include <qcheckbox.h>

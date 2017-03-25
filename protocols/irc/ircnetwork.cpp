@@ -20,10 +20,11 @@
 #include "ircnetwork.h"
 
 #include <kdebug.h>
-#include <kstandarddirs.h> // for locate
+ // for locate
 
 #include <qdom.h>
 #include <qfile.h>
+#include <QStandardPaths>
 
 struct IRC::Networks::Private {
     IRC::NetworkList networks;
@@ -72,7 +73,7 @@ void Networks::slotReadNetworks()
 {
     d->networks.clear();
 
-    QFile xmlFile(KStandardDirs::locate("appdata", "ircnetworks.xml"));
+    QFile xmlFile(QStandardPaths::locate(QStandardPaths::DataLocation, "ircnetworks.xml"));
     xmlFile.open(QIODevice::ReadOnly);
 
     // FIXME
@@ -160,7 +161,7 @@ bool Networks::slotSaveNetworkConfig() const
     }
 
 //	kDebug(14121) << doc.toString(4);
-    QFile xmlFile(KStandardDirs::locateLocal("appdata", "ircnetworks.xml"));
+    QFile xmlFile(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "ircnetworks.xml");
 
     if (xmlFile.open(QIODevice::WriteOnly)) {
         QTextStream stream(&xmlFile);

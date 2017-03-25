@@ -29,7 +29,7 @@
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
-#include <kstandarddirs.h>
+
 
 // Kopete Includes
 #include <kopeteaccount.h>

@@ -49,7 +49,7 @@
 #include <kinputdialog.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include <kstandarddirs.h>
+
 #include <kuser.h>
 
 #include <qcheckbox.h>

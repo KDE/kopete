@@ -29,7 +29,7 @@
 #include <qtimer.h>
 
 #include <KLocalizedString>
-#include <kstandarddirs.h>
+
 #include <qtextbrowser.h>
 #include <kdebug.h>
 

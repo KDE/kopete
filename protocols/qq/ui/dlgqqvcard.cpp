@@ -26,6 +26,7 @@
 #include <QPixmap>
 // KDE includes
 #include <kdebug.h>
+#include <QStandardPaths>
 // Kopete includes
 #include "qqprotocol.h"
 #include "qqcontact.h"
@@ -332,7 +333,7 @@ void dlgQQVCard::slotSelectPhoto()
 				img = img.copy(0, (img.height()-img.width())/2, img.height(), img.height());
 		}
 
-		m_photoPath = KStandardDirs::locateLocal("appdata", "qqphotos/" + m_contact->rosterItem().jid().full().toLower().replace(QRegExp("[./~]"),"-")  +".png");
+		m_photoPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "qqphotos/" + m_contact->rosterItem().jid().full().toLower().replace(QRegExp("[./~]"),"-")  +".png";
 		if( img.save(m_photoPath, "PNG") )
 		{
 			m_mainWidget->lblPhoto->setPixmap( QPixmap::fromImage(img) );

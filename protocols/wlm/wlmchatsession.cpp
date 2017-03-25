@@ -41,7 +41,7 @@
 #include <kmainwindow.h>
 #include <ktoolbar.h>
 #include <krun.h>
-#include <kstandarddirs.h>
+
 #include <kcomponentdata.h>
 #include <kemoticons.h>
 #include <kcodecs.h>
@@ -65,6 +65,7 @@
 #include "wlmchatsessioninkaction.h"
 #ifdef HAVE_GIFLIB
 #include <gif_lib.h>
+#include <QStandardPaths>
 /* old giflib has no GIFLIB_MAJOR, define to avoid cpp warnings */
 #ifndef GIFLIB_MAJOR
 #define GIFLIB_MAJOR 4
@@ -1173,7 +1174,7 @@ WlmChatSession::requestDisplayPicture ()
     }
     if (isReady ())
     {
-        QString newlocation = KGlobal::dirs()->locateLocal("appdata", "wlmpictures/" + QString(SHA1D.replace ('/', '_')));
+        QString newlocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "wlmpictures/" + QString(SHA1D.replace ('/', '_'));
         getChatService()->requestDisplayPicture(generateSessionID(), QFile::encodeName(newlocation).constData(),
                                                 contact->getMsnObj().toUtf8().constData());
         setDownloadDisplayPicture (false);

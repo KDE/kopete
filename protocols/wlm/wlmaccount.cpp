@@ -32,7 +32,7 @@
 #include <knotification.h>
 #include <KCodecs>
 #include <KInputDialog>
-#include <KStandardDirs>
+
 #include <KToolInvocation>
 
 #include "kopetechatsessionmanager.h"

@@ -25,7 +25,7 @@
 #include <kio/job.h>
 #include <kio/jobclasses.h>
 #include <kurl.h>
-#include <kstandarddirs.h>
+
 #include <klocale.h>
 
 #include "yahootypes.h"

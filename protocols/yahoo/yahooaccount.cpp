@@ -44,7 +44,7 @@
 #include <QMenu>
 #include <kmessagebox.h>
 #include <krun.h>
-#include <kstandarddirs.h>
+
 #include <ktoolinvocation.h>
 #include <QIcon>
 #include <kmessagebox_queued.h>
@@ -60,6 +60,7 @@
 #include <kopetetransfermanager.h>
 #include <kopeteview.h>
 #include <kopeteaddedinfoevent.h>
+#include <QStandardPaths>
 
 // Yahoo
 #include "yahoocontact.h"
@@ -1673,7 +1674,7 @@ void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 	}
 
 	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() &&
-	     QFile::exists( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png" ) ) )
+	     QFile::exists( QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png" ) ) 
 	{
 		qCDebug(YAHOO_PROTOCOL_LOG) << "Icon already exists. I will not request it again.";
 		return;
@@ -1691,7 +1692,7 @@ void YahooAccount::slotGotBuddyIconInfo(const QString &who, KUrl url, int checks
 	}
 
 	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()  &&
-	     QFile::exists( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png" ) ))
+	     QFile::exists( QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png" ) )
 	{
 		qCDebug(YAHOO_PROTOCOL_LOG) << "Icon already exists. I will not download it again.";
 		return;
@@ -1732,7 +1733,7 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 	else
 	{
 		QImage image( url.toLocalFile() );
-		QString newlocation( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ url.fileName().toLower() ) ) ;
+		QString newlocation( QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "yahoopictures/"+ url.fileName().toLower() )  ;
 		QFile iconFile( newlocation );
 		QByteArray data;
 		uint expire = myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt();

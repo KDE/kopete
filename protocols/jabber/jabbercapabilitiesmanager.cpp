@@ -29,10 +29,11 @@
 #include <qfile.h>
 #include <qtextcodec.h>
 
-#include <kstandarddirs.h>
+
 #include "jabber_protocol_debug.h"
 
 #include <xmpp_tasks.h>
+#include <QStandardPaths>
 
 #include "jabberaccount.h"
 #include "jabberprotocol.h"
@@ -487,7 +488,7 @@ void JabberCapabilitiesManager::discoRequestFinished()
 void JabberCapabilitiesManager::loadCachedInformation()
 {
     QString capsFileName;
-    capsFileName = KStandardDirs::locateLocal("appdata", QStringLiteral("jabber-capabilities-cache.xml"));
+    capsFileName = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("jabber-capabilities-cache.xml");
 
     // Load settings
     QDomDocument doc;
@@ -594,7 +595,7 @@ QString JabberCapabilitiesManager::clientVersion(const Jid &jid) const
 void JabberCapabilitiesManager::saveInformation()
 {
     QString capsFileName;
-    capsFileName = KStandardDirs::locateLocal("appdata", QStringLiteral("jabber-capabilities-cache.xml"));
+    capsFileName = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("jabber-capabilities-cache.xml");
 
     // Generate XML
     QDomDocument doc;

@@ -29,6 +29,7 @@
 #include <KGlobal>
 #include <KLocale>
 #include <KConfig>
+#include <KSharedConfig>
 
 // Local Includes
 #include "wpaccount.h"

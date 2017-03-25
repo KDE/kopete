@@ -61,7 +61,7 @@
 #include <kio/job.h>
 #include <kio/jobclasses.h>
 #include <kimageio.h>
-#include <kstandarddirs.h>
+
 #include <kfiledialog.h>
 #include <ktoolinvocation.h>
 #include <QIcon>

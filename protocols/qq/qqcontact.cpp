@@ -30,7 +30,7 @@
 #include <kfiledialog.h>
 #include <QLineEdit>
 #include <klocale.h>
-#include <kstandarddirs.h>
+
 #include <kmessagebox.h>
 #include <ktoolinvocation.h>
 #include <ktemporaryfile.h>
@@ -40,6 +40,8 @@
 #include <kio/job.h>
 #include <kdialog.h>
 #include <QIcon>
+#include <QStandardPaths>
+#include <KSharedConfig>
 
 #include "kopetecontactlist.h"
 #include "kopetechatsessionmanager.h"
@@ -439,7 +441,7 @@ void QQContact::setDisplayPicture(KTemporaryFile *f)
 	//copy the temp file somewere else.
 	// in a better world, the file could be dirrectly wrote at the correct location.
 	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
-	QString newlocation=KStandardDirs::locateLocal( "appdata", "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png"  ) ;
+	QString newlocation=QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png"   ;
 
 	QString fileName = f->fileName();
 	f->setAutoRemove(false);
@@ -453,7 +455,7 @@ void QQContact::setDisplayPicture(KTemporaryFile *f)
 
 void QQContact::slotEmitDisplayPictureChanged()
 {
-	QString newlocation=KStandardDirs::locateLocal( "appdata", "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png"  ) ;
+	QString newlocation=QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png"   ;
 	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 	emit displayPictureChanged();
 }

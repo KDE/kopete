@@ -77,6 +77,7 @@
 #include "jt_pubsub.h"
 
 #include <sys/utsname.h>
+#include <KSharedConfig>
 
 #ifdef LIBJINGLE_SUPPORT
 #include "libjingle.h"

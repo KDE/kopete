@@ -40,6 +40,7 @@
 
 #include <algorithm>
 #include <kconfiggroup.h>
+#include <KSharedConfig>
 
 IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
     : QWidget(parent)
@@ -211,7 +212,7 @@ void IRCEditAccountWidget::slotAddCtcp()
 
 QString IRCEditAccountWidget::generateAccountId(const QString &network)
 {
-    KSharedConfig::Ptr config = KGlobal::config();
+    KSharedConfig::Ptr config = KSharedConfig::openConfig();
     QString nextId = network;
 
     uint accountNumber = 1;

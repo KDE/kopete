@@ -32,6 +32,7 @@
 #include <kconfig.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
+#include <KSharedConfig>
 
 // Kopete Includes
 #include "kopeteaccountmanager.h"

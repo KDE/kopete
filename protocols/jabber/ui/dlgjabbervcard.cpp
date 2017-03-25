@@ -37,7 +37,7 @@
 #include <krun.h>
 #include <kio/netaccess.h>
 #include <kfiledialog.h>
-#include <kstandarddirs.h>
+
 
 // libiris(XMPP backend) includes
 #include "im.h"

@@ -34,7 +34,7 @@
 #include <krandom.h>
 #include <kcodecs.h>
 #include <kmessagebox.h>
-#include <kstandarddirs.h>
+
 #include <qinputdialog.h>
 
 #include <kfiledialog.h>

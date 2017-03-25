@@ -35,6 +35,7 @@
 
 //#include <solid/devicenotifier.h>
 //#include <solid/device.h>
+#include <KSharedConfig>
 
 #include "kopetecontact.h"
 

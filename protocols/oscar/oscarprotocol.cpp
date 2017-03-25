@@ -21,6 +21,7 @@
 #include <KLocalizedString>
 #include <kglobal.h>
 #include <kconfiggroup.h>
+#include <KSharedConfig>
 
 #include "kopeteaccountmanager.h"
 

@@ -39,7 +39,7 @@
 #include <kfiledialog.h>
 #include <kpassworddialog.h>
 #include <kconfig.h>
-#include <kstandarddirs.h>
+
 #include <ktoolinvocation.h>
 #include <kmessagebox_queued.h>
 
