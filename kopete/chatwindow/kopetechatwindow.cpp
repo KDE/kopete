@@ -379,7 +379,7 @@ void KopeteChatWindow::initActions(void)
     //'Enter' is on the Numpad
     QList<QKeySequence> chatSendShortcuts;
     chatSendShortcuts << QKeySequence(Qt::Key_Return) << QKeySequence(Qt::Key_Enter);
-    chatSend->setShortcuts(chatSendShortcuts);
+    coll->setDefaultShortcuts(chatSend, chatSendShortcuts);
     chatSend->setEnabled(false);
 
     chatSendFile = new QAction(QIcon::fromTheme(QStringLiteral("mail-attachment")), i18n("Send File..."), coll);
@@ -403,13 +403,13 @@ void KopeteChatWindow::initActions(void)
 
     tabRight = new QAction(i18n("&Activate Next Tab"), coll);
     coll->addAction(QStringLiteral("tabs_right"), tabRight);
-    tabRight->setShortcuts(KStandardShortcut::tabNext());
+    coll->setDefaultShortcuts(tabRight, KStandardShortcut::tabNext());
     tabRight->setEnabled(false);
     connect(tabRight, SIGNAL(triggered(bool)), this, SLOT(slotNextTab()));
 
     tabLeft = new QAction(i18n("&Activate Previous Tab"), coll);
     coll->addAction(QStringLiteral("tabs_left"), tabLeft);
-    tabLeft->setShortcuts(KStandardShortcut::tabPrev());
+    coll->setDefaultShortcuts(tabLeft, KStandardShortcut::tabPrev());
     tabLeft->setEnabled(false);
     connect(tabLeft, SIGNAL(triggered(bool)), this, SLOT(slotPreviousTab()));
 
@@ -417,7 +417,7 @@ void KopeteChatWindow::initActions(void)
     // The actual "slot" is the eventFilter.
     nickComplete = new QAction(i18n("Nic&k Completion"), coll);
     coll->addAction(QStringLiteral("nick_complete"), nickComplete);
-    nickComplete->setShortcut(QKeySequence(Qt::Key_Tab));
+    coll->setDefaultShortcut(nickComplete, QKeySequence(Qt::Key_Tab));
 
     tabDetach = new QAction(QIcon::fromTheme(QStringLiteral("tab-detach")), i18n("&Detach Chat"), coll);
     coll->addAction(QStringLiteral("tabs_detach"), tabDetach);
@@ -441,7 +441,7 @@ void KopeteChatWindow::initActions(void)
     connect(actionTabPlacementMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPreparePlacementMenu()));
     connect(actionTabPlacementMenu->menu(), SIGNAL(triggered(QAction *)), this, SLOT(slotPlaceTabs(QAction *)));
 
-    tabDetach->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_B));
+    coll->setDefaultShortcut(tabDetach, QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_B));
 
     KStandardAction::cut(this, SLOT(slotCut()), coll);
     KStandardAction::copy(this, SLOT(slotCopy()), coll);
@@ -451,12 +451,12 @@ void KopeteChatWindow::initActions(void)
 
     historyUp = new QAction(i18n("Previous History"), coll);
     coll->addAction(QStringLiteral("history_up"), historyUp);
-    historyUp->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Up));
+    coll->setDefaultShortcut(historyUp, QKeySequence(Qt::CTRL + Qt::Key_Up));
     connect(historyUp, SIGNAL(triggered(bool)), this, SLOT(slotHistoryUp()));
 
     historyDown = new QAction(i18n("Next History"), coll);
     coll->addAction(QStringLiteral("history_down"), historyDown);
-    historyDown->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Down));
+    coll->setDefaultShortcut(historyDown, QKeySequence(Qt::CTRL + Qt::Key_Down));
     connect(historyDown, SIGNAL(triggered(bool)), this, SLOT(slotHistoryDown()));
 
     action = KStandardAction::prior(this, SLOT(slotPageUp()), coll);

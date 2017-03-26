@@ -45,7 +45,7 @@ LatexGUIClient::LatexGUIClient(Kopete::ChatSession *parent)
 
     QAction *previewAction = new QAction(QIcon::fromTheme(QStringLiteral("latex")), i18n("Preview Latex Images"), this);
     actionCollection()->addAction(QStringLiteral("latexPreview"), previewAction);
-    previewAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
+    actionCollection()->setDefaultShortcut(previewAction, QKeySequence(Qt::CTRL + Qt::Key_L));
     connect(previewAction, SIGNAL(triggered(bool)), this, SLOT(slotPreview()));
 
     setXMLFile(QStringLiteral("latexchatui.rc"));

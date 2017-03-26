@@ -35,6 +35,7 @@ JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const
 											 : Kopete::ChatSession ( user, others, protocol )
 {
 	qCDebug(JABBER_PROTOCOL_LOG) << "New message manager for " << user->contactId ();
+    setComponentName(QStringLiteral("kopete"), i18n("Kopete"));
 
 	mRoomJid = roomJid;
 	

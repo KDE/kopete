@@ -48,6 +48,7 @@ JabberChatSession::JabberChatSession (JabberProtocol *protocol, const JabberBase
 {
     qCDebug(JABBER_PROTOCOL_LOG) << "New message manager for " << user->contactId();
 
+    setComponentName(QStringLiteral("kopete"), i18n("Kopete"));
     // make sure Kopete knows about this instance
     Kopete::ChatSessionManager::self()->registerChatSession(this);
 

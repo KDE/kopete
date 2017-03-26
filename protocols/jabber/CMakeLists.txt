@@ -177,4 +177,4 @@ install(TARGETS kopete_jabber  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 ########### install files ###############
 
 install( FILES kopete_jabber.desktop xmpp.protocol DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
-install( FILES jabberchatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_jabber)
+install( FILES jabberchatui.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
