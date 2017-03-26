@@ -25,7 +25,7 @@
 #include "privkeypopup.h"
 
 #include <kwindowsystem.h>
-#include <KIcon>
+#include <QIcon>
 
 PrivKeyPopup::PrivKeyPopup(QWidget *parent) : KDialog(parent)
 {
@@ -36,7 +36,7 @@ PrivKeyPopup::PrivKeyPopup(QWidget *parent) : KDialog(parent)
     setCaption(i18n("Please wait"));
     setButtons(KDialog::None);
 
-    ui.lIcon->setPixmap(KIcon(QStringLiteral("dialog-password")).pixmap(48, 48));
+    ui.lIcon->setPixmap(QIcon::fromTheme(QStringLiteral("dialog-password")).pixmap(48, 48));
 }
 
 PrivKeyPopup::~PrivKeyPopup()
