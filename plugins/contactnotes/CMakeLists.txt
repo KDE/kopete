@@ -19,7 +19,7 @@ install(TARGETS kopete_contactnotes  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 ########### install files ###############
 
 install( FILES kopete_contactnotes.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
-install( FILES contactnotesui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_contactnotes)
+install( FILES contactnotesui.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
 
 
 
