@@ -76,7 +76,7 @@ ChatWindowStyle::ChatWindowStyle(const QString &styleName, const QString &varian
 
 void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMode)
 {
-    QStringList styleDirs = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("styles/%1/Contents/Resources/").arg(styleName));
+    QStringList styleDirs = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("/styles/%1/Contents/Resources/").arg(styleName));
     if (styleDirs.isEmpty()) {
         kDebug(14000) << "Failed to find style" << styleName;
         return;

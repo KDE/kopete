@@ -330,16 +330,16 @@ bool WebPresencePlugin::transform(KTemporaryFile *src, KTemporaryFile *dest)
         return false;
     case WEB_HTML:
         if (WebPresenceConfig::self()->useImagesHTML()) {
-            sheet.setFileName(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("webpresence/webpresence_html_images.xsl")));
+            sheet.setFileName(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("/webpresence/webpresence_html_images.xsl")));
         } else {
-            sheet.setFileName(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("webpresence/webpresence_html.xsl")));
+            sheet.setFileName(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("/webpresence/webpresence_html.xsl")));
         }
         break;
     case WEB_XHTML:
         if (WebPresenceConfig::self()->useImagesHTML()) {
-            sheet.setFileName(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("webpresence/webpresence_xhtml_images.xsl")));
+            sheet.setFileName(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("/webpresence/webpresence_xhtml_images.xsl")));
         } else {
-            sheet.setFileName(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("webpresence/webpresence_xhtml.xsl")));
+            sheet.setFileName(QStandardPaths::locate(QStandardPaths::DataLocation, QStringLiteral("/webpresence/webpresence_xhtml.xsl")));
         }
         break;
     case WEB_CUSTOM:

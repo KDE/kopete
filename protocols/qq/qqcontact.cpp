@@ -440,7 +440,7 @@ void QQContact::setDisplayPicture(KTemporaryFile *f)
 	//copy the temp file somewere else.
 	// in a better world, the file could be dirrectly wrote at the correct location.
 	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
-	QString newlocation=QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png"   ;
+    QString newlocation=QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "/qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png"   ;
 
 	QString fileName = f->fileName();
 	f->setAutoRemove(false);
@@ -454,7 +454,7 @@ void QQContact::setDisplayPicture(KTemporaryFile *f)
 
 void QQContact::slotEmitDisplayPictureChanged()
 {
-	QString newlocation=QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png"   ;
+    QString newlocation=QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "/qqpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),QStringLiteral("-"))  +".png"   ;
 	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 	emit displayPictureChanged();
 }
