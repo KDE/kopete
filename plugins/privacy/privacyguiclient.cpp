@@ -35,7 +35,7 @@ PrivacyGUIClient::PrivacyGUIClient(Kopete::ChatSession *parent)
     : QObject(parent)
     , KXMLGUIClient(parent)
 {
-    //setComponentData(PrivacyPlugin::plugin()->componentData());
+    setComponentName(QStringLiteral("kopete"), i18n("Kopete"));
 
     m_manager = parent;
 
