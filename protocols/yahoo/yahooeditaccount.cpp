@@ -36,7 +36,6 @@
 #include <kmessagebox.h>
 #include <krun.h>
 #include <kurl.h>
-#include <kfiledialog.h>
 #include <kpassworddialog.h>
 #include <kconfig.h>
 

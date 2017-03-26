@@ -62,7 +62,6 @@
 #include <kio/jobclasses.h>
 #include <kimageio.h>
 
-#include <kfiledialog.h>
 #include <ktoolinvocation.h>
 #include <QIcon>
 

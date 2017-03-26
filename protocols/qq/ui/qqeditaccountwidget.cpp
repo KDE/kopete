@@ -30,7 +30,6 @@
 #include <QVBoxLayout>
 #include <QLatin1String>
 
-#include <kfiledialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 

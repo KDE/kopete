@@ -37,7 +37,6 @@
 #include <QBoxLayout>
 #include <QSize>
 
-#include <KFileDialog>
 #include <KIconDialog>
 #include <KIconLoader>
 #include <KGlobal>

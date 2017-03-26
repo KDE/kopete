@@ -47,7 +47,6 @@
 
 #include <kurlrequesterdialog.h>
 #include <krun.h>
-#include <kfiledialog.h>
 #include <KGlobal>
 
 #include "kopeteglobal.h"

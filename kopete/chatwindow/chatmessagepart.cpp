@@ -68,7 +68,6 @@
 #include <kactioncollection.h>
 #include <kdebug.h>
 
-#include <kfiledialog.h>
 #include <khtmlview.h>
 #include <KLocalizedString>
 #include <kmessagebox.h>
