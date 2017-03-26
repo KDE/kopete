@@ -59,6 +59,7 @@ PrivacyPlugin::PrivacyPlugin(QObject *parent, const QVariantList &)
     actionCollection()->addAction(QStringLiteral("addToBlackList"), addToBlackList);
     connect(addToBlackList, SIGNAL(triggered(bool)), this, SLOT(slotAddToBlackList()));
 
+    setComponentName(QStringLiteral("kopete"), i18n("Kopete"));
     setXMLFile(QStringLiteral("privacyui.rc"));
 
     m_inboundHandler = new PrivacyMessageHandlerFactory(Kopete::Message::Inbound,

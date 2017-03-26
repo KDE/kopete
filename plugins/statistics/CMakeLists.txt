@@ -25,4 +25,4 @@ install(TARGETS kopete_statistics  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 ########### install files ###############
 install( FILES org.kde.kopete.Statistics.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR} )
 install( FILES kopete_statistics.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
-install( FILES statisticsui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_statistics)
+install( FILES statisticsui.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
