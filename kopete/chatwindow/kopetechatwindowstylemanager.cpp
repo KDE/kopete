@@ -20,6 +20,7 @@
 // Qt includes
 #include <QStack>
 #include <QFileInfo>
+#include <QDir>
 
 // KDE includes
 #include <kstandarddirs.h>
@@ -87,7 +88,7 @@ ChatWindowStyleManager::~ChatWindowStyleManager()
 void ChatWindowStyleManager::loadStyles()
 {
     // Make sure there exists a directory where chat styles can be installed to and it will be watched for changes
-    QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("styles/");
+    QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("styles/"));
 
     QStringList chatStyles = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("styles"));
     foreach (const QString &styleDir, chatStyles) {
