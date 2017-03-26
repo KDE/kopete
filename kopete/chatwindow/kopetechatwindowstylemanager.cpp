@@ -90,7 +90,7 @@ void ChatWindowStyleManager::loadStyles()
     // Make sure there exists a directory where chat styles can be installed to and it will be watched for changes
     QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("styles/"));
 
-    QStringList chatStyles = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("/styles/"));
+    QStringList chatStyles = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("/styles/"), QStandardPaths::LocateDirectory);
     foreach (const QString &styleDir, chatStyles) {
         qDebug() << "ChatWindowStyleManager::loadStyles " << styleDir;
         d->styleDirs.push(QUrl::fromLocalFile(styleDir));
@@ -115,7 +115,7 @@ QStringList ChatWindowStyleManager::getAvailableStyles() const
 int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 {
     QString localStyleDir;
-    QStringList chatStyles = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("/styles"));
+    QStringList chatStyles = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("/styles"), QStandardPaths::LocateDirectory);
     // findDirs returns preferred paths first, let's check if one of them is writable
     foreach (const QString &styleDir, chatStyles) {
         if (QFileInfo(styleDir).isWritable()) {
@@ -268,7 +268,7 @@ bool ChatWindowStyleManager::removeStyle(const QString &styleName)
             delete deletedStyle;
         }
 
-        QStringList styleDirs = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("/styles/%1").arg(styleName));
+        QStringList styleDirs = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("/styles/%1").arg(styleName), QStandardPaths::LocateDirectory);
         if (styleDirs.isEmpty()) {
             kDebug(14000) << "Failed to find style" << styleName;
             return false;
