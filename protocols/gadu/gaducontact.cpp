@@ -27,6 +27,7 @@
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <QIcon>
+#include <QFileDialog>
 
 #include "gaduaccount.h"
 #include "gaduprotocol.h"
@@ -96,7 +97,7 @@ GaduContact::sendFile(const KUrl &sourceURL, const QString & /*fileName*/, uint 
 
     //If the file location is null, then get it from a file open dialog
     if (!sourceURL.isValid()) {
-        filePath = KFileDialog::getOpenFileName(KUrl(), "*", 0l, i18n("Kopete File Transfer"));
+        filePath = QFileDialog::getOpenFileName(0l, i18n("Kopete File Transfer"), QString(), "*");
     } else {
         filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
     }

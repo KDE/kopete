@@ -42,6 +42,7 @@
 #include <QIcon>
 #include <QStandardPaths>
 #include <KSharedConfig>
+#include <QFileDialog>
 
 #include "kopetecontactlist.h"
 #include "kopetechatsessionmanager.h"
@@ -410,7 +411,7 @@ void QQContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uin
 
 	//If the file location is null, then get it from a file open dialog
 	if( !sourceURL.isValid() )
-		filePath = KFileDialog::getOpenFileName( KUrl(),QStringLiteral("*"), 0l  , i18n( "Kopete File Transfer" ));
+		filePath = QFileDialog::getOpenFileName(0l  , i18n( "Kopete File Transfer" ),  QString(), QStringLiteral("*"));
 	else
 		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 

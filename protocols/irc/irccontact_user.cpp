@@ -28,6 +28,7 @@
 #include <klocale.h>
 
 #include <qtimer.h>
+#include <QFileDialog>
 /*
 QString IRCContact::user_caption() const
 {
@@ -134,7 +135,7 @@ void IRCUserContact::sendFile(const KUrl &sourceURL, const QString&, unsigned in
 
     //If the file location is null, then get it from a file open dialog
     if( !sourceURL.isValid() )
-        filePath = KFileDialog::getOpenFileName(QString::null, "*", 0l  , i18n("Kopete File Transfer"));	//krazy:exclude=nullstrassign for old broken gcc
+        filePath = QFileDialog::getOpenFileName(0l  , i18n("Kopete File Transfer"), QString::null, "*");
     else
         filePath = sourceURL.path(-1);
 

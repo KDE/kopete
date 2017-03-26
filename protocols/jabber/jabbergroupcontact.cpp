@@ -23,6 +23,7 @@
 #include <kfiledialog.h>
 #include <qinputdialog.h>
 #include <QAction>
+#include <QFileDialog>
 
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
@@ -352,7 +353,7 @@ void JabberGroupContact::sendFile ( const QUrl &sourceURL, const QString &/*file
 
 	// if the file location is null, then get it from a file open dialog
 	if ( !sourceURL.isValid () )
-		filePath = KFileDialog::getOpenFileName( QUrl(), QStringLiteral("*"), 0L, i18n ( "Kopete File Transfer" ) );
+		filePath = QFileDialog::getOpenFileName(0L, i18n ( "Kopete File Transfer" ) ,  QString(), QStringLiteral("*"));
 	else
 		filePath = sourceURL.adjusted(QUrl::StripTrailingSlash).path();
 

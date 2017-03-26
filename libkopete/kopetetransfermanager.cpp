@@ -32,6 +32,7 @@
 #include <KSharedConfig>
 #include <KConfigGroup>
 #include <KLocalizedString>
+#include <QFileDialog>
 
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
@@ -510,7 +511,7 @@ void Kopete::TransferManager::sendFile(const QUrl &file, const QString &fname, u
 
     //If the file location is null, then get it from a file open dialog
     if (!url.isValid()) {
-        url = KFileDialog::getOpenUrl(QUrl(), QStringLiteral("*"), 0l, i18n("Kopete File Transfer"));
+        url = QFileDialog::getOpenFileUrl(0l, i18n("Kopete File Transfer"), QString(), QStringLiteral("*"));
     } else {
         filename = fname;
         size = sz;
