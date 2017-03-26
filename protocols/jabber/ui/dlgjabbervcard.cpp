@@ -36,7 +36,6 @@
 #include <kmessagebox.h>
 #include <krun.h>
 #include <kio/netaccess.h>
-#include <kfiledialog.h>
 
 
 // libiris(XMPP backend) includes

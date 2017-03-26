@@ -24,10 +24,8 @@
 #include <qcheckbox.h>
 #include <QList>
 
-#undef KDE_NO_COMPAT
 #include <QAction>
 #include <kdebug.h>
-#include <kfiledialog.h>
 #include <QLineEdit>
 #include <klocale.h>
 
