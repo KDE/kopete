@@ -17,21 +17,19 @@
 #ifndef IDGUIELEMENTS_H
 #define IDGUIELEMENTS_H
 
-#include <KPushButton>
+#include <QPushButton>
 #include <KComboBox>
-#include <KIcon>
-
+#include <QIcon>
 #include <QSlider>
 #include <QCheckBox>
 
-class IdPushButton : public KPushButton
+class IdPushButton : public QPushButton
 {
     Q_OBJECT
 public:
     IdPushButton(unsigned int id, QWidget *parent = nullptr);
     IdPushButton(unsigned int id, const QString &text, QWidget *parent = nullptr);
-    IdPushButton(unsigned int id, const KIcon &icon, const QString &text, QWidget *parent = nullptr);
-    IdPushButton(unsigned int id, KGuiItem item, QWidget *parent = nullptr);
+    IdPushButton(unsigned int id, const QIcon &icon, const QString &text, QWidget *parent = nullptr);
 private:
     unsigned int _id;
 private slots:

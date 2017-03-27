@@ -16,25 +16,19 @@
  */
 #include "IdGuiElements.h"
 
-IdPushButton::IdPushButton(unsigned int id, QWidget *parent) : KPushButton(parent)
+IdPushButton::IdPushButton(unsigned int id, QWidget *parent) : QPushButton(parent)
 {
     _id = id;
     connect(this, SIGNAL(pressed()), this, SLOT(emitPressed()));
 }
 
-IdPushButton::IdPushButton(unsigned int id, const QString &text, QWidget *parent) : KPushButton(text, parent)
+IdPushButton::IdPushButton(unsigned int id, const QString &text, QWidget *parent) : QPushButton(text, parent)
 {
     _id = id;
     connect(this, SIGNAL(pressed()), this, SLOT(emitPressed()));
 }
 
-IdPushButton::IdPushButton(unsigned int id, const KIcon &icon, const QString &text, QWidget *parent) : KPushButton(icon, text, parent)
-{
-    _id = id;
-    connect(this, SIGNAL(pressed()), this, SLOT(emitPressed()));
-}
-
-IdPushButton::IdPushButton(unsigned int id, KGuiItem item, QWidget *parent) : KPushButton(item, parent)
+IdPushButton::IdPushButton(unsigned int id, const QIcon &icon, const QString &text, QWidget *parent) : QPushButton(icon, text, parent)
 {
     _id = id;
     connect(this, SIGNAL(pressed()), this, SLOT(emitPressed()));
