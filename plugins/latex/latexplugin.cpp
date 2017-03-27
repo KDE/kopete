@@ -61,7 +61,7 @@ LatexPlugin::LatexPlugin(QObject *parent, const QVariantList & /*args*/)
     m_convScript = KStandardDirs::findExe(QStringLiteral("kopete_latexconvert.sh"));
 
     //Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-    QList<Kopete::ChatSession *> sessions = Kopete::ChatSessionManager::self()->sessions();
+    const QList<Kopete::ChatSession *> sessions = Kopete::ChatSessionManager::self()->sessions();
     foreach (Kopete::ChatSession *cs, sessions) {
         slotNewChatSession(cs);
     }
@@ -70,7 +70,7 @@ LatexPlugin::LatexPlugin(QObject *parent, const QVariantList & /*args*/)
 LatexPlugin::~LatexPlugin()
 {
     qDeleteAll(m_tempFiles);
-    s_pluginStatic = 0L;
+    s_pluginStatic = nullptr;
 }
 
 LatexPlugin *LatexPlugin::plugin()
@@ -78,7 +78,7 @@ LatexPlugin *LatexPlugin::plugin()
     return s_pluginStatic;
 }
 
-LatexPlugin *LatexPlugin::s_pluginStatic = 0L;
+LatexPlugin *LatexPlugin::s_pluginStatic = nullptr;
 
 void LatexPlugin::slotNewChatSession(Kopete::ChatSession *KMM)
 {

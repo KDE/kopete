@@ -39,14 +39,14 @@ LatexGUIClient::LatexGUIClient(Kopete::ChatSession *parent)
     , KXMLGUIClient(parent)
 {
     setComponentName(QStringLiteral("kopete"), i18n("Kopete"));
-    connect(LatexPlugin::plugin(), SIGNAL(destroyed(QObject *)), this, SLOT(deleteLater()));
+    connect(LatexPlugin::plugin(), &QObject::destroyed, this, &QObject::deleteLater);
 
     m_manager = parent;
 
     QAction *previewAction = new QAction(QIcon::fromTheme(QStringLiteral("latex")), i18n("Preview Latex Images"), this);
     actionCollection()->addAction(QStringLiteral("latexPreview"), previewAction);
     actionCollection()->setDefaultShortcut(previewAction, QKeySequence(Qt::CTRL + Qt::Key_L));
-    connect(previewAction, SIGNAL(triggered(bool)), this, SLOT(slotPreview()));
+    connect(previewAction, &QAction::triggered, this, &LatexGUIClient::slotPreview);
 
     setXMLFile(QStringLiteral("latexchatui.rc"));
 }
