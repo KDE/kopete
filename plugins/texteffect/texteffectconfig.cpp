@@ -32,10 +32,7 @@ void TextEffectConfig::load()
 {
     KConfigGroup config(KSharedConfig::openConfig(), "TextEffect Plugin");
 
-    mColors = config.readEntry("Colors", QStringList());
-    if (mColors.isEmpty()) {
-        mColors = defaultColorList();
-    }
+    mColors = config.readEntry("Colors", defaultColorList());
     mColorRandom = config.readEntry("Color Random Order", false);
     mColorLines = config.readEntry("Color change every lines", true);
     mColorWords = config.readEntry("Color change every words", false);
