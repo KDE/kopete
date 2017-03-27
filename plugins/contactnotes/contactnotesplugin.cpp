@@ -40,7 +40,7 @@ ContactNotesPlugin::ContactNotesPlugin(QObject *parent, const QVariantList & /* 
     } else {
         pluginStatic_ = this;
     }
-    setComponentName(QStringLiteral("kopete"), i18n("Kopete"));
+    setComponentName(QStringLiteral("contactnotes"), i18n("Kopete"));
     QAction *m_actionEdit = new QAction(QIcon::fromTheme(QStringLiteral("user-identity")), i18n("&Notes"), this);
     actionCollection()->addAction(QStringLiteral("editContactNotes"), m_actionEdit);
     connect(m_actionEdit, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()));

@@ -8,6 +8,8 @@ ${KOPETE_INCLUDES}
 
 set(kopete_contactnotes_PART_SRCS contactnotesplugin.cpp contactnotesedit.cpp )
 
+qt5_add_resources(kopete_contactnotes_PART_SRCS contactnotes.qrc)
+
 add_library(kopete_contactnotes MODULE ${kopete_contactnotes_PART_SRCS})
 
 
@@ -19,8 +21,6 @@ install(TARGETS kopete_contactnotes  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 ########### install files ###############
 
 install( FILES kopete_contactnotes.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
-install( FILES contactnotesui.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
-
 
 
 
