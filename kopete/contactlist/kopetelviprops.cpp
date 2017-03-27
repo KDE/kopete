@@ -40,7 +40,7 @@
 #include <KIconDialog>
 #include <KIconLoader>
 #include <KGlobal>
-#include <KLocale>
+#include <KLocalizedString>
 #include <QUrl>
 #include <KUrlRequester>
 #include <KStandardDirs>

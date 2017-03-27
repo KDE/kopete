@@ -35,7 +35,7 @@
 #include <kopeteprotocol.h>
 #include <kopetecontact.h>
 #include <KGlobal>
-#include <KLocale>
+#include <KLocalizedString>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>

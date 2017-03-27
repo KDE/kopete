@@ -27,7 +27,7 @@
 // KDE Includes
 #include <KDebug>
 #include <KGlobal>
-#include <KLocale>
+#include <KLocalizedString>
 #include <KConfig>
 #include <KSharedConfig>
 

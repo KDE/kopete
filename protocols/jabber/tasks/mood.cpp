@@ -15,7 +15,7 @@
 
 #include "mood.h"
 
-#include <KLocale>
+#include <KLocalizedString>
 
 #define MOOD_NS "http://jabber.org/protocol/mood"
 

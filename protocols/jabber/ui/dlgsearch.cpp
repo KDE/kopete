@@ -20,7 +20,7 @@
 
 #include <QHeaderView>
 #include <KMessageBox>
-#include <KLocale>
+#include <KLocalizedString>
 
 #include "xmpp_xmlcommon.h"
 #include "xmpp_xdata.h"

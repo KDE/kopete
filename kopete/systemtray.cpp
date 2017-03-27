@@ -24,7 +24,7 @@
 #include <QAction>
 
 #include <KDebug>
-#include <KLocale>
+#include <KLocalizedString>
 #include <KGlobal>
 #include <K4AboutData>
 #include <KComponentData>

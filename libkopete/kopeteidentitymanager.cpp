@@ -25,7 +25,7 @@
 #include <KGlobal>
 #include <KSharedConfig>
 #include <KSharedConfigPtr>
-#include <KLocale>
+#include <KLocalizedString>
 
 namespace Kopete {
 class IdentityManager::Private

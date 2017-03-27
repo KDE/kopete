@@ -24,7 +24,7 @@
 #include "contactlisttoken.h"
 
 #include <KHBox>
-#include <KLocale>
+#include <KLocalizedString>
 #include <KDebug>
 
 #include <QCheckBox>

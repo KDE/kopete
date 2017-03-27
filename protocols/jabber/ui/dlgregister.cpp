@@ -20,7 +20,7 @@
 
 #include <QLabel>
 #include <KMessageBox>
-#include <KLocale>
+#include <KLocalizedString>
 #include "jabber_protocol_debug.h"
 
 #include "jabberaccount.h"

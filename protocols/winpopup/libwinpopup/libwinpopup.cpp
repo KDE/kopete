@@ -28,7 +28,7 @@
 // KDE Includes
 #include <KDebug>
 #include <KMessageBox>
-#include <KLocale>
+#include <KLocalizedString>
 #include <KDirLister>
 #include <KToolInvocation>
 #include <unistd.h> // gethostname

@@ -24,7 +24,7 @@
 
 #include <QAction>
 #include <KHBox>
-#include <KLocale>
+#include <KLocalizedString>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>

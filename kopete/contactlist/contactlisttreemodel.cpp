@@ -25,7 +25,7 @@
 #include <QDebug>
 #include <QMimeData>
 #include <QDomDocument>
-#include <KLocale>
+#include <KLocalizedString>
 
 #include "kopeteaccount.h"
 #include "kopetegroup.h"

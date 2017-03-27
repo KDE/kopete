@@ -27,7 +27,7 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <KDebug>
-#include <KLocale>
+#include <KLocalizedString>
 
 #include <kio/global.h>
 #include <kio/job.h>

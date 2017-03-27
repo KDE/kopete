@@ -21,7 +21,7 @@
 #include <QMenu>
 
 #include <QAction>
-#include <KLocale>
+#include <KLocalizedString>
 
 #include "kopeteitemdelegate.h"
 

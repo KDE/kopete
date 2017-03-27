@@ -27,7 +27,7 @@
 #include <KConfigGroup>
 #include <KGlobal>
 #include <KSharedConfigPtr>
-#include <KLocale>
+#include <KLocalizedString>
 #include <KRandom>
 #include <QMenu>
 

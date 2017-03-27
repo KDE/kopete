@@ -18,7 +18,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
-#include <KLocale>
+#include <KLocalizedString>
 #include "jabber_protocol_debug.h"
 
 #include "jt_ahcommand.h"
