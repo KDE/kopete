@@ -192,6 +192,7 @@ void ListView::slotDoubleClicked(QTreeWidgetItem *item)
 
 void ListView::slotContextMenu(QTreeWidget * /*listview*/, QTreeWidgetItem *item, const QPoint & /*point*/)
 {
+    //KF5 FIXME argument
     if (item && !item->isSelected()) {
         clearSelection();
         item->setSelected(true);

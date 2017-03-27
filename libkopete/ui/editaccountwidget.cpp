@@ -21,6 +21,12 @@
 class KopeteEditAccountWidgetPrivate
 {
 public:
+    KopeteEditAccountWidgetPrivate()
+        : account(nullptr)
+    {
+
+    }
+
     Kopete::Account *account;
 };
 
