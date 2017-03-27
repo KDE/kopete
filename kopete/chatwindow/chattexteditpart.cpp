@@ -32,7 +32,6 @@
 #include <kcompletion.h>
 #include <kdebug.h>
 #include <kfontaction.h>
-#include <kfontdialog.h>
 #include <kfontsizeaction.h>
 #include <kglobalsettings.h>
 #include <kcolorscheme.h>

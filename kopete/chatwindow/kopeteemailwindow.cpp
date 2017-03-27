@@ -37,8 +37,8 @@
 #include <kcursor.h>
 #include <kdebug.h>
 
+#include <KConfigGroup>
 #include <kedittoolbar.h>
-#include <kfontdialog.h>
 #include <kcolorscheme.h>
 #include <khtmlview.h>
 #include <kiconloader.h>
