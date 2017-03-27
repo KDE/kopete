@@ -15,7 +15,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#define QT3_SUPPORT
 
 #include "autoreplacepreferences.h"
 

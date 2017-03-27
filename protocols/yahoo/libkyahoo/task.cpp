@@ -20,7 +20,7 @@
 #include "task.h"
 
 #include <qtimer.h>
-
+#include <KLocalizedString>
 #include "client.h"
 #include "transfer.h"
 #include "safedelete.h"
@@ -168,7 +168,7 @@ void Task::onDisconnect()
 	if(!d->done) {
 		d->success = false;
 		d->statusCode = ErrDisc;
-		d->statusString = tr("Disconnected");
+		d->statusString = i18n("Disconnected");
 
 		// delay this so that tasks that react don't block the shutdown
 		QTimer::singleShot(0, this, SLOT(done()));

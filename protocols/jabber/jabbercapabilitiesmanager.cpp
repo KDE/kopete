@@ -347,7 +347,7 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 
     const QString &node = status.caps().node();
     const QString &version = status.caps().version();
-    const QString &extensions = status.caps().ext().join(QStringLiteral(" "));
+    const QString &extensions = status.caps().ext().join(QLatin1Char(' '));
     const QString &hash = XMPP::CapsSpec::cryptoMap().key(status.caps().hashAlgorithm());
 
     Capabilities capabilities(node, version, extensions, hash);

@@ -1235,7 +1235,7 @@ QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)
 
     // Affect the parsed body.
     formattedBody += QStringLiteral("class=\"%1\">%2</span>")
-                     .arg(classes.join(QStringLiteral(" ")), message.parsedBody());
+                     .arg(classes.join(QLatin1Char(' ')), message.parsedBody());
 
     return formattedBody;
 }
