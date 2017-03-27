@@ -140,7 +140,7 @@ set(kopete_jabber_PART_SRCS
    jabberbobcache.cpp
    xoauth2provider.cpp
 )
-
+qt5_add_resources(kopete_jabber_PART_SRCS jabberprotocol.qrc)
 if(BUILD_LIBJINGLE)
   set(kopete_jabber_PART_SRCS
       ${kopete_jabber_PART_SRCS}
@@ -177,4 +177,3 @@ install(TARGETS kopete_jabber  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 ########### install files ###############
 
 install( FILES kopete_jabber.desktop xmpp.protocol DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
-install( FILES jabberchatui.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
