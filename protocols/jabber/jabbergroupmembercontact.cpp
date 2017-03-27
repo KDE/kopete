@@ -105,7 +105,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 {
 	// message type is always chat in a groupchat
 	QString viewType = QStringLiteral("kopete_chatwindow");
-	Kopete::Message *newMessage = 0L;
+	Kopete::Message *newMessage = nullptr;
 
 	qDebug (JABBER_PROTOCOL_LOG) << "Received Message Type:" << message.type ();
 

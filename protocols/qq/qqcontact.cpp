@@ -82,7 +82,7 @@ QQContact::QQContact( Kopete::Account *account, const QString &id, Kopete::MetaC
 	// if it's a temporary contact, better to set the unknown status.
 	setOnlineStatus( ( parent && parent->isTemporary() ) ? QQProtocol::protocol()->UNK : QQProtocol::protocol()->Offline );
 
-	actionBlock = 0L;
+	actionBlock = nullptr;
 }
 
 QQContact::~QQContact()

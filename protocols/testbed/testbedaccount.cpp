@@ -62,7 +62,7 @@ void TestbedAccount::fillActionMenu( KActionMenu *actionMenu )
 bool TestbedAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
 {
 	TestbedContact* newContact = new TestbedContact( this, contactId, parentContact );
-	return newContact != 0L;
+	return newContact != nullptr;
 }
 
 void TestbedAccount::setAway( bool away, const QString & /* reason */ )

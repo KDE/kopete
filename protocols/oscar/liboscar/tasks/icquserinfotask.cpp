@@ -168,7 +168,7 @@ void ICQUserInfoRequestTask::onGo()
 	if ( m_userToRequestFor.isNull() )
 		return;
 	
-	Buffer* sendBuf = 0L;
+	Buffer* sendBuf = nullptr;
 	Buffer b;
 	if ( m_type != Short )
 	{

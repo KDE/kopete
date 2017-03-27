@@ -40,7 +40,7 @@ public:
     Identity *defaultIdentity;
 };
 
-IdentityManager *IdentityManager::s_self = 0L;
+IdentityManager *IdentityManager::s_self = nullptr;
 
 IdentityManager *IdentityManager::self()
 {
@@ -60,7 +60,7 @@ IdentityManager::IdentityManager()
 
 IdentityManager::~IdentityManager()
 {
-    s_self = 0L;
+    s_self = nullptr;
 
     delete d;
 }

@@ -284,8 +284,8 @@ JabberResource *JabberResourcePool::bestJabberResource(const XMPP::Jid &jid, boo
         }
     }
 
-    JabberResource *bestResource = 0L;
-    JabberResource *currentResource = 0L;
+    JabberResource *bestResource = nullptr;
+    JabberResource *currentResource = nullptr;
 
     foreach (currentResource, d->pool) {
         // make sure we are only looking up resources for the specified JID

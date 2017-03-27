@@ -45,7 +45,7 @@
 #include "kopeteidletimer.h"
 
 namespace Kopete {
-StatusManager *StatusManager::instance = 0L;
+StatusManager *StatusManager::instance = nullptr;
 
 class StatusManager::Private
 {
@@ -90,7 +90,7 @@ StatusManager::StatusManager()
 
 StatusManager::~StatusManager()
 {
-    instance = 0L;
+    instance = nullptr;
 
     delete d->idleTimer;
 

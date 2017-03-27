@@ -238,7 +238,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(Kopete::MetaContact *metaContact, QWidget
 
     mAddressBookUid = mMetaContact->kabcId();
 
-    mExport = 0L;
+    mExport = nullptr;
 
     if (!mAddressBookUid.isEmpty()) {
         //DEPRECATED: KContacts::AddressBook *ab = Kopete::KABCPersistence::self()->addressBook();

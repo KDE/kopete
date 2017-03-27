@@ -47,7 +47,7 @@ ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::M
 {
 	m_requestingInfo = InfoNone;
 	mProtocol = static_cast<ICQProtocol *>(protocol());
-	m_infoWidget = 0L;
+	m_infoWidget = nullptr;
 
 	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 
@@ -653,7 +653,7 @@ void ICQContact::closeUserInfoDialog()
 {
 	QObject::disconnect( this, 0, m_infoWidget, 0 );
 	m_infoWidget->deleteLater();
-	m_infoWidget = 0L;
+	m_infoWidget = nullptr;
 }
 
 void ICQContact::slotIgnore()
@@ -695,7 +695,7 @@ void ICQContact::slotReadAwayMessage()
 void ICQContact::slotCloseAwayMessageDialog()
 {
 	awayMessageDialog->deleteLater();
-	awayMessageDialog = 0L;
+	awayMessageDialog = nullptr;
 }
 
 const QString ICQContact::awayMessage()

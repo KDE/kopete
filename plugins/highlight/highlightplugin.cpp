@@ -45,7 +45,7 @@ HighlightPlugin::HighlightPlugin(QObject *parent, const QVariantList & /*args*/)
 
 HighlightPlugin::~HighlightPlugin()
 {
-    pluginStatic_ = 0L;
+    pluginStatic_ = nullptr;
     delete m_config;
 }
 
@@ -54,7 +54,7 @@ HighlightPlugin *HighlightPlugin::plugin()
     return pluginStatic_;
 }
 
-HighlightPlugin *HighlightPlugin::pluginStatic_ = 0L;
+HighlightPlugin *HighlightPlugin::pluginStatic_ = nullptr;
 
 void HighlightPlugin::slotIncomingMessage(Kopete::Message &msg)
 {

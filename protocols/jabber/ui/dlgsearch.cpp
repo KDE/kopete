@@ -55,7 +55,7 @@ QDialog(parent)
 	setWindowTitle(i18n("Search"));
 
 	mAccount = account;
-	mXDataWidget = 0L;
+	mXDataWidget = nullptr;
 
 	ui.tblResults->header()->setResizeMode(QHeaderView::ResizeToContents);
 	ui.lblWait->setText(i18n("Please wait while retrieving search form..."));

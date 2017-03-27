@@ -64,7 +64,7 @@ public:
     MetaContact *myself;
 };
 
-ContactList *ContactList::s_self = 0L;
+ContactList *ContactList::s_self = nullptr;
 
 ContactList *ContactList::self()
 {
@@ -83,7 +83,7 @@ ContactList::ContactList()
 
     //the myself metacontact can't be created now, because it will use
     //ContactList::self() as parent which will call this constructor -> infinite loop
-    d->myself = 0L;
+    d->myself = nullptr;
 
     //no contact list loaded yet, don't save them
     d->loaded = false;
@@ -104,7 +104,7 @@ ContactList::ContactList()
 
 ContactList::~ContactList()
 {
-    s_self = 0L;
+    s_self = nullptr;
     delete d->myself;
     delete d;
 }

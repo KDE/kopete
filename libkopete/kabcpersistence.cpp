@@ -74,7 +74,7 @@ public:
     //static KContacts::AddressBook* s_addressBook;
 };
 
-//KContacts::AddressBook* KABCPersistence::Private::s_addressBook = 0L;
+//KContacts::AddressBook* KABCPersistence::Private::s_addressBook = nullptr;
 
 KABCPersistence::KABCPersistence(QObject *parent, const char *name)
     : QObject(parent)
@@ -96,7 +96,7 @@ KABCPersistence *KABCPersistence::self()
 
 /*KContacts::AddressBook* KABCPersistence::addressBook()
 {
-    if ( Private::s_addressBook == 0L )
+    if ( Private::s_addressBook == nullptr )
     {
         Private::s_addressBook = KContacts::StdAddressBook::self();
         KContacts::StdAddressBook::setAutomaticSave( false );

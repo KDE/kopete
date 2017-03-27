@@ -91,7 +91,7 @@ public:
      * @param hide a bitmask of HideWidget used to hide some widget. By default, everything is shown.
      *
      */
-    explicit ContactAddedNotifyDialog(const QString &contactId, const QString &contactNick = QString(), Kopete::Account *account = 0L, const HideWidgetOptions &hide = DefaultHide);
+    explicit ContactAddedNotifyDialog(const QString &contactId, const QString &contactNick = QString(), Kopete::Account *account = nullptr, const HideWidgetOptions &hide = DefaultHide);
 
     /**
      * @brief Destructor

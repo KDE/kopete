@@ -89,7 +89,7 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	}
 	else
 	{
-		m_image = 0L;
+		m_image = nullptr;
 	}
 
 	setXMLFile(QStringLiteral("yahooimui.rc"));

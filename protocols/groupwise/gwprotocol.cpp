@@ -42,7 +42,7 @@
 K_PLUGIN_FACTORY( GroupWiseProtocolFactory, registerPlugin<GroupWiseProtocol>(); )
 K_EXPORT_PLUGIN( GroupWiseProtocolFactory( "kopete_groupwise" ) )
 
-GroupWiseProtocol *GroupWiseProtocol::s_protocol = 0L;
+GroupWiseProtocol *GroupWiseProtocol::s_protocol = nullptr;
 
 GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QVariantList &/*args*/ )
 	: Kopete::Protocol( parent ),

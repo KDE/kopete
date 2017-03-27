@@ -104,7 +104,7 @@ ChatSessionMembersListModel::ChatSessionMembersListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
     d = new Private();
-    d->session = 0L;
+    d->session = nullptr;
 }
 
 ChatSessionMembersListModel::~ChatSessionMembersListModel()

@@ -114,10 +114,10 @@ YahooProtocol::YahooProtocol( QObject *parent, const QVariantList & )
 YahooProtocol::~YahooProtocol()
 {
 	qCDebug(YAHOO_PROTOCOL_LOG) ;
-	s_protocolStatic_ = 0L;
+	s_protocolStatic_ = nullptr;
 }
 
-YahooProtocol* YahooProtocol::s_protocolStatic_ = 0L;
+YahooProtocol* YahooProtocol::s_protocolStatic_ = nullptr;
 
 Kopete::OnlineStatus YahooProtocol::statusFromYahoo( int status )
 {

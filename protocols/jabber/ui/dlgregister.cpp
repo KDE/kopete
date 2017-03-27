@@ -35,8 +35,8 @@ KDialog(parent)
 {
 	setAttribute(Qt::WA_DeleteOnClose);
 	mAccount = account;
-	mXDataWidget = 0L;
-	mTranslator = 0L;
+	mXDataWidget = nullptr;
+	mTranslator = nullptr;
 
 	mMainWidget = new QWidget(this);
 	setMainWidget(mMainWidget);

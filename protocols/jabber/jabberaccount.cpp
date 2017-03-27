@@ -98,11 +98,11 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	m_jabberClient = new JabberClient;
 	
-	m_resourcePool = 0L;
-	m_contactPool = 0L;
+	m_resourcePool = nullptr;
+	m_contactPool = nullptr;
 
 #ifdef JINGLE_SUPPORT
-	m_jcm = 0L;
+	m_jcm = nullptr;
 #endif
 	m_bookmarks = new JabberBookmarks(this);
 	m_removing=false;
@@ -176,22 +176,22 @@ void JabberAccount::cleanup ()
 
 	delete m_jabberClient;
 	
-	m_jabberClient = 0L;
+	m_jabberClient = nullptr;
 
 	delete m_resourcePool;
-	m_resourcePool = 0L;
+	m_resourcePool = nullptr;
 
 	delete m_contactPool;
-	m_contactPool = 0L;
+	m_contactPool = nullptr;
 
 #ifdef LIBJINGLE_SUPPORT
 	delete m_libjingle;
-	m_libjingle = 0L;
+	m_libjingle = nullptr;
 #endif
 
 #ifdef JINGLE_SUPPORT
 	delete m_jcm;
-	m_jcm = 0L;
+	m_jcm = nullptr;
 #endif
 }
 
@@ -793,7 +793,7 @@ void JabberAccount::slotCSDisconnected ()
 
 #ifdef JINGLE_SUPPORT
 	delete m_jcm;
-	m_jcm = 0L;
+	m_jcm = nullptr;
 #endif
 
 }

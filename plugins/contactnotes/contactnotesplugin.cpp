@@ -53,7 +53,7 @@ ContactNotesPlugin::ContactNotesPlugin(QObject *parent, const QVariantList & /* 
 
 ContactNotesPlugin::~ContactNotesPlugin()
 {
-    pluginStatic_ = 0L;
+    pluginStatic_ = nullptr;
 }
 
 ContactNotesPlugin *ContactNotesPlugin::plugin()
@@ -61,7 +61,7 @@ ContactNotesPlugin *ContactNotesPlugin::plugin()
     return pluginStatic_;
 }
 
-ContactNotesPlugin *ContactNotesPlugin::pluginStatic_ = 0L;
+ContactNotesPlugin *ContactNotesPlugin::pluginStatic_ = nullptr;
 
 void ContactNotesPlugin::slotEditInfo()
 {

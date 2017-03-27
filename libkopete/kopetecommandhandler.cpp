@@ -93,7 +93,7 @@ struct CommandHandlerPrivate
     QList<QAction *> m_commands;
 };
 
-CommandHandlerPrivate *Kopete::CommandHandler::p = 0L;
+CommandHandlerPrivate *Kopete::CommandHandler::p = nullptr;
 
 Kopete::CommandHandler::CommandHandler() : QObject(qApp)
 {
@@ -287,7 +287,7 @@ void Kopete::CommandHandler::slotSayCommand(const QString &args, Kopete::ChatSes
 void Kopete::CommandHandler::slotExecCommand(const QString &args, Kopete::ChatSession *manager)
 {
     if (!args.isEmpty()) {
-        KProcess *proc = 0L;
+        KProcess *proc = nullptr;
         if (KAuthorized::authorizeKAction(QStringLiteral("shell_access"))) {
             proc = new KProcess(manager);
         }

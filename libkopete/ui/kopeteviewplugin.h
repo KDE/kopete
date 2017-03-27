@@ -41,8 +41,8 @@ public:
     /**
      * @brief Create and initialize the plugin
      */
-    explicit ViewPlugin(const KAboutData &instance, QObject *parent = 0L);
-    explicit ViewPlugin(QObject *parent = 0L);
+    explicit ViewPlugin(const KAboutData &instance, QObject *parent = nullptr);
+    explicit ViewPlugin(QObject *parent = nullptr);
 
     /**
      * @brief Creates a view to be associated with the passed in session

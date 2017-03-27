@@ -135,9 +135,9 @@ void MetaContactSelectorWidgetLVI::buildVisualComponents()
         delete component(0);
     }
 
-    d->nameText = 0L;
-    d->metaContactPhoto = 0L;
-    d->extraText = 0L;
+    d->nameText = nullptr;
+    d->metaContactPhoto = nullptr;
+    d->extraText = nullptr;
     d->contactIconSize = 16;
     d->photoSize = 48;
 
@@ -221,7 +221,7 @@ MetaContactSelectorWidget::~MetaContactSelectorWidget()
 
 Kopete::MetaContact *MetaContactSelectorWidget::metaContact()
 {
-    MetaContactSelectorWidgetLVI *item = 0L;
+    MetaContactSelectorWidgetLVI *item = nullptr;
     item = static_cast<MetaContactSelectorWidgetLVI *>(d->widget->metaContactListView->currentItem());
 
     if (item) {

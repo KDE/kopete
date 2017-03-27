@@ -46,7 +46,7 @@ class KOPETE_EXPORT ContactListElement : public PropertyContainer
     Q_OBJECT
 
 protected:
-    ContactListElement(QObject *parent = 0L);
+    ContactListElement(QObject *parent = nullptr);
     ~ContactListElement();
 
 public:

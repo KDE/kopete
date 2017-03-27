@@ -239,13 +239,13 @@ signals:
      * a message will be soon shown in the chatwindow.
      * See @ref Kopete::ChatSessionManager::aboutToDisplay() signal
      */
-    void messageAppended(Kopete::Message &msg, Kopete::ChatSession *kmm = 0L);
+    void messageAppended(Kopete::Message &msg, Kopete::ChatSession *kmm = nullptr);
 
     /**
      * a message will be soon received
      * See @ref Kopete::ChatSessionManager::aboutToReceive() signal
      */
-    void messageReceived(Kopete::Message &msg, Kopete::ChatSession *kmm = 0L);
+    void messageReceived(Kopete::Message &msg, Kopete::ChatSession *kmm = nullptr);
 
     /**
      * @brief a message is going to be sent
@@ -255,7 +255,7 @@ signals:
      * the protocol have also to call @ref appendMessage() and @ref messageSucceeded()
      * See also @ref Kopete::ChatSessionManager::aboutToSend() signal
      */
-    void messageSent(Kopete::Message &msg, Kopete::ChatSession *kmm = 0L);
+    void messageSent(Kopete::Message &msg, Kopete::ChatSession *kmm = nullptr);
 
     /**
      * The last message has finaly successfully been sent

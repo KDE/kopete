@@ -90,7 +90,7 @@ AvatarManager::AvatarManager(QObject *parent)
 
 AvatarManager::~AvatarManager()
 {
-    s_self = 0L;
+    s_self = nullptr;
     delete d;
 }
 

@@ -130,7 +130,7 @@ RateClass* RateClassManager::findRateClass( SnacTransfer* st ) const
 {
 	SNAC s = st->snac();
 	//kDebug(OSCAR_RAW_DEBUG) << "Looking for SNAC " << s.family << ", " << s.subtype;
-	RateClass* rc = 0L;
+	RateClass* rc = nullptr;
 	QList<RateClass*>::const_iterator it;
 	QList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
 

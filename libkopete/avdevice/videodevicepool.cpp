@@ -88,7 +88,7 @@ VideoDevicePool::VideoDevicePool()
  */
 VideoDevicePool::~VideoDevicePool()
 {
-    s_self = 0L;
+    s_self = nullptr;
     foreach (VideoDevice *vd, m_videodevices) {
         delete vd;
     }

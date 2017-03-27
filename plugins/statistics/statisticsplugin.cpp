@@ -55,7 +55,7 @@ K_EXPORT_PLUGIN(StatisticsPluginFactory("kopete_statistics"))
 StatisticsPlugin::StatisticsPlugin(QObject *parent, const QVariantList & /*args*/)
     : Kopete::Plugin(parent)
 {
-    m_db = 0L;
+    m_db = nullptr;
     QAction *viewMetaContactStatistics = new QAction(QIcon::fromTheme(QStringLiteral("view-statistics")), i18n("View &Statistics"),
                                                      this);
     actionCollection()->addAction(QStringLiteral("viewMetaContactStatistics"), viewMetaContactStatistics);
@@ -119,7 +119,7 @@ StatisticsPlugin::~StatisticsPlugin()
     qDeleteAll(statisticsContactMap);
     statisticsContactMap.clear();
     delete m_db;
-    m_db = 0L;
+    m_db = nullptr;
 }
 
 void StatisticsPlugin::slotAboutToReceive(Kopete::Message &m)

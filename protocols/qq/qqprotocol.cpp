@@ -28,7 +28,7 @@
 K_PLUGIN_FACTORY( QQProtocolFactory, registerPlugin<QQProtocol>(); )
 K_EXPORT_PLUGIN( QQProtocolFactory( "kopete_qq" ) )
 
-QQProtocol *QQProtocol::s_protocol = 0L;
+QQProtocol *QQProtocol::s_protocol = nullptr;
 
 QQProtocol::QQProtocol( QObject* parent, const QVariantList &/*args*/ )
     : Kopete::Protocol( parent ),

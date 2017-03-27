@@ -302,7 +302,7 @@ QList<QAction *> *JabberContact::customContextMenuActions ()
 void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 {
 	QString viewPlugin;
-	Kopete::Message *newMessage = 0L;
+	Kopete::Message *newMessage = nullptr;
 
 	qDebug (JABBER_PROTOCOL_LOG) << "Received Message Type:" << message.type ();
 

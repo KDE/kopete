@@ -52,7 +52,7 @@ TextEffectPlugin::TextEffectPlugin(QObject *parent, const QVariantList & /*args*
 TextEffectPlugin::~TextEffectPlugin()
 {
     delete m_config;
-    pluginStatic_ = 0L;
+    pluginStatic_ = nullptr;
 }
 
 TextEffectPlugin *TextEffectPlugin::plugin()
@@ -60,7 +60,7 @@ TextEffectPlugin *TextEffectPlugin::plugin()
     return pluginStatic_;
 }
 
-TextEffectPlugin *TextEffectPlugin::pluginStatic_ = 0L;
+TextEffectPlugin *TextEffectPlugin::pluginStatic_ = nullptr;
 
 void TextEffectPlugin::slotOutgoingMessage(Kopete::Message &msg)
 {

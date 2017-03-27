@@ -48,7 +48,7 @@ bool MailNotifierTask::take(Transfer *transfer)
 
 bool MailNotifierTask::forMe(const Transfer *transfer) const
 {
-    const YMSGTransfer *t = 0L;
+    const YMSGTransfer *t = nullptr;
     t = dynamic_cast<const YMSGTransfer *>(transfer);
     if (!t) {
         return false;

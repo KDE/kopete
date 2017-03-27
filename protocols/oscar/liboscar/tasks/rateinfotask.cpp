@@ -115,7 +115,7 @@ QList<RateClass*> RateInfoTask::parseRateClasses(Buffer *buffer)
 		groupNum = buffer->getWord();
 		kDebug(OSCAR_RAW_DEBUG) << "Adding snac members to group " << groupNum;
 		
-		RateClass* rc = 0L;
+		RateClass* rc = nullptr;
 		QList<RateClass*>::ConstIterator it = rates.constBegin();
 		for ( ; it != rates.constEnd(); ++it )
 		{

@@ -33,7 +33,7 @@ public:
 //	UI::ChatView *activeView;
 };
 
-ChatSessionManager *ChatSessionManager::s_self = 0L;
+ChatSessionManager *ChatSessionManager::s_self = nullptr;
 
 ChatSessionManager *ChatSessionManager::self()
 {
@@ -53,7 +53,7 @@ ChatSessionManager::ChatSessionManager(QObject *parent)
 
 ChatSessionManager::~ChatSessionManager()
 {
-    s_self = 0L;
+    s_self = nullptr;
     QList<ChatSession *>::ConstIterator it;
     for (it = d->sessions.constBegin(); it != d->sessions.constEnd(); ++it) {
         qCDebug(LIBKOPETE_LOG) << "Unloading KMM: Why this KMM isn't yet unloaded?";
@@ -64,7 +64,7 @@ ChatSessionManager::~ChatSessionManager()
 
 ChatSession *ChatSessionManager::findChatSession(const Contact *user, ContactPtrList chatContacts, Protocol *protocol)
 {
-    ChatSession *result = 0L;
+    ChatSession *result = nullptr;
     QList<ChatSession *>::ConstIterator it;
     int i;
 

@@ -146,7 +146,7 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 		d->engine->setVersion( OscarVersionUpdater::self()->getAIMVersion() );
 
 	d->engine->setCodecProvider( d );
-    d->olnscDialog = 0L;
+    d->olnscDialog = nullptr;
     QObject::connect( d->engine, SIGNAL(loggedIn()), this, SLOT(loginActions()) );
 	QObject::connect( d->engine, SIGNAL(messageReceived(Oscar::Message)),
 	                  this, SLOT(messageReceived(Oscar::Message)) );
@@ -455,7 +455,7 @@ void OscarAccount::nonServerAddContactDialogClosed()
 	configGroup()->sync();
 
     d->olnscDialog->deleteLater();
-    d->olnscDialog = 0L;
+    d->olnscDialog = nullptr;
 }
 
 void OscarAccount::chatroomRequest( ChatRoomHandler* handler )

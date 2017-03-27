@@ -61,7 +61,7 @@ bool WebcamTask::take( Transfer* transfer )
 
 bool WebcamTask::forMe( const Transfer* transfer ) const
 {
-	const YMSGTransfer *t = 0L;
+	const YMSGTransfer *t = nullptr;
 	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
 		return false;
@@ -99,7 +99,7 @@ void WebcamTask::parseWebcamInformation( YMSGTransfer *t )
 	info.key = t->firstParam( 61 );
 	info.status = InitialStatus;
 	info.dataLength = 0;
-	info.buffer = 0L;
+	info.buffer = nullptr;
 	info.headerRead = false;
 	if(info.sender.isEmpty()){
 		info.sender = t->firstParam( 4 );
@@ -481,7 +481,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 		
 		info->headerRead = false;
 		delete info->buffer;
-		info->buffer = 0L;
+		info->buffer = nullptr;
 	}
 	if( data.size() > read )
 	{
@@ -547,7 +547,7 @@ void WebcamTask::addPendingInvitation( const QString &userId )
 void WebcamTask::grantAccess( const QString &userId )
 {
 	qCDebug(YAHOO_PROTOCOL_LOG) ;
-	KStreamSocket *socket = 0L;
+	KStreamSocket *socket = nullptr;
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
@@ -575,7 +575,7 @@ void WebcamTask::grantAccess( const QString &userId )
 void WebcamTask::closeOutgoingWebcam()
 {
 	qCDebug(YAHOO_PROTOCOL_LOG) ;
-	KStreamSocket *socket = 0L;
+	KStreamSocket *socket = nullptr;
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
@@ -599,7 +599,7 @@ void WebcamTask::sendEmptyWebcamImage()
 {
 	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
-	KStreamSocket *socket = 0L;
+	KStreamSocket *socket = nullptr;
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
@@ -645,7 +645,7 @@ void WebcamTask::sendWebcamImage( const QByteArray &image )
 	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	pictureBuffer = image;
 	transmissionPending = true;
-	KStreamSocket *socket = 0L;
+	KStreamSocket *socket = nullptr;
 	SocketInfoMap::Iterator it;
 	doPendingInvitations();
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
@@ -672,7 +672,7 @@ void WebcamTask::transmitWebcamImage()
 	qCDebug(YAHOO_PROTOCOL_LOG) << "arraysize: " << pictureBuffer.size();
 
 	// Find outgoing socket
-	KStreamSocket *socket = 0L;
+	KStreamSocket *socket = nullptr;
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{

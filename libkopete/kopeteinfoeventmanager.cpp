@@ -26,7 +26,7 @@ public:
     QList<InfoEvent *> eventList;
 };
 
-InfoEventManager *InfoEventManager::instance = 0L;
+InfoEventManager *InfoEventManager::instance = nullptr;
 
 InfoEventManager::InfoEventManager()
     : QObject(qApp)
@@ -36,7 +36,7 @@ InfoEventManager::InfoEventManager()
 
 InfoEventManager::~InfoEventManager()
 {
-    instance = 0L;
+    instance = nullptr;
     delete d;
 }
 

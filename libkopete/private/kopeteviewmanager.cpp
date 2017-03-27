@@ -122,7 +122,7 @@ struct KopeteViewManagerPrivate
     Kopete::ActiveNotifications activeNotifications;
 };
 
-KopeteViewManager *KopeteViewManager::s_viewManager = 0L;
+KopeteViewManager *KopeteViewManager::s_viewManager = nullptr;
 
 KopeteViewManager *KopeteViewManager::viewManager()
 {
@@ -136,7 +136,7 @@ KopeteViewManager::KopeteViewManager()
 {
     s_viewManager = this;
     d = new KopeteViewManagerPrivate;
-    d->activeView = 0L;
+    d->activeView = nullptr;
     d->foreignMessage = false;
 
     connect(Kopete::BehaviorSettings::self(), SIGNAL(configChanged()), this, SLOT(slotPrefsChanged()));
@@ -186,7 +186,7 @@ KopeteView *KopeteViewManager::view(Kopete::ChatSession *session, const QString 
         return d->sessionMap[ session ];
     } else {
         Kopete::PluginManager *pluginManager = Kopete::PluginManager::self();
-        Kopete::ViewPlugin *viewPlugin = 0L;
+        Kopete::ViewPlugin *viewPlugin = nullptr;
 
         QString pluginName = requestedPlugin.isEmpty() ? Kopete::BehaviorSettings::self()->viewPlugin() : requestedPlugin;
         if (!pluginName.isEmpty()) {
@@ -503,7 +503,7 @@ void KopeteViewManager::slotViewDestroyed(KopeteView *closingView)
     }
 
     if (closingView == d->activeView) {
-        d->activeView = 0L;
+        d->activeView = nullptr;
     }
 }
 

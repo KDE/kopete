@@ -26,7 +26,7 @@
 #include <kconfiggroup.h>
 
 QMutex updateMutex;
-OscarVersionUpdater *OscarVersionUpdater::versionUpdaterStatic = 0L;
+OscarVersionUpdater *OscarVersionUpdater::versionUpdaterStatic = nullptr;
 
 OscarVersionUpdater::OscarVersionUpdater()
 : mStamp( 1 ), mUpdating( false )

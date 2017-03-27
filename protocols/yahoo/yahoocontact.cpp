@@ -73,9 +73,9 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	m_userId = userId;
 	if ( metaContact )
 		m_groupName = metaContact->groups().first()->displayName();
-	m_manager = 0L;
+	m_manager = nullptr;
 	m_account = account;
-	m_YABEntry = 0L;
+	m_YABEntry = nullptr;
 	m_receivingWebcam = false;
 	m_sessionActive = false;
 
@@ -87,20 +87,20 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	if ( m_account->haveContactList() )
 		syncToServer();
 
-	m_webcamDialog = 0L;
-	m_webcamAction = 0L;
-	m_stealthAction = 0L;
-	m_inviteWebcamAction = 0L;
-	m_inviteConferenceAction = 0L;
-	m_profileAction = 0L;
+	m_webcamDialog = nullptr;
+	m_webcamAction = nullptr;
+	m_stealthAction = nullptr;
+	m_inviteWebcamAction = nullptr;
+	m_inviteConferenceAction = nullptr;
+	m_profileAction = nullptr;
 
-	m_buzzAction = 0L;
+	m_buzzAction = nullptr;
 }
 
 YahooContact::~YahooContact()
 {
 	delete m_YABEntry;
-	m_YABEntry = 0L;
+	m_YABEntry = nullptr;
 }
 
 QString YahooContact::userId() const
@@ -389,7 +389,7 @@ void YahooContact::slotTyping(bool isTyping_ )
 
 void YahooContact::slotChatSessionDestroyed()
 {
-	m_manager = 0L;
+	m_manager = nullptr;
 	m_account->yahooSession()->setChatSessionState( m_userId, true );	// Unregister chatsession
 	m_sessionActive = false;
 }
@@ -695,7 +695,7 @@ void YahooContact::closeWebcamDialog()
 	if( m_receivingWebcam )
 		m_account->yahooSession()->closeWebcam( contactId() );
 	m_webcamDialog->delayedDestruct();
-	m_webcamDialog = 0L;
+	m_webcamDialog = nullptr;
 }
 
 void YahooContact::deleteContact()

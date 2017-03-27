@@ -40,8 +40,8 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 	mProtocol=static_cast<AIMProtocol *>(protocol());
 	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 
-	m_infoDialog = 0L;
-	m_warnUserAction = 0L;
+	m_infoDialog = nullptr;
+	m_warnUserAction = nullptr;
 
 	QObject::connect( mAccount->engine(), SIGNAL(receivedUserInfo(QString,UserDetails)),
 	                  this, SLOT(userInfoUpdated(QString,UserDetails)) );
@@ -208,7 +208,7 @@ void AIMContact::gotWarning( const QString& contact, quint16 increase, quint16 n
 void AIMContact::closeUserInfoDialog()
 {
 	m_infoDialog->deleteLater();
-	m_infoDialog = 0L;
+	m_infoDialog = nullptr;
 }
 
 void AIMContact::warnUser()

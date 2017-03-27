@@ -1830,7 +1830,7 @@ void YahooAccount::slotOutgoingWebcamClosing()
 {
 	m_session->closeOutgoingWebcam();
 	m_webcam->deleteLater();
-	m_webcam = 0L;
+	m_webcam = nullptr;
 }
 
 void YahooAccount::slotWebcamViewerJoined( const QString &viewer )

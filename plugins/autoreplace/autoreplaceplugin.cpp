@@ -29,7 +29,7 @@
 K_PLUGIN_FACTORY(AutoReplacePluginFactory, registerPlugin<AutoReplacePlugin>();
                  )
 
-AutoReplacePlugin * AutoReplacePlugin::pluginStatic_ = 0L;
+AutoReplacePlugin * AutoReplacePlugin::pluginStatic_ = nullptr;
 
 AutoReplacePlugin::AutoReplacePlugin(QObject *parent, const QVariantList &)
     : Kopete::Plugin(parent)
@@ -52,7 +52,7 @@ AutoReplacePlugin::AutoReplacePlugin(QObject *parent, const QVariantList &)
 
 AutoReplacePlugin::~AutoReplacePlugin()
 {
-    pluginStatic_ = 0L;
+    pluginStatic_ = nullptr;
 
     delete mInboundHandler;
     delete m_prefs;

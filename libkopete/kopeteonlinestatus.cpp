@@ -152,7 +152,7 @@ OnlineStatus::OnlineStatus(StatusType status)
     d->status = status;
     d->internalStatus = 0;
     d->weight = 0;
-    d->protocol = 0L;
+    d->protocol = nullptr;
     d->categories = 0x00;
     d->options = 0x00;
 
@@ -186,7 +186,7 @@ OnlineStatus::OnlineStatus()
     d->status = Unknown;
     d->internalStatus = 0;
     d->weight = 0;
-    d->protocol = 0L;
+    d->protocol = nullptr;
     d->overlayIcons = QStringList(QLatin1String("status_unknown"));
     d->categories = 0x00;
     d->options = 0x00;

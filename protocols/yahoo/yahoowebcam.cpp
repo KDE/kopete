@@ -32,7 +32,7 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 	setObjectName( QStringLiteral("yahoo_webcam") );
 	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	theAccount = account;
-	theDialog = 0L;
+	theDialog = nullptr;
 	m_img = new QImage();
 
 	m_sendTimer = new QTimer( this );

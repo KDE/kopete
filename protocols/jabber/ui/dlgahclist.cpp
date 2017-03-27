@@ -33,7 +33,7 @@ KDialog(parent)
 	mClient = client;
 	mCommandsWidget = new QWidget(this);
 	setMainWidget(mCommandsWidget);
-	mCommandsLayout = 0L;
+	mCommandsLayout = nullptr;
 	setButtons(Close | User1 | User2);
 	setButtonText(User1, i18n("Execute"));
 	setButtonText(User2, i18n("Refresh"));

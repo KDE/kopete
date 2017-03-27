@@ -137,7 +137,7 @@ public:
 	DiscoItem::Identity discoIdentity;
 };
 
-XMPP::S5BServer *JabberClient::Private::s5bServer = 0L;
+XMPP::S5BServer *JabberClient::Private::s5bServer = nullptr;
 QStringList JabberClient::Private::s5bAddressList;
 int JabberClient::Private::s5bServerPort = 8010;
 
@@ -170,12 +170,12 @@ void JabberClient::cleanUp ()
 	delete d->jabberTLS;
 	// privacyManager will be deleted with jabberClient, its parent's parent
 
-	d->jabberClient = 0L;
-	d->jabberClientStream = 0L;
-	d->jabberClientConnector = 0L;
-	d->jabberTLSHandler = 0L;
-	d->jabberTLS = 0L;
-	d->privacyManager = 0L;
+	d->jabberClient = nullptr;
+	d->jabberClientStream = nullptr;
+	d->jabberClientConnector = nullptr;
+	d->jabberTLSHandler = nullptr;
+	d->jabberTLS = nullptr;
+	d->privacyManager = nullptr;
 
 	d->currentPenaltyTime = 0;
 
@@ -280,7 +280,7 @@ XMPP::S5BServer *JabberClient::s5bServer ()
 void JabberClient::slotS5BServerGone ()
 {
 
-	d->s5bServer = 0L;
+	d->s5bServer = nullptr;
 
 	if ( d->jabberClient )
 		d->jabberClient->s5bManager()->setServer( 0L );
@@ -316,7 +316,7 @@ void JabberClient::removeS5BServerAddress ( const QString &address )
 	if ( d->s5bAddressList.isEmpty () )
 	{
 		delete d->s5bServer;
-		d->s5bServer = 0L;
+		d->s5bServer = nullptr;
 	}
 	else
 	{

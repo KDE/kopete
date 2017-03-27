@@ -93,7 +93,7 @@ void ContactStalker::messageAppended(Kopete::Message &message, Kopete::ChatSessi
 void ContactStalker::slotMetaContactRemoved(Kopete::MetaContact *contact)
 {
     if (contact == m_contact) {
-        m_contact = 0L;
+        m_contact = nullptr;
         emit contactChanged(contact->metaContactId().toString());
     }
 }
@@ -154,7 +154,7 @@ Kopete::OnlineStatusManager::Categories KopeteDBusInterfacePrivate::status2Value
 Kopete::MetaContact *KopeteDBusInterfacePrivate::findContact(
     const QString &nameOrId)
 {
-    Kopete::MetaContact *contact = 0L;
+    Kopete::MetaContact *contact = nullptr;
 
     if (nameOrId.count(':') == 2) {
         QStringList tokens = nameOrId.split(':');

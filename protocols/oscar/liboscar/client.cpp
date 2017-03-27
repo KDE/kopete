@@ -188,20 +188,20 @@ Client::Client( QObject* parent )
 	d->status.sent = false;
 	d->ssiManager = new ContactManager( this );
 	d->settings = new Oscar::Settings();
-	d->errorTask = 0L;
-	d->onlineNotifier = 0L;
-	d->ownStatusTask = 0L;
-	d->messageReceiverTask = 0L;
-	d->messageAckTask = 0L;
-	d->ssiAuthTask = 0L;
-	d->icqInfoTask = 0L;
-	d->icqTlvInfoTask = 0L;
-	d->userInfoTask = 0L;
+	d->errorTask = nullptr;
+	d->onlineNotifier = nullptr;
+	d->ownStatusTask = nullptr;
+	d->messageReceiverTask = nullptr;
+	d->messageAckTask = nullptr;
+	d->ssiAuthTask = nullptr;
+	d->icqInfoTask = nullptr;
+	d->icqTlvInfoTask = nullptr;
+	d->userInfoTask = nullptr;
 	d->stage = ClientPrivate::StageOne;
-	d->loginTask = 0L;
-	d->loginTaskTwo = 0L;
-	d->typingNotifyTask = 0L;
-	d->ssiModifyTask = 0L;
+	d->loginTask = nullptr;
+	d->loginTaskTwo = nullptr;
+	d->typingNotifyTask = nullptr;
+	d->ssiModifyTask = nullptr;
 	d->awayMsgRequestTimer = new QTimer();
 	d->codecProvider = &defaultCodecProvider;
 
@@ -603,7 +603,7 @@ void Client::notifySocketError( int errCode, const QString& msg )
 
 void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 {
-    Connection* c = 0L;
+    Connection* c = nullptr;
     if ( msg.channel() == 0x0003 )
     {
         c = d->connections.connectionForChatRoom( msg.exchange(), msg.chatRoom() );

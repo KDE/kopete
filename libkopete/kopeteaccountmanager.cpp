@@ -72,7 +72,7 @@ public:
     uint suspendedStatusCategory;
 };
 
-AccountManager *AccountManager::s_self = 0L;
+AccountManager *AccountManager::s_self = nullptr;
 
 AccountManager *AccountManager::self()
 {
@@ -100,7 +100,7 @@ AccountManager::AccountManager()
 
 AccountManager::~AccountManager()
 {
-    s_self = 0L;
+    s_self = nullptr;
 
     delete d;
 }
@@ -422,7 +422,7 @@ void AccountManager::slotPluginLoaded(Plugin *plugin)
         qCDebug(LIBKOPETE_LOG)
             <<"Creating account for '" << accountId << "'" << endl;
 
-        Account *account = 0L;
+        Account *account = nullptr;
         account = registerAccount(protocol->createNewAccount(accountId));
         if (!account) {
             qCWarning(LIBKOPETE_LOG)

@@ -96,7 +96,7 @@ Kopete::ChatSession* AIMMyselfContact::manager( Kopete::Contact::CanCreateFlags 
 	kDebug(OSCAR_AIM_DEBUG) ;
 	Kopete::ContactPtrList chatMembers;
 	chatMembers.append( this );
-	Kopete::ChatSession* genericManager = 0L;
+	Kopete::ChatSession* genericManager = nullptr;
 	genericManager = Kopete::ChatSessionManager::self()->findChatSession( account()->myself(), chatMembers, protocol() );
 	AIMChatSession* session = dynamic_cast<AIMChatSession*>( genericManager );
 
@@ -441,7 +441,7 @@ void AIMAccount::joinChatDialogClosed( int code )
 	}
 
 	m_joinChatDialog->delayedDestruct();
-	m_joinChatDialog = 0L;
+	m_joinChatDialog = nullptr;
 }
 
 void AIMAccount::loginActions()

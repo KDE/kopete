@@ -83,7 +83,7 @@ JabberContact *JabberContactPool::addContact(const XMPP::RosterItem &contact, Ko
 
     qCDebug(JABBER_PROTOCOL_LOG) << "Adding new contact " << contact.jid().full();
 
-    JabberTransport *transport = 0l;
+    JabberTransport *transport = nullptr;
     QString legacyId;
     //find if the contact should be added to a transport.
     if (mAccount->transports().contains(contact.jid().domain())) {
@@ -124,7 +124,7 @@ JabberBaseContact *JabberContactPool::addGroupContact(const XMPP::RosterItem &co
             qCDebug(JABBER_PROTOCOL_LOG) << "Bad contact will be removed and re-added " << mContact.jid().full();
             Kopete::MetaContact *old_mc = mContactItem->contact()->metaContact();
             delete mContactItem->contact();
-            mContactItem = 0L;
+            mContactItem = nullptr;
             if (old_mc->contacts().isEmpty() && old_mc != metaContact) {
                 Kopete::ContactList::self()->removeMetaContact(old_mc);
             }

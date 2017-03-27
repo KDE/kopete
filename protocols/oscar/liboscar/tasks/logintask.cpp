@@ -38,8 +38,8 @@
 StageOneLoginTask::StageOneLoginTask( Task* parent )
 	: Task ( parent )
 {
-	m_loginTask = 0L;
-	m_closeTask = 0L;
+	m_loginTask = nullptr;
+	m_closeTask = nullptr;
 }
 
 StageOneLoginTask::~StageOneLoginTask()

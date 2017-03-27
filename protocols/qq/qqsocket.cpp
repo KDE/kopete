@@ -45,7 +45,7 @@ using namespace KNetwork;
 QQSocket::QQSocket(QObject* parent)  : QObject (parent)
 {
 	m_onlineStatus = Disconnected;
-	m_socket = 0L;
+	m_socket = nullptr;
 }
 
 QQSocket::~QQSocket()
@@ -156,7 +156,7 @@ void QQSocket::slotSocketError( int error )
 
 	//delete m_socket;
 	m_socket->deleteLater();
-	m_socket = 0L;
+	m_socket = nullptr;
 
 	setOnlineStatus( Disconnected );
 	emit connectionFailed();
@@ -286,7 +286,7 @@ void QQSocket::slotSocketClosed()
 	doneDisconnect();
 
 	m_socket->deleteLater();
-	m_socket = 0L;
+	m_socket = nullptr;
 
 	emit socketClosed();
 }

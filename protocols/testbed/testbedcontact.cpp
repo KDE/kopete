@@ -37,7 +37,7 @@ TestbedContact::TestbedContact( Kopete::Account* _account, const QString &unique
 	kDebug( 14210 ) << " uniqueName: " << uniqueName;
 	m_type = TestbedContact::Null;
 	// FIXME: ? setDisplayName( displayName );
-	m_msgManager = 0L;
+	m_msgManager = nullptr;
 
 	setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
 }
@@ -144,6 +144,6 @@ void TestbedContact::receivedMessage( const QString &message )
 void TestbedContact::slotChatSessionDestroyed()
 {
 	//FIXME: the chat window was closed?  Take appropriate steps.
-	m_msgManager = 0L;
+	m_msgManager = nullptr;
 }
 

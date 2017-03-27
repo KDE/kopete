@@ -28,7 +28,7 @@
 
 namespace Kopete {
 namespace Utils {
-NotifyHelper *NotifyHelper::s_self = 0L;
+NotifyHelper *NotifyHelper::s_self = nullptr;
 
 NotifyHelper::NotifyHelper() : QObject(qApp)
 {
@@ -36,7 +36,7 @@ NotifyHelper::NotifyHelper() : QObject(qApp)
 
 NotifyHelper::~NotifyHelper()
 {
-    s_self = 0L;
+    s_self = nullptr;
 }
 
 NotifyHelper *NotifyHelper::self()

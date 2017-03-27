@@ -173,7 +173,7 @@ void Kopete::WalletManager::closeWallet()
     }
 
     delete d->wallet;
-    d->wallet = 0L;
+    d->wallet = nullptr;
 
     emit walletLost();
 }

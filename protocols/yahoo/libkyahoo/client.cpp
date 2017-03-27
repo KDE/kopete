@@ -120,13 +120,13 @@ Client::Client(QObject *par) : QObject(par)
     d->statusOnConnect = Yahoo::StatusAvailable;
     setStatus(Yahoo::StatusDisconnected);
     d->tasksInitialized = false;
-    d->stream = 0L;
-    d->iconLoader = 0L;
+    d->stream = nullptr;
+    d->iconLoader = nullptr;
     d->loginTask = new LoginTask(d->root);
     d->listTask = new ListTask(d->root);
     d->pictureFlag = Yahoo::NoPicture;
     d->buddyListReady = false;
-    m_connector = 0L;
+    m_connector = nullptr;
 
     m_pingTimer = new QTimer(this);
     QObject::connect(m_pingTimer, SIGNAL(timeout()), this, SLOT(sendPing()));
@@ -208,11 +208,11 @@ void Client::close()
         QObject::disconnect(d->stream, SIGNAL(readyRead()), this, SLOT(streamReadyRead()));
         d->stream->deleteLater();
     }
-    d->stream = 0L;
+    d->stream = nullptr;
     if (m_connector) {
         m_connector->deleteLater();
     }
-    m_connector = 0L;
+    m_connector = nullptr;
     d->active = false;
     d->buddyListReady = false;
 }
@@ -992,19 +992,19 @@ void Client::deleteTasks()
 {
     d->tasksInitialized = false;
     d->statusTask->deleteLater();
-    d->statusTask = 0L;
+    d->statusTask = nullptr;
     d->mailTask->deleteLater();
-    d->mailTask = 0L;
+    d->mailTask = nullptr;
     d->messageReceiverTask->deleteLater();
-    d->messageReceiverTask = 0L;
+    d->messageReceiverTask = nullptr;
     d->pictureNotifierTask->deleteLater();
-    d->pictureNotifierTask = 0L;
+    d->pictureNotifierTask = nullptr;
     d->webcamTask->deleteLater();
-    d->webcamTask = 0L;
+    d->webcamTask = nullptr;
     d->conferenceTask->deleteLater();
-    d->conferenceTask = 0L;
+    d->conferenceTask = nullptr;
     d->yabTask->deleteLater();
-    d->yabTask = 0L;
+    d->yabTask = nullptr;
     d->fileTransferTask->deleteLater();
     d->fileTransferTask = 0;
     d->yahooChatTask->deleteLater();

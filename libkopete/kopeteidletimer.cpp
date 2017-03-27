@@ -44,7 +44,7 @@ public:
     Kopete::IdlePlatform *platform;
 };
 
-Kopete::IdleTimer *Kopete::IdleTimer::instance = 0L;
+Kopete::IdleTimer *Kopete::IdleTimer::instance = nullptr;
 
 Kopete::IdleTimer::IdleTimer()
     : QObject()
@@ -80,7 +80,7 @@ Kopete::IdleTimer *Kopete::IdleTimer::self()
 
 Kopete::IdleTimer::~IdleTimer()
 {
-    instance = 0L;
+    instance = nullptr;
 
     delete d->platform;
 

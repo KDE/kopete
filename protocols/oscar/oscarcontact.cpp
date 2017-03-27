@@ -66,7 +66,7 @@ OscarContact::OscarContact( Kopete::Account* account, const QString& name,
 {
 	mAccount = static_cast<OscarAccount*>(account);
 	mName = name;
-	mMsgManager = 0L;
+	mMsgManager = nullptr;
 	m_buddyIconDirty = false;
 	m_oesd = 0;
 
@@ -153,7 +153,7 @@ void OscarContact::deleteContact()
 
 void OscarContact::chatSessionDestroyed()
 {
-	mMsgManager = 0L;
+	mMsgManager = nullptr;
 }
 
 // Called when the metacontact owning this contact has changed groups
@@ -552,7 +552,7 @@ void OscarContact::changeEncodingDialogClosed( int result )
 	if ( m_oesd )
 	{
 		m_oesd->deleteLater();
-		m_oesd = 0L;
+		m_oesd = nullptr;
 	}
 }
 

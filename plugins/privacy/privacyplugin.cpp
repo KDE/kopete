@@ -42,7 +42,7 @@
 K_PLUGIN_FACTORY(PrivacyPluginFactory, registerPlugin<PrivacyPlugin>();
                  )
 
-PrivacyPlugin * PrivacyPlugin::pluginStatic_ = 0L;
+PrivacyPlugin * PrivacyPlugin::pluginStatic_ = nullptr;
 
 PrivacyPlugin::PrivacyPlugin(QObject *parent, const QVariantList &)
     : Kopete::Plugin(parent)
@@ -74,7 +74,7 @@ PrivacyPlugin::PrivacyPlugin(QObject *parent, const QVariantList &)
 PrivacyPlugin::~PrivacyPlugin()
 {
     kDebug(14313);
-    pluginStatic_ = 0L;
+    pluginStatic_ = nullptr;
     delete m_inboundHandler;
 }
 

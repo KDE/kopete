@@ -140,11 +140,11 @@ JabberProtocol::~JabberProtocol ()
 	//disconnectAll();
 
 	delete capsManager;
-	capsManager = 0L;
+	capsManager = nullptr;
 
 	/* make sure that the next attempt to load Jabber
 	 * re-initializes the protocol class. */
-	protocolInstance = 0L;
+	protocolInstance = nullptr;
 }
 
 AddContactPage *JabberProtocol::createAddContactWidget (QWidget * parent, Kopete::Account * i)

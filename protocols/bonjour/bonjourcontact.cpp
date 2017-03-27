@@ -126,7 +126,7 @@ void BonjourContact::slotChatSessionDestroyed()
         connection = NULL;
     }
 
-    m_msgManager = 0L;
+    m_msgManager = nullptr;
 }
 
 void BonjourContact::setremoteHostName(const QString &nremoteHostName)

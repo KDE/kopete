@@ -28,9 +28,9 @@
 #include <KLocalizedString>
 
 namespace Kopete {
-Group *Group::s_topLevel = 0L;
-Group *Group::s_temporary = 0L;
-Group *Group::s_offline = 0L;
+Group *Group::s_topLevel = nullptr;
+Group *Group::s_temporary = nullptr;
+Group *Group::s_offline = nullptr;
 Group *Group::topLevel()
 {
     if (!s_topLevel) {
@@ -92,13 +92,13 @@ Group::Group()
 Group::~Group()
 {
     if (d->type == TopLevel) {
-        s_topLevel = 0L;
+        s_topLevel = nullptr;
     }
     if (d->type == Temporary) {
-        s_temporary = 0L;
+        s_temporary = nullptr;
     }
     if (d->type == Offline) {
-        s_offline = 0L;
+        s_offline = nullptr;
     }
     delete d;
 }

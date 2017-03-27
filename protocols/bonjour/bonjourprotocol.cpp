@@ -30,7 +30,7 @@ K_PLUGIN_FACTORY( BonjourProtocolFactory, registerPlugin<BonjourProtocol>(); )
 K_EXPORT_PLUGIN( BonjourProtocolFactory( "kopete_bonjour" ) )
 
 
-BonjourProtocol *BonjourProtocol::s_protocol = 0L;
+BonjourProtocol *BonjourProtocol::s_protocol = nullptr;
 
 BonjourProtocol::BonjourProtocol(QObject *parent, const QVariantList & /*args*/)
     : Kopete::Protocol(parent)

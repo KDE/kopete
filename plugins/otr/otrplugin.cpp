@@ -121,7 +121,7 @@ OTRPlugin::OTRPlugin (QObject *parent, const QVariantList & /*args*/)
 OTRPlugin::~OTRPlugin()
 {
     delete m_inboundHandler;
-    pluginStatic_ = 0L;
+    pluginStatic_ = nullptr;
     kDebug(14318) << "Exiting OTR plugin";
 }
 
@@ -130,7 +130,7 @@ OTRPlugin *OTRPlugin::plugin()
     return pluginStatic_;
 }
 
-OTRPlugin *OTRPlugin::pluginStatic_ = 0L;
+OTRPlugin *OTRPlugin::pluginStatic_ = nullptr;
 
 void OTRPlugin::slotNewChatSessionWindow(Kopete::ChatSession *KMM)
 {

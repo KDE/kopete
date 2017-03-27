@@ -85,7 +85,7 @@ Kopete::ChatSession::ChatSession(const Kopete::Contact *user, Kopete::ContactPtr
     d->isEmpty = others.isEmpty();
     d->mCanBeDeleted = true;
     d->refcount = 0;
-    d->view = 0L;
+    d->view = nullptr;
     d->customDisplayName = false;
     d->mayInvite = false;
     d->form = form;
@@ -648,7 +648,7 @@ KopeteView *Kopete::ChatSession::view(bool canCreate, const QString &requestedPl
 
 void Kopete::ChatSession::slotViewDestroyed()
 {
-    d->view = 0L;
+    d->view = nullptr;
     if (d->mCanBeDeleted && d->refcount < 1) {
         deleteLater();
     }

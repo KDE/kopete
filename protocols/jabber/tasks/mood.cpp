@@ -50,7 +50,7 @@ QDomElement Mood::toXml(QDomDocument &doc)
 	return mood;
 }
 
-MoodManager *MoodManager::s_self = 0L;
+MoodManager *MoodManager::s_self = nullptr;
 
 MoodManager *MoodManager::self()
 {

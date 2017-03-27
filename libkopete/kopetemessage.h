@@ -545,7 +545,7 @@ public:  /* static helpers */
      * @return The decoded string
 
      */
-    static QString decodeString(const QByteArray &message, const QTextCodec *providedCodec = 0L, bool *success = 0L);
+    static QString decodeString(const QByteArray &message, const QTextCodec *providedCodec = nullptr, bool *success = nullptr);
 #endif
 
 private:

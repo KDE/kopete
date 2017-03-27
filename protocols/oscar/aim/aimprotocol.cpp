@@ -36,7 +36,7 @@
 K_PLUGIN_FACTORY( AIMProtocolFactory, registerPlugin<AIMProtocol>(); )
 K_EXPORT_PLUGIN( AIMProtocolFactory( "kopete_aim" ) )
 
-AIMProtocol* AIMProtocol::protocolStatic_ = 0L;
+AIMProtocol* AIMProtocol::protocolStatic_ = nullptr;
 
 AIMProtocolHandler::AIMProtocolHandler() : Kopete::MimeTypeHandler(false)
 {

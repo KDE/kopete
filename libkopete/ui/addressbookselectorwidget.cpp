@@ -91,7 +91,7 @@ AddressBookSelectorWidget::~AddressBookSelectorWidget()
 
 KContacts::Addressee AddressBookSelectorWidget::addressee()
 {
-    AddresseeItem *item = 0L;
+    AddresseeItem *item = nullptr;
     item = static_cast<AddresseeItem *>(addresseeListView->currentItem());
 
     if (item) {

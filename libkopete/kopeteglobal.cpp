@@ -39,7 +39,7 @@ public:
     PropertyTmpl::Map mTemplates;
 };
 
-Properties *Properties::mSelf = 0L;
+Properties *Properties::mSelf = nullptr;
 
 Properties *Properties::self()
 {
@@ -75,7 +75,7 @@ Properties::Properties()
 Properties::~Properties()
 {
     kDebug(14000);
-    mSelf = 0L;
+    mSelf = nullptr;
     delete d;
 }
 

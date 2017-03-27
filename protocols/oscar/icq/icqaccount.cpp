@@ -127,7 +127,7 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	QString nickName = configGroup()->readEntry("NickName", QString() );
 	mWebAware = configGroup()->readEntry( "WebAware", false );
 	mHideIP = configGroup()->readEntry( "HideIP", true );
-	mInfoWidget = 0L;
+	mInfoWidget = nullptr;
 
 	QObject::connect( engine(), SIGNAL(userReadsStatusMessage(QString)),
 	                  this, SLOT(userReadsStatusMessage(QString)) );
@@ -331,7 +331,7 @@ void ICQAccount::closeUserInfoDialog()
 {
 	QObject::disconnect( this, 0, mInfoWidget, 0 );
 	mInfoWidget->deleteLater();
-	mInfoWidget = 0L;
+	mInfoWidget = nullptr;
 }
 
 void ICQAccount::userReadsStatusMessage( const QString& contact )

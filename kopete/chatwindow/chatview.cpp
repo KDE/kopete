@@ -94,7 +94,7 @@ ChatView::ChatView(Kopete::ChatSession *mgr, ChatWindowPlugin *parent)
 
     KVBox *vbox = this;
 
-    m_mainWindow = 0L;
+    m_mainWindow = nullptr;
     m_tabState = Normal;
 
     d->warnGroupChat = mgr->warnGroupChat();

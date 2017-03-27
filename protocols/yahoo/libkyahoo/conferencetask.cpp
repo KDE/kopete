@@ -38,7 +38,7 @@ bool ConferenceTask::take(Transfer *transfer)
         return false;
     }
 
-    YMSGTransfer *t = 0L;
+    YMSGTransfer *t = nullptr;
     t = static_cast<YMSGTransfer *>(transfer);
 
     if (t->service() == Yahoo::ServiceConfInvite
@@ -59,7 +59,7 @@ bool ConferenceTask::take(Transfer *transfer)
 
 bool ConferenceTask::forMe(const Transfer *transfer) const
 {
-    const YMSGTransfer *t = 0L;
+    const YMSGTransfer *t = nullptr;
     t = dynamic_cast<const YMSGTransfer *>(transfer);
     if (!t) {
         return false;

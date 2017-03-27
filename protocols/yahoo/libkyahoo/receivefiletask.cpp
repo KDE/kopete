@@ -102,7 +102,7 @@ bool ReceiveFileTask::take( Transfer* transfer )
 bool ReceiveFileTask::forMe( const Transfer *transfer ) const
 {
 	qCDebug(YAHOO_PROTOCOL_LOG) ;
-	const YMSGTransfer *t = 0L;
+	const YMSGTransfer *t = nullptr;
 	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
 		return false;
@@ -287,12 +287,12 @@ void ReceiveFileTask::canceled( unsigned int id )
 	if( m_mimetypeJob )
 	{
 		m_mimetypeJob->kill();
-		m_mimetypeJob = 0L;
+		m_mimetypeJob = nullptr;
 	}
 	if( m_transferJob )
 	{
 		m_transferJob->kill();
-		m_transferJob = 0L;
+		m_transferJob = nullptr;
 	}
 	
 	setError();

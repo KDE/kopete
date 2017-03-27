@@ -108,7 +108,7 @@ KopeteChatWindow *KopeteChatWindow::window(Kopete::ChatSession *manager)
     KopeteChatWindow *myWindow = 0;
 
     //Take the first and the first? What else?
-    Kopete::Group *group = 0L;
+    Kopete::Group *group = nullptr;
     Kopete::ContactPtrList members = manager->members();
     Kopete::MetaContact *metaContact = members.first()->metaContact();
 
@@ -201,11 +201,11 @@ KopeteChatWindow::KopeteChatWindow(Kopete::ChatSession::Form form, QWidget *pare
     QTime chrono;
     chrono.start();
 #endif
-    m_activeView = 0L;
-    m_popupView = 0L;
-    backgroundFile = 0L;
+    m_activeView = nullptr;
+    m_popupView = nullptr;
+    backgroundFile = nullptr;
     updateBg = true;
-    m_tabBar = 0L;
+    m_tabBar = nullptr;
 
     m_participantsWidget = new QDockWidget(i18n("Participants"), this);
     m_participantsWidget->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
@@ -254,7 +254,7 @@ KopeteChatWindow::KopeteChatWindow(Kopete::ChatSession::Form form, QWidget *pare
         connect(m_button_send, SIGNAL(clicked()), this, SLOT(slotSendMessage()));
         statusBar()->addPermanentWidget(m_button_send, 0);
     } else {
-        m_button_send = 0L;
+        m_button_send = nullptr;
     }
 
     m_status_text = new KSqueezedTextLabel(i18nc("@info:status", "Ready."), statusBar());
@@ -719,7 +719,7 @@ void KopeteChatWindow::slotCloseChat(QWidget *chatView)
 void KopeteChatWindow::addTab(ChatView *view)
 {
     QList<Kopete::Contact *> chatMembers = view->msgManager()->members();
-    Kopete::Contact *c = 0L;
+    Kopete::Contact *c = nullptr;
     foreach (Kopete::Contact *contact, chatMembers) {
         if (!c || c->onlineStatus() < contact->onlineStatus()) {
             c = contact;
@@ -767,7 +767,7 @@ void KopeteChatWindow::deleteTabBar()
         }
 
         m_tabBar->deleteLater();
-        m_tabBar = 0L;
+        m_tabBar = nullptr;
     }
 }
 
@@ -862,7 +862,7 @@ void KopeteChatWindow::detachChatView(ChatView *view)
 
 void KopeteChatWindow::slotDetachChat(QAction *action)
 {
-    KopeteChatWindow *newWindow = 0L;
+    KopeteChatWindow *newWindow = nullptr;
     ChatView *detachedView;
 
     if (m_popupView) {
@@ -1043,7 +1043,7 @@ void KopeteChatWindow::slotUpdateCaptionIcons(ChatView *view)
         return; //(pas de charité)
     }
     QList<Kopete::Contact *> chatMembers = view->msgManager()->members();
-    Kopete::Contact *c = 0L;
+    Kopete::Contact *c = nullptr;
     foreach (Kopete::Contact *contact, chatMembers) {
         if (!c || c->onlineStatus() < contact->onlineStatus()) {
             c = contact;

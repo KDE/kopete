@@ -127,9 +127,9 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
         return StyleNoDirectoryValid;
     }
 
-    KArchiveEntry *currentEntry = 0L;
-    KArchiveDirectory *currentDir = 0L;
-    KArchive *archive = 0L;
+    KArchiveEntry *currentEntry = nullptr;
+    KArchiveDirectory *currentDir = nullptr;
+    KArchive *archive = nullptr;
 
     // Find mimetype for current bundle. ZIP and KTar need separate constructor
     QString currentBundleMimeType = KMimeType::findByPath(styleBundlePath, 0, false)->name();

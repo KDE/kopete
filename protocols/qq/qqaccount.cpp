@@ -39,7 +39,7 @@
 QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 : Kopete::PasswordedAccount ( parent, accountID )
 {
-	m_notifySocket = 0L;
+	m_notifySocket = nullptr;
 	m_connectstatus = QQProtocol::protocol()->Offline;
 	m_newContactList=false;
 	m_codec = QTextCodec::codecForName("GB18030");
@@ -86,7 +86,7 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 		// from the old socket thinking they are from the new one
 		QObject::disconnect( m_notifySocket , 0, this, 0 );
 		m_notifySocket->deleteLater(); //be sure it will be deleted
-		m_notifySocket = 0L;
+		m_notifySocket = nullptr;
 	}
 
 	myself()->setOnlineStatus( QQProtocol::protocol()->CNT );
@@ -164,7 +164,7 @@ bool QQAccount::createContact(const QString& contactId, Kopete::MetaContact* par
 {
 	kDebug( 14140 ) ;
 	QQContact* newContact = new QQContact( this, contactId, parentContact );
-	return newContact != 0L;
+	return newContact != nullptr;
 
 }
 

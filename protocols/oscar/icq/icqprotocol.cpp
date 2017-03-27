@@ -161,7 +161,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const QUrl & url) co
 
 //BEGIN class ICQProtocol
 
-ICQProtocol* ICQProtocol::protocolStatic_ = 0L;
+ICQProtocol* ICQProtocol::protocolStatic_ = nullptr;
 
 ICQProtocol::ICQProtocol(QObject *parent, const QVariantList&)
 : OscarProtocol( parent ),

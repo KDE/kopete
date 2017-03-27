@@ -659,7 +659,7 @@ QString MetaContact::displayName() const
 //				qCDebug(LIBKOPETE_LOG) << " setting displayname source for " << metaContactId();
             }
         }
-        if (displayNameSourceContact() != 0L) {
+        if (displayNameSourceContact() != nullptr) {
             return nameFromContact(displayNameSourceContact());
         } else {
 //			qCDebug(LIBKOPETE_LOG) << " source == SourceContact , but there is no displayNameSourceContact for contact " << metaContactId();
@@ -740,7 +740,7 @@ QImage MetaContact::photoFromCustom() const
 
 QImage photoFromContact(Kopete::Contact *contact)  /*const*/
 {
-    if (contact == 0L) {
+    if (contact == nullptr) {
         return QImage();
     }
 
@@ -822,7 +822,7 @@ void MetaContact::setPhotoSourceContact(Contact *contact)
     d->photoSourceContact = contact;
 
     // Create a cache for the contact photo.
-    if (d->photoSourceContact != 0L) {
+    if (d->photoSourceContact != nullptr) {
         QVariant photoProp;
         if (contact->hasProperty(Kopete::Global::Properties::self()->photo().key())) {
             photoProp = contact->property(Kopete::Global::Properties::self()->photo().key()).value();
@@ -1182,7 +1182,7 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
         case SourceContact:
         {
             Contact *source = photoSourceContact();
-            if (source != 0L) {
+            if (source != nullptr) {
                 newValue = source->property(Kopete::Global::Properties::self()->photo()).value();
             }
             break;

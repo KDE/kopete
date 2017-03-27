@@ -29,7 +29,7 @@
 
 K_PLUGIN_FACTORY( TestbedProtocolFactory, registerPlugin<TestbedProtocol>(); )
 
-TestbedProtocol *TestbedProtocol::s_protocol = 0L;
+TestbedProtocol *TestbedProtocol::s_protocol = nullptr;
 
 TestbedProtocol::TestbedProtocol( QObject* parent, const QVariantList &/*args*/ )
 	: Kopete::Protocol( parent ),

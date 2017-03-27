@@ -33,7 +33,7 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent)
 {
 	kDebug(14153) << "called";
 	mAccount = owner;
-	m_searchDialog = 0L;
+	m_searchDialog = nullptr;
 
 	addUI = new Ui::icqAddUI();
 	addUI->setupUi(this);

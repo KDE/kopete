@@ -35,7 +35,7 @@
 #include "kopeteuiglobal.h"
 #include <kactioncollection.h>
 
-KSettings::Dialog *KopetePreferencesAction::s_settingsDialog = 0L;
+KSettings::Dialog *KopetePreferencesAction::s_settingsDialog = nullptr;
 
 KopetePreferencesAction::KopetePreferencesAction(KActionCollection *parent, const char *name)
     : QAction(QIcon::fromTheme(KStandardGuiItem::configure().iconName()), KStandardGuiItem::configure().text(), parent)

@@ -404,11 +404,11 @@ QByteArray SendMessageTask::encodeFileName( const QString &fileName, QString &en
 }
 
 /* Old oscarsocket code, which is here for reference in case this doesn't work
-QTextCodec *codec = 0L;
+QTextCodec *codec = nullptr;
 WORD charset = 0x0000; // default to ascii
 WORD charsubset = 0x0000;
 int length = message.length();
-unsigned char *utfMessage = 0L;
+unsigned char *utfMessage = nullptr;
 
 codec=QTextCodec::codecForMib(3); // US-ASCII
 

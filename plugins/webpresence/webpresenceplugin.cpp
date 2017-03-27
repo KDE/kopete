@@ -165,7 +165,7 @@ void WebPresencePlugin::slotWriteFile()
     switch (resultFormatting) {
     case WEB_XML:
         m_output = xml;
-        xml = 0L;
+        xml = nullptr;
         break;
     case WEB_HTML:
     case WEB_XHTML:
@@ -176,7 +176,7 @@ void WebPresencePlugin::slotWriteFile()
         if (!transform(xml, m_output)) {
             //TODO: give some error to user, even better if shown only once
             delete m_output;
-            m_output = 0L;
+            m_output = nullptr;
 
             delete xml;
             return;
@@ -201,7 +201,7 @@ void WebPresencePlugin::slotUploadJobResult(KJob *job)
         kDebug(14309) << "Error uploading presence info.";
         KMessageBox::detailedError(0, i18n("An error occurred when uploading your presence page.\nCheck the path and write permissions of the destination."), 0, displayName());
         delete m_output;
-        m_output = 0L;
+        m_output = nullptr;
     }
 }
 

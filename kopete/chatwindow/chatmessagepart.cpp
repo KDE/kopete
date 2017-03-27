@@ -756,7 +756,7 @@ void ChatMessagePart::slotRightClick(const QString &, const QPoint &point)
         return;
     }
 
-    QMenu *chatWindowPopup = 0L;
+    QMenu *chatWindowPopup = nullptr;
 
     if (Kopete::Contact *contact = contactFromNode(d->activeElement)) {
         chatWindowPopup = contact->popupMenu();
