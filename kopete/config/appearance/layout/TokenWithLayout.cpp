@@ -23,7 +23,7 @@
 #include "TokenDropTarget.h"
 
 #include <QAction>
-#include <KHBox>
+#include <QHBoxLayout>
 #include <KLocalizedString>
 
 #include <QActionGroup>
@@ -105,11 +105,14 @@ void TokenWithLayout::fillMenu(QMenu *menu)
 
     int orgHeight = menu->height();
 
-    KHBox *sliderBox = new KHBox(menu);
+    QWidget *sliderBox = new QWidget(menu);
+    QHBoxLayout *sliderBoxHBoxLayout = new QHBoxLayout(sliderBox);
+    sliderBoxHBoxLayout->setMargin(0);
     sliderBox->setFixedWidth(menu->width() - 4);
     sliderBox->move(sliderBox->pos().x() + 2, orgHeight);
 
     QSlider *slider = new QSlider(Qt::Horizontal, sliderBox);
+    sliderBoxHBoxLayout->addWidget(slider);
     slider->setMaximum(100);
     slider->setMinimum(0);
 
@@ -137,6 +140,7 @@ void TokenWithLayout::fillMenu(QMenu *menu)
     slider->setValue(m_width * 100.0);
 
     QLCDNumber *sizeLabel = new QLCDNumber(3, sliderBox);
+    sliderBoxHBoxLayout->addWidget(sizeLabel);
     sizeLabel->display(m_width * 100.0);
 
     connect(slider, SIGNAL(valueChanged(int)), sizeLabel, SLOT(display(int)));

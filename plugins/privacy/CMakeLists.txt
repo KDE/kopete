@@ -32,6 +32,6 @@ install(TARGETS kcm_kopete_privacy  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 ########### install files ###############
 
-install( FILES privacyui.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
+install( FILES privacyui.rc  privacychatui.rc DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
 install( FILES kopete_privacy.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
 install( FILES kopete_privacy_config.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)

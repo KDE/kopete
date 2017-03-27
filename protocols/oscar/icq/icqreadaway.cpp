@@ -36,7 +36,7 @@ ICQReadAway::ICQReadAway(ICQContact *c, QWidget *parent, const char* name)
 	mContact = c;
 	setCaption(i18n("'%2' Message for %1", c->displayName(), c->onlineStatus().description()));
 
-	KVBox *mMainWidget = makeVBoxMainWidget();
+	QWidget *mMainWidget = makeVBoxMainWidget();
 
 	awayMessageBrowser = new KTextBrowser(mMainWidget);
 	awayMessageBrowser->setObjectName("userInfoView");

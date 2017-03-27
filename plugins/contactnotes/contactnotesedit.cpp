@@ -21,7 +21,7 @@
 #include <QTextEdit>
 
 #include <KLocalizedString>
-#include <kvbox.h>
+#include <QVBoxLayout>
 
 #include "kopetemetacontact.h"
 
@@ -37,11 +37,15 @@ ContactNotesEdit::ContactNotesEdit(Kopete::MetaContact *m, ContactNotesPlugin *p
     m_plugin = p;
     m_metaContact = m;
 
-    KVBox *w = new KVBox(this);
-    w->setSpacing(KDialog::spacingHint());
+    QWidget *w = new QWidget(this);
+    QVBoxLayout *wVBoxLayout = new QVBoxLayout(w);
+    wVBoxLayout->setMargin(0);
+    wVBoxLayout->setSpacing(KDialog::spacingHint());
     m_label = new QLabel(i18n("Notes about %1:", m->displayName()), w);
+    wVBoxLayout->addWidget(m_label);
     m_label->setObjectName(QStringLiteral("m_label"));
     m_linesEdit = new QTextEdit(w);
+    wVBoxLayout->addWidget(m_linesEdit);
 
     m_linesEdit->setText(p->notes(m));
 

@@ -28,7 +28,7 @@
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
 #include <kplugininfo.h>
-#include <kvbox.h>
+#include <QVBoxLayout>
 #include <KDialog>
 
 #include "editaccountwidget.h"
@@ -53,7 +53,7 @@ public:
 
     QMap<QTreeWidgetItem *, KPluginInfo> protocolItems;
     KopeteEditAccountWidget *accountPage;
-    KVBox *accountPageWidget;
+    QWidget *accountPageWidget;
     QWidget *selectService;
     QWidget *finish;
     Ui::AddAccountWizardPage1 uiSelectService;
@@ -82,7 +82,9 @@ AddAccountWizard::AddAccountWizard(QWidget *parent, bool firstRun)
     d->selectServiceItem = addPage(d->selectService, d->selectService->windowTitle());
     setValid(d->selectServiceItem, false);
 
-    d->accountPageWidget = new KVBox(this);
+    d->accountPageWidget = new QWidget(this);
+    QVBoxLayout *accountPageWidgetVBoxLayout = new QVBoxLayout(d->accountPageWidget);
+    accountPageWidgetVBoxLayout->setMargin(0);
     addPage(d->accountPageWidget, i18n("Step Two: Account Information"));
 
     // setup the final page
