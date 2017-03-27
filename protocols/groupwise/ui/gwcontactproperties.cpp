@@ -107,7 +107,7 @@ void GroupWiseContactProperties::setupProperties( QMap< QString, QVariant > serv
 	{
 		i.next();
 		QString key = i.key();
-		kDebug() << " adding property: " << key << ", " << i.value();
+		qDebug() << " adding property: " << key << ", " << i.value();
 		QString localised;
 		if ( key == QLatin1String("telephoneNumber") )
 			localised = i18n( "Telephone Number" );
@@ -134,7 +134,7 @@ void GroupWiseContactProperties::setupProperties( QMap< QString, QVariant > serv
 
 void GroupWiseContactProperties::copy()
 {
-	kDebug() ;
+	qDebug() ;
 	QList<QTreeWidgetItem *> selection = m_ui.propsView->selectedItems();
 	if ( !selection.isEmpty() )
 	{

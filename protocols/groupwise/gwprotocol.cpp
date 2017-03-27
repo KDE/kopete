@@ -77,7 +77,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QVariantList &/*arg
 	  propEmail( Kopete::Global::Properties::self()->emailAddress() )
 {
 	// ^^ That is all member initialiser syntax, not broken indentation!
-	kDebug() ;
+    qDebug() ;
 
 	s_protocol = this;
 
@@ -105,7 +105,7 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 
 	if ( !account )
 	{
-		kDebug() << "Account doesn't exist, skipping";
+        qDebug() << "Account doesn't exist, skipping";
 		return 0;
 	}
 
@@ -117,13 +117,13 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 
 AddContactPage * GroupWiseProtocol::createAddContactWidget( QWidget *parent, Kopete::Account *  account )
 {
-	kDebug() << "Creating Add Contact Page";
+    qDebug() << "Creating Add Contact Page";
 	return new GroupWiseAddContactPage( account, parent );
 }
 
 KopeteEditAccountWidget * GroupWiseProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
-	kDebug() << "Creating Edit Account Page";
+    qDebug() << "Creating Edit Account Page";
 	return new GroupWiseEditAccountWidget( parent, account );
 }
 
@@ -253,13 +253,13 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 			}
 			else
 			{
-				kDebug() << "bogus utf-8 lead byte: 0x" << hex << current;
+                qDebug() << "bogus utf-8 lead byte: 0x" << hex << current;
 				ucs4Char = 0x003F;
 				bytesEncoded = 1;
 			}
 			index += bytesEncoded;
 			escapedUnicodeChar = QStringLiteral("\\u%1?").arg( ucs4Char );
-			kDebug() << "unicode escaped char: " << escapedUnicodeChar;
+            qDebug() << "unicode escaped char: " << escapedUnicodeChar;
 			outputText.append( escapedUnicodeChar );
 		}
 	}

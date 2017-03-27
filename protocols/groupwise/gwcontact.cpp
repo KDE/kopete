@@ -75,7 +75,7 @@ QString GroupWiseContact::dn() const
 
 void GroupWiseContact::updateDetails( const ContactDetails & details )
 {
-	kDebug() ;
+	qDebug() ;
 	if ( !details.cn.isNull() )
 		setProperty( protocol()->propCN, QVariant(details.cn) );
 	if ( !details.dn.isNull() )
@@ -144,7 +144,7 @@ void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap
 
 Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 {
-	//kDebug() << "called, canCreate: " << canCreate;
+	//qDebug() << "called, canCreate: " << canCreate;
 
 	Kopete::ContactPtrList chatMembers;
 	chatMembers.append( this );
@@ -188,7 +188,7 @@ QMap< QString, QVariant > GroupWiseContact::serverProperties()
 
 void GroupWiseContact::sendMessage( Kopete::Message &message )
 {
-	kDebug() ;
+	qDebug() ;
 	manager()->appendMessage( message );
 	// tell the manager it was sent successfully
 	manager()->messageSucceeded();
@@ -206,7 +206,7 @@ void GroupWiseContact::sync( unsigned int)
 
 void GroupWiseContact::slotBlock()
 {
-	kDebug() ;
+	qDebug() ;
 	if ( account()->isConnected() )
 	{
 		if ( account()->isContactBlocked( m_dn ) )
@@ -294,7 +294,7 @@ void GroupWiseContact::renamedOnServer()
 		setNickName( uct->displayName() );
 	}
 	else
-		kDebug() << "rename failed, return code: " << uct->statusCode();
+		qDebug() << "rename failed, return code: " << uct->statusCode();
 }
 
 void GroupWiseContact::setMessageReceivedOffline( bool on )

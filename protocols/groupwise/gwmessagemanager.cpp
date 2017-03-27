@@ -108,11 +108,11 @@ void GroupWiseChatSession::setGuid( const GroupWise::ConferenceGuid & guid )
 {
 	if ( m_guid.isEmpty() )
 	{
-		kDebug() << "setting GUID to: " << guid;
+		qDebug() << "setting GUID to: " << guid;
 		m_guid = guid;
 	}
 	else
-		kDebug() << "attempted to change the conference's GUID when already set!";
+		qDebug() << "attempted to change the conference's GUID when already set!";
 }
 
 bool GroupWiseChatSession::closed()
@@ -132,7 +132,7 @@ bool GroupWiseChatSession::secure()
 
 void GroupWiseChatSession::setClosed()
 {
-	kDebug() << " Conference " << m_guid << " is now Closed ";
+	qDebug() << " Conference " << m_guid << " is now Closed ";
 	m_guid.clear();
 	m_flags = m_flags | GroupWise::Closed;
 }
@@ -454,7 +454,7 @@ void GroupWiseChatSession::joined( GroupWiseContact * c )
 
 void GroupWiseChatSession::left( GroupWiseContact * c )
 {
-	kDebug() ;
+	qDebug() ;
 	removeContact( c );
 	--m_memberCount;
 

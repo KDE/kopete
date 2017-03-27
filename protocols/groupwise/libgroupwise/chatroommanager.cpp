@@ -114,7 +114,7 @@ void ChatroomManager::requestProperties( const QString & displayName )
 
 void ChatroomManager::slotGotChatProperties()
 {
-//	kDebug() ;
+//	qDebug() ;
 	ChatPropertiesTask * cpt = (ChatPropertiesTask *)sender();
 	if ( cpt )
 	{

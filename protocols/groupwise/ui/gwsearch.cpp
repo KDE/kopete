@@ -331,14 +331,14 @@ void GroupWiseContactSearch::slotDoSearch()
 	}
 	else
 	{
-		kDebug() << "no query to perform!";
+		qDebug() << "no query to perform!";
 	}
 	
 }
 
 void GroupWiseContactSearch::slotShowDetails()
 {
-	kDebug() ;
+	qDebug() ;
 	// get the first selected result
 	QModelIndexList selected = m_results->selectionModel()->selectedIndexes();
 	if ( !selected.empty() )
@@ -376,7 +376,7 @@ GroupWise::ContactDetails GroupWiseContactSearch::detailsAtIndex( const QModelIn
 }
 void GroupWiseContactSearch::slotGotSearchResults()
 {
-	kDebug() ;
+	qDebug() ;
 	SearchUserTask * st = ( SearchUserTask * ) sender();
 	m_lastSearchResults.clear();
 	m_lastSearchResults = st->results();
@@ -409,7 +409,7 @@ QList< GroupWise::ContactDetails > GroupWiseContactSearch::selectedResults()
 			lst.append( detailsAtIndex( index ) );
 		}
 	} else {
-		kDebug() << "called when no model was set!";
+		qDebug() << "called when no model was set!";
 		kBacktrace();
 	}
 	return lst;

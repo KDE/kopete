@@ -479,7 +479,7 @@ void Client::send(Request *request)
 void Client::debug(const QString &str)
 {
 #ifdef LIBGW_USE_KDEBUG
-    kDebug() << str;
+    qDebug() << str;
 #else
     qDebug() << "CLIENT: " << str.toAscii();
 #endif

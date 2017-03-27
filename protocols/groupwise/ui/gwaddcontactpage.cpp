@@ -50,7 +50,7 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidg
 		: AddContactPage(parent)
 {
 	m_account = static_cast<GroupWiseAccount *>( owner );
-	kDebug() ;
+	qDebug() ;
 	QVBoxLayout * layout = new QVBoxLayout( this );
 	if (owner->isConnected ())
 	{

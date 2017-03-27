@@ -80,7 +80,7 @@ bool SearchUserTask::take( Transfer * transfer )
 		return false;
 	if ( response->resultCode() )
 	{
-//		kDebug() << "got return code in response << " << response->resultCode();
+//		qDebug() << "got return code in response << " << response->resultCode();
 		setError( response->resultCode() );
 		return true;
 	}
@@ -101,7 +101,7 @@ void SearchUserTask::slotPollForResults()
 void SearchUserTask::slotGotPollResults()
 {
 	PollSearchResultsTask * psrt = (PollSearchResultsTask *)sender();
-//	kDebug() << "status code is " << psrt->queryStatus();
+//	qDebug() << "status code is " << psrt->queryStatus();
 	m_polls++;
 	switch ( psrt->queryStatus() )
 	{

@@ -114,7 +114,7 @@ GroupWise::ChatroomSearchResult GetChatSearchResultsTask::extractChatDetails( Fi
 	if ( ( sf = fields.findSingleField ( Field::NM_A_UD_PARTICIPANTS ) ) )
 		csr.participants = sf->value().toInt();
 	
-//	kDebug() << csr.name << ", " << csr.ownerDN << ", " << csr.participants;
+//	qDebug() << csr.name << ", " << csr.ownerDN << ", " << csr.participants;
 	return csr;
 }
 

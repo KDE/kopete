@@ -107,7 +107,7 @@ void GroupWiseChatSearchDialog::slotPropertiesClicked()
 
 void GroupWiseChatSearchDialog::slotGotProperties(const GroupWise::Chatroom & room)
 {
-	kDebug() ;
+	qDebug() ;
 	new GroupWiseChatPropsDialog( room, true, this );
 }
 

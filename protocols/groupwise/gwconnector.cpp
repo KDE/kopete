@@ -63,7 +63,7 @@ void KNetworkConnector::connectToServer ( const QString & /*server*/ )
 
 void KNetworkConnector::slotConnected ()
 {
-	kDebug() << "We are connected.";
+	qDebug() << "We are connected.";
 
 	// FIXME: setPeerAddress() is something different, find out correct usage later
 	//KInetSocketAddress inetAddress = mStreamSocket->address().asInet().makeIPv6 ();
@@ -75,7 +75,7 @@ void KNetworkConnector::slotConnected ()
 
 void KNetworkConnector::slotError ( int code )
 {
-	kDebug() << "Error detected: " << code;
+	qDebug() << "Error detected: " << code;
 
 	mErrorCode = code;
 	emit error ();

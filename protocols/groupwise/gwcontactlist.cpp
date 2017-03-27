@@ -115,7 +115,7 @@ void GWContactList::removeInstanceById(unsigned int id)
 
 void GWContactList::dump()
 {
-    kDebug();
+    qDebug();
     foreach (GWFolder *folder, findChildren<GWFolder *>()) {
         if (folder) {
             folder->dump(1);
@@ -125,7 +125,7 @@ void GWContactList::dump()
 
 void GWContactList::clear()
 {
-    kDebug();
+    qDebug();
     foreach (QObject *obj, children()) {
         delete obj;
     }
@@ -150,7 +150,7 @@ void GWFolder::dump(unsigned int depth)
 {
     QString s;
     s.fill(' ', ++depth * 2);
-    kDebug() << s <<"Folder " << displayName << " id: " << id << " contains: ";
+    qDebug() << s <<"Folder " << displayName << " id: " << id << " contains: ";
     foreach (QObject *obj, children()) {
         GWContactInstance *instance = qobject_cast< GWContactInstance * >(obj);
         if (instance) {
@@ -175,5 +175,5 @@ void GWContactInstance::dump(unsigned int depth)
 {
     QString s;
     s.fill(' ', ++depth * 2);
-    kDebug() << s << "Contact " << displayName << " id: " << id << " dn: " << dn;
+    qDebug() << s << "Contact " << displayName << " id: " << id << " dn: " << dn;
 }

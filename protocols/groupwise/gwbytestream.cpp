@@ -29,7 +29,7 @@
 KNetworkByteStream::KNetworkByteStream (QObject *parent)
     : ByteStream(parent)
 {
-    kDebug() << "Instantiating new KNetwork byte stream.";
+    qDebug() << "Instantiating new KNetwork byte stream.";
 
     // reset close tracking flag
     mClosing = false;
@@ -39,7 +39,7 @@ KNetworkByteStream::KNetworkByteStream (QObject *parent)
 
 bool KNetworkByteStream::connect(QString host, QString service)
 {
-    kDebug() << "Connecting to " << host << ", service " << service;
+    qDebug() << "Connecting to " << host << ", service " << service;
     mSocket = KSocketFactory::connectToHost(QStringLiteral("gwims"), host, service.toUInt(), this);
 
     Kopete::SocketTimeoutWatcher *timeoutWatcher = Kopete::SocketTimeoutWatcher::watch(mSocket);
@@ -69,7 +69,7 @@ bool KNetworkByteStream::isOpen() const
 
 void KNetworkByteStream::close()
 {
-    kDebug() << "Closing stream.";
+    qDebug() << "Closing stream.";
 
     // close the socket and set flag that we are closing it ourselves
     mClosing = true;
@@ -103,15 +103,15 @@ void KNetworkByteStream::slotConnected()
 
 void KNetworkByteStream::slotConnectionClosed()
 {
-    kDebug() << "Socket has been closed.";
+    qDebug() << "Socket has been closed.";
 
     // depending on who closed the socket, emit different signals
     if (mClosing) {
-        kDebug() << "..by ourselves!";
-        kDebug() << "socket error is \"" << socket()->errorString() << "\"";
+        qDebug() << "..by ourselves!";
+        qDebug() << "socket error is \"" << socket()->errorString() << "\"";
         emit connectionClosed();
     } else {
-        kDebug() << "..by the other end";
+        qDebug() << "..by the other end";
         emit delayedCloseFinished();
     }
 }
@@ -130,6 +130,6 @@ void KNetworkByteStream::slotBytesWritten(qint64 bytes)
 
 void KNetworkByteStream::slotError(QAbstractSocket::SocketError code)
 {
-    kDebug() << "Socket error " <<  mSocket->errorString() <<  "' - Code : " << code;
+    qDebug() << "Socket error " <<  mSocket->errorString() <<  "' - Code : " << code;
     emit error(code);
 }

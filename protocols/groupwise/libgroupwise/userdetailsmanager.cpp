@@ -121,7 +121,7 @@ void UserDetailsManager::slotReceiveContactDetails( const GroupWise::ContactDeta
 	m_pendingDNs.removeAll( details.dn );
 	/*client()->userDetailsManager()->*/
 	addDetails( details );
-		kDebug() 
+		qDebug() 
 		<< "  Auth attribute: " << details.authAttribute
 		<< "  , Away message: " << details.awayMessage
 		<< "  , CN" << details.cn
