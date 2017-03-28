@@ -18,7 +18,7 @@
 #include "contactnotesplugin.h"
 
 #include <QAction>
-#include <kdebug.h>
+#include "plugin_contactnotes_debug.h"
 #include <kgenericfactory.h>
 #include <qicon.h>
 
@@ -36,7 +36,7 @@ ContactNotesPlugin::ContactNotesPlugin(QObject *parent, const QVariantList & /* 
     : Kopete::Plugin(parent)
 {
     if (pluginStatic_) {
-        kDebug(14302)<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized";
+        qCDebug(KOPETE_PLUGIN_CONTACTNOTES_LOG)<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized";
     } else {
         pluginStatic_ = this;
     }
