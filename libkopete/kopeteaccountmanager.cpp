@@ -25,7 +25,6 @@
 #include <QtDBus/QDBusInterface>
 
 #include <ksharedconfig.h>
-#include <kdebug.h>
 #include <kglobal.h>
 #include <kplugininfo.h>
 #include <kconfiggroup.h>

@@ -22,7 +22,6 @@
 #include <QDrag>
 #include <QMimeData>
 
-#include "kdebug.h"
 #include <QMenu>
 #include "kopetecontact.h"
 #include "chatsessionmemberslistmodel.h"

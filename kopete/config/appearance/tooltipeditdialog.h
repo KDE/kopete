@@ -18,7 +18,6 @@
 #ifndef TOOLTIPEDITDIALOG_H
 #define TOOLTIPEDITDIALOG_H
 
-#include <kdebug.h>
 #include <kdialog.h>
 
 #include "ui_tooltipeditwidget.h"
@@ -30,7 +29,7 @@ class TooltipEditDialog : public KDialog, private Ui::TooltipEditWidget
     Q_OBJECT
 
 public:
-    TooltipEditDialog(QWidget *parent = 0);
+    TooltipEditDialog(QWidget *parent = nullptr);
 
 private slots:
     void slotUnusedSelected(const QItemSelection &);

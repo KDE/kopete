@@ -37,7 +37,6 @@
 #include <kopeteprotocol.h>
 #include <kopetestdaction.h>
 #include <avatardialog.h>
-#include <KDebug>
 #include <kopeteuiglobal.h>
 #include <KCMultiDialog>
 

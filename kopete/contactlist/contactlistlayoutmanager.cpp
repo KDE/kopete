@@ -26,7 +26,6 @@
 #include <KGlobal>
 #include <KConfig>
 #include <KConfigGroup>
-#include <KDebug>
 #include <KLocalizedString>
 
 #include <kio/global.h>

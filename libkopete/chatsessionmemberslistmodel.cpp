@@ -18,7 +18,6 @@
 #include "chatsessionmemberslistmodel.h"
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
-#include "kdebug.h"
 
 //own contact comparator, needs sessions contact-online-status weight
 inline bool lessThan(const Kopete::Contact *c1, int weight1, const Kopete::Contact *c2, int weight2)

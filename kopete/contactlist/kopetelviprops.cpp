@@ -21,7 +21,6 @@
 
 #include "kopetelviprops.h"
 
-#include <kdebug.h>
 
 #include <QApplication>
 #include <QCheckBox>

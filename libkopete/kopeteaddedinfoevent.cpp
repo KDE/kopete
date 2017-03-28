@@ -16,7 +16,6 @@
 #include "kopeteaddedinfoevent.h"
 
 #include <KLocalizedString>
-#include <kdebug.h>
 
 #include "kopeteaccount.h"
 #include "kopeteprotocol.h"

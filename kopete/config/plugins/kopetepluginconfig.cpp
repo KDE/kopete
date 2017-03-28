@@ -24,7 +24,6 @@
 #include <QVBoxLayout>
 
 // KDE includes
-#include <kdebug.h>
 #include <KLocalizedString>
 #include <kpluginselector.h>
 #include <kpluginfactory.h>

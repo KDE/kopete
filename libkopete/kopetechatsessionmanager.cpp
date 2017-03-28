@@ -19,7 +19,6 @@
 #include "kopeteviewmanager.h"
 
 #include <kapplication.h>
-#include <kdebug.h>
 
 #include "ui/kopeteview.h"
 #include "kopetecontact.h"

@@ -23,7 +23,6 @@
 #include <QMenu>
 #include <KActionMenu>
 #include <KGlobal>
-#include <KDebug>
 
 #include <kopeteaccount.h>
 #include <kopetecontact.h>

@@ -28,7 +28,6 @@
 #include <QUrl>
 #include <KMessageBox>
 #include <KLocalizedString>
-#include <KDebug>
 #include <KEmoticonsTheme>
 #include <kmessagebox_queued.h>
 #include <QStandardPaths>

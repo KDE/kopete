@@ -25,7 +25,6 @@
 #include <cerrno>
 #include <cstring>
 
-#include <kdebug.h>
 #include <KLocalizedString>
 #include <kglobal.h>
 #include <kconfig.h>

@@ -19,7 +19,6 @@
 
 #include "kopetegrouplistaction.h"
 
-#include <kdebug.h>
 #include <kguiitem.h>
 #include <KLocalizedString>
 #include <QIcon>

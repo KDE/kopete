@@ -16,6 +16,7 @@
 */
 
 #include "videoinput.h"
+#include <QDebug>
 
 namespace Kopete {
 namespace AV {

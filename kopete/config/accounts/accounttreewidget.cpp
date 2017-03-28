@@ -17,7 +17,6 @@
 #include "accounttreewidget.h"
 
 #include <QDropEvent>
-#include <kdebug.h>
 
 AccountTreeWidget::AccountTreeWidget(QWidget *parent)
     : QTreeWidget(parent)

@@ -24,7 +24,6 @@
 #include <qcombobox.h>
 #include <qlineedit.h>
 
-#include <kdebug.h>
 #include <kconfig.h>
 #include <kurlrequester.h>
 

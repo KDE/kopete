@@ -30,7 +30,6 @@
 
 #include <kcolorbutton.h>
 #include <QPushButton>
-#include <kdebug.h>
 #include <kdialog.h>
 #include <kpluginfactory.h>
 #include <kiconloader.h>

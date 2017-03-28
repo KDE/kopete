@@ -29,7 +29,7 @@
 
 #include <kiconloader.h>
 #include <KLocalizedString>
-
+#include <KDebug>
 TooltipEditDialog::TooltipEditDialog(QWidget *parent)
     : KDialog(parent)
 {
