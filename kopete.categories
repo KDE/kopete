@@ -1,2 +1,3 @@
 org.kde.kopete.libkopete kopete (libkopete)
 org.kde.kopete.jabber kopete (jabber protocol)
+org.kde.kopete.plugin.otr kopete (otr plugin)

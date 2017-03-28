@@ -24,7 +24,7 @@
 
 #include "authenticationwizard.h"
 
-#include <kdebug.h>
+#include "plugin_otr_debug.h"
 #include <klocale.h>
 #include <kopetecontact.h>
 #include <knotification.h>
@@ -269,7 +269,7 @@ int AuthenticationWizard::nextId() const
 
 bool AuthenticationWizard::validateCurrentPage()
 {
-    kDebug(14318) << "currentId:" << currentId();
+    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "currentId:" << currentId();
     switch (currentId()) {
     case 1:
         if (initiate) {
@@ -299,7 +299,7 @@ bool AuthenticationWizard::validateCurrentPage()
 
 void AuthenticationWizard::cancelVerification()
 {
-    kDebug(14318) << "cancelVerification...";
+    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "cancelVerification...";
     if (!initiate) {
         OtrlChatInterface::self()->abortSMP(context, session);
     }
@@ -315,21 +315,21 @@ void AuthenticationWizard::nextState()
 
 void AuthenticationWizard::finished(bool success, bool trust)
 {
-    kDebug(14318) << "authWizard finished";
+    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "authWizard finished";
     if (currentId() == Page_Wait2) {
-        kDebug(14318) << "Yes, in wait_page2";
+        qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Yes, in wait_page2";
         ((WaitPage *)currentPage())->ready();
         next();
         if (success) {
-            kDebug(14318) << "auth succeeded";
+            qCDebug(KOPETE_PLUGIN_OTR_LOG) << "auth succeeded";
             currentPage()->setTitle(i18n("Authentication successful"));
             if (question != NULL || rbQA->isChecked()) {
                 if (initiate) {
-                    kDebug(14318) << "initiate";
+                    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "initiate";
                     lFinal->setText(i18n("The authentication with %1 was completed successfully. The conversation is now secure.",
                                          OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
                 } else {
-                    kDebug(14318) << "not initiate";
+                    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "not initiate";
                     if (trust) {
                         lFinal->setText(i18n("The authentication with %1 was completed successfully. The conversation is now secure.",
                                              OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
@@ -388,7 +388,7 @@ void AuthenticationWizard::updateInfoBox()
 
 void AuthenticationWizard::notificationActivated(unsigned int id)
 {
-    kDebug(14318) << "notificationActivated. ButtonId" << id;
+    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "notificationActivated. ButtonId" << id;
     if (id == 1) {
         // raise the view to bring the chatwindow + authwizard to current desktop and on top
         session->view()->raise(true);

@@ -29,7 +29,7 @@
 #include <qcolor.h>
 
 #include <KStandardDirs>
-#include <kdebug.h>
+#include "plugin_otr_debug.h"
 #include <qaction.h>
 #include <kconfig.h>
 #include <kgenericfactory.h>
@@ -60,7 +60,7 @@ K_EXPORT_PLUGIN(OTRPluginFactory("kopete_otr"))
 OTRPlugin::OTRPlugin (QObject *parent, const QVariantList & /*args*/)
     : Kopete::Plugin(parent)
 {
-    kDebug(14318) << "OTR Plugin loading...";
+    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "OTR Plugin loading...";
 
     if (!pluginStatic_) {
         pluginStatic_ = this;
@@ -122,7 +122,7 @@ OTRPlugin::~OTRPlugin()
 {
     delete m_inboundHandler;
     pluginStatic_ = nullptr;
-    kDebug(14318) << "Exiting OTR plugin";
+    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Exiting OTR plugin";
 }
 
 OTRPlugin *OTRPlugin::plugin()
@@ -164,7 +164,7 @@ void OTRPlugin::slotOutgoingMessage(Kopete::Message &msg)
             messageCache.insert(QStringLiteral("!OTR:MsgDelByOTR"), qMakePair(cacheBody, cachePlain));
         }
 
-        kDebug(14318) << "Outgoing message after processing:" << msg.plainBody() << msg.format();
+        qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Outgoing message after processing:" << msg.plainBody() << msg.format();
     }
 }
 
@@ -243,7 +243,7 @@ void OtrMessageHandler::handleMessage(Kopete::MessageEvent *event)
 //	Kopete::ChatSession *session = msg.manager();
     QMap<QString, QPair<QString, bool> > messageCache = plugin->getMessageCache();
 
-    kDebug(14318) << "OtrMessageHandler::handleMessage:" << msg.plainBody();
+    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "OtrMessageHandler::handleMessage:" << msg.plainBody();
 
     if (msg.direction() == Kopete::Message::Inbound) {
         if (msg.type() == Kopete::Message::TypeFileTransferRequest) {
@@ -263,7 +263,7 @@ void OtrMessageHandler::handleMessage(Kopete::MessageEvent *event)
         }
     } else if (msg.direction() == Kopete::Message::Outbound) {
         const QString &plainBody = msg.plainBody();
-//        kDebug(14318) << "searching cache for" << msg.plainBody();
+//        qCDebug(KOPETE_PLUGIN_OTR_LOG) << "searching cache for" << msg.plainBody();
         if (messageCache.contains(plainBody)) {
             if (!messageCache[plainBody].second) {
                 msg.setHtmlBody(messageCache[plainBody].first);
@@ -278,7 +278,7 @@ void OtrMessageHandler::handleMessage(Kopete::MessageEvent *event)
         // Check if Message is an OTR message. Should it be discarded or shown?
         if (OtrlChatInterface::self()->shouldDiscard(msg.plainBody())) {
             event->discard();
-            kDebug(14318) << "OTR: discarding message";
+            qCDebug(KOPETE_PLUGIN_OTR_LOG) << "OTR: discarding message";
             return;
         }
         // If the message is sent while a Finished state libotr deletes the messagetext.
@@ -325,12 +325,12 @@ void OTRPlugin::slotSelectionChanged(bool single)
 
 void OTRPlugin::slotSetPolicy()
 {
-    kDebug(14318) << "Setting contact policy";
+    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Setting contact policy";
     Kopete::MetaContact *metaContact = Kopete::ContactList::self()->selectedMetaContacts().first();
     if (metaContact) {
         metaContact->setPluginData(this, QStringLiteral("otr_policy"), QString::number(otrPolicyMenu->currentItem() - 1));     // -1 because of the Separator
     }
-    kDebug(14318) << "Selected policy: " << otrPolicyMenu->currentItem();
+    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Selected policy: " << otrPolicyMenu->currentItem();
 }
 
 void OTRPlugin::slotSecuritySate(Kopete::ChatSession *session, int state)

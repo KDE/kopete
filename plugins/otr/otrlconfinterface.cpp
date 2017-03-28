@@ -34,7 +34,7 @@
 #include <kopeteaccount.h>
 #include "kopeteuiglobal.h"
 
-#include <kdebug.h>
+#include "plugin_otr_debug.h"
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <kglobal.h>
@@ -144,7 +144,7 @@ void OtrlConfInterface::verifyFingerprint(const QString &strFingerprint, bool tr
         }
         otrl_privkey_write_fingerprints(userstate, QString(QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true)) + "fingerprints").toLocal8Bit());
     } else {
-        kDebug(14318) << "could not find fingerprint";
+        qCDebug(KOPETE_PLUGIN_OTR_LOG) << "could not find fingerprint";
     }
 }
 

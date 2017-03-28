@@ -4,7 +4,10 @@ include_directories(${LIBOTR_INCLUDE_DIR} ${KOPETE_INCLUDES})
 
 ########### next target ###############
 
-set(kopete_otr_PART_SRCS otrguiclient.cpp otrplugin.cpp)
+set(kopete_otr_common_SRCS)
+ecm_qt_declare_logging_category(kopete_otr_common_SRCS HEADER plugin_otr_debug.h IDENTIFIER KOPETE_PLUGIN_OTR_LOG CATEGORY_NAME org.kde.kopete.plugin.otr)
+
+set(kopete_otr_PART_SRCS otrguiclient.cpp otrplugin.cpp ${kopete_otr_common_SRCS})
 
 kconfig_add_kcfg_files(kopete_otr_PART_SRCS kopete_otr.kcfgc)
 
@@ -31,6 +34,7 @@ install(TARGETS kcm_kopete_otr DESTINATION ${KDE_INSTALL_PLUGINDIR})
 ########### next target ###############
 
 set(kopete_otr_shared_LIB_SRCS
+    ${kopete_otr_common_SRCS}
     otrlchatinterface.cpp
     otrlconfinterface.cpp
     authenticationwizard.cpp

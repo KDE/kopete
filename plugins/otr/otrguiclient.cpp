@@ -28,7 +28,7 @@
 #include <kopetechatsession.h>
 #include <ui/kopeteview.h>
 #include <kopetemessage.h>
-#include <kdebug.h>
+#include "plugin_otr_debug.h"
 
 #include <kmessagebox.h>
 #include <qicon.h>
@@ -108,7 +108,7 @@ void OtrGUIClient::slotVerifyFingerprint()
 
 void OtrGUIClient::encryptionEnabled(Kopete::ChatSession *session, int state)
 {
-    kDebug(14318) << "OTRGUIClient switched security state to: " << state;
+    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "OTRGUIClient switched security state to: " << state;
     if (session == m_manager) {
         switch (state) {
         case 0:

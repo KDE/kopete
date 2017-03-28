@@ -36,7 +36,7 @@
 #include <kopetecontact.h>
 #include <KGlobal>
 #include <KLocalizedString>
-#include <kdebug.h>
+#include "plugin_otr_debug.h"
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
@@ -142,7 +142,7 @@ void OtrlChatInterface::inject_message(void *opdata, const char *accountname, co
     Q_UNUSED(accountname)
     Q_UNUSED(protocol)
 
-//	kDebug(14318) << "Sending message:" << message;
+//	qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Sending message:" << message;
 
     Kopete::ChatSession *session = ((Kopete::ChatSession *)opdata);
     Kopete::ContactPtrList list = session->members();
@@ -206,7 +206,7 @@ void OtrlChatInterface::gone_secure(void *opdata, ConnContext *context)
         OtrlChatInterface::self()->emitGoneSecure(((Kopete::ChatSession *)opdata), 1);
     }
 
-    kDebug(14318) << "Updating otr-instag to" << context->their_instance << "for session" << session;
+    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Updating otr-instag to" << context->their_instance << "for session" << session;
     session->setProperty("otr-instag", QString::number(context->their_instance));
 }
 
@@ -246,13 +246,13 @@ int OtrlChatInterface::max_message_size(void *opdata, ConnContext *context)
     Q_UNUSED(context)
 
     if (!opdata) {
-        kDebug(14318) << "Trying to determine max message size of unknown session. Fragmentation will not work.";
+        qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Trying to determine max message size of unknown session. Fragmentation will not work.";
         return 0;
     }
 
     Kopete::ChatSession *session = ((Kopete::ChatSession *)opdata);
 
-    kDebug(14318) << session->protocol()->pluginId();
+    qCDebug(KOPETE_PLUGIN_OTR_LOG) << session->protocol()->pluginId();
 
     if (session->protocol()->pluginId() == QLatin1String("WlmProtocol")) {
         return 1409;
@@ -367,7 +367,7 @@ void OtrlChatInterface::handle_smp_event(void *opdata, OtrlSMPEvent smp_event, C
     case OTRL_SMPEVENT_SUCCESS:
         if (context->active_fingerprint->trust && context->active_fingerprint->trust[0]) {
             AuthenticationWizard::findWizard(chatSession)->finished(true, true);
-            kDebug(14318) << "trust found";
+            qCDebug(KOPETE_PLUGIN_OTR_LOG) << "trust found";
             Kopete::Message msg(chatSession->members().first(), chatSession->account()->myself());
             msg.setHtmlBody(i18n("Authentication with <b>%1</b> successful. The conversation is now secure.", formatContact(chatSession->members().first()->contactId())));
             msg.setDirection(Kopete::Message::Internal);
@@ -375,7 +375,7 @@ void OtrlChatInterface::handle_smp_event(void *opdata, OtrlSMPEvent smp_event, C
             OtrlChatInterface::self()->emitGoneSecure(chatSession, 2);
         } else {
             AuthenticationWizard::findWizard(chatSession)->finished(true, false);
-            kDebug(14318) << "trust _NOT_ found";
+            qCDebug(KOPETE_PLUGIN_OTR_LOG) << "trust _NOT_ found";
             Kopete::Message msg(chatSession->members().first(), chatSession->account()->myself());
             msg.setHtmlBody(i18n("<b>%1</b> has successfully authenticated you. You may want to authenticate this contact as well by asking your own question.",
                                  formatContact(chatSession->members().first()->contactId())));
@@ -434,9 +434,9 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
         }
         switch (gcry_err_code(err)) {
         case GPG_ERR_INV_VALUE:
-            kDebug(14318) << "Error setting up private conversation: Malformed message received";
+            qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Error setting up private conversation: Malformed message received";
         default:
-            kDebug(14318) << "Error setting up private conversation:" << err;
+            qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Error setting up private conversation:" << err;
         }
 
         msg.setHtmlBody(i18n("OTR error"));
@@ -464,10 +464,10 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
         msg.setDirection(Kopete::Message::Internal);
         break;
     case OTRL_MSGEVENT_LOG_HEARTBEAT_RCVD:
-        kDebug(14318) << "Heartbeat received from" << context->username;
+        qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Heartbeat received from" << context->username;
         return;
     case OTRL_MSGEVENT_LOG_HEARTBEAT_SENT:
-        kDebug(14318) << "Heartbeat sent to" << context->username;
+        qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Heartbeat sent to" << context->username;
         return;
     case OTRL_MSGEVENT_RCVDMSG_GENERAL_ERR:
         msg.setHtmlBody(QLatin1String(message));
@@ -480,7 +480,7 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
         OtrlChatInterface::self()->m_blackistIds.append(msg.id());
         break;
     case OTRL_MSGEVENT_RCVDMSG_UNRECOGNIZED:
-        kDebug(14318) << "Unrecognized OTR message received from" << context->username;
+        qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Unrecognized OTR message received from" << context->username;
         return;
     case OTRL_MSGEVENT_RCVDMSG_FOR_OTHER_INSTANCE:
         msg.setHtmlBody(i18n("%1 has sent an encrypted message intended for a different session. If you are logged in multiple times, another session may have received the message.",
@@ -620,7 +620,7 @@ int OtrlChatInterface::decryptMessage(Kopete::Message &message)
     if (context && !ignoremessage && newMessage != NULL) {
         otrl_instag_t instance = message.manager()->property("otr-instag").toUInt();
         if (instance != context->their_instance && context->their_instance) {
-            kDebug(14318) << "Encrypted message from different instance was received";
+            qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Encrypted message from different instance was received";
             gone_secure((void *)chatSession, context);
         }
     }
@@ -691,7 +691,7 @@ int OtrlChatInterface::encryptMessage(Kopete::Message &message)
 
         OtrlMessageType type = otrl_proto_message_type(msgBody.toLatin1());
         if (type == OTRL_MSGTYPE_TAGGEDPLAINTEXT) {
-            kDebug(14318) << "Tagged plaintext!";
+            qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Tagged plaintext!";
 
             /* Here we have a problem... libotr tags messages with whitespaces to
             be recognized by other clients. Those whitespaces are discarded
@@ -776,7 +776,7 @@ int OtrlChatInterface::privState(Kopete::ChatSession *session)
 
     if (context) {
         if (instance == OTRL_INSTAG_BEST && context->their_instance) {
-            kDebug(14318) << "Updating otr-instag to" << context->their_instance << "for session" << session;
+            qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Updating otr-instag to" << context->their_instance << "for session" << session;
             session->setProperty("otr-instag", QString::number(context->their_instance));
         }
         switch (context->msgstate) {
@@ -892,11 +892,11 @@ void OtrlChatInterface::setTrust(Kopete::ChatSession *session, bool trust)
         } else {
             otrl_context_set_trust(fingerprint, NULL);
         }
-        kDebug(14318) << "Writing fingerprints";
+        qCDebug(KOPETE_PLUGIN_OTR_LOG) << "Writing fingerprints";
         otrl_privkey_write_fingerprints(userstate, QString(QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true)) + "fingerprints").toLocal8Bit());
         emitGoneSecure(session, privState(session));
     } else {
-        kDebug(14318) << "could not find fingerprint";
+        qCDebug(KOPETE_PLUGIN_OTR_LOG) << "could not find fingerprint";
     }
 }
 
@@ -950,7 +950,7 @@ void OtrlChatInterface::initSMPQ(ConnContext *context, Kopete::ChatSession *sess
 
 void OtrlChatInterface::respondSMP(ConnContext *context, Kopete::ChatSession *session, const QString &secret)
 {
-    kDebug(14318) << "resonding SMP";
+    qCDebug(KOPETE_PLUGIN_OTR_LOG) << "resonding SMP";
 
     otrl_message_respond_smp(userstate, &ui_ops, session, context, (unsigned char *)secret.toLocal8Bit().data(), secret.length());
 
