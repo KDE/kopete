@@ -19,7 +19,7 @@
 
 #include <stdlib.h>
 
-#include <kdebug.h>
+#include "plugin_texteffect_debug.h"
 #include <kgenericfactory.h>
 #include <QColor>
 

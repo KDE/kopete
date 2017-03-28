@@ -28,7 +28,7 @@
 #include <KLocalizedString>
 #include <QColorDialog>
 #include <kgenericfactory.h>
-#include <kdebug.h>
+#include "plugin_texteffect_debug.h"
 
 #include "ui_texteffectprefs.h"
 #include "texteffectconfig.h"
@@ -41,16 +41,16 @@ TextEffectPreferences::TextEffectPreferences(QWidget *parent, const QVariantList
 {
     QVBoxLayout *l = new QVBoxLayout(this);
     QWidget *w = new QWidget;
-    kDebug(14310) << "Creating preferences dialog";
+    qCDebug(KOPETE_PLUGIN_TEXTEFFECT_LOG) << "Creating preferences dialog";
     preferencesDialog = new Ui::TextEffectPrefs;
     preferencesDialog->setupUi(w);
     l->addWidget(w);
 
-    kDebug(14310) << "Creating config object";
+    qCDebug(KOPETE_PLUGIN_TEXTEFFECT_LOG) << "Creating config object";
 
     config = new TextEffectConfig;
 
-    kDebug(14310) << "Setting up connections";
+    qCDebug(KOPETE_PLUGIN_TEXTEFFECT_LOG) << "Setting up connections";
 
     connect(preferencesDialog->mColorsAdd, SIGNAL(pressed()),
             this, SLOT(slotAddPressed()));
@@ -90,7 +90,7 @@ TextEffectPreferences::~TextEffectPreferences()
 
 void TextEffectPreferences::load()
 {
-    kDebug(14310) << "ENTER";
+    qCDebug(KOPETE_PLUGIN_TEXTEFFECT_LOG) << "ENTER";
 
     config->load();
 
@@ -107,12 +107,12 @@ void TextEffectPreferences::load()
     // Indicate that we have not changed ^_^
     emit changed(false);
 
-    kDebug(14310) << "EXIT";
+    qCDebug(KOPETE_PLUGIN_TEXTEFFECT_LOG) << "EXIT";
 }
 
 void TextEffectPreferences::save()
 {
-    qDebug() << "ENTER";
+    qCDebug(KOPETE_PLUGIN_TEXTEFFECT_LOG) << "ENTER";
     // Save the settings
     config->setColors(colors());
     config->setColorRandom(preferencesDialog->m_colorRandom->isChecked());
@@ -133,7 +133,7 @@ void TextEffectPreferences::save()
 
     // Indicate that we have not changed ^_^
     emit changed(false);
-    qDebug() << "EXIT";
+    qCDebug(KOPETE_PLUGIN_TEXTEFFECT_LOG) << "EXIT";
 }
 
 QStringList TextEffectPreferences::colors()
@@ -207,7 +207,7 @@ void TextEffectPreferences::slotDownPressed()
 
 void TextEffectPreferences::slotSettingChanged()
 {
-    qDebug() << "Called"
+    qCDebug(KOPETE_PLUGIN_TEXTEFFECT_LOG) << "Called"
              << endl;
     // Indicate that our settings have changed
     emit changed(true);

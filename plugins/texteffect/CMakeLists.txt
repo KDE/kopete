@@ -5,10 +5,11 @@ include_directories(
 ${KOPETE_INCLUDES} 
 )
 
-
+set(kopete_texteffect_common_SRCS)
+ecm_qt_declare_logging_category(kopete_texteffect_common_SRCS HEADER plugin_texteffect_debug.h IDENTIFIER KOPETE_PLUGIN_TEXTEFFECT_LOG CATEGORY_NAME org.kde.plugin.texteffect)
 ########### next target ###############
 
-set(kopete_texteffect_PART_SRCS texteffectplugin.cpp texteffectconfig.cpp )
+set(kopete_texteffect_PART_SRCS texteffectplugin.cpp texteffectconfig.cpp ${kopete_texteffect_common_SRCS})
 
 add_library(kopete_texteffect MODULE ${kopete_texteffect_PART_SRCS})
 
@@ -20,7 +21,7 @@ install(TARGETS kopete_texteffect  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 ########### next target ###############
 
-set(kcm_kopete_texteffect_PART_SRCS texteffectconfig.cpp texteffectpreferences.cpp )
+set(kcm_kopete_texteffect_PART_SRCS texteffectconfig.cpp texteffectpreferences.cpp ${kopete_texteffect_common_SRCS})
 
 ki18n_wrap_ui(kcm_kopete_texteffect_PART_SRCS texteffectprefs.ui )
 
