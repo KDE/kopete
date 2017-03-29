@@ -59,7 +59,6 @@ target_link_libraries(kopete_bin
     KF5::Contacts
     KF5::TextEditor
     KF5::NotifyConfig
-    ${KDE4_SOLID_LIBRARY}
     ${QIMAGEBLITZ_LIBRARIES}
     kopete
     kopeteaddaccountwizard
