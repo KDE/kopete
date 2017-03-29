@@ -20,7 +20,7 @@
 #include <stdlib.h>
 
 #include "plugin_texteffect_debug.h"
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <QColor>
 
 #include "kopetechatsessionmanager.h"

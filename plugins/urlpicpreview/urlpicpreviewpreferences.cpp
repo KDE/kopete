@@ -26,7 +26,7 @@
 #include <kdebug.h>
 #include <knuminput.h>
 #include <kapplication.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 // Kopete
 #include "urlpicpreviewconfig.h"
 #include "ui_urlpicpreviewprefsbase.h"

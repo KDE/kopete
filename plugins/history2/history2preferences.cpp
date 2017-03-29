@@ -25,7 +25,7 @@
 
 #include <kcolorbutton.h>
 #include <knuminput.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
 #include "history2import.h"
 #include "history2config.h"

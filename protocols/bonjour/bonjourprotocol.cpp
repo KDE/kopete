@@ -17,7 +17,7 @@
 #include "bonjourprotocol.h"
 
 #include <QList>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kdebug.h>
 
 #include <kopeteaccountmanager.h>

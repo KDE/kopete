@@ -49,7 +49,7 @@
 #include <QPushButton>
 #include <ktextedit.h>
 #include <kwindowsystem.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kxmlguifactory.h>
 #include <kpluginfactory.h>
 #include <kvbox.h>

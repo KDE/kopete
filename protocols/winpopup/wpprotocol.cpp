@@ -27,7 +27,7 @@
 
 // KDE Includes
 #include <kdebug.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kmessagebox.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>

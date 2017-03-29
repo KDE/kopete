@@ -19,7 +19,7 @@
 
 #include "jabberprotocol.h"
 #include "jabber_protocol_debug.h"
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kconfig.h>
 
 #include <qmap.h>

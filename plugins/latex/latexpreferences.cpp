@@ -21,7 +21,7 @@
 
 //#include <kparts/componentfactory.h>
 #include <KLocalizedString>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kdebug.h>
 #include <KUrl>
 #include <knuminput.h>

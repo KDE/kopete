@@ -17,7 +17,7 @@
 
 #include "aimprotocol.h"
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
 #include "aimaccount.h"
 #include "aimstatusmanager.h"

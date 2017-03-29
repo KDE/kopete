@@ -32,7 +32,7 @@
 #include <kactionmenu.h>
 #include <kactioncollection.h>
 #include <klocale.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
 static Kopete::MetaContact *dummyContacts = new Kopete::MetaContact();
 

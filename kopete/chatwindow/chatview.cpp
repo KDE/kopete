@@ -44,7 +44,7 @@
 #include <kstringhandler.h>
 #include <kwindowsystem.h>
 #include <kglobalsettings.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <khtmlview.h>
 #include <kxmlguifactory.h>
 #include <kpluginfactory.h>

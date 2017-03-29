@@ -29,7 +29,7 @@
 #include <QtXml/QDomDocument>
 
 #include <kdebug.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kio/job.h>
 #include <kmessagebox.h>
 #include <ktemporaryfile.h>

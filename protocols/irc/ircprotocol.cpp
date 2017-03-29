@@ -44,7 +44,7 @@
 #include <QAction>
 #include <kcharsets.h>
 #include <kdebug.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kglobal.h>
 #include <kinputdialog.h>
 #include <kiconloader.h>

@@ -25,7 +25,7 @@
 #include <KLocalizedString>
 #include <QLineEdit>
 #include <kglobal.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
 #include "ui_autoreplaceprefs.h"
 #include "autoreplaceconfig.h"

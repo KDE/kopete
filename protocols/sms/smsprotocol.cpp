@@ -16,7 +16,7 @@
 
 #include "smsprotocol.h"
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kmessagebox.h>

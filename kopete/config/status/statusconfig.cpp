@@ -21,7 +21,7 @@
 #include <QVBoxLayout>
 #include <QTabWidget>
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kpluginfactory.h>
 #include "kopetestatussettings.h"
 

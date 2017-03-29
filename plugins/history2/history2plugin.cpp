@@ -20,7 +20,7 @@
 
 #include <QtCore/QList>
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kaboutdata.h>
 #include <kaction.h>
 #include <kmessagebox.h>

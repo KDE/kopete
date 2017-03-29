@@ -17,7 +17,7 @@
 
 #include "autoreplaceplugin.h"
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
 #include <kopetecontact.h>
 

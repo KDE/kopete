@@ -25,7 +25,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kaction.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kaboutdata.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>

@@ -17,7 +17,7 @@
 #include "testbedprotocol.h"
 
 #include <QList>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <KLocalizedString>
 #include <kdebug.h>
 

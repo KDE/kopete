@@ -21,7 +21,7 @@
 #include <klocale.h>
 #include <QLineEdit>
 #include <kglobal.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kmessagebox.h>
 #include <kconfig.h>
 #include <qregexp.h>

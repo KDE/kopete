@@ -21,9 +21,11 @@
 #include <QHeaderView>
 #include <QPointer>
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kdialog.h>
 #include <kvbox.h>
+#include <KLocalizedString>
+#include <KDebug>
 
 #include "kopeteuiglobal.h"
 #include "kopetemetacontact.h"

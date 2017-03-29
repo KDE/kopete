@@ -24,7 +24,7 @@
 #include <kaction.h>
 #include <kstandardaction.h>
 #include <klocale.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kicon.h>
 #include <kactioncollection.h>
 

@@ -22,7 +22,7 @@
 #include "gaduprotocol.h"
 
 #include <kdebug.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kconfig.h>
 
 #include <libgadu.h>

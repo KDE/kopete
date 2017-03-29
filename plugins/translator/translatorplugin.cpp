@@ -29,7 +29,7 @@
 #include <qmetaobject.h>
 
 #include <kdebug.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kdeversion.h>

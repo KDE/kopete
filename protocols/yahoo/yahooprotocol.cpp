@@ -22,7 +22,7 @@
 
 /* KDE Includes */
 #include "yahoo_protocol_debug.h"
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kconfig.h>
 
 /* Local Includes */

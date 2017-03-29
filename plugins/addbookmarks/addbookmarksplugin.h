@@ -17,7 +17,7 @@
 #include <kopeteplugin.h>
 #include <kopetemessage.h>
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kbookmarkmanager.h>
 #include <kio/job.h>
 #include <kurl.h>

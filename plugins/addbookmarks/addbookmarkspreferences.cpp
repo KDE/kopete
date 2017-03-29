@@ -13,7 +13,7 @@
 #include "ui_addbookmarksprefsui.h"
 #include "addbookmarksplugin.h"
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
 #include <kopetepluginmanager.h>
 #include <kopetecontactlist.h>

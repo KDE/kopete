@@ -17,7 +17,7 @@
 
 #include "webpresencepreferences.h"
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kurlrequester.h>
 
 #include "ui_webpresenceprefs.h"

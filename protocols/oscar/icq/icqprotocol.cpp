@@ -21,7 +21,7 @@
 #include <qcombobox.h>
 #include <kdialog.h>
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <KLocalizedString>
 #include <kconfig.h>
 #include <kmessagebox.h>

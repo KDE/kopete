@@ -16,11 +16,13 @@
 
 #include "privacyplugin.h"
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <QIcon>
 #include <QAction>
 #include <knotification.h>
 #include <kplugininfo.h>
+#include <KDebug>
+#include <KLocalizedString>
 
 #include "kopeteaccount.h"
 #include "kopetecontact.h"

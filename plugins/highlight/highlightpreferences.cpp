@@ -26,7 +26,7 @@
 #include <QLineEdit>
 #include <KLocalizedString>
 #include <kdialog.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kservicetypetrader.h>
 #include <kcolorbutton.h>
 #include <qinputdialog.h>

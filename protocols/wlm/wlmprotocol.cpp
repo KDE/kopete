@@ -20,7 +20,7 @@
 #include "wlmaddcontactpage.h"
 #include "wlmeditaccountwidget.h"
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kdebug.h>
 #include <KAboutData>
 #include "kopeteaccountmanager.h"

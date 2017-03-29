@@ -17,7 +17,7 @@
 
 #include <qregexp.h>
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteview.h"

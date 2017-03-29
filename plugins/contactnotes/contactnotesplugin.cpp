@@ -19,8 +19,9 @@
 
 #include <QAction>
 #include "plugin_contactnotes_debug.h"
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <qicon.h>
+#include <KLocalizedString>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"

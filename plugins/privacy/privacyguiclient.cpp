@@ -23,8 +23,9 @@
 #include <QAction>
 #include <kstandardaction.h>
 #include <KLocalizedString>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <qicon.h>
+#include <KDebug>
 
 #include <QList>
 #include <kactioncollection.h>

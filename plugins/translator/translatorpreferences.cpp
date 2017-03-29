@@ -23,11 +23,12 @@
 #include <qboxlayout.h>
 #include <qwidget.h>
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kopetepluginmanager.h>
 
 #include "translatorplugin.h"
 #include "translatorconfig.h"
+#include <KDebug>
 #include "ui_translatorprefsbase.h"
 
 K_PLUGIN_FACTORY(TranslatorPreferencesFactory, registerPlugin<TranslatorPreferences>();

@@ -24,7 +24,7 @@
 #include "skypecontact.h"
 
 #include <kopeteonlinestatusmanager.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <kdebug.h>

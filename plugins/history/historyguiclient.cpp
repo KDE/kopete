@@ -24,7 +24,7 @@
 #include <QAction>
 #include <kstandardaction.h>
 #include <klocale.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <QIcon>
 #include <kactioncollection.h>
 

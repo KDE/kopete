@@ -19,7 +19,7 @@
 
 #include "tutorialpreferences.h"
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
 typedef KGenericFactory<TutorialPreferences> TutorialPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY(kcm_kopete_tutorialplugin, TutorialPreferencesFactory("kcm_kopete_tutorialplugin"))

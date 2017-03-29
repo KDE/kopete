@@ -27,7 +27,7 @@
 
 #include <KLocalizedString>
 #include <QColorDialog>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include "plugin_texteffect_debug.h"
 
 #include "ui_texteffectprefs.h"

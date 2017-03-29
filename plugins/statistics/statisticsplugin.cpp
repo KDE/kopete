@@ -23,11 +23,13 @@
 #include <QList>
 #include <qtimer.h>
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kaboutdata.h>
 #include <QAction>
 #include <kactioncollection.h>
 #include <kmessagebox.h>
+#include <KDebug>
+#include <KLocalizedString>
 
 
 #include <kapplication.h>

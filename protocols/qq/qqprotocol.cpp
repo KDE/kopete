@@ -16,7 +16,7 @@
 
 #include "qqprotocol.h"
 #include <QList>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kdebug.h>
 
 #include "kopeteaccountmanager.h"
@@ -24,6 +24,7 @@
 #include "qqcontact.h"
 #include "qqaddcontactpage.h"
 #include "ui/qqeditaccountwidget.h"
+#include <KLocalizedString>
 
 K_PLUGIN_FACTORY( QQProtocolFactory, registerPlugin<QQProtocol>(); )
 K_EXPORT_PLUGIN( QQProtocolFactory( "kopete_qq" ) )

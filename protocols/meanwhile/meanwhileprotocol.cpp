@@ -18,7 +18,7 @@
 #include "meanwhileaddcontactpage.h"
 #include "meanwhileeditaccountwidget.h"
 #include "meanwhileaccount.h"
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include "kopeteaccountmanager.h"
 #include "kopeteglobal.h"
 #include "kopeteonlinestatusmanager.h"

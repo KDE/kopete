@@ -26,7 +26,7 @@
 #include <kimageio.h>
 #include <ktemporaryfile.h>
 #include <kapplication.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
 // KIO
 #include <kio/netaccess.h>

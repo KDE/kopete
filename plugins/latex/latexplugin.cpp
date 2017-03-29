@@ -23,7 +23,7 @@
 #include <qbuffer.h>
 #include <QTextDocument>
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kprocess.h>

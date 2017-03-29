@@ -32,7 +32,7 @@
 #include "plugin_otr_debug.h"
 #include <qaction.h>
 #include <kconfig.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kselectaction.h>
 #include <kactioncollection.h>
 
