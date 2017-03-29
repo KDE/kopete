@@ -1,11 +1,11 @@
 
 include_directories( 
-${KOPETE_INCLUDES} 
-${KOPETE_SOURCE_DIR}/kopete/addaccountwizard
-${KOPETE_BINARY_DIR}/kopete/addaccountwizard
-${KOPETE_SOURCE_DIR}/kopete/identity
-${KOPETE_BINARY_DIR}/kopete/identity
-)
+    ${KOPETE_INCLUDES}
+    ${KOPETE_SOURCE_DIR}/kopete/addaccountwizard
+    ${KOPETE_BINARY_DIR}/kopete/addaccountwizard
+    ${KOPETE_SOURCE_DIR}/kopete/identity
+    ${KOPETE_BINARY_DIR}/kopete/identity
+    )
 
 link_directories( ${KOPETE_BINARY_DIR}/kopete/addaccountwizard ${KOPETE_BINARY_DIR}/kopete/identity )
 

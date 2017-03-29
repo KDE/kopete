@@ -12,7 +12,7 @@ set(kcm_kopete_statusconfig_PART_SRCS
 ki18n_wrap_ui(kcm_kopete_statusconfig_PART_SRCS
     statusconfig_manager.ui
     statusconfig_general.ui
-)
+    )
 
 add_library(kcm_kopete_statusconfig MODULE ${kcm_kopete_statusconfig_PART_SRCS})
 
