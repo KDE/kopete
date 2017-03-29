@@ -122,3 +122,5 @@ void TranslatorPreferences::slotShowPreviousChanged(bool on)
     Q_UNUSED(on);
     emit KCModule::changed(true);
 }
+
+#include "translatorpreferences.moc"

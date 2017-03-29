@@ -29,7 +29,6 @@
 #include <qmetaobject.h>
 
 #include <kdebug.h>
-#include <kaction.h>
 #include <kgenericfactory.h>
 #include <kglobal.h>
 #include <kconfig.h>
@@ -72,7 +71,7 @@ TranslatorPlugin::TranslatorPlugin(QObject *parent, const QVariantList & /* args
     connect(Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession *)),
             this, SLOT(slotNewKMM(Kopete::ChatSession *)));
 
-    m_actionLanguage = new KSelectAction(KIcon("preferences-desktop-locale"), i18n("Set &Language"), this);
+    m_actionLanguage = new KSelectAction(QIcon::fromTheme("preferences-desktop-locale"), i18n("Set &Language"), this);
     actionCollection()->addAction("contactLanguage", m_actionLanguage);
     connect(m_actionLanguage, SIGNAL(triggered(int)), this, SLOT(slotSetLanguage()));
     connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), this, SLOT(slotSelectionChanged(bool)));

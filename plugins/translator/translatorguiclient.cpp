@@ -22,7 +22,6 @@
 #include <qvariant.h>
 
 #include <kdebug.h>
-#include <kaction.h>
 #include <klocale.h>
 #include <kicon.h>
 #include <QKeySequence>
@@ -46,10 +45,10 @@ TranslatorGUIClient::TranslatorGUIClient(Kopete::ChatSession *parent)
 
     m_manager = parent;
 
-    KAction *translate = new KAction(KIcon("preferences-desktop-locale"), i18n("Translate"), this);
+    QAction *translate = new QAction(QIcon::fromTheme("preferences-desktop-locale"), i18n("Translate"), this);
     actionCollection()->addAction("translateCurrentMessage", translate);
     connect(translate, SIGNAL(triggered(bool)), this, SLOT(slotTranslateChat()));
-    translate->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
+    actionCollection()->setDefaultShortcut(translate, QKeySequence(Qt::CTRL + Qt::Key_T));
 
     setXMLFile("translatorchatui.rc");
 }
