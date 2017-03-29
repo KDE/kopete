@@ -83,7 +83,7 @@ CryptographyGUIClient::CryptographyGUIClient (Kopete::ChatSession *parent)
     actionCollection()->addAction("encryptionToggle", m_encAction);
     m_signAction = new KToggleAction(KIcon("document-sign"), i18nc("@action toggle action", "Sign Messages"), this);
     actionCollection()->addAction("signToggle", m_signAction);
-    m_exportAction = new KAction(i18nc("@action toggle action", "Export Contacts' Keys to Address Book"), this);
+    m_exportAction = new QAction(i18nc("@action toggle action", "Export Contacts' Keys to Address Book"), this);
     actionCollection()->addAction("export", m_exportAction);
 
     m_encAction->setChecked(wantEncrypt && keysAvailable);

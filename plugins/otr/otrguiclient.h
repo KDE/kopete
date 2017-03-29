@@ -32,7 +32,7 @@
 #include <kopeteplugin.h>
 
 class KActionMenu;
-class KAction;
+class QAction;
 
 namespace Kopete {
 class ChatSession;
@@ -54,9 +54,9 @@ public:
 private:
     Kopete::ChatSession *m_manager;
     KActionMenu *otrActionMenu;
-    KAction *actionEnableOtr;
-    KAction *actionDisableOtr;
-    KAction *actionVerifyFingerprint;
+    QAction *actionEnableOtr;
+    QAction *actionDisableOtr;
+    QAction *actionVerifyFingerprint;
 
 private slots:
     void slotEnableOtr();

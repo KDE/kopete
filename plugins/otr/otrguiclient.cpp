@@ -62,15 +62,15 @@ OtrGUIClient::OtrGUIClient(Kopete::ChatSession *parent)
     otrActionMenu->setDelayed(false);
     actionCollection()->addAction(QStringLiteral("otr_settings"), otrActionMenu);
 
-    actionEnableOtr = new KAction(QIcon::fromTheme(QStringLiteral("object-locked")), i18n("Start OTR Session"), this);
+    actionEnableOtr = new QAction(QIcon::fromTheme(QStringLiteral("object-locked")), i18n("Start OTR Session"), this);
     actionCollection()->addAction(QStringLiteral("enableOtr"), actionEnableOtr);
     connect(actionEnableOtr, SIGNAL(triggered(bool)), this, SLOT(slotEnableOtr()));
 
-    actionDisableOtr = new KAction(QIcon::fromTheme(QStringLiteral("object-unlocked")), i18n("End OTR Session"), this);
+    actionDisableOtr = new QAction(QIcon::fromTheme(QStringLiteral("object-unlocked")), i18n("End OTR Session"), this);
     actionCollection()->addAction(QStringLiteral("disableOtr"), actionDisableOtr);
     connect(actionDisableOtr, SIGNAL(triggered(bool)), this, SLOT(slotDisableOtr()));
 
-    actionVerifyFingerprint = new KAction(QIcon::fromTheme(QStringLiteral("application-pgp-signature")), i18n("Authenticate Contact"), this);
+    actionVerifyFingerprint = new QAction(QIcon::fromTheme(QStringLiteral("application-pgp-signature")), i18n("Authenticate Contact"), this);
     actionCollection()->addAction(QStringLiteral("verifyFingerprint"), actionVerifyFingerprint);
     connect(actionVerifyFingerprint, SIGNAL(triggered(bool)), this, SLOT(slotVerifyFingerprint()));
 

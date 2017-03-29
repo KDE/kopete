@@ -53,7 +53,7 @@ History2GUIClient::History2GUIClient (Kopete::ChatSession *parent)
 
     QList<Kopete::Contact *> mb = m_manager->members();
 
-    actionLast = new KAction(KIcon("go-last"), i18n("Latest History"), this);
+    actionLast = new QAction(KIcon("go-last"), i18n("Latest History"), this);
     actionCollection()->addAction("historyLast", actionLast);
     connect(actionLast, SIGNAL(triggered(bool)), this, SLOT(slotLast()));
     actionPrev = KStandardAction::back(this, SLOT(slotPrevious()), this);
@@ -61,12 +61,12 @@ History2GUIClient::History2GUIClient (Kopete::ChatSession *parent)
     actionNext = KStandardAction::forward(this, SLOT(slotNext()), this);
     actionCollection()->addAction("historyNext", actionNext);
 
-    KAction *viewChatHistory2 = new KAction(KIcon("view-history"), i18n("View &History"), this);
+    QAction *viewChatHistory2 = new QAction(KIcon("view-history"), i18n("View &History"), this);
     actionCollection()->addAction("viewChatHistory", viewChatHistory2);
     viewChatHistory2->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_H));
     connect(viewChatHistory2, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory2()));
 
-    KAction *actionQuote = new KAction(KIcon("go-last"), i18n("Quote Last Message"), this);
+    QAction *actionQuote = new QAction(KIcon("go-last"), i18n("Quote Last Message"), this);
     actionCollection()->addAction("historyQuote", actionQuote);
     connect(actionQuote, SIGNAL(triggered(bool)), this, SLOT(slotQuote()));
 

@@ -180,7 +180,7 @@ History2Dialog::History2Dialog(Kopete::MetaContact *mc, QWidget *parent)
     mCopyAct = KStandardAction::copy(this, SLOT(slotCopy()), mHtmlView);
     mHtmlView->addAction(mCopyAct);
 
-    mCopyURLAct = new KAction(KIcon("edit-copy"), i18n("Copy Link Address"), mHtmlView);
+    mCopyURLAct = new QAction(KIcon("edit-copy"), i18n("Copy Link Address"), mHtmlView);
     mHtmlView->addAction(mCopyURLAct);
     connect(mCopyURLAct, SIGNAL(triggered(bool)), this, SLOT(slotCopyURL()));
 

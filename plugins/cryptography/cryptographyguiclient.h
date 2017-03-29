@@ -49,7 +49,7 @@ public:
 
     KToggleAction *m_encAction;
     KToggleAction *m_signAction;
-    KAction *m_exportAction;
+    QAction *m_exportAction;
 
 private slots:
     void slotEncryptToggled();

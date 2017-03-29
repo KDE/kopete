@@ -28,7 +28,7 @@
 
 class QTreeWidgetItem;
 
-class KAction;
+class QAction;
 class KHTMLView;
 class KHTMLPart;
 namespace KParts {
@@ -165,8 +165,8 @@ private:
 
     bool mSearching;
 
-    KAction *mCopyAct;
-    KAction *mCopyURLAct;
+    QAction *mCopyAct;
+    QAction *mCopyURLAct;
     QString mURL;
 };
 

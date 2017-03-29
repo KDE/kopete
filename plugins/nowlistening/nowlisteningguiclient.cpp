@@ -38,7 +38,7 @@ NowListeningGUIClient::NowListeningGUIClient(Kopete::ChatSession *parent, NowLis
     connect(plugin, SIGNAL(readyForUnload()), SLOT(slotPluginUnloaded()));
     m_msgManager = parent;
 
-    m_action = new KAction(i18n("Send Media Info"), this);
+    m_action = new QAction(i18n("Send Media Info"), this);
     actionCollection()->addAction("actionSendAdvert", m_action);
     connect(m_action, SIGNAL(triggered(bool)), this, SLOT(slotAdvertToCurrentChat()));
 

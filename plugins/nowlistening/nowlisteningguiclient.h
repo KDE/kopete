@@ -24,7 +24,7 @@
 #include <QObject>
 #include <kxmlguiclient.h>
 
-class KAction;
+class QAction;
 class NowListeningPlugin;
 
 namespace Kopete {
@@ -47,7 +47,7 @@ protected slots:
 
 private:
     Kopete::ChatSession *m_msgManager;
-    KAction *m_action;
+    QAction *m_action;
 };
 
 #endif

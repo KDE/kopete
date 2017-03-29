@@ -91,13 +91,13 @@ CryptographyPlugin::CryptographyPlugin (QObject *parent, const QVariantList & /*
             SLOT(slotOutgoingMessage(Kopete::Message&)));
 
     // actions in the contact list
-    KAction *action = new KAction(KIcon("document-encrypt"), i18nc("@action", "&Select Public Key..."), this);
+    QAction *action = new QAction(KIcon("document-encrypt"), i18nc("@action", "&Select Public Key..."), this);
     actionCollection()->addAction("contactSelectKey", action);
     connect(action, SIGNAL(triggered(bool)), this, SLOT(slotSelectContactKey()));
     connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), action, SLOT(setEnabled(bool)));
     action->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count() == 1);
 
-    action = new KAction(KIcon("document-export-key"), i18nc("@action", "&Export Public Keys To Address Book..."), this);
+    action = new QAction(KIcon("document-export-key"), i18nc("@action", "&Export Public Keys To Address Book..."), this);
     actionCollection()->addAction("exportKey", action);
     connect(action, SIGNAL(triggered(bool)), this, SLOT(slotExportSelectedMetaContactKeys()));
     connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), action, SLOT(setEnabled(bool)));
