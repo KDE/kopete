@@ -4,21 +4,21 @@
 add_subdirectory(a11y)
 
 include_directories( 
-${KOPETE_INCLUDES}
-${CMAKE_CURRENT_SOURCE_DIR}/../ 
-)
+    ${KOPETE_INCLUDES}
+    ${CMAKE_CURRENT_SOURCE_DIR}/../
+    )
 
 link_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 ########### next target ###############
 
 set( kopetechatwindow_shared_SRCS 
-chatmessagepart.cpp 
-emoticonselector.cpp 
-kopeteemoticonaction.cpp 
-chattexteditpart.cpp
-kopeterichtextwidget.cpp
-kopetechatwindowstylemanager.cpp 
-kopetechatwindowstyle.cpp )
+    chatmessagepart.cpp
+    emoticonselector.cpp
+    kopeteemoticonaction.cpp
+    chattexteditpart.cpp
+    kopeterichtextwidget.cpp
+    kopetechatwindowstylemanager.cpp
+    kopetechatwindowstyle.cpp )
 
 
 kconfig_add_kcfg_files(kopetechatwindow_shared_SRCS GENERATE_MOC kopetechatwindowsettings.kcfgc )

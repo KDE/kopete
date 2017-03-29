@@ -3,9 +3,9 @@
 add_subdirectory( icons ) 
 
 include_directories( 
-${KOPETE_INCLUDES} 
-${CMAKE_CURRENT_SOURCE_DIR}/libwinpopup/ 
-)
+    ${KOPETE_INCLUDES}
+    ${CMAKE_CURRENT_SOURCE_DIR}/libwinpopup/
+    )
 
 
 ########### next target ###############
@@ -13,24 +13,24 @@ ${CMAKE_CURRENT_SOURCE_DIR}/libwinpopup/
 set(kopete_wp_ui_SRCS)
 
 ki18n_wrap_ui(kopete_wp_ui_SRCS 
-ui/wpaddcontactbase.ui 
-ui/wpuserinfowidget.ui 
-ui/wpeditaccountbase.ui 
-)
+    ui/wpaddcontactbase.ui
+    ui/wpuserinfowidget.ui
+    ui/wpeditaccountbase.ui
+    )
 
 set(libwinpopup_SRCS 
-libwinpopup/libwinpopup.cpp 
-)
+    libwinpopup/libwinpopup.cpp
+    )
 
 set(kopete_wp_PART_SRCS 
-   ${kopete_wp_ui_SRCS} 
-   ${libwinpopup_SRCS} 
-   wpprotocol.cpp 
-   wpcontact.cpp 
-   wpaddcontact.cpp 
-   wpeditaccount.cpp 
-   wpaccount.cpp 
-   wpuserinfo.cpp )
+    ${kopete_wp_ui_SRCS}
+    ${libwinpopup_SRCS}
+    wpprotocol.cpp
+    wpcontact.cpp
+    wpaddcontact.cpp
+    wpeditaccount.cpp
+    wpaccount.cpp
+    wpuserinfo.cpp )
 
 
 add_library(kopete_wp MODULE ${kopete_wp_PART_SRCS})

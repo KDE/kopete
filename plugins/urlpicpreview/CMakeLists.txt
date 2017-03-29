@@ -1,7 +1,7 @@
 
 include_directories( 
-${KOPETE_INCLUDES}
-)
+    ${KOPETE_INCLUDES}
+    )
 
 
 ########### next target ###############
@@ -9,8 +9,8 @@ ${KOPETE_INCLUDES}
 find_package(KF5 ${KF5_VERSION} REQUIRED COMPONENTS KCMUtils)
 
 set(kopete_urlpicpreview_PART_SRCS
-#   linkpreview.cpp
-   urlpicpreviewplugin.cpp )
+    #   linkpreview.cpp
+    urlpicpreviewplugin.cpp )
 
 kconfig_add_kcfg_files(kopete_urlpicpreview_PART_SRCS urlpicpreviewconfig.kcfgc )
 
@@ -22,7 +22,7 @@ target_link_libraries(kopete_urlpicpreview
     KF5::KIOCore
     KF5::KCMUtils
     kopete
-)
+    )
 
 install(TARGETS kopete_urlpicpreview DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
@@ -30,7 +30,7 @@ install(TARGETS kopete_urlpicpreview DESTINATION ${KDE_INSTALL_PLUGINDIR})
 ########### next target ###############
 
 set(kcm_kopete_urlpicpreview_PART_SRCS
-   urlpicpreviewpreferences.cpp )
+    urlpicpreviewpreferences.cpp )
 
 ki18n_wrap_ui(kcm_kopete_urlpicpreview_PART_SRCS urlpicpreviewprefsbase.ui )
 
@@ -42,7 +42,7 @@ add_library(kcm_kopete_urlpicpreview MODULE ${kcm_kopete_urlpicpreview_PART_SRCS
 target_link_libraries(kcm_kopete_urlpicpreview
     KF5::KIOCore
     kopete
-)
+    )
 
 install(TARGETS kcm_kopete_urlpicpreview  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 

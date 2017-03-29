@@ -2,8 +2,8 @@
 add_subdirectory( icons ) 
 
 include_directories( 
-${KOPETE_INCLUDES} 
-)
+    ${KOPETE_INCLUDES}
+    )
 
 set(kopete_texteffect_common_SRCS)
 ecm_qt_declare_logging_category(kopete_texteffect_common_SRCS HEADER plugin_texteffect_debug.h IDENTIFIER KOPETE_PLUGIN_TEXTEFFECT_LOG CATEGORY_NAME org.kde.plugin.texteffect)

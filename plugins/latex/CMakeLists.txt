@@ -2,8 +2,8 @@
 add_subdirectory( icons ) 
 
 include_directories( 
-${KOPETE_INCLUDES} 
-)
+    ${KOPETE_INCLUDES}
+    )
 
 
 ########### next target ###############
@@ -18,7 +18,7 @@ add_library(kopete_latex MODULE ${kopete_latex_PART_SRCS})
 target_link_libraries(kopete_latex
     kopete
     KF5::KDELibs4Support
-)
+    )
 
 install(TARGETS kopete_latex  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
@@ -42,7 +42,7 @@ target_link_libraries(kcm_kopete_latex
     KF5::KCMUtils
     Qt5::Widgets
     Qt5::Gui
-)
+    )
 
 install(TARGETS kcm_kopete_latex  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 

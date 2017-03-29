@@ -2,22 +2,22 @@
 add_subdirectory( tests ) 
 
 include_directories(
-${KOPETE_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/utils ${CMAKE_CURRENT_SOURCE_DIR}/tasks
-)
+    ${KOPETE_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/utils ${CMAKE_CURRENT_SOURCE_DIR}/tasks
+    )
 
 
 ########### next target ###############
 
 set(liboscar_SRCS 
     oscarutils.cpp
-    client.cpp 
+    client.cpp
     inputprotocolbase.cpp
     coreprotocol.cpp
-    flapprotocol.cpp 
+    flapprotocol.cpp
     snacprotocol.cpp
     oftprotocol.cpp
     ofttransfer.cpp
-    transfer.cpp 
+    transfer.cpp
     oscarclientstream.cpp
     safedelete.cpp
     stream.cpp
@@ -48,7 +48,7 @@ set(liboscar_SRCS
     tasks/oscarlogintask.cpp
     tasks/closeconnectiontask.cpp
     tasks/serverversionstask.cpp
-    tasks/rateinfotask.cpp 
+    tasks/rateinfotask.cpp
     tasks/errortask.cpp
     tasks/locationrightstask.cpp
     tasks/profiletask.cpp
@@ -87,7 +87,7 @@ set(liboscar_SRCS
     tasks/icqtlvinfoupdatetask.cpp
     tasks/chatroomtask.cpp
     utils/rtf.cc
-)
+    )
 
 add_library( oscar SHARED ${liboscar_SRCS} )
 

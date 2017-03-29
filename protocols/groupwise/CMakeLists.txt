@@ -10,46 +10,46 @@ set( GROUPWISE_DEBUG_GLOBAL 14190 )
 add_definitions( -DKDE_DEFAULT_DEBUG_AREA=${GROUPWISE_DEBUG_GLOBAL} )
 
 set( kopete_groupwise_ui_SRCS
-	ui/gwaddcontactpage.cpp
-	ui/gweditaccountwidget.cpp
-	ui/gwreceiveinvitationdialog.cpp
-	ui/gwcontactproperties.cpp
-	ui/gwprivacydialog.cpp
-	ui/gwsearch.cpp
-	ui/gwchatsearchdialog.cpp
-	ui/gwchatpropsdialog.cpp
-)
+    ui/gwaddcontactpage.cpp
+    ui/gweditaccountwidget.cpp
+    ui/gwreceiveinvitationdialog.cpp
+    ui/gwcontactproperties.cpp
+    ui/gwprivacydialog.cpp
+    ui/gwsearch.cpp
+    ui/gwchatsearchdialog.cpp
+    ui/gwchatpropsdialog.cpp
+    )
 
 ki18n_wrap_ui(kopete_groupwise_ui_SRCS
-	ui/gwaccountpreferences.ui
-	ui/gwaddui.ui
-	ui/gwchatprops.ui
-	ui/gwchatsearch.ui
-	ui/gwshowinvitation.ui
-	ui/gwcontactprops.ui
-	ui/gwprivacy.ui
-	ui/gwcustomstatus.ui
-	ui/gwcustomstatusedit.ui
-	ui/gwcontactprops.ui
-	ui/gwcontactsearch.ui
-	ui/gwcustomstatus.ui
-	ui/gwcustomstatusedit.ui
-	ui/gwcontactsearch.ui
-	ui/gwchatsearch.ui
-)
+    ui/gwaccountpreferences.ui
+    ui/gwaddui.ui
+    ui/gwchatprops.ui
+    ui/gwchatsearch.ui
+    ui/gwshowinvitation.ui
+    ui/gwcontactprops.ui
+    ui/gwprivacy.ui
+    ui/gwcustomstatus.ui
+    ui/gwcustomstatusedit.ui
+    ui/gwcontactprops.ui
+    ui/gwcontactsearch.ui
+    ui/gwcustomstatus.ui
+    ui/gwcustomstatusedit.ui
+    ui/gwcontactsearch.ui
+    ui/gwchatsearch.ui
+    )
 
 ########### next target ###############
 
 set(kopete_groupwise_PART_SRCS
-   ${kopete_groupwise_ui_SRCS}
-   gwprotocol.cpp
-   gwcontact.cpp
-   gwaccount.cpp
-   gwbytestream.cpp
-   gwconnector.cpp
-   gwmessagemanager.cpp
-   gwcontactlist.cpp
-)
+    ${kopete_groupwise_ui_SRCS}
+    gwprotocol.cpp
+    gwcontact.cpp
+    gwaccount.cpp
+    gwbytestream.cpp
+    gwconnector.cpp
+    gwmessagemanager.cpp
+    gwcontactlist.cpp
+    )
 
 add_library(kopete_groupwise MODULE ${kopete_groupwise_PART_SRCS})
 
