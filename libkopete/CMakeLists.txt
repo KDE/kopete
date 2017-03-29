@@ -179,8 +179,8 @@ if(Q_WS_X11 AND X11_Xss_FOUND)
 endif(Q_WS_X11 AND X11_Xss_FOUND)
 
 set_target_properties(kopete PROPERTIES
-    VERSION ${GENERIC_LIB_VERSION}
-    SOVERSION ${GENERIC_LIB_SOVERSION}
+    VERSION 1.0.0
+    SOVERSION 1
     )
 if(MSVC)
     set_target_properties(kopete PROPERTIES
