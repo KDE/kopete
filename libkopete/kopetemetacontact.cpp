@@ -704,7 +704,10 @@ QString nameFromContact(Kopete::Contact *c)  /*const*/
 
 QUrl MetaContact::customPhoto() const
 {
-    return QUrl(d->customPicture.path());
+    if (d->customPicture.path().isEmpty()) {
+        return QUrl();
+    }
+    return QUrl::fromLocalFile(d->customPicture.path());
 }
 
 void MetaContact::setPhoto(const QUrl &url)

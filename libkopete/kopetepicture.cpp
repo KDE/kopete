@@ -18,6 +18,7 @@
 
 #include <kcontacts/picture.h>
 
+#include <QDir>
 #include <kcodecs.h>
 #include <kdebug.h>
 
@@ -119,6 +120,7 @@ QString Picture::path()
         context.addData(tempArray);
         // Save the image to a file.
         localPhotoPath = context.result() + QLatin1String(".png");
+        QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("metacontactpicturecache/"));
         localPhotoPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("metacontactpicturecache/%1").arg(localPhotoPath);
         if (image().save(localPhotoPath, "PNG")) {
             d->picturePath = localPhotoPath;
