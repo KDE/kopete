@@ -1287,8 +1287,8 @@ bool KopeteChatWindow::queryClose()
 
 bool KopeteChatWindow::queryExit()
 {
-    KopeteApplication *app = static_cast<KopeteApplication *>(kapp);
-    if (app->sessionSaving()
+    KopeteApplication *app = static_cast<KopeteApplication *>(qApp);
+    if (app->isSavingSession()
         || app->isShuttingDown() /* only set if KopeteApplication::quitKopete() or
                                     KopeteApplication::commitData() called */
         || !Kopete::BehaviorSettings::self()->showSystemTray() /* also close if our tray icon is hidden! */
@@ -1304,8 +1304,8 @@ void KopeteChatWindow::closeEvent(QCloseEvent *e)
 {
     // if there's a system tray applet and we are not shutting down then just do what needs to be done if a
     // window is closed.
-    KopeteApplication *app = static_cast<KopeteApplication *>(kapp);
-    if (Kopete::BehaviorSettings::self()->showSystemTray() && !app->isShuttingDown() && !app->sessionSaving()) {
+    KopeteApplication *app = static_cast<KopeteApplication *>(qApp);
+    if (Kopete::BehaviorSettings::self()->showSystemTray() && !app->isShuttingDown() && !app->isSavingSession()) {
 //		hide();
         // BEGIN of code borrowed from KMainWindow::closeEvent
         // Save settings if auto-save is enabled, and settings have changed

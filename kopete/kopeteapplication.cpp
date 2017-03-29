@@ -53,8 +53,8 @@
 #include "kopeteidentitymanager.h"
 #include "kopetedbusinterface.h"
 
-KopeteApplication::KopeteApplication()
-    : KUniqueApplication(true, true)
+KopeteApplication::KopeteApplication(int &argc, char *argv[])
+    : QApplication(argc, argv)
 {
     m_isShuttingDown = false;
 
@@ -151,7 +151,7 @@ void KopeteApplication::slotLoadPlugins()
     KSharedConfig::Ptr config = KSharedConfig::openConfig();
 
     // Parse command-line arguments
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    //FIXME KF5 KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     bool showConfigDialog = false;
 
@@ -179,6 +179,7 @@ void KopeteApplication::slotLoadPlugins()
     */
 
     // Prevent plugins from loading? (--disable=foo,bar)
+#if 0//FIXME KF5
     foreach (const QString &disableArg, args->getOption("disable").split(',')) {
         showConfigDialog = false;
         Kopete::PluginManager::self()->setPluginEnabled(disableArg, false);
@@ -192,11 +193,12 @@ void KopeteApplication::slotLoadPlugins()
             Kopete::PluginManager::self()->setPluginEnabled(plugin, true);
         }
     }
+#endif
 
     config->sync();
 
     // Disable plugins altogether? (--noplugins)
-    if (!args->isSet("plugins")) {
+    if (/*!args->isSet("plugins")*/1) { //KF5 FIXME
         // If anybody reenables this I'll get a sword and make a nice chop-suy out
         // of your body :P [mETz - 29.05.2004]
         // This screws up kopeterc because there is no way to get the Plugins group back!
@@ -232,19 +234,20 @@ void KopeteApplication::slotLoadPlugins()
 
 void KopeteApplication::slotAllPluginsLoaded()
 {
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    //FIXME KF5 KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     //FIXME: this should probably ask for the identities to connect instead of all accounts
     // --noconnect not specified?
 
     Kopete::OnlineStatusManager::Category initStatus = Kopete::OnlineStatusManager::self()->initialStatus();
     Kopete::OnlineStatusManager::Category setStatus = Kopete::OnlineStatusManager::Offline;
-
+#if 0 //FIXME
     if (args->isSet("connect") && initStatus != Kopete::OnlineStatusManager::Offline
         && (Solid::Networking::status() == Solid::Networking::Unknown
             || Solid::Networking::status() == Solid::Networking::Connected)) {
         setStatus = initStatus;
     }
+#endif
 
     QList <Kopete::Status::StatusItem *> statusList = Kopete::StatusManager::self()->getRootGroup()->childList();
     QString message, title;
@@ -273,7 +276,8 @@ void KopeteApplication::slotAllPluginsLoaded()
     }
 
     kDebug(14000)<< "initial status set in config: " << initStatus;
-
+//FIXME KF5
+#if 0
     QStringList connectArgs = args->getOptionList("autoconnect");
 
     // toConnect will contain all the protocols to connect to
@@ -315,8 +319,10 @@ void KopeteApplication::slotAllPluginsLoaded()
 
     // Parse any passed URLs/files
     handleURLArgs();
+#endif
 }
 
+#if 0
 int KopeteApplication::newInstance()
 {
 //	kDebug(14000) ;
@@ -324,9 +330,11 @@ int KopeteApplication::newInstance()
 
     return KUniqueApplication::newInstance();
 }
+#endif
 
 void KopeteApplication::handleURLArgs()
 {
+#if 0
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 //	kDebug(14000) << "called with " << args->count() << " arguments to handle.";
 
@@ -340,6 +348,7 @@ void KopeteApplication::handleURLArgs()
             Kopete::MimeTypeHandler::dispatchURL(u);
         } // END for()
     } // END args->count() > 0
+#endif
 }
 
 void KopeteApplication::quitKopete()
@@ -370,7 +379,7 @@ void KopeteApplication::quitKopete()
 void KopeteApplication::commitData(QSessionManager &sm)
 {
     m_isShuttingDown = true;
-    KUniqueApplication::commitData(sm);
+    //FIXME KUniqueApplication::commitData(sm);
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

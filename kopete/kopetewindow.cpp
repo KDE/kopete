@@ -284,7 +284,7 @@ KopeteWindow::KopeteWindow (QWidget *parent)
     , d(new Private)
 {
     d->appDestroyed = false;
-    connect(kapp, SIGNAL(destroyed()), this, SLOT(slotAppDestroyed()));
+    connect(qApp, SIGNAL(destroyed()), this, SLOT(slotAppDestroyed()));
     setAttribute(Qt::WA_DeleteOnClose, false);
     setAttribute(Qt::WA_QuitOnClose, false);
     // Applications should ensure that their StatusBar exists before calling createGUI()
@@ -833,8 +833,8 @@ void KopeteWindow::slotDisconnectAll()
 
 bool KopeteWindow::queryClose()
 {
-    KopeteApplication *app = static_cast<KopeteApplication *>(kapp);
-    if (app->sessionSaving() || app->isShuttingDown()) {
+    KopeteApplication *app = static_cast<KopeteApplication *>(qApp);
+    if (app->isSavingSession() || app->isShuttingDown()) {
         // we are shutting down, don't show any message
         return true;
     }
@@ -881,8 +881,8 @@ bool KopeteWindow::shouldExitOnClose() const
 
 bool KopeteWindow::queryExit()
 {
-    KopeteApplication *app = static_cast<KopeteApplication *>(kapp);
-    if (app->sessionSaving()
+    KopeteApplication *app = static_cast<KopeteApplication *>(qApp);
+    if (app->isSavingSession()
         || app->isShuttingDown()     /* only set if KopeteApplication::quitKopete() or
                                     KopeteApplication::commitData() called */
         || shouldExitOnClose()
@@ -904,8 +904,8 @@ void KopeteWindow::closeEvent(QCloseEvent *e)
 {
     // if we are not ok to exit on close and we are not shutting down then just do what needs to be done if a
     // window is closed.
-    KopeteApplication *app = static_cast<KopeteApplication *>(kapp);
-    if (!shouldExitOnClose() && !app->isShuttingDown() && !app->sessionSaving()) {
+    KopeteApplication *app = static_cast<KopeteApplication *>(qApp);
+    if (!shouldExitOnClose() && !app->isShuttingDown() && !app->isSavingSession()) {
         // BEGIN of code borrowed from KMainWindow::closeEvent
         // Save settings if auto-save is enabled, and settings have changed
         if (settingsDirty() && autoSaveSettings()) {
@@ -925,7 +925,7 @@ void KopeteWindow::closeEvent(QCloseEvent *e)
 
 void KopeteWindow::slotQuit()
 {
-    KopeteApplication *app = static_cast<KopeteApplication *>(kapp);
+    KopeteApplication *app = static_cast<KopeteApplication *>(qApp);
     app->quitKopete();
 
     if (d->tray && app->isShuttingDown()) {
@@ -1018,8 +1018,8 @@ void KopeteWindow::slotIdentityToolTipChanged(Kopete::Identity *identity)
         return;
     }
 
-    KopeteApplication *app = static_cast<KopeteApplication *>(kapp);
-    if (app->sessionSaving() || app->isShuttingDown()) {
+    KopeteApplication *app = static_cast<KopeteApplication *>(qApp);
+    if (app->isSavingSession() || app->isShuttingDown()) {
         return;
     }
 
@@ -1051,8 +1051,8 @@ void KopeteWindow::slotIdentityStatusIconChanged(Kopete::Identity *identity)
         return;
     }
 
-    KopeteApplication *app = static_cast<KopeteApplication *>(kapp);
-    if (app->sessionSaving() || app->isShuttingDown()) {
+    KopeteApplication *app = static_cast<KopeteApplication *>(qApp);
+    if (app->isSavingSession() || app->isShuttingDown()) {
         return;
     }
 

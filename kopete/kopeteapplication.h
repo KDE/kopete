@@ -22,7 +22,7 @@
 
 #include <qpointer.h>
 
-#include <kuniqueapplication.h>
+#include <QApplication>
 
 class KopeteWindow;
 class QSessionManager;
@@ -35,12 +35,12 @@ class FileEngineHandler;
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
-class KopeteApplication : public KUniqueApplication
+class KopeteApplication : public QApplication
 {
     Q_OBJECT
 
 public:
-    KopeteApplication();
+    KopeteApplication(int &argc, char *argv[]);
     ~KopeteApplication();
 
     /**
@@ -52,7 +52,7 @@ public:
         return m_isShuttingDown;
     }
 
-    int newInstance() Q_DECL_OVERRIDE;
+    //FIXME int newInstance() Q_DECL_OVERRIDE;
 
 public slots:
     /**
