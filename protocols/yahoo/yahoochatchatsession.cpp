@@ -35,6 +35,7 @@ YahooChatChatSession::YahooChatChatSession( Kopete::Protocol *protocol, const Ko
 	Kopete::ContactPtrList others )
 : Kopete::ChatSession( user, others, protocol )
 {
+    setComponentName(QStringLiteral("yahoo_protocol"), i18n("Kopete"));
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
 
 	connect ( this, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),

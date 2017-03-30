@@ -47,6 +47,8 @@ set(kopete_yahoo_PART_SRCS
    yahooverifyaccount.cpp 
    yahoowebcam.cpp )
 
+qt5_add_resources(kopete_yahoo_PART_SRCS yahooprotocol.qrc)   
+   
 ecm_qt_declare_logging_category(kopete_yahoo_PART_SRCS HEADER yahoo_protocol_debug.h IDENTIFIER YAHOO_PROTOCOL_LOG CATEGORY_NAME org.kde.kopete.yahoo)
 
 add_library(kopete_yahoo MODULE ${kopete_yahoo_PART_SRCS})
@@ -62,7 +64,6 @@ install(TARGETS kopete_yahoo  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 ########### install files ###############
 
 install( FILES kopete_yahoo.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
-install( FILES yahooconferenceui.rc yahooimui.rc yahoochatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_yahoo)
 
 
 
