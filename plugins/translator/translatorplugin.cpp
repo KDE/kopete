@@ -108,7 +108,7 @@ void TranslatorPlugin::loadSettings()
 {
     QString previousLang = m_languages->languageKey(m_service, m_actionLanguage->currentItem());
 
-    TranslatorConfig::self()->readConfig();
+    TranslatorConfig::self()->load();
     int mode = 0;
 
     m_myLang = TranslatorConfig::defaultLanguage();

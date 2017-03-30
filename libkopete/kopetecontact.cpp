@@ -669,7 +669,7 @@ QString Contact::toolTip() const
             const QString name = formattedName();
             if (!name.isEmpty()) {
                 tip += i18nc("@label:textbox formatted name",
-                             "<br /><b>Full Name:</b>&nbsp;<nobr>%1</nobr>", Qt::escape(name));
+                             "<br /><b>Full Name:</b>&nbsp;<nobr>%1</nobr>", name.toHtmlEscaped());
             }
         } else if ((*it) == Kopete::Global::Properties::self()->idleTime().key()) {
             const QString time = formattedIdleTime();
@@ -682,7 +682,7 @@ QString Contact::toolTip() const
             if (!url.isEmpty()) {
                 tip += i18nc("@label:textbox formatted url",
                              "<br /><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>",
-                             QString(QUrl::toPercentEncoding(url)), Kopete::Message::escape(Qt::escape(url)));
+                             QString(QUrl::toPercentEncoding(url)), Kopete::Message::escape(url.toHtmlEscaped()));
             }
         } else if ((*it) == Kopete::Global::Properties::self()->statusTitle().key()) {
             const QString statusTitle = property(*it).value().toString();
@@ -730,7 +730,7 @@ QString Contact::toolTip() const
 
                 tip += i18nc("@label:textbox property label %2 is name, %1 is value",
                              "<br /><nobr><b>%2:</b></nobr>&nbsp;%1",
-                             valueText, Qt::escape(p.tmpl().label()));
+                             valueText, p.tmpl().label().toHtmlEscaped());
             }
         }
     }

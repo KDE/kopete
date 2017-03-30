@@ -77,7 +77,7 @@ void URLPicPreviewPlugin::aboutToDisplay(Kopete::Message &message)
 {
     if (message.direction() == Kopete::Message::Inbound) {
         // reread configuration
-        URLPicPreviewConfig::self()->readConfig();
+        URLPicPreviewConfig::self()->load();
 
         QRegExp ex("(<a href=\")([^\"]*)(\" )?([^<]*)(</a>)(.*)$");
         QString myParsedBody = message.parsedBody();

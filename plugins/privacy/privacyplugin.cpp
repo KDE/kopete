@@ -87,7 +87,7 @@ PrivacyPlugin *PrivacyPlugin::plugin()
 
 void PrivacyPlugin::slotSettingsChanged()
 {
-    PrivacyConfig::self()->readConfig();
+    PrivacyConfig::self()->load();
 }
 
 void PrivacyPlugin::slotAddToWhiteList()
@@ -126,7 +126,7 @@ void PrivacyPlugin::addContactsToWhiteList(QList<const Kopete::Contact *> list)
     }
 
     PrivacyConfig::setWhiteList(whitelist);
-    PrivacyConfig::self()->writeConfig();
+    PrivacyConfig::self()->save();
 }
 
 void PrivacyPlugin::addContactsToBlackList(QList<const Kopete::Contact *> list)
@@ -141,7 +141,7 @@ void PrivacyPlugin::addContactsToBlackList(QList<const Kopete::Contact *> list)
     }
 
     PrivacyConfig::setBlackList(blacklist);
-    PrivacyConfig::self()->writeConfig();
+    PrivacyConfig::self()->save();
 }
 
 void PrivacyPlugin::slotIncomingMessage(Kopete::MessageEvent *event)

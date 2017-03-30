@@ -687,19 +687,19 @@ void KopeteWindow::slotToggleShowAllOfflineEmpty(bool toggled)
     d->actionShowEmptyGroups->setChecked(toggled);
     Kopete::AppearanceSettings::self()->setShowOfflineUsers(toggled);
     Kopete::AppearanceSettings::self()->setShowEmptyGroups(toggled);
-    Kopete::AppearanceSettings::self()->writeConfig();
+    Kopete::AppearanceSettings::self()->save();
 }
 
 void KopeteWindow::slotToggleShowOfflineUsers()
 {
     Kopete::AppearanceSettings::self()->setShowOfflineUsers(d->actionShowOfflineUsers->isChecked());
-    Kopete::AppearanceSettings::self()->writeConfig();
+    Kopete::AppearanceSettings::self()->save();
 }
 
 void KopeteWindow::slotToggleShowEmptyGroups()
 {
     Kopete::AppearanceSettings::self()->setShowEmptyGroups(d->actionShowEmptyGroups->isChecked());
-    Kopete::AppearanceSettings::self()->writeConfig();
+    Kopete::AppearanceSettings::self()->save();
 }
 
 static bool compareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b);

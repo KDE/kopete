@@ -662,7 +662,7 @@ int OtrlChatInterface::encryptMessage(Kopete::Message &message)
     bool plaintext = message.format() == Qt::PlainText;
 
     if (plaintext) {
-        msgBody = Qt::escape(message.plainBody()).replace('\n', QLatin1String("<br/>"));
+        msgBody = message.plainBody().toHtmlEscaped().replace('\n', QLatin1String("<br/>"));
     } else {
         msgBody = message.escapedBody();
     }

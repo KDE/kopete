@@ -347,7 +347,7 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
     newNode.setInnerHTML(resultHTML);
     mHtmlPart->htmlDocument().body().appendChild(newNode);
 
-    const QString searchForEscaped = Qt::escape(mMainWidget->searchLine->text());
+    const QString searchForEscaped = mMainWidget->searchLine->text().toHtmlEscaped();
 
     // Populating HTML Part with messages
     foreach (const Kopete::Message &msg, msgs) {

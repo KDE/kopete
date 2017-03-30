@@ -92,7 +92,7 @@ void CryptographyPreferences::save()
     CryptographySettings::setPrivateKeyFingerprint(key->fingerprint());
     CryptographySettings::setClearSignMode(checkBox->checkState() == Qt::Checked ? true : false);
 
-    CryptographySettings::self()->writeConfig();
+    CryptographySettings::self()->save();
 
     KCModule::save();
     emit changed(false);

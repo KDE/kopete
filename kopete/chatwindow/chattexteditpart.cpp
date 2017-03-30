@@ -48,6 +48,7 @@
 #include <QKeyEvent>
 #include <QTextCursor>
 #include <QTextCharFormat>
+#include <QFontDatabase>
 
 typedef KParts::GenericFactory<ChatTextEditPart> ChatTextEditPartFactory;
 K_EXPORT_COMPONENT_FACTORY(librichtexteditpart, ChatTextEditPartFactory)
@@ -433,7 +434,7 @@ void ChatTextEditPart::slotAppearanceChanged()
 {
     Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
 
-    QFont font = (settings->chatFontSelection() == 1) ? settings->chatFont() : KGlobalSettings::generalFont();
+    QFont font = (settings->chatFontSelection() == 1) ? settings->chatFont() : QFontDatabase::systemFont(QFontDatabase::GeneralFont);
     QTextCharFormat format;
     format.setFont(font);
     format.setBackground(settings->chatBackgroundColor());

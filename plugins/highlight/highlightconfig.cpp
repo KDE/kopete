@@ -151,17 +151,17 @@ void HighlightConfig::save()
         // Save metafilter information.
         foreach (Filter *filtre, m_filters) {
             xml += QLatin1String("  <filter>\n    <display-name>")
-                   + Qt::escape(filtre->displayName)
+                   + filtre->displayName.toHtmlEscaped()
                    + QLatin1String("</display-name>\n");
 
             xml += QLatin1String("    <search caseSensitive=\"") + QString::number(static_cast<int>(filtre->caseSensitive))
                    +QLatin1String("\" regExp=\"") + QString::number(static_cast<int>(filtre->isRegExp))
-                   +QLatin1String("\">") + Qt::escape(filtre->search) + QLatin1String("</search>\n");
+                   +QLatin1String("\">") + filtre->search.toHtmlEscaped() + QLatin1String("</search>\n");
 
             xml += QLatin1String("    <BG set=\"") + QString::number(static_cast<int>(filtre->setBG))
-                   +QLatin1String("\">") + Qt::escape(filtre->BG.name()) + QLatin1String("</BG>\n");
+                   +QLatin1String("\">") + filtre->BG.name().toHtmlEscaped() + QLatin1String("</BG>\n");
             xml += QLatin1String("    <FG set=\"") + QString::number(static_cast<int>(filtre->setFG))
-                   +QLatin1String("\">") + Qt::escape(filtre->FG.name()) + QLatin1String("</FG>\n");
+                   +QLatin1String("\">") + filtre->FG.name().toHtmlEscaped() + QLatin1String("</FG>\n");
 
             xml += QLatin1String("    <importance set=\"") + QString::number(static_cast<int>(filtre->setImportance))
                    +QLatin1String("\">") + QString::number(filtre->importance) + QLatin1String("</importance>\n");

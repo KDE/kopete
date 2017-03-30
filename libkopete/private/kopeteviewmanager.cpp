@@ -64,7 +64,7 @@ static QString squashMessage(const Kopete::Message &msg, const int len = 30)
         if (msgText.length() > len) {
             msgText = msgText.left(len) + QLatin1String(" ...");
         }
-        msgText = Kopete::Emoticons::parseEmoticons(Qt::escape(msgText));
+        msgText = Kopete::Emoticons::parseEmoticons(msgText.toHtmlEscaped());
     } else {
         QString plainText = msg.plainBody();
         if (plainText.length() > len) {
@@ -351,12 +351,12 @@ void KopeteViewManager::createNotification(Kopete::Message &msg, const QString &
     QString bodyString = squashedMessage;
     if (msg.type() == Kopete::Message::TypeFileTransferRequest) {
         eventId = QStringLiteral("kopete_incoming_file_transfer");
-        titleString = i18nc("@title %1 is contact's name", "Incoming file transfer request from <i>%1</i>", Qt::escape(msgFrom));
+        titleString = i18nc("@title %1 is contact's name", "Incoming file transfer request from <i>%1</i>", msgFrom.toHtmlEscaped());
         if (squashedMessage.isEmpty()) {
-            bodyString = i18nc("@info", "A user is trying to send you a file <filename>%1</filename>", Qt::escape(msg.fileName()));
+            bodyString = i18nc("@info", "A user is trying to send you a file <filename>%1</filename>", msg.fileName().toHtmlEscaped());
         } else {
             bodyString = i18nc("@info %2 is message", "A user is trying to send you a file <filename>%1</filename> with the message:<nl/>\"%2\"",
-                               Qt::escape(msg.fileName()), squashedMessage);
+                               msg.fileName().toHtmlEscaped(), squashedMessage);
         }
     } else {
         KLocalizedString title = ki18n("Incoming message from <i>%1</i>");

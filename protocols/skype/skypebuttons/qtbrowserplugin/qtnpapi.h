@@ -64,7 +64,7 @@ struct NPRect
     uint16	right;
 };
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
 struct NPEvent
 {
     uint16 event;
@@ -74,7 +74,7 @@ struct NPEvent
 #elif defined(Q_WS_X11)
 #  include <X11/Xlib.h>
 typedef XEvent NPEvent;
-#elif defined (Q_WS_MAC)
+#elif defined (Q_OS_MAC)
 typedef struct EventRecord NPEvent;
 #endif
 
@@ -243,7 +243,7 @@ struct NPByteRange
 #define NPVERS_WIN16_HAS_LIVECONNECT        10
 
 // Mac specifics
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
 # define getFocusEvent       (osEvt + 16)
 # define loseFocusEvent      (osEvt + 17)
 # define adjustCursorEvent   (osEvt + 18)

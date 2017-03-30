@@ -187,7 +187,7 @@ void InfoEventWidget::updateInfo()
         connect(d->currentEvent, SIGNAL(changed()), this, SLOT(updateInfo()));
     }
 
-    static_cast<KSqueezedTextLabel *>(d->ui.lblTitle)->setText(Qt::escape(event->title()));
+    static_cast<KSqueezedTextLabel *>(d->ui.lblTitle)->setText(event->title().toHtmlEscaped());
     d->ui.lblEvent->setText(QStringLiteral("%1/%2").arg(d->currentEventIndex + 1).arg(ie->eventCount()));
 
     d->ui.lblInfo->setVisible(!event->text().isEmpty());
@@ -211,7 +211,7 @@ void InfoEventWidget::updateInfo()
         while (it.hasNext())
         {
             it.next();
-            linkCode += QStringLiteral("<a href=\"%1\">%2</a> ").arg(it.key()).arg(Qt::escape(it.value()));
+            linkCode += QStringLiteral("<a href=\"%1\">%2</a> ").arg(it.key()).arg(it.value().toHtmlEscaped());
         }
 
         d->ui.lblActions->setText(linkCode);

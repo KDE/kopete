@@ -30,7 +30,7 @@
 #include "qtbrowserplugin_p.h"
 
 #ifndef WINAPI
-# ifdef Q_WS_WIN
+# ifdef Q_OS_WIN
 #  define WINAPI __stdcall
 # else
 #  define WINAPI
@@ -916,7 +916,7 @@ NPP_New(NPMIMEType pluginType,
     This->fMode = mode; // NP_EMBED, NP_FULL, or NP_BACKGROUND (see npapi.h)
     This->window = 0;
     This->qt.object = 0;
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     This->rootWidget = 0;
 #endif
     This->pendingStream = 0; // stream might be created before instance
@@ -1129,7 +1129,7 @@ NPP_StreamAsFile(NPP instance, NPStream *stream, const char* fname)
         return;
 
     QString path = QString::fromLocal8Bit(fname);
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     path = "/" + path.section(':', 1).replace(':', '/');
 #endif
 

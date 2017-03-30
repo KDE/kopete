@@ -498,7 +498,7 @@ void OscarContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 
 				QString text = currentFragment.text();
 				lastFragmentHasLineSeparator = text.endsWith( QChar::LineSeparator );
-				rtfText += Qt::escape( text );
+				rtfText += text.toHtmlEscaped();
 				defaultCharFormat = format;
 			}
 		}

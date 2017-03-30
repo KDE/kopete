@@ -62,7 +62,7 @@ HistoryPreferences::~HistoryPreferences()
 void HistoryPreferences::load()
 {
     kDebug(14310) << "called.";
-    HistoryConfig::self()->readConfig();
+    HistoryConfig::self()->load();
     p->chkShowPrevious->setChecked(HistoryConfig::auto_chatwindow());
     slotShowPreviousChanged(p->chkShowPrevious->isChecked());
     p->Number_Auto_chatwindow->setValue(HistoryConfig::number_Auto_chatwindow());
@@ -79,7 +79,7 @@ void HistoryPreferences::save()
     HistoryConfig::setNumber_Auto_chatwindow(p->Number_Auto_chatwindow->value());
     HistoryConfig::setNumber_ChatWindow(p->Number_ChatWindow->value());
     HistoryConfig::setHistory_color(p->History_color->color());
-    HistoryConfig::self()->writeConfig();
+    HistoryConfig::self()->save();
     emit KCModule::changed(false);
 }
 

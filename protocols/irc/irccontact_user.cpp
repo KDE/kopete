@@ -369,7 +369,7 @@ void IRCUserContact::whoWasComplete()
             .arg(mInfo.realName);
 
         msg += i18n("Last Online: %1\n").arg(
-            KGlobal::locale()->formatDateTime(
+            KLocale::global()->formatDateTime(
                 property( m_protocol->propLastSeen ).value().toDateTime()
             )
         );

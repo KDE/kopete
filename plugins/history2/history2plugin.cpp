@@ -172,5 +172,5 @@ void History2Plugin::slotKMMClosed(Kopete::ChatSession *kmm)
 
 void History2Plugin::slotSettingsChanged()
 {
-    History2Config::self()->readConfig();
+    History2Config::self()->load();
 }

@@ -289,7 +289,7 @@ void HistoryLogger::appendMessage(const Kopete::Message &msg, const Kopete::Cont
     if (msg.format() != Qt::PlainText) {
         body = msg.escapedBody();
     } else {
-        body = Qt::escape(msg.plainBody()).replace('\n', "<br />");
+        body = msg.plainBody().toHtmlEscaped().replace('\n', "<br />");
     }
 
     // Convert UTF-16 surrogate pairs into XML entities

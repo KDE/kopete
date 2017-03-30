@@ -1308,8 +1308,8 @@ void MetaContact::onlineStatusNotification(Kopete::Contact *c)
 
         if (notify) {
             QString text = i18n("<qt><i>%1</i> is now %2.</qt>",
-                                Kopete::Emoticons::parseEmoticons(Qt::escape(displayName())),
-                                Qt::escape(c->onlineStatus().description()));
+                                Kopete::Emoticons::parseEmoticons(displayName().toHtmlEscaped()),
+                                c->onlineStatus().description().toHtmlEscaped());
 
             notify->setText(text);
             notify->setPixmap(QPixmap::fromImage(picture().image()));

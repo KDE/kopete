@@ -291,8 +291,8 @@ void SkypeCallDialog::updateCallInfo() {
 		default:
 			;//Get rid of that stupid warning about not handled value in switch
 	}
-	const QString &activeTime = KGlobal::locale()->formatTime(QTime().addSecs(d->callTime / 2), true, true);
-	const QString &totalTime = KGlobal::locale()->formatTime(QTime().addSecs(d->totalTime / 2), true, true);
+	const QString &activeTime = KLocale::global()->formatTime(QTime().addSecs(d->callTime / 2), true, true);
+	const QString &totalTime = KLocale::global()->formatTime(QTime().addSecs(d->totalTime / 2), true, true);
 	dialog->TimeLabel->setText(i18n("%1 active\n%2 total", activeTime, totalTime));
 }
 
@@ -305,7 +305,7 @@ void SkypeCallDialog::skypeOutInfo(int balance, const QString &currency) {
 	// NOTE: As per the Skype API docs, the precision of the balance is fixed at 2 decimal places, regardless of currency, etc.
 	// If that ever changes, this might need to be altered.
 	double value = static_cast<double>(balance) / 100.;
-	dialog->CreditLabel->setText(KGlobal::locale()->formatMoney(value, currencyCode.defaultSymbol(), 2));
+	dialog->CreditLabel->setText(KLocale::global()->formatMoney(value, currencyCode.defaultSymbol(), 2));
 }
 
 void SkypeCallDialog::chatUser() {

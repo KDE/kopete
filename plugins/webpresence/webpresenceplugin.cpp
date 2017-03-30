@@ -82,7 +82,7 @@ WebPresencePlugin::~WebPresencePlugin()
 void WebPresencePlugin::slotSettingsChanged()
 {
     // Force reading config
-    WebPresenceConfig::self()->readConfig();
+    WebPresenceConfig::self()->load();
 
     resultFormatting = WEB_UNDEFINED;
 
@@ -222,7 +222,7 @@ KTemporaryFile *WebPresencePlugin::generateFile()
     // insert the current date/time
     QDomElement date = doc.createElement(QStringLiteral("listdate"));
     QDomText t = doc.createTextNode(
-        KGlobal::locale()->formatDateTime(QDateTime::currentDateTime()));
+        KLocale::global()->formatDateTime(QDateTime::currentDateTime()));
     date.appendChild(t);
     root.appendChild(date);
 

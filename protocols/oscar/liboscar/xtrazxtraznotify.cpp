@@ -156,10 +156,10 @@ QString XtrazNotify::createRequest( const QString &pluginId, const XService* ser
 	QString body = QStringLiteral( "<N><QUERY>%1</QUERY><NOTIFY>%2</NOTIFY></N>\r\n" );
 	
 	QDomDocument queryDoc = xmlQuery( pluginId );
-	QString query = Qt::escape( queryDoc.toString(0) );
+	QString query = queryDoc.toString(0).toHtmlEscaped();
 
 	QDomDocument notifyDoc = xmlNotify( service );
-	QString notify = Qt::escape( notifyDoc.toString( 0 ) );
+	QString notify = notifyDoc.toString( 0 ).toHtmlEscaped();
 
 	return body.arg( query ).arg( notify );
 }
@@ -169,7 +169,7 @@ QString XtrazNotify::createResponse( const QString &event, const QList<XService*
 	QString body = QStringLiteral( "<NR><RES>%1</RES></NR>\r\n" );
 
 	QDomDocument serviceDoc = xmlRet( event, serviceList );
-	QString response = Qt::escape( serviceDoc.toString(0) );
+	QString response = serviceDoc.toString(0).toHtmlEscaped();
 
 	return body.arg( response );
 }

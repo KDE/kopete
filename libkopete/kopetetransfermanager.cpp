@@ -334,9 +334,9 @@ bool Kopete::Transfer::showHtmlMessage(QString text) const
 QString Kopete::Transfer::fileForMessage() const
 {
     if (d->info.direction() == Kopete::FileTransferInfo::Incoming) {
-        return QStringLiteral("<a href=\"%1\">%2</a>").arg(d->localUrl.url(), Qt::escape(d->localUrl.toLocalFile()));
+        return QStringLiteral("<a href=\"%1\">%2</a>").arg(d->localUrl.url(), d->localUrl.toLocalFile().toHtmlEscaped());
     } else {
-        return Qt::escape(d->info.file());
+        return d->info.file().toHtmlEscaped();
     }
 }
 

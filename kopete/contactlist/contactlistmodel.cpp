@@ -651,7 +651,7 @@ QString ContactListModel::metaContactTooltip(const Kopete::MetaContact *metaCont
         if ((*it).type == KEmoticonsTheme::Image) {
             displayName += (*it).picHTMLCode;
         } else if ((*it).type == KEmoticonsTheme::Text) {
-            displayName += Qt::escape((*it).text);
+            displayName += (*it).text.toHtmlEscaped();
         }
     }
 

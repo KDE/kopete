@@ -78,7 +78,7 @@ void URLPicPreviewPreferences::save()
     URLPicPreviewConfig::self()->setPreviewScaleWidth(m_ui->previewScaleWidth->value());
     URLPicPreviewConfig::self()->setPreviewAmount(m_ui->previewAmount->value());
 
-    URLPicPreviewConfig::self()->writeConfig();
+    URLPicPreviewConfig::self()->save();
 }
 
 void URLPicPreviewPreferences::defaults()

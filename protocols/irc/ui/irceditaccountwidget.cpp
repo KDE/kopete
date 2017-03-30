@@ -86,7 +86,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 //	mNickName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mNickName ) );
 //	mAltNickname->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mAltNickname ) );
 
-    KCharsets *c = KGlobal::charsets();
+    KCharsets *c = KCharsets::charsets();
     charset->addItems(c->availableEncodingNames());
 
     for (int i = 0; i < charset->count(); ++i) {
@@ -261,7 +261,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
     account()->setConnectCommands( cmds );
     */
 
-    KCharsets *c = KGlobal::charsets();
+    KCharsets *c = KCharsets::charsets();
     account()->setCodec(c->codecForName(c->encodingForName(charset->currentText())));
 
     return account();

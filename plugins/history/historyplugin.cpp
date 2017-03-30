@@ -187,7 +187,7 @@ void HistoryPlugin::slotKMMClosed(Kopete::ChatSession *kmm)
 void HistoryPlugin::slotSettingsChanged()
 {
     kDebug(14310) << "RELOADING CONFIG";
-    HistoryConfig::self()->readConfig();
+    HistoryConfig::self()->load();
 }
 
 #include "historyplugin.moc"

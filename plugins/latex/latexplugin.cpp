@@ -175,7 +175,7 @@ void LatexPlugin::slotMessageAboutToShow(Kopete::Message &msg)
         }
         imagePxWidth = theImage.width();
         imagePxHeight = theImage.height();
-        QString escapedLATEX = Qt::escape(it.key()).replace('\"', QLatin1String("&quot;"));  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
+        QString escapedLATEX = it.key().toHtmlEscaped().replace('\"', QLatin1String("&quot;"));  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
         messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(
                                 imagePxHeight) + "\" align=\"middle\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
     }
@@ -214,7 +214,7 @@ void LatexPlugin::slotMessageAboutToSend(Kopete::Message &msg)
         QString url = handleLatex(latexFormula);
 
         if (!url.isNull()) {
-            QString escapedLATEX = Qt::escape(messageText).replace('\"', "&quot;");
+            QString escapedLATEX = messageText.toHtmlEscaped().replace('\"', "&quot;");
             QString messageText = "<img src=\"" + url + "\" alt=\"" + escapedLATEX + "\" title=\"" + escapedLATEX +"\"  />";
             msg.setBody(messageText, Kopete::Message::RichText);
         }
@@ -237,7 +237,7 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
     QString argumentOut = QStringLiteral("-o %1").arg(fileName);
     QString argumentInclude(QStringLiteral("-x %1"));
     //QString argumentFormat = "-fgif";  //we uses gif format because MSN only handle gif
-    LatexConfig::self()->readConfig();
+    LatexConfig::self()->load();
     QString includePath = LatexConfig::latexIncludeFile();
     if (!includePath.isNull()) {
         p << m_convScript <<  argumentRes << argumentOut /*<< argumentFormat*/ << argumentInclude.arg(includePath) << latexFormula;

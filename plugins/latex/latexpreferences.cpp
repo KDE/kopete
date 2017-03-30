@@ -61,7 +61,7 @@ LatexPreferences::~LatexPreferences()
 
 void LatexPreferences::load()
 {
-    LatexConfig::self()->readConfig();
+    LatexConfig::self()->load();
     // load widgets here
     m_preferencesDialog->horizontalDPI->setValue(LatexConfig::horizontalDPI());
     m_preferencesDialog->verticalDPI->setValue(LatexConfig::verticalDPI());
@@ -79,7 +79,7 @@ void LatexPreferences::save()
     LatexConfig::setHorizontalDPI(m_preferencesDialog->horizontalDPI->value());
     LatexConfig::setVerticalDPI(m_preferencesDialog->verticalDPI->value());
     LatexConfig::setLatexIncludeFile(m_preferencesDialog->includeUrlRequester->url().path());
-    LatexConfig::self()->writeConfig();
+    LatexConfig::self()->save();
     emit KCModule::changed(false);
 }
 

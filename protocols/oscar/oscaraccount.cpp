@@ -1457,7 +1457,7 @@ QString OscarAccount::addQuotesAroundAttributes( QString message ) const
 QString OscarAccount::sanitizedPlainMessage( const QString& message ) const
 {
 	// FIXME: messages from AIM to ICQ shouldn't be escaped, we need to redesign this
-	QString sanitizedMsg = (d->engine->isIcq()) ? Qt::escape( message ) : message;
+	QString sanitizedMsg = (d->engine->isIcq()) ? message.toHtmlEscaped() : message;
 	sanitizedMsg.replace( QRegExp(QString::fromLatin1("[\r]?[\n]")), QString::fromLatin1("<br />") );
 	return sanitizedMsg;
 }

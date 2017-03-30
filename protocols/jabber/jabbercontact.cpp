@@ -316,7 +316,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		{
 			QString room=message.invite();
 			QString originalBody=message.body().isEmpty() ? QString() :
-					i18n( "The original message is : <i>\" %1 \"</i><br />" , Qt::escape(message.body()));
+					i18n( "The original message is : <i>\" %1 \"</i><br />" , message.body().toHtmlEscaped());
 			QString mes=i18n("<qt><i>%1</i> has invited you to join the conference <b>%2</b><br />%3<br />"
 					"If you want to accept and join, just <b>enter your nickname</b> and press OK.<br />"
 							 "If you want to decline, press Cancel.</qt>",

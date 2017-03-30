@@ -371,7 +371,7 @@ void IRCChannelContact::topicUser(const QString &nick, const QDateTime &time)
 
     Kopete::Message msg(account->myServer(), mMyself,
         i18n("Topic set by %1 at %2",nick,
-            KGlobal::locale()->formatDateTime(time, KLocale::ShortDate)
+            KLocale::global()->formatDateTime(time, KLocale::ShortDate)
     ), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
     msg.setImportance(Kopete::Message::Low); //set the importance manualy to low
     appendMessage(msg);

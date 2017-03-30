@@ -143,7 +143,7 @@ QString KSParser::parse(QString message)
     QColor fgColor; /*KopeteMesage::fg().name()*/
     QColor bgColor; /*KopeteMesage::bg().name()*/
 
-    message = Qt::escape(message);
+    message = message.toHtmlEscaped();
     for (uint i = 0; i < message.length(); ++i) {
         QChar car = message[i];
         switch (car.unicode()) {

@@ -91,7 +91,7 @@ void TranslatorPreferences::save()
     KCModule::save();
     TranslatorConfig::setService(m_languages->serviceKey(p->service->currentIndex()));
     TranslatorConfig::setDefaultLanguage(m_languages->languageKey(TranslatorConfig::service(), p->defaultLanguage->currentIndex()));
-    TranslatorConfig::self()->writeConfig();
+    TranslatorConfig::self()->save();
     emit preferencesChanged();
 }
 

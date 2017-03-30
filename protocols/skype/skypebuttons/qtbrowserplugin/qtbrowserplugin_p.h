@@ -41,14 +41,14 @@ struct QtNPInstance
 
     short fMode;
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     typedef HWND Widget;
 #endif
 #ifdef Q_WS_X11
     typedef Window Widget;
     Display *display;
 #endif
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     typedef NPPort* Widget;
     QWidget *rootWidget;
 #endif

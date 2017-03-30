@@ -107,7 +107,7 @@ void BehaviorConfig::save()
         Kopete::BehaviorSettings::self()->setViewPlugin(viewPlugins[mPrfsChat->viewPlugin->currentIndex()].pluginName());
     }
 
-    Kopete::BehaviorSettings::self()->writeConfig();
+    Kopete::BehaviorSettings::self()->save();
 
     load();
 }

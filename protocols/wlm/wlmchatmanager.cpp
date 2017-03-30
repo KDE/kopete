@@ -693,7 +693,7 @@ bool WlmChatManager::fillEmoticons(WlmChatSession *chat, Kopete::Message* messag
     QMap<QString,QString>::iterator it2 = chat->emoticonsList.begin();
     for (;it2!=chat->emoticonsList.end(); ++it2)
     {
-        QString es = Qt::escape(it2.key());
+        QString es = it2.key().toHtmlEscaped();
         if (escapedMessage.contains(es))
         {
             if (!QFile::exists(it2.value()))

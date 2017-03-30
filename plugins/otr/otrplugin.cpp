@@ -173,7 +173,7 @@ void OTRPlugin::slotEnableOtr(Kopete::ChatSession *session, bool enable)
     if (enable) {
         QString policy = session->members().first()->metaContact()->pluginData(OTRPlugin::plugin(), QStringLiteral("otr_policy"));
         bool noerr;
-        KopeteOtrKcfg::self()->readConfig();
+        KopeteOtrKcfg::self()->load();
         if (policy.toInt(&noerr, 10) == 4 || (policy.toInt(&noerr, 10) == 0 && KopeteOtrKcfg::self()->rbNever())) {
             Kopete::Message msg(session->account()->myself(), session->members());
             msg.setPlainBody(i18nc("@info:status", "Your policy settings do not allow encrypted sessions to this contact."));
@@ -208,7 +208,7 @@ void OTRPlugin::slotVerifyFingerprint(Kopete::ChatSession *session)
 
 void OTRPlugin::slotSettingsChanged()
 {
-    KopeteOtrKcfg::self()->readConfig();
+    KopeteOtrKcfg::self()->load();
     if (KopeteOtrKcfg::self()->rbAlways()) {
         otrlChatInterface->setPolicy(OTRL_POLICY_ALWAYS);
     } else if (KopeteOtrKcfg::self()->rbOpportunistic()) {

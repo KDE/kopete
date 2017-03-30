@@ -98,7 +98,7 @@ PrivacyPreferences::~PrivacyPreferences()
 
 void PrivacyPreferences::load()
 {
-    PrivacyConfig::self()->readConfig();
+    PrivacyConfig::self()->load();
 
     prefUi->radioAllowAll->setChecked(PrivacyConfig::sender_AllowAll());
     prefUi->radioOnlyWhiteList->setChecked(PrivacyConfig::sender_AllowNoneButWhiteList());
@@ -131,7 +131,7 @@ void PrivacyPreferences::save()
     PrivacyConfig::setContent_DropIfAll(prefUi->chkDropAll->isChecked());
     PrivacyConfig::setDropIfAll(prefUi->editDropAll->text());
 
-    PrivacyConfig::self()->writeConfig();
+    PrivacyConfig::self()->save();
     emit KCModule::changed(false);
 }
 

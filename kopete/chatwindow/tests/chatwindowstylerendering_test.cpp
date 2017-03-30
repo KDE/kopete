@@ -208,7 +208,7 @@ void ChatWindowStyleRendering_Test::testHeaderRendering()
         "<div>Outgoing/buddy_icon.png</div>\n"
         "<div>%1</div>\n"
         "<div>%2</div>"
-        ).arg(KGlobal::locale()->formatDateTime(QDateTime::currentDateTime()))
+        ).arg(KLocale::global()->formatDateTime(QDateTime::currentDateTime()))
                            .arg(QDateTime::currentDateTime().toString("hh:mm"));
 
     QString headerHtml = d->testStyle->getHeaderHtml();
@@ -233,7 +233,7 @@ void ChatWindowStyleRendering_Test::testMessageRendering()
         "<div>%1</div>\n"
         "<div>%2</div>\n"
         "<div id=\"insert\">"
-        ).arg(KGlobal::locale()->formatDateTime(QDateTime::currentDateTime()))
+        ).arg(KLocale::global()->formatDateTime(QDateTime::currentDateTime()))
                                    .arg(QDateTime::currentDateTime().toString("hh:mm"));
 
     QString expectedOutgoingHtml = QString(
@@ -246,7 +246,7 @@ void ChatWindowStyleRendering_Test::testMessageRendering()
         "<div>%1</div>\n"
         "<div>%2</div>\n"
         "<div id=\"insert\">"
-        ).arg(KGlobal::locale()->formatDateTime(QDateTime::currentDateTime()))
+        ).arg(KLocale::global()->formatDateTime(QDateTime::currentDateTime()))
                                    .arg(QDateTime::currentDateTime().toString("hh:mm"));
 
     QString tempHtml;
@@ -276,7 +276,7 @@ void ChatWindowStyleRendering_Test::testStatusRendering()
         "<div>A contact went offline.</div>\n"
         "<div>%1</div>\n"
         "<div>%2</div>"
-        ).arg(KGlobal::locale()->formatDateTime(QDateTime::currentDateTime()))
+        ).arg(KLocale::global()->formatDateTime(QDateTime::currentDateTime()))
                                  .arg(QDateTime::currentDateTime().toString("hh:mm"));
 
     QString statusHtml = d->testStyle->getStatusHtml();

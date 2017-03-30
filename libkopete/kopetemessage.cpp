@@ -357,7 +357,7 @@ QString Message::unescape(const QString &xml)
 
 QString Message::escape(const QString &text)
 {
-    QString html = Qt::escape(text);
+    QString html = text.toHtmlEscaped();
     //Replace carriage returns inside the text
     html.replace(QLatin1Char('\n'), QLatin1String("<br />"));
     //Replace a tab with 4 spaces

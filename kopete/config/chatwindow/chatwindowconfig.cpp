@@ -521,7 +521,7 @@ void ChatWindowConfig::slotGetChatStyles()
     // Forcing an active one below works around bug 163382, but the problem is somewhere else.
 
     // FIXME: componentData() is not a member of KopeteChatWindowConfigFactory
-    //KGlobal::setActiveComponent(KopeteChatWindowConfigFactory::componentData());
+    //KComponentData::setActiveComponent(KopeteChatWindowConfigFactory::componentData());
 
     KNS::Entry::List entries = engine->downloadDialogModal(this);
 
@@ -752,7 +752,7 @@ void ChatWindowConfig::slotManageEmoticonThemes()
     // Forcing an active one below works around bug 165919, but the problem is somewhere else.
 
     // FIXME: componentData() is not a member of KopeteChatWindowConfigFactory
-    //KGlobal::setActiveComponent(KopeteChatWindowConfigFactory::componentData());
+    //KComponentData::setActiveComponent(KopeteChatWindowConfigFactory::componentData());
 
     KCMultiDialog *kcm = new KCMultiDialog(this);
     kcm->setWindowTitle(i18n("Configure Emoticon Themes"));

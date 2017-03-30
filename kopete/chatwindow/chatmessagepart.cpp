@@ -80,6 +80,7 @@
 #include <kiconloader.h>
 #include <kcodecs.h>
 #include <KMimeType>
+#include <QFontDatabase>
 
 // Kopete includes
 #include "kopetecontact.h"
@@ -957,9 +958,9 @@ QString ChatMessagePart::formatStyleKeywords(const QString &sourceHTML, const Ko
         protocolIcon = KIconLoader::global()->iconPath(iconName, KIconLoader::Small);
 
         nickLink = QStringLiteral("<a href=\"kopetemessage://%1/?protocolId=%2&amp;accountId=%3\" class=\"KopeteDisplayName\">")
-                   .arg(Qt::escape(message.from()->contactId()).replace('"', QLatin1String("&quot;")),
-                        Qt::escape(message.from()->protocol()->pluginId()).replace('"', QLatin1String("&quot;")),
-                        Qt::escape(message.from()->account()->accountId()).replace('"', QLatin1String("&quot;")));
+                   .arg(message.from()->contactId().toHtmlEscaped().replace('"', QLatin1String("&quot;")),
+                        message.from()->protocol()->pluginId().toHtmlEscaped().replace('"', QLatin1String("&quot;")),
+                        message.from()->account()->accountId().toHtmlEscaped().replace('"', QLatin1String("&quot;")));
     } else {
         nickLink = QStringLiteral("<a>");
     }
@@ -968,16 +969,16 @@ QString ChatMessagePart::formatStyleKeywords(const QString &sourceHTML, const Ko
     resultHTML.replace(QLatin1String("%sender%"), nickLink+nick+"</a>");
     // Replace time, by default display only time and display seconds(that was true means).
     if (Kopete::BehaviorSettings::showDates() && message.timestamp().date() != QDate::currentDate()) {
-        resultHTML.replace(QLatin1String("%time%"), KGlobal::locale()->formatDateTime(message.timestamp(), KLocale::ShortDate, true));
+        resultHTML.replace(QLatin1String("%time%"), KLocale::global()->formatDateTime(message.timestamp(), KLocale::ShortDate, true));
     } else {
-        resultHTML.replace(QLatin1String("%time%"), KGlobal::locale()->formatTime(message.timestamp().time(), true));
+        resultHTML.replace(QLatin1String("%time%"), KLocale::global()->formatTime(message.timestamp().time(), true));
     }
     // Replace %screenName% (contact ID)
-    resultHTML.replace(QLatin1String("%senderScreenName%"), nickLink+Qt::escape(contactId)+"</a>");
+    resultHTML.replace(QLatin1String("%senderScreenName%"), nickLink+contactId.toHtmlEscaped()+"</a>");
     // Replace service name (protocol name)
-    resultHTML.replace(QLatin1String("%service%"), Qt::escape(service));
+    resultHTML.replace(QLatin1String("%service%"), service.toHtmlEscaped());
     // Replace protocolIcon (sender statusIcon)
-    resultHTML.replace(QLatin1String("%senderStatusIcon%"), Qt::escape(protocolIcon).replace('"', QLatin1String("&quot;")));
+    resultHTML.replace(QLatin1String("%senderStatusIcon%"), protocolIcon.toHtmlEscaped().replace('"', QLatin1String("&quot;")));
 
     // Look for %time{X}%
     QRegExp timeRegExp("%time\\{([^}]*)\\}%");
@@ -1084,7 +1085,7 @@ QString ChatMessagePart::formatStyleKeywords(const QString &sourceHTML, const Ko
             fileIcon = KIconLoader::global()->iconPath(iconName, -KIconLoader::SizeMedium);
         }
 
-        resultHTML.replace(QLatin1String("%fileName%"), Qt::escape(message.fileName()).replace('"', QLatin1String("&quot;")));
+        resultHTML.replace(QLatin1String("%fileName%"), message.fileName().toHtmlEscaped().replace('"', QLatin1String("&quot;")));
         resultHTML.replace(QLatin1String("%fileSize%"), KFormat().formatByteSize(message.fileSize()).replace('"', QLatin1String("&quot;")));
         resultHTML.replace(QLatin1String("%fileIconPath%"), fileIcon);
 
@@ -1143,7 +1144,7 @@ QString ChatMessagePart::formatStyleKeywords(const QString &sourceHTML)
         // Replace %destinationName%
         resultHTML.replace(QLatin1String("%destinationName%"), formatName(destinationName, Qt::RichText));
         // For %timeOpened%, display the date and time (also the seconds).
-        resultHTML.replace(QLatin1String("%timeOpened%"), KGlobal::locale()->formatDateTime(QDateTime::currentDateTime(), KLocale::ShortDate, true));
+        resultHTML.replace(QLatin1String("%timeOpened%"), KLocale::global()->formatDateTime(QDateTime::currentDateTime(), KLocale::ShortDate, true));
 
         // Look for %timeOpened{X}%
         QRegExp timeRegExp("%timeOpened\\{([^}]*)\\}%");
@@ -1174,7 +1175,7 @@ QString ChatMessagePart::formatStyleKeywords(const QString &sourceHTML)
 QString ChatMessagePart::formatTime(const QString &_timeFormat, const QDateTime &dateTime)
 {
     char buffer[256];
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     QString timeFormat = _timeFormat;
     // some formats are not supported on windows (gnu extension?)
     timeFormat = timeFormat.replace(QLatin1String("%e"), QLatin1String("%d"));
@@ -1531,7 +1532,7 @@ void ChatMessagePart::readChatFont()
 {
     Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
 
-    d->chatFont = KGlobalSettings::generalFont();
+    d->chatFont = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
     if (settings->chatFontSelection() == 1) {
         d->chatFont = settings->chatFont();
     }

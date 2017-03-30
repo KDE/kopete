@@ -17,6 +17,8 @@
 #include "editorwithicon.h"
 
 #include <kglobalsettings.h>
+#include <QApplication>
+#include <QDesktopWidget>
 
 #include  <QVBoxLayout>
 #include  <QToolButton>
@@ -89,7 +91,7 @@ void EditorWithIcon::popupIcons()
 	popupFrame->resize( QSize(150, 100).expandedTo(popupFrame->minimumSizeHint()) );	
 	popupFrame->ensurePolished();
 
-	QRect screen = KGlobalSettings::desktopGeometry( mIconButton->rect().bottomLeft() );
+	QRect screen = QApplication::desktop()->screenGeometry( mIconButton->rect().bottomLeft() );
 	
 	QPoint below = mIconButton->mapToGlobal( mIconButton->rect().bottomLeft() );
 	int belowHeight = screen.bottom() - below.y();

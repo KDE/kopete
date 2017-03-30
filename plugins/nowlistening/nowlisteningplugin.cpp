@@ -482,7 +482,7 @@ void NowListeningPlugin::updateCurrentMediaPlayer()
 void NowListeningPlugin::slotSettingsChanged()
 {
     // Force reading config
-    NowListeningConfig::self()->readConfig();
+    NowListeningConfig::self()->load();
 
     // Update the currentMediaPlayer, because config has changed.
     if (NowListeningConfig::useSpecifiedMediaPlayer()) {
