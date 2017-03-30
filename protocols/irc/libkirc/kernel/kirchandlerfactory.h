@@ -19,6 +19,7 @@
 #include "kirc_export.h"
 
 #include <QtCore/QStringList>
+#include <QObject>
 
 namespace KIrc {
 class Handler;

@@ -14,7 +14,7 @@
 */
 
 using namespace KIrc;
-
+#include "kirchandlerplugin.h"
 HandlerPlugin::HandlerPlugin()
 {
 }
