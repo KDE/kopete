@@ -21,7 +21,6 @@
 #include "kopeteemoticons.h"
 #include "kopeteonlinestatus.h"
 
-#include <kiconloader.h>
 #include <kstringhandler.h>
 
 #include <QApplication>

@@ -23,7 +23,6 @@
 #include <kcombobox.h>
 #include <QLineEdit>
 #include <QPushButton>
-#include <kiconloader.h>
 
 #include <kcontacts/addressee.h>
 #include <KConfigGroup>

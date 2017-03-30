@@ -23,7 +23,6 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <kicon.h>
 #include <QKeySequence>
 #include <kactioncollection.h>
 

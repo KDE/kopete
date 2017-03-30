@@ -34,7 +34,6 @@
 #include <kconfig.h>
 #include <kdeversion.h>
 #include <kselectaction.h>
-#include <kicon.h>
 #include <kurl.h>
 #include <kactioncollection.h>
 

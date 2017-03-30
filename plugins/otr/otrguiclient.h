@@ -26,7 +26,6 @@
 
 #include <kglobal.h>
 
-#include <kiconloader.h>
 
 #include <kopetemessage.h>
 #include <kopeteplugin.h>

@@ -28,7 +28,6 @@
 
 #include <kconfig.h>
 #include <KLocalizedString>
-#include <kiconloader.h>
 
 #include <qinputdialog.h>
 

@@ -28,8 +28,6 @@
 #include <KLocalizedString>
 #include <QPushButton>
 
-#include <kiconloader.h>
-
 #include <kopetemetacontact.h>
 
 #include "addressbookselectordialog.h"

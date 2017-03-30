@@ -32,7 +32,6 @@
 #include <QPushButton>
 #include <kdialog.h>
 #include <kpluginfactory.h>
-#include <kiconloader.h>
 #include <KLocalizedString>
 #include <kmessagebox.h>
 #include <QIcon>

@@ -25,7 +25,6 @@
 #include <QDialogButtonBox>
 
 #include <KTitleWidget>
-#include <KIconLoader>
 #include <KConfigGroup>
 #include <KLocalizedString>
 

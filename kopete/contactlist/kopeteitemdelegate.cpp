@@ -31,8 +31,6 @@
 //FIXME: Find alternative to QImageBlitz in Qt5
 //#include <qimageblitz.h>
 
-#include <KIconLoader>
-
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
 #include "kopeteappearancesettings.h"

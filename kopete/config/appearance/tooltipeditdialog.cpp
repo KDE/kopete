@@ -27,7 +27,6 @@
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 
-#include <kiconloader.h>
 #include <KLocalizedString>
 #include <KDebug>
 TooltipEditDialog::TooltipEditDialog(QWidget *parent)
