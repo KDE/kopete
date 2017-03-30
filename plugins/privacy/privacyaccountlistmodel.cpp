@@ -20,7 +20,6 @@
 
 #include <KLocalizedString>
 #include <kdebug.h>
-#include <kiconloader.h>
 
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"

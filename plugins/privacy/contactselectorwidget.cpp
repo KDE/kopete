@@ -19,7 +19,6 @@
 #include <kopeteplugin.h>
 #include <kopetepluginmanager.h>
 #include <kopeteprotocol.h>
-#include <kiconloader.h>
 #include <kplugininfo.h>
 #include <metacontactselectorwidget.h>
 #include "ui_contactselectorwidget_base.h"

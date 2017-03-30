@@ -33,7 +33,6 @@
 #include <kxmlguiwindow.h>
 #include <ktoolbar.h>
 #include <krun.h>
-#include <kiconloader.h>
 #include <QIcon>
 
 #include "kopetecontactaction.h"

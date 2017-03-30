@@ -23,7 +23,6 @@
 
 #include "jabber_protocol_debug.h"
 #include <KLocalizedString>
-#include <kiconloader.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
 #include <QLineEdit>

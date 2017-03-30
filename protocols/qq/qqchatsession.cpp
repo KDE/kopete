@@ -18,7 +18,6 @@
 #include <QList>
 #include <kdebug.h>
 #include <kdialog.h>
-#include <kiconloader.h>
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kxmlguiwindow.h>

@@ -28,7 +28,6 @@
 #include <klocale.h>
 #include <kopetecontact.h>
 #include <knotification.h>
-#include <kiconloader.h>
 
 #include <QGroupBox>
 #include <QProgressBar>

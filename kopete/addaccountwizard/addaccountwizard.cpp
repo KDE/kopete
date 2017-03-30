@@ -23,7 +23,6 @@
 
 #include <kcolorbutton.h>
 #include <kdebug.h>
-#include <kiconloader.h>
 #include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>

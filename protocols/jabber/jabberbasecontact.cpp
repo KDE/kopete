@@ -20,7 +20,6 @@
 
 #include "jabber_protocol_debug.h"
 #include <KLocalizedString>
-#include <kiconloader.h>
 
 #include <qtimer.h>
 #include <qimage.h>

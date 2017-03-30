@@ -39,7 +39,6 @@
 #include <kconfig.h>
 #include <kapplication.h>
 #include <kpassivepopup.h>
-#include <kiconloader.h>
 
 #include <kcomponentdata.h>
 

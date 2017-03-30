@@ -27,7 +27,6 @@
 #include <QTabWidget>
 
 #include <kdebug.h>
-#include <kiconloader.h>
 #include <KLocalizedString>
 #include <QPushButton>
 #include <kmessagebox.h>

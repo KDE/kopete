@@ -27,7 +27,6 @@
 // KDE Includes
 #include <kcombobox.h>
 #include <kdebug.h>
-#include <kiconloader.h>
 #include <kurlrequester.h>
 #include <kmessagebox.h>
 #include <KLocalizedString>
