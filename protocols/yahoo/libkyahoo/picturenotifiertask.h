@@ -41,7 +41,7 @@ protected:
 	void parsePictureStatus( YMSGTransfer *transfer );
 	void parsePicture( YMSGTransfer *transfer );
 	void parsePictureUploadResponse( YMSGTransfer *transfer );
-signals:
+Q_SIGNALS:
 	void pictureStatusNotify( const QString &, int );
 	void pictureChecksumNotify( const QString &, int );
 	void pictureInfoNotify( const QString &, KUrl, int );

@@ -39,7 +39,7 @@ public:
     explicit ChatMembersListView(QWidget *parent = nullptr);
     virtual ~ChatMembersListView();
 
-public slots:
+public Q_SLOTS:
     void slotContextMenuRequested(const QPoint &pos);
 private:
 };

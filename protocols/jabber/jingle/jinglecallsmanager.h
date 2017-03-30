@@ -55,7 +55,7 @@ public:
     QList<JabberJingleSession *> jabberSessions();
     MediaManager *mediaManager();
 
-public slots:
+public Q_SLOTS:
     void slotNewSession(XMPP::JingleSession *);
     void slotSessionTerminate(XMPP::JingleSession *);
     void slotSessionTerminated();
@@ -63,7 +63,7 @@ public slots:
     void slotUserRejected();
     void slotStateChanged();
 
-signals:
+Q_SIGNALS:
     //FIXME:Those signals aren't used and I don't know what they are doing here.
     void newSessionCreated();
     void sessionTerminated(Reason);

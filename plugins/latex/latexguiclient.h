@@ -42,7 +42,7 @@ public:
     explicit LatexGUIClient(Kopete::ChatSession *parent);
     ~LatexGUIClient();
 
-private slots:
+private Q_SLOTS:
     void slotPreview();
 
 private:

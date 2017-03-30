@@ -38,7 +38,7 @@ protected:
     bool forMe(const Transfer *transfer) const Q_DECL_OVERRIDE;
     void parseBuddyList(YMSGTransfer *transfer);
 
-signals:
+Q_SIGNALS:
     void gotBuddy(const QString &, const QString &, const QString &);
     void stealthStatusChanged(const QString &, Yahoo::StealthStatus);
 };

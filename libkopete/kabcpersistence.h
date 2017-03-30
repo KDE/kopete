@@ -90,7 +90,7 @@ public:
 protected:
 
     static void splitField(const QString &str, QString &app, QString &name, QString &value);
-protected slots:
+protected Q_SLOTS:
     /**
      * Perform a delayed address book write
      */

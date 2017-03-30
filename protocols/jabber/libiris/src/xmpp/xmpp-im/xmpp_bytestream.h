@@ -62,7 +62,7 @@ namespace XMPP
 	protected:
 		virtual const char* sidPrefix() const = 0;
 
-	signals:
+	Q_SIGNALS:
 		void incomingReady();
 	};
 }

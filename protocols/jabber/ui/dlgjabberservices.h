@@ -44,7 +44,7 @@ protected:
 	void initTree();
 	bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
 	//void slotSetSelection (Q3ListViewItem *);
 	void slotItemExpanded(QTreeWidgetItem *item);
 	void slotService();
@@ -76,7 +76,7 @@ public:
 
 	void startDisco();
 
-private slots:
+private Q_SLOTS:
 	void slotDiscoFinished();
 	void slotDiscoInfoFinished();
 

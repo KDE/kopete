@@ -58,7 +58,7 @@ public:
     virtual bool hasCustomStatusMenu() const;       //Has custom status menu
     virtual void setAway(bool status, const QString &); // Set user away
 
-public slots:
+public Q_SLOTS:
     virtual void connect(const Kopete::OnlineStatus &);                     // Connect to server
     virtual void disconnect();                  // Disconnect from server
 
@@ -84,7 +84,7 @@ public:
      */
     bool checkHost(const QString &Name);
 
-public slots:
+public Q_SLOTS:
     /**
      * Dispatches said message to the destination.
      */
@@ -102,7 +102,7 @@ public slots:
 protected:
     virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentContact);
 
-private slots:
+private Q_SLOTS:
 //	void updateAccountId();
 
 private:

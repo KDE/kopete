@@ -34,10 +34,10 @@ public:
 	explicit ICQChangePasswordDialog( ICQAccount* account, QWidget* parent = nullptr );
 	~ICQChangePasswordDialog();
 
-protected slots:
+protected Q_SLOTS:
 	void slotButtonClicked( int button ) Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
 	void slotPasswordChanged( bool error );
 
 private:

@@ -55,12 +55,12 @@ public:
 protected:
 	bool forMe( const Transfer *transfer ) const Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void bytesProcessed( unsigned int, unsigned int );
 	void complete( unsigned int );
 	void error( unsigned int, int, const QString & );
 
-private slots:
+private Q_SLOTS:
 	void slotData( KIO::Job *job, const QByteArray &data );
 	void slotHeadComplete( KJob *job );
 	void slotComplete( KJob *job );

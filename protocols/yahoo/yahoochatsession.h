@@ -32,7 +32,7 @@ public:
 	YahooChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others );
 	~YahooChatSession();
 
-private slots:
+private Q_SLOTS:
 	void slotDisplayPictureChanged();
 
 	void slotBuzzContact();

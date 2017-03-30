@@ -43,7 +43,7 @@ public:
 	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 	void onGo() Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void userWarned( const QString&, quint16, quint16 );
 	
 private:

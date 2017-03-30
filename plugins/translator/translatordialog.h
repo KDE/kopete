@@ -41,7 +41,7 @@ public:
 private:
     KTextEdit *m_textEdit;
 
-private slots: // Public slots
+private Q_SLOTS: // Public slots
 //  void slotFinished();
 };
 

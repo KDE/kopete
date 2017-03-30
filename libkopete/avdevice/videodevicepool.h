@@ -98,14 +98,14 @@ private:
 
     VideoDevicePool();
 
-protected slots:
+protected Q_SLOTS:
     /**
      * Slot called when a new device is added to the system
      */
     void deviceAdded(const QString &udi);
     void deviceRemoved(const QString &udi);
 
-signals:
+Q_SIGNALS:
     /**
      * Provisional signatures, probably more useful to indicate which device was registered
      */

@@ -59,11 +59,11 @@ public:
 	void write(const QByteArray &);
 	qint64 bytesToWrite() const Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void tlsHandshaken();
 	void tlsClosed();
 
-private slots:
+private Q_SLOTS:
 	void bs_readyRead();
 	void bs_bytesWritten(qint64);
 

@@ -68,7 +68,7 @@ public:
      */
     bool isBlocked(const QString &contactId);
 
-public slots:
+public Q_SLOTS:
     /**
      * Add a contact to the blacklist.
      *
@@ -96,7 +96,7 @@ public slots:
      */
     void removeContact(const QString &contactId);
 
-signals:
+Q_SIGNALS:
     /**
      * \brief A new contact has been added to the list
      *

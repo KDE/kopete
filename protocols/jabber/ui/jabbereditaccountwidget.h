@@ -46,7 +46,7 @@ public:
 	Kopete::Account *apply () Q_DECL_OVERRIDE;
 	JabberAccount *account ();
 
-private slots:
+private Q_SLOTS:
 	void registerClicked ();
 	void slotChangePasswordClicked ();
 	void slotChangePasswordFinished ();

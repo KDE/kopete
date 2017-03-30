@@ -17,7 +17,7 @@ public:
 
 	qint64 write(const QByteArray&);
 
-protected slots:
+protected Q_SLOTS:
 	void flush();
 
 protected:

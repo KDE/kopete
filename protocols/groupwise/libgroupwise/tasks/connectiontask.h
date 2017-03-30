@@ -35,7 +35,7 @@ public:
 	ConnectionTask(Task* parent);
 	~ConnectionTask();
 	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
-signals:
+Q_SIGNALS:
 	void connectedElsewhere();
 	void serverDisconnect();
 };

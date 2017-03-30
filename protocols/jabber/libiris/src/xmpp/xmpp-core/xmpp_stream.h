@@ -71,7 +71,7 @@ namespace XMPP
 
 		static void cleanup();
 
-	signals:
+	Q_SIGNALS:
 		void connectionClosed();
 		void delayedCloseFinished();
 		void readyRead();

@@ -43,9 +43,9 @@ public:
 	explicit QQWebcamDialog( const QString &, QWidget* parent = 0 );
 	~QQWebcamDialog();
 	
-public slots:
+public Q_SLOTS:
 	void slotUpdateImage();
-//signals:
+//Q_SIGNALS:
 //	void closingWebcamDialog();
 	
 private:

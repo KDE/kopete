@@ -56,21 +56,21 @@ public:
     EmoticonSelector (QWidget *parent = nullptr);
 //	~EmoticonSelector();
 
-signals:
+Q_SIGNALS:
     /**
     * gets emitted when an emoticon has been selected from the list
     * the QString holds the emoticon as a string or is 0L if nothing was selected
     **/
     void itemSelected(const QString &);
 
-public slots:
+public Q_SLOTS:
     void prepareList();
 
 protected:
     void hideEvent(QHideEvent *) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *) Q_DECL_OVERRIDE;
 
-protected slots:
+protected Q_SLOTS:
     void emoticonClicked(QListWidgetItem *);
     void mouseOverItem(QListWidgetItem *);
     void currentChanged();

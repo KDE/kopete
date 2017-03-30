@@ -59,14 +59,14 @@ public:
 	 */
 	void fetchBuddyIcon( const QString &who, KUrl url, int checksum );
 
-signals:
+Q_SIGNALS:
 	/**
 	 * 	The account can connect to this signal and append the icon
 	 * 	stored in 'file' to the appropriate contact
 	 */
 	void fetchedBuddyIcon( const QString &who, const QByteArray &icon, int checksum );
 
-private slots:
+private Q_SLOTS:
 	void slotData( KIO::Job *job, const QByteArray &data );
 	void slotComplete( KJob *job );
 

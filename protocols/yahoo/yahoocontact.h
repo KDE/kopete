@@ -74,7 +74,7 @@ public:
 
 	static QString prepareMessage( const QString &messageText );
 
-public slots:
+public Q_SLOTS:
 	void slotUserInfo() Q_DECL_OVERRIDE;
 	virtual void slotSendFile( const KUrl &file );
 	void deleteContact() Q_DECL_OVERRIDE;
@@ -95,13 +95,13 @@ public slots:
 
 	void sync(unsigned int flags) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void signalReceivedWebcamImage( const QPixmap &pic );
 	void signalWebcamClosed( int reason );
 	void signalWebcamPaused();
 	void displayPictureChanged();
 
-private slots:
+private Q_SLOTS:
 	void slotChatSessionDestroyed();
 	void slotSendMessage( Kopete::Message& );
 	void slotTyping( bool );

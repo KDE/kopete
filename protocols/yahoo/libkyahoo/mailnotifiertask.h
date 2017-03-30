@@ -37,7 +37,7 @@ public:
 protected:
     bool forMe(const Transfer *transfer) const Q_DECL_OVERRIDE;
     void parseMail(YMSGTransfer *transfer);
-signals:
+Q_SIGNALS:
     void mailNotify(const QString &, const QString &, int);
 };
 

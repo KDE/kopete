@@ -77,7 +77,7 @@ class ProcessMessageTask : public Task
 public:
     MessageEvent *event();
 
-public slots:
+public Q_SLOTS:
     void start() Q_DECL_OVERRIDE;
     void slotDone();
     void kill(bool);

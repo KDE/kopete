@@ -32,7 +32,7 @@ public:
     ~ErrorTask();
     bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void messageError( const QString& contact, uint messageId );
 
 protected:

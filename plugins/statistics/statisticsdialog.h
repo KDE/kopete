@@ -84,7 +84,7 @@ private:
     void generatePageForDay(const int dayOfWeek);
     void generatePageForMonth(const int monthOfYear);
 
-private slots:
+private Q_SLOTS:
     /**
      * We manage the openUrlRequestDelayed signal from the generalHTMLPart->browserExtension() in order to
      * generate requested pages on the fly.

@@ -31,7 +31,7 @@ public:
 	DlgJabberXOAuth2(JabberAccount *account, QWidget *parent = NULL);
 	virtual ~DlgJabberXOAuth2();
 
-private slots:
+private Q_SLOTS:
 	void slotOk();
 	void slotCancel();
 

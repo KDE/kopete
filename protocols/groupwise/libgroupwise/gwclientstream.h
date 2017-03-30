@@ -131,7 +131,7 @@ public:
 /*#	void writeDirect(const QString &s); // must be for debug testing*/
 	void setNoopTime(int mills);
 
-signals:
+Q_SIGNALS:
 	void connected();
 	void securityLayerActivated(int);
 	//void needAuthParams(bool user, bool pass, bool realm);
@@ -140,10 +140,10 @@ signals:
 // #	void incomingXml(const QString &s); // signals emitted in processNext but don't seem to go anywhere...
 // #	void outgoingXml(const QString &s); //
 //	void readyRead(); //signals that there is a transfer ready to be read - defined in stream
-public slots:
+public Q_SLOTS:
 	void continueAfterWarning();
 
-private slots:
+private Q_SLOTS:
 	void cr_connected();
 	void cr_error();
 	/**

@@ -52,7 +52,7 @@ public:
 
     void dispatchLoop();
 
-private slots:
+private Q_SLOTS:
     void slotClientDebugMessage(const QString &msg);
     void slotHandleTLSWarning(int validityResult);
     void slotClientError(JabberClient::ErrorCode errorCode);

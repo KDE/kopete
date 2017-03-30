@@ -34,12 +34,12 @@ public:
     QByteArray read() const;
     int timeStamp();
 
-public slots:
+public Q_SLOTS:
     void slotReadyRead();
     void slotEncoded();
     void slotDecoded();
 
-signals:
+Q_SIGNALS:
     void readyRead();
 
 private:

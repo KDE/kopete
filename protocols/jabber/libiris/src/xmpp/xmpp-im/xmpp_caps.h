@@ -60,10 +60,10 @@ public:
 	bool isRegistered(const QString &) const;
 	DiscoItem disco(const QString&) const;
 
-signals:
+Q_SIGNALS:
 	void registered(const XMPP::CapsSpec&);
 
-public slots:
+public Q_SLOTS:
 	void load();
 	void save();
 
@@ -100,13 +100,13 @@ public:
 	QString osVersion(const Jid& jid) const;
 	CapsSpec capsSpec(const Jid &jid) const;
 
-signals:
+Q_SIGNALS:
 	/**
 	 * This signal is emitted when the feature list of a given JID have changed.
 	 */
 	void capsChanged(const Jid& jid);
 
-protected slots:
+protected Q_SLOTS:
 	void discoFinished();
 	void capsRegistered(const CapsSpec&);
 

@@ -126,7 +126,7 @@ public:
 
 	Kopete::OnlineStatus statusFromYahoo( int status );
 
-public slots:
+public Q_SLOTS:
 	AddContactPage *createAddContactWidget(QWidget * parent, Kopete::Account* a) Q_DECL_OVERRIDE;
 	KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent) Q_DECL_OVERRIDE;
 	Kopete::Account *createNewAccount(const QString &accountId) Q_DECL_OVERRIDE;

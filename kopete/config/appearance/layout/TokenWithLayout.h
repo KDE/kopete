@@ -68,7 +68,7 @@ public:
         return m_suffix;
     }
 
-public slots:
+public Q_SLOTS:
     void setAlignLeft(bool);
     void setAlignCenter(bool);
     void setAlignRight(bool);

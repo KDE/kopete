@@ -40,7 +40,7 @@ public:
 	void sendMessage( const QString &room, const QStringList &members, const QString &msg );
 	void inviteConference( const QString &room, const QStringList &members, const QString &msg );
 	void addInvite( const QString &room, const QStringList &who, const QStringList &members, const QString &msg );
-signals:
+Q_SIGNALS:
 	void gotInvite( const QString &who, const QString &room, const QString &msg, const QStringList &members);
 	void gotMessage( const QString &who, const QString &room, const QString &msg );
 	void userJoined( const QString &who, const QString &room );

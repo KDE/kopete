@@ -48,9 +48,9 @@ private:
     QLabel *m_label;
     QTextEdit *m_linesEdit;
 
-protected slots: // Protected slots
+protected Q_SLOTS: // Protected slots
     void slotButtonClicked(int buttonCode) Q_DECL_OVERRIDE;
-signals: // Signals
+Q_SIGNALS: // Signals
     void notesChanged(const QString &, Kopete::MetaContact *);
 };
 

@@ -139,7 +139,7 @@ public:
 	 */
 	bool messageReceivedOffline() const;
 
-public slots:
+public Q_SLOTS:
 	/**
 	 * Transmits an outgoing message to the server 
 	 * Called when the chat window send button has been pressed
@@ -158,7 +158,7 @@ public slots:
 protected:
 	// debug function to see what message managers we have on the server
 	void dumpManagers();
-protected slots:
+protected Q_SLOTS:
 	/**
 	 * Show the contact's properties
 	 */

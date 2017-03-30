@@ -165,7 +165,7 @@ public:
     const QByteArray getlastName() const;
     const QByteArray getemailAddress() const;
 
-public slots:
+public Q_SLOTS:
 
     /**
      * @brief Slots Called When a Contact Comes Online
@@ -301,7 +301,7 @@ private:
      */
     void wipeOutContact(Kopete::Contact *c);
 
-protected slots:
+protected Q_SLOTS:
     /**
      * @brief Change the account's status.  Called by KActions and internally.
      */

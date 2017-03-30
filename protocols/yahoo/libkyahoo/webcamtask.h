@@ -82,7 +82,7 @@ public:
     void addPendingInvitation(const QString &userId);
     void grantAccess(const QString &userId);
     void closeOutgoingWebcam();
-signals:
+Q_SIGNALS:
     void webcamNotAvailable(const QString &);
     void webcamClosed(const QString &, int);
     void webcamPaused(const QString &);
@@ -92,7 +92,7 @@ signals:
     void viewerJoined(const QString &);
     void viewerLeft(const QString &);
     void viewerRequest(const QString &);
-private slots:
+private Q_SLOTS:
     void slotConnectionStage1Established();
     void slotConnectionStage2Established();
     void slotConnectionFailed(int);

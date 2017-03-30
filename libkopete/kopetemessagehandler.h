@@ -81,7 +81,7 @@ public:
 
     /** @internal */
     void handleMessageInternal(MessageEvent *event);
-private slots:
+private Q_SLOTS:
     /**
      * @internal The message has been accepted. Pass it on to the next handler.
      */

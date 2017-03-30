@@ -38,10 +38,10 @@ public:
 	void change(const QString &host, int port);
 	void write(const QByteArray &data);
 
-signals:
+Q_SIGNALS:
 	void packetReady(const QByteArray &data);
 
-private slots:
+private Q_SLOTS:
 	void sd_activated();
 
 private:
@@ -96,7 +96,7 @@ protected:
 	qint64 writeData(const char *data, qint64 maxSize) Q_DECL_OVERRIDE;
 	qint64 readData(char *data, qint64 maxSize) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	// outgoing
 	void connected();
 
@@ -106,7 +106,7 @@ signals:
 	void incomingConnectRequest(const QString &host, int port);
 	void incomingUDPAssociateRequest();
 
-private slots:
+private Q_SLOTS:
 	void sock_connected();
 	void sock_connectionClosed();
 	void sock_delayedCloseFinished();
@@ -144,11 +144,11 @@ public:
 
 	void writeUDP(const QHostAddress &addr, int port, const QByteArray &data);
 
-signals:
+Q_SIGNALS:
 	void incomingReady();
 	void incomingUDP(const QString &host, int port, const QHostAddress &addr, int sourcePort, const QByteArray &data);
 
-private slots:
+private Q_SLOTS:
 	void connectionReady(qintptr);
 	void connectionError();
 	void sd_activated();

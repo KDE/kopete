@@ -407,7 +407,7 @@ public:
      */
     void requestRoster();
 
-signals:
+Q_SIGNALS:
     /**
      * Connected successfully.
      */
@@ -542,7 +542,7 @@ private:
      */
     void removeS5BServerAddress(const QString &address);
 
-private slots:
+private Q_SLOTS:
     /* S5B server object has been destroyed. */
     void slotS5BServerGone();
 

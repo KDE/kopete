@@ -289,7 +289,7 @@ public:
      */
     void setRemoteAndLocal(const QString &remote, const QString &local);
 
-signals:
+Q_SIGNALS:
 
     /**
      * @brief This Signal is Emitted when there is new data
@@ -332,7 +332,7 @@ signals:
      */
     void errorCouldNotConnect();
 
-public slots:
+public Q_SLOTS:
 
     /**
      * @brief This slot is called by the socket, to signify new data

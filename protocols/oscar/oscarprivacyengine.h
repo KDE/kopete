@@ -48,7 +48,7 @@ public:
 	void setContactsView( QAbstractItemView* view );
 	void setAllContactsView( QComboBox* combo );
 	
-public slots:
+public Q_SLOTS:
 	void slotAdd();
 	void slotRemove();
 	void storeChanges();

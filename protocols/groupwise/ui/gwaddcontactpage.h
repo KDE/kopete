@@ -55,7 +55,7 @@ public:
 	 * Is the data correct?
 	 */
     bool validateData() Q_DECL_OVERRIDE;
-private slots:
+private Q_SLOTS:
 	void searchResult(bool valid);
 protected:
 	unsigned char searchOperation( int comboIndex );

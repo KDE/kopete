@@ -72,7 +72,7 @@ public:
 		turn.close();
 	}
 
-private slots:
+private Q_SLOTS:
 	void turn_connected()
 	{
 		if(debugLevel >= IceTransport::DL_Info)

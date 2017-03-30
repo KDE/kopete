@@ -37,7 +37,7 @@ public:
 	
 	~ClientStreamTest();
 
-public slots:
+public Q_SLOTS:
 	void slotDoTest();
 	
 	void slotConnected();

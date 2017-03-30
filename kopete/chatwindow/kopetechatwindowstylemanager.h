@@ -80,7 +80,7 @@ public:
      */
     QStringList getAvailableStyles() const;
 
-public slots:
+public Q_SLOTS:
     /**
      * Install a new style into user style directory
      * Note that you must pass a path to a archive.
@@ -123,14 +123,14 @@ public slots:
      */
     ChatWindowStyle *getValidStyleFromPool(const QString &styleName);
 
-signals:
+Q_SIGNALS:
     /**
      * This signal is emitted when all styles finished to list.
      * Used to inform and/or update GUI.
      */
     void loadStylesFinished();
 
-private slots:
+private Q_SLOTS:
     /**
      * KDirLister found new files.
      * @param dirList new files found.

@@ -165,7 +165,7 @@ public:
 
 #endif
 
-public slots:
+public Q_SLOTS:
     /* Connects to the server. */
     void connectWithPassword(const QString &password) Q_DECL_OVERRIDE;
 
@@ -257,7 +257,7 @@ private:
 #ifdef JINGLE_SUPPORT
     JingleCallsManager *m_jcm;
 #endif
-private slots:
+private Q_SLOTS:
     /* Connects to the server. */
     void slotConnect();
 
@@ -357,10 +357,10 @@ private slots:
 public:
     JabberMoodAction(const Mood::Type type, QObject *parent);
 
-public slots:
+public Q_SLOTS:
     void triggered();
 
-signals:
+Q_SIGNALS:
     void triggered(const Mood::Type type);
 
 private:

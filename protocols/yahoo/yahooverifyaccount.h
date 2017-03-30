@@ -45,10 +45,10 @@ public:
 
 	void setUrl( const KUrl &url );
 
-protected slots:
+protected Q_SLOTS:
 	virtual void slotClose();
 	virtual void slotApply();
-public slots:
+public Q_SLOTS:
 	void slotData( KIO::Job *job, const QByteArray& data );
 	void slotComplete( KJob *job );
 };

@@ -146,7 +146,7 @@ public:
 	//   empty and so you shouldn't call this function)
 	static QList<QByteArray> parseTxtRecord(const QByteArray &txtRecord);
 
-signals:
+Q_SIGNALS:
 	void queryResult(int id, const QDnsSd::QueryResult &result);
 	void browseResult(int id, const QDnsSd::BrowseResult &result);
 	void resolveResult(int id, const QDnsSd::ResolveResult &result);

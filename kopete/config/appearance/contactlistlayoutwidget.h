@@ -31,10 +31,10 @@ public:
     void load();
     bool save();
 
-signals:
+Q_SIGNALS:
     void changed();
 
-private slots:
+private Q_SLOTS:
     void emitChanged();
     void setLayout(const QString &layoutName);
     void reloadLayoutList();

@@ -55,11 +55,11 @@ public:
 
 	QSize sizeHint () const Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	/** Emitted when a icon is selected in the table */
 	void selected( int index );
 
-protected slots:
+protected Q_SLOTS:
 	void selected( int row, int column );
 
 protected:

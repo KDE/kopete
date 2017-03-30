@@ -38,7 +38,7 @@ public:
     ContactListProxyModel(QObject *parent = nullptr);
     ~ContactListProxyModel();
 
-public slots:
+public Q_SLOTS:
     void slotConfigChanged();
 protected:
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const Q_DECL_OVERRIDE;
@@ -47,7 +47,7 @@ protected:
     bool showEmptyFolders;
     int rootRowCount;
     bool sortScheduled;
-private slots:
+private Q_SLOTS:
     // Workaround Qt sorting bug
     void proxyRowsInserted(const QModelIndex &parent, int start, int end);
     void proxyRowsRemoved(const QModelIndex &parent, int start, int end);

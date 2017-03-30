@@ -40,9 +40,9 @@ public:
 	void left( YahooContact *c );
 	const QString &room();
 	YahooAccount *account();
-signals:
+Q_SIGNALS:
 	void leavingConference( YahooConferenceChatSession *s );
-protected slots:
+protected Q_SLOTS:
 	void slotMessageSent( Kopete::Message &message, Kopete::ChatSession * );
 	void slotInviteOthers();
 private:

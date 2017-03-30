@@ -33,7 +33,7 @@ public:
 	StatusTask(Task* parent);
 	~StatusTask();
 	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
-signals:
+Q_SIGNALS:
 	void gotStatus( const QString & contactId, quint16 status, const QString & statusText );
 };
 

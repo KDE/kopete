@@ -62,7 +62,7 @@ public:
 
     void addWidget(QWidget *w, const QString &caption);
 
-protected slots:
+protected Q_SLOTS:
     /**
      * This should be reimplemented in derived dialogs to enable saving info
      */

@@ -107,7 +107,7 @@ public:
 	void setIncomingClient(SocksClient *sc);
 	void incomingActivate(const Jid &streamHost);
 
-signals:
+Q_SIGNALS:
 	void accepted();
 	void tryingHosts(const StreamHostList &list);
 	void proxyConnect();
@@ -115,7 +115,7 @@ signals:
 	void connected();
 	void error(int);
 
-private slots:
+private Q_SLOTS:
 	void jt_finished();
 	void conn_result(bool b);
 	void proxy_result(bool b);
@@ -1783,10 +1783,10 @@ public:
 		success();
 	}
 
-signals:
+Q_SIGNALS:
 	void result(bool);
 
-private slots:
+private Q_SLOTS:
 	void sc_connected()
 	{
 		// if udp, need to send init packet before we are good
@@ -2001,10 +2001,10 @@ public:
 		expire.start(30000);
 	}
 
-signals:
+Q_SIGNALS:
 	void result(bool);
 
-private slots:
+private Q_SLOTS:
 	void doError()
 	{
 		expire.stop();

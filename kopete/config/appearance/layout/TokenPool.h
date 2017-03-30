@@ -44,7 +44,7 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
     void onDoubleClick(Token *token);           //connects to TokenLayoutWidget::addToken( QString )
 
 private:

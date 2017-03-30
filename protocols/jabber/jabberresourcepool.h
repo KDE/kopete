@@ -124,7 +124,7 @@ public:
 	void findResources ( const XMPP::Jid &jid, JabberResourcePool::ResourceList &resourceList );
 	void findResources ( const XMPP::Jid &jid, XMPP::ResourceList &resourceList );
 	
-private slots:
+private Q_SLOTS:
 	void slotResourceDestroyed ( QObject *sender );
 	void slotResourceUpdated ( JabberResource *resource );
 	

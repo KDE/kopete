@@ -10,9 +10,9 @@ class Wallet;
 class WalletReciever : public QObject
 {
     Q_OBJECT
-public slots:
+public Q_SLOTS:
     void timer();
-private slots:
+private Q_SLOTS:
     void gotWallet(KWallet::Wallet *w);
 };
 

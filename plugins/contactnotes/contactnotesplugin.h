@@ -51,13 +51,13 @@ public:
 
     QString notes(Kopete::MetaContact *m);
 
-public slots:
+public Q_SLOTS:
     void setNotes(const QString &n, Kopete::MetaContact *m);
 
 private:
     static ContactNotesPlugin *pluginStatic_;
 
-private slots: // Private slots
+private Q_SLOTS: // Private slots
     /** No descriptions */
     void slotEditInfo();
 };

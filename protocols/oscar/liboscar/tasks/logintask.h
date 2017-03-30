@@ -68,7 +68,7 @@ public:
 	//! Get the error reason so it can be displayed
 	const QString& errorReason() const;
 
-public slots:
+public Q_SLOTS:
 	void closeTaskFinished();
 	void loginTaskFinished();
 
@@ -121,7 +121,7 @@ public:
 	QString host() const;
 	QString port() const;
 
-public slots:
+public Q_SLOTS:
 
 	//! Start the rate info task
 	void versionTaskFinished();

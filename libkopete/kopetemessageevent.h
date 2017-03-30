@@ -67,7 +67,7 @@ public:
 
     EventState state();
 
-public slots:
+public Q_SLOTS:
     /**
      * @deprecated Use accept() instead to continue the processing of this event once the caller has moved to using MessageHandlers
      *
@@ -97,7 +97,7 @@ public slots:
      */
     void discard();
 
-signals:
+Q_SIGNALS:
     /**
      * The event has been processed
      */

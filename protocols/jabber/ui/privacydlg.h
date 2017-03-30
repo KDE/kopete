@@ -45,7 +45,7 @@ protected:
 	void revertSettings();
 	void listChanged();
 	
-protected slots:
+protected Q_SLOTS:
 	void setWidgetsEnabled(bool);
 	void setEditRuleEnabled(bool);
 	void updateLists(const QString&, const QString&, const QStringList&);

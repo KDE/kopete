@@ -42,7 +42,7 @@ public:
 	void start(const QByteArray &hostName);
 	void stop();
 
-signals:
+Q_SIGNALS:
 	void resultsReady(const QList<QHostAddress> &results);
 	void error(XMPP::AddressResolver::Error e);
 

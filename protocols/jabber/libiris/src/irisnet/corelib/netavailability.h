@@ -35,7 +35,7 @@ public:
 
 	bool isAvailable() const;
 
-signals:
+Q_SIGNALS:
 	void changed(bool available);
 
 private:

@@ -78,7 +78,7 @@ namespace XMPP
 
 		void onGo() Q_DECL_OVERRIDE;
 
-	private slots:
+	private Q_SLOTS:
 		void getFormFinished();
 		void unregFinished();
 
@@ -124,7 +124,7 @@ namespace XMPP
 
 		bool take(const QDomElement &) Q_DECL_OVERRIDE;
 
-	signals:
+	Q_SIGNALS:
 		void roster(const Roster &);
 
 	private:
@@ -163,7 +163,7 @@ namespace XMPP
 
 		bool take(const QDomElement &) Q_DECL_OVERRIDE;
 
-	signals:
+	Q_SIGNALS:
 		void presence(const Jid &, const Status &);
 		void subscription(const Jid &, const QString &, const QString&);
 
@@ -205,7 +205,7 @@ namespace XMPP
 
 		bool take(const QDomElement &) Q_DECL_OVERRIDE;
 
-	signals:
+	Q_SIGNALS:
 		void message(const Message &);
 
 	private:

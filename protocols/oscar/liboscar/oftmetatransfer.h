@@ -44,10 +44,10 @@ public:
 
 	void start(); //start sending file
 
-public slots:
+public Q_SLOTS:
 	void doCancel(); //one of the users is cancelling us
 
-signals:
+Q_SIGNALS:
 	void fileStarted( const QString& sourceFile, const QString& destinationFile );
 	void fileStarted( const QString& fileName, unsigned int fileSize );
 	void fileProcessed( unsigned int bytesSent, unsigned int fileSize );
@@ -56,7 +56,7 @@ signals:
 	void transferCompleted();
 	void transferError( int errorCode, const QString &error );
 
-private slots:
+private Q_SLOTS:
 	//bool validFile();
 	void socketError( QAbstractSocket::SocketError );
 	void socketRead();

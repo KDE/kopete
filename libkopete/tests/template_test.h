@@ -25,7 +25,7 @@ class Template_Test : public KUnitTest::Tester
 {
 public:
     void allTests();
-public slots:
+public Q_SLOTS:
     void testSomething();
 private:
 };

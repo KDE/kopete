@@ -414,7 +414,7 @@ public:
      */
     void setPhoto(const QString &photoPath);
 
-public slots:
+public Q_SLOTS:
     /**
      * This should typically pop up a KopeteChatWindow
      */
@@ -491,7 +491,7 @@ public slots:
      *                file size (such as over  asocket
      */
     virtual void sendFile(const QUrl &sourceURL = QUrl(), const QString &fileName = QString(), uint fileSize = 0L);
-private slots:
+private Q_SLOTS:
     /**
      * This add the contact totally in the list if it was a temporary contact
      */
@@ -526,7 +526,7 @@ private slots:
      * slot to handle changing display name
      */
     void slotPropertyChanged(Kopete::PropertyContainer *, const QString &key, const QVariant &oldValue, const QVariant &newValue);
-signals:
+Q_SIGNALS:
     /**
      * The contact's online status changed
      */

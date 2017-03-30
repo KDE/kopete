@@ -43,9 +43,9 @@ public:
 	QString handle() { return m_handle; }
 
 	void removeAllContacts();
-signals:
+Q_SIGNALS:
 	void leavingChat( YahooChatChatSession *s );
-protected slots:
+protected Q_SLOTS:
 	void slotMessageSent( Kopete::Message &message, Kopete::ChatSession * );
 private:
 	QString m_topic;

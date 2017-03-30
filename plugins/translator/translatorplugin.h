@@ -70,7 +70,7 @@ public:
         ShowDialog = 3
     };
 
-private slots:
+private Q_SLOTS:
     void slotIncomingMessage(Kopete::Message &msg);
     void slotOutgoingMessage(Kopete::Message &msg);
     void slotDataReceived(KIO::Job *, const QByteArray &data);

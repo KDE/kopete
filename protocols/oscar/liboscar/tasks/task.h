@@ -66,7 +66,7 @@ public:
 	 */
 	void setTransfer( Transfer * transfer );
 
-signals:
+Q_SIGNALS:
 	void finished();
 
 protected:
@@ -98,7 +98,7 @@ protected:
 	 */
 	Transfer* createTransfer( Buffer* buffer );
 
-private slots:
+private Q_SLOTS:
 	void clientDisconnected();
 	void done();
 

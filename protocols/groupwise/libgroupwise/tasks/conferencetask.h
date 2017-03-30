@@ -41,7 +41,7 @@ public:
 	ConferenceTask( Task* parent );
 	~ConferenceTask();
 	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
-signals:
+Q_SIGNALS:
 	void typing( const ConferenceEvent & );
 	void notTyping( const ConferenceEvent & );
 	void joined( const ConferenceEvent & );
@@ -55,7 +55,7 @@ signals:
 	// GW7
 	void broadcast( const ConferenceEvent &);
 	void systemBroadcast( const ConferenceEvent &);
-protected slots:
+protected Q_SLOTS:
 	void slotReceiveUserDetails( const GroupWise::ContactDetails & );
 protected:
 	quint32 readFlags( QDataStream & din );

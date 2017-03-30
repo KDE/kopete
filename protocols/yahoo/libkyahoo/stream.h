@@ -64,7 +64,7 @@ public:
 	 */
 	virtual void write( Transfer *request) = 0;
 
-signals:
+Q_SIGNALS:
 	void connectionClosed();
 	void delayedCloseFinished();
 	void readyRead();

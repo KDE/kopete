@@ -37,7 +37,7 @@ public:
 	 */
 	void sendMessage( const QString &contactId, const QString &message );
 	
-public slots:
+public Q_SLOTS:
 	/**
 	 * A message came in off the simulated wire.
 	 * In reality, a message on the incoming message list
@@ -45,7 +45,7 @@ public slots:
 	 */
 	void incomingMessage( QString message );
 	
-signals:
+Q_SIGNALS:
 	/**
 	 * Tells the account that a message arrived
 	 */

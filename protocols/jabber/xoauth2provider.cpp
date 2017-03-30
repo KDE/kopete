@@ -287,7 +287,7 @@ private:
         QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
     }
 
-private slots:
+private Q_SLOTS:
     void accessTokenReceived()
     {
         QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());

@@ -42,13 +42,13 @@ public:
      */
     KopeteIdentityStatusBarIcon(Kopete::Identity *identity, QWidget *parent);
 
-signals:
+Q_SIGNALS:
     void leftClicked(Kopete::Identity *identity, const QPoint &p);
 
 protected:
     void mousePressEvent(QMouseEvent *me) Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
     void updateMessage(Kopete::StatusRootAction *statusRootAction);
 
 private:

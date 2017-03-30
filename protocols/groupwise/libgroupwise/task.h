@@ -59,7 +59,7 @@ public:
 	virtual bool take( Transfer* transfer );
 	void safeDelete();
 
-signals:
+Q_SIGNALS:
 	void finished();
 
 protected:
@@ -86,7 +86,7 @@ protected:
 	 * Direct setter for Tasks which don't have any fields
 	 */
 	void setTransfer( Transfer * transfer );
-private slots:
+private Q_SLOTS:
 	void clientDisconnected();
 	void done();
 

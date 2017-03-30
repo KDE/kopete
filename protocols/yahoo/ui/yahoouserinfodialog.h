@@ -38,11 +38,11 @@ public:
 	explicit YahooUserInfoDialog( YahooContact *c, QWidget* parent = nullptr );
 	~YahooUserInfoDialog();
 	void setAccountConnected( bool isOnline );
-signals:
+Q_SIGNALS:
 	void saveYABEntry( YABEntry & );
-public slots:
+public Q_SLOTS:
 	void setData( const YABEntry &yab );
-private slots:
+private Q_SLOTS:
 	void slotSaveAndCloseClicked();
 	void slotUser2();
 private:

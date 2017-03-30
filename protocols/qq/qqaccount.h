@@ -106,7 +106,7 @@ public:
 	void sendMessage(const QString& guid, Kopete::Message& message );
 	void getVCard( QQContact* contact );
 
-public slots:
+public Q_SLOTS:
 	/**
 	 * Called by the server when it has a message for us.
 	 * This identifies the sending Kopete::Contact and passes it a Kopete::Message
@@ -126,7 +126,7 @@ protected:
 	 */
 	void updateContactStatus();
 
-protected slots:
+protected Q_SLOTS:
 	/**
 	 * Show webcam.  Called by KActions and internally.
 	 */

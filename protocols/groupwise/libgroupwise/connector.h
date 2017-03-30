@@ -43,7 +43,7 @@ public:
 	QHostAddress peerAddress() const;
 	quint16 peerPort() const;
 
-signals:
+Q_SIGNALS:
 	void connected();
 	void error();
 

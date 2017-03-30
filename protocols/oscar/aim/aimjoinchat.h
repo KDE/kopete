@@ -40,11 +40,11 @@ public:
     QString roomName() const;
     QString exchange() const;
 
-protected slots:
+protected Q_SLOTS:
 	void joinChat();
 	void closeClicked();
 
-signals:
+Q_SIGNALS:
 	void closing( int );
 
 private:

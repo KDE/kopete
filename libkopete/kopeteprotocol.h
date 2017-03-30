@@ -200,7 +200,7 @@ public:
      */
     void aboutToUnload() Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
     /**
      * @internal
      * The account changed online status. Used while unloading the protocol.

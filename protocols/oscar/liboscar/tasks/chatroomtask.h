@@ -59,12 +59,12 @@ public:
 protected:
 	void onGo() Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
 	void doInvite();
 	void doReject();
 	void doAccept();
 
-signals:
+Q_SIGNALS:
 	void joinChatRoom( const QString& roomName, int exchange );
 
 private:

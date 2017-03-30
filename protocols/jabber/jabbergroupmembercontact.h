@@ -57,7 +57,7 @@ public:
 	
 	QString lastReceivedMessageId () const Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
 
 	/**
 	 * This is the JabberContact level slot for sending files.
@@ -71,7 +71,7 @@ public slots:
 	void sendFile( const QUrl &sourceURL = QUrl(),
 		const QString &fileName = QString(), uint fileSize = 0L ) Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
 	/**
 	 * Catch a dying message manager
 	 */

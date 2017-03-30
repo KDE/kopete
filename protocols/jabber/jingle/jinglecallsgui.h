@@ -37,7 +37,7 @@ public:
     void removeSession(JabberJingleSession *);
     void changeState(JabberJingleSession *);
 
-public slots:
+public Q_SLOTS:
     void slotNewSession();
     void slotAddContent();
     void slotTerminate();

@@ -61,7 +61,7 @@ public:
     virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags canCreate,
                                           Oscar::WORD exchange, const QString& room );
 
-public slots:
+public Q_SLOTS:
     void sendMessage( Kopete::Message&, Kopete::ChatSession* session );
     void chatSessionDestroyed( Kopete::ChatSession* );
 
@@ -94,7 +94,7 @@ public:
 
 	void setPrivacySettings( int privacy );
 
-public slots:
+public Q_SLOTS:
 	/** Reimplementation from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
 	                      const OnlineStatusOptions& options = None ) Q_DECL_OVERRIDE;
@@ -105,7 +105,7 @@ public slots:
 
 	void slotJoinChat();
 
-protected slots:
+protected Q_SLOTS:
     void joinChatDialogClosed( int );
 
 	void loginActions() Q_DECL_OVERRIDE;

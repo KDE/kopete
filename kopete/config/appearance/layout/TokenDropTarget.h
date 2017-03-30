@@ -61,7 +61,7 @@ public:
 
 //     inline uint columnLimit() const { return m_limits[0]; }
 //     inline void setColumnLimit( uint c ) { m_limits[0] = c; }
-signals:
+Q_SIGNALS:
     void changed();
     void focussed(QWidget *);
 

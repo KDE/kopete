@@ -58,7 +58,7 @@ public:
 
 	void setSSIItem( const OContact& ssiItem ) Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
 	void userInfoUpdated( const QString& contact, const UserDetails& details ) Q_DECL_OVERRIDE;
 
 	void userOnline( const QString& userId ) Q_DECL_OVERRIDE;
@@ -71,7 +71,7 @@ private:
 	KToggleAction *m_actionVisibleTo;
 	KToggleAction *m_actionInvisibleTo;
 
-private slots:
+private Q_SLOTS:
 	void slotVisibleTo();
 	void slotInvisibleTo();
 };

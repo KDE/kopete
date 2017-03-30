@@ -460,10 +460,10 @@ public:
 	/** Notify that a socket error has occurred */
 	void notifySocketError( int errCode, const QString& msg );
 
-public slots:
+public Q_SLOTS:
 	void joinChatRoom( const QString& roomName, int exchange );
 
-signals:
+Q_SIGNALS:
 	/** CONNECTION EVENTS */
 
 	/** Notifies that we want to create new stream.
@@ -563,7 +563,7 @@ signals:
 	/** incoming filetransfer */
 	void incomingFileTransfer( FileTransferHandler* handler );
 
-protected slots:
+protected Q_SLOTS:
 	// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 
 	/** Singleshot timer to start stage two login */

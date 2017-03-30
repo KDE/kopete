@@ -45,7 +45,7 @@ public:
 protected:
 	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void userIsOnline( const QString& user, const UserDetails& ud );
 	void userIsOffline( const QString& user, const UserDetails& ud );
 	

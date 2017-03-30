@@ -51,7 +51,7 @@ private:
 
     bool donttouch;
 
-private slots:
+private Q_SLOTS:
     void slotCurrentFilterChanged();
     void slotAddFilter();
     void slotRemoveFilter();

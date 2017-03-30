@@ -80,10 +80,10 @@ public:
      */
     QString clientVersion(const Jid &jid) const;
 
-signals:
+Q_SIGNALS:
     void capabilitiesChanged(const XMPP::Jid &jid);
 
-public slots:
+public Q_SLOTS:
     /**
      * Update if necessary the capabities for the JID passed in args.
      * Caps are received in Presence messages so that's why we are
@@ -94,7 +94,7 @@ public slots:
      */
     void updateCapabilities(JabberAccount *account, const XMPP::Jid &jid, const XMPP::Status &status);
 
-private slots:
+private Q_SLOTS:
     /**
      * @brief Called when a reply to disco#info request was received.
      * If the result was successful, the resulting features are recorded in the

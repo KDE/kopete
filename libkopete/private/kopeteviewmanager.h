@@ -66,7 +66,7 @@ public:
      */
     QList<Kopete::MessageEvent *> pendingMessages(Kopete::Contact *contact);
 
-public slots:
+public Q_SLOTS:
     /**
     * Make a view visible and on top.
     * @param manager The originating Kopete::ChatSession.
@@ -87,11 +87,11 @@ public slots:
 
     void nextEvent();
 
-private slots:
+private Q_SLOTS:
     void slotViewDestroyed(KopeteView *);
     void slotChatSessionDestroyed(Kopete::ChatSession *);
 
-public slots:
+public Q_SLOTS:
     /**
     * An event has been deleted.
     */

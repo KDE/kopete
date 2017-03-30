@@ -129,7 +129,7 @@ public:
      */
     void setConnection(BonjourContactConnection *conn);
 
-public slots:
+public Q_SLOTS:
     /**
      * @brief Send an Outgoing message
      *
@@ -161,7 +161,7 @@ public slots:
      */
     void connectionDisconnected(BonjourContactConnection *conn);
 
-protected slots:
+protected Q_SLOTS:
     /**
      * @brief Show the settings dialog
      *

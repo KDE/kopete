@@ -48,7 +48,7 @@ private:
     Ui::TextEffectPrefs *preferencesDialog;
     TextEffectConfig *config;
 
-private slots: // Public slots
+private Q_SLOTS: // Public slots
     void slotAddPressed();
     void slotRemovePressed();
     void slotUpPressed();

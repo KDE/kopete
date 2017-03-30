@@ -96,7 +96,7 @@ public:
      */
     QList<JabberBaseContact *> findRelevantSources(const XMPP::Jid &jid);
 
-private slots:
+private Q_SLOTS:
     void slotContactDestroyed(Kopete::Contact *contact);
 
 private:

@@ -190,7 +190,7 @@ public:
      */
     void sendFile(const QUrl &file, const QString &localFile, unsigned long fileSize, bool mustBeLocal, QObject *sendTo, const char *slot);
 
-signals:
+Q_SIGNALS:
     /** @brief Signals the transfer is done. */
     void done(Kopete::Transfer *);
 
@@ -211,7 +211,7 @@ signals:
     /** @brief Send a file */
     void sendFile(const QUrl &file, const QString &localFile, unsigned int fileSize);
 
-private slots:
+private Q_SLOTS:
     void slotComplete(KJob *);
 
 private:
@@ -270,7 +270,7 @@ protected:
 
     void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
     /**
      * @brief Set the source and destination file names of currently processed file.
      */
@@ -302,7 +302,7 @@ public slots:
     /** display a message in the chatwindow if it exists */
     bool showMessage(QString text) const;
 
-signals:
+Q_SIGNALS:
     /**
      * @deprecated Use result() and check error() for ERR_USER_CANCELED
      */
@@ -321,7 +321,7 @@ private:
 
     class Private;
     Private *d;
-private slots:
+private Q_SLOTS:
     void slotResultEmitted();
     void slotContactDestroyed();
 };

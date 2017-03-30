@@ -40,7 +40,7 @@ public:
 	explicit ICQStatusEditor( ICQStatusManager *statusManager, QWidget *parent = nullptr );
 	~ICQStatusEditor();
 
-public slots:
+public Q_SLOTS:
 	void save();
 
 	void moveUp();
@@ -49,7 +49,7 @@ public slots:
 	void addStatus();
 	void deleteStatus();
 
-private slots:
+private Q_SLOTS:
 	void updateButtons();
 
 private:

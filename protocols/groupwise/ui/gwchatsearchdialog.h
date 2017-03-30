@@ -36,7 +36,7 @@ class GroupWiseChatSearchDialog : public KDialog
 		~GroupWiseChatSearchDialog();
 	protected:
 		void populateWidget();
-	protected slots:
+	protected Q_SLOTS:
 		/* Button handlers */
 		void slotPropertiesClicked();
 		void slotUpdateClicked();

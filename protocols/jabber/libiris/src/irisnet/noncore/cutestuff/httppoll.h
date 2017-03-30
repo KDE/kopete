@@ -48,7 +48,7 @@ public:
 	bool isOpen() const;
 	void close() Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void connected();
 	void syncStarted();
 	void syncFinished();
@@ -56,7 +56,7 @@ signals:
 protected:
 	int tryWrite() Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
 	void http_result();
 	void http_error(int);
 	void do_sync();
@@ -89,11 +89,11 @@ public:
 	QByteArray body() const;
 	QString getHeader(const QString &) const;
 
-signals:
+Q_SIGNALS:
 	void result();
 	void error(int);
 
-private slots:
+private Q_SLOTS:
 	void sock_connected();
 	void sock_connectionClosed();
 	void sock_readyRead();
@@ -125,13 +125,13 @@ public:
 	QString getHeader(const QString &) const;
 	int length() const; // -1 for unknown
 
-signals:
+Q_SIGNALS:
 	void handshaken();
 	void dataReady(const QByteArray &buf);
 	void finished();
 	void error(int);
 
-private slots:
+private Q_SLOTS:
 	void sock_connected();
 	void sock_connectionClosed();
 	void sock_readyRead();

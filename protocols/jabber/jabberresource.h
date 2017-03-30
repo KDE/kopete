@@ -81,10 +81,10 @@ public:
 	 */
 	bool sendsDeliveredEvent() const;
 
-signals:
+Q_SIGNALS:
 	void updated ( JabberResource * );
 
-private slots:
+private Q_SLOTS:
 	void slotGetTimedClientVersion ();
 	void slotGotClientVersion ();
 	void slotGetDiscoCapabilties ();

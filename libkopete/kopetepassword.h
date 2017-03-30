@@ -148,7 +148,7 @@ public:
      */
     QString cachedValue();
 
-public slots:
+public Q_SLOTS:
     /**
      * Set the password for this account.
      * @param pass If set to QString(), the password is forgotten unless you
@@ -192,9 +192,9 @@ public:
     {
     }
 
-signals:
+Q_SIGNALS:
     void requestFinished(const QString &password);
-public slots:
+public Q_SLOTS:
     virtual void walletReceived(KWallet::Wallet *wallet) = 0;
     virtual void gotPassword(const QString &, bool) = 0;
     virtual void slotCancelPressed() = 0;

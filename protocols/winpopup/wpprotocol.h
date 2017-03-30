@@ -86,7 +86,7 @@ public:
     void sendMessage(const QString &Body, const QString &Destination);
     void settingsChanged(void);         // Callback when settings changed
 
-public slots:
+public Q_SLOTS:
     void installSamba();                // Modify smb.conf to use winpopup-send script
     void slotReceivedMessage(const QString &Body, const QDateTime &Time, const QString &From);
 

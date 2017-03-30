@@ -50,7 +50,7 @@ public:
     QString newHost() const;
     Oscar::WORD service() const;
 
-signals:
+Q_SIGNALS:
 	void haveServer( const QString&, const QByteArray&, Oscar::WORD );
 
 private:

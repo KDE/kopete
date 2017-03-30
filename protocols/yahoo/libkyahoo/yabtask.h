@@ -43,13 +43,13 @@ public:
 
     void getAllEntries(long lastMerge, long lastRemoteRevision);
     void saveEntry(const YABEntry &);
-signals:
+Q_SIGNALS:
     void gotEntry(YABEntry *);
     void gotRevision(long rev, bool merged);
 protected:
     bool forMe(const Transfer *transfer) const Q_DECL_OVERRIDE;
     void parseContactDetails(YMSGTransfer *t);
-private slots:
+private Q_SLOTS:
     void slotData(KIO::Job *, const QByteArray &);
     void slotResult(KJob *);
 private:

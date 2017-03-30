@@ -34,14 +34,14 @@ class ICQReadAway : public KDialog
 	public:
 		explicit ICQReadAway(ICQContact *, QWidget *parent = 0, const char* name = "ICQReadAway");
 
-	private slots:
+	private Q_SLOTS:
 		void slotFetchAwayMessage();
 		void slotAwayMessageChanged();
 		void slotCloseClicked();
 		void slotUrlClicked(const QString &url);
 		void slotMailClicked(const QString&, const QString &address);
 
-	signals:
+	Q_SIGNALS:
 		void closing();
 
 	private:

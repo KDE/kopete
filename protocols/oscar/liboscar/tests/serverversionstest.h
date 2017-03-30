@@ -23,7 +23,7 @@
 class ServerVersionsTest : public OscarTestBase
 {
 Q_OBJECT
-private slots:
+private Q_SLOTS:
 	void testSupportedFamilies();
 };
 

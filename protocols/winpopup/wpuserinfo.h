@@ -40,12 +40,12 @@ public:
 
     void startDetailsProcess(const QString &host);
 
-private slots:
+private Q_SLOTS:
     void slotDetailsProcess(int i = 1, QProcess::ExitStatus status = QProcess::CrashExit);
     void slotDetailsProcessFinished(int, QProcess::ExitStatus);
     void slotCloseClicked();
 
-signals:
+Q_SIGNALS:
     void closing();
 
 private:

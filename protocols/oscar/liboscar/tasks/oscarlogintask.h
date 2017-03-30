@@ -43,7 +43,7 @@ public:
 protected:
 	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void haveAuthKey();
 
 private:
@@ -63,7 +63,7 @@ private:
 	//Massive code duplication with CloseConnectionTask
 	bool parseDisconnectCode( int error, QString& reason );
 
-private slots:
+private Q_SLOTS:
 	//! Send SNAC 0x17, 0x02
 	void sendLoginRequest();
 

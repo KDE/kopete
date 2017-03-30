@@ -143,7 +143,7 @@ public:
 		}
 	}
 
-signals:
+Q_SIGNALS:
 	void ready();
 	void error(XMPP::StunAllocatePermission::Error e, const QString &reason);
 
@@ -173,7 +173,7 @@ private:
 		timer->start();
 	}
 
-private slots:
+private Q_SLOTS:
 	void trans_createMessage(const QByteArray &transactionId)
 	{
 		// CreatePermission
@@ -333,7 +333,7 @@ public:
 		}
 	}
 
-signals:
+Q_SIGNALS:
 	void ready();
 	void error(XMPP::StunAllocateChannel::Error e, const QString &reason);
 
@@ -364,7 +364,7 @@ private:
 		timer->start();
 	}
 
-private slots:
+private Q_SLOTS:
 	void trans_createMessage(const QByteArray &transactionId)
 	{
 		// ChannelBind
@@ -862,7 +862,7 @@ private:
 		return true;
 	}
 
-private slots:
+private Q_SLOTS:
 	void refresh()
 	{
 		Q_ASSERT(state == Started);

@@ -47,7 +47,7 @@ public:
 protected:
 	void showEvent(QShowEvent *e) Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
 	void showSearchDialog();
 	void searchDialogDestroyed();
 private:

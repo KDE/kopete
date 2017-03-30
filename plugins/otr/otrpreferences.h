@@ -44,7 +44,7 @@ private:
     OtrlConfInterface *otrlConfInterface;
     QMap<int, int> privKeys;
 
-private slots: // Public slots
+private Q_SLOTS: // Public slots
     void generateFingerprint();
     void showPrivFingerprint(int accountnr);
     void verifyFingerprint();

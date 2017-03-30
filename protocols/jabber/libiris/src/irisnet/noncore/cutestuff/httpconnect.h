@@ -42,10 +42,10 @@ public:
 protected:
 	qint64 writeData(const char *data, qint64 maxSize) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void connected();
 
-private slots:
+private Q_SLOTS:
 	void sock_connected();
 	void sock_connectionClosed();
 	void sock_delayedCloseFinished();

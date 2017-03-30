@@ -47,7 +47,7 @@ public:
     void setMessage( const Oscar::Message& msg );
     void setEncoding( const QByteArray &enc );
 
-signals:
+Q_SIGNALS:
     void userJoinedChat( Oscar::WORD, const QString& r, const QString& u );
     void userLeftChat( Oscar::WORD, const QString& r, const QString& u );
     void newChatMessage( const Oscar::Message& msg );

@@ -402,7 +402,7 @@ public:
 		info = ifaces;
 	}
 
-public slots:
+public Q_SLOTS:
 	void check()
 	{
 		poll();

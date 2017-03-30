@@ -88,17 +88,17 @@ public:
      */
     void setPassword(const QString &pass);
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted when the information stored in this widget changes
      */
     void changed();
 
-public slots:
+public Q_SLOTS:
     /** @internal */
     void receivePassword(const QString &);
 
-private slots:
+private Q_SLOTS:
     void slotRememberChanged();
     void passwordTextChanged();
 

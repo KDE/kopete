@@ -120,7 +120,7 @@ class PrivacyManager : public QObject
 	protected:
 		static QStringList blockedContacts ( const PrivacyList&, bool* allBlocked );
 
-	private slots:
+	private Q_SLOTS:
 		void receiveLists();
 		void receiveList();
 		void changeDefaultList_finished();
@@ -134,7 +134,7 @@ class PrivacyManager : public QObject
 		void block_getDefaultList_success ( const PrivacyList& );
 		void block_getDefaultList_error();
 
-	signals:
+	Q_SIGNALS:
 		void changeDefaultList_success();
 		void changeDefaultList_error();
 		void changeActiveList_success();

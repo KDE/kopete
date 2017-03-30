@@ -104,7 +104,7 @@ public:
      */
     Identity *registerIdentity(Identity *identity);
 
-public slots:
+public Q_SLOTS:
 
     /**
      * @brief Set all identities a status in the specified category
@@ -127,7 +127,7 @@ public slots:
      */
     void load();
 
-signals:
+Q_SIGNALS:
     /**
      * \brief Signals when an identity is ready for use
      */
@@ -153,7 +153,7 @@ private:
      */
     IdentityManager();
 
-private slots:
+private Q_SLOTS:
     void slotIdentityOnlineStatusChanged(Kopete::Identity *i);
 
     /**

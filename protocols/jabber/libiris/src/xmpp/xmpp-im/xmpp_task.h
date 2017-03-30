@@ -56,7 +56,7 @@ namespace XMPP {
 		virtual bool take(const QDomElement &);
 		void safeDelete();
 
-	signals:
+	Q_SIGNALS:
 		void finished();
 
 	protected:
@@ -71,7 +71,7 @@ namespace XMPP {
 		void debug(const QString &);
 		bool iqVerify(const QDomElement &x, const Jid &to, const QString &id, const QString &xmlns=QLatin1String(""));
 
-	private slots:
+	private Q_SLOTS:
 		void clientDisconnected();
 		void timeoutFinished();
 		void done();

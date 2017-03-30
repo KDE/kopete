@@ -69,7 +69,7 @@ public:
 	virtual void start() = 0;
 	virtual QList<Info> interfaces() const = 0;
 
-signals:
+Q_SIGNALS:
 	void updated();
 };
 
@@ -88,7 +88,7 @@ public:
 	virtual void start() = 0;
 	virtual bool isAvailable() const = 0;
 
-signals:
+Q_SIGNALS:
 	void updated();
 };
 
@@ -113,7 +113,7 @@ public:
 	virtual void resolve_localResultsReady(int id, const QList<XMPP::NameRecord> &results);
 	virtual void resolve_localError(int id, XMPP::NameResolver::Error e);
 
-signals:
+Q_SIGNALS:
 	void resolve_resultsReady(int id, const QList<XMPP::NameRecord> &results);
 	void resolve_error(int id, XMPP::NameResolver::Error e);
 
@@ -151,7 +151,7 @@ public:
 	virtual void publish_extra_update(int id, const NameRecord &name) = 0;
 	virtual void publish_extra_stop(int id) = 0;
 
-signals:
+Q_SIGNALS:
 	void browse_instanceAvailable(int id, const XMPP::ServiceInstance &instance);
 	void browse_instanceUnavailable(int id, const XMPP::ServiceInstance &instance);
 	void browse_error(int id, XMPP::ServiceBrowser::Error e);

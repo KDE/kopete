@@ -37,7 +37,7 @@ public:
 
     XMPP::Form &resultData();
 
-signals:
+Q_SIGNALS:
     void gatherData(XMPP::Form &form);
 
 private:

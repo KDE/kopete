@@ -36,7 +36,7 @@ public:
 	  dlgRegister(JabberAccount *account, const XMPP::Jid &jid, QWidget *parent = nullptr);
 	 ~dlgRegister();
 
-private slots:
+private Q_SLOTS:
 	void slotGotForm();
 	void slotSendForm();
 	void slotSentForm();

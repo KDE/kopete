@@ -44,7 +44,7 @@ public:
     //virtual void save();
     //virtual void load();
 
-private slots:
+private Q_SLOTS:
     void slotSettingsChanged(bool);
     void slotValueChanged(int);
     void slotDeviceKComboBoxChanged(int);

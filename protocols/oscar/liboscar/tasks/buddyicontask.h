@@ -43,7 +43,7 @@ public:
 	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void haveIcon( const QString&, QByteArray );
 
 private:

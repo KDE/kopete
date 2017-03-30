@@ -27,7 +27,7 @@ public:
     // Period Size is the size of a frame which can be decoded in one time.
     virtual int frameSizeBytes();
 
-signals:
+Q_SIGNALS:
     void encoded();
     void decoded();
 };

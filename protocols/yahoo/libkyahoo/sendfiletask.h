@@ -45,7 +45,7 @@ public:
 	void setFileUrl( KUrl url );
 	void setTransferId( unsigned int transferId );
 
-signals:
+Q_SIGNALS:
 	void bytesProcessed( unsigned int, unsigned int );
 	void complete( unsigned int );
 	void error( unsigned int, int, const QString & );
@@ -66,7 +66,7 @@ protected:
 	/** returns true if file transfer completed */ 
 	bool checkTransferEnd();
 
-private slots:
+private Q_SLOTS:
 	void connectSucceeded();
 	void connectFailed( int );
 	void transmitData();

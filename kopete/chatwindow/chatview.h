@@ -175,7 +175,7 @@ public:
     /** Reimplemented from KopeteView **/
     void registerTooltipHandler(QObject *target, const char *slot) Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
     /**
      * Initiates a cut action on the edit area of the chat view
      */
@@ -247,7 +247,7 @@ public slots:
     /** Retrieves the tab state. */
     KopeteTabState tabState() const;
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted when a message is sent
      * @param message The message sent
@@ -297,7 +297,7 @@ signals:
 
     void autoSpellCheckEnabled(ChatView *, bool);
 
-private slots:
+private Q_SLOTS:
     void slotRemoteTypingTimeout();
 
     /**

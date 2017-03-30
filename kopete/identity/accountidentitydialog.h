@@ -98,13 +98,13 @@ public:
      */
     static bool changeAccountIdentity(QWidget *parent, QList<Kopete::Account *> accountList, Kopete::Identity *hidden_ident = 0, const QString &message = QString());
 
-private slots:
+private Q_SLOTS:
     void slotValidate();
     void slotIdentityListDoubleClicked();
     void slotLoadIdentities();
     void slotLoadAccounts();
 
-protected slots:
+protected Q_SLOTS:
     void accept() Q_DECL_OVERRIDE;
     void reject() Q_DECL_OVERRIDE;
 

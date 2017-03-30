@@ -89,7 +89,7 @@ private:
     QWizardPage *createMVPage();
     QWizardPage *createFinalPage();
 
-private slots:
+private Q_SLOTS:
     void cancelVerification();
     void updateInfoBox();
     void notificationActivated(unsigned int);

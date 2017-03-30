@@ -55,7 +55,7 @@ public:
     HighlightPlugin(QObject *parent, const QVariantList &args);
     ~HighlightPlugin();
 
-public slots:
+public Q_SLOTS:
     void slotIncomingMessage(Kopete::Message &msg);
     void slotSettingsChanged();
 

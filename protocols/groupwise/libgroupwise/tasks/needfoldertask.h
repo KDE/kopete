@@ -27,7 +27,7 @@ public:
 	~NeedFolderTask();
 	void createFolder();
 	virtual void onFolderCreated() = 0;
-protected slots:
+protected Q_SLOTS:
 	void slotFolderAdded( const FolderItem & );
 	void slotFolderTaskFinished();
 protected:

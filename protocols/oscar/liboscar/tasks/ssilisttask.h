@@ -45,7 +45,7 @@ protected:
 	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 	void onGo() Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	/** We have a new group */
 	void newGroup( const OContact& );
 

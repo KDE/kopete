@@ -62,7 +62,7 @@ public:
 	 */
 	int timeToInitialLevel( Oscar::SNAC s );
 
-public slots:
+public Q_SLOTS:
 
 	void transferReady( Transfer* );
 

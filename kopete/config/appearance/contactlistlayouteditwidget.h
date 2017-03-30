@@ -48,7 +48,7 @@ public:
     void readLayout(ContactList::LayoutItemConfig config);
     ContactList::LayoutItemConfig config();
 
-signals:
+Q_SIGNALS:
     void focussed(QWidget *);
     void changed();
 

@@ -56,11 +56,11 @@ public:
 	 */
 	QString getLocalIP();
 
-public slots:
+public Q_SLOTS:
 	void connect( const QString &server, uint port );
 	virtual void disconnect();
 
-signals:
+Q_SIGNALS:
 	/**
 	 * The online status has changed
 	 */
@@ -125,7 +125,7 @@ protected:
 	const QString &server() { return m_server; }
 	uint port() { return m_port; }
 
-private slots:
+private Q_SLOTS:
 	void slotDataReceived();
 	/**
 	 * If the socket emits a connectionFailed() then this slot is called
@@ -148,7 +148,7 @@ private slots:
 	 */
 	void slotSocketClosed();
 
-protected slots:
+protected Q_SLOTS:
 	virtual void slotReadyWrite();
 
 protected:

@@ -713,7 +713,7 @@ public:
 		return false;
 	}
 
-private slots:
+private Q_SLOTS:
 	void bs_connected()
 	{
 		ObjectSessionWatcher watch(&sess);

@@ -44,7 +44,7 @@ protected:
 	void disableWidgets();
 	void populateWidgets();
 	void updateButtonState();
-protected slots:
+protected Q_SLOTS:
 	void slotAllowClicked();
 	void slotBlockClicked();
 	void slotAddClicked();

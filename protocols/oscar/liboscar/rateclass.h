@@ -101,7 +101,7 @@ public:
 	 */
 	void dumpQueue();
 
-signals:
+Q_SIGNALS:
 
 	/** Tell the rate class manager we're ready to send */
 	void dataReady( Transfer* );
@@ -114,7 +114,7 @@ private:
 	/** sets up the timer for the transfer just added to the queue */
 	void setupTimer();
 
-private slots:
+private Q_SLOTS:
 	/**
 	 * Send the packet. Basically emits dataReady for the first transfer
 	 */

@@ -42,12 +42,12 @@ public:
     void requestProperties(const QString &displayName);
     void updateRooms();
     void updateCounts();
-signals:
+Q_SIGNALS:
     void gotProperties(const GroupWise::Chatroom &);
     void updated();
 protected:
     void getChatrooms(bool refresh);
-protected slots:
+protected Q_SLOTS:
     /**
      * Used to initialise the list of chatrooms in response to a SearchChatTask.
      */

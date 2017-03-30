@@ -57,13 +57,13 @@ private:
     QAction *actionDisableOtr;
     QAction *actionVerifyFingerprint;
 
-private slots:
+private Q_SLOTS:
     void slotEnableOtr();
     void slotDisableOtr();
     void encryptionEnabled(Kopete::ChatSession *session, int state);
     void slotVerifyFingerprint();
 
-signals:
+Q_SIGNALS:
     void signalOtrChatsession(Kopete::ChatSession *session, bool enable);
     void signalVerifyFingerprint(Kopete::ChatSession *session);
 };

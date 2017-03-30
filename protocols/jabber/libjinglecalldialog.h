@@ -47,7 +47,7 @@ class LibjingleCallDialog : public QDialog, public Ui::LibjingleCallDialog
 		 */
 		virtual void closeEvent(QCloseEvent * e);
 
-	signals:
+	Q_SIGNALS:
 
 		void closed();
 

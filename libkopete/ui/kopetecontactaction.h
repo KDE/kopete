@@ -46,7 +46,7 @@ public:
      */
     ContactAction(Kopete::Contact *contact, KActionCollection *parent);
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted when the action is triggered. Connect to this slot when
      * you need to know which contact the action was triggered for
@@ -54,7 +54,7 @@ signals:
     void triggered(Kopete::Contact *, bool checked);
     void triggered(const QString &, bool checked);
 
-private slots:
+private Q_SLOTS:
     /**
      * @internal
      * Reimplemented to emit triggered with a Kopete::Contact object

@@ -44,7 +44,7 @@ protected:
     void mousePressEvent(QMouseEvent *me) Q_DECL_OVERRIDE;
     bool event(QEvent *event) Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
     void statusIconChanged();
 
 private:

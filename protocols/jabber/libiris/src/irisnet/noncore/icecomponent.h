@@ -155,7 +155,7 @@ public:
 
 	void setDebugLevel(DebugLevel level);
 
-signals:
+Q_SIGNALS:
 	// this is emitted in the same pass of the eventloop that a
 	//   transport/path becomes ready
 	void candidateAdded(const XMPP::IceComponent::Candidate &c);

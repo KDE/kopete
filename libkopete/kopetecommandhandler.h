@@ -180,7 +180,7 @@ public:
      */
     bool commandHandledByProtocol(const QString &command, Protocol *protocol);
 
-private slots:
+private Q_SLOTS:
     void slotPluginLoaded(Kopete::Plugin *);
     void slotPluginDestroyed(QObject *);
     void slotExecError(QProcess::ProcessError error);

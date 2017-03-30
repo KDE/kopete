@@ -40,7 +40,7 @@ public:
 	 * Has this message already been delivered?
 	 */
 	bool delivered() { return m_delivered; }
-public slots:
+public Q_SLOTS:
 	/**
 	 * 'Deliver' the message to Kopete by calling TestbedFakeServer::incomingMessage().
 	 * This marks the message as delivered so it can be purged from the incoming list.

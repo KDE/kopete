@@ -97,7 +97,7 @@ namespace XMPP
 		qint64 writeData(const char *data, qint64 maxSize) Q_DECL_OVERRIDE;
 		qint64 readData(char * data, qint64 maxSize) Q_DECL_OVERRIDE;
 
-	signals:
+	Q_SIGNALS:
 		void proxyQuery();                             // querying proxy for streamhost information
 		void proxyResult(bool b);                      // query success / fail
 		void requesting();                             // sent actual S5B request (requester only)
@@ -108,7 +108,7 @@ namespace XMPP
 		void connected();                              // connection active
 		void datagramReady();
 
-	private slots:
+	private Q_SLOTS:
 		void doPending();
 
 		void sc_connectionClosed();
@@ -158,7 +158,7 @@ namespace XMPP
 	protected:
 		const char* sidPrefix() const Q_DECL_OVERRIDE;
 
-	private slots:
+	private Q_SLOTS:
 		void ps_incoming(const S5BRequest &req);
 		void ps_incomingUDPSuccess(const Jid &from, const QString &dstaddr);
 		void ps_incomingActivate(const Jid &from, const QString &sid, const Jid &streamHost);
@@ -219,10 +219,10 @@ namespace XMPP
 
 		class Item;
 
-	signals:
+	Q_SIGNALS:
 		void result(bool);
 
-	private slots:
+	private Q_SLOTS:
 		void item_result(bool);
 		void t_timeout();
 
@@ -251,7 +251,7 @@ namespace XMPP
 
 		class Item;
 
-	private slots:
+	private Q_SLOTS:
 		void ss_incomingReady();
 		void ss_incomingUDP(const QString &host, int port, const QHostAddress &addr, int sourcePort, const QByteArray &data);
 		void item_result(bool);
@@ -287,7 +287,7 @@ namespace XMPP
 		Jid streamHostUsed() const;
 		StreamHost proxyInfo() const;
 
-	private slots:
+	private Q_SLOTS:
 		void t_timeout();
 
 	private:
@@ -320,7 +320,7 @@ namespace XMPP
 
 		bool take(const QDomElement &) Q_DECL_OVERRIDE;
 
-	signals:
+	Q_SIGNALS:
 		void incoming(const S5BRequest &req);
 		void incomingUDPSuccess(const Jid &from, const QString &dstaddr);
 		void incomingActivate(const Jid &from, const QString &sid, const Jid &streamHost);

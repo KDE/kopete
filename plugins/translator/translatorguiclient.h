@@ -44,7 +44,7 @@ public:
     explicit TranslatorGUIClient(Kopete::ChatSession *parent);
     ~TranslatorGUIClient();
 
-private slots:
+private Q_SLOTS:
     void slotTranslateChat();
     void messageTranslated(const QVariant &);
 

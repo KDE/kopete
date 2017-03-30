@@ -54,7 +54,7 @@ public:
     TextEffectPlugin(QObject *parent, const QVariantList &args);
     ~TextEffectPlugin();
 
-public slots:
+public Q_SLOTS:
     void slotOutgoingMessage(Kopete::Message &msg);
     void slotSettingsChanged();
 

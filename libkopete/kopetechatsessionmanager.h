@@ -104,7 +104,7 @@ public:
      */
     KopeteView *activeView();
 
-signals:
+Q_SIGNALS:
     /**
      * This signal is emitted whenever a message
      * is about to be displayed by the KopeteChatWindow.
@@ -166,7 +166,7 @@ signals:
      */
     void readMessage();
 
-public slots:
+public Q_SLOTS:
     void slotReadMessage();
 
 private:

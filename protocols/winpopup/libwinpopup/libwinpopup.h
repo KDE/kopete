@@ -80,7 +80,7 @@ private:
 
     bool checkMessageDir();
 
-private slots:
+private Q_SLOTS:
     void slotUpdateGroupData();
     void startReadProcess();
     void slotReadIpProcessExited(int i = 1, QProcess::ExitStatus status = QProcess::CrashExit);
@@ -89,7 +89,7 @@ private slots:
     void slotStartDirLister();
     void slotReadMessages(const KFileItemList &items);
 
-signals:
+Q_SIGNALS:
     void signalNewMessage(const QString &, const QDateTime &, const QString &);
 };
 

@@ -52,7 +52,7 @@ public:
 
 	virtual QAbstractSocket* abstractSocket() const { return 0; }
 
-signals:
+Q_SIGNALS:
 	void connectionClosed();
 	void delayedCloseFinished();
 	void error(int);

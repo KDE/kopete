@@ -33,10 +33,10 @@ public:
 
     int selectedEncoding() const;
 
-signals:
+Q_SIGNALS:
     void closing( int );
 
-protected slots:
+protected Q_SLOTS:
     void slotOk();
     void slotCancel();
 

@@ -70,10 +70,10 @@ public:
 	int socket() const                 { return sn->socket(); }
 	QSocketNotifier::Type type() const { return sn->type(); }
 
-public slots:
+public Q_SLOTS:
 	void setEnabled(bool enable)       { sn->setEnabled(enable); }
 
-signals:
+Q_SIGNALS:
 	void activated(int socket);
 
 private:
@@ -206,7 +206,7 @@ public:
 	}
 #endif
 
-public slots:
+public Q_SLOTS:
 	void ctrl_ready()
 	{
 #ifdef Q_OS_WIN

@@ -47,7 +47,7 @@ public:
 
     QList<int> exchangeList() const;
 
-signals:
+Q_SIGNALS:
     void haveChatExchanges( const QList<int>& );
     void connectChat( Oscar::WORD, QByteArray, Oscar::WORD, const QString& );
 

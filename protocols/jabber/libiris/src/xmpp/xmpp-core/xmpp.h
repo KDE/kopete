@@ -87,7 +87,7 @@ namespace XMPP
 
 		virtual QString host() const;
 
-	signals:
+	Q_SIGNALS:
 		void connected();
 		void error();
 
@@ -156,13 +156,13 @@ namespace XMPP
 
 		QString host() const Q_DECL_OVERRIDE;
 
-	signals:
+	Q_SIGNALS:
 		void srvLookup(const QString &server);
 		void srvResult(bool success);
 		void httpSyncStarted();
 		void httpSyncFinished();
 
-	private slots:
+	private Q_SLOTS:
 		void bs_connected();
 		void bs_error(int);
 		void http_syncStarted();
@@ -188,7 +188,7 @@ namespace XMPP
 		virtual void write(const QByteArray &a)=0;
 		virtual void writeIncoming(const QByteArray &a)=0;
 
-	signals:
+	Q_SIGNALS:
 		void success();
 		void fail();
 		void closed();
@@ -215,13 +215,13 @@ namespace XMPP
 		void write(const QByteArray &a) Q_DECL_OVERRIDE;
 		void writeIncoming(const QByteArray &a) Q_DECL_OVERRIDE;
 
-	signals:
+	Q_SIGNALS:
 		void tlsHandshaken();
 
-	public slots:
+	public Q_SLOTS:
 		void continueAfterHandshake();
 
-	private slots:
+	private Q_SLOTS:
 		void tls_handshaken();
 		void tls_readyRead();
 		void tls_readyReadOutgoing();

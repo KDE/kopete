@@ -37,7 +37,7 @@ public:
 	explicit DlgJabberChangePassword ( JabberAccount *account, QWidget *parent = nullptr );
 	~DlgJabberChangePassword();
 
-private slots:
+private Q_SLOTS:
 	void slotOk ();
 	void slotCancel ();
 	void slotChangePassword ();

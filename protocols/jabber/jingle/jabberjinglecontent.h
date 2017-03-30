@@ -43,7 +43,7 @@ public:
     QString contentName();
     QString elementToSdp(const QDomElement &);
 
-public slots:
+public Q_SLOTS:
     void slotSendRtpData();
     void slotIncomingData(const QByteArray &);
     void slotReadyRead();

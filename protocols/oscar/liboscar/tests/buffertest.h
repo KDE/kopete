@@ -6,7 +6,7 @@
 class BufferTest : public QObject
 {
 Q_OBJECT
-private slots:
+private Q_SLOTS:
 	void testAddByte();
 	void testAddWord();
 	void testAddDWord();

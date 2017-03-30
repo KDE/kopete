@@ -32,11 +32,11 @@ public:
     explicit IdentityDialog(Kopete::Identity *identity, QWidget *parent = nullptr);
     ~IdentityDialog();
 
-protected slots:
+protected Q_SLOTS:
     void load();
     void slotSave() Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
     void slotSelectPhoto();
     void slotClearPhoto();
 

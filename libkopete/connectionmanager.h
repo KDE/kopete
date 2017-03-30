@@ -40,7 +40,7 @@ public:
     NetworkStatus::EnumRequestResult requestConnection(QWidget *mainWidget, const QString &host, bool userInitiated);
     // method to relinquish a connection
     void relinquishConnection(const QString &host);
-signals:
+Q_SIGNALS:
     // signal that the network for a hostname is up/down
     void statusChanged(const QString &host, NetworkStatus::EnumStatus status);
 protected:

@@ -53,7 +53,7 @@ public:
     void save() Q_DECL_OVERRIDE;
     void load() Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
     //----- Style TAB ---------------------
     void slotInstallChatStyle();
     int installChatStyle(const QUrl &styleToInstall);

@@ -451,7 +451,7 @@ public:
 	*/
 	void stop();
 
-signals:
+Q_SIGNALS:
 	/**
 	   \brief Notification of result records
 
@@ -528,7 +528,7 @@ public:
 	void start(const QString &type, const QString &domain = QStringLiteral("local"));
 	void stop();
 
-signals:
+Q_SIGNALS:
 	void instanceAvailable(const XMPP::ServiceInstance &instance);
 	void instanceUnavailable(const XMPP::ServiceInstance &instance);
 	void error();
@@ -627,7 +627,7 @@ public:
 	 */
 	ProtoSplit happySplit();
 
-signals:
+Q_SIGNALS:
 	/*!
 	 * The lookup succeeded
 	 * \param address Resolved IP address
@@ -640,7 +640,7 @@ signals:
 	void srvReady();
 	void srvFailed();
 
-private slots:
+private Q_SLOTS:
 	void handle_srv_ready(const QList<XMPP::NameRecord>&);
 	void handle_srv_error(XMPP::NameResolver::Error);
 	void handle_host_ready(const QList<XMPP::NameRecord>&);
@@ -681,7 +681,7 @@ public:
 	void addRecord(const NameRecord &rec);
 	void cancel();
 
-signals:
+Q_SIGNALS:
 	void published();
 	void error(XMPP::ServiceLocalPublisher::Error e);
 

@@ -122,7 +122,7 @@ public:
      */
     Group *group() const;
 
-public slots:
+public Q_SLOTS:
 
     /**
      * @brief create a metacontact.
@@ -136,7 +136,7 @@ public slots:
      */
     MetaContact *addContact() const;
 
-signals:
+Q_SIGNALS:
     /**
      * @brief the dialog has been applied
      * @param contactId is the id of the contact passed in the constructor.
@@ -154,7 +154,7 @@ signals:
      */
     void infoClicked(const QString &contactId);
 
-private slots:
+private Q_SLOTS:
     void slotAddresseeSelected(const KContacts::Addressee &);
     void slotInfoClicked();
     void slotFinished();

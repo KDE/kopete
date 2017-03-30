@@ -143,7 +143,7 @@ public:
     void resetConfig(KConfigGroup &config);
     void writeConfig(KConfigGroup &config);
 
-public slots:
+public Q_SLOTS:
     /**
      * Go up an entry in the message history.
      */
@@ -166,7 +166,7 @@ public slots:
 
     void checkToolbarEnabled();
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted when a message is sent.
      * @param message The message sent
@@ -188,7 +188,7 @@ signals:
     void toolbarToggled(bool enabled);
     void richTextChanged();
 
-private slots:
+private Q_SLOTS:
     /**
      * Called when a contact is added to the chat session.
      * Adds this contact to the nickname completion list.

@@ -39,7 +39,7 @@ public:
 	~GetDetailsTask();
 	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
 	void userDNs( const QStringList & userDNs );
-signals:
+Q_SIGNALS:
 	void gotContactUserDetails( const GroupWise::ContactDetails & );
 protected:
 	GroupWise::ContactDetails extractUserDetails( Field::MultiField * details );

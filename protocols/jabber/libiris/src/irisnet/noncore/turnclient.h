@@ -163,7 +163,7 @@ public:
 
 	void setDebugLevel(DebugLevel level); // default DL_None
 
-signals:
+Q_SIGNALS:
 	void connected(); // tcp connected
 	void tlsHandshaken();
 	void closed();

@@ -41,7 +41,7 @@ class JDnsShutdownAgent : public QObject
 public:
 	void start();
 
-signals:
+Q_SIGNALS:
 	void started();
 };
 
@@ -53,10 +53,10 @@ public:
 
 	JDnsShutdownWorker(const QList<QJDnsShared*> &_list);
 
-signals:
+Q_SIGNALS:
 	void finished();
 
-private slots:
+private Q_SLOTS:
 	void jdns_shutdownFinished();
 };
 
@@ -76,7 +76,7 @@ public:
 protected:
 	void run() Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
 	void agent_started();
 	void worker_finished();
 };
@@ -93,7 +93,7 @@ public:
 	QJDnsSharedDebugPrivate(QJDnsSharedDebug *_q);
 	void addDebug(const QString &name, const QStringList &_lines);
 
-private slots:
+private Q_SLOTS:
 	void doUpdate();
 };
 
@@ -184,10 +184,10 @@ public:
 	void publishUpdate(QJDnsSharedRequest *obj, const QJDns::Record &record);
 	void publishCancel(QJDnsSharedRequest *obj);
 
-public slots:
+public Q_SLOTS:
 	void late_shutdown();
 
-private slots:
+private Q_SLOTS:
 	void jdns_resultsReady(int id, const QJDns::Response &results);
 	void jdns_published(int id);
 	void jdns_error(int id, QJDns::Error e);
@@ -226,7 +226,7 @@ public:
 	QJDnsSharedRequestPrivate(QJDnsSharedRequest *_q);
 	void resetSession();
 
-private slots:
+private Q_SLOTS:
 	void lateTimer_timeout();
 };
 

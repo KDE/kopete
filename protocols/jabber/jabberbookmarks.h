@@ -82,7 +82,7 @@ class JabberBookmarks : public QObject
 		 * return an action that will be added in the jabber popup menu
 		 */
 		QAction *bookmarksAction(QObject * parent);
-	private slots:
+	private Q_SLOTS:
 		void accountConnected();
 		void slotReceivedBookmarks();
 		void slotJoinChatBookmark(const QString&);

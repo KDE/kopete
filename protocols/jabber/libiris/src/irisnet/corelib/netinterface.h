@@ -106,7 +106,7 @@ public:
 	*/
 	QHostAddress gateway() const; // optional
 
-signals:
+Q_SIGNALS:
 	/**
 	   \brief Notifies when the interface becomes unavailable
 
@@ -187,7 +187,7 @@ QString iface = NetInterfaceManager::interfaceForAddress(tcpSocket->localAddress
 	*/
 	static QString interfaceForAddress(const QHostAddress &a);
 
-signals:
+Q_SIGNALS:
 	/**
 	   \brief Notifies when an interface becomes available
 

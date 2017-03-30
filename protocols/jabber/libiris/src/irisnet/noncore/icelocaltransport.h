@@ -84,7 +84,7 @@ public:
 	void addChannelPeer(const QHostAddress &addr, int port) Q_DECL_OVERRIDE;
 	void setDebugLevel(DebugLevel level) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	// may be emitted multiple times.
 	// if handling internal ErrorMismatch, then local address may change
 	//   and server reflexive address may disappear.

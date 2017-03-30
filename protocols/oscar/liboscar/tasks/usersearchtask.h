@@ -48,7 +48,7 @@ public:
 	
 	void searchWhitePages( const ICQWPSearchInfo& info );
 	
-signals:
+Q_SIGNALS:
 	void foundUser( const ICQSearchResult& result );
 	void searchFinished( int );
 	

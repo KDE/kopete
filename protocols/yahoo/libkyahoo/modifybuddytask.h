@@ -42,7 +42,7 @@ public:
 	void setGroup( const QString &group );
 	void setOldGroup( const QString &group );
 
-signals:
+Q_SIGNALS:
 	void buddyAddResult( const QString &, const QString &, bool );
 	void buddyRemoveResult( const QString &, const QString &, bool );
 	void buddyChangeGroupResult( const QString &, const QString &, bool );

@@ -165,7 +165,7 @@ namespace XMPP
 		const StreamFeatures &streamFeatures() const;	
 		QList<QDomElement> unhandledFeatures() const;
 
-	signals:
+	Q_SIGNALS:
 		void connected();
 		void securityLayerActivated(int);
 		void needAuthParams(bool user, bool pass, bool realm);
@@ -176,10 +176,10 @@ namespace XMPP
 		void outgoingXml(const QString &s);
 		void stanzasAcked(int);
 
-	public slots:
+	public Q_SLOTS:
 		void continueAfterWarning();
 
-	private slots:
+	private Q_SLOTS:
 		void cr_connected();
 		void cr_error();
 

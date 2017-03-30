@@ -54,7 +54,7 @@ public:
 
     //FIXME int newInstance() Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
     /**
      * Quit Kopete, closing all the windows, which causes application shutdown
      * This method marks Kopete as 'shutting down' to avoid
@@ -69,7 +69,7 @@ public slots:
      */
     void slotLoadPlugins();
 
-private slots:
+private Q_SLOTS:
     /**
      * auto-connect
      */

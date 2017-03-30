@@ -68,7 +68,7 @@ public:
      */
     int state();
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted as the core protocol converts fields to wire ready data
      */
@@ -78,7 +78,7 @@ signals:
      * Emitted when there is incoming data, parsed into a Transfer
      */
     void incomingData();
-protected slots:
+protected Q_SLOTS:
     /**
      * Just a debug method to test emitting to the socket, atm - should go to the ClientStream
      */

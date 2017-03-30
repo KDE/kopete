@@ -42,7 +42,7 @@ public:
 	explicit ICQSearchDialog( ICQAccount* account, QWidget* parent = nullptr );
 	~ICQSearchDialog();
 
-private slots:
+private Q_SLOTS:
 	void startSearch();
 	void stopSearch();
 	void clearResults();
@@ -59,7 +59,7 @@ private slots:
 	/// The search is finished
 	void searchFinished( int numLeft );
 
-protected slots:
+protected Q_SLOTS:
 	void slotButtonClicked( int button ) Q_DECL_OVERRIDE;
 
 private:

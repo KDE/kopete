@@ -81,7 +81,7 @@ public:
 	*/
 	static void cleanup();
 
-signals:
+Q_SIGNALS:
 	/**
 	   \brief Notification of termination request
 

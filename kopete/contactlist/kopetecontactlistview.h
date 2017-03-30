@@ -99,11 +99,11 @@ protected:
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
     bool viewportEvent(QEvent *event) Q_DECL_OVERRIDE;
 
-protected slots:
+protected Q_SLOTS:
     void rowsInserted(const QModelIndex &parent, int start, int end) Q_DECL_OVERRIDE;
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
     void reexpandGroups();
     void itemExpanded(const QModelIndex &index);
     void itemCollapsed(const QModelIndex &index);

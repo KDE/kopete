@@ -45,7 +45,7 @@ public:
 	int clientConfId() const;
 	GroupWise::ConferenceGuid conferenceGUID() const;
 	
-signals:
+Q_SIGNALS:
 	void created( const GroupWise::ConferenceGuid & guid );
 private: 
 	int m_confId; // the conference id given us before making the request

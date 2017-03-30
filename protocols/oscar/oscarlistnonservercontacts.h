@@ -40,7 +40,7 @@ public:
 protected:
     void slotButtonClicked( int buttonCode ) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
     void closing();
 
 private:

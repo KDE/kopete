@@ -132,7 +132,7 @@ public:
       */
     MetaContact *myself();
 
-public slots:
+public Q_SLOTS:
     /**
      * Add metacontacts into the contact list
      * When calling this method, contacts have to be already placed in the correct group.
@@ -201,7 +201,7 @@ public slots:
      */
     void shutdown();
 
-signals:
+Q_SIGNALS:
     /**
      * A meta contact was added to the contact list. Interested classes
      * ( like the listview widgets ) can connect to this signal to receive
@@ -257,7 +257,7 @@ signals:
 
     void contactListLoaded();
 
-private slots:
+private Q_SLOTS:
     /**
      * Called when the contact list changes. Flags the list dirty and schedules a save for a little while later.
      */

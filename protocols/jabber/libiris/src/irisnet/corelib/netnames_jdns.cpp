@@ -355,10 +355,10 @@ public:
 		return !mul_addr6.isNull();
 	}
 
-signals:
+Q_SIGNALS:
 	void interfacesChanged();
 
-private slots:
+private Q_SLOTS:
 	void jdns_debugReady()
 	{
 		QStringList lines = db.readDebugLines();
@@ -686,7 +686,7 @@ public:
 			Q_ARG(XMPP::NameResolver::Error, e));
 	}
 
-private slots:
+private Q_SLOTS:
 	void req_resultsReady()
 	{
 		QJDnsSharedRequest *req = (QJDnsSharedRequest *)sender();
@@ -831,7 +831,7 @@ public:
 		req.query(typeAndDomain, QJDns::Ptr);
 	}
 
-signals:
+Q_SIGNALS:
 	void available(const QByteArray &instance);
 	void unavailable(const QByteArray &instance);
 
@@ -857,7 +857,7 @@ private:
 		return friendlyName;
 	}
 
-private slots:
+private Q_SLOTS:
 	void jdns_resultsReady()
 	{
 		// ignore errors
@@ -950,7 +950,7 @@ public:
 		req.query(name, QJDns::Srv);
 	}
 
-signals:
+Q_SIGNALS:
 	void finished();
 	void error(QJDnsSharedRequest::Error e);
 
@@ -980,7 +980,7 @@ private:
 		return false;
 	}
 
-private slots:
+private Q_SLOTS:
 	void reqtxt_ready()
 	{
 		if(!reqtxt.success())
@@ -1175,10 +1175,10 @@ public:
 		return success_;
 	}
 
-signals:
+Q_SIGNALS:
 	void resultsReady();
 
-private slots:
+private Q_SLOTS:
 	void pub_addr_ready()
 	{
 		if(pub_addr.success())
@@ -1344,7 +1344,7 @@ public:
 		}
 	}
 
-signals:
+Q_SIGNALS:
 	void hostName(const QByteArray &str);
 
 private:
@@ -1419,7 +1419,7 @@ private:
 			emit hostName(QByteArray());
 	}
 
-private slots:
+private Q_SLOTS:
 	void doDisable()
 	{
 		bool lostHost = success;
@@ -1478,7 +1478,7 @@ public:
 	void start(const QJDns::Record &_rec);
 	void update(const QJDns::Record &_rec);
 
-signals:
+Q_SIGNALS:
 	void published();
 	void error(QJDnsSharedRequest::Error e);
 
@@ -1595,7 +1595,7 @@ public:
 		doPublishTxt();
 	}
 
-public slots:
+public Q_SLOTS:
 	// pass empty host if host lost
 	void hostChanged(const QByteArray &_host)
 	{
@@ -1619,7 +1619,7 @@ public slots:
 		}
 	}
 
-signals:
+Q_SIGNALS:
 	void published();
 	void error(QJDnsSharedRequest::Error e);
 
@@ -1768,7 +1768,7 @@ private:
 		extra->have = false;
 	}
 
-private slots:
+private Q_SLOTS:
 	void pub_srv_ready()
 	{
 		if(pub_srv.success())
@@ -2459,7 +2459,7 @@ private:
 			publishExtraItemList.remove(i);
 	}
 
-private slots:
+private Q_SLOTS:
 	void interfacesChanged()
 	{
 		if(pub_addresses)

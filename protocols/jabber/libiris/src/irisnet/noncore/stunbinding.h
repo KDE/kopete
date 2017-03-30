@@ -66,7 +66,7 @@ public:
 	// non-translatable diagnostic string for convenience
 	QString errorString() const;
 
-signals:
+Q_SIGNALS:
 	void success();
 	void error(XMPP::StunBinding::Error e);
 

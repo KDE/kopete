@@ -49,7 +49,7 @@ public:
 
 	int errorCode();
 
-private slots:
+private Q_SLOTS:
 	void slotConnected();
 	void slotError( int );
 

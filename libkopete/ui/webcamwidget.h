@@ -54,7 +54,7 @@ public:
      * @param text The text to be displayed
      */
     void setText(const QString &text);
-protected slots:
+protected Q_SLOTS:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 
 private:

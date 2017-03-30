@@ -32,7 +32,7 @@ public:
 	dlgAHCList(const XMPP::Jid &jid, XMPP::Client *client, QWidget *parent = nullptr);
 	~dlgAHCList();
 
-protected slots:
+protected Q_SLOTS:
 	void slotGetList();
 	void slotListReceived();
 	void slotExecuteCommand();

@@ -129,7 +129,7 @@ public:
 	void setDetail(const QMap<const char*, QByteArray>& map) 
 	{ m_contactDetail = map; }
 
-public slots:
+public Q_SLOTS:
 	void slotUserInfo() Q_DECL_OVERRIDE;
 	void deleteContact() Q_DECL_OVERRIDE;
 	virtual void sendFile( const KUrl &sourceURL = KUrl(),
@@ -142,10 +142,10 @@ public slots:
 
 	void setDisplayPicture(KTemporaryFile *f) ;
 
-signals:
+Q_SIGNALS:
 	void displayPictureChanged();
 
-private slots:
+private Q_SLOTS:
 	void slotBlockUser();
 	void slotShowProfile();
 	void slotSendMail();

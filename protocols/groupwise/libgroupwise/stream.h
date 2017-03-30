@@ -80,7 +80,7 @@ public:
 //	static QString xmlToString(const static XmlProtocol *foo = 0;
 //QDomElement &e, bool clip=false);
 
-signals:
+Q_SIGNALS:
 	void connectionClosed();
 	void delayedCloseFinished();
 	void readyRead();

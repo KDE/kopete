@@ -74,9 +74,9 @@ public:
 	 */
 	void requestDetails( const QString & dn, bool onlyUnknown = true );
 	
-signals:
+Q_SIGNALS:
 	void gotContactDetails( const GroupWise::ContactDetails & );
-protected slots:
+protected Q_SLOTS:
 	void slotReceiveContactDetails( const GroupWise::ContactDetails & );
 protected:
 	void dump( const QStringList & list );

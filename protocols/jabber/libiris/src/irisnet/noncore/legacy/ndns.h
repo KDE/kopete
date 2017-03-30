@@ -41,10 +41,10 @@ public:
 	QHostAddress result() const;
 	QString resultString() const;
 
-signals:
+Q_SIGNALS:
 	void resultsReady();
 
-private slots:
+private Q_SLOTS:
 	void dns_resultsReady(const QList<XMPP::NameRecord> &);
 	void dns_error(XMPP::NameResolver::Error);
 

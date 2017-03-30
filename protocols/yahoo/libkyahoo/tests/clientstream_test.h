@@ -31,7 +31,7 @@ public:
 	
 	bool isConnected();
 
-public slots:
+public Q_SLOTS:
 	void slotDoTest();
 	
 	void slotConnected();

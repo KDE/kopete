@@ -86,7 +86,7 @@ public:
 	 */
 	void printDebug();
 
-private slots:
+private Q_SLOTS:
 	void slotTransferData( KIO::Job *job, const QByteArray &data );
 	void slotTransferResult( KJob *job );
 	

@@ -61,19 +61,19 @@ public:
      */
     void openWallet(QObject *object, const char *slot);
 
-public slots:
+public Q_SLOTS:
     /**
      * Close the connection to the wallet. Will cause walletLost() to be emitted.
      */
     void closeWallet();
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted when the connection to the wallet is lost.
      */
     void walletLost();
 
-private slots:
+private Q_SLOTS:
     /**
      * Called by the stored wallet pointer when it is successfully opened or
      * when it fails.
@@ -106,7 +106,7 @@ class KopeteWalletSignal : public QObject
 {
     Q_OBJECT
     friend class Kopete::WalletManager;
-signals:
+Q_SIGNALS:
     void walletOpened(KWallet::Wallet *wallet);
 };
 

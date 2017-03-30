@@ -26,7 +26,7 @@ class ChatWindowStyle_Test : public KUnitTest::Tester
 public:
     void allTests();
 
-public slots:
+public Q_SLOTS:
     void testPaths();
     void testHtml();
     void testVariants();

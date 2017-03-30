@@ -43,13 +43,13 @@ public:
     Kopete::ChatSession *session();
 
     Kopete::Contact *contactAt(const QModelIndex &index) const;
-public slots:
+public Q_SLOTS:
     /**
      * Called when the ChatSession change for this list (eg. when the tab in the KopeteChatWindow is changing)
      */
     void setChatSession(Kopete::ChatSession *session);
 
-private slots:
+private Q_SLOTS:
     /**
      * Called when a contact is added to the chat session.
      * Adds this contact to the contact list view.

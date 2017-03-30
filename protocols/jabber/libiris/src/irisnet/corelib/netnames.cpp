@@ -898,7 +898,7 @@ public:
 		np->id = p_serv->publish_extra_start(np->id, rec);
 	}
 
-private slots:
+private Q_SLOTS:
 	void provider_resolve_resultsReady(int id, const QList<XMPP::NameRecord> &results)
 	{
 		NameResolver::Private *np = res_instances.value(id);

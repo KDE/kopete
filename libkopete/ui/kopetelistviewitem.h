@@ -467,7 +467,7 @@ protected:
 
     void setHeight(int);
 
-signals:
+Q_SIGNALS:
     void visibilityChanged(bool visibility);
 
 private:
@@ -476,7 +476,7 @@ private:
     void scheduleLayout();
     void mySetVisible(bool b);
 
-private slots:
+private Q_SLOTS:
     void slotColumnResized();
     void slotLayoutItems();
     void slotLayoutAnimateItems();

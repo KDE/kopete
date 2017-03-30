@@ -45,7 +45,7 @@ public:
     AutoReplacePlugin(QObject *parent, const QVariantList &args);
     ~AutoReplacePlugin();
 
-private slots:
+private Q_SLOTS:
     void slotInterceptMessage(Kopete::Message &msg);
 
     void slotSettingsChanged();

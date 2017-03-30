@@ -19,7 +19,7 @@ public:
 	QByteArray readOutgoing(int*);
 	int errorCode();
 
-signals:
+Q_SIGNALS:
 	void readyRead();
 	void readyReadOutgoing();
 	void error();

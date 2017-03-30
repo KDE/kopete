@@ -36,11 +36,11 @@ public:
 	void addParticipant( const QString &participant );
 private:
 	
-signals:
+Q_SIGNALS:
 	void readyToInvite( const QString &room, const QStringList &buddies, const QStringList &participants, const QString &msg );
-protected slots:
+protected Q_SLOTS:
 
-public slots:
+public Q_SLOTS:
 	virtual void slotInvite();
 	virtual void slotCancel();
 	virtual void slotAddCustom();

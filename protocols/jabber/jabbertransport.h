@@ -98,7 +98,7 @@ public:
      */
     QString legacyId(const XMPP::Jid &jid);
 
-public slots:
+public Q_SLOTS:
 
     /* Reimplemented from Kopete::Account */
     void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(), const OnlineStatusOptions &options = None) Q_DECL_OVERRIDE;

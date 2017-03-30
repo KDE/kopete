@@ -38,7 +38,7 @@ class URLPicPreviewPlugin : public Kopete::Plugin
     URLPicPreviewPlugin(const URLPicPreviewPlugin &);
     URLPicPreviewPlugin &operator=(const URLPicPreviewPlugin &);
 
-signals:
+Q_SIGNALS:
     void abortAllOperations();
 
 public:
@@ -49,7 +49,7 @@ private:
     QString prepareBody(const QString &parsedBody, uint previewCount = 0);
     QString createPreviewPicture(const KUrl &url);
 
-protected slots:
+protected Q_SLOTS:
     void aboutToDisplay(Kopete::Message &message);
     void readyForUnload();
 

@@ -50,7 +50,7 @@ public:
 protected:
 	void setupProperties( QMap< QString, QVariant > serverProps );
 	void init();
-protected slots:
+protected Q_SLOTS:
 	void copy();
 private:
 	Ui::GroupWiseContactProps m_ui;

@@ -43,11 +43,11 @@ public:
 	void onGo() Q_DECL_OVERRIDE;
 	void setAction( Action action );
 	void setEntry( const YABEntry & );
-signals:
+Q_SIGNALS:
 	void gotEntry( YABEntry * );
 	void gotRevision( long rev, bool merged );
 	void error( YABEntry *, const QString &);
-private slots:
+private Q_SLOTS:
 	void connectSucceeded();
 	void connectFailed( int );
 	void slotRead();

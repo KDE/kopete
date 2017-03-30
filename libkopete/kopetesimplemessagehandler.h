@@ -72,7 +72,7 @@ public:
 
     void handleMessage(MessageEvent *event) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
     void handle(Kopete::Message &message);
 
 private:

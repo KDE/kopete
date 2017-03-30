@@ -31,7 +31,7 @@ class TooltipEditDialog : public KDialog, private Ui::TooltipEditWidget
 public:
     TooltipEditDialog(QWidget *parent = nullptr);
 
-private slots:
+private Q_SLOTS:
     void slotUnusedSelected(const QItemSelection &);
     void slotUsedSelected(const QItemSelection &);
     void slotUpButton();
@@ -40,7 +40,7 @@ private slots:
     void slotRemoveButton();
     void slotOkClicked();
 
-signals:
+Q_SIGNALS:
     void changed(bool);
 
 private:

@@ -247,7 +247,7 @@ public:
 		tryCleanup();
 	}
 
-private slots:
+private Q_SLOTS:
 	void sock_readyRead()
 	{
 		QUdpSocket *sock = (QUdpSocket *)sender();

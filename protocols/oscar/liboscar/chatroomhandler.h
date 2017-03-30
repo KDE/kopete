@@ -45,7 +45,7 @@ public Q_SLOTS:
 	void reject();
 	void accept();
 
-signals:
+Q_SIGNALS:
 	void joinChatRoom( const QString& roomName, int exchange );
 
 private:

@@ -29,11 +29,11 @@ public:
 	explicit dlgXMPPConsole(JabberClient *client, QWidget *parent = nullptr);
 	virtual ~dlgXMPPConsole();
 
-public slots:
+public Q_SLOTS:
 	void slotIncomingXML(const QString &msg);
 	void slotOutgoingXML(const QString &msg);
 
-private slots:
+private Q_SLOTS:
 	void slotSend();
 	void slotClear();
 

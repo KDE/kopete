@@ -126,7 +126,7 @@ public:
         ConnectIfOffline = 0x01
     };
 
-public slots:
+public Q_SLOTS:
     /**
      * @brief Set all accounts a status in the specified category
      *
@@ -173,7 +173,7 @@ public slots:
      */
     void load();
 
-signals:
+Q_SIGNALS:
     /**
      * \brief Signals when an account is ready for use
      */
@@ -201,7 +201,7 @@ private:
      */
     AccountManager();
 
-private slots:
+private Q_SLOTS:
     /**
      * Try to connect every account that should be connected automatically
      */

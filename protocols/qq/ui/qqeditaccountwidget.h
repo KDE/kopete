@@ -44,7 +44,7 @@ public:
 	 */
 	bool validateData() Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
 	void slotOpenRegister();
 
 private:

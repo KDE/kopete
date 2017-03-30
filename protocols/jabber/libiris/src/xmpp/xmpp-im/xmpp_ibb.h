@@ -77,10 +77,10 @@ namespace XMPP
 	protected:
 		qint64 writeData(const char *data, qint64 maxSize) Q_DECL_OVERRIDE;
 
-	signals:
+	Q_SIGNALS:
 		void connected();
 
-	private slots:
+	private Q_SLOTS:
 		void ibb_finished();
 		void trySend();
 
@@ -113,14 +113,14 @@ namespace XMPP
 		BSConnection *createConnection() Q_DECL_OVERRIDE;
 		IBBConnection *takeIncoming();
 
-	public slots:
+	public Q_SLOTS:
 		void takeIncomingData(const Jid &from, const QString &id,
 							  const IBBData &data, Stanza::Kind);
 
 	protected:
 		const char* sidPrefix() const Q_DECL_OVERRIDE;
 
-	private slots:
+	private Q_SLOTS:
 		void ibb_incomingRequest(const Jid &from, const QString &id,
 								 const QString &sid, int blockSize,
 								 const QString &stanza);
@@ -162,7 +162,7 @@ namespace XMPP
 		int mode() const;
 		int bytesWritten() const;
 
-	signals:
+	Q_SIGNALS:
 		void incomingRequest(const Jid &from, const QString &id,
 							 const QString &sid, int blockSize,
 							 const QString &stanza);

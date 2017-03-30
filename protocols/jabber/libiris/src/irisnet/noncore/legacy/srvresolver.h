@@ -62,10 +62,10 @@ public:
 	QHostAddress resultAddress() const;
 	quint16 resultPort() const;
 
-signals:
+Q_SIGNALS:
 	void resultsReady();
 
-private slots:
+private Q_SLOTS:
 	void nndns_resultsReady(const QList<XMPP::NameRecord> &);
 	void nndns_error(XMPP::NameResolver::Error);
 	void ndns_done();

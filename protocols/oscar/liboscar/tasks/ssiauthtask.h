@@ -40,7 +40,7 @@ public:
 	void grantFutureAuth( const QString& uin, const QString& reason );
 	void sendAuthRequest( const QString& uin, const QString& reason );
 	void sendAuthReply( const QString& uin, const QString& reason, bool auth );
-signals:
+Q_SIGNALS:
 	void futureAuthGranted( const QString& uin, const QString& reason );
 	void authRequested( const QString& uin, const QString& reason );
 	void authReplied( const QString& uin, const QString& reason, bool auth );

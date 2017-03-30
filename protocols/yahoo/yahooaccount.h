@@ -125,7 +125,7 @@ public:
 	void sendChatMessage( const Kopete::Message &msg, const QString &handle );
 	void prepareConference( const QString &who );
 	void sendFile( YahooContact *to, const KUrl &url );
-public slots:
+public Q_SLOTS:
 	/**
 	 * Connect to the Yahoo service
 	 */
@@ -139,7 +139,7 @@ public slots:
 	void setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
 	                      const OnlineStatusOptions& options = None ) Q_DECL_OVERRIDE;
 	void setStatusMessage(const Kopete::StatusMessage&) Q_DECL_OVERRIDE;
-signals:
+Q_SIGNALS:
 	/**
 	 * Emitted when we receive notification that the person we're talking to is typing
 	 */
@@ -167,7 +167,7 @@ protected:
 	 */
 	QString stripMsgColorCodes(const QString& msg);
 
-protected slots:
+protected Q_SLOTS:
 	void slotConnected();
 	void slotGoOnline();
 	void slotGoOffline();

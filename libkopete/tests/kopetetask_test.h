@@ -32,7 +32,7 @@ public:
         return m_parsed;
     }
 
-private slots:
+private Q_SLOTS:
     void start();
 
 private:
@@ -45,7 +45,7 @@ private:
 class KopeteTaskTest : public QObject
 {
     Q_OBJECT
-private slots:
+private Q_SLOTS:
     void testEmoticonTask();
 };
 

@@ -38,7 +38,7 @@ public:
 	void setRule(const PrivacyListItem&);
 	PrivacyListItem rule() const;
 
-protected slots:
+protected Q_SLOTS:
 	void type_selected(const QString&);
 
 private:

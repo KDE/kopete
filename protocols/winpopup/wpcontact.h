@@ -59,12 +59,12 @@ public:
     Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate) Q_DECL_OVERRIDE;
     void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData) Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
     void slotUserInfo() Q_DECL_OVERRIDE;
     void slotCheckStatus(); // the call back for the checkStatus timer
     void slotNewMessage(const QString &Body, const QDateTime &Arrival);
 
-private slots:
+private Q_SLOTS:
     void slotChatSessionDestroyed();
     void slotSendMessage(Kopete::Message &message);
     void slotCloseUserInfoDialog(); // Called when the userinfo dialog is getting closed

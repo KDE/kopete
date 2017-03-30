@@ -42,7 +42,7 @@ public:
 	QLabel *noaddMsg1;
 	QLabel *noaddMsg2;
 	bool canadd;
-public slots:
+public Q_SLOTS:
 	void slotPromtReceived();
 };
 
@@ -58,7 +58,7 @@ class  JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND : p
 		JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND( JabberTransport * , Kopete::MetaContact *mc, QObject *parent);
 		Kopete::MetaContact *metacontact;
 		JabberTransport *transport;
-	public slots:
+	public Q_SLOTS:
 		void slotJidReceived();
 };
 

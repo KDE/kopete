@@ -127,7 +127,7 @@ public:
         LoadSync, LoadAsync
     };
 
-public slots:
+public Q_SLOTS:
     /**
      * @brief Load a single plugin by plugin name. Returns an existing plugin
      * if one is already loaded in memory.
@@ -151,7 +151,7 @@ public slots:
      */
     void loadAllPlugins();
 
-signals:
+Q_SIGNALS:
     /**
      * @brief Signals a new plugin has just been loaded.
      */
@@ -189,7 +189,7 @@ signals:
      */
     void allPluginsLoaded();
 
-private slots:
+private Q_SLOTS:
     /**
      * @brief Cleans up some references if the plugin is destroyed
      */

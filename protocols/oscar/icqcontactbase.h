@@ -41,7 +41,7 @@ public:
 	            const QString& icon = QString() );
 	virtual ~ICQContactBase();
 
-private slots:
+private Q_SLOTS:
 	void receivedXStatusMessage( const QString& contact, int icon, const QString& description, const QString& message );
 
 };

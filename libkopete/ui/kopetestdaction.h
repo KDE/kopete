@@ -108,7 +108,7 @@ public:
     explicit KopetePreferencesAction(KActionCollection *parent, const char *name = 0);
     ~KopetePreferencesAction();
 
-protected slots:
+protected Q_SLOTS:
     void slotShowPreferences();
 private:
     static KSettings::Dialog *s_settingsDialog;

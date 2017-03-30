@@ -228,7 +228,7 @@ public:
      */
     QStringList findUrls(const Kopete::Message &msg);
 
-signals:
+Q_SIGNALS:
     /**
      * @brief the KMM will be deleted
      * Used by a Kopete::ChatSession to signal that it is closing.
@@ -337,7 +337,7 @@ signals:
      */
     void toggleGraphicOverride(bool enable);
 
-public slots:
+public Q_SLOTS:
     /**
      * @brief Got a typing notification from a user
      */
@@ -454,7 +454,7 @@ public slots:
      */
     void raiseView();
 
-private slots:
+private Q_SLOTS:
     void clearChains();
     void slotUpdateDisplayName();
     void slotViewDestroyed();

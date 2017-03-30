@@ -45,7 +45,7 @@ public:
 
 	bool validateData() Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
 	bool apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact) Q_DECL_OVERRIDE;
 };
 

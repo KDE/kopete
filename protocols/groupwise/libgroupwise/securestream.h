@@ -57,11 +57,11 @@ public:
 	void write(const QByteArray &) Q_DECL_OVERRIDE;
 	int bytesToWrite() const Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void tlsHandshaken();
 	void tlsClosed();
 
-private slots:
+private Q_SLOTS:
 	void bs_readyRead();
 	void bs_bytesWritten(int);
 
@@ -131,14 +131,14 @@ public:
 	bool tls_done;
 	int prebytes;
 
-signals:
+Q_SIGNALS:
         void tlsHandshaken();
         void tlsClosed(const QByteArray &);
         void readyRead(const QByteArray &);
         void needWrite(const QByteArray &);
         void error(int);
 
-private slots:
+private Q_SLOTS:
         void tls_handshaken();
         void tls_readyRead();
         void tls_readyReadOutgoing(int plainBytes);

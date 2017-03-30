@@ -106,7 +106,7 @@ public:
 	//   required to provide a fingerprint.
 	void setFingerprintRequired(bool enabled);
 
-signals:
+Q_SIGNALS:
 	// you must use a direct connection with this signal and call
 	//   setMessage() in the slot.  this signal may occur many times
 	//   before the StunTransaction completes, and you must recreate the
@@ -174,7 +174,7 @@ public:
 
 	void setDebugLevel(DebugLevel level); // default DL_None
 
-signals:
+Q_SIGNALS:
 	// note: not DOR-SS safe.  writeIncomingMessage() must not be called
 	//   during this signal.
 	//

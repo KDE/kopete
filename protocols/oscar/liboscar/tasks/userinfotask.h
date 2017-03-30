@@ -47,7 +47,7 @@ public:
 	void requestInfoFor( const QString& userId, unsigned int types );
 	UserDetails getInfoFor( Oscar::DWORD sequence ) const;
 
-signals:
+Q_SIGNALS:
 	void gotInfo( Oscar::DWORD seqNumber );
 	void receivedProfile( const QString& contact, const QString& profile );
 	void receivedAwayMessage( const QString& contact, const QString& message );

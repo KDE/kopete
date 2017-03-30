@@ -147,7 +147,7 @@ public:
 	
 	void syncContact( GroupWiseContact * contact );
 	
-public slots:
+public Q_SLOTS:
 
 	void slotTestRTFize();
 
@@ -166,14 +166,14 @@ public slots:
 	 */
 	void setStatusMessage( const Kopete::StatusMessage &statusMessage ) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void conferenceCreated( const int mmId, const GroupWise::ConferenceGuid & guid );
 	void conferenceCreationFailed( const int mmId, const int statusCode );
 	void contactTyping( const ConferenceEvent & );
 	void contactNotTyping( const ConferenceEvent & );
 	void privacyChanged( const QString & dn, bool allowed );
 
-protected slots:
+protected Q_SLOTS:
     void slotMessageSendingFailed();
 	/**
 	 * Set an auto reply message for use when the account is away
@@ -361,9 +361,9 @@ private:
 	Q_OBJECT
   public:
 	OnlineStatusMessageAction ( const Kopete::OnlineStatus& status, const QString &text, const QString &message, const QIcon &pix, QObject *parent=0, const char *name=0);
-  signals:
+  Q_SIGNALS:
 	void activated( const Kopete::OnlineStatus& status, const QString & );
-  private slots:
+  private Q_SLOTS:
 	void slotActivated();
   private:
 	Kopete::OnlineStatus m_status;

@@ -51,7 +51,7 @@ namespace XMPP
 		void onGo() Q_DECL_OVERRIDE;
 		bool take(const QDomElement &) Q_DECL_OVERRIDE;
 
-	private slots:
+	private Q_SLOTS:
 		void cachedReady();
 
 	private:

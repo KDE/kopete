@@ -55,7 +55,7 @@ public:
      */
     virtual bool apply(Kopete::Account *, Kopete::MetaContact *) = 0;
 
-signals:
+Q_SIGNALS:
     /**
      * New incarnation of validateData, emit it every time you think the current data is valid/invalid
      */

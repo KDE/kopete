@@ -49,11 +49,11 @@ public:
      */
     void setIdentity(Kopete::Identity *identity);
 
-private slots:
+private Q_SLOTS:
     void slotProtocolListClicked();
     void slotProtocolListDoubleClicked();
 
-protected slots:
+protected Q_SLOTS:
     void back() Q_DECL_OVERRIDE;
     void next() Q_DECL_OVERRIDE;
     void accept() Q_DECL_OVERRIDE;

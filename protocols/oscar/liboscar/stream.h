@@ -51,7 +51,7 @@ public:
 	 */
 	virtual void write( Transfer *request ) = 0;
 
-signals:
+Q_SIGNALS:
 	void disconnected();
 	void readyRead(); //signals that there is a transfer ready to be read
 	void error( int );

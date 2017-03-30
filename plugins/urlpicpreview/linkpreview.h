@@ -42,7 +42,7 @@ public:
 private:
     LinkPreview();
 
-protected slots:
+protected Q_SLOTS:
     void completed();
 
 private:

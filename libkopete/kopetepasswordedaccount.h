@@ -79,7 +79,7 @@ public:
      */
     bool removeAccount() Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
     /**
      * Called when your account should attempt to connect.
      * @param password The password to connect with, or QString()
@@ -95,7 +95,7 @@ protected:
      */
     virtual QString passwordPrompt();
 
-protected slots:
+protected Q_SLOTS:
     /**
      * @internal
      * Reimplemented to set the password wrong if the reason is BadPassword

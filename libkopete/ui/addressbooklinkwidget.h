@@ -61,7 +61,7 @@ public:
      * Return the selected addressbook UID.
      */
     QString uid() const;
-signals:
+Q_SIGNALS:
     /**
      * Emitted when the selected addressee changed.  addr is the KContacts::Addressee that was selected. If addr.isEmpty() is empty, the clear button was clicked.
      */
@@ -72,7 +72,7 @@ signals:
      * To do so, QObject::disconnect() btnSelectAddressee and connect your own slot to this signal
      */
     void selectAddresseeClicked();
-protected slots:
+protected Q_SLOTS:
     void slotClearAddressee();
     void slotSelectAddressee();
 private:

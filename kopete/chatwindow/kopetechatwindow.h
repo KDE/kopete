@@ -182,16 +182,16 @@ private:
 
     bool m_UpdateChatLabel;
 
-signals:
+Q_SIGNALS:
     void closing(KopeteChatWindow *);
     void chatSessionChanged(Kopete::ChatSession *newSession);
 
-public slots:
+public Q_SLOTS:
     void slotSmileyActivated(const QString &);
     void setActiveView(QWidget *active);
     void updateBackground(const QPixmap &pm);
 
-private slots:
+private Q_SLOTS:
 //	void slotPrepareSmileyMenu();
     void testCanDecode(const QDragMoveEvent *, bool &);
     void receivedDropEvent(QWidget *, QDropEvent *);

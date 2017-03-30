@@ -110,7 +110,7 @@ public:
      **/
     void removeProperty(const Kopete::PropertyTmpl &tmpl);
 
-signals:
+Q_SIGNALS:
     void propertyChanged(Kopete::PropertyContainer *container, const QString &key, const QVariant &oldValue, const QVariant &newValue);
 
 private:

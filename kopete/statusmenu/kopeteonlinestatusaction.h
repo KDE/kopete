@@ -33,9 +33,9 @@ public:
     OnlineStatusAction (const OnlineStatus &status, const QString &text, const QIcon &pix, QObject *parent);
     ~OnlineStatusAction();
 
-signals:
+Q_SIGNALS:
     void activated(const Kopete::OnlineStatus &status);
-private slots:
+private Q_SLOTS:
     void slotActivated();
 private:
     class Private;

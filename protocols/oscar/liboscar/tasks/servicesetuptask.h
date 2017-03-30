@@ -45,7 +45,7 @@ public:
 	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 	void onGo() Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
 	void childTaskFinished();
 
 private:

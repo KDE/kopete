@@ -138,7 +138,7 @@ public:
      */
     void save();
 
-public slots:
+public Q_SLOTS:
     /**
      * @brief Sets the online status for this identity
      * Sets the online status for each account in this identity, except those which are set to
@@ -165,10 +165,10 @@ public slots:
 
     void updateOnlineStatus();
 
-protected slots:
+protected Q_SLOTS:
     void slotSaveProperty(Kopete::PropertyContainer *container, const QString &key, const QVariant &oldValue, const QVariant &newValue);
 
-signals:
+Q_SIGNALS:
     void onlineStatusChanged(Kopete::Identity *);
     void toolTipChanged(Kopete::Identity *);
     void identityDestroyed(const Kopete::Identity *identity);

@@ -73,7 +73,7 @@ public:
 	 * Return a reference to the server stub
 	 */
 	TestbedFakeServer* server();
-public slots:
+public Q_SLOTS:
 	/**
 	 * Called by the server when it has a message for us.
 	 * This identifies the sending Kopete::Contact and passes it a Kopete::Message
@@ -87,7 +87,7 @@ protected:
 	void updateContactStatus();
 	TestbedFakeServer* m_server;
 
-protected slots:
+protected Q_SLOTS:
 	/**
 	 * Change the account's status.  Called by KActions and internally.
 	 */

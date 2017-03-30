@@ -147,7 +147,7 @@ public:
 	
 	virtual QString lastReceivedMessageId () const { return QString(); }
 
-public slots:
+public Q_SLOTS:
 
 	/**
 	 * Retrieve a vCard for the contact

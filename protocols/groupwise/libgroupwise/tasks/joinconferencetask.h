@@ -43,7 +43,7 @@ public:
 	QStringList participants() const;
 	QStringList invitees() const;
 	ConferenceGuid guid() const;
-public slots:
+public Q_SLOTS:
 	void slotReceiveUserDetails( const GroupWise::ContactDetails & details );
 private:
 	ConferenceGuid m_guid;

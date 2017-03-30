@@ -402,7 +402,7 @@ public:
      */
     StatusMessage statusMessage() const;
 
-public slots:
+public Q_SLOTS:
 
     /**
      * @brief Send a file to this metacontact
@@ -426,7 +426,7 @@ public slots:
      */
     void serialize();
 
-signals:
+Q_SIGNALS:
     /**
      * One of the subcontacts' idle status has changed.  As with online status,
      * this can occur without the metacontact changing idle state
@@ -438,7 +438,7 @@ signals:
      */
     void statusMessageChanged(Kopete::MetaContact *metaContact);
 
-public slots:
+public Q_SLOTS:
 
     /**
      * @brief Move a contact from one group to another.
@@ -512,7 +512,7 @@ public slots:
      */
     void slotProtocolLoaded(Kopete::Protocol *p);
 
-signals:
+Q_SIGNALS:
     /**
      *  @brief The MetaContact online status changed
      */
@@ -571,7 +571,7 @@ signals:
      */
     void persistentDataChanged();
 
-private slots:
+private Q_SLOTS:
     /**
      * Update the contact's online status and emit onlineStatusChanged
      * when appropriate

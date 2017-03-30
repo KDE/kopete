@@ -44,7 +44,7 @@ public:
 
     ~SocketTimeoutWatcher();
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted when timeout is reached.
      * @note socketError is always QAbstractSocket::RemoteHostClosedError
@@ -52,7 +52,7 @@ signals:
     void error(QAbstractSocket::SocketError socketError);
     void errorInt(int socketError);
 
-private slots:
+private Q_SLOTS:
     void bytesWritten();
     void ackTimeoutCheck();
 

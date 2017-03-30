@@ -134,10 +134,10 @@ private:
     QString fingerprint(const OnlineStatus &statusFor, const QString &icon, int size, QColor color, bool idle = false);
     QPixmap *renderIcon(const OnlineStatus &statusFor, const QString &baseicon, int size, QColor color, bool idle = false) const;
 
-signals:
+Q_SIGNALS:
     void iconsChanged();
 
-private slots:
+private Q_SLOTS:
     void slotIconsChanged();
 
 private:

@@ -79,7 +79,7 @@ public:
      */
     QString formatName(const QString &sourceName, Qt::TextFormat format) const;
 
-public slots:
+public Q_SLOTS:
     /**
      * Initiates a copy action
      * If there is text selected in the HTML view, that text is copied
@@ -153,7 +153,7 @@ public slots:
      */
     KDE_DEPRECATED void slotToggleGraphicOverride(bool enable);
 
-signals:
+Q_SIGNALS:
     /**
      * Emits before the context menu is about to show
      */
@@ -164,7 +164,7 @@ signals:
      */
     void tooltipEvent(const QString &textUnderMouse, QString &toolTip);
 
-private slots:
+private Q_SLOTS:
     void slotOpenURLRequest(const QUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &);
     void slotFileTransferIncomingDone(unsigned int id);
     void slotScrollView();

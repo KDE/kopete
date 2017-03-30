@@ -22,7 +22,7 @@
 class StatusMessage_Test : public QObject
 {
     Q_OBJECT
-private slots:
+private Q_SLOTS:
     void testNormalStatus();
     void testMusicMetaData();
     void testAppendHash();

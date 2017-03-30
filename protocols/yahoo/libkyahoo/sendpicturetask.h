@@ -56,7 +56,7 @@ private:
 	void sendChecksum();
 	void sendInformation();
 	void sendStatus();
-private slots:
+private Q_SLOTS:
 	void connectSucceeded();
 	void connectFailed( int );
 	void readResult();

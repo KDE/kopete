@@ -71,13 +71,13 @@ private:
     //KContacts::AddressBook * m_addressBook;
     KContacts::Addressee m_addressee;
 
-protected slots:
+protected Q_SLOTS:
     void slotAddAddresseeClicked();
     /**
      * Utility function, populates the addressee list
      */
     void slotLoadAddressees();
-signals:
+Q_SIGNALS:
     void addresseeListClicked(QTreeWidgetItem *addressee);
     void addAddresseeClicked();
 };

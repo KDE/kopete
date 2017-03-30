@@ -43,7 +43,7 @@ public:
     * @param maxPasswordLength The maximum length for passwords for this account, or 0 for no limit
     */
     ManagedConnectionAccount(Protocol *parent, const QString &acctId);
-public slots:
+public Q_SLOTS:
     /**
      * @brief Begin the connection process, by checking if the connection is available with the ConnectionManager.
      * This method is called by PasswordedAccount::connect()
@@ -57,7 +57,7 @@ protected:
      * network connection and connect to the server.
      */
     virtual void performConnectWithPassword(const QString &password) = 0;
-protected slots:
+protected Q_SLOTS:
     /**
      * @brief Handle a change in the network connection
      * Called by the ConnectionManager when the network comes up or fails.

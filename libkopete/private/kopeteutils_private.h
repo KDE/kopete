@@ -41,7 +41,7 @@ public:
     static NotifyHelper *self();
     void registerNotification(const KNotification *event, ErrorNotificationInfo error);
     void unregisterNotification(const KNotification *event);
-public slots:
+public Q_SLOTS:
     void slotEventActivated(unsigned int action);
     void slotEventClosed();
 private:

@@ -89,7 +89,7 @@ public:
 	 * Reimplemented from Kopete::ChatSession - invites contacts via DND
 	 */
 	void inviteContact(const QString& ) Q_DECL_OVERRIDE;
-signals:
+Q_SIGNALS:
 	/**
 	 * Tell the contact we got a GUID so it can route incoming messages here.
 	 */
@@ -107,7 +107,7 @@ protected:
 	 * Sends any messages and invitations that were queued while waiting for the conference to be created
 	 */
 	void dequeueMessagesAndInvites();
-protected slots:
+protected Q_SLOTS:
 	/**
 	 * Receive the GUID returned by the server when we start a chat.
 	 * @param mmId Message Manager ID, used to determine if this GUID is meant for this message manager

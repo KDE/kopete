@@ -42,7 +42,7 @@ public:
 
 	void setSSIItem( const OContact& ssiItem ) Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
 	void slotUserInfo() Q_DECL_OVERRIDE;
 	void userInfoUpdated( const QString& contact, const UserDetails& details ) Q_DECL_OVERRIDE;
 	void userOnline( const QString& userId ) Q_DECL_OVERRIDE;
@@ -50,10 +50,10 @@ public slots:
 	void updateProfile( const QString& contact, const QString& profile );
 	void gotWarning( const QString& contact, quint16, quint16 );
 
-signals:
+Q_SIGNALS:
 	void updatedProfile();
 
-private slots:
+private Q_SLOTS:
 	void closeUserInfoDialog();
 	void warnUser();
 

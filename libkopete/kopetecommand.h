@@ -96,7 +96,7 @@ public:
         return m_type;
     }
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted whenever a command is handled by this object. When a command
      * has been handled, all processing on it stops by the command handler
@@ -104,7 +104,7 @@ signals:
      */
     void handleCommand(const QString &args, Kopete::ChatSession *manager);
 
-private slots:
+private Q_SLOTS:
     /**
      * Connected to our activated() signal
      */

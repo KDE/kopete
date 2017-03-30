@@ -138,7 +138,7 @@ public:
 	 */
 	bool changeContactGroupInSSI( const QString& contact, const QString& newGroupName, bool autoAddGroup );
 
-public slots:
+public Q_SLOTS:
 	void slotGoOffline();
 
 	void slotGoOnline();
@@ -164,7 +164,7 @@ protected:
 
 	virtual QString sanitizedMessage( const QString& message ) const;
 
-protected slots:
+protected Q_SLOTS:
 
 	//! do stuff on login
 	virtual void loginActions();
@@ -200,7 +200,7 @@ protected slots:
 
 	void chatroomRequest( ChatRoomHandler* handler );
 
-signals:
+Q_SIGNALS:
 
 	void accountDisconnected( Kopete::Account::DisconnectReason reason );
 
@@ -218,7 +218,7 @@ private:
 
 	QList<QDomNode> getElementsByTagNameCI( const QDomNode& node, const QString& tagName ) const;
 
-private slots:
+private Q_SLOTS:
 	/** Handler from socket errors from a connection */
 	void slotSocketError( int, const QString& );
 

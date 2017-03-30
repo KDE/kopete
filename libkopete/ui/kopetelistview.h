@@ -127,7 +127,7 @@ public:
      * Gets the mouse navigation status
      */
     bool mouseNavigation() const;
-public slots:
+public Q_SLOTS:
     /**
      * Calls QListView::sort()
      */
@@ -150,10 +150,10 @@ protected:
      */
     bool eventFilter(QObject *o, QEvent *e) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
     void visibleSizeChanged();
 
-private slots:
+private Q_SLOTS:
     void slotContextMenu(QTreeWidget *, QTreeWidgetItem *item, const QPoint &point);
     void slotDoubleClicked(QTreeWidgetItem *item);
     /**

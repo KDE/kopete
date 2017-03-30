@@ -70,7 +70,7 @@ public:
 
 	QString lastReceivedMessageId () const Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
 
 	/**
 	 * Remove this contact from the roster
@@ -124,7 +124,7 @@ public slots:
 	void startJingleVideoCall();
 #endif
 
-private slots:
+private Q_SLOTS:
 
 	/**
 	 * Send type="subscribed" to contact

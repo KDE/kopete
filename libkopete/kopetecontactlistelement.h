@@ -186,7 +186,7 @@ public:
      */
     void setUseCustomIcon(bool useCustomIcon);
 
-signals:
+Q_SIGNALS:
     /**
      * The plugin data was changed (by a plugin)
      */

@@ -33,7 +33,7 @@ public:
   ~dlgJabberChatJoin();
   /*$PUBLIC_FUNCTIONS$*/
 
-public slots:
+public Q_SLOTS:
   /*$PUBLIC_SLOTS$*/
   virtual void          slotJoin();
   virtual void          slotQuery();
@@ -41,7 +41,7 @@ public slots:
 protected:
   /*$PROTECTED_FUNCTIONS$*/
 
-protected slots:
+protected Q_SLOTS:
   /*$PROTECTED_SLOTS$*/
 
 private:
@@ -53,7 +53,7 @@ private:
 		should be merged elsewhere !
 	*/
 	void checkDefaultChatroomServer();
-private slots:
+private Q_SLOTS:
 	void slotQueryFinished();
 	void slotDiscoFinished();
 	void slotChatRooomsQueryFinished();

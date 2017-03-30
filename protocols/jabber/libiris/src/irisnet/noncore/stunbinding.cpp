@@ -88,7 +88,7 @@ public:
 		trans->start(pool, stunAddr, stunPort);
 	}
 
-private slots:
+private Q_SLOTS:
 	void trans_createMessage(const QByteArray &transactionId)
 	{
 		StunMessage message;

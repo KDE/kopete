@@ -40,7 +40,7 @@ public:
 	virtual void write(const QByteArray &a)=0;
 	virtual void writeIncoming(const QByteArray &a)=0;
 
-signals:
+Q_SIGNALS:
 	void success();
 	void fail();
 	void closed();

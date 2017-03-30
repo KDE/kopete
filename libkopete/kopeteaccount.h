@@ -459,7 +459,7 @@ protected:
      */
     void setAccountLabel(const QString &label);
 
-protected slots:
+protected Q_SLOTS:
     /**
      * \brief The service has been disconnected
      *
@@ -494,7 +494,7 @@ protected slots:
  */
     void networkingStatusChanged(const Solid::Networking::Status status);
 
-signals:
+Q_SIGNALS:
     /**
      * The color of the account has been changed
      *
@@ -529,7 +529,7 @@ public:
      */
     bool registerContact(Contact *c);
 
-public slots:
+public Q_SLOTS:
     /**
      * @brief Go online for this service.
      *
@@ -549,7 +549,7 @@ public slots:
      */
     virtual void disconnect() = 0;
 
-public slots:
+public Q_SLOTS:
     /**
      * Reimplement this function to set the online status
      * @param status is the new status
@@ -600,7 +600,7 @@ public slots:
      */
     virtual void unblock(const QString &contactId);
 
-private slots:
+private Q_SLOTS:
     /**
      * Restore online status and status message on reconnect.
      */

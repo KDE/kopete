@@ -44,7 +44,7 @@ public:
 	static SafeDeleteLater *ensureExists();
 	void deleteItLater(QObject *o);
 
-private slots:
+private Q_SLOTS:
 	void explode();
 
 private:

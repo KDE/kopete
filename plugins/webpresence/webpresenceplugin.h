@@ -69,7 +69,7 @@ public:
 
     void aboutToUnload() Q_DECL_OVERRIDE;
 
-protected slots:
+protected Q_SLOTS:
     /**
      * Called when settings were changed
      */

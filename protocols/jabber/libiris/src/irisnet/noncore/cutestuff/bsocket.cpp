@@ -55,7 +55,7 @@ public:
 		connect(sock, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(sock_error(QAbstractSocket::SocketError)), Qt::QueuedConnection);
 	}
 
-signals:
+Q_SIGNALS:
 	void hostFound();
 	void connected();
 	void disconnected();
@@ -63,7 +63,7 @@ signals:
 	void bytesWritten(qint64);
 	void error(QAbstractSocket::SocketError);
 
-public slots:
+public Q_SLOTS:
 	void sock_hostFound()
 	{
 		emit hostFound();
@@ -269,7 +269,7 @@ private:
 		lastIndex = -1;
 	}
 
-private slots:
+private Q_SLOTS:
 	/*
 	Notice: most probably recipient should reparent socket and relay
 	*/
@@ -382,7 +382,7 @@ private slots:
 		}
 	}
 
-signals:
+Q_SIGNALS:
 	void connected();
 	void error(QAbstractSocket::SocketError);
 };

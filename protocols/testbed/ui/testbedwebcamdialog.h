@@ -43,9 +43,9 @@ public:
 	explicit TestbedWebcamDialog( const QString &, QWidget* parent = nullptr );
 	~TestbedWebcamDialog();
 	
-public slots:
+public Q_SLOTS:
 	void slotUpdateImage();
-//signals:
+//Q_SIGNALS:
 //	void closingWebcamDialog();
 	
 private:

@@ -46,7 +46,7 @@ public:
 	bool validateData() Q_DECL_OVERRIDE;
 	Kopete::Account *apply() Q_DECL_OVERRIDE;
 	
-private slots:
+private Q_SLOTS:
 	void slotOpenRegister();
 	
 protected:

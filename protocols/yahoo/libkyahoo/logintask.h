@@ -73,7 +73,7 @@ protected Q_SLOTS:
 	void handleAuthSixteenStage2Data(KIO::Job*, const QByteArray& data);
 	void handleAuthSixteenStage2Result(KJob*);
 
-signals:
+Q_SIGNALS:
 	void haveSessionID( uint );
 	void haveCookies();
 	void loginResponse( int, const QString& );

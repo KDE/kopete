@@ -36,7 +36,7 @@ public:
     void load() Q_DECL_OVERRIDE;
     void save() Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
     void PreferencesChanged();
 
 private:
@@ -45,7 +45,7 @@ private:
     QStringListModel *p_contactsListModel;
     BookmarksPrefsSettings m_settings;
 
-private slots:
+private Q_SLOTS:
     void slotSetStatusChanged();
 };
 

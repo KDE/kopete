@@ -27,7 +27,7 @@ public:
     StatusConfig_Manager(QWidget *parent = nullptr);
     ~StatusConfig_Manager();
 
-public slots:
+public Q_SLOTS:
     void load();
     void save();
 
@@ -35,10 +35,10 @@ public slots:
     void addGroup();
     void removeStatus();
 
-signals:
+Q_SIGNALS:
     void changed();
 
-private slots:
+private Q_SLOTS:
     void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
 
     void editTitleEdited(const QString &text);

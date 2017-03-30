@@ -59,7 +59,7 @@ class GroupWiseChatPropsDialog : public KDialog
 		GroupWise::Chatroom room();
 	protected:
 		void initialise();
-	protected slots:
+	protected Q_SLOTS:
 		void slotWidgetChanged();
 	private:
 		Ui::GroupWiseChatProps m_ui;

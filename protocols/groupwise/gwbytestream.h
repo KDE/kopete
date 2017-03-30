@@ -46,13 +46,13 @@ public:
 
 	QTcpSocket *socket () const;
 
-signals:
+Q_SIGNALS:
 	void connected ();
 
 protected:
 	int tryWrite () Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
 	void slotConnected ();
 	void slotConnectionClosed ();
 	void slotReadyRead ();

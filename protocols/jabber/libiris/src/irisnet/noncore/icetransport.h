@@ -58,7 +58,7 @@ public:
 
 	virtual void setDebugLevel(DebugLevel level) = 0;
 
-signals:
+Q_SIGNALS:
 	void started();
 	void stopped();
 	void error(int e);

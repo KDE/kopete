@@ -114,7 +114,7 @@ public:
 	 */
 	virtual void setEncoding( int mib );
 
-public slots:	
+public Q_SLOTS:	
 	/** Remove this contact from the server. Reimplemented from Kopete::Contact */
 	void deleteContact() Q_DECL_OVERRIDE;
 
@@ -141,7 +141,7 @@ public slots:
 
 	void requestAuthorization();
 
-protected slots:
+protected Q_SLOTS:
 	void slotTyping( bool typing );
 	void messageAck( const QString& contact, uint messageId );
 	void messageError( const QString& contact, uint messageId );
@@ -155,10 +155,10 @@ protected:
 	int m_warningLevel;
 	QString m_clientFeatures;
 
-protected slots:
+protected Q_SLOTS:
 	virtual void slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session);
 	
-private slots:
+private Q_SLOTS:
 	void changeEncodingDialogClosed( int );
 	void chatSessionDestroyed();
 	void requestBuddyIcon();

@@ -41,12 +41,12 @@ public:
     virtual void save();
     virtual void load();
 
-private slots:
+private Q_SLOTS:
     void updateLanguageList();
     void slotModified();
     void slotShowPreviousChanged(bool);
 
-signals:
+Q_SIGNALS:
     void preferencesChanged();
 
 private:

@@ -36,7 +36,7 @@ public:
     void save() Q_DECL_OVERRIDE;
     void load() Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
     void slotSettingsChanged(bool);
     void slotValueChanged(int);
     void slotTextChanged();

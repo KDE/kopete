@@ -61,7 +61,7 @@ public Q_SLOTS:
      */
     void unregisterTimeout(QObject *receiver);
 
-private slots:
+private Q_SLOTS:
     void updateIdleTime();
 
 private:

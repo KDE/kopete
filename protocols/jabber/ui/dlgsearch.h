@@ -37,7 +37,7 @@ public:
 	dlgSearch(JabberAccount *account, const XMPP::Jid &jid, QWidget *parent = nullptr);
 	~dlgSearch();
 
-private slots:
+private Q_SLOTS:
 	void slotGotForm();
 	void slotSendForm();
 	void slotSentForm();

@@ -48,12 +48,12 @@ public:
 	void setSingleShot(bool singleShot);
 	int timerId() const;
 
-public slots:
+public Q_SLOTS:
 	void start(int msec);
 	void start();
 	void stop();
 
-signals:
+Q_SIGNALS:
 	void timeout();
 
 private:
@@ -114,7 +114,7 @@ public:
 	void doNextStep();
 	void removeCancelled(int id);
 	
-private slots:
+private Q_SLOTS:
 	void udp_readyRead();
 	void udp_bytesWritten(qint64);
 	void st_timeout();

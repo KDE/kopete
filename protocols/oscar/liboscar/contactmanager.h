@@ -102,7 +102,7 @@ public:
 	void setListComplete( bool complete );
 	bool listComplete() const;
 
-public slots:
+public Q_SLOTS:
 	bool newGroup( const OContact& group );
 	bool updateGroup( const OContact& group );
 	bool removeGroup( const OContact& group );
@@ -120,7 +120,7 @@ public slots:
 	void addID( const OContact& item );
 	void removeID( const OContact& item );
 
-signals:
+Q_SIGNALS:
 	
 	//! Emitted when we've added a new contact to the list
 	void contactAdded( const OContact& );

@@ -61,13 +61,13 @@ public:
 	bool take( int type, QByteArray cookie, Buffer b );
 	bool takeAutoResponse( int type, QByteArray cookie, Buffer* b );
 
-public slots:
+public Q_SLOTS:
 	void doCancel();
 	void doAccept( const QString &localDirecotry );
 	void doAccept( const QStringList &localFileNames );
 	void timeout();
 
-signals:
+Q_SIGNALS:
 	void transferCancelled();
 	void transferError( int errorCode, const QString &error );
 	void transferProcessed( unsigned int totalSent );
@@ -81,7 +81,7 @@ signals:
 	
 	void cancelOft();
 
-private slots:
+private Q_SLOTS:
 	void readyAccept(); //serversocket got connection
 	void socketError( QAbstractSocket::SocketError );
 	void proxyRead();

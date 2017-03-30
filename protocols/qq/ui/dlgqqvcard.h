@@ -57,7 +57,7 @@ public:
 	dlgQQVCard (QQAccount *account, QQContact *contact, QWidget * parent = 0);
 	~dlgQQVCard ();
 
-private slots:
+private Q_SLOTS:
 	/**
 	 * Show the KFileDialog for image to select a photo for the contact.
 	 */

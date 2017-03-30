@@ -52,7 +52,7 @@ protected:
 	QStringList readPrivacyItems( const QByteArray & tag, Field::FieldList & fields );
 	void extractCustomStatuses( Field::FieldList & fields );
 	void extractKeepalivePeriod( Field::FieldList & fields );
-signals:
+Q_SIGNALS:
 	void gotMyself( const GroupWise::ContactDetails & );
 	void gotFolder( const FolderItem & );
 	void gotContact( const ContactItem & );

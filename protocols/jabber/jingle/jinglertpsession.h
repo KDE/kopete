@@ -65,7 +65,7 @@ public:
 
     void setMediaSession(MediaSession *mSession);
 
-private slots:
+private Q_SLOTS:
     /*
      * Called when rtp data is ready to be read from the socket, we then wait
      * for the media data to be extracted from the RTP packet by oRTP.
@@ -73,7 +73,7 @@ private slots:
     void rtpDataReady();
     void rtcpDataReady(); // Maybe not used.
 
-signals:
+Q_SIGNALS:
     void dataSent();
     void readyRead(const QByteArray &);
 

@@ -57,7 +57,7 @@ public:
 	dlgJabberVCard (JabberAccount *account, JabberBaseContact *contact, QWidget * parent = nullptr);
 	~dlgJabberVCard ();
 
-private slots:
+private Q_SLOTS:
 	/**
 	 * Show the KFileDialog for image to select a photo for the contact.
 	 */

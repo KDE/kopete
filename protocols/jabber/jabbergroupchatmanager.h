@@ -59,7 +59,7 @@ public:
      */
     void updateDisplayName();
 
-public slots:
+public Q_SLOTS:
 
     /**
      * reimplemented from Kopete::ChatSession
@@ -67,7 +67,7 @@ public slots:
      */
     void inviteContact(const QString &contactId) Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
     ///Slot to show invite menu for other user to chat
     void showInviteMenu();
     ///Slot to hide invite menu

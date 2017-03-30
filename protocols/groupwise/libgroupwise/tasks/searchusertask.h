@@ -51,7 +51,7 @@ public:
 	 * Access the results of the search
 	 */
 	QList< GroupWise::ContactDetails > results();
-protected slots:
+protected Q_SLOTS:
 	void slotPollForResults();
 	void slotGotPollResults();
 private: 

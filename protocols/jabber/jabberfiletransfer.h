@@ -49,7 +49,7 @@ public:
 
     ~JabberFileTransfer ();
 
-private slots:
+private Q_SLOTS:
     void slotIncomingTransferAccepted(Kopete::Transfer *transfer, const QString &fileName);
     void slotTransferRefused(const Kopete::FileTransferInfo &transfer);
     void slotTransferResult();

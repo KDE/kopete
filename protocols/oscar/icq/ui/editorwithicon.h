@@ -54,11 +54,11 @@ public:
 	/** Returns selected icon index */
 	int iconIndex() const { return mIconIndex; }
 
-public slots:
+public Q_SLOTS:
 	/** Sets selected icon index */
 	void setIconIndex( int index );
 
-private slots:
+private Q_SLOTS:
 	/** Popups widget with icons */
 	void popupIcons();
 

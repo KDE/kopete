@@ -54,9 +54,9 @@ public:
 	// change everything at once
 	void setPrivacy( bool defaultIsDeny, const QStringList & allowList, const QStringList & denyList );
 
-signals:
+Q_SIGNALS:
 	void privacyChanged( const QString &dn, bool allowed );
-public slots:
+public Q_SLOTS:
 	/** 
 	 * Used to initialise the privacy manager using the server side privacy list
 	 */
@@ -73,7 +73,7 @@ protected:
 	 * @return The difference between the two sets
 	 */
 	QStringList difference( const QStringList & lhs, const QStringList & rhs );
-protected slots:
+protected Q_SLOTS:
 	// Receive the results of Tasks manipulating the privacy lists
 	void slotDefaultPolicyChanged();
 	void slotAllowAdded();

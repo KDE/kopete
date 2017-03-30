@@ -52,11 +52,11 @@ private:
     KBookmarkGroup getFolder(KBookmarkGroup group, QString folder);
     bool isURLInGroup(const KUrl &url, KBookmarkGroup group);
     QTextCodec *getPageEncoding(const QByteArray &data);
-public slots:
+public Q_SLOTS:
     void slotBookmarkURLsInMessage(Kopete::Message &msg);
     void slotReloadSettings();
 
-private slots:
+private Q_SLOTS:
     void slotAddKopeteBookmark(KIO::Job *transfer, const QByteArray &data);
 };
 

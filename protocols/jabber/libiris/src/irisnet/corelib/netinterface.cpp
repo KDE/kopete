@@ -61,7 +61,7 @@ public:
 		delete c;
 	}
 
-signals:
+Q_SIGNALS:
 	void updated();
 private:
 
@@ -74,7 +74,7 @@ private:
 		return out;
 	}
 
-private slots:
+private Q_SLOTS:
 	void c_updated() {
 		{
 			QMutexLocker locker(&m);
@@ -133,7 +133,7 @@ public:
 		// locked from caller
 	}
 
-signals:
+Q_SIGNALS:
 	void updated();
 private:
 	NetTrackerThread() {
@@ -346,7 +346,7 @@ public:
 			emit q->interfaceAvailable(here_ids[n]);
 	}
 
-public slots:
+public Q_SLOTS:
 	void tracker_updated()
 	{
 		// collapse multiple updates by queuing up an update if there isn't any queued yet.

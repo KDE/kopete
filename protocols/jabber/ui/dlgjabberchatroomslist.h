@@ -29,7 +29,7 @@ public:
 	~dlgJabberChatRoomsList();
   /*$PUBLIC_FUNCTIONS$*/
 
-public slots:
+public Q_SLOTS:
   /*$PUBLIC_SLOTS$*/
   virtual void slotJoin();
   virtual void slotQuery();
@@ -39,7 +39,7 @@ public slots:
 protected:
   /*$PROTECTED_FUNCTIONS$*/
 
-protected slots:
+protected Q_SLOTS:
   /*$PROTECTED_SLOTS$*/
 
 	void slotQueryFinished();

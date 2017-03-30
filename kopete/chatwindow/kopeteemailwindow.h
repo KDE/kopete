@@ -51,12 +51,12 @@ public:
         return this;
     }
 
-public slots:
+public Q_SLOTS:
     virtual void sendMessage();
     void appendMessage(Kopete::Message &message) Q_DECL_OVERRIDE;
     void messageSentSuccessfully() Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
     void shown();
     void messageSent(Kopete::Message &message);
     void closing(KopeteView *view);
@@ -66,7 +66,7 @@ protected:
     void closeEvent(QCloseEvent *e) Q_DECL_OVERRIDE;
     void changeEvent(QEvent *e) Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
     void slotReplySend();
     void slotUpdateReplySend();
     void slotReadNext();

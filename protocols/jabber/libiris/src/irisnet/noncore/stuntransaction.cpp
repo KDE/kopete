@@ -305,7 +305,7 @@ public:
 		transmit();
 	}
 
-private slots:
+private Q_SLOTS:
 	void t_timeout()
 	{
 		if(mode == StunTransaction::Tcp || tries == rc)
@@ -473,7 +473,7 @@ public:
 		return true;
 	}
 
-public slots:
+public Q_SLOTS:
 	void continueAfterParams()
 	{
 		retry();

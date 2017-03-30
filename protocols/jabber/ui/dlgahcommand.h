@@ -31,7 +31,7 @@ public:
 	dlgAHCommand(const AHCommand &r, const XMPP::Jid &jid, XMPP::Client *client, bool final = false, QWidget *parent = nullptr);
 	~dlgAHCommand();
 
-protected slots:
+protected Q_SLOTS:
 	void slotPrev();
 	void slotNext();
 	void slotComplete();

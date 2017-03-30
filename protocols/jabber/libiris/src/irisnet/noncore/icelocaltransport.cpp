@@ -116,11 +116,11 @@ public:
 		sock->writeDatagram(buf, address, port);
 	}
 
-signals:
+Q_SIGNALS:
 	void readyRead();
 	void datagramsWritten(int count);
 
-private slots:
+private Q_SLOTS:
 	void sock_readyRead()
 	{
 		emit readyRead();
@@ -444,7 +444,7 @@ private:
 		return false;
 	}
 
-private slots:
+private Q_SLOTS:
 	void postStart()
 	{
 		if(stopping)

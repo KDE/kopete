@@ -107,12 +107,12 @@ private:
     static void create_instag(void *opdata, const char *accountname, const char *protocol);
     static void timer_control(void *opdata, unsigned int interval);
 
-private slots:
+private Q_SLOTS:
     void otrlMessagePoll();
     void replayStoredMessages();
     void chatSessionDestroyed(Kopete::ChatSession *chatSession);
 
-signals:
+Q_SIGNALS:
     void goneSecure(Kopete::ChatSession *session, int state);
 };
 

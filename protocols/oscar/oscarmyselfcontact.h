@@ -45,7 +45,7 @@ public:
 	
 	UserDetails details();
 	
-public slots:
+public Q_SLOTS:
 	/** our user info has been updated */
 	virtual void userInfoUpdated() = 0;
 	

@@ -41,11 +41,11 @@ public:
 			QWidget *parent = 0 );
 	virtual ~GroupWiseContactSearch();
 	QList< GroupWise::ContactDetails > selectedResults();
-signals:
+Q_SIGNALS:
 	void selectionValidates( bool );
 protected:
 	unsigned char searchOperation( int comboIndex );
-protected slots:
+protected Q_SLOTS:
 	void slotClear();
 	void slotDoSearch();
 	void slotGotSearchResults();

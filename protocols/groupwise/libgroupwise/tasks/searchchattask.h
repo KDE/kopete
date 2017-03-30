@@ -55,7 +55,7 @@ class LIBGROUPWISE_EXPORT SearchChatTask : public RequestTask
 		 * Access the results of the search
 	 */
 		QList< GroupWise::ChatroomSearchResult > results();
-	protected slots:
+	protected Q_SLOTS:
 		void slotPollForResults();
 		void slotGotPollResults();
 	private: 

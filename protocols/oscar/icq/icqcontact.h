@@ -58,7 +58,7 @@ public:
 	/**  Set encoding for this contact */
 	void setEncoding( int mib ) Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
 	void slotUserInfo() Q_DECL_OVERRIDE;
 	void userInfoUpdated( const QString& contact, const UserDetails& details ) Q_DECL_OVERRIDE;
 
@@ -66,7 +66,7 @@ public slots:
 	void userOffline( const QString& userID ) Q_DECL_OVERRIDE;
 	void loggedIn();
 
-signals:
+Q_SIGNALS:
 	void haveBasicInfo( const ICQGeneralUserInfo& );
 	void haveWorkInfo( const ICQWorkUserInfo& );
 	void haveEmailInfo( const ICQEmailInfo& );
@@ -89,7 +89,7 @@ private:
 
 	enum { InfoNone = 0, InfoShort, InfoMediumTlv } m_requestingInfo;
 
-private slots:
+private Q_SLOTS:
 	/** Refresh status from this contact */
 	void refreshStatus( const UserDetails& details, Oscar::Presence presence );
 

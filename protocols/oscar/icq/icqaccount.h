@@ -41,7 +41,7 @@ public:
 	ICQMyselfContact( ICQAccount *acct );
 	void userInfoUpdated() Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
 	void receivedShortInfo( const QString& );
 	void fetchShortInfo();
 };
@@ -71,7 +71,7 @@ public:
 protected:
 	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem ) Q_DECL_OVERRIDE;
 
-protected slots:
+protected Q_SLOTS:
 	void loginActions() Q_DECL_OVERRIDE;
 	void disconnected( DisconnectReason reason ) Q_DECL_OVERRIDE;
 
@@ -82,7 +82,7 @@ private:
 
 	//const unsigned long fullStatus( const unsigned long plainStatus );
 
-private slots:
+private Q_SLOTS:
 	void setPresenceTarget( const Oscar::Presence &presence, const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
 	void setPresenceXStatus( const Xtraz::Status &xStatus );
 

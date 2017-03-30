@@ -51,7 +51,7 @@ public:
 	 * Is the data correct?
 	 */
 	bool validateData() Q_DECL_OVERRIDE;
-protected slots:
+protected Q_SLOTS:
 	void configChanged();
 protected:
 	bool settings_changed;

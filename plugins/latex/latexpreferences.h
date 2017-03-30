@@ -43,7 +43,7 @@ public:
 
 private:
     Ui::LatexPrefsUI *m_preferencesDialog;
-private slots:
+private Q_SLOTS:
     void slotModified();
 };
 

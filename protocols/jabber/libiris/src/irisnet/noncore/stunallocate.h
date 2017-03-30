@@ -108,7 +108,7 @@ public:
 	static bool containsChannelData(const quint8 *data, int size);
 	static QByteArray readChannelData(const quint8 *data, int size);
 
-signals:
+Q_SIGNALS:
 	void started();
 	void stopped();
 	void error(XMPP::StunAllocate::Error e);

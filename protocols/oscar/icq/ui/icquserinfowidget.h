@@ -49,7 +49,7 @@ public:
 	QList<ICQInfoBase*> getInfoData() const;
 	QString getAlias() const;
 
-public slots:
+public Q_SLOTS:
 	void fillBasicInfo( const ICQGeneralUserInfo& );
 	void fillWorkInfo( const ICQWorkUserInfo& );
 	void fillEmailInfo( const ICQEmailInfo& );
@@ -58,7 +58,7 @@ public slots:
 	void fillInterestInfo( const ICQInterestInfo& );
 	void fillOrgAffInfo( const ICQOrgAffInfo& info);
 
-private slots:
+private Q_SLOTS:
 	void receivedLongInfo( const QString& contact );
 
 	void slotUpdateDay();

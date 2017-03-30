@@ -69,7 +69,7 @@ public:
 	 * Set the Type of this contact
 	 */
 	void setType( Type type );
-public slots:
+public Q_SLOTS:
 	/**
 	 * Transmits an outgoing message to the server 
 	 * Called when the chat window send button has been pressed
@@ -82,7 +82,7 @@ public slots:
 	 */
 	void receivedMessage( const QString &message );
 
-protected slots:
+protected Q_SLOTS:
 	/**
 	 * Show the settings dialog
 	 */

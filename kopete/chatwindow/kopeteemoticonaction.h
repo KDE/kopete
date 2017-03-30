@@ -34,7 +34,7 @@ public:
     KopeteEmoticonAction(QObject *parent);
     virtual ~KopeteEmoticonAction();
 
-signals:
+Q_SIGNALS:
     void activated(const QString &item);
 
 private:

@@ -33,7 +33,7 @@ class StatusConfig : public KCModule
 public:
     StatusConfig(QWidget *parent, const QVariantList &args);
 
-public slots:
+public Q_SLOTS:
     void save() Q_DECL_OVERRIDE;
     void load() Q_DECL_OVERRIDE;
 

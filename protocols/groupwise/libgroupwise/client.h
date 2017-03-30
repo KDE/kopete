@@ -244,7 +244,7 @@ fd		 * @param password
 		 */
 		Task* rootTask();
 
-	signals:
+	Q_SIGNALS:
 		/** CONNECTION EVENTS */
 		/**
 		 * Notifies that the login process has succeeded.
@@ -361,7 +361,7 @@ fd		 * @param password
 		 * Instantiate all the event handling tasks
 		 */
 		void initialiseEventTasks();
-	protected slots:
+	protected Q_SLOTS:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();
 		void sst_statusChanged();

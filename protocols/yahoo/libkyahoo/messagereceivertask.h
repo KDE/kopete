@@ -39,7 +39,7 @@ protected:
 	void parseMessage( YMSGTransfer *transfer );
 	void parseAnimatedAudibleIcon( YMSGTransfer *transfer );
 	void parseNotify( YMSGTransfer *transfer );
-signals:
+Q_SIGNALS:
 	void gotIm(const QString&, const QString&, long, int);
 	void gotBuzz( const QString &who, long tm );
 	void systemMessage(const QString&);

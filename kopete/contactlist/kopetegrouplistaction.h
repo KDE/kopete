@@ -31,7 +31,7 @@ public:
     KopeteGroupListAction(const QString &, const QString &, const QKeySequence &, const QObject *, const char *, QObject *);
     ~KopeteGroupListAction();
 
-protected slots:
+protected Q_SLOTS:
     void slotUpdateList();
 };
 

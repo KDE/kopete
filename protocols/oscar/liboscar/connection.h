@@ -184,7 +184,7 @@ public:
 	void send( Transfer* t ) const;
 	void forcedSend( Transfer* t ) const;
 
-signals:
+Q_SIGNALS:
 
 	/** There's data ready to read */
 	void readyRead();
@@ -212,7 +212,7 @@ private:
 	/** Distribute the transfer among the connection's tasks */
 	void distribute( Transfer* t ) const;
 
-private slots:
+private Q_SLOTS:
 	/** Reset the data for the connection.*/
 	void reset();
 

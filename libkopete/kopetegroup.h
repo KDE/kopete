@@ -141,19 +141,19 @@ public:
      */
     void setUniqueGroupId(uint uniqueGroupId);
 
-public slots:
+public Q_SLOTS:
     /**
      * Send a message to all contacts in the group
      */
     void sendMessage();
 
-signals:
+Q_SIGNALS:
     /**
      * \brief Emitted when the group has been renamed
      */
     void displayNameChanged(Kopete::Group *group, const QString &oldName);
 
-private slots:
+private Q_SLOTS:
     void sendMessage(Kopete::Message &);
 
 private:

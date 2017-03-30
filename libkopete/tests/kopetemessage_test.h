@@ -39,7 +39,7 @@ class KopeteMessage_Test : public QObject
 public:
     KopeteMessage_Test();
 
-private slots:
+private Q_SLOTS:
     void testPrimitives();
     void testLinkParser();
 

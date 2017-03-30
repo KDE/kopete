@@ -90,7 +90,7 @@ class Libjingle : public QObject
 		 */
 		void setStatus(const QString &status);
 
-	public slots:
+	public Q_SLOTS:
 
 		/**
 		 * Start and login to jabber server using libjingle example libjingle-call application for voice call support
@@ -168,7 +168,7 @@ class Libjingle : public QObject
 		/// restart timer
 		QTimer * timer;
 
-	private slots:
+	private Q_SLOTS:
 
 		/// slot for read all available data from libjingle example libjingle-call application
 		void read();
@@ -181,7 +181,7 @@ class Libjingle : public QObject
 		/// slot for restart libjingle example libjingle-call application
 		void restart();
 
-	signals:
+	Q_SIGNALS:
 
 		/**
 		 * This signal is emitted when we are succesfull login to jabber server

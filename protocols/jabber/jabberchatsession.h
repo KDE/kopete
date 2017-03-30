@@ -60,7 +60,7 @@ public:
      */
     const QString &resource() const;
 
-public slots:
+public Q_SLOTS:
     /**
      * Show a message to the chatwindow, or append it to the queue.
      * This is the function protocols HAVE TO call for both incoming and outgoing messages
@@ -75,7 +75,7 @@ public slots:
      */
     void appendMessage(Kopete::Message &msg, const QString &fromResource);
 
-private slots:
+private Q_SLOTS:
     void slotSendTypingNotification(bool typing);
     void slotMessageSent(Kopete::Message &message, Kopete::ChatSession *kmm);
 

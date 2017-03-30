@@ -93,7 +93,7 @@ public:
         return m_tokens.value(tokenType);
     }
 
-signals:
+Q_SIGNALS:
     void activeLayoutChanged();
     void layoutListChanged();
 

@@ -40,7 +40,7 @@ class AIMUserInfoDialog : public KDialog
         QTextBrowser *userInfoView;
 		KTextEdit *userInfoEdit;
 
-	private slots:
+	private Q_SLOTS:
 		void slotSaveClicked();
 		void slotCloseClicked();
 		void slotUpdateClicked();
@@ -48,7 +48,7 @@ class AIMUserInfoDialog : public KDialog
 		void slotUrlClicked(const QString&);
 		void slotMailClicked(const QString&, const QString&);
 
-	signals:
+	Q_SIGNALS:
 //		void updateNickname(const QString &);
 		void closing();
 };

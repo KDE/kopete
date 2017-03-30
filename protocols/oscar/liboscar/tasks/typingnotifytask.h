@@ -40,7 +40,7 @@ public:
 	
 	void setParams( const QString & contact, int notifyType );
 	
-signals:
+Q_SIGNALS:
 	//! somebody started typing on the other end
 	void typingStarted( const QString& contact );
 	

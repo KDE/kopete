@@ -104,12 +104,12 @@ public:
     }
 
     void aboutToUnload() Q_DECL_OVERRIDE;
-private slots:
+private Q_SLOTS:
     // Do the initializations
     void slotInitialize();
     void slotInitialize2();
 
-public slots:
+public Q_SLOTS:
 
     /** \brief This slot is called when the status of a contact changed.
      *

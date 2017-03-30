@@ -36,7 +36,7 @@ class YahooWebcam : public QObject
 public:
 	explicit YahooWebcam( YahooAccount *account );
 	~YahooWebcam();
-public slots:
+public Q_SLOTS:
 	void startTransmission();
 	void stopTransmission();
 	void sendImage();
@@ -44,7 +44,7 @@ public slots:
 	void webcamDialogClosing();
 	void addViewer( const QString & );
 	void removeViewer( const QString & );
-signals:
+Q_SIGNALS:
 	void webcamClosing();
 private:
 	YahooAccount *theAccount;

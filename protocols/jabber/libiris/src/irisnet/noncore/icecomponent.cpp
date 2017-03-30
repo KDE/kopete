@@ -598,7 +598,7 @@ private:
 			postStop();
 	}
 
-private slots:
+private Q_SLOTS:
 	void doExt()
 	{
 		if(stopping)

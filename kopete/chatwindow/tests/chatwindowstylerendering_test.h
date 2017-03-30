@@ -32,7 +32,7 @@ public:
     ~ChatWindowStyleRendering_Test();
 
     void allTests();
-public slots:
+public Q_SLOTS:
     void testHeaderRendering();
     void testMessageRendering();
     void testStatusRendering();

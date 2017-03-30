@@ -30,10 +30,10 @@ class StatusAction: public QAction
 public:
 	StatusAction( const Xtraz::Status &status, QObject *parent );
 
-public slots:
+public Q_SLOTS:
 	void triggered();
 
-signals:
+Q_SIGNALS:
 	void triggered( const Xtraz::Status &status );
 
 private:

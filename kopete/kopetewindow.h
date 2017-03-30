@@ -60,7 +60,7 @@ protected:
     void showEvent(QShowEvent *ev) Q_DECL_OVERRIDE;
     void hideEvent(QHideEvent *ev) Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
     void slotToggleShowAllOfflineEmpty(bool toggled);
     void slotToggleShowOfflineUsers();
     void slotToggleShowEmptyGroups();
@@ -238,7 +238,7 @@ public:
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
     void iconClicked(const QPoint &position);
 };
 
@@ -251,10 +251,10 @@ public:
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
     void clicked();
 
-private slots:
+private Q_SLOTS:
     void updateIcon();
 };
 

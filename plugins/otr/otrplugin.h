@@ -91,14 +91,14 @@ public:
     void emitGoneSecure(Kopete::ChatSession *session, int status);
     QMap<QString, QPair<QString, bool> > getMessageCache();
 
-public slots:
+public Q_SLOTS:
 
     void slotOutgoingMessage(Kopete::Message &msg);
     void slotEnableOtr(Kopete::ChatSession *session, bool enable);
     void slotSettingsChanged();
     void slotVerifyFingerprint(Kopete::ChatSession *session);
 
-private slots:
+private Q_SLOTS:
     void slotNewChatSessionWindow(Kopete::ChatSession *);
     void slotSelectionChanged(bool single);
     void slotSetPolicy();
@@ -110,18 +110,7 @@ private:
     OtrlChatInterface *otrlChatInterface;
     QMap<QString, QPair<QString, bool> > messageCache;
     KSelectAction *otrPolicyMenu;
-
-/*	KActionMenu *otrPolicyMenuBar;
-    KActionMenu *otrPolicyPopup;
-    KAction *otrPolicyDefault;
-    KAction *otrPolicyAlways;
-    KAction *otrPolicyOpportunistic;
-    KAction *otrPolicyManual;
-    KAction *otrPolicyNever;
-//	SessionManager manager
-*/
-
-signals:
+Q_SIGNALS:
     void goneSecure(Kopete::ChatSession *session, int state);
 };
 

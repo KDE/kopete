@@ -176,7 +176,7 @@ public:
 		watchers.clear();
 	}
 
-private slots:
+private Q_SLOTS:
 	void doCall()
 	{
 		MethodCall *call = pendingCalls.takeFirst();

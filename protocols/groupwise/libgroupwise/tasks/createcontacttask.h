@@ -74,7 +74,7 @@ public:
 	 * Starts off the whole process
 	 */
 	void onGo() Q_DECL_OVERRIDE;
-protected slots:
+protected Q_SLOTS:
 	void slotContactAdded( const ContactItem & );
 	void slotCheckContactInstanceCreated();
 private:

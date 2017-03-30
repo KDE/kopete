@@ -46,10 +46,10 @@ public:
 
 	void setServer ( const QString &server );
 
-public slots:
+public Q_SLOTS:
 	void accept () Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
 	void slotChooseServer ();
 	void slotJIDInformation ();
 	void slotSSLToggled ();

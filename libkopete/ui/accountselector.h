@@ -71,14 +71,14 @@ public:
      */
     Kopete::Account *selectedItem();
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted whenever the selection changed, @p acc is a pointer to the
      * newly selected account
      */
     void selectionChanged(Kopete::Account *acc);
 
-private slots:
+private Q_SLOTS:
     void slotSelectionChanged(QTreeWidgetItem *item);
 
 private:

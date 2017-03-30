@@ -36,9 +36,9 @@ Q_OBJECT
 public:
 	ReceiveInvitationDialog( GroupWiseAccount * account, const ConferenceEvent & event, QWidget *parent, const char *name );
 	~ReceiveInvitationDialog();
-signals:
+Q_SIGNALS:
 	void invitationAccepted( bool, const GroupWise::ConferenceGuid & guid );
-protected slots:
+protected Q_SLOTS:
 	void slotYesClicked();
 	void slotNoClicked();
 private:

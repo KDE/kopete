@@ -76,11 +76,11 @@ protected:
 	qint64 writeData(const char *data, qint64 maxSize) Q_DECL_OVERRIDE;
 	qint64 readData(char *data, qint64 maxSize) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void hostFound();
 	void connected();
 
-private slots:
+private Q_SLOTS:
 	void qs_connected();
 	void qs_closed();
 	void qs_readyRead();

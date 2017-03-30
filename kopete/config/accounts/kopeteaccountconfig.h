@@ -51,7 +51,7 @@ public:
 protected:
     bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
 
-public slots:
+public Q_SLOTS:
     void save() Q_DECL_OVERRIDE;
     void load() Q_DECL_OVERRIDE;
 
@@ -81,7 +81,7 @@ private:
     QAction *m_actionIdentityRemove;
     QAction *m_actionIdentitySetDefault;
 
-private slots:
+private Q_SLOTS:
     void slotModify();
 
     void slotAddAccount();

@@ -32,9 +32,9 @@ public:
     IdPushButton(unsigned int id, const QIcon &icon, const QString &text, QWidget *parent = nullptr);
 private:
     unsigned int _id;
-private slots:
+private Q_SLOTS:
     void emitPressed();
-signals:
+Q_SIGNALS:
     void pressed(unsigned int id);
 };
 
@@ -46,9 +46,9 @@ public:
     IdComboBox(unsigned int id, bool rw, QWidget *parent = nullptr);
 private:
     unsigned int _id;
-private slots:
+private Q_SLOTS:
     void emitCurrentIndexChanged(int index);
-signals:
+Q_SIGNALS:
     void currentIndexChanged(unsigned int id, int index);
 };
 
@@ -60,9 +60,9 @@ public:
     IdCheckBox(unsigned int id, const QString &text, QWidget *parent = nullptr);
 private:
     unsigned int _id;
-private slots:
+private Q_SLOTS:
     void emitStateChanged(int state);
-signals:
+Q_SIGNALS:
     void stateChanged(unsigned int id, int state);
 };
 
@@ -74,9 +74,9 @@ public:
     IdSlider(unsigned int id, Qt::Orientation orientation, QWidget *parent = nullptr);
 private:
     unsigned int _id;
-private slots:
+private Q_SLOTS:
     void emitValueChanged(int value);
-signals:
+Q_SIGNALS:
     void valueChanged(unsigned int id, int value);
 };
 

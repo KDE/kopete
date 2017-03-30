@@ -48,7 +48,7 @@ public:
 
     Kopete::Contact *contactAt(const QStyleOptionViewItem &option, const QModelIndex &index, const QPoint &point) const;
 
-public slots:
+public Q_SLOTS:
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) Q_DECL_OVERRIDE;
 
 private:

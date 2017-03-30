@@ -464,7 +464,7 @@ Q_OBJECT
 		 */
 		void notifyError( const QString &info, const QString &errorString, LogLevel level );
 
-	signals:
+	Q_SIGNALS:
 		/** CONNECTION EVENTS */
 		/**
 		 * Notifies that the login process has succeeded.
@@ -687,7 +687,7 @@ Q_OBJECT
 		 * We have received a message in a chatroom
 		 */
 		void chatMessageReceived( const QString &, const QString &, const QString & );
-	protected slots:
+	protected Q_SLOTS:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();
 		void lt_gotSessionID( uint );

@@ -40,7 +40,7 @@ public:
 
 	UserDetails getInfo() const;
 	
-signals:
+Q_SIGNALS:
 	/** Emitted when user info is received. Needed because succeeded() is only emitted once. */
 	void gotInfo();
 	

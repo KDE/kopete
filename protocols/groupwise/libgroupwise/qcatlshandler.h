@@ -44,13 +44,13 @@ public:
 	void write(const QByteArray &a) Q_DECL_OVERRIDE;
 	void writeIncoming(const QByteArray &a) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void tlsHandshaken();
 
-public slots:
+public Q_SLOTS:
 	void continueAfterHandshake();
 
-private slots:
+private Q_SLOTS:
 	void tls_handshaken();
 	void tls_readyRead();
 	void tls_readyReadOutgoing();

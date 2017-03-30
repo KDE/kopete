@@ -8,7 +8,7 @@ class PasswordRetriever : public QObject
     Q_OBJECT
 public:
     QString password;
-public slots:
+public Q_SLOTS:
     void timer();
     void gotPassword(const QString &);
 };

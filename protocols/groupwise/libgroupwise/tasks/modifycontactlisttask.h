@@ -40,7 +40,7 @@ public:
 	ModifyContactListTask(Task* parent);
 	~ModifyContactListTask();
 	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
-signals:
+Q_SIGNALS:
 	void gotFolderAdded( const FolderItem &);
 	void gotFolderDeleted( const FolderItem &  );
 	void gotContactAdded( const ContactItem & );

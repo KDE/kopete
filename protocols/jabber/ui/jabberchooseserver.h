@@ -45,7 +45,7 @@ public:
 
 	~JabberChooseServer();
 
-private slots:
+private Q_SLOTS:
 	void slotOk ();
 	void slotCancel ();
 	void slotTransferData ( KIO::Job *job, const QByteArray &data );

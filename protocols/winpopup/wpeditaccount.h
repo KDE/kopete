@@ -48,7 +48,7 @@ public:
     bool validateData() Q_DECL_OVERRIDE;
     void writeConfig();
 
-public slots:
+public Q_SLOTS:
     Kopete::Account *apply() Q_DECL_OVERRIDE;
     virtual void installSamba();
 };

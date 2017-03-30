@@ -43,10 +43,10 @@ public:
 	int port() const;
 	QHostAddress address() const;
 
-signals:
+Q_SIGNALS:
 	void connectionReady(qintptr);
 
-private slots:
+private Q_SLOTS:
 	void sss_connectionReady(qintptr);
 
 private:
@@ -60,7 +60,7 @@ class ServSockSignal : public QTcpServer
 public:
 	ServSockSignal(QObject *parent = nullptr);
 
-signals:
+Q_SIGNALS:
 	void connectionReady(qintptr);
 
 protected:

@@ -41,7 +41,7 @@ public:
 
     void mouseReleaseEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
     void clicked();
 };
 
@@ -80,14 +80,14 @@ public:
     QWidget *innerWidget() const;
     void setInnerWidget(QWidget *w);
 
-public slots:
+public Q_SLOTS:
     void setExpanded(bool collapsed);
     void setWindowTitle(const QString &caption);
 
 protected:
     void init();
 
-private slots:
+private Q_SLOTS:
     void animateCollapse(qreal);
 
 private:

@@ -43,10 +43,10 @@ protected:
 	bool forMe( const Transfer* transfer ) const Q_DECL_OVERRIDE;
 	void onGo() Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void gotRateLimits();
 
-private slots:
+private Q_SLOTS:
 
 	//! Send the rate info request (SNAC 0x01, 0x06)
 	void sendRateInfoRequest();

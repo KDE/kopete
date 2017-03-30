@@ -50,7 +50,7 @@ public:
     QString name() const;
     int value() const;
 
-signals:
+Q_SIGNALS:
     void changed();
 
 protected:

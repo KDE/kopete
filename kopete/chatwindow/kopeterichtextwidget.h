@@ -82,7 +82,7 @@ public Q_SLOTS:
     void slotCheckSpellingChanged(bool b);
     void slotDocumentSizeUpdated();
     void slotEnableAutoResize(bool enable);
-signals:
+Q_SIGNALS:
     void richTextSupportChanged();
     void documentSizeUpdated(int difference);
 
@@ -90,7 +90,7 @@ protected:
     void insertFromMimeData(const QMimeData *source) Q_DECL_OVERRIDE;
     bool event(QEvent *event) Q_DECL_OVERRIDE;
 
-protected slots:
+protected Q_SLOTS:
     void updateTextFormat();
     void updateCharFormat(const QTextCharFormat &);
     void slotTextModeChanged(KRichTextEdit::Mode mode);

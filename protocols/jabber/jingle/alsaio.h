@@ -153,11 +153,11 @@ public:
     void writeData();
     int frameSizeBytes();
 
-public slots:
+public Q_SLOTS:
     void slotReadyRead(int socket);
     void slotReadyWrite(int socket);
 
-signals:
+Q_SIGNALS:
     void readyRead();
     void bytesWritten();
 

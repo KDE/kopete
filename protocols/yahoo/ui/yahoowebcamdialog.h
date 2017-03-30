@@ -36,11 +36,11 @@ public:
 	~YahooWebcamDialog();
 	
 	void setViewer( const QStringList & );
-public slots:
+public Q_SLOTS:
 	void newImage( const QPixmap &image );
 	void webcamClosed( int );
 	void webcamPaused();
-signals:
+Q_SIGNALS:
 	void closingWebcamDialog();
 	
 private:

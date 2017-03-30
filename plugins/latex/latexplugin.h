@@ -53,7 +53,7 @@ public:
     LatexPlugin(QObject *parent, const QVariantList &args);
     ~LatexPlugin();
 
-public slots:
+public Q_SLOTS:
     void slotMessageAboutToShow(Kopete::Message &msg);
     void slotMessageAboutToSend(Kopete::Message &msg);
     void slotNewChatSession(Kopete::ChatSession *KMM);

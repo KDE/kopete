@@ -689,7 +689,7 @@ private:
 		return 0;
 	}
 
-private slots:
+private Q_SLOTS:
 	void postStop()
 	{
 		state = Stopped;

@@ -62,7 +62,7 @@ public:
 
 	void sendTextMessage( const uint toId, const QByteArray& message );
 
-signals:
+Q_SIGNALS:
 	void statusChanged( const Kopete::OnlineStatus &newStatus );
 	void newContactList();
 	void contactList( const Eva::ContactInfo& ci );

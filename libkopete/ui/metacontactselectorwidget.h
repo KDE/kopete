@@ -58,12 +58,12 @@ public:
      * @return true if there is a contact selected
      */
     bool metaContactSelected();
-protected slots:
+protected Q_SLOTS:
     /**
      * Utility function, populates the metacontact list
      */
     void slotLoadMetaContacts();
-signals:
+Q_SIGNALS:
     void metaContactListClicked(QTreeWidgetItem *mc);
 private:
     class Private;
@@ -82,7 +82,7 @@ public:
     virtual ~MetaContactSelectorWidgetLVI();
     Kopete::MetaContact *metaContact();
     virtual QString text(int column) const;
-protected slots:
+protected Q_SLOTS:
     void slotPhotoChanged();
     void slotDisplayNameChanged();
     void buildVisualComponents();

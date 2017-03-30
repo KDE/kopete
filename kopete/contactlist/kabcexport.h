@@ -44,9 +44,9 @@ class KOPETE_CONTACT_LIST_EXPORT KabcExportWizard : public KAssistantDialog
 public:
     KabcExportWizard(QWidget *parent = nullptr);
     ~KabcExportWizard();
-public slots:
+public Q_SLOTS:
     void accept() Q_DECL_OVERRIDE;
-protected slots:
+protected Q_SLOTS:
     void slotDeselectAll();
     void slotSelectAll();
     void slotResourceSelectionChanged(QListWidgetItem *lbi);

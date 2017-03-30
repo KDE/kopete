@@ -43,7 +43,7 @@ public:
     void load() Q_DECL_OVERRIDE;
     void defaults() Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
     //void slotSettingsDirty();
     void slotAddCouple();
     void slotEditCouple();
@@ -51,7 +51,7 @@ private slots:
     void slotEnableAddEdit(const QString &);
     void slotSelectionChanged();
 
-protected slots:
+protected Q_SLOTS:
     virtual void slotWidgetModified();
 private:
     Ui::AutoReplacePrefsUI *preferencesDialog;

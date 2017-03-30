@@ -38,7 +38,7 @@ public:
 
 protected:
     bool forMe(const Transfer *transfer) const Q_DECL_OVERRIDE;
-signals:
+Q_SIGNALS:
     void incomingFileTransfer(const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long size, const QPixmap &preview);
 private:
     void parseFileTransfer(YMSGTransfer *transfer);

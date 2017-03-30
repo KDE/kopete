@@ -56,7 +56,7 @@ public:
 	bool take( Transfer* transfer ) Q_DECL_OVERRIDE;
 	void onGo() Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
 	void receivedInfoFor( const QString& contact, unsigned int type );
 	
 private:

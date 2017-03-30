@@ -56,7 +56,7 @@ private:
     Kopete::Group *mGroup;
     bool m_dirty;
 
-private slots:
+private Q_SLOTS:
     void slotOkClicked();
     void slotUseCustomIconsToggled(bool on);
     void slotIconChanged();
@@ -90,7 +90,7 @@ private:
     Kopete::MetaContact::PropertySource selectedPhotoSource() const;
     Kopete::Contact *selectedNameSourceContact() const;
     Kopete::Contact *selectedPhotoSourceContact() const;
-private slots:
+private Q_SLOTS:
     void slotOkClicked();
     void slotUseCustomIconsToggled(bool on);
     void slotClearPhotoClicked();

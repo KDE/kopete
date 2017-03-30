@@ -63,7 +63,7 @@ private:
      */
     void load();
 
-private slots:
+private Q_SLOTS:
     void slotAnimate(qreal amount);
 
     void showAccountContextMenu(const QPoint &);
