@@ -32,7 +32,7 @@
 
 #include "ui_nowlisteningprefs.h"
 #include "nowlisteningconfig.h"
-#include "nowlisteningpreferences.moc"
+
 
 K_PLUGIN_FACTORY(NowListeningPreferencesFactory, registerPlugin<NowListeningPreferences>();
                  )
@@ -90,6 +90,7 @@ void NowListeningPreferences::defaults()
     preferencesDialog->m_autoAdvertising->setChecked( false );*/
 }
 
+#include "nowlisteningpreferences.moc"
 /*
 * Local variables:
 * c-indentation-style: k&r
