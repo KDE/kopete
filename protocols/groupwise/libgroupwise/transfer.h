@@ -1,10 +1,10 @@
 /*
     transfer.h - Kopete Groupwise Protocol
-   
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -21,14 +21,16 @@
 /**
 @author Kopete Developers
 */
-class Transfer{
+class Transfer
+{
 public:
-	enum TransferType { EventTransfer, RequestTransfer, ResponseTransfer };
-	Transfer();
-	virtual ~Transfer();
-	
-	virtual TransferType type() = 0;
+    enum TransferType {
+        EventTransfer, RequestTransfer, ResponseTransfer
+    };
+    Transfer();
+    virtual ~Transfer();
 
+    virtual TransferType type() = 0;
 };
 
 #endif

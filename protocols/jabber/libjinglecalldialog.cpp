@@ -17,12 +17,13 @@
 
 #include <QCloseEvent>
 
-LibjingleCallDialog::LibjingleCallDialog(QWidget *parent): QDialog(parent) {
-	setupUi(this);
+LibjingleCallDialog::LibjingleCallDialog(QWidget *parent) : QDialog(parent)
+{
+    setupUi(this);
 }
 
-void LibjingleCallDialog::closeEvent(QCloseEvent * e) {
-	e->ignore();
-	emit(closed());
+void LibjingleCallDialog::closeEvent(QCloseEvent *e)
+{
+    e->ignore();
+    emit(closed());
 }
-

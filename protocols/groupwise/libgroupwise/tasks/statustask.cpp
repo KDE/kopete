@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     statustask.cpp - Event handling task responsible for status change events
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -22,25 +22,24 @@
 
 #include "client.h"
 
-StatusTask::StatusTask(Task* parent): EventTask(parent)
+StatusTask::StatusTask(Task *parent) : EventTask(parent)
 {
-	registerEvent( GroupWise::StatusChange );
+    registerEvent(GroupWise::StatusChange);
 }
 
 StatusTask::~StatusTask()
 {
 }
 
-bool StatusTask::take( Transfer * transfer )
+bool StatusTask::take(Transfer *transfer)
 {
-	if ( forMe( transfer ) )
-	{
-		EventTransfer * event = static_cast<EventTransfer *>(transfer);
-		client()->debug( QStringLiteral("Got a status change!") );
-		client()->debug( QStringLiteral( "%1 changed status to %2, message: %3" ).arg( event->source() ).arg( event->status() ).arg( event->statusText() ) );
-		emit gotStatus( event->source().toLower(), event->status(), event->statusText() );
-		return true;
-	}
-	else
-		return false;
+    if (forMe(transfer)) {
+        EventTransfer *event = static_cast<EventTransfer *>(transfer);
+        client()->debug(QStringLiteral("Got a status change!"));
+        client()->debug(QStringLiteral("%1 changed status to %2, message: %3").arg(event->source()).arg(event->status()).arg(event->statusText()));
+        emit gotStatus(event->source().toLower(), event->status(), event->statusText());
+        return true;
+    } else {
+        return false;
+    }
 }

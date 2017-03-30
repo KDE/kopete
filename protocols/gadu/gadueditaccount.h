@@ -33,8 +33,7 @@ namespace Kopete {
 class Account;
 }
 
-class GaduEditAccount : public QWidget, private Ui::GaduAccountEditUI,
-    public KopeteEditAccountWidget
+class GaduEditAccount : public QWidget, private Ui::GaduAccountEditUI, public KopeteEditAccountWidget
 {
     Q_OBJECT
 

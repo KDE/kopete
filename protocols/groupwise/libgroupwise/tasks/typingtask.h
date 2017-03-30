@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     typingtask.h - sends typing notifications to the server
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -24,18 +24,18 @@
 #include "requesttask.h"
 
 /**
-	Notifies the server that we are typing or are no longer typing in a particular conversation
-	
+    Notifies the server that we are typing or are no longer typing in a particular conversation
+
 @author Kopete Developers
 */
 class TypingTask : public RequestTask
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-	TypingTask(Task* parent);
-	~TypingTask();
-	void typing( const GroupWise::ConferenceGuid & guid, const bool typing );
+    TypingTask(Task *parent);
+    ~TypingTask();
+    void typing(const GroupWise::ConferenceGuid &guid, const bool typing);
 };
 
 #endif

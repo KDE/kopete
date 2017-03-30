@@ -1,11 +1,11 @@
 /*
     usertransfer.cpp - Ancestor of In- or outgoing Transfers (Requests and Response)
     initated by the user.
-   
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -18,28 +18,27 @@
 
 #include "usertransfer.h"
 
-UserTransfer::UserTransfer( int transactionId )
+UserTransfer::UserTransfer(int transactionId)
 {
-	m_transactionId = transactionId;
+    m_transactionId = transactionId;
 }
 
 UserTransfer::~UserTransfer()
 {
-	m_fields.purge();
+    m_fields.purge();
 }
 
-void UserTransfer::setFields( Field::FieldList fields )
+void UserTransfer::setFields(Field::FieldList fields)
 {
-	m_fields = fields;
+    m_fields = fields;
 }
 
 int UserTransfer::transactionId() const
 {
-	return m_transactionId;
+    return m_transactionId;
 }
 
 Field::FieldList UserTransfer::fields()
 {
-	return m_fields;
+    return m_fields;
 }
-

@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     requesttask.h - Ancestor of all tasks that carry out a user request
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -29,16 +29,16 @@ class Transfer;
 
 class LIBGROUPWISE_EXPORT RequestTask : public Task
 {
-Q_OBJECT
-	public:
-		RequestTask( Task *parent );
-		bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
-		void onGo() Q_DECL_OVERRIDE;
-	protected:
-		bool forMe( const Transfer * transfer ) const Q_DECL_OVERRIDE;
-		void createTransfer( const QString & command, const Field::FieldList & fields );
-	private:
-		int m_transactionId;
+    Q_OBJECT
+public:
+    RequestTask(Task *parent);
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+    void onGo() Q_DECL_OVERRIDE;
+protected:
+    bool forMe(const Transfer *transfer) const Q_DECL_OVERRIDE;
+    void createTransfer(const QString &command, const Field::FieldList &fields);
+private:
+    int m_transactionId;
 };
 
 #endif

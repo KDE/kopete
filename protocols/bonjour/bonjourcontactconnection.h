@@ -187,8 +187,7 @@ public:
      * @param remote The remoteuser@hostname
      * @param local myself@hostname
      */
-    BonjourContactConnection(const QHostAddress &address, short int port, const QString &alocal,
-                             const QString &aremote, QObject *parent = NULL);
+    BonjourContactConnection(const QHostAddress &address, short int port, const QString &alocal, const QString &aremote, QObject *parent = NULL);
 
     // Destructor
     ~BonjourContactConnection();

@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     joinconferencetask.h - Join a conference on the server, after having been invited.
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -34,22 +34,22 @@ Sends Join Conference messages when the user accepts an invitation
 
 class JoinConferenceTask : public RequestTask
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	JoinConferenceTask(Task* parent);
-	~JoinConferenceTask();
-	void join( const ConferenceGuid & guid );
-	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
-	QStringList participants() const;
-	QStringList invitees() const;
-	ConferenceGuid guid() const;
+    JoinConferenceTask(Task *parent);
+    ~JoinConferenceTask();
+    void join(const ConferenceGuid &guid);
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+    QStringList participants() const;
+    QStringList invitees() const;
+    ConferenceGuid guid() const;
 public Q_SLOTS:
-	void slotReceiveUserDetails( const GroupWise::ContactDetails & details );
+    void slotReceiveUserDetails(const GroupWise::ContactDetails &details);
 private:
-	ConferenceGuid m_guid;
-	QStringList m_participants;
-	QStringList m_invitees;
-	QStringList m_unknowns;
+    ConferenceGuid m_guid;
+    QStringList m_participants;
+    QStringList m_invitees;
+    QStringList m_unknowns;
 };
 
 #endif

@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     connectiontask.h - Event Handling task responsible for all connection related events
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -30,14 +30,14 @@ This task monitors connection related events, currently 'connected elsewhere' di
 */
 class ConnectionTask : public EventTask
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	ConnectionTask(Task* parent);
-	~ConnectionTask();
-	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
+    ConnectionTask(Task *parent);
+    ~ConnectionTask();
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 Q_SIGNALS:
-	void connectedElsewhere();
-	void serverDisconnect();
+    void connectedElsewhere();
+    void serverDisconnect();
 };
 
 #endif

@@ -34,31 +34,31 @@ Get the current number of users in each chat on the server
  */
 class ChatPropertiesTask : public RequestTask
 {
-	Q_OBJECT
-	public:
-		ChatPropertiesTask(Task* parent);
-		~ChatPropertiesTask();
-		/**
-		 * Specify which chatroom to get properties for
-		 */
-		void setChat( const QString & );
-		bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
-		/**
-		 * Contains a list of the ACL entries for the specified chatroom
-		 */
-		QList< GroupWise::ChatContact > aclEntries();
-		QString m_chat;
-		QString m_ownerDn;
-		QString m_description;
-		QString m_disclaimer;
-		QString m_query;
-		QString m_archive;
-		QString m_maxUsers;
-		QString m_topic;
-		QString m_creatorDn;
-		QDateTime m_creationTime;
-		uint m_rights;
-		QList< GroupWise::ChatContact > m_aclEntries;
+    Q_OBJECT
+public:
+    ChatPropertiesTask(Task *parent);
+    ~ChatPropertiesTask();
+    /**
+     * Specify which chatroom to get properties for
+     */
+    void setChat(const QString &);
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+    /**
+     * Contains a list of the ACL entries for the specified chatroom
+     */
+    QList< GroupWise::ChatContact > aclEntries();
+    QString m_chat;
+    QString m_ownerDn;
+    QString m_description;
+    QString m_disclaimer;
+    QString m_query;
+    QString m_archive;
+    QString m_maxUsers;
+    QString m_topic;
+    QString m_creatorDn;
+    QDateTime m_creationTime;
+    uint m_rights;
+    QList< GroupWise::ChatContact > m_aclEntries;
 };
 
 #endif

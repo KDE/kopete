@@ -1,12 +1,12 @@
 /*
     task.cpp - Kopete Groupwise Protocol
-   
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
-    
+
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -16,7 +16,7 @@
     *                                                                       *
     *************************************************************************
 */
-  
+
 #include "task.h"
 
 #include <qtimer.h>
@@ -29,234 +29,240 @@
 class Task::TaskPrivate
 {
 public:
-	TaskPrivate() {}
+    TaskPrivate()
+    {
+    }
 
-	QString id;
-	bool success;
-	int statusCode;
-	QString statusString;
-	Client *client;
-	bool insignificant, deleteme, autoDelete;
-	bool done;
-	Transfer * transfer;
+    QString id;
+    bool success;
+    int statusCode;
+    QString statusString;
+    Client *client;
+    bool insignificant, deleteme, autoDelete;
+    bool done;
+    Transfer *transfer;
 };
 
 Task::Task(Task *parent)
-:QObject(parent)
+    : QObject(parent)
 {
-	init();
-	d->transfer = 0;
-	d->client = parent->client();
-	d->id = client()->genUniqueId();
-	connect(d->client, SIGNAL(disconnected()), SLOT(clientDisconnected()));
+    init();
+    d->transfer = 0;
+    d->client = parent->client();
+    d->id = client()->genUniqueId();
+    connect(d->client, SIGNAL(disconnected()), SLOT(clientDisconnected()));
 }
 
 Task::Task(Client *parent, bool)
-:QObject(0)
+    : QObject(0)
 {
-	init();
+    init();
 
-	d->client = parent;
-	connect(d->client, SIGNAL(disconnected()), SLOT(clientDisconnected()));
+    d->client = parent;
+    connect(d->client, SIGNAL(disconnected()), SLOT(clientDisconnected()));
 }
 
 Task::~Task()
 {
-	delete d;
+    delete d;
 }
 
 void Task::init()
 {
-	d = new TaskPrivate;
-	d->success = false;
-	d->insignificant = false;
-	d->deleteme = false;
-	d->autoDelete = false;
-	d->done = false;
-	d->transfer = 0;
-	d->statusCode = 0;
+    d = new TaskPrivate;
+    d->success = false;
+    d->insignificant = false;
+    d->deleteme = false;
+    d->autoDelete = false;
+    d->done = false;
+    d->transfer = 0;
+    d->statusCode = 0;
 }
 
 Task *Task::parent() const
 {
-	return (Task *)QObject::parent();
+    return (Task *)QObject::parent();
 }
 
 Client *Task::client() const
 {
-	return d->client;
+    return d->client;
 }
 
-Transfer * Task::transfer() const
+Transfer *Task::transfer() const
 {
-	return d->transfer;
+    return d->transfer;
 }
 
-void Task::setTransfer( Transfer * transfer )
+void Task::setTransfer(Transfer *transfer)
 {
-	d->transfer = transfer;
+    d->transfer = transfer;
 }
 
 QString Task::id() const
 {
-	return d->id;
+    return d->id;
 }
 
 bool Task::success() const
 {
-	return d->success;
+    return d->success;
 }
 
 int Task::statusCode() const
 {
-	return d->statusCode;
+    return d->statusCode;
 }
 
-const QString & Task::statusString() const
+const QString &Task::statusString() const
 {
-	return d->statusString;
+    return d->statusString;
 }
 
 void Task::go(bool autoDelete)
 {
-	d->autoDelete = autoDelete;
+    d->autoDelete = autoDelete;
 
-	onGo();
+    onGo();
 }
 
-bool Task::take( Transfer * transfer)
+bool Task::take(Transfer *transfer)
 {
-	// pass along the transfer to our children
-	Task *t;
-	foreach( QObject* obj, children() )
-	{
-		if(!obj->inherits("Task"))
-			continue;
+    // pass along the transfer to our children
+    Task *t;
+    foreach (QObject *obj, children()) {
+        if (!obj->inherits("Task")) {
+            continue;
+        }
 
-		t = static_cast<Task*>(obj);
-		
-		if(t->take( transfer ))
-		{
-			client()->debug( QStringLiteral( "Transfer ACCEPTED by: %1" ).arg( t->metaObject()->className() ) );
-			return true;
-		}
-	}
+        t = static_cast<Task *>(obj);
 
-	return false;
+        if (t->take(transfer)) {
+            client()->debug(QStringLiteral("Transfer ACCEPTED by: %1").arg(t->metaObject()->className()));
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void Task::safeDelete()
 {
-	if(d->deleteme)
-		return;
+    if (d->deleteme) {
+        return;
+    }
 
-	d->deleteme = true;
-	if(!d->insignificant)
-		SafeDelete::deleteSingle(this);
+    d->deleteme = true;
+    if (!d->insignificant) {
+        SafeDelete::deleteSingle(this);
+    }
 }
 
 void Task::onGo()
 {
-	client()->debug( QStringLiteral("ERROR: calling default NULL onGo() for this task, you should reimplement this!"));
+    client()->debug(QStringLiteral("ERROR: calling default NULL onGo() for this task, you should reimplement this!"));
 }
 
 void Task::onDisconnect()
 {
-	if(!d->done) {
-		d->success = false;
-		d->statusCode = ErrDisc;
-		d->statusString = i18n("Disconnected");
+    if (!d->done) {
+        d->success = false;
+        d->statusCode = ErrDisc;
+        d->statusString = i18n("Disconnected");
 
-		// delay this so that tasks that react don't block the shutdown
-		QTimer::singleShot(0, this, SLOT(done()));
-	}
+        // delay this so that tasks that react don't block the shutdown
+        QTimer::singleShot(0, this, SLOT(done()));
+    }
 }
 
-void Task::send( Request * request )
+void Task::send(Request *request)
 {
-	client()->send( request );
+    client()->send(request);
 }
 
 void Task::setSuccess(int code, const QString &str)
 {
-	if(!d->done) {
-		d->success = true;
-		d->statusCode = code;
-		d->statusString = str;
-		done();
-	}
+    if (!d->done) {
+        d->success = true;
+        d->statusCode = code;
+        d->statusString = str;
+        done();
+    }
 }
 
 void Task::setError(int code, const QString &str)
 {
-	if(!d->done) {
-		d->success = false;
-		d->statusCode = code;
-		if ( str.isEmpty() )
-			d->statusString = GroupWise::errorCodeToString( code );
-		else
-			d->statusString = str;
-		done();
-	}
+    if (!d->done) {
+        d->success = false;
+        d->statusCode = code;
+        if (str.isEmpty()) {
+            d->statusString = GroupWise::errorCodeToString(code);
+        } else {
+            d->statusString = str;
+        }
+        done();
+    }
 }
 
 void Task::done()
 {
-	debug(QStringLiteral("Task::done()"));
-	if(d->done || d->insignificant)
-		return;
-	d->done = true;
+    debug(QStringLiteral("Task::done()"));
+    if (d->done || d->insignificant) {
+        return;
+    }
+    d->done = true;
 
-	if(d->deleteme || d->autoDelete)
-		d->deleteme = true;
+    if (d->deleteme || d->autoDelete) {
+        d->deleteme = true;
+    }
 
-	d->insignificant = true;
-	debug(QStringLiteral("emitting finished"));
-	finished();
-	d->insignificant = false;
+    d->insignificant = true;
+    debug(QStringLiteral("emitting finished"));
+    finished();
+    d->insignificant = false;
 
-	if(d->deleteme)
-		SafeDelete::deleteSingle(this);
+    if (d->deleteme) {
+        SafeDelete::deleteSingle(this);
+    }
 }
 
 void Task::clientDisconnected()
 {
-	onDisconnect();
+    onDisconnect();
 }
 
 // void Task::debug(const char *fmt, ...)
 // {
-// 	char *buf;
-// 	QString str;
-// 	int size = 1024;
-// 	int r;
-// 
-// 	do {
-// 		buf = new char[size];
-// 		va_list ap;
-// 		va_start(ap, fmt);
-// 		r = vsnprintf(buf, size, fmt, ap);
-// 		va_end(ap);
-// 
-// 		if(r != -1)
-// 			str = QString(buf);
-// 
-// 		delete [] buf;
-// 
-// 		size *= 2;
-// 	} while(r == -1);
-// 
-// 	debug(str);
+//  char *buf;
+//  QString str;
+//  int size = 1024;
+//  int r;
+//
+//  do {
+//      buf = new char[size];
+//      va_list ap;
+//      va_start(ap, fmt);
+//      r = vsnprintf(buf, size, fmt, ap);
+//      va_end(ap);
+//
+//      if(r != -1)
+//          str = QString(buf);
+//
+//      delete [] buf;
+//
+//      size *= 2;
+//  } while(r == -1);
+//
+//  debug(str);
 // }
 
 void Task::debug(const QString &str)
 {
-	client()->debug(QStringLiteral("%1: ").arg(metaObject()->className()) + str);
+    client()->debug(QStringLiteral("%1: ").arg(metaObject()->className()) + str);
 }
 
-bool Task::forMe( const Transfer * transfer ) const
+bool Task::forMe(const Transfer *transfer) const
 {
-	Q_UNUSED( transfer );
-	return false;
+    Q_UNUSED(transfer);
+    return false;
 }
-

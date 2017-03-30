@@ -1,11 +1,11 @@
 /*
     usertransfer.h - Ancestor of In- or outgoing Transfers (Requests and Response)
     initated by the user.
-   
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -30,16 +30,15 @@
 class UserTransfer : public Transfer
 {
 public:
-    UserTransfer( int transactionId );
+    UserTransfer(int transactionId);
     virtual ~UserTransfer();
-	int transactionId() const;
-	Field::FieldList fields();
-	void setFields( Field::FieldList fields );
-	
+    int transactionId() const;
+    Field::FieldList fields();
+    void setFields(Field::FieldList fields);
+
 private:
-	int m_transactionId;
-	Field::FieldList m_fields;
-	
+    int m_transactionId;
+    Field::FieldList m_fields;
 };
 
 #endif

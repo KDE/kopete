@@ -64,8 +64,7 @@ class BonjourContact : public Kopete::Contact
     QMap <QString, QByteArray> textdata;
 
 public:
-    BonjourContact(Kopete::Account *_account, const QString &uniqueName,
-                   Kopete::MetaContact *parent);
+    BonjourContact(Kopete::Account *_account, const QString &uniqueName, Kopete::MetaContact *parent);
 
     ~BonjourContact();
 

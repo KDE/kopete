@@ -27,7 +27,6 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 
-
 #include <time.h>
 #include <QStandardPaths>
 

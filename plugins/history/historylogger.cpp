@@ -726,8 +726,9 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 
     // BEGIN check if there are Kopete 0.7.x
     QDir d1(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString("kopete/logs/"
-                                       +c->protocol()->pluginId().replace(QRegExp(QString::fromLatin1("[./~?*]")), QString::fromLatin1("-"))
-                                       ));
+                                                                                                               +c->protocol()->pluginId().replace(QRegExp(QString::fromLatin1(
+                                                                                                                                                              "[./~?*]")), QString::fromLatin1("-"))
+                                                                                                               ));
     d1.setFilter(QDir::Files | QDir::NoSymLinks);
     d1.setSorting(QDir::Name);
 
@@ -748,10 +749,12 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
     // END of kopete 0.7.x check
 
     QDir d(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString("kopete/logs/"
-                                      +c->protocol()->pluginId().replace(QRegExp(QString::fromLatin1("[./~?*]")), QString::fromLatin1("-"))
-                                      +QString::fromLatin1("/")
-                                      +c->account()->accountId().replace(QRegExp(QString::fromLatin1("[./~?*]")), QString::fromLatin1("-"))
-                                      ));
+                                                                                                              +c->protocol()->pluginId().replace(QRegExp(QString::fromLatin1(
+                                                                                                                                                             "[./~?*]")), QString::fromLatin1("-"))
+                                                                                                              +QString::fromLatin1("/")
+                                                                                                              +c->account()->accountId().replace(QRegExp(QString::fromLatin1(
+                                                                                                                                                             "[./~?*]")), QString::fromLatin1("-"))
+                                                                                                              ));
 
     d.setFilter(QDir::Files | QDir::NoSymLinks);
     d.setSorting(QDir::Name);

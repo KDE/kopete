@@ -107,8 +107,7 @@ public:
      *
      * @return @c true if the contact is created, @c false otherwise
      */
-    bool createContact(const QString &contactId,
-                       Kopete::MetaContact *parentContact) Q_DECL_OVERRIDE;
+    bool createContact(const QString &contactId, Kopete::MetaContact *parentContact) Q_DECL_OVERRIDE;
 
     /**
      * @brief Called when Kopete is set globally away
@@ -122,9 +121,7 @@ public:
      *
      * @todo FIXME: This Only Makes us go online or offline, we cannot go away
      */
-    void setOnlineStatus(const Kopete::OnlineStatus &status,
-                         const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
-                         const OnlineStatusOptions &options = None) Q_DECL_OVERRIDE;
+    void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(), const OnlineStatusOptions &options = None) Q_DECL_OVERRIDE;
     void setStatusMessage(const Kopete::StatusMessage &statusMessage) Q_DECL_OVERRIDE;
 
     /**

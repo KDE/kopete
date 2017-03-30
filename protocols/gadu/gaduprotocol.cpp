@@ -130,8 +130,7 @@ GaduProtocol::settingsChanged()
 
 Kopete::Contact *
 GaduProtocol::deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString,
-                                                                              QString> &serializedData,
-                                 const QMap<QString, QString> & /* addressBookData */)
+                                                                              QString> &serializedData, const QMap<QString, QString> & /* addressBookData */)
 {
     const QString aid = serializedData[ "accountId" ];
     const QString cid = serializedData[ "contactId" ];

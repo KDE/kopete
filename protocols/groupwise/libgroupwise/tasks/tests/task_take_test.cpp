@@ -1,7 +1,7 @@
 //
 // C++ Implementation: task_take_test
 //
-// Description: 
+// Description:
 //
 //
 // Author: Kopete Developers <kopete-devel@kde.org>, (C) 2004
@@ -14,5 +14,5 @@
 
 int main()
 {
-	// balls, root task requires client, will test in situ instead
+    // balls, root task requires client, will test in situ instead
 }

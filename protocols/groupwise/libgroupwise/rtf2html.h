@@ -35,9 +35,9 @@ using namespace std;
 
 struct FontDef
 {
-    int		charset;
-    string	taggedName;
-    string	nonTaggedName;
+    int charset;
+    string taggedName;
+    string nonTaggedName;
 };
 
 class RTF2HTML;
@@ -57,24 +57,51 @@ enum TagEnum
 class ParStyle
 {
 public:
-    ParStyle() { dir = DirLTR; }
+    ParStyle()
+    {
+        dir = DirLTR;
+    }
+
     void clearFormatting();
 
 public:
-    enum {DirLTR, DirRTL} dir;
+    enum {
+        DirLTR, DirRTL
+    } dir;
 };
 
 class Level
 {
 public:
     Level(RTF2HTML *_p);
-    Level(const Level&);
-    void setText(const char* str);
-    void setFontTbl() { m_bFontTbl = true; }
-    void setColors() { m_bColors = true; resetColors(); }
-    void setRed(unsigned char val) { setColor(val, &m_nRed); }
-    void setGreen(unsigned char val) { setColor(val, &m_nGreen); }
-    void setBlue(unsigned char val) { setColor(val, &m_nBlue); }
+    Level(const Level &);
+    void setText(const char *str);
+    void setFontTbl()
+    {
+        m_bFontTbl = true;
+    }
+
+    void setColors()
+    {
+        m_bColors = true;
+        resetColors();
+    }
+
+    void setRed(unsigned char val)
+    {
+        setColor(val, &m_nRed);
+    }
+
+    void setGreen(unsigned char val)
+    {
+        setColor(val, &m_nGreen);
+    }
+
+    void setBlue(unsigned char val)
+    {
+        setColor(val, &m_nBlue);
+    }
+
     void setFont(unsigned nFont);
     void setEncoding(unsigned nFont);
     void setFontName();
@@ -98,9 +125,17 @@ protected:
     string text;
     void Init();
     RTF2HTML *p;
-    void resetColors() { m_nRed = m_nGreen = m_nBlue = 0; m_bColorInit = false; }
+    void resetColors()
+    {
+        m_nRed = m_nGreen = m_nBlue = 0;
+        m_bColorInit = false;
+    }
+
     void setColor(unsigned char val, unsigned char *p)
-    { *p = val; m_bColorInit=true; }
+    {
+        *p = val;
+        m_bColorInit = true;
+    }
 
     // Marks the position in m_tags where this level begun.
     unsigned m_nTagsStartPos;
@@ -131,7 +166,11 @@ protected:
 class OutTag
 {
 public:
-    OutTag(TagEnum _tag, unsigned _param) : tag(_tag), param(_param) {}
+    OutTag(TagEnum _tag, unsigned _param) : tag(_tag)
+        , param(_param)
+    {
+    }
+
     TagEnum tag;
     unsigned param;
 };
@@ -161,7 +200,7 @@ public:
     // Writes down the tags from oTags into the paragraph buffer.
     void FlushOutTags();
     // Retrieves the top not-yet-written tag.
-    OutTag* getTopOutTag(TagEnum tagType);
+    OutTag *getTopOutTag(TagEnum tagType);
     // Writes down the paragraph buffer and resets the paragraph state.
     void FlushParagraph();
 
@@ -169,7 +208,7 @@ public:
 
     void PutTag(TagEnum n)
     {
-       tags.push(n);
+        tags.push(n);
     }
 
 protected:

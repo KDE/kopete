@@ -3,8 +3,8 @@
 
 int main()
 {
-	Client c;
-	Task rootTask( &c, true );
-	
-	return 0;
+    Client c;
+    Task rootTask(&c, true);
+
+    return 0;
 }

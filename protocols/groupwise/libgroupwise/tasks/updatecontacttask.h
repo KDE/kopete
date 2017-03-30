@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     updatecontacttask.h - rename a contact on the server
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -33,14 +33,14 @@
  */
 class LIBGROUPWISE_EXPORT UpdateContactTask : public UpdateItemTask
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	UpdateContactTask(Task* parent);
-	~UpdateContactTask();
-	void renameContact( const QString& newName, const QList<GroupWise::ContactItem> & contactInstances );
-	QString displayName();
+    UpdateContactTask(Task *parent);
+    ~UpdateContactTask();
+    void renameContact(const QString &newName, const QList<GroupWise::ContactItem> &contactInstances);
+    QString displayName();
 private:
-	QString m_name;
+    QString m_name;
 };
 
 #endif

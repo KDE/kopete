@@ -24,9 +24,7 @@
 #include <QtCrypto>
 
 namespace XMPP {
-
 namespace StunUtil {
-
 quint16 read16(const quint8 *in);
 quint32 read32(const quint8 *in);
 quint64 read64(const quint8 *in);
@@ -36,9 +34,7 @@ void write32(quint8 *out, quint32 i);
 void write64(quint8 *out, quint64 i);
 
 QCA::SecureArray saslPrep(const QCA::SecureArray &in);
-
 }
-
 }
 
 #endif

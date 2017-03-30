@@ -1,12 +1,12 @@
 /*
     gwclientstream.h - Kopete Groupwise Protocol
-  
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
-    
+
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -20,59 +20,59 @@
 #ifndef SAFEDELETE_H
 #define SAFEDELETE_H
 
-#include<qobject.h>
+#include <qobject.h>
 
 class SafeDelete;
 class SafeDeleteLock
 {
 public:
-	SafeDeleteLock(SafeDelete *sd);
-	~SafeDeleteLock();
+    SafeDeleteLock(SafeDelete *sd);
+    ~SafeDeleteLock();
 
 private:
-	SafeDelete *_sd;
-	bool own;
-	friend class SafeDelete;
-	void dying();
+    SafeDelete *_sd;
+    bool own;
+    friend class SafeDelete;
+    void dying();
 };
 
 class SafeDelete
 {
 public:
-	SafeDelete();
-	~SafeDelete();
+    SafeDelete();
+    ~SafeDelete();
 
-	void deleteLater(QObject *o);
+    void deleteLater(QObject *o);
 
-	// same as QObject::deleteLater()
-	static void deleteSingle(QObject *o);
+    // same as QObject::deleteLater()
+    static void deleteSingle(QObject *o);
 
 private:
-	QObjectList list;
-	void deleteAll();
+    QObjectList list;
+    void deleteAll();
 
-	friend class SafeDeleteLock;
-	SafeDeleteLock *lock;
-	void unlock();
+    friend class SafeDeleteLock;
+    SafeDeleteLock *lock;
+    void unlock();
 };
 
 class SafeDeleteLater : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	static SafeDeleteLater *ensureExists();
-	void deleteItLater(QObject *o);
+    static SafeDeleteLater *ensureExists();
+    void deleteItLater(QObject *o);
 
 private Q_SLOTS:
-	void explode();
+    void explode();
 
 private:
-	SafeDeleteLater();
-	~SafeDeleteLater();
+    SafeDeleteLater();
+    ~SafeDeleteLater();
 
-	QObjectList list;
-	friend class SafeDelete;
-	static SafeDeleteLater *self;
+    QObjectList list;
+    friend class SafeDelete;
+    static SafeDeleteLater *self;
 };
 
 #endif

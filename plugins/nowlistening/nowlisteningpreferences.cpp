@@ -33,7 +33,6 @@
 #include "ui_nowlisteningprefs.h"
 #include "nowlisteningconfig.h"
 
-
 K_PLUGIN_FACTORY(NowListeningPreferencesFactory, registerPlugin<NowListeningPreferences>();
                  )
 

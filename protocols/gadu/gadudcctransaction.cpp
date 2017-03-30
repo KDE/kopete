@@ -156,7 +156,7 @@ GaduDCCTransaction::setupIncoming(gg_dcc *dccS)
 
     connect(Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer *,
                                                                         QString)),
-            this, SLOT(slotIncomingTransferAccepted(Kopete::Transfer*,QString)));
+            this, SLOT(slotIncomingTransferAccepted(Kopete::Transfer *,QString)));
     connect(Kopete::TransferManager::transferManager(), SIGNAL(refused(Kopete::FileTransferInfo)),
             this, SLOT(slotTransferRefused(Kopete::FileTransferInfo)));
 
@@ -230,8 +230,7 @@ GaduDCCTransaction::disableNotifiers()
 }
 
 void
-GaduDCCTransaction::slotIncomingTransferAccepted(Kopete::Transfer *transfer,
-                                                 const QString &fileName)
+GaduDCCTransaction::slotIncomingTransferAccepted(Kopete::Transfer *transfer, const QString &fileName)
 {
     if ((long)transfer->info().transferId() != transferId_) {
         return;
@@ -288,7 +287,7 @@ GaduDCCTransaction::slotIncomingTransferAccepted(Kopete::Transfer *transfer,
         dccSock_->file_fd = localFile_.handle();
     }
 
-    connect(transfer, SIGNAL(result(KJob*)), this, SLOT(slotTransferResult()));
+    connect(transfer, SIGNAL(result(KJob *)), this, SLOT(slotTransferResult()));
 
     // reenable notifiers
     enableNotifiers(dccSock_->check);
@@ -321,7 +320,7 @@ GaduDCCTransaction::askIncommingTransfer()
                                                                                            char *)
                                                                                           dccSock_->
                                                                                           file_info.
-    filename), dccSock_->file_info.size);
+                                                                                          filename), dccSock_->file_info.size);
 }
 
 void

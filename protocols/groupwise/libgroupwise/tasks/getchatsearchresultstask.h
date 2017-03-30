@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     getchatsearchresultstask.h - Poll the server once to see if it has processed our chatroom search yet.
 
-    Copyright (c) 2005      SUSE Linux Products GmbH	 	 http://www.suse.com
-    
+    Copyright (c) 2005      SUSE Linux Products GmbH	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -34,19 +34,21 @@ Search results are polled on the server, using the search handle returned by the
  */
 class GetChatSearchResultsTask : public RequestTask
 {
-	Q_OBJECT
-	public:
-		enum SearchResultCode { Completed=2, Cancelled=4, Error=5, GettingData=8, DataRetrieved=9 };
-		GetChatSearchResultsTask(Task* parent);
-		~GetChatSearchResultsTask();
-		void poll( int queryHandle);
-		bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
-		int queryStatus();
-		QList< GroupWise::ChatroomSearchResult > results();
-	private:
-		GroupWise::ChatroomSearchResult extractChatDetails( Field::FieldList & fields );
-		SearchResultCode m_queryStatus;
-		QList< GroupWise::ChatroomSearchResult > m_results;
+    Q_OBJECT
+public:
+    enum SearchResultCode {
+        Completed = 2, Cancelled = 4, Error = 5, GettingData = 8, DataRetrieved = 9
+    };
+    GetChatSearchResultsTask(Task *parent);
+    ~GetChatSearchResultsTask();
+    void poll(int queryHandle);
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+    int queryStatus();
+    QList< GroupWise::ChatroomSearchResult > results();
+private:
+    GroupWise::ChatroomSearchResult extractChatDetails(Field::FieldList &fields);
+    SearchResultCode m_queryStatus;
+    QList< GroupWise::ChatroomSearchResult > m_results;
 };
 
 #endif

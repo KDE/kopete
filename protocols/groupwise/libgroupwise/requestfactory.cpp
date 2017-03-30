@@ -1,10 +1,10 @@
 /*
     requestfactory.cpp - Kopete Groupwise Protocol
-  
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -21,7 +21,7 @@
 
 #define GW_REQUESTFACTORY_FIRST_TID 1
 RequestFactory::RequestFactory()
-: m_nextTransaction( GW_REQUESTFACTORY_FIRST_TID )
+    : m_nextTransaction(GW_REQUESTFACTORY_FIRST_TID)
 {
 }
 
@@ -29,8 +29,7 @@ RequestFactory::~RequestFactory()
 {
 }
 
-Request* RequestFactory::request( const QString &command )
+Request *RequestFactory::request(const QString &command)
 {
-	return new Request( m_nextTransaction++, command );
+    return new Request(m_nextTransaction++, command);
 }
-

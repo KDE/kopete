@@ -34,7 +34,6 @@
 #include <kmessagebox.h>
 #include <ktemporaryfile.h>
 
-
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 

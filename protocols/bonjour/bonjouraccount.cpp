@@ -103,9 +103,7 @@ void BonjourAccount::setAway(bool away, const QString & /* reason */)
     }
 }
 
-void BonjourAccount::setOnlineStatus(const Kopete::OnlineStatus &status,
-                                     const Kopete::StatusMessage &reason,
-                                     const OnlineStatusOptions & /*options*/)
+void BonjourAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions & /*options*/)
 {
     if (status.status() == Kopete::OnlineStatus::Online
         && myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline) {
@@ -453,10 +451,10 @@ void BonjourAccount::newIncomingConnection()
     QTcpSocket *sock = localServer->nextPendingConnection();
 
     BonjourContactConnection *bcc = new BonjourContactConnection(sock);
-    QObject::connect(bcc, SIGNAL(discoveredUserName(BonjourContactConnection*,QString)),
-                     this, SLOT(discoveredUserName(BonjourContactConnection*,QString)));
-    QObject::connect(bcc, SIGNAL(usernameNotInStream(BonjourContactConnection*)),
-                     this, SLOT(usernameNotInStream(BonjourContactConnection*)));
+    QObject::connect(bcc, SIGNAL(discoveredUserName(BonjourContactConnection *,QString)),
+                     this, SLOT(discoveredUserName(BonjourContactConnection *,QString)));
+    QObject::connect(bcc, SIGNAL(usernameNotInStream(BonjourContactConnection *)),
+                     this, SLOT(usernameNotInStream(BonjourContactConnection *)));
 
     unknownConnections << bcc;
 }

@@ -1,7 +1,7 @@
 //
 // C++ Implementation: clientstream_test
 //
-// Description: 
+// Description:
 //
 //
 // Author: Kopete Developers <kopete-devel@kde.org>, (C) 2004
@@ -31,27 +31,27 @@
 
 class ClientStreamTest : public QApplication
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	ClientStreamTest(int argc, char ** argv);
-	
-	~ClientStreamTest();
+    ClientStreamTest(int argc, char **argv);
+
+    ~ClientStreamTest();
 
 public Q_SLOTS:
-	void slotDoTest();
-	
-	void slotConnected();
-	
-	void slotWarning(int warning);
+    void slotDoTest();
 
-	void slotsend(int layer);
-	void slotTLSHandshaken();
-	
+    void slotConnected();
+
+    void slotWarning(int warning);
+
+    void slotsend(int layer);
+    void slotTLSHandshaken();
+
 private:
-	KNetworkConnector *myConnector;
-	QCA::TLS *myTLS;
-	QCATLSHandler *myTLSHandler;
-	ClientStream *myTestObject;
+    KNetworkConnector *myConnector;
+    QCA::TLS *myTLS;
+    QCATLSHandler *myTLSHandler;
+    ClientStream *myTestObject;
 };
 
 #endif

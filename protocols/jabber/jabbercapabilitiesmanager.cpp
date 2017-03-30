@@ -29,7 +29,6 @@
 #include <qfile.h>
 #include <qtextcodec.h>
 
-
 #include "jabber_protocol_debug.h"
 
 #include <xmpp_tasks.h>

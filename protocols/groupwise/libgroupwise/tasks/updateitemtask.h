@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     updateitemtask.h - ancestor for tasks that rename objects on the server
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -30,11 +30,11 @@ Rename a folder or contact on the server.  In future may be used for changing th
 */
 class UpdateItemTask : public RequestTask
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	UpdateItemTask( Task* parent );
-	~UpdateItemTask();
-	void item( Field::FieldList updateItemFields );
+    UpdateItemTask(Task *parent);
+    ~UpdateItemTask();
+    void item(Field::FieldList updateItemFields);
 };
 
 #endif

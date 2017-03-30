@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     connectiontask.cpp - Event Handling task responsible for all connection related events
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -21,33 +21,30 @@
 
 #include "client.h"
 
-ConnectionTask::ConnectionTask(Task* parent): EventTask(parent)
+ConnectionTask::ConnectionTask(Task *parent) : EventTask(parent)
 {
-	registerEvent( GroupWise::UserDisconnect );
-	registerEvent( GroupWise::ServerDisconnect );
+    registerEvent(GroupWise::UserDisconnect);
+    registerEvent(GroupWise::ServerDisconnect);
 }
 
 ConnectionTask::~ConnectionTask()
 {
 }
 
-bool ConnectionTask::take( Transfer * transfer )
+bool ConnectionTask::take(Transfer *transfer)
 {
-	if ( forMe( transfer ) )
-	{
-		EventTransfer * incomingEvent = static_cast<EventTransfer *>(transfer);
-		client()->debug( QStringLiteral("Got a connection event:") );
-		switch ( incomingEvent->eventType() )
-		{
-			case GroupWise::UserDisconnect:
-				emit connectedElsewhere();
-				break;
-			case GroupWise::ServerDisconnect:
-				emit serverDisconnect();
-				break;
-		}
-		return true;
-	}
-	return false;
+    if (forMe(transfer)) {
+        EventTransfer *incomingEvent = static_cast<EventTransfer *>(transfer);
+        client()->debug(QStringLiteral("Got a connection event:"));
+        switch (incomingEvent->eventType()) {
+        case GroupWise::UserDisconnect:
+            emit connectedElsewhere();
+            break;
+        case GroupWise::ServerDisconnect:
+            emit serverDisconnect();
+            break;
+        }
+        return true;
+    }
+    return false;
 }
-

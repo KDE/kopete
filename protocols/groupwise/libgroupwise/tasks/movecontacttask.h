@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     movecontacttask.h - Move a contact between folders on the server
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -31,20 +31,20 @@ Moves a contact between folders on the server
 */
 class LIBGROUPWISE_EXPORT MoveContactTask : public NeedFolderTask
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	MoveContactTask(Task* parent);
-	~MoveContactTask();
-	void moveContact( const ContactItem & contact, const int newParent );
-	void moveContactToNewFolder( const ContactItem & contact, const int newSequenceNumber, const QString & folderDisplayName );
-	void onGo() Q_DECL_OVERRIDE;
+    MoveContactTask(Task *parent);
+    ~MoveContactTask();
+    void moveContact(const ContactItem &contact, const int newParent);
+    void moveContactToNewFolder(const ContactItem &contact, const int newSequenceNumber, const QString &folderDisplayName);
+    void onGo() Q_DECL_OVERRIDE;
 protected:
-	void onFolderCreated() Q_DECL_OVERRIDE;
+    void onFolderCreated() Q_DECL_OVERRIDE;
 private:
-	int m_targetFolder;
-	QString m_dn;
-	QString m_displayName;
-	ContactItem m_contactToMove;	
+    int m_targetFolder;
+    QString m_dn;
+    QString m_displayName;
+    ContactItem m_contactToMove;
 };
 
 #endif

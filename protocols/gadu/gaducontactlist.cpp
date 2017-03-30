@@ -138,9 +138,7 @@ GaduContactsList::addContact(ContactLine &cl)
 
 void
 GaduContactsList::addContact(
-    QString &displayname, QString &group, QString &uin, QString &firstname, QString &surname,
-    QString &nickname, QString &phonenr, QString &email, bool ignored, bool offlineTo,
-    QString &landline)
+    QString &displayname, QString &group, QString &uin, QString &firstname, QString &surname, QString &nickname, QString &phonenr, QString &email, bool ignored, bool offlineTo, QString &landline)
 {
     ContactLine cl;
 

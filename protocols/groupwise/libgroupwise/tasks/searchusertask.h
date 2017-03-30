@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     searchusertask.h - high level search for users on the server - spawns PollSearchResultsTasks
 
-    Copyright (c) 2005      SUSE Linux Products GmbH	 	 http://www.suse.com
-    
+    Copyright (c) 2005      SUSE Linux Products GmbH	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -33,32 +33,32 @@ This Task performs user searching on the server
 */
 class LIBGROUPWISE_EXPORT SearchUserTask : public RequestTask
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-    SearchUserTask(Task* parent);
+    SearchUserTask(Task *parent);
 
     ~SearchUserTask();
-	/**
-	 * Create the search query
-	 * @param query a list of search terms
-	 */
-	void search( const QList<GroupWise::UserSearchQueryTerm> & query);
-	/** 
-	 * If the query was accepted, start a timer to poll for results using PollSearchResultsTask
-	 */
-	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
-	/**
-	 * Access the results of the search
-	 */
-	QList< GroupWise::ContactDetails > results();
+    /**
+     * Create the search query
+     * @param query a list of search terms
+     */
+    void search(const QList<GroupWise::UserSearchQueryTerm> &query);
+    /**
+     * If the query was accepted, start a timer to poll for results using PollSearchResultsTask
+     */
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+    /**
+     * Access the results of the search
+     */
+    QList< GroupWise::ContactDetails > results();
 protected Q_SLOTS:
-	void slotPollForResults();
-	void slotGotPollResults();
-private: 
-	QString m_queryHandle;  // used to identify our query to the server, so we can poll for its results
-	QTimer * m_resultsPollTimer;
-	QList< GroupWise::ContactDetails > m_results;
-	int m_polls;
+    void slotPollForResults();
+    void slotGotPollResults();
+private:
+    QString m_queryHandle;  // used to identify our query to the server, so we can poll for its results
+    QTimer *m_resultsPollTimer;
+    QList< GroupWise::ContactDetails > m_results;
+    int m_polls;
 };
 
 #endif

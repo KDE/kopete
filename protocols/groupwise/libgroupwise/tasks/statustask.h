@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     statustask.h - Event handling task responsible for status change events
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -28,13 +28,13 @@
 */
 class StatusTask : public EventTask
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	StatusTask(Task* parent);
-	~StatusTask();
-	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
+    StatusTask(Task *parent);
+    ~StatusTask();
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
 Q_SIGNALS:
-	void gotStatus( const QString & contactId, quint16 status, const QString & statusText );
+    void gotStatus(const QString &contactId, quint16 status, const QString &statusText);
 };
 
 #endif

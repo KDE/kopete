@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     connector.h - the Groupwise socket connector
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -29,34 +29,34 @@ class ByteStream;
 
 class LIBGROUPWISE_EXPORT Connector : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	Connector(QObject *parent=0);
-	virtual ~Connector();
+    Connector(QObject *parent = 0);
+    virtual ~Connector();
 
-	virtual void connectToServer(const QString &server)=0;
-	virtual ByteStream *stream() const=0;
-	virtual void done()=0;
+    virtual void connectToServer(const QString &server) = 0;
+    virtual ByteStream *stream() const = 0;
+    virtual void done() = 0;
 
-	bool useSSL() const;
-	bool havePeerAddress() const;
-	QHostAddress peerAddress() const;
-	quint16 peerPort() const;
+    bool useSSL() const;
+    bool havePeerAddress() const;
+    QHostAddress peerAddress() const;
+    quint16 peerPort() const;
 
 Q_SIGNALS:
-	void connected();
-	void error();
+    void connected();
+    void error();
 
 protected:
-	void setUseSSL(bool b);
-	void setPeerAddressNone();
-	void setPeerAddress(const QHostAddress &addr, quint16 port);
+    void setUseSSL(bool b);
+    void setPeerAddressNone();
+    void setPeerAddress(const QHostAddress &addr, quint16 port);
 
 private:
-	bool ssl;
-	bool haveaddr;
-	QHostAddress addr;
-	quint16 port;
+    bool ssl;
+    bool haveaddr;
+    QHostAddress addr;
+    quint16 port;
 };
 
 #endif

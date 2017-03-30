@@ -133,7 +133,7 @@ GaduDCC::registerAccount(GaduAccount *account)
         dccServer = new GaduDCCServer();
     }
 
-    connect(dccServer, SIGNAL(incoming(gg_dcc*,bool&)), SLOT(slotIncoming(gg_dcc*,bool&)));
+    connect(dccServer, SIGNAL(incoming(gg_dcc *,bool&)), SLOT(slotIncoming(gg_dcc *,bool&)));
 
     initmutex.unlock();
 

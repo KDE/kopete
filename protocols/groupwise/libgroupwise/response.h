@@ -1,10 +1,10 @@
 /*
     response.h - Kopete Groupwise Protocol
-  
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -24,16 +24,20 @@
  * Represents the server's reply to a client generated request
  * @author Kopete Developers
 */
-class Response: public UserTransfer
+class Response : public UserTransfer
 {
 public:
-	Response( int transactionId, int resultCode, Field::FieldList fields );
-	virtual ~Response( );
+    Response(int transactionId, int resultCode, Field::FieldList fields);
+    virtual ~Response();
 
-	TransferType type() Q_DECL_OVERRIDE { return Transfer::ResponseTransfer; }
-	int resultCode() const;
+    TransferType type() Q_DECL_OVERRIDE
+    {
+        return Transfer::ResponseTransfer;
+    }
+
+    int resultCode() const;
 private:
-	int m_resultCode;
+    int m_resultCode;
 };
 
 #endif

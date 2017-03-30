@@ -25,12 +25,10 @@
 #include "irisnetplugin.h"
 
 namespace XMPP {
-
 typedef void (*IrisNetCleanUpFunction)();
 
 IRISNET_EXPORT void irisNetAddPostRoutine(IrisNetCleanUpFunction func);
-IRISNET_EXPORT QList<IrisNetProvider*> irisNetProviders();
-
+IRISNET_EXPORT QList<IrisNetProvider *> irisNetProviders();
 }
 
 #endif

@@ -32,469 +32,456 @@
 #define RESTART_INTERVAL 100000
 #define QUIT_INTERVAL 10000
 
-Libjingle::Libjingle(const QString &jid, const QString &password, const QString &host, quint16 port) {
-
+Libjingle::Libjingle(const QString &jid, const QString &password, const QString &host, quint16 port)
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::Libjingle";
-	callProcess = new QProcess;
-	callDialog = new LibjingleCallDialog;
-	timer = new QTimer;
+    callProcess = new QProcess;
+    callDialog = new LibjingleCallDialog;
+    timer = new QTimer;
 
-	support = true;
-	c = false;
-	activeCall = false;
+    support = true;
+    c = false;
+    activeCall = false;
 
-	this->jid = jid;
-	this->password = password;
-	this->host = host;
-	this->port = port;
+    this->jid = jid;
+    this->password = password;
+    this->host = host;
+    this->port = port;
 
-	connect( callDialog->muteButton, SIGNAL(toggled(bool)), this, SLOT(muteCall(bool)) );
-	connect( callDialog->acceptButton, SIGNAL(pressed()), this, SLOT(acceptCall()) );
-	connect( callDialog->hangupButton, SIGNAL(pressed()), this, SLOT(hangupCall()) );
-	connect( callDialog->rejectButton, SIGNAL(pressed()), this, SLOT(rejectCall()) );
-	connect( callDialog, SIGNAL(closed()), this, SLOT(cancelCall()) );
-
+    connect(callDialog->muteButton, SIGNAL(toggled(bool)), this, SLOT(muteCall(bool)));
+    connect(callDialog->acceptButton, SIGNAL(pressed()), this, SLOT(acceptCall()));
+    connect(callDialog->hangupButton, SIGNAL(pressed()), this, SLOT(hangupCall()));
+    connect(callDialog->rejectButton, SIGNAL(pressed()), this, SLOT(rejectCall()));
+    connect(callDialog, SIGNAL(closed()), this, SLOT(cancelCall()));
 }
 
-Libjingle::~Libjingle() {
-
+Libjingle::~Libjingle()
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::~Libjingle";
-	logout("destruct");
+    logout("destruct");
 
-	delete timer;
-	delete callProcess;
-	delete callDialog;
-
+    delete timer;
+    delete callProcess;
+    delete callDialog;
 }
 
-void Libjingle::setUser(const QString &jid, const QString &password) {
-
+void Libjingle::setUser(const QString &jid, const QString &password)
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::setUser";
-	if ( ! support )
-		return;
+    if (!support) {
+        return;
+    }
 
-	c = false;
-	activeCall = false;
+    c = false;
+    activeCall = false;
 
-	this->jid = jid;
-	this->password = password;
-
+    this->jid = jid;
+    this->password = password;
 }
 
-void Libjingle::setServer(const QString &host, quint16 port) {
-
+void Libjingle::setServer(const QString &host, quint16 port)
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::setServer";
-	if ( ! support )
-		return;
+    if (!support) {
+        return;
+    }
 
-	c = false;
-	activeCall = false;
+    c = false;
+    activeCall = false;
 
-	this->host = host;
-	this->port = port;
-
+    this->host = host;
+    this->port = port;
 }
 
-void Libjingle::error(QProcess::ProcessError error) {
-
+void Libjingle::error(QProcess::ProcessError error)
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::error";
-	if ( error == QProcess::FailedToStart ) {
-		//Cant start process call
-		support = false;
-		QPointer <QMessageBox> error = new QMessageBox(QMessageBox::Critical, "Jabber Protocol", i18n("Cannot start process %1. Check your installation of Kopete.", QString(callExe)));
-		error->exec();
-		delete error;
-	}
-
+    if (error == QProcess::FailedToStart) {
+        //Cant start process call
+        support = false;
+        QPointer <QMessageBox> error = new QMessageBox(QMessageBox::Critical, "Jabber Protocol", i18n("Cannot start process %1. Check your installation of Kopete.", QString(callExe)));
+        error->exec();
+        delete error;
+    }
 }
 
-void Libjingle::login() {
-
+void Libjingle::login()
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::login";
-	if ( ! support )
-		return;
+    if (!support) {
+        return;
+    }
 
-	if ( isRunning() || isConnected() )
-		logout();
+    if (isRunning() || isConnected()) {
+        logout();
+    }
 
-	usersOnline.clear();
+    usersOnline.clear();
 
-	connect( callProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)) );
-	connect( callProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(read()) );
-	connect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(finished(int,QProcess::ExitStatus)) );
+    connect(callProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
+    connect(callProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(read()));
+    connect(callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(finished(int,QProcess::ExitStatus)));
 
-	c = false;
-	activeCall = false;
+    c = false;
+    activeCall = false;
 
-	QStringList callArgs;
+    QStringList callArgs;
 
-	if ( ! this->host.isEmpty() ) {
-		QString server = this->host;
-		if ( this->port )
-			server += ':' + QString::number(this->port);
-		callArgs << "--s" << server;
-	}
+    if (!this->host.isEmpty()) {
+        QString server = this->host;
+        if (this->port) {
+            server += ':' + QString::number(this->port);
+        }
+        callArgs << "--s" << server;
+    }
 
-	callProcess->start(callExe, callArgs);
+    callProcess->start(callExe, callArgs);
 //	callProcess->waitForStarted();
 //	qCDebug(JABBER_PROTOCOL_LOG) << "started";
 
-	#warning Disabled periodic restart
-	//Uncomment this 2 lines if periodic restart is needed
-	//connect( timer, SIGNAL(timeout()), this, SLOT(restart()) );
-	//timer->start(RESTART_INTERVAL);
-
+    #warning Disabled periodic restart
+    //Uncomment this 2 lines if periodic restart is needed
+    //connect( timer, SIGNAL(timeout()), this, SLOT(restart()) );
+    //timer->start(RESTART_INTERVAL);
 }
 
-void Libjingle::logout(const QString &res) {
-
+void Libjingle::logout(const QString &res)
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::logout";
-	if ( ! support )
-		return;
+    if (!support) {
+        return;
+    }
 
-	timer->stop();
+    timer->stop();
 
-	disconnect( timer, SIGNAL(timeout()), this, SLOT(restart()) );
-	disconnect( callProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)) );
-	disconnect( callProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(read()) );
-	disconnect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(finished(int,QProcess::ExitStatus)) );
+    disconnect(timer, SIGNAL(timeout()), this, SLOT(restart()));
+    disconnect(callProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
+    disconnect(callProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(read()));
+    disconnect(callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(finished(int,QProcess::ExitStatus)));
 
-	usersOnline.clear();
+    usersOnline.clear();
 
-	if ( activeCall ) {
-		activeCall = false;
-		closeCallDialog();
-		callDialog->userName->setText("");
-		callDialog->callStatus->setText("");
-	}
+    if (activeCall) {
+        activeCall = false;
+        closeCallDialog();
+        callDialog->userName->setText("");
+        callDialog->callStatus->setText("");
+    }
 
-	if ( isRunning() && c ) {
+    if (isRunning() && c) {
+        if (res.isEmpty()) {
+            emit(disconnected("logout"));
+        } else {
+            emit(disconnected(res));
+        }
 
-		if ( res.isEmpty() )
-			emit(disconnected("logout"));
-		else
-			emit(disconnected(res));
+        write("quit");
 
-		write("quit");
+        c = false;
 
-		c = false;
+        if (res == "destruct") {
+            callProcess->terminate();
+            return;
+        }
 
-		if ( res == "destruct" ) {
+        QEventLoop *loop = new QEventLoop;
+        QTimer *quitTimer = new QTimer;
 
-			callProcess->terminate();
-			return;
+        connect(callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), loop, SLOT(quit()));
+        connect(quitTimer, SIGNAL(timeout()), loop, SLOT(quit()));
 
-		}
+        quitTimer->start(QUIT_INTERVAL);
+        loop->exec();
 
-		QEventLoop * loop = new QEventLoop;
-		QTimer * quitTimer = new QTimer;
+        disconnect(quitTimer, SIGNAL(timeout()), loop, SLOT(quit()));
+        disconnect(callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), loop, SLOT(quit()));
 
-		connect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), loop, SLOT(quit()) );
-		connect( quitTimer, SIGNAL(timeout()), loop, SLOT(quit()) );
+        if (isRunning()) {
+            callProcess->kill();
 
-		quitTimer->start(QUIT_INTERVAL);
-		loop->exec();
+            connect(callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), loop, SLOT(quit()));
+            connect(quitTimer, SIGNAL(timeout()), loop, SLOT(quit()));
 
-		disconnect( quitTimer, SIGNAL(timeout()), loop, SLOT(quit()) );
-		disconnect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), loop, SLOT(quit()) );
+            quitTimer->start(QUIT_INTERVAL);
+            loop->exec();
 
-		if ( isRunning() ) {
+            disconnect(quitTimer, SIGNAL(timeout()), loop, SLOT(quit()));
+            disconnect(callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), loop, SLOT(quit()));
 
-			callProcess->kill();
+            if (isRunning()) {
+                callProcess->terminate();
+            }
+        }
 
-			connect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), loop, SLOT(quit()) );
-			connect( quitTimer, SIGNAL(timeout()), loop, SLOT(quit()) );
-
-			quitTimer->start(QUIT_INTERVAL);
-			loop->exec();
-
-			disconnect( quitTimer, SIGNAL(timeout()), loop, SLOT(quit()) );
-			disconnect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), loop, SLOT(quit()) );
-
-			if ( isRunning() )
-				callProcess->terminate();
-
-		}
-
-		delete quitTimer;
-		delete loop;
-		
-	}
-
+        delete quitTimer;
+        delete loop;
+    }
 }
 
-void Libjingle::restart() {
-
+void Libjingle::restart()
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::restart";
-	if ( ! activeCall && c ) {
-		logout("Periodic restart");
-		login();
-	}
-
+    if (!activeCall && c) {
+        logout("Periodic restart");
+        login();
+    }
 }
 
-void Libjingle::finished(int, QProcess::ExitStatus exitStatus) {
-
+void Libjingle::finished(int, QProcess::ExitStatus exitStatus)
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::finished";
-	logout();
+    logout();
 
-	if ( exitStatus == QProcess::CrashExit ) {
+    if (exitStatus == QProcess::CrashExit) {
 //		qCDebug(JABBER_PROTOCOL_LOG) << "crashed - disconnected";
-		emit(disconnected("crashed"));
-		login();
-	}
-
+        emit(disconnected("crashed"));
+        login();
+    }
 }
 
-void Libjingle::openCallDialog() {
-
+void Libjingle::openCallDialog()
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::openCallDialog";
-	callDialog->show();
-
+    callDialog->show();
 }
 
-void Libjingle::closeCallDialog() {
-
+void Libjingle::closeCallDialog()
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::closeCallDialog";
-	callDialog->hide();
-
+    callDialog->hide();
 }
 
-void Libjingle::write(const QByteArray &line) {
-
+void Libjingle::write(const QByteArray &line)
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::write" << line;
-	if ( ! isRunning() )
-		return;
+    if (!isRunning()) {
+        return;
+    }
 
-	callProcess->write(line);
-	callProcess->write("\n");
-
+    callProcess->write(line);
+    callProcess->write("\n");
 }
 
-void Libjingle::read() {
-
+void Libjingle::read()
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::read";
-	QStringList input = QString::fromUtf8(callProcess->readAllStandardOutput()).split('\n');
+    QStringList input = QString::fromUtf8(callProcess->readAllStandardOutput()).split('\n');
 
-	for ( int i=0; i<input.size(); ++i ) {
-
-		QString line = input.at(i);
+    for (int i = 0; i < input.size(); ++i) {
+        QString line = input.at(i);
 //		qCDebug(JABBER_PROTOCOL_LOG) << "line:" << line;
 
-		if ( line.startsWith("JID:") ) {
-			//Send user name
-			write(jid.toUtf8());
+        if (line.startsWith("JID:")) {
+            //Send user name
+            write(jid.toUtf8());
 //			qCDebug(JABBER_PROTOCOL_LOG) << "send user name";
-		} else if ( line.startsWith("Password:") ) {
-			//Send password
-			write(password.toUtf8());
+        } else if (line.startsWith("Password:")) {
+            //Send password
+            write(password.toUtf8());
 //			qCDebug(JABBER_PROTOCOL_LOG) << "send passwd";
-		} else if ( line.startsWith("logged in...") ) {
-			//We are connected
-			c = true;
-			emit(connected());
+        } else if (line.startsWith("logged in...")) {
+            //We are connected
+            c = true;
+            emit(connected());
 //			qCDebug(JABBER_PROTOCOL_LOG) << "connected";
-			//Set lowest resource priority
-			write("priority -127");
-		} else if ( line.startsWith("logged out...") ) {
-			//We are logouted - bad username or passwd
-			QString res = line.section("logged out...", -1).trimmed();
-			emit(disconnected(res));
+            //Set lowest resource priority
+            write("priority -127");
+        } else if (line.startsWith("logged out...")) {
+            //We are logouted - bad username or passwd
+            QString res = line.section("logged out...", -1).trimmed();
+            emit(disconnected(res));
 //			qCDebug(JABBER_PROTOCOL_LOG) << "bad user";
-		} else if ( line.startsWith("Invalid JID") ) {
-			//Invalid JID
-			emit(disconnected(line));
-		} else if ( line.startsWith("Removing from roster:") ) {
-			//User does not support libjingle
-			QString user = line.section(':', -1).section('/', 0, 0).trimmed();
-			QString resource = line.section(':', -1).section('/', -1).trimmed();
+        } else if (line.startsWith("Invalid JID")) {
+            //Invalid JID
+            emit(disconnected(line));
+        } else if (line.startsWith("Removing from roster:")) {
+            //User does not support libjingle
+            QString user = line.section(':', -1).section('/', 0, 0).trimmed();
+            QString resource = line.section(':', -1).section('/', -1).trimmed();
 //			qCDebug(JABBER_PROTOCOL_LOG) << "user offline" << user << resource;
-			emit(userOffline(user, resource));
-			usersOnline.remove(user, resource);
-		} else if ( line.startsWith("Adding to roster:") ) {
-			//User support libjingle
-			QString user = line.section(':', -1).section('/', 0, 0).trimmed();
-			QString resource = line.section(':', -1).section('/', -1).trimmed();
+            emit(userOffline(user, resource));
+            usersOnline.remove(user, resource);
+        } else if (line.startsWith("Adding to roster:")) {
+            //User support libjingle
+            QString user = line.section(':', -1).section('/', 0, 0).trimmed();
+            QString resource = line.section(':', -1).section('/', -1).trimmed();
 //			qCDebug(JABBER_PROTOCOL_LOG) << "user online" << user << resource;
-			emit(userOnline(user, resource));
-			if ( ! usersOnline.contains(user, resource) )
-				usersOnline.insert(user, resource);
-		} else if ( line.startsWith("Found online friend") ) {
-			//User support libjingle
-			QString user = line.section('\'', 1, 1).section('/', 0, 0).trimmed();
-			QString resource = line.section('\'', 1, 1).section('/', -1).trimmed();
+            emit(userOnline(user, resource));
+            if (!usersOnline.contains(user, resource)) {
+                usersOnline.insert(user, resource);
+            }
+        } else if (line.startsWith("Found online friend")) {
+            //User support libjingle
+            QString user = line.section('\'', 1, 1).section('/', 0, 0).trimmed();
+            QString resource = line.section('\'', 1, 1).section('/', -1).trimmed();
 //			qCDebug(JABBER_PROTOCOL_LOG) << "user online" << user << resource;
-			emit(userOnline(user, resource));
-			if ( ! usersOnline.contains(user, resource) )
-				usersOnline.insert(user, resource);
-		} else if ( line.startsWith("Incoming call from") ) {
-			//Incoming call
-			QString user = line.section('\'', 1, 1).section('/', 0, 0).trimmed();
-			QString resource = line.section('\'', 1, 1).section('/', -1).trimmed();
+            emit(userOnline(user, resource));
+            if (!usersOnline.contains(user, resource)) {
+                usersOnline.insert(user, resource);
+            }
+        } else if (line.startsWith("Incoming call from")) {
+            //Incoming call
+            QString user = line.section('\'', 1, 1).section('/', 0, 0).trimmed();
+            QString resource = line.section('\'', 1, 1).section('/', -1).trimmed();
 //			qCDebug(JABBER_PROTOCOL_LOG) << "incoming call" << user << resource;
-			activeCall = true;
-			callDialog->acceptButton->setEnabled(true);
-			callDialog->hangupButton->setEnabled(false);
-			callDialog->rejectButton->setEnabled(true);
-			callDialog->userName->setText(user);
-			callDialog->callStatus->setText(i18n("Answer for incoming call"));
-			openCallDialog();
-			emit(incomingCall(user, resource));
-		} else if ( line.startsWith("call answered") ) {
-			//Accepted call
+            activeCall = true;
+            callDialog->acceptButton->setEnabled(true);
+            callDialog->hangupButton->setEnabled(false);
+            callDialog->rejectButton->setEnabled(true);
+            callDialog->userName->setText(user);
+            callDialog->callStatus->setText(i18n("Answer for incoming call"));
+            openCallDialog();
+            emit(incomingCall(user, resource));
+        } else if (line.startsWith("call answered")) {
+            //Accepted call
 //			qCDebug(JABBER_PROTOCOL_LOG) << "accepted call";
-			activeCall = true;
-			callDialog->acceptButton->setEnabled(false);
-			callDialog->hangupButton->setEnabled(true);
-			callDialog->rejectButton->setEnabled(false);
-			callDialog->callStatus->setText(i18n("Accepted"));
-			emit(acceptedCall());
-		} else if ( line.startsWith("calling...") ) {
-			//Calling...
+            activeCall = true;
+            callDialog->acceptButton->setEnabled(false);
+            callDialog->hangupButton->setEnabled(true);
+            callDialog->rejectButton->setEnabled(false);
+            callDialog->callStatus->setText(i18n("Accepted"));
+            emit(acceptedCall());
+        } else if (line.startsWith("calling...")) {
+            //Calling...
 //			qCDebug(JABBER_PROTOCOL_LOG) << "calling...";
-			activeCall = true;
-			callDialog->acceptButton->setEnabled(false);
-			callDialog->hangupButton->setEnabled(true);
-			callDialog->rejectButton->setEnabled(false);
-			callDialog->callStatus->setText(i18n("Calling..."));
-			emit(callingCall());
-		} else if ( line.startsWith("call not answered") ) {
-			//Rejected call
+            activeCall = true;
+            callDialog->acceptButton->setEnabled(false);
+            callDialog->hangupButton->setEnabled(true);
+            callDialog->rejectButton->setEnabled(false);
+            callDialog->callStatus->setText(i18n("Calling..."));
+            emit(callingCall());
+        } else if (line.startsWith("call not answered")) {
+            //Rejected call
 //			qCDebug(JABBER_PROTOCOL_LOG) << "rejected call";
-			callDialog->callStatus->setText(i18n("Rejected"));
-			closeCallDialog();
-			callDialog->userName->setText("");
-			activeCall = false;
-			emit(rejectedCall());
-		} else if ( line.startsWith("call in progress") ) {
-			//Call in progress
+            callDialog->callStatus->setText(i18n("Rejected"));
+            closeCallDialog();
+            callDialog->userName->setText("");
+            activeCall = false;
+            emit(rejectedCall());
+        } else if (line.startsWith("call in progress")) {
+            //Call in progress
 //			qCDebug(JABBER_PROTOCOL_LOG) << "Call in progress";
-			activeCall = true;
-			callDialog->acceptButton->setEnabled(false);
-			callDialog->hangupButton->setEnabled(true);
-			callDialog->rejectButton->setEnabled(false);
-			callDialog->callStatus->setText(i18n("Call in progress"));
-			emit(progressCall());
-		} else if ( line.startsWith("other side hung up") ) {
-			//Hanged up
+            activeCall = true;
+            callDialog->acceptButton->setEnabled(false);
+            callDialog->hangupButton->setEnabled(true);
+            callDialog->rejectButton->setEnabled(false);
+            callDialog->callStatus->setText(i18n("Call in progress"));
+            emit(progressCall());
+        } else if (line.startsWith("other side hung up")) {
+            //Hanged up
 //			qCDebug(JABBER_PROTOCOL_LOG) << "hanged up call";
-			write("hangup"); //for correct
-			callDialog->userName->setText("");
-			callDialog->callStatus->setText(i18n("Other side hung up"));
-			closeCallDialog();
-			activeCall = false;
-			emit(hangedupCall());
-		} else if ( line.startsWith("call destroyed") ) {
-			closeCallDialog();
-			callDialog->callStatus->setText("");
-			callDialog->userName->setText("");
-			activeCall = false;
-			emit(hangedupCall());
-		}
-	}
-
+            write("hangup"); //for correct
+            callDialog->userName->setText("");
+            callDialog->callStatus->setText(i18n("Other side hung up"));
+            closeCallDialog();
+            activeCall = false;
+            emit(hangedupCall());
+        } else if (line.startsWith("call destroyed")) {
+            closeCallDialog();
+            callDialog->callStatus->setText("");
+            callDialog->userName->setText("");
+            activeCall = false;
+            emit(hangedupCall());
+        }
+    }
 }
 
-bool Libjingle::isOnline(const QString &user) {
-
+bool Libjingle::isOnline(const QString &user)
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::isOnline";
-	if ( ! c )
-		return false;
+    if (!c) {
+        return false;
+    }
 
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Online are:" << usersOnline;
-	return ( usersOnline.contains(user) && ! activeCall );
+    return usersOnline.contains(user) && !activeCall;
 }
 
-bool Libjingle::isConnected() {
-
+bool Libjingle::isConnected()
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::isConnected";
-	return c;
-
+    return c;
 }
 
-void Libjingle::setStatus(const QString &status) {
-
+void Libjingle::setStatus(const QString &status)
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::setStatus" << status;
-	write(QString("status %1").arg(status).toUtf8());
-
+    write(QString("status %1").arg(status).toUtf8());
 }
 
-void Libjingle::makeCall(const QString &user) {
-
+void Libjingle::makeCall(const QString &user)
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::makeCall";
-	if ( ! support )
-		return;
+    if (!support) {
+        return;
+    }
 
-	if ( ! isOnline(user) )
-		return;
+    if (!isOnline(user)) {
+        return;
+    }
 
-	write(QString("call %1").arg(user).toUtf8());
+    write(QString("call %1").arg(user).toUtf8());
 
-	callDialog->acceptButton->setEnabled(false);
-	callDialog->hangupButton->setEnabled(true);
-	callDialog->rejectButton->setEnabled(false);
-	callDialog->userName->setText(user);
-	callDialog->callStatus->setText(i18n("Waiting..."));
+    callDialog->acceptButton->setEnabled(false);
+    callDialog->hangupButton->setEnabled(true);
+    callDialog->rejectButton->setEnabled(false);
+    callDialog->userName->setText(user);
+    callDialog->callStatus->setText(i18n("Waiting..."));
 
-	openCallDialog();
-	activeCall = true;
-
+    openCallDialog();
+    activeCall = true;
 }
 
-void Libjingle::acceptCall() {
-
+void Libjingle::acceptCall()
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::acceptCall";
-	write("accept");
-	activeCall = true;
-
+    write("accept");
+    activeCall = true;
 }
 
-void Libjingle::rejectCall() {
-
+void Libjingle::rejectCall()
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::rejectCall";
-	write("reject");
+    write("reject");
 
-	closeCallDialog();
+    closeCallDialog();
 
-	callDialog->userName->setText("");
-	callDialog->callStatus->setText("");
+    callDialog->userName->setText("");
+    callDialog->callStatus->setText("");
 
-	activeCall = false;
-
+    activeCall = false;
 }
 
-void Libjingle::hangupCall() {
-
+void Libjingle::hangupCall()
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::hangupCall";
-	write("hangup");
+    write("hangup");
 
-	closeCallDialog();
+    closeCallDialog();
 
-	callDialog->userName->setText("");
-	callDialog->callStatus->setText("");
+    callDialog->userName->setText("");
+    callDialog->callStatus->setText("");
 
-	activeCall = false;
-
+    activeCall = false;
 }
 
-void Libjingle::cancelCall() {
-
+void Libjingle::cancelCall()
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::cancelCall";
-	hangupCall();
-	rejectCall();
-
+    hangupCall();
+    rejectCall();
 }
 
-void Libjingle::muteCall(bool b) {
-
+void Libjingle::muteCall(bool b)
+{
 //	qCDebug(JABBER_PROTOCOL_LOG) << "Libjingle::muteCall";
-	if ( ! activeCall )
-		return;
+    if (!activeCall) {
+        return;
+    }
 
-	if ( b )
-		write("mute");
-	else
-		write("unmute");
-
+    if (b) {
+        write("mute");
+    } else {
+        write("unmute");
+    }
 }
-

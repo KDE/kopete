@@ -1,10 +1,10 @@
 /*
     transferbase.h - Base class of all I/O transfers
-   
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -21,12 +21,12 @@
 /**
 @author Kopete Developers
 */
-class TransferBase{
+class TransferBase
+{
 public:
     TransferBase();
 
     ~TransferBase();
-
 };
 
 #endif

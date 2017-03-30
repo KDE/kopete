@@ -1,4 +1,4 @@
- /*
+/*
   * jabberresource.h
   *
   * Copyright (c) 2005-2006 by Michaël Larouche <larouche@kde.org>
@@ -27,8 +27,7 @@
 
 class JabberAccount;
 
-namespace XMPP
-{
+namespace XMPP {
 class Resource;
 class Jid;
 class Features;
@@ -36,64 +35,63 @@ class Features;
 
 class JabberResource : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-	/**
-	 * Create a new Jabber resource.
-	 */
-	JabberResource (JabberAccount *account, const XMPP::Jid &jid, const XMPP::Resource &resource);
-	~JabberResource ();
+    /**
+     * Create a new Jabber resource.
+     */
+    JabberResource (JabberAccount *account, const XMPP::Jid &jid, const XMPP::Resource &resource);
+    ~JabberResource ();
 
-	const XMPP::Jid &jid() const;
-	const XMPP::Resource &resource() const;
+    const XMPP::Jid &jid() const;
+    const XMPP::Resource &resource() const;
 
-	void setResource ( const XMPP::Resource &resource );
+    void setResource(const XMPP::Resource &resource);
 
-	/**
-	 * Return the client name for this resource.
-	 * @return the client name
-	 */
-	const QString &clientName () const;
-	/**
-	 * Return the client version for this resource.
-	 * @return the client version
-	 */
-	const QString &clientVersion () const;
-	/**
-	 * Return the client system for this resource.
-	 * @return the client system.
-	 */
-	const QString &clientSystem () const;
+    /**
+     * Return the client name for this resource.
+     * @return the client name
+     */
+    const QString &clientName() const;
+    /**
+     * Return the client version for this resource.
+     * @return the client version
+     */
+    const QString &clientVersion() const;
+    /**
+     * Return the client system for this resource.
+     * @return the client system.
+     */
+    const QString &clientSystem() const;
 
-	/**
-	 * Get the available features for this resource.
-	 */
-	XMPP::Features features() const;
+    /**
+     * Get the available features for this resource.
+     */
+    XMPP::Features features() const;
 
-	/**
-	 * Set if client sends delivery event flag.
-	 */
-	void setSendsDeliveredEvent( bool sends );
+    /**
+     * Set if client sends delivery event flag.
+     */
+    void setSendsDeliveredEvent(bool sends);
 
-	/**
-	 * Return true if client sends delivery event.
-	 */
-	bool sendsDeliveredEvent() const;
+    /**
+     * Return true if client sends delivery event.
+     */
+    bool sendsDeliveredEvent() const;
 
 Q_SIGNALS:
-	void updated ( JabberResource * );
+    void updated(JabberResource *);
 
 private Q_SLOTS:
-	void slotGetTimedClientVersion ();
-	void slotGotClientVersion ();
-	void slotGetDiscoCapabilties ();
-	void slotGotDiscoCapabilities ();
+    void slotGetTimedClientVersion();
+    void slotGotClientVersion();
+    void slotGetDiscoCapabilties();
+    void slotGotDiscoCapabilities();
 
 private:
-	class Private;
-	Private * const d;
+    class Private;
+    Private *const d;
 };
 
 #endif
-

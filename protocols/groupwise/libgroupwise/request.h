@@ -1,10 +1,10 @@
 /*
     request.h - Kopete Groupwise Protocol
-  
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -26,15 +26,19 @@
 */
 class Request : public UserTransfer
 {
-friend class RequestFactory;
+    friend class RequestFactory;
 
 public:
-	~Request( );
-	QString command();
-	TransferType type() Q_DECL_OVERRIDE { return Transfer::RequestTransfer; }
+    ~Request();
+    QString command();
+    TransferType type() Q_DECL_OVERRIDE
+    {
+        return Transfer::RequestTransfer;
+    }
+
 private:
-	Request( const int transactionId, const QString &command );
-	QString m_command;
+    Request(const int transactionId, const QString &command);
+    QString m_command;
 };
 
 #endif

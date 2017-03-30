@@ -1,12 +1,12 @@
 /*
     tlshandler.h - Kopete Groupwise Protocol
-      
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
-    
+
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -16,7 +16,7 @@
     *                                                                       *
     *************************************************************************
 */
-  
+
 #ifndef GWTLSHANDLER_H
 #define GWTLSHANDLER_H
 
@@ -27,25 +27,25 @@
 //#include<qcstring.h>
 //#include<qxml.h>
 //#include<qdom.h>
- 
+
 class TLSHandler : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	TLSHandler(QObject *parent=0);
-	virtual ~TLSHandler();
+    TLSHandler(QObject *parent = 0);
+    virtual ~TLSHandler();
 
-	virtual void reset()=0;
-	virtual void startClient(const QString &host)=0;
-	virtual void write(const QByteArray &a)=0;
-	virtual void writeIncoming(const QByteArray &a)=0;
+    virtual void reset() = 0;
+    virtual void startClient(const QString &host) = 0;
+    virtual void write(const QByteArray &a) = 0;
+    virtual void writeIncoming(const QByteArray &a) = 0;
 
 Q_SIGNALS:
-	void success();
-	void fail();
-	void closed();
-	void readyRead(const QByteArray &a);
-	void readyReadOutgoing(const QByteArray &a, int plainBytes);
+    void success();
+    void fail();
+    void closed();
+    void readyRead(const QByteArray &a);
+    void readyReadOutgoing(const QByteArray &a, int plainBytes);
 };
 
 #endif

@@ -1,10 +1,10 @@
 /*
     response.cpp - Kopete Groupwise Protocol
-  
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -18,10 +18,11 @@
 
 #include <qapplication.h>
 
-Response::Response( int transactionId, int resultCode, Field::FieldList fields )
-: UserTransfer( transactionId ), m_resultCode( resultCode )
+Response::Response(int transactionId, int resultCode, Field::FieldList fields)
+    : UserTransfer(transactionId)
+    , m_resultCode(resultCode)
 {
-	setFields( fields );
+    setFields(fields);
 }
 
 Response::~Response()
@@ -30,5 +31,5 @@ Response::~Response()
 
 int Response::resultCode() const
 {
-	return m_resultCode;
+    return m_resultCode;
 }

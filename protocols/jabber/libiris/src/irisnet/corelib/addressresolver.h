@@ -24,34 +24,32 @@
 #include <QHostAddress>
 
 namespace XMPP {
-
 // resolve both AAAA and A for a hostname
 class AddressResolver : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	enum Error
-	{
-		ErrorGeneric
-	};
+    enum Error
+    {
+        ErrorGeneric
+    };
 
-	AddressResolver(QObject *parent = 0);
-	~AddressResolver();
+    AddressResolver(QObject *parent = 0);
+    ~AddressResolver();
 
-	void start(const QByteArray &hostName);
-	void stop();
+    void start(const QByteArray &hostName);
+    void stop();
 
 Q_SIGNALS:
-	void resultsReady(const QList<QHostAddress> &results);
-	void error(XMPP::AddressResolver::Error e);
+    void resultsReady(const QList<QHostAddress> &results);
+    void error(XMPP::AddressResolver::Error e);
 
 private:
-	class Private;
-	friend class Private;
-	Private *d;
+    class Private;
+    friend class Private;
+    Private *d;
 };
-
 }
 
 #endif

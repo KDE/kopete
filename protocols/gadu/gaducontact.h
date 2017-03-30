@@ -85,8 +85,7 @@ public slots:
     void messageAck();
     void slotShowPublicProfile();
     void slotEditContact();
-    virtual void sendFile(const KUrl &sourceURL = KUrl(),
-                          const QString &fileName = QString(), uint fileSize = 0L);
+    virtual void sendFile(const KUrl &sourceURL = KUrl(), const QString &fileName = QString(), uint fileSize = 0L);
 
 protected:
     virtual Kopete::ChatSession *manager(

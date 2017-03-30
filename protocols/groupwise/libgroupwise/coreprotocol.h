@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     coreprotocol.h- the core GroupWise protocol
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -70,7 +70,7 @@ class Transfer;
  * CCCC... is the event source, a UTF8 encoded string, which is observed to be zero terminated
  * DDDD... is event dependent binary data, which frequently consists of the conference the event relates to,
  *         conference flags describing the logging, chat security and closed status, and message data.
- * 
+ *
  * As the DDDD portion is irregularly structured, it must be processed knowing the semantics of the event type.
  * See the @ref EventProtocol documentation.
  *
@@ -113,89 +113,90 @@ class Transfer;
  */
 class CoreProtocol : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	enum State { NeedMore, Available, NoData };
+    enum State {
+        NeedMore, Available, NoData
+    };
 
-	CoreProtocol();
-	
-	virtual ~CoreProtocol();
-	/**
-	 * Debug output
-	 */
-	static void debug(const QString &str);
+    CoreProtocol();
 
-	/**
-	 * Reset the protocol, clear buffers
-	 */
-	void reset();
-	
-	/**
-	 * Accept data from the network, and buffer it into a useful message
-	 * @param incomingBytes Raw data in wire format.
-	 */
-	void addIncomingData( const QByteArray& incomingBytes );
-	
-	/**
-	 * @return the incoming transfer or 0 if none is available.
-	 */
-	Transfer* incomingTransfer();
-	
-	/** 
-	 * Convert a request into an outgoing transfer
-	 * emits @ref outgoingData() with each part of the transfer
-	 */
-	void outgoingTransfer( Request* outgoing );
-	
-	/**
-	 * Get the state of the protocol 
-	 */
-	int state();
-	
+    virtual ~CoreProtocol();
+    /**
+     * Debug output
+     */
+    static void debug(const QString &str);
+
+    /**
+     * Reset the protocol, clear buffers
+     */
+    void reset();
+
+    /**
+     * Accept data from the network, and buffer it into a useful message
+     * @param incomingBytes Raw data in wire format.
+     */
+    void addIncomingData(const QByteArray &incomingBytes);
+
+    /**
+     * @return the incoming transfer or 0 if none is available.
+     */
+    Transfer *incomingTransfer();
+
+    /**
+     * Convert a request into an outgoing transfer
+     * emits @ref outgoingData() with each part of the transfer
+     */
+    void outgoingTransfer(Request *outgoing);
+
+    /**
+     * Get the state of the protocol
+     */
+    int state();
+
 Q_SIGNALS:
-	/** 
-	 * Emitted as the core protocol converts fields to wire ready data
-	 */
-	void outgoingData( const QByteArray& );
-	/**
-	 * Emitted when there is incoming data, parsed into a Transfer
-	 */
-	void incomingData();
+    /**
+     * Emitted as the core protocol converts fields to wire ready data
+     */
+    void outgoingData(const QByteArray &);
+    /**
+     * Emitted when there is incoming data, parsed into a Transfer
+     */
+    void incomingData();
 protected Q_SLOTS:
-	/**
-	 * Just a debug method to test emitting to the socket, atm - should go to the ClientStream
-	 */
-	void slotOutgoingData( const QByteArray & );
-	
+    /**
+     * Just a debug method to test emitting to the socket, atm - should go to the ClientStream
+     */
+    void slotOutgoingData(const QByteArray &);
+
 protected:
-	/**
-	 * Check that there is data to read, and set the protocol's state if there isn't any.
-	 */
-	bool okToProceed();
-	/**
-	 * Convert incoming wire data into a Transfer object and queue it
-	 * @return number of bytes from the input that were parsed into a Transfer
-	 */ 
-	int wireToTransfer( QByteArray& wire );
-	/**
-	 * Convert fields to a wire representation.  Emits outgoingData as each field is written.
-	 * Calls itself recursively to process nested fields, hence
-	 * @param depth Current depth of recursion.  Don't use this parameter yourself!
-	 */
-	void fieldsToWire( Field::FieldList fields, int depth = 0 );
-	/**
-	 * encodes a method number (usually supplied as a #defined symbol) to a char
-	 */
-	QLatin1Char encode_method( quint8 method );
+    /**
+     * Check that there is data to read, and set the protocol's state if there isn't any.
+     */
+    bool okToProceed();
+    /**
+     * Convert incoming wire data into a Transfer object and queue it
+     * @return number of bytes from the input that were parsed into a Transfer
+     */
+    int wireToTransfer(QByteArray &wire);
+    /**
+     * Convert fields to a wire representation.  Emits outgoingData as each field is written.
+     * Calls itself recursively to process nested fields, hence
+     * @param depth Current depth of recursion.  Don't use this parameter yourself!
+     */
+    void fieldsToWire(Field::FieldList fields, int depth = 0);
+    /**
+     * encodes a method number (usually supplied as a #defined symbol) to a char
+     */
+    QLatin1Char encode_method(quint8 method);
 private:
-	QByteArray m_in;	// buffer containing unprocessed bytes we received
-	QDataStream* m_din; // contains the packet currently being parsed
-	int m_error;
-	Transfer* m_inTransfer; // the transfer that is being received
-	int m_state;		// represents the protocol's overall state
-	EventProtocol* m_eventProtocol;
-	ResponseProtocol * m_responseProtocol;
+    QByteArray m_in;    // buffer containing unprocessed bytes we received
+    QDataStream *m_din; // contains the packet currently being parsed
+    int m_error;
+    Transfer *m_inTransfer; // the transfer that is being received
+    int m_state;        // represents the protocol's overall state
+    EventProtocol *m_eventProtocol;
+    ResponseProtocol *m_responseProtocol;
 };
 
 #endif
-

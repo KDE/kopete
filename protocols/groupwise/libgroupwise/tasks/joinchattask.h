@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     joinchattask.h - Join a chatroom on the server, after having been invited.
 
-    Copyright (c) 2004      SUSE Linux Products GmbH	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux Products GmbH	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -34,20 +34,20 @@ Sends Join Conference messages when the user accepts an invitation
 
 class JoinChatTask : public RequestTask
 {
-	Q_OBJECT
-	public:
-		JoinChatTask(Task* parent);
-		~JoinChatTask();
-		void join( const QString & displayName );
-		bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
-		QStringList participants() const;
-		QStringList invitees() const;
-		QString displayName() const;
-	private:
-		ConferenceGuid m_displayName;
-		QStringList m_participants;
-		QStringList m_invitees;
-		QStringList m_unknowns;
+    Q_OBJECT
+public:
+    JoinChatTask(Task *parent);
+    ~JoinChatTask();
+    void join(const QString &displayName);
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+    QStringList participants() const;
+    QStringList invitees() const;
+    QString displayName() const;
+private:
+    ConferenceGuid m_displayName;
+    QStringList m_participants;
+    QStringList m_invitees;
+    QStringList m_unknowns;
 };
 
 #endif

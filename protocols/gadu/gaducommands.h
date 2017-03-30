@@ -132,8 +132,7 @@ public:
     ChangePasswordCommand(QObject *parent = 0);
     ~ChangePasswordCommand();
 
-    void setInfo(uin_t uin, const QString &passwd, const QString &newpasswd,
-                 const QString &newemail);
+    void setInfo(uin_t uin, const QString &passwd, const QString &newpasswd, const QString &newemail);
     void execute();
 
 protected slots:

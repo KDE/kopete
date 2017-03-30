@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     connector.cpp - the Groupwise socket connector
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -21,10 +21,10 @@
 #include "connector.h"
 
 Connector::Connector(QObject *parent)
-:QObject(parent)
+    : QObject(parent)
 {
-	setUseSSL(false);
-	setPeerAddressNone();
+    setUseSSL(false);
+    setPeerAddressNone();
 }
 
 Connector::~Connector()
@@ -33,40 +33,39 @@ Connector::~Connector()
 
 bool Connector::useSSL() const
 {
-	return ssl;
+    return ssl;
 }
 
 bool Connector::havePeerAddress() const
 {
-	return haveaddr;
+    return haveaddr;
 }
 
 QHostAddress Connector::peerAddress() const
 {
-	return addr;
+    return addr;
 }
 
 quint16 Connector::peerPort() const
 {
-	return port;
+    return port;
 }
 
 void Connector::setUseSSL(bool b)
 {
-	ssl = b;
+    ssl = b;
 }
 
 void Connector::setPeerAddressNone()
 {
-	haveaddr = false;
-	addr = QHostAddress();
-	port = 0;
+    haveaddr = false;
+    addr = QHostAddress();
+    port = 0;
 }
 
 void Connector::setPeerAddress(const QHostAddress &_addr, quint16 _port)
 {
-	haveaddr = true;
-	addr = _addr;
-	port = _port;
+    haveaddr = true;
+    addr = _addr;
+    port = _port;
 }
-

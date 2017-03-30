@@ -15,7 +15,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
 #include "autoreplacepreferences.h"
 
 #include <qlayout.h>

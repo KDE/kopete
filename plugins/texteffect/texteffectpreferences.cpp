@@ -208,7 +208,7 @@ void TextEffectPreferences::slotDownPressed()
 void TextEffectPreferences::slotSettingChanged()
 {
     qCDebug(KOPETE_PLUGIN_TEXTEFFECT_LOG) << "Called"
-             << endl;
+                                          << endl;
     // Indicate that our settings have changed
     emit changed(true);
 }

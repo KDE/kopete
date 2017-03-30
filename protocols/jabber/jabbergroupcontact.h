@@ -1,4 +1,4 @@
- /*
+/*
   * jabbercontact.cpp  -  Kopete Jabber protocol groupchat contact
   *
   * Copyright (c) 2002-2004 by Till Gerken <till@tantalo.net>
@@ -22,90 +22,89 @@
 
 #include <QList>
 
-namespace Kopete { class MetaContact; }
+namespace Kopete {
+class MetaContact;
+}
 class JabberGroupChatManager;
 
 class JabberGroupContact : public JabberBaseContact
 {
-
-Q_OBJECT
+    Q_OBJECT
 
 public:
 
-	JabberGroupContact (const XMPP::RosterItem &rosterItem,
-						JabberAccount *account, Kopete::MetaContact * mc);
+    JabberGroupContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact *mc);
 
-	~JabberGroupContact ();
+    ~JabberGroupContact ();
 
-	/**
-	 * Create custom context menu items for the contact
-	 * FIXME: implement manager version here?
-	 */
-	QList<QAction *> *customContextMenuActions () Q_DECL_OVERRIDE;
-	using JabberBaseContact::customContextMenuActions;
+    /**
+     * Create custom context menu items for the contact
+     * FIXME: implement manager version here?
+     */
+    QList<QAction *> *customContextMenuActions() Q_DECL_OVERRIDE;
+    using JabberBaseContact::customContextMenuActions;
 
-	/**
-	 * Deal with an incoming message for this contact.
-	 */
-	void handleIncomingMessage ( const XMPP::Message &message ) Q_DECL_OVERRIDE;
+    /**
+     * Deal with an incoming message for this contact.
+     */
+    void handleIncomingMessage(const XMPP::Message &message) Q_DECL_OVERRIDE;
 
-	/**
-	 * Add a contact to this room.
-	 */
-	JabberBaseContact *addSubContact ( const XMPP::RosterItem &rosterItem, bool addToManager = true );
+    /**
+     * Add a contact to this room.
+     */
+    JabberBaseContact *addSubContact(const XMPP::RosterItem &rosterItem, bool addToManager = true);
 
-	/**
-	 * Remove a contact from this room.
-	 */
-	void removeSubContact ( const XMPP::RosterItem &rosterItem );
+    /**
+     * Remove a contact from this room.
+     */
+    void removeSubContact(const XMPP::RosterItem &rosterItem);
 
-	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate ) Q_DECL_OVERRIDE;
+    Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate) Q_DECL_OVERRIDE;
 
 public Q_SLOTS:
 
-	/**
-	 * This is the JabberContact level slot for sending files.
-	 *
-	 * @param sourceURL The actual QUrl of the file you are sending
-	 * @param fileName (Optional) An alternate name for the file - what the
-	 *                 receiver will see
-	 * @param fileSize (Optional) Size of the file being sent. Used when sending
-	 *                 a nondeterminate file size (such as over a socket)
-	 */
-	void sendFile( const QUrl &sourceURL = QUrl(),
-		const QString &fileName = QString(), uint fileSize = 0L ) Q_DECL_OVERRIDE;
+    /**
+     * This is the JabberContact level slot for sending files.
+     *
+     * @param sourceURL The actual QUrl of the file you are sending
+     * @param fileName (Optional) An alternate name for the file - what the
+     *                 receiver will see
+     * @param fileSize (Optional) Size of the file being sent. Used when sending
+     *                 a nondeterminate file size (such as over a socket)
+     */
+    void sendFile(const QUrl &sourceURL = QUrl(), const QString &fileName = QString(), uint fileSize = 0L) Q_DECL_OVERRIDE;
 
 private Q_SLOTS:
 
-	/**
-	 * Catch a dying message manager and leave the room.
-	 */
-	void slotChatSessionDeleted ();
-	
-	/**
-	 * When our own status change, we need to manually send the presence.
-	 */
-	void slotStatusChanged();
-	
-	/**
-	 * ask the user to change the nick, and change it
-	 */
-	void slotChangeNick();
-	
-	/**
-	 * a subcontact has been destroyed   (may happen when closing kopete)
-	 */
-	void slotSubContactDestroyed(Kopete::Contact*);
+    /**
+     * Catch a dying message manager and leave the room.
+     */
+    void slotChatSessionDeleted();
+
+    /**
+     * When our own status change, we need to manually send the presence.
+     */
+    void slotStatusChanged();
+
+    /**
+     * ask the user to change the nick, and change it
+     */
+    void slotChangeNick();
+
+    /**
+     * a subcontact has been destroyed   (may happen when closing kopete)
+     */
+    void slotSubContactDestroyed(Kopete::Contact *);
 
 private:
 
-	QList<Kopete::Contact*> mContactList;
-	QList<Kopete::MetaContact*> mMetaContactList;
+    QList<Kopete::Contact *> mContactList;
+    QList<Kopete::MetaContact *> mMetaContactList;
 
-	JabberGroupChatManager *mManager;
-	JabberBaseContact *mSelfContact;
-	QString mNick;
-	bool mLeaveGroupChat;
+    JabberGroupChatManager *mManager;
+    JabberBaseContact *mSelfContact;
+    QString mNick;
+    bool mLeaveGroupChat;
 };
 
 #endif

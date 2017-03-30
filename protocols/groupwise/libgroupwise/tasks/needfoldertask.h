@@ -1,7 +1,7 @@
 //
 // C++ Interface: %{MODULE}
 //
-// Description: 
+// Description:
 //
 //
 // Author: %{AUTHOR} <%{EMAIL}>, (C) %{YEAR}
@@ -21,19 +21,19 @@ This Task is the ancestor of Tasks that may need to create a folder on the serve
 */
 class NeedFolderTask : public ModifyContactListTask
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	NeedFolderTask(Task* parent);
-	~NeedFolderTask();
-	void createFolder();
-	virtual void onFolderCreated() = 0;
+    NeedFolderTask(Task *parent);
+    ~NeedFolderTask();
+    void createFolder();
+    virtual void onFolderCreated() = 0;
 protected Q_SLOTS:
-	void slotFolderAdded( const FolderItem & );
-	void slotFolderTaskFinished();
+    void slotFolderAdded(const FolderItem &);
+    void slotFolderTaskFinished();
 protected:
-	int m_folderSequence;
-	int m_folderId;
-	QString m_folderDisplayName;
+    int m_folderSequence;
+    int m_folderId;
+    QString m_folderDisplayName;
 };
 
 #endif

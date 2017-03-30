@@ -380,8 +380,7 @@ ChangePasswordCommand::~ChangePasswordCommand()
 }
 
 void
-ChangePasswordCommand::setInfo(uin_t uin, const QString &passwd, const QString &newpasswd,
-                               const QString &newemail)
+ChangePasswordCommand::setInfo(uin_t uin, const QString &passwd, const QString &newpasswd, const QString &newemail)
 {
     uin_ = uin;
     passwd_ = passwd;

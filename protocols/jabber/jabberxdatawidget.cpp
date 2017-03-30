@@ -1,4 +1,4 @@
- /*
+/*
     Copyright (c) 2008 by Igor Janssen  <alaves17@gmail.com>
 
     Kopete    (c) 2008 by the Kopete developers <kopete-devel@kde.org>
@@ -27,37 +27,37 @@
 class XDataWidgetField
 {
 public:
-	XDataWidgetField(XMPP::XData::Field f)
-	{
-		mField = f;
-	}
+    XDataWidgetField(XMPP::XData::Field f)
+    {
+        mField = f;
+    }
 
-	virtual ~XDataWidgetField()
-	{
-	}
+    virtual ~XDataWidgetField()
+    {
+    }
 
-	QString labelText() const
-	{
-		return mField.label();
-	}
+    QString labelText() const
+    {
+        return mField.label();
+    }
 
-	QString reqText() const
-	{
-		return QLatin1String("");
-	}
+    QString reqText() const
+    {
+        return QLatin1String("");
+    }
 
-	virtual XMPP::XData::Field field() const
-	{
-		return mField;
-	}
+    virtual XMPP::XData::Field field() const
+    {
+        return mField;
+    }
 
-	virtual bool isValid() const
-	{
-		return true;
-	}
+    virtual bool isValid() const
+    {
+        return true;
+    }
 
 private:
-	XMPP::XData::Field mField;
+    XMPP::XData::Field mField;
 };
 
 //-------------------------------------------------------------------------------------------------//
@@ -65,40 +65,39 @@ private:
 class BooleanField : public XDataWidgetField
 {
 public:
-	BooleanField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout):
-	XDataWidgetField(f)
-	{
-		check = new QCheckBox(parent);
-		check->setText(labelText());
-		if(f.value().count() > 0)
-		{
-			QString s = f.value().first();
-			if(s == QLatin1String("1") || s == QLatin1String("true") || s == QLatin1String("yes"))
-				check->setChecked(true);
-		}
-		layout->addWidget(check, row, 1, 1, 2);
+    BooleanField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout)
+        : XDataWidgetField(f)
+    {
+        check = new QCheckBox(parent);
+        check->setText(labelText());
+        if (f.value().count() > 0) {
+            QString s = f.value().first();
+            if (s == QLatin1String("1") || s == QLatin1String("true") || s == QLatin1String("yes")) {
+                check->setChecked(true);
+            }
+        }
+        layout->addWidget(check, row, 1, 1, 2);
 
-		QLabel *req = new QLabel(reqText(), parent);
-		layout->addWidget(req, row, 2);
+        QLabel *req = new QLabel(reqText(), parent);
+        layout->addWidget(req, row, 2);
 
-		if(!f.desc().isEmpty())
-		{
-			check->setToolTip(f.desc());
-			req->setToolTip(f.desc());
-		}
-	}
+        if (!f.desc().isEmpty()) {
+            check->setToolTip(f.desc());
+            req->setToolTip(f.desc());
+        }
+    }
 
-	XMPP::XData::Field field() const Q_DECL_OVERRIDE
-	{
-		XMPP::XData::Field f = XDataWidgetField::field();
-		QStringList val;
-		val << QString(check->isChecked() ? "1" : "0");
-		f.setValue(val);
-		return f;
-	}
+    XMPP::XData::Field field() const Q_DECL_OVERRIDE
+    {
+        XMPP::XData::Field f = XDataWidgetField::field();
+        QStringList val;
+        val << QString(check->isChecked() ? "1" : "0");
+        f.setValue(val);
+        return f;
+    }
 
 protected:
-	QCheckBox *check;
+    QCheckBox *check;
 };
 
 //-------------------------------------------------------------------------------------------------//
@@ -106,24 +105,25 @@ protected:
 class FixedField : public XDataWidgetField
 {
 public:
-	FixedField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout):
-	XDataWidgetField(f)
-	{
-		QString text;
-		const QStringList val = f.value();
-		for(QStringList::ConstIterator it = val.begin(); it != val.end(); ++it)
-		{
-			if(!text.isEmpty())
-				text += QLatin1String("<br>");
-			text += *it;
-		}
-		QLabel *label = new QLabel("<qt>" + text + "</qt>", parent);
-		label->setWordWrap(true);
-		layout->addWidget(label, row, 0, 1, 3);
+    FixedField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout)
+        : XDataWidgetField(f)
+    {
+        QString text;
+        const QStringList val = f.value();
+        for (QStringList::ConstIterator it = val.begin(); it != val.end(); ++it) {
+            if (!text.isEmpty()) {
+                text += QLatin1String("<br>");
+            }
+            text += *it;
+        }
+        QLabel *label = new QLabel("<qt>" + text + "</qt>", parent);
+        label->setWordWrap(true);
+        layout->addWidget(label, row, 0, 1, 3);
 
-		if(!f.desc().isEmpty())
-			label->setToolTip(f.desc());
-	}
+        if (!f.desc().isEmpty()) {
+            label->setToolTip(f.desc());
+        }
+    }
 };
 
 //-------------------------------------------------------------------------------------------------//
@@ -131,10 +131,10 @@ public:
 class HiddenField : public XDataWidgetField
 {
 public:
-	HiddenField(XMPP::XData::Field f):
-	XDataWidgetField(f)
-	{
-	}
+    HiddenField(XMPP::XData::Field f)
+        : XDataWidgetField(f)
+    {
+    }
 };
 
 //-------------------------------------------------------------------------------------------------//
@@ -142,60 +142,61 @@ public:
 class ListSingleField : public XDataWidgetField
 {
 public:
-	ListSingleField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout):
-	XDataWidgetField(f)
-	{
-		QLabel *label = new QLabel(labelText(), parent);
-		layout->addWidget(label, row, 0);
+    ListSingleField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout)
+        : XDataWidgetField(f)
+    {
+        QLabel *label = new QLabel(labelText(), parent);
+        layout->addWidget(label, row, 0);
 
-		combo = new QComboBox(parent);
-		layout->addWidget(combo, row, 1);
-		combo->setInsertPolicy(QComboBox::NoInsert);
-		QString sel;
-		if (!f.value().isEmpty())
-			sel = f.value().first();
-		XMPP::XData::Field::OptionList opts = f.options();
-		for(XMPP::XData::Field::OptionList::Iterator it = opts.begin(); it != opts.end(); ++it)
-		{
-			QString lbl = (*it).label;
-			if(lbl.isEmpty())
-				lbl = (*it).value;
-			combo->addItem(lbl);
-			if ((*it).value == sel)
-				combo->setItemText(combo->currentIndex(), lbl);
-		}
+        combo = new QComboBox(parent);
+        layout->addWidget(combo, row, 1);
+        combo->setInsertPolicy(QComboBox::NoInsert);
+        QString sel;
+        if (!f.value().isEmpty()) {
+            sel = f.value().first();
+        }
+        XMPP::XData::Field::OptionList opts = f.options();
+        for (XMPP::XData::Field::OptionList::Iterator it = opts.begin(); it != opts.end(); ++it) {
+            QString lbl = (*it).label;
+            if (lbl.isEmpty()) {
+                lbl = (*it).value;
+            }
+            combo->addItem(lbl);
+            if ((*it).value == sel) {
+                combo->setItemText(combo->currentIndex(), lbl);
+            }
+        }
 
-		QLabel *req = new QLabel(reqText(), parent);
-		layout->addWidget(req, row, 2);
+        QLabel *req = new QLabel(reqText(), parent);
+        layout->addWidget(req, row, 2);
 
-		if(!f.desc().isEmpty())
-		{
-			label->setToolTip(f.desc());
-			combo->setToolTip(f.desc());
-			req->setToolTip(f.desc());
-		}
-	}
+        if (!f.desc().isEmpty()) {
+            label->setToolTip(f.desc());
+            combo->setToolTip(f.desc());
+            req->setToolTip(f.desc());
+        }
+    }
 
-	XMPP::XData::Field field() const Q_DECL_OVERRIDE
-	{
-		// TODO is value unique?
-		QString lbl = combo->currentText();
-		XMPP::XData::Field f = XDataWidgetField::field();
-		QStringList val;
-		XMPP::XData::Field::OptionList opts = f.options();
-		XMPP::XData::Field::OptionList::Iterator it = opts.begin();
-		for ( ; it != opts.end(); ++it)
-			if ( (*it).label == lbl || (*it).value == lbl )
-			{
-				val << (*it).value;
-				break;
-			}
-		f.setValue(val);
-		return f;
-	}
+    XMPP::XData::Field field() const Q_DECL_OVERRIDE
+    {
+        // TODO is value unique?
+        QString lbl = combo->currentText();
+        XMPP::XData::Field f = XDataWidgetField::field();
+        QStringList val;
+        XMPP::XData::Field::OptionList opts = f.options();
+        XMPP::XData::Field::OptionList::Iterator it = opts.begin();
+        for (; it != opts.end(); ++it) {
+            if ((*it).label == lbl || (*it).value == lbl) {
+                val << (*it).value;
+                break;
+            }
+        }
+        f.setValue(val);
+        return f;
+    }
 
 private:
-	QComboBox *combo;
+    QComboBox *combo;
 };
 
 //-------------------------------------------------------------------------------------------------//
@@ -203,69 +204,66 @@ private:
 class ListMultiField : public XDataWidgetField
 {
 public:
-	ListMultiField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout):
-	XDataWidgetField(f)
-	{
-		QLabel *label = new QLabel(labelText(), parent);
-		layout->addWidget(label, row, 0);
+    ListMultiField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout)
+        : XDataWidgetField(f)
+    {
+        QLabel *label = new QLabel(labelText(), parent);
+        layout->addWidget(label, row, 0);
 
-		list = new QListWidget(parent);
-		layout->addWidget(list, row, 1);
-		list->setSelectionMode(QAbstractItemView::MultiSelection);
+        list = new QListWidget(parent);
+        layout->addWidget(list, row, 1);
+        list->setSelectionMode(QAbstractItemView::MultiSelection);
 
-		XMPP::XData::Field::OptionList opts = f.options();
-		XMPP::XData::Field::OptionList::Iterator it = opts.begin();
-		for(; it != opts.end(); ++it)
-		{
-			QString lbl = (*it).label;
-			if(lbl.isEmpty())
-				lbl = (*it).value;
-			QListWidgetItem *item = new QListWidgetItem(lbl, list);
-			QStringList val = f.value();
-			QStringList::Iterator sit = val.begin();
-			for(; sit != val.end(); sit++)
-				if((*it).label == *sit || (*it).value == *sit)
-					list->setItemSelected(item, true);
-		}
+        XMPP::XData::Field::OptionList opts = f.options();
+        XMPP::XData::Field::OptionList::Iterator it = opts.begin();
+        for (; it != opts.end(); ++it) {
+            QString lbl = (*it).label;
+            if (lbl.isEmpty()) {
+                lbl = (*it).value;
+            }
+            QListWidgetItem *item = new QListWidgetItem(lbl, list);
+            QStringList val = f.value();
+            QStringList::Iterator sit = val.begin();
+            for (; sit != val.end(); sit++) {
+                if ((*it).label == *sit || (*it).value == *sit) {
+                    list->setItemSelected(item, true);
+                }
+            }
+        }
 
-		QLabel *req = new QLabel(reqText(), parent);
-		layout->addWidget(req, row, 2);
-		if(!f.desc().isEmpty())
-		{
-			label->setToolTip(f.desc());
-			list->setToolTip(f.desc());
-			req->setToolTip(f.desc());
-		}
-	}
+        QLabel *req = new QLabel(reqText(), parent);
+        layout->addWidget(req, row, 2);
+        if (!f.desc().isEmpty()) {
+            label->setToolTip(f.desc());
+            list->setToolTip(f.desc());
+            req->setToolTip(f.desc());
+        }
+    }
 
-	XMPP::XData::Field field() const Q_DECL_OVERRIDE
-	{
-		XMPP::XData::Field f = XDataWidgetField::field();
-		QStringList val;
-		for(int i = 0; i < list->count(); ++i)
-		{
-			QListWidgetItem *item = list->item(i);
-			if(list->isItemSelected(item))
-			{
-				QString lbl = item->text();
-				XMPP::XData::Field::OptionList opts = f.options();
-				XMPP::XData::Field::OptionList::Iterator it = opts.begin();
-				for(; it != opts.end(); ++it)
-				{
-					if((*it).label == lbl || (*it).value == lbl)
-					{
-						val << (*it).value;
-						break;
-					}
-				}
-			}
-		}
-		f.setValue(val);
-		return f;
-	}
+    XMPP::XData::Field field() const Q_DECL_OVERRIDE
+    {
+        XMPP::XData::Field f = XDataWidgetField::field();
+        QStringList val;
+        for (int i = 0; i < list->count(); ++i) {
+            QListWidgetItem *item = list->item(i);
+            if (list->isItemSelected(item)) {
+                QString lbl = item->text();
+                XMPP::XData::Field::OptionList opts = f.options();
+                XMPP::XData::Field::OptionList::Iterator it = opts.begin();
+                for (; it != opts.end(); ++it) {
+                    if ((*it).label == lbl || (*it).value == lbl) {
+                        val << (*it).value;
+                        break;
+                    }
+                }
+            }
+        }
+        f.setValue(val);
+        return f;
+    }
 
 private:
-	QListWidget *list;
+    QListWidget *list;
 };
 
 //-------------------------------------------------------------------------------------------------//
@@ -273,45 +271,44 @@ private:
 class TextMultiField : public XDataWidgetField
 {
 public:
-	TextMultiField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout):
-	XDataWidgetField(f)
-	{
-		QLabel *label = new QLabel(labelText(), parent);
-		layout->addWidget(label, row, 0);
+    TextMultiField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout)
+        : XDataWidgetField(f)
+    {
+        QLabel *label = new QLabel(labelText(), parent);
+        layout->addWidget(label, row, 0);
 
-		edit = new QTextEdit(parent);
-		layout->addWidget(edit, row, 1);
-		QString text;
-		const QStringList val = f.value();
-		QStringList::ConstIterator it = val.begin();
-		for(; it != val.end(); ++it)
-		{
-			if(!text.isEmpty())
-				text += '\n';
-			text += *it;
-		}
-		edit->setText(text);
+        edit = new QTextEdit(parent);
+        layout->addWidget(edit, row, 1);
+        QString text;
+        const QStringList val = f.value();
+        QStringList::ConstIterator it = val.begin();
+        for (; it != val.end(); ++it) {
+            if (!text.isEmpty()) {
+                text += '\n';
+            }
+            text += *it;
+        }
+        edit->setText(text);
 
-		QLabel *req = new QLabel(reqText(), parent);
-		layout->addWidget(req, row, 2);
+        QLabel *req = new QLabel(reqText(), parent);
+        layout->addWidget(req, row, 2);
 
-		if(!f.desc().isEmpty())
-		{
-			label->setToolTip(f.desc());
-			edit->setToolTip(f.desc());
-			req->setToolTip(f.desc());
-		}
-	}
+        if (!f.desc().isEmpty()) {
+            label->setToolTip(f.desc());
+            edit->setToolTip(f.desc());
+            req->setToolTip(f.desc());
+        }
+    }
 
-	XMPP::XData::Field field() const Q_DECL_OVERRIDE
-	{
-		XMPP::XData::Field f = XDataWidgetField::field();
-		f.setValue(edit->toPlainText().split('\n'));
-		return f;
-	}
+    XMPP::XData::Field field() const Q_DECL_OVERRIDE
+    {
+        XMPP::XData::Field f = XDataWidgetField::field();
+        f.setValue(edit->toPlainText().split('\n'));
+        return f;
+    }
 
 protected:
-	QTextEdit *edit;
+    QTextEdit *edit;
 };
 
 //-------------------------------------------------------------------------------------------------//
@@ -319,42 +316,42 @@ protected:
 class TextSingleField : public XDataWidgetField
 {
 public:
-	TextSingleField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout):
-	XDataWidgetField(f)
-	{
-		QString text;
-		if(f.value().count())
-			text = f.value().first();
+    TextSingleField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout)
+        : XDataWidgetField(f)
+    {
+        QString text;
+        if (f.value().count()) {
+            text = f.value().first();
+        }
 
-		QLabel *label = new QLabel(labelText(), parent);
-		layout->addWidget(label, row, 0);
+        QLabel *label = new QLabel(labelText(), parent);
+        layout->addWidget(label, row, 0);
 
-		edit = new QLineEdit(parent);
-		edit->setText(text);
-		layout->addWidget(edit, row, 1);
+        edit = new QLineEdit(parent);
+        edit->setText(text);
+        layout->addWidget(edit, row, 1);
 
-		QLabel *req = new QLabel(reqText(), parent);
-		layout->addWidget(req, row, 2);
+        QLabel *req = new QLabel(reqText(), parent);
+        layout->addWidget(req, row, 2);
 
-		if(!f.desc().isEmpty())
-		{
-			label->setToolTip(f.desc());
-			edit->setToolTip(f.desc());
-			req->setToolTip(f.desc());
-		}
-	}
+        if (!f.desc().isEmpty()) {
+            label->setToolTip(f.desc());
+            edit->setToolTip(f.desc());
+            req->setToolTip(f.desc());
+        }
+    }
 
-	XMPP::XData::Field field() const Q_DECL_OVERRIDE
-	{
-		XMPP::XData::Field f = XDataWidgetField::field();
-		QStringList val;
-		val << edit->text();
-		f.setValue(val);
-		return f;
-	}
+    XMPP::XData::Field field() const Q_DECL_OVERRIDE
+    {
+        XMPP::XData::Field f = XDataWidgetField::field();
+        QStringList val;
+        val << edit->text();
+        f.setValue(val);
+        return f;
+    }
 
 protected:
-	QLineEdit *edit;
+    QLineEdit *edit;
 };
 
 //-------------------------------------------------------------------------------------------------//
@@ -362,11 +359,11 @@ protected:
 class TextPrivateField : public TextSingleField
 {
 public:
-	TextPrivateField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout):
-	TextSingleField(f, row, parent, layout)
-	{
-		edit->setEchoMode(QLineEdit::Password);
-	}
+    TextPrivateField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout)
+        : TextSingleField(f, row, parent, layout)
+    {
+        edit->setEchoMode(QLineEdit::Password);
+    }
 };
 
 //-------------------------------------------------------------------------------------------------//
@@ -374,16 +371,16 @@ public:
 class JidMultiField : public TextMultiField
 {
 public:
-	JidMultiField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout):
-	TextMultiField(f, row, parent, layout)
-	{
-	}
+    JidMultiField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout)
+        : TextMultiField(f, row, parent, layout)
+    {
+    }
 
-	bool isValid() const Q_DECL_OVERRIDE
-	{
-		// TODO
-		return true;
-	}
+    bool isValid() const Q_DECL_OVERRIDE
+    {
+        // TODO
+        return true;
+    }
 };
 
 //-------------------------------------------------------------------------------------------------//
@@ -391,107 +388,104 @@ public:
 class JidSingleField : public TextSingleField
 {
 public:
-	JidSingleField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout):
-	TextSingleField(f, row, parent, layout)
-	{
-	}
+    JidSingleField(XMPP::XData::Field f, int row, QWidget *parent, QGridLayout *layout)
+        : TextSingleField(f, row, parent, layout)
+    {
+    }
 
-	bool isValid() const Q_DECL_OVERRIDE
-	{
-		// TODO
-		return true;
-	}
+    bool isValid() const Q_DECL_OVERRIDE
+    {
+        // TODO
+        return true;
+    }
 };
 
 //-------------------------------------------------------------------------------------------------//
 
 JabberXDataWidget::JabberXDataWidget(const XMPP::XData &data, QWidget *parent) : QWidget(parent)
 {
-	const XMPP::XData::FieldList &f = data.fields();
-	mFields.clear();
-	
-	int fields = 0;
-	if(!data.instructions().isEmpty())
-		fields++;
+    const XMPP::XData::FieldList &f = data.fields();
+    mFields.clear();
 
-	if(f.count() == 0 && fields == 0)
-		return;
+    int fields = 0;
+    if (!data.instructions().isEmpty()) {
+        fields++;
+    }
 
-	XMPP::XData::FieldList::ConstIterator it = f.begin();
-	for(; it != f.end(); ++it)
-	{
-		switch((*it).type())
-		{
-			case XMPP::XData::Field::Field_Boolean:
-			case XMPP::XData::Field::Field_Fixed:
-			case XMPP::XData::Field::Field_JidMulti:
-			case XMPP::XData::Field::Field_JidSingle:
-			case XMPP::XData::Field::Field_ListMulti:
-			case XMPP::XData::Field::Field_ListSingle:
-			case XMPP::XData::Field::Field_TextMulti:
-			case XMPP::XData::Field::Field_TextPrivate:
-			case XMPP::XData::Field::Field_TextSingle:
-				fields++;
-				break;
-			case XMPP::XData::Field::Field_Hidden:
-				break;
-		}
-	}
+    if (f.count() == 0 && fields == 0) {
+        return;
+    }
 
-	QGridLayout *formLayout = new QGridLayout(parent);
-	setLayout(formLayout);
+    XMPP::XData::FieldList::ConstIterator it = f.begin();
+    for (; it != f.end(); ++it) {
+        switch ((*it).type()) {
+        case XMPP::XData::Field::Field_Boolean:
+        case XMPP::XData::Field::Field_Fixed:
+        case XMPP::XData::Field::Field_JidMulti:
+        case XMPP::XData::Field::Field_JidSingle:
+        case XMPP::XData::Field::Field_ListMulti:
+        case XMPP::XData::Field::Field_ListSingle:
+        case XMPP::XData::Field::Field_TextMulti:
+        case XMPP::XData::Field::Field_TextPrivate:
+        case XMPP::XData::Field::Field_TextSingle:
+            fields++;
+            break;
+        case XMPP::XData::Field::Field_Hidden:
+            break;
+        }
+    }
 
-	int row = 0;
-	if(!data.instructions().isEmpty())
-	{
-		QLabel *instr = new QLabel(data.instructions(), parent);
-		instr->setWordWrap(true);
-		instr->setScaledContents(true);
-		instr->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
-		//connect(instr, SIGNAL(linkActivated(QString)), SLOT(linkActivated(QString)));
-		formLayout->addWidget(instr, row, 0, 1, 3);
-		row++;
-	}
-	it = f.begin();
-	for(; it != f.end(); ++it, ++row)
-	{
-		XDataWidgetField *f;
-		switch((*it).type())
-		{
-			case XMPP::XData::Field::Field_Boolean:
-				f = new BooleanField(*it, row, this, formLayout);
-				break;
-			case XMPP::XData::Field::Field_Fixed:
-				f = new FixedField(*it, row, this, formLayout);
-				break;
-			case XMPP::XData::Field::Field_Hidden:
-				f = new HiddenField(*it);
-				break;
-			case XMPP::XData::Field::Field_JidMulti:
-				f = new JidMultiField(*it, row, this, formLayout);
-				break;
-			case XMPP::XData::Field::Field_JidSingle:
-				f = new JidSingleField(*it, row, this, formLayout);
-				break;
-			case XMPP::XData::Field::Field_ListMulti:
-				f = new ListMultiField(*it, row, this, formLayout);
-				break;
-			case XMPP::XData::Field::Field_ListSingle:
-				f = new ListSingleField(*it, row, this, formLayout);
-				break;
-			case XMPP::XData::Field::Field_TextMulti:
-				f = new TextMultiField(*it, row, this, formLayout);
-				break;
-			case XMPP::XData::Field::Field_TextPrivate:
-				f = new TextPrivateField(*it, row, this, formLayout);
-				break;
-			case XMPP::XData::Field::Field_TextSingle:
-				f = new TextSingleField(*it, row, this, formLayout);
-				break;
-		}
-		mFields.append(f);
-	}
-	//formLayout->addStretch(1);
+    QGridLayout *formLayout = new QGridLayout(parent);
+    setLayout(formLayout);
+
+    int row = 0;
+    if (!data.instructions().isEmpty()) {
+        QLabel *instr = new QLabel(data.instructions(), parent);
+        instr->setWordWrap(true);
+        instr->setScaledContents(true);
+        instr->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
+        //connect(instr, SIGNAL(linkActivated(QString)), SLOT(linkActivated(QString)));
+        formLayout->addWidget(instr, row, 0, 1, 3);
+        row++;
+    }
+    it = f.begin();
+    for (; it != f.end(); ++it, ++row) {
+        XDataWidgetField *f;
+        switch ((*it).type()) {
+        case XMPP::XData::Field::Field_Boolean:
+            f = new BooleanField(*it, row, this, formLayout);
+            break;
+        case XMPP::XData::Field::Field_Fixed:
+            f = new FixedField(*it, row, this, formLayout);
+            break;
+        case XMPP::XData::Field::Field_Hidden:
+            f = new HiddenField(*it);
+            break;
+        case XMPP::XData::Field::Field_JidMulti:
+            f = new JidMultiField(*it, row, this, formLayout);
+            break;
+        case XMPP::XData::Field::Field_JidSingle:
+            f = new JidSingleField(*it, row, this, formLayout);
+            break;
+        case XMPP::XData::Field::Field_ListMulti:
+            f = new ListMultiField(*it, row, this, formLayout);
+            break;
+        case XMPP::XData::Field::Field_ListSingle:
+            f = new ListSingleField(*it, row, this, formLayout);
+            break;
+        case XMPP::XData::Field::Field_TextMulti:
+            f = new TextMultiField(*it, row, this, formLayout);
+            break;
+        case XMPP::XData::Field::Field_TextPrivate:
+            f = new TextPrivateField(*it, row, this, formLayout);
+            break;
+        case XMPP::XData::Field::Field_TextSingle:
+            f = new TextSingleField(*it, row, this, formLayout);
+            break;
+        }
+        mFields.append(f);
+    }
+    //formLayout->addStretch(1);
 }
 
 JabberXDataWidget::~JabberXDataWidget()
@@ -500,17 +494,19 @@ JabberXDataWidget::~JabberXDataWidget()
 
 XMPP::XData::FieldList JabberXDataWidget::fields() const
 {
-	XMPP::XData::FieldList f;
-	for(QList<XDataWidgetField *>::ConstIterator it = mFields.constBegin(); it != mFields.constEnd(); ++it)
-		f.append((*it)->field());
-	return f;
+    XMPP::XData::FieldList f;
+    for (QList<XDataWidgetField *>::ConstIterator it = mFields.constBegin(); it != mFields.constEnd(); ++it) {
+        f.append((*it)->field());
+    }
+    return f;
 }
 
 bool JabberXDataWidget::isValid() const
 {
-	for(QList<XDataWidgetField *>::ConstIterator it = mFields.constBegin(); it != mFields.constEnd(); ++it)
-		if(!(*it)->isValid())
-			return false;
-	return true;
+    for (QList<XDataWidgetField *>::ConstIterator it = mFields.constBegin(); it != mFields.constEnd(); ++it) {
+        if (!(*it)->isValid()) {
+            return false;
+        }
+    }
+    return true;
 }
-

@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     createconferencetask.h - Request task that creates conferences on the server
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -31,25 +31,25 @@ This task is responsible for creating a conference at the server, and confirming
 */
 class CreateConferenceTask : public RequestTask
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	CreateConferenceTask(Task* parent);
-	~CreateConferenceTask();
-	/**
-	 * Set up a create conference request
-	 * @param confId The client-unique conference Id.
-	 * @param participants A list of Novell DNs of the people taking part in the conference.
-	 */
-	void conference( const int confId, const QStringList &participants );
-	bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
-	int clientConfId() const;
-	GroupWise::ConferenceGuid conferenceGUID() const;
-	
+    CreateConferenceTask(Task *parent);
+    ~CreateConferenceTask();
+    /**
+     * Set up a create conference request
+     * @param confId The client-unique conference Id.
+     * @param participants A list of Novell DNs of the people taking part in the conference.
+     */
+    void conference(const int confId, const QStringList &participants);
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+    int clientConfId() const;
+    GroupWise::ConferenceGuid conferenceGUID() const;
+
 Q_SIGNALS:
-	void created( const GroupWise::ConferenceGuid & guid );
-private: 
-	int m_confId; // the conference id given us before making the request
-	ConferenceGuid m_guid;
+    void created(const GroupWise::ConferenceGuid &guid);
+private:
+    int m_confId; // the conference id given us before making the request
+    ConferenceGuid m_guid;
 };
 
 #endif

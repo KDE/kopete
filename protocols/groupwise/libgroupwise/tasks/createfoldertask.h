@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     createfoldertask.h - Request Task for creating a single folder on the server
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -30,11 +30,11 @@ Creates a folder on the server
 */
 class CreateFolderTask : public ModifyContactListTask
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	CreateFolderTask(Task* parent);
-	~CreateFolderTask();
-	void folder( const int parentId, const int sequence, const QString & displayName );
+    CreateFolderTask(Task *parent);
+    ~CreateFolderTask();
+    void folder(const int parentId, const int sequence, const QString &displayName);
 };
 
 #endif

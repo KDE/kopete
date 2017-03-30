@@ -1,12 +1,12 @@
 /*
     safedelete.cpp - Kopete Groupwise Protocol
-  
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
 
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
-    
+
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -26,42 +26,46 @@
 //----------------------------------------------------------------------------
 SafeDelete::SafeDelete()
 {
-	lock = 0;
+    lock = 0;
 }
 
 SafeDelete::~SafeDelete()
 {
-	if(lock)
-		lock->dying();
+    if (lock) {
+        lock->dying();
+    }
 }
 
 void SafeDelete::deleteLater(QObject *o)
 {
-	if(!lock)
-		deleteSingle(o);
-	else
-		list.append(o);
+    if (!lock) {
+        deleteSingle(o);
+    } else {
+        list.append(o);
+    }
 }
 
 void SafeDelete::unlock()
 {
-	lock = 0;
-	deleteAll();
+    lock = 0;
+    deleteAll();
 }
 
 void SafeDelete::deleteAll()
 {
-	if(list.isEmpty())
-		return;
+    if (list.isEmpty()) {
+        return;
+    }
 
-	foreach( QObject* o, list )
-		deleteSingle( o );
-	list.clear();
+    foreach (QObject *o, list) {
+        deleteSingle(o);
+    }
+    list.clear();
 }
 
 void SafeDelete::deleteSingle(QObject *o)
 {
-	o->deleteLater();
+    o->deleteLater();
 }
 
 //----------------------------------------------------------------------------
@@ -69,28 +73,29 @@ void SafeDelete::deleteSingle(QObject *o)
 //----------------------------------------------------------------------------
 SafeDeleteLock::SafeDeleteLock(SafeDelete *sd)
 {
-	own = false;
-	if(!sd->lock) {
-		_sd = sd;
-		_sd->lock = this;
-	}
-	else
-		_sd = 0;
+    own = false;
+    if (!sd->lock) {
+        _sd = sd;
+        _sd->lock = this;
+    } else {
+        _sd = 0;
+    }
 }
 
 SafeDeleteLock::~SafeDeleteLock()
 {
-	if(_sd) {
-		_sd->unlock();
-		if(own)
-			delete _sd;
-	}
+    if (_sd) {
+        _sd->unlock();
+        if (own) {
+            delete _sd;
+        }
+    }
 }
 
 void SafeDeleteLock::dying()
 {
-	_sd = new SafeDelete(*_sd);
-	own = true;
+    _sd = new SafeDelete(*_sd);
+    own = true;
 }
 
 //----------------------------------------------------------------------------
@@ -100,30 +105,30 @@ SafeDeleteLater *SafeDeleteLater::self = 0;
 
 SafeDeleteLater *SafeDeleteLater::ensureExists()
 {
-	if(!self)
-		new SafeDeleteLater();
-	return self;
+    if (!self) {
+        new SafeDeleteLater();
+    }
+    return self;
 }
 
 SafeDeleteLater::SafeDeleteLater()
 {
-	self = this;
-	QTimer::singleShot(0, this, SLOT(explode()));
+    self = this;
+    QTimer::singleShot(0, this, SLOT(explode()));
 }
 
 SafeDeleteLater::~SafeDeleteLater()
 {
-	list.clear();
-	self = 0;
+    list.clear();
+    self = 0;
 }
 
 void SafeDeleteLater::deleteItLater(QObject *o)
 {
-	list.append(o);
+    list.append(o);
 }
 
 void SafeDeleteLater::explode()
 {
-	delete this;
+    delete this;
 }
-

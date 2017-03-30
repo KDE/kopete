@@ -63,8 +63,7 @@ GaduEditContact::GaduEditContact(GaduAccount *account, GaduContact *contact, QWi
     fillIn();
 }
 
-GaduEditContact::GaduEditContact(GaduAccount *account, GaduContactsList::ContactLine *clin,
-                                 QWidget *parent)
+GaduEditContact::GaduEditContact(GaduAccount *account, GaduContactsList::ContactLine *clin, QWidget *parent)
     : KDialog(parent)
     , account_(account)
     , contact_(NULL)
@@ -131,8 +130,8 @@ GaduEditContact::init()
 
     show();
     connect(this, SIGNAL(okClicked()), SLOT(slotApply()));
-    connect(ui_->groups, SIGNAL(itemClicked(QTreeWidgetItem*,0)),
-            SLOT(listClicked(QTreeWidgetItem*)));
+    connect(ui_->groups, SIGNAL(itemClicked(QTreeWidgetItem *,0)),
+            SLOT(listClicked(QTreeWidgetItem *)));
 }
 
 void

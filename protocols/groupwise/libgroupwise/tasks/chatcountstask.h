@@ -33,17 +33,17 @@ Get the current number of users in each chat on the server
  */
 class ChatCountsTask : public RequestTask
 {
-	Q_OBJECT
-	public:
-		ChatCountsTask(Task* parent);
-		~ChatCountsTask();
-		bool take( Transfer * transfer ) Q_DECL_OVERRIDE;
-		/**
-		 * Contains a list of all the chatrooms that have participants on the server.  If a chatroom exists but is empty, this task does not return a result, so update the participants count to 0.
-		 */
-		QMap< QString, int > results();
-	private:
-		QMap< QString, int > m_results;
+    Q_OBJECT
+public:
+    ChatCountsTask(Task *parent);
+    ~ChatCountsTask();
+    bool take(Transfer *transfer) Q_DECL_OVERRIDE;
+    /**
+     * Contains a list of all the chatrooms that have participants on the server.  If a chatroom exists but is empty, this task does not return a result, so update the participants count to 0.
+     */
+    QMap< QString, int > results();
+private:
+    QMap< QString, int > m_results;
 };
 
 #endif

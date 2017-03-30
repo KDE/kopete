@@ -26,9 +26,9 @@
 #include "bonjouraddcontactpage.h"
 #include "bonjoureditaccountwidget.h"
 
-K_PLUGIN_FACTORY( BonjourProtocolFactory, registerPlugin<BonjourProtocol>(); )
-K_EXPORT_PLUGIN( BonjourProtocolFactory( "kopete_bonjour" ) )
-
+K_PLUGIN_FACTORY(BonjourProtocolFactory, registerPlugin<BonjourProtocol>();
+                 )
+K_EXPORT_PLUGIN(BonjourProtocolFactory("kopete_bonjour"))
 
 BonjourProtocol *BonjourProtocol::s_protocol = nullptr;
 
@@ -53,8 +53,7 @@ BonjourProtocol::~BonjourProtocol()
 }
 
 Kopete::Contact *BonjourProtocol::deserializeContact(
-    Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData,
-    const QMap<QString, QString> & /* addressBookData */)
+    Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> & /* addressBookData */)
 {
     QString contactId = serializedData[ QStringLiteral("contactId") ];
     QString accountId = serializedData[ QStringLiteral("accountId") ];
@@ -79,15 +78,13 @@ Kopete::Contact *BonjourProtocol::deserializeContact(
     return contact;
 }
 
-AddContactPage *BonjourProtocol::createAddContactWidget(QWidget *parent,
-                                                        Kopete::Account * /* account */)
+AddContactPage *BonjourProtocol::createAddContactWidget(QWidget *parent, Kopete::Account * /* account */)
 {
     qDebug()<< "Creating Add Contact Page";
     return new BonjourAddContactPage(parent);
 }
 
-KopeteEditAccountWidget *BonjourProtocol::createEditAccountWidget(Kopete::Account *account,
-                                                                  QWidget *parent)
+KopeteEditAccountWidget *BonjourProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
     qDebug() << "Creating Edit Account Page";
     return new BonjourEditAccountWidget(parent, account);
@@ -102,4 +99,5 @@ BonjourProtocol *BonjourProtocol::protocol()
 {
     return s_protocol;
 }
+
 #include "bonjourprotocol.moc"

@@ -233,10 +233,10 @@ GaduAccount::initConnections()
 {
     QObject::connect(p->session_, SIGNAL(error(QString,QString)),
                      SLOT(error(QString,QString)));
-    QObject::connect(p->session_, SIGNAL(messageReceived(KGaduMessage*)),
-                     SLOT(messageReceived(KGaduMessage*)));
-    QObject::connect(p->session_, SIGNAL(contactStatusChanged(KGaduNotify*)),
-                     SLOT(contactStatusChanged(KGaduNotify*)));
+    QObject::connect(p->session_, SIGNAL(messageReceived(KGaduMessage *)),
+                     SLOT(messageReceived(KGaduMessage *)));
+    QObject::connect(p->session_, SIGNAL(contactStatusChanged(KGaduNotify *)),
+                     SLOT(contactStatusChanged(KGaduNotify *)));
     QObject::connect(p->session_, SIGNAL(connectionFailed(gg_failure_t)),
                      SLOT(connectionFailed(gg_failure_t)));
     QObject::connect(p->session_, SIGNAL(connectionSucceed()),
@@ -426,9 +426,7 @@ GaduAccount::disconnect(DisconnectReason reason)
 }
 
 void
-GaduAccount::setOnlineStatus(const Kopete::OnlineStatus &status,
-                             const Kopete::StatusMessage &reason,
-                             const OnlineStatusOptions & /*options*/)
+GaduAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions & /*options*/)
 {
     kDebug(14100) << "Called";
     changeStatus(status, reason.message());

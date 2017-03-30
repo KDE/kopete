@@ -1,4 +1,4 @@
- /*
+/*
 
     Copyright (c) 2006      by Olivier Goffart  <ogoffart at kde.org>
 
@@ -39,320 +39,314 @@
 
 #include "xmpp_tasks.h"
 
-JabberTransport::JabberTransport (JabberAccount * parentAccount, const XMPP::RosterItem & item, const QString& gateway_type)
-	: Kopete::Account ( parentAccount->protocol(), parentAccount->accountId()+'/'+ item.jid().bare() )
+JabberTransport::JabberTransport (JabberAccount *parentAccount, const XMPP::RosterItem &item, const QString &gateway_type)
+    : Kopete::Account(parentAccount->protocol(), parentAccount->accountId()+'/'+ item.jid().bare())
 {
-	m_status=Creating;
-	m_account = parentAccount;
-	m_account->addTransport( this,item.jid().bare() );
-	
-	JabberContact *myContact = m_account->contactPool()->addContact ( item , Kopete::ContactList::self()->myself(), false );
-	setMyself( myContact );
-	
-	qCDebug(JABBER_PROTOCOL_LOG) << accountId() <<" transport created:  myself: " << myContact;
-	
-	setColor( account()->color() );
+    m_status = Creating;
+    m_account = parentAccount;
+    m_account->addTransport(this, item.jid().bare());
 
-	QString cIcon;
-	if(gateway_type==QLatin1String("msn"))
-		cIcon=QStringLiteral("jabber_gateway_msn");
-	else if(gateway_type==QLatin1String("icq"))
-		cIcon=QStringLiteral("jabber_gateway_icq");
-	else if(gateway_type==QLatin1String("aim"))
-		cIcon=QStringLiteral("jabber_gateway_aim");
-	else if(gateway_type==QLatin1String("yahoo"))
-		cIcon=QStringLiteral("jabber_gateway_yahoo");
-	else if(gateway_type==QLatin1String("sms"))
-		cIcon=QStringLiteral("jabber_gateway_sms");
-	else if(gateway_type==QLatin1String("gadu-gadu"))
-		cIcon=QStringLiteral("jabber_gateway_gadu");
-	else if(gateway_type==QLatin1String("smtp"))
-		cIcon=QStringLiteral("jabber_gateway_smtp");
-	else if(gateway_type==QLatin1String("http-ws")) 
-		cIcon=QStringLiteral("jabber_gateway_http-ws");
-	else if(gateway_type==QLatin1String("qq"))
-		cIcon=QStringLiteral("jabber_gateway_qq");
-	else if(gateway_type==QLatin1String("tlen"))
-		cIcon=QStringLiteral("jabber_gateway_tlen");
-	else if(gateway_type==QLatin1String("irc"))  //NOTE: this is not official 
-		cIcon=QStringLiteral("irc_protocol");
+    JabberContact *myContact = m_account->contactPool()->addContact(item, Kopete::ContactList::self()->myself(), false);
+    setMyself(myContact);
 
-	if( !cIcon.isEmpty() )
-		setCustomIcon( cIcon );
+    qCDebug(JABBER_PROTOCOL_LOG) << accountId() <<" transport created:  myself: " << myContact;
 
-	configGroup()->writeEntry("GatewayJID" , item.jid().full() );
+    setColor(account()->color());
 
-	QTimer::singleShot(0, this, SLOT(eatContacts()));
-	
-	m_status=Normal;
+    QString cIcon;
+    if (gateway_type == QLatin1String("msn")) {
+        cIcon = QStringLiteral("jabber_gateway_msn");
+    } else if (gateway_type == QLatin1String("icq")) {
+        cIcon = QStringLiteral("jabber_gateway_icq");
+    } else if (gateway_type == QLatin1String("aim")) {
+        cIcon = QStringLiteral("jabber_gateway_aim");
+    } else if (gateway_type == QLatin1String("yahoo")) {
+        cIcon = QStringLiteral("jabber_gateway_yahoo");
+    } else if (gateway_type == QLatin1String("sms")) {
+        cIcon = QStringLiteral("jabber_gateway_sms");
+    } else if (gateway_type == QLatin1String("gadu-gadu")) {
+        cIcon = QStringLiteral("jabber_gateway_gadu");
+    } else if (gateway_type == QLatin1String("smtp")) {
+        cIcon = QStringLiteral("jabber_gateway_smtp");
+    } else if (gateway_type == QLatin1String("http-ws")) {
+        cIcon = QStringLiteral("jabber_gateway_http-ws");
+    } else if (gateway_type == QLatin1String("qq")) {
+        cIcon = QStringLiteral("jabber_gateway_qq");
+    } else if (gateway_type == QLatin1String("tlen")) {
+        cIcon = QStringLiteral("jabber_gateway_tlen");
+    } else if (gateway_type == QLatin1String("irc")) { //NOTE: this is not official
+        cIcon = QStringLiteral("irc_protocol");
+    }
+
+    if (!cIcon.isEmpty()) {
+        setCustomIcon(cIcon);
+    }
+
+    configGroup()->writeEntry("GatewayJID", item.jid().full());
+
+    QTimer::singleShot(0, this, SLOT(eatContacts()));
+
+    m_status = Normal;
 }
 
-JabberTransport::JabberTransport( JabberAccount * parentAccount, const QString & _accountId )
-	: Kopete::Account ( parentAccount->protocol(), _accountId )
+JabberTransport::JabberTransport(JabberAccount *parentAccount, const QString &_accountId)
+    : Kopete::Account(parentAccount->protocol(), _accountId)
 {
-	m_status=Creating;
-	m_account = parentAccount;
-	
-	const QString contactJID_s = configGroup()->readEntry("GatewayJID");
-	
-	if(contactJID_s.isEmpty())
-	{
+    m_status = Creating;
+    m_account = parentAccount;
+
+    const QString contactJID_s = configGroup()->readEntry("GatewayJID");
+
+    if (contactJID_s.isEmpty()) {
         qCCritical(JABBER_PROTOCOL_LOG) << _accountId <<": GatewayJID is empty: MISCONFIGURATION  (have you used Kopete 0.12 beta ?)" << endl;
-	}
-	
-	XMPP::Jid contactJID= XMPP::Jid( contactJID_s );
-	
-	m_account->addTransport( this, contactJID.domain() );
-	
-	JabberContact *myContact = m_account->contactPool()->addContact ( contactJID , Kopete::ContactList::self()->myself(), false );
-	setMyself( myContact );
-	
-	qCDebug(JABBER_PROTOCOL_LOG) << accountId() <<" transport created:  myself: " << myContact;
-	
-	m_status=Normal;
+    }
+
+    XMPP::Jid contactJID = XMPP::Jid(contactJID_s);
+
+    m_account->addTransport(this, contactJID.domain());
+
+    JabberContact *myContact = m_account->contactPool()->addContact(contactJID, Kopete::ContactList::self()->myself(), false);
+    setMyself(myContact);
+
+    qCDebug(JABBER_PROTOCOL_LOG) << accountId() <<" transport created:  myself: " << myContact;
+
+    m_status = Normal;
 }
 
 JabberTransport::~JabberTransport ()
 {
-	m_account->removeTransport( XMPP::Jid( myself()->contactId() ).domain() );
+    m_account->removeTransport(XMPP::Jid(myself()->contactId()).domain());
 }
 
-void JabberTransport::fillActionMenu( KActionMenu *actionMenu )
+void JabberTransport::fillActionMenu(KActionMenu *actionMenu)
 {
-	actionMenu->setIcon( myself()->onlineStatus().iconFor( this ) );
+    actionMenu->setIcon(myself()->onlineStatus().iconFor(this));
 
-	QString nick;
-	if ( identity()->hasProperty( Kopete::Global::Properties::self()->nickName().key() ))
-		nick = identity()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
-	else
-		nick = myself()->displayName();
+    QString nick;
+    if (identity()->hasProperty(Kopete::Global::Properties::self()->nickName().key())) {
+        nick = identity()->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+    } else {
+        nick = myself()->displayName();
+    }
 
-	actionMenu->menu()->addAction( myself()->onlineStatus().iconFor( myself() ),
-	nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
-								  );
-	
-	QList<QAction *> *customActions = myself()->customContextMenuActions(  );
-	if( customActions && !customActions->isEmpty() )
-	{
-		actionMenu->addSeparator();
+    actionMenu->menu()->addAction(myself()->onlineStatus().iconFor(myself()),
+                                  nick.isNull() ? accountLabel() : i18n("%2 <%1>", accountLabel(), nick)
+                                  );
 
-		foreach( QAction *a, *customActions )
-			actionMenu->menu()->addAction(a);
-	}
-	delete customActions;
+    QList<QAction *> *customActions = myself()->customContextMenuActions();
+    if (customActions && !customActions->isEmpty()) {
+        actionMenu->addSeparator();
+
+        foreach (QAction *a, *customActions) {
+            actionMenu->menu()->addAction(a);
+        }
+    }
+    delete customActions;
 
 /*	KActionMenu *m_actionMenu = Kopete::Account::actionMenu();
 
-	m_actionMenu->popupMenu()->insertSeparator();
+    m_actionMenu->popupMenu()->insertSeparator();
 
-	m_actionMenu->insert(new QAction (i18n ("Join Groupchat..."), "jabber_group", 0,
-		this, SLOT (slotJoinNewChat()), this, "actionJoinChat"));
+    m_actionMenu->insert(new QAction (i18n ("Join Groupchat..."), "jabber_group", 0,
+        this, SLOT (slotJoinNewChat()), this, "actionJoinChat"));
 
-	m_actionMenu->popupMenu()->insertSeparator();
+    m_actionMenu->popupMenu()->insertSeparator();
 
-	m_actionMenu->insert ( new QAction ( i18n ("Services..."), "jabber_serv_on", 0,
-										 this, SLOT (slotGetServices()), this, "actionJabberServices") );
+    m_actionMenu->insert ( new QAction ( i18n ("Services..."), "jabber_serv_on", 0,
+                                         this, SLOT (slotGetServices()), this, "actionJabberServices") );
 
-	m_actionMenu->insert ( new QAction ( i18n ("Send Raw Packet to Server..."), "mail_new", 0,
-										 this, SLOT (slotSendRaw()), this, "actionJabberSendRaw") );
+    m_actionMenu->insert ( new QAction ( i18n ("Send Raw Packet to Server..."), "mail_new", 0,
+                                         this, SLOT (slotSendRaw()), this, "actionJabberSendRaw") );
 
-	m_actionMenu->insert ( new QAction ( i18n ("Edit User Info..."), "identity", 0,
-										 this, SLOT (slotEditVCard()), this, "actionEditVCard") );
+    m_actionMenu->insert ( new QAction ( i18n ("Edit User Info..."), "identity", 0,
+                                         this, SLOT (slotEditVCard()), this, "actionEditVCard") );
 
-	return m_actionMenu;*/
+    return m_actionMenu;*/
 }
 
 bool JabberTransport::hasCustomStatusMenu() const
 {
-	return true;
+    return true;
 }
 
-bool JabberTransport::createContact (const QString & contactId,  Kopete::MetaContact * metaContact)
+bool JabberTransport::createContact(const QString &contactId, Kopete::MetaContact *metaContact)
 {
-	Q_UNUSED(contactId);
-	Q_UNUSED(metaContact);
+    Q_UNUSED(contactId);
+    Q_UNUSED(metaContact);
 #if 0 //TODO
-	// collect all group names
-	QStringList groupNames;
-	Kopete::GroupList groupList = metaContact->groups();
-	for(Kopete::Group *group = groupList.first(); group; group = groupList.next())
-		groupNames += group->displayName();
+    // collect all group names
+    QStringList groupNames;
+    Kopete::GroupList groupList = metaContact->groups();
+    for (Kopete::Group *group = groupList.first(); group; group = groupList.next()) {
+        groupNames += group->displayName();
+    }
 
-	XMPP::Jid jid ( contactId );
-	XMPP::RosterItem item ( jid );
-	item.setName ( metaContact->displayName () );
-	item.setGroups ( groupNames );
+    XMPP::Jid jid(contactId);
+    XMPP::RosterItem item(jid);
+    item.setName(metaContact->displayName());
+    item.setGroups(groupNames);
 
-	// this contact will be created with the "dirty" flag set
-	// (it will get reset if the contact appears in the roster during connect)
-	JabberContact *contact = contactPool()->addContact ( item, metaContact, true );
+    // this contact will be created with the "dirty" flag set
+    // (it will get reset if the contact appears in the roster during connect)
+    JabberContact *contact = contactPool()->addContact(item, metaContact, true);
 
-	return ( contact != 0 );
+    return contact != 0;
 #endif
-	return false;
+    return false;
 }
 
-void JabberTransport::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options )
+void JabberTransport::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions &options)
 {
-	Q_UNUSED(status);
-	Q_UNUSED(reason);
-	Q_UNUSED(options);
+    Q_UNUSED(status);
+    Q_UNUSED(reason);
+    Q_UNUSED(options);
 #if 0
-	if( status.status() == Kopete::OnlineStatus::Offline )
-	{
-		disconnect( Kopete::Account::Manual );
-		return;
-	}
+    if (status.status() == Kopete::OnlineStatus::Offline) {
+        disconnect(Kopete::Account::Manual);
+        return;
+    }
 
-	if( isConnecting () )
-	{
-		errorConnectionInProgress ();
-		return;
-	}
+    if (isConnecting()) {
+        errorConnectionInProgress();
+        return;
+    }
 
-	XMPP::Status xmppStatus ( "", reason );
+    XMPP::Status xmppStatus("", reason);
 
-	switch ( status.internalStatus () )
-	{
-		case JabberProtocol::JabberFreeForChat:
-			xmppStatus.setShow ( "chat" );
-			break;
+    switch (status.internalStatus()) {
+    case JabberProtocol::JabberFreeForChat:
+        xmppStatus.setShow("chat");
+        break;
 
-		case JabberProtocol::JabberOnline:
-			xmppStatus.setShow ( "" );
-			break;
+    case JabberProtocol::JabberOnline:
+        xmppStatus.setShow("");
+        break;
 
-		case JabberProtocol::JabberAway:
-			xmppStatus.setShow ( "away" );
-			break;
+    case JabberProtocol::JabberAway:
+        xmppStatus.setShow("away");
+        break;
 
-		case JabberProtocol::JabberXA:
-			xmppStatus.setShow ( "xa" );
-			break;
+    case JabberProtocol::JabberXA:
+        xmppStatus.setShow("xa");
+        break;
 
-		case JabberProtocol::JabberDND:
-			xmppStatus.setShow ( "dnd" );
-			break;
+    case JabberProtocol::JabberDND:
+        xmppStatus.setShow("dnd");
+        break;
 
-		case JabberProtocol::JabberInvisible:
-			xmppStatus.setIsInvisible ( true );
-			break;
-	}
+    case JabberProtocol::JabberInvisible:
+        xmppStatus.setIsInvisible(true);
+        break;
+    }
 
-	if ( !isConnected () )
-	{
-		// we are not connected yet, so connect now
-		m_initialPresence = xmppStatus;
-		connect ();
-	}
-	else
-	{
-		setPresence ( xmppStatus );
-	}
+    if (!isConnected()) {
+        // we are not connected yet, so connect now
+        m_initialPresence = xmppStatus;
+        connect();
+    } else {
+        setPresence(xmppStatus);
+    }
 #endif
 }
 
-void JabberTransport::setStatusMessage( const Kopete::StatusMessage &statusMessage )
+void JabberTransport::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
-	Q_UNUSED(statusMessage);
+    Q_UNUSED(statusMessage);
 }
 
-JabberProtocol * JabberTransport::protocol( ) const
+JabberProtocol *JabberTransport::protocol() const
 {
-	return m_account->protocol(); 
+    return m_account->protocol();
 }
 
-bool JabberTransport::removeAccount( )
+bool JabberTransport::removeAccount()
 {
-	if(m_status == Removing  ||  m_status == AccountRemoved)
-		return true; //so it can be deleted
-	
-	if (!account()->isConnected())
-	{
-		account()->errorConnectFirst ();
-		return false;
-	}
-	
-	m_status = Removing;
-	XMPP::JT_Register *task = new XMPP::JT_Register ( m_account->client()->rootTask () );
-	QObject::connect ( task, SIGNAL (finished()), this, SLOT (removeAllContacts()) );
+    if (m_status == Removing || m_status == AccountRemoved) {
+        return true; //so it can be deleted
+    }
+    if (!account()->isConnected()) {
+        account()->errorConnectFirst();
+        return false;
+    }
 
-	//JabberContact *my=static_cast<JabberContact*>(myself());
-	task->unreg ( myself()->contactId() );
-	task->go ( true );
-	return false; //delay the removal
+    m_status = Removing;
+    XMPP::JT_Register *task = new XMPP::JT_Register(m_account->client()->rootTask());
+    QObject::connect(task, SIGNAL(finished()), this, SLOT(removeAllContacts()));
+
+    //JabberContact *my=static_cast<JabberContact*>(myself());
+    task->unreg(myself()->contactId());
+    task->go(true);
+    return false; //delay the removal
 }
 
-void JabberTransport::removeAllContacts( )
+void JabberTransport::removeAllContacts()
 {
 //	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
 
 /*	if ( ! task->success ())
-	KMessageBox::queuedMessageBox ( 0L, KMessageBox::Error,
-									i18n ("An error occurred when trying to remove the transport:\n%1").arg(task->statusString()),
-									i18n ("Jabber Service Unregistration"));
-	*/ //we don't really care, we remove everithing anyway.
+    KMessageBox::queuedMessageBox ( 0L, KMessageBox::Error,
+                                    i18n ("An error occurred when trying to remove the transport:\n%1").arg(task->statusString()),
+                                    i18n ("Jabber Service Unregistration"));
+    *///we don't really care, we remove everithing anyway.
 
-	qCDebug(JABBER_PROTOCOL_LOG) << "delete all contacts of the transport";
-	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd();
-	for( it = contacts().constBegin(); it != itEnd; ++it )
-	{
-		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
-		rosterTask->remove ( static_cast<JabberBaseContact*>(it.value())->rosterItem().jid() );
-		rosterTask->go ( true );
-	}
+    qCDebug(JABBER_PROTOCOL_LOG) << "delete all contacts of the transport";
+    QHash<QString, Kopete::Contact *>::ConstIterator it, itEnd = contacts().constEnd();
+    for (it = contacts().constBegin(); it != itEnd; ++it) {
+        XMPP::JT_Roster *rosterTask = new XMPP::JT_Roster(account()->client()->rootTask());
+        rosterTask->remove(static_cast<JabberBaseContact *>(it.value())->rosterItem().jid());
+        rosterTask->go(true);
+    }
 
-	// Remove myself
-	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
-	rosterTask->remove ( static_cast<JabberBaseContact*>(myself())->rosterItem().jid() );
-	rosterTask->go ( true );
+    // Remove myself
+    XMPP::JT_Roster *rosterTask = new XMPP::JT_Roster(account()->client()->rootTask());
+    rosterTask->remove(static_cast<JabberBaseContact *>(myself())->rosterItem().jid());
+    rosterTask->go(true);
 
-	m_status = Removing; //in theory that's already our status
-	Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
+    m_status = Removing; //in theory that's already our status
+    Kopete::AccountManager::self()->removeAccount(this);   //this will delete this
 }
 
-QString JabberTransport::legacyId( const XMPP::Jid & jid )
+QString JabberTransport::legacyId(const XMPP::Jid &jid)
 {
-	if(jid.node().isEmpty())
-		return QString();
-	QString node = jid.node();
-	return node.replace('%','@');
+    if (jid.node().isEmpty()) {
+        return QString();
+    }
+    QString node = jid.node();
+    return node.replace('%', '@');
 }
 
-void JabberTransport::jabberAccountRemoved( )
+void JabberTransport::jabberAccountRemoved()
 {
-	m_status = AccountRemoved;
-	Kopete::AccountManager::self()->removeAccount( this ); //this will delete this	
+    m_status = AccountRemoved;
+    Kopete::AccountManager::self()->removeAccount(this);   //this will delete this
 }
 
-void JabberTransport::eatContacts( )
+void JabberTransport::eatContacts()
 {
-	/*
-	* "Gateway Contact Eating" (c)(r)(tm)(g)(o)(f)
-	* this comes directly from my mind into the kopete code.
-	* principle: - the transport is hungry
-	*            - it will eat contacts which belong to him
-	*            - the contact will die
-	*            - a new contact will born, with the same characteristics, but owned by the transport
-	* - Olivier 2006-01-17 -
-	*/
-    qCDebug(JABBER_PROTOCOL_LOG) ;
-	QHash<QString, Kopete::Contact*> cts=account()->contacts();
-	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = cts.constEnd(); 
-	for( it = cts.constBegin(); it != itEnd; ++it )
-	{
-		JabberContact *contact=dynamic_cast<JabberContact*>(it.value());
-		if( contact && !contact->transport() && contact->rosterItem().jid().domain() == myself()->contactId())
-		{
-			XMPP::RosterItem item=contact->rosterItem();
-			Kopete::MetaContact *mc=contact->metaContact();
-			Kopete::OnlineStatus status = contact->onlineStatus();
-			qCDebug(JABBER_PROTOCOL_LOG) << item.jid().full() << " will be soon eat  - " << contact;
-			delete contact;
-			Kopete::Contact *c2=account()->contactPool()->addContact( item , mc , false ); //not sure this is false;
-			if(c2)
-				c2->setOnlineStatus( status ); //put back the old status
-		}
-	}
+    /*
+    * "Gateway Contact Eating" (c)(r)(tm)(g)(o)(f)
+    * this comes directly from my mind into the kopete code.
+    * principle: - the transport is hungry
+    *            - it will eat contacts which belong to him
+    *            - the contact will die
+    *            - a new contact will born, with the same characteristics, but owned by the transport
+    * - Olivier 2006-01-17 -
+    */
+    qCDebug(JABBER_PROTOCOL_LOG);
+    QHash<QString, Kopete::Contact *> cts = account()->contacts();
+    QHash<QString, Kopete::Contact *>::ConstIterator it, itEnd = cts.constEnd();
+    for (it = cts.constBegin(); it != itEnd; ++it) {
+        JabberContact *contact = dynamic_cast<JabberContact *>(it.value());
+        if (contact && !contact->transport() && contact->rosterItem().jid().domain() == myself()->contactId()) {
+            XMPP::RosterItem item = contact->rosterItem();
+            Kopete::MetaContact *mc = contact->metaContact();
+            Kopete::OnlineStatus status = contact->onlineStatus();
+            qCDebug(JABBER_PROTOCOL_LOG) << item.jid().full() << " will be soon eat  - " << contact;
+            delete contact;
+            Kopete::Contact *c2 = account()->contactPool()->addContact(item, mc, false);   //not sure this is false;
+            if (c2) {
+                c2->setOnlineStatus(status);   //put back the old status
+            }
+        }
+    }
 }
-

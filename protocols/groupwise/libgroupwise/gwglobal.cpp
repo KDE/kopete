@@ -1,10 +1,10 @@
 /*
     gwglobal.cpp - Kopete Groupwise Protocol
-  
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -17,23 +17,31 @@
 
 #include "gwerror.h"
 
-namespace GroupWise
+namespace GroupWise {
+ConferenceGuid::ConferenceGuid()
 {
-	ConferenceGuid::ConferenceGuid() {}
-	ConferenceGuid::ConferenceGuid( const QString & string ) : QString( string ) {}
-	
-	ConferenceGuid::~ConferenceGuid() {}
-	
-	bool operator==( const ConferenceGuid & g1, const ConferenceGuid & g2 )
-	{
-		return g1.left( CONF_GUID_END ) == g2.left( CONF_GUID_END );
-	}
-	bool operator==( const QString & s, const ConferenceGuid & g )
-	{
-		return s.left( CONF_GUID_END ) == g.left( CONF_GUID_END );
-	}
-	bool operator==( const ConferenceGuid & g, const QString & s )
-	{
-		return s.left( CONF_GUID_END ) == g.left( CONF_GUID_END );
-	}
+}
+
+ConferenceGuid::ConferenceGuid(const QString &string) : QString(string)
+{
+}
+
+ConferenceGuid::~ConferenceGuid()
+{
+}
+
+bool operator==(const ConferenceGuid &g1, const ConferenceGuid &g2)
+{
+    return g1.left(CONF_GUID_END) == g2.left(CONF_GUID_END);
+}
+
+bool operator==(const QString &s, const ConferenceGuid &g)
+{
+    return s.left(CONF_GUID_END) == g.left(CONF_GUID_END);
+}
+
+bool operator==(const ConferenceGuid &g, const QString &s)
+{
+    return s.left(CONF_GUID_END) == g.left(CONF_GUID_END);
+}
 }

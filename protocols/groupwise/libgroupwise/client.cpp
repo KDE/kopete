@@ -309,8 +309,7 @@ void Client::leaveConference(const GroupWise::ConferenceGuid &guid)
     lct->go(true);
 }
 
-void Client::sendInvitation(const GroupWise::ConferenceGuid &guid, const QString &dn,
-                            const GroupWise::OutgoingMessage &message)
+void Client::sendInvitation(const GroupWise::ConferenceGuid &guid, const QString &dn, const GroupWise::OutgoingMessage &message)
 {
     SendInviteTask *sit = new SendInviteTask(d->root);
     QStringList invitees(dn);

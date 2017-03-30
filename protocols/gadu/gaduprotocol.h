@@ -68,9 +68,7 @@ public:
         return true;
     }
 
-    virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact,
-                                                const QMap<QString, QString> &serializedData,
-                                                const QMap<QString, QString> &addressBookData);
+    virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData);
     // }
     //!Plugin reimplementation
 

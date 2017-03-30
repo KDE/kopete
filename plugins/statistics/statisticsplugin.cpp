@@ -31,7 +31,6 @@
 #include <KDebug>
 #include <KLocalizedString>
 
-
 #include <kapplication.h>
 
 #include "kopetechatsessionmanager.h"

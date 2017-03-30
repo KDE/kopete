@@ -1,13 +1,13 @@
 /*
     Kopete Groupwise Protocol
-    leaveconferencetask.h - Tell the server we are leaving a conference 
+    leaveconferencetask.h - Tell the server we are leaving a conference
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -30,11 +30,11 @@ Tells the server that you are leaving a conference (closed the chatwindow)
 */
 class LeaveConferenceTask : public RequestTask
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	LeaveConferenceTask(Task* parent);
-	~LeaveConferenceTask();
-	void leave( const GroupWise::ConferenceGuid & guid );
+    LeaveConferenceTask(Task *parent);
+    ~LeaveConferenceTask();
+    void leave(const GroupWise::ConferenceGuid &guid);
 };
 
 #endif

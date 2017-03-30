@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     deleteitemtask.h - Delete a contact or folder on the server
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -29,11 +29,11 @@
 */
 class LIBGROUPWISE_EXPORT DeleteItemTask : public ModifyContactListTask
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	DeleteItemTask(Task* parent);
-	~DeleteItemTask();
-	void item( const int parentFolder, const int objectId );
+    DeleteItemTask(Task *parent);
+    ~DeleteItemTask();
+    void item(const int parentFolder, const int objectId);
 };
 
 #endif

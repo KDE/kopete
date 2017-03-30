@@ -2,12 +2,12 @@
     Kopete Groupwise Protocol
     eventtask.h - Ancestor of all Event Handling tasks
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -28,14 +28,14 @@ class Transfer;
 
 class EventTask : public Task
 {
-Q_OBJECT
-	public:
-		EventTask( Task *parent );
-	protected:
-		bool forMe( const Transfer * transfer ) const Q_DECL_OVERRIDE;
-		void registerEvent( GroupWise::Event e );
-	private:
-		QList<int> m_eventCodes;
+    Q_OBJECT
+public:
+    EventTask(Task *parent);
+protected:
+    bool forMe(const Transfer *transfer) const Q_DECL_OVERRIDE;
+    void registerEvent(GroupWise::Event e);
+private:
+    QList<int> m_eventCodes;
 };
 
 #endif

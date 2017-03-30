@@ -2,10 +2,10 @@
     Kopete Groupwise Protocol
     privacymanager.cpp - stores the user's privacy information and maintains it on the server
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004      SUSE Linux AG	     http://www.suse.com
+
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -24,7 +24,7 @@
 #include "libgroupwise_export.h"
 
 namespace GroupWise {
-	class Client;
+class Client;
 }
 
 /**
@@ -34,58 +34,58 @@ Keeps a record of the server side privacy allow and deny lists, default policy a
 */
 class LIBGROUPWISE_EXPORT PrivacyManager : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	PrivacyManager( GroupWise::Client * client);
-	~PrivacyManager();
-	// accessors
-	bool isBlocked( const QString & dn );
-	QStringList allowList();
-	QStringList denyList();
-	bool isPrivacyLocked();
-	bool defaultDeny();
-	bool defaultAllow();
-	// mutators
-	void setDefaultAllow( bool allow );
-	void setDefaultDeny( bool deny );
-	void setAllow( const QString & dn );
-	void setDeny( const QString & dn );
-	void getDetailsForPrivacyLists();
-	// change everything at once
-	void setPrivacy( bool defaultIsDeny, const QStringList & allowList, const QStringList & denyList );
+    PrivacyManager(GroupWise::Client *client);
+    ~PrivacyManager();
+    // accessors
+    bool isBlocked(const QString &dn);
+    QStringList allowList();
+    QStringList denyList();
+    bool isPrivacyLocked();
+    bool defaultDeny();
+    bool defaultAllow();
+    // mutators
+    void setDefaultAllow(bool allow);
+    void setDefaultDeny(bool deny);
+    void setAllow(const QString &dn);
+    void setDeny(const QString &dn);
+    void getDetailsForPrivacyLists();
+    // change everything at once
+    void setPrivacy(bool defaultIsDeny, const QStringList &allowList, const QStringList &denyList);
 
 Q_SIGNALS:
-	void privacyChanged( const QString &dn, bool allowed );
+    void privacyChanged(const QString &dn, bool allowed);
 public Q_SLOTS:
-	/** 
-	 * Used to initialise the privacy manager using the server side privacy list
-	 */
-	void slotGotPrivacySettings( bool locked, bool defaultDeny, const QStringList & allowList, const QStringList & denyList );
+    /**
+     * Used to initialise the privacy manager using the server side privacy list
+     */
+    void slotGotPrivacySettings(bool locked, bool defaultDeny, const QStringList &allowList, const QStringList &denyList);
 protected:
-	void addAllow( const QString & dn );
-	void addDeny( const QString & dn );
-	void removeAllow( const QString & dn );
-	void removeDeny( const QString & dn );
-	/**
-	 * A set difference function
-	 * @param lhs The set of strings to be subtracted from
-	 * @param rhs The set of string to subtract
-	 * @return The difference between the two sets
-	 */
-	QStringList difference( const QStringList & lhs, const QStringList & rhs );
+    void addAllow(const QString &dn);
+    void addDeny(const QString &dn);
+    void removeAllow(const QString &dn);
+    void removeDeny(const QString &dn);
+    /**
+     * A set difference function
+     * @param lhs The set of strings to be subtracted from
+     * @param rhs The set of string to subtract
+     * @return The difference between the two sets
+     */
+    QStringList difference(const QStringList &lhs, const QStringList &rhs);
 protected Q_SLOTS:
-	// Receive the results of Tasks manipulating the privacy lists
-	void slotDefaultPolicyChanged();
-	void slotAllowAdded();
-	void slotDenyAdded();
-	void slotAllowRemoved();
-	void slotDenyRemoved();	
+    // Receive the results of Tasks manipulating the privacy lists
+    void slotDefaultPolicyChanged();
+    void slotAllowAdded();
+    void slotDenyAdded();
+    void slotAllowRemoved();
+    void slotDenyRemoved();
 private:
-	GroupWise::Client * m_client;
-	bool m_locked;
-	bool m_defaultDeny;
-	QStringList m_allowList;
-	QStringList m_denyList;
+    GroupWise::Client *m_client;
+    bool m_locked;
+    bool m_defaultDeny;
+    QStringList m_allowList;
+    QStringList m_denyList;
 };
 
 #endif
