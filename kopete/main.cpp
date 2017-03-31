@@ -23,6 +23,7 @@
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QApplication>
+#include <KDBusService>
 
 #include "kopeteapplication.h"
 #include "kopeteversion.h"
@@ -110,8 +111,8 @@ int main(int argc, char *argv[])
     parser.process(kopete);
     aboutData.processCommandLine(&parser);
 
-    //KUniqueApplication::addCmdLineOptions();
 
+    KDBusService service(KDBusService::Unique);
 
     return kopete.exec();
 }

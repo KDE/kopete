@@ -59,6 +59,8 @@ target_link_libraries(kopete_bin
     KF5::Contacts
     KF5::TextEditor
     KF5::NotifyConfig
+    KF5::Crash
+    KF5::DBusAddons
     ${QIMAGEBLITZ_LIBRARIES}
     kopete
     kopeteaddaccountwizard

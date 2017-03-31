@@ -30,6 +30,8 @@ find_package(KF5 ${KF5_VERSION} REQUIRED COMPONENTS
 	Wallet
 	KDELibs4Support
         TextEditor
+        Crash
+        DBusAddons
 	#[[Phonon]]
 )
 
