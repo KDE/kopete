@@ -33,7 +33,6 @@ static const char description[]
 
 int main(int argc, char *argv[])
 {
-    //QApplication app(argc, argv);
     KopeteApplication kopete(argc, argv);
 
     KLocalizedString::setApplicationDomain("kopete");
