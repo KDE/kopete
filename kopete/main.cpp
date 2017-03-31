@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
                          i18n("kopete-devel@kde.org"), "http://kopete.kde.org");
 
     aboutData.addAuthor(i18n("Pali Rohár"), i18n("Developer and maintainer"), "pali.rohar@gmail.com");
+    aboutData.addAuthor(i18n("Laurent Montel"), i18n("Porting to KF5"), "montel@kde.org");
     aboutData.addAuthor(i18n("Duncan Mac-Vicar Prett"), i18n("Developer and Project founder"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan");
     aboutData.addAuthor(i18n("Andre Duffeck"), i18n("Developer, Yahoo plugin maintainer"), "duffeck@kde.org");
     aboutData.addAuthor(i18n("Andy Goossens"), i18n("Developer"), "andygoossens@telenet.be");
