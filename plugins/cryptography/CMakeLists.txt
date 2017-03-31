@@ -1,4 +1,4 @@
-include_directories (${KLEOPATRA_INCLUDE_DIR} ${KOPETE_INCLUDES})
+include_directories (${KOPETE_INCLUDES})
 
 ########### next target ###############
 
@@ -17,7 +17,7 @@ ki18n_wrap_ui(kopete_cryptography_PART_SRCS kabckeyselectorbase.ui exportkeysbas
 
 add_library(kopete_cryptography MODULE ${kopete_cryptography_PART_SRCS})
 
-target_link_libraries(kopete_cryptography Qt5::Gui  KF5::KDELibs4Support kopete ${KLEOPATRA_LIBRARIES} ${KDE4_KABC_LIBS} ${QGPGME_LIBRARIES} )
+target_link_libraries(kopete_cryptography Qt5::Gui  KF5::KDELibs4Support kopete QGpgme )
 
 install(TARGETS kopete_cryptography  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
@@ -35,7 +35,6 @@ add_library(kcm_kopete_cryptography MODULE ${kcm_kopete_cryptography_PART_SRCS})
 target_link_libraries(
     kcm_kopete_cryptography
     kopete
-    ${KLEOPATRA_LIBRARIES}
     KF5::KDELibs4Support
     
     

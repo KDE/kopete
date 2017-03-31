@@ -74,6 +74,6 @@ endif(WITH_webpresence AND LIBXML2_FOUND AND LIBXSLT_FOUND)
 if (WITH_otr AND LIBOTR_FOUND)
   add_subdirectory ( otr )
 endif (WITH_otr AND LIBOTR_FOUND)
-#[[if (WITH_cryptography AND KLEOPATRA_FOUND AND QGPGME_FOUND)
+if (WITH_cryptography AND QGpgme_FOUND)
   add_subdirectory ( cryptography )
-endif (WITH_cryptography AND KLEOPATRA_FOUND AND QGPGME_FOUND)]]
+endif (WITH_cryptography AND QGpgme_FOUND)

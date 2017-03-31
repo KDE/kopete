@@ -69,6 +69,8 @@ if(DISABLE_VIDEOSUPPORT)
     add_definitions(-DVIDEOSUPPORT_DISABLED)
 endif(DISABLE_VIDEOSUPPORT)
 
+set(LIBKLEO_LIB_VERSION_LIB "5.4.0")
+find_package(KF5Libkleo ${LIBKLEO_LIB_VERSION_LIB} CONFIG REQUIRED)
 
 ### Alphabetical list of optional packages ###
 
@@ -134,8 +136,8 @@ set_package_properties(Qca-qt5 PROPERTIES DESCRIPTION "Support for encryption"
                        URL "http://download.kde.org/stable/qca-qt5/"
                        TYPE RECOMMENDED)
 
-find_package(QGpgme QUIET CONFIG)
-set_package_properties(QGpgme PROPERTIES DESCRIPTION "QGpgME library (from kdepimlibs)" URL "http://www.kde.org/" TYPE OPTIONAL PURPOSE "Required for the Cryptography plugin")
+set(GPGMEPP_LIB_VERSION "1.7.1")
+find_package(Gpgmepp ${GPGMEPP_LIB_VERSION} CONFIG REQUIRED)
 
 find_package(Sqlite QUIET)
 set_package_properties(Sqlite PROPERTIES DESCRIPTION "SQLite is a Binary-Database" URL "http://www.sqlite.org" TYPE OPTIONAL PURPOSE "Required for the Statistic plugin")
