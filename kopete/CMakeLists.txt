@@ -74,7 +74,7 @@ install(TARGETS kopete_bin  ${KDE_INSTALL_TARGETS_DEFAULT_ARGS} )
 
 ########### install files ###############
 
-install( PROGRAMS kopete.desktop  DESTINATION ${KDE_INSTALL_APPDIR})
+install( PROGRAMS org.kde.kopete.desktop  DESTINATION ${KDE_INSTALL_APPDIR})
 install(FILES
     kopeteui.rc
     DESTINATION  ${KDE_INSTALL_KXMLGUI5DIR}/kopete)

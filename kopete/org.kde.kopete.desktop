@@ -235,3 +235,5 @@ Icon=kopete
 Categories=Qt;KDE;Network;InstantMessaging;
 X-DBUS-StartupType=Unique
 X-KDE-ServiceTypes=DBUS/InstantMessenger
+X-DBUS-StartupType=Unique
+X-DBUS-ServiceName=org.kde.kopete
