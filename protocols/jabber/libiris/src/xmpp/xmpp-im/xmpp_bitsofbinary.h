@@ -64,6 +64,8 @@ namespace XMPP
 		QSharedDataPointer<Private> d;
 	};
 
+
+
 	class BoBCache : public QObject
 	{
 		Q_OBJECT
@@ -73,6 +75,8 @@ namespace XMPP
 		virtual void put(const BoBData &) = 0;
 		virtual BoBData get(const QString &) = 0;
 	};
+
+
 
 	class BoBManager : public QObject
 	{
@@ -87,7 +91,7 @@ namespace XMPP
 		BoBData append(const QByteArray &data, const QString &type,
 							unsigned int maxAge = 0);
 		QString append(QFile &file,
-							 const QString &type = QStringLiteral("application/octet-stream"));
+							 const QString &type = "application/octet-stream");
 		void append(const BoBData &);
 
 	private:

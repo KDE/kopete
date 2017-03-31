@@ -82,6 +82,7 @@ Stanza::Error::Error(int _type, int _condition, const QString &_text, const QDom
 	originalCode = 0;
 }
 
+
 class Stanza::Error::Private
 {
 public:
@@ -114,6 +115,7 @@ public:
 		const char *str;
 	};
 	static ErrorDescEntry errorDescriptions[];
+
 
 	static int stringToErrorType(const QString &s)
 	{
@@ -310,11 +312,11 @@ bool Stanza::Error::fromCode(int code)
 */
 bool Stanza::Error::fromXml(const QDomElement &e, const QString &baseNS)
 {
-	if(e.tagName() != QLatin1String("error") && e.namespaceURI() != baseNS)
+	if(e.tagName() != "error" && e.namespaceURI() != baseNS)
 		return false;
 
 	// type
-	type = Private::stringToErrorType(e.attribute(QStringLiteral("type")));
+	type = Private::stringToErrorType(e.attribute("type"));
 
 	// condition
 	QDomNodeList nl = e.childNodes();
@@ -326,7 +328,7 @@ bool Stanza::Error::fromXml(const QDomElement &e, const QString &baseNS)
 		t = i.toElement();
 		if(!t.isNull()) {
 			// FIX-ME: this shouldn't be needed
-			if(t.namespaceURI() == NS_STANZAS || t.attribute(QStringLiteral("xmlns")) == NS_STANZAS) {
+			if(t.namespaceURI() == NS_STANZAS || t.attribute("xmlns") == NS_STANZAS) {
 				condition = Private::stringToErrorCond(t.tagName());
 				if (condition != -1)
 					break;
@@ -335,7 +337,7 @@ bool Stanza::Error::fromXml(const QDomElement &e, const QString &baseNS)
 	}
 
 	// code
-	originalCode = e.attribute(QStringLiteral("code")).toInt();
+	originalCode = e.attribute("code").toInt();
 
 	// try to guess type/condition
 	if(type == -1 || condition == -1) {
@@ -350,7 +352,7 @@ bool Stanza::Error::fromXml(const QDomElement &e, const QString &baseNS)
 	}
 
 	// text
-	t = e.elementsByTagNameNS(NS_STANZAS, QStringLiteral("text")).item(0).toElement();
+	t = e.elementsByTagNameNS(NS_STANZAS, "text").item(0).toElement();
 	if(!t.isNull())
 		text = t.text().trimmed();
 	else
@@ -380,7 +382,7 @@ bool Stanza::Error::fromXml(const QDomElement &e, const QString &baseNS)
 */
 QDomElement Stanza::Error::toXml(QDomDocument &doc, const QString &baseNS) const
 {
-	QDomElement errElem = doc.createElementNS(baseNS, QStringLiteral("error"));
+	QDomElement errElem = doc.createElementNS(baseNS, "error");
 	QDomElement t;
 
 	// XMPP error
@@ -391,19 +393,19 @@ QDomElement Stanza::Error::toXml(QDomDocument &doc, const QString &baseNS) const
 	if(scond.isEmpty())
 		return errElem;
 
-	errElem.setAttribute(QStringLiteral("type"), stype);
+	errElem.setAttribute("type", stype);
 	errElem.appendChild(t = doc.createElementNS(NS_STANZAS, scond));
-	t.setAttribute(QStringLiteral("xmlns"), NS_STANZAS);	// FIX-ME: this shouldn't be needed
+	t.setAttribute("xmlns", NS_STANZAS);	// FIX-ME: this shouldn't be needed
 
 	// old code
 	int scode = code();
 	if(scode)
-		errElem.setAttribute(QStringLiteral("code"), scode);
+		errElem.setAttribute("code", scode);
 
 	// text
 	if(!text.isEmpty()) {
-		t = doc.createElementNS(NS_STANZAS, QStringLiteral("text"));
-		t.setAttribute(QStringLiteral("xmlns"), NS_STANZAS);	// FIX-ME: this shouldn't be needed
+		t = doc.createElementNS(NS_STANZAS, "text");
+		t.setAttribute("xmlns", NS_STANZAS);	// FIX-ME: this shouldn't be needed
 		t.appendChild(doc.createTextNode(text));
 		errElem.appendChild(t);
 	}
@@ -445,11 +447,11 @@ public:
 	static QString kindToString(Kind k)
 	{
 		if(k == Message)
-			return QStringLiteral("message");
+			return QLatin1String("message");
 		else if(k == Presence)
-			return QStringLiteral("presence");
+			return QLatin1String("presence");
 		else
-			return QStringLiteral("iq");
+			return QLatin1String("iq");
 	}
 
 	Stream *s;
@@ -577,58 +579,58 @@ void Stanza::setKind(Kind k)
 
 Jid Stanza::to() const
 {
-	return Jid(d->e.attribute(QStringLiteral("to")));
+	return Jid(d->e.attribute("to"));
 }
 
 Jid Stanza::from() const
 {
-	return Jid(d->e.attribute(QStringLiteral("from")));
+	return Jid(d->e.attribute("from"));
 }
 
 QString Stanza::id() const
 {
-	return d->e.attribute(QStringLiteral("id"));
+	return d->e.attribute("id");
 }
 
 QString Stanza::type() const
 {
-	return d->e.attribute(QStringLiteral("type"));
+	return d->e.attribute("type");
 }
 
 QString Stanza::lang() const
 {
-	return d->e.attributeNS(NS_XML, QStringLiteral("lang"), QString());
+	return d->e.attributeNS(NS_XML, "lang", QString());
 }
 
 void Stanza::setTo(const Jid &j)
 {
-	d->e.setAttribute(QStringLiteral("to"), j.full());
+	d->e.setAttribute("to", j.full());
 }
 
 void Stanza::setFrom(const Jid &j)
 {
-	d->e.setAttribute(QStringLiteral("from"), j.full());
+	d->e.setAttribute("from", j.full());
 }
 
 void Stanza::setId(const QString &id)
 {
-	d->e.setAttribute(QStringLiteral("id"), id);
+	d->e.setAttribute("id", id);
 }
 
 void Stanza::setType(const QString &type)
 {
-	d->e.setAttribute(QStringLiteral("type"), type);
+	d->e.setAttribute("type", type);
 }
 
 void Stanza::setLang(const QString &lang)
 {
-	d->e.setAttribute(QStringLiteral("xml:lang"), lang);
+	d->e.setAttribute("xml:lang", lang);
 }
 
 Stanza::Error Stanza::error() const
 {
 	Error err;
-	QDomElement e = d->e.elementsByTagNameNS(d->s->baseNS(), QStringLiteral("error")).item(0).toElement();
+	QDomElement e = d->e.elementsByTagNameNS(d->s->baseNS(), "error").item(0).toElement();
 	if(!e.isNull())
 		err.fromXml(e, d->s->baseNS());
 
@@ -640,7 +642,7 @@ void Stanza::setError(const Error &err)
 	QDomDocument doc = d->e.ownerDocument();
 	QDomElement errElem = err.toXml(doc, d->s->baseNS());
 
-	QDomElement oldElem = d->e.elementsByTagNameNS(d->s->baseNS(), QStringLiteral("error")).item(0).toElement();
+	QDomElement oldElem = d->e.elementsByTagNameNS(d->s->baseNS(), "error").item(0).toElement();
 	if(oldElem.isNull()) {
 		d->e.appendChild(errElem);
 	}
@@ -651,7 +653,7 @@ void Stanza::setError(const Error &err)
 
 void Stanza::clearError()
 {
-	QDomElement errElem = d->e.elementsByTagNameNS(d->s->baseNS(), QStringLiteral("error")).item(0).toElement();
+	QDomElement errElem = d->e.elementsByTagNameNS(d->s->baseNS(), "error").item(0).toElement();
 	if(!errElem.isNull())
 		d->e.removeChild(errElem);
 }

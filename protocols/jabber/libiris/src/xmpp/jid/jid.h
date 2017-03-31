@@ -77,7 +77,7 @@ namespace XMPP
 		~Jid();
 
 		Jid(const QString &s);
-		Jid(const QString &node, const QString& domain, const QString& resource = QLatin1String(QLatin1String("")));
+		Jid(const QString &node, const QString& domain, const QString& resource = "");
 		Jid(const char *s);
 		Jid & operator=(const QString &s);
 		Jid & operator=(const char *s);
@@ -101,7 +101,7 @@ namespace XMPP
 
 	private:
 		void set(const QString &s);
-		void set(const QString &domain, const QString &node, const QString &resource=QLatin1String(QLatin1String("")));
+		void set(const QString &domain, const QString &node, const QString &resource="");
 
 		void setDomain(const QString &s);
 		void setNode(const QString &s);

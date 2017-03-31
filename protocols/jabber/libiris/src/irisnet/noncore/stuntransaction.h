@@ -78,7 +78,7 @@ public:
 		ErrorTimeout
 	};
 
-	StunTransaction(QObject *parent = nullptr);
+	StunTransaction(QObject *parent = 0);
 	~StunTransaction();
 
 	// toAddress/toPort are optional, to associate this request to a
@@ -106,7 +106,7 @@ public:
 	//   required to provide a fingerprint.
 	void setFingerprintRequired(bool enabled);
 
-Q_SIGNALS:
+signals:
 	// you must use a direct connection with this signal and call
 	//   setMessage() in the slot.  this signal may occur many times
 	//   before the StunTransaction completes, and you must recreate the
@@ -142,7 +142,7 @@ public:
 		DL_Packet
 	};
 
-	StunTransactionPool(StunTransaction::Mode mode, QObject *parent = nullptr);
+	StunTransactionPool(StunTransaction::Mode mode, QObject *parent = 0);
 	~StunTransactionPool();
 
 	StunTransaction::Mode mode() const;
@@ -174,7 +174,7 @@ public:
 
 	void setDebugLevel(DebugLevel level); // default DL_None
 
-Q_SIGNALS:
+signals:
 	// note: not DOR-SS safe.  writeIncomingMessage() must not be called
 	//   during this signal.
 	//

@@ -143,7 +143,7 @@ public:
 		}
 	}
 
-Q_SIGNALS:
+signals:
 	void ready();
 	void error(XMPP::StunAllocatePermission::Error e, const QString &reason);
 
@@ -173,7 +173,7 @@ private:
 		timer->start();
 	}
 
-private Q_SLOTS:
+private slots:
 	void trans_createMessage(const QByteArray &transactionId)
 	{
 		// CreatePermission
@@ -212,7 +212,7 @@ private Q_SLOTS:
 			if(!StunTypes::parseErrorCode(response.attribute(StunTypes::ERROR_CODE), &code, &reason))
 			{
 				cleanup();
-				emit error(ErrorProtocol, QStringLiteral("Unable to parse ERROR-CODE in error response."));
+				emit error(ErrorProtocol, "Unable to parse ERROR-CODE in error response.");
 				return;
 			}
 
@@ -247,9 +247,9 @@ private Q_SLOTS:
 		cleanup();
 
 		if(e == XMPP::StunTransaction::ErrorTimeout)
-			emit error(ErrorTimeout, QStringLiteral("Request timed out."));
+			emit error(ErrorTimeout, "Request timed out.");
 		else
-			emit error(ErrorGeneric, QStringLiteral("Generic transaction error."));
+			emit error(ErrorGeneric, "Generic transaction error.");
 	}
 
 	void timer_timeout()
@@ -333,7 +333,7 @@ public:
 		}
 	}
 
-Q_SIGNALS:
+signals:
 	void ready();
 	void error(XMPP::StunAllocateChannel::Error e, const QString &reason);
 
@@ -364,7 +364,7 @@ private:
 		timer->start();
 	}
 
-private Q_SLOTS:
+private slots:
 	void trans_createMessage(const QByteArray &transactionId)
 	{
 		// ChannelBind
@@ -406,7 +406,7 @@ private Q_SLOTS:
 			if(!StunTypes::parseErrorCode(response.attribute(StunTypes::ERROR_CODE), &code, &reason))
 			{
 				cleanup();
-				emit error(ErrorProtocol, QStringLiteral("Unable to parse ERROR-CODE in error response."));
+				emit error(ErrorProtocol, "Unable to parse ERROR-CODE in error response.");
 				return;
 			}
 
@@ -441,9 +441,9 @@ private Q_SLOTS:
 		cleanup();
 
 		if(e == XMPP::StunTransaction::ErrorTimeout)
-			emit error(ErrorTimeout, QStringLiteral("Request timed out."));
+			emit error(ErrorTimeout, "Request timed out.");
 		else
-			emit error(ErrorGeneric, QStringLiteral("Generic transaction error."));
+			emit error(ErrorGeneric, "Generic transaction error.");
 	}
 
 	void timer_timeout()
@@ -862,7 +862,7 @@ private:
 		return true;
 	}
 
-private Q_SLOTS:
+private slots:
 	void refresh()
 	{
 		Q_ASSERT(state == Started);
@@ -968,7 +968,7 @@ private Q_SLOTS:
 			if(!StunTypes::parseErrorCode(response.attribute(StunTypes::ERROR_CODE), &code, &reason))
 			{
 				cleanup();
-				errorString = QStringLiteral("Unable to parse ERROR-CODE in error response.");
+				errorString = "Unable to parse ERROR-CODE in error response.";
 				emit q->error(StunAllocate::ErrorProtocol);
 				return;
 			}
@@ -986,7 +986,7 @@ private Q_SLOTS:
 					if(!StunTypes::parseUnknownAttributes(response.attribute(StunTypes::UNKNOWN_ATTRIBUTES), &typeList))
 					{
 						cleanup();
-						errorString = QStringLiteral("Unable to parse UNKNOWN-ATTRIBUTES in 420 (Unknown Attribute) error response.");
+						errorString = "Unable to parse UNKNOWN-ATTRIBUTES in 420 (Unknown Attribute) error response.";
 						emit q->error(StunAllocate::ErrorProtocol);
 						return;
 					}
@@ -1010,7 +1010,7 @@ private Q_SLOTS:
 				else if(code == StunTypes::AllocationMismatch)
 				{
 					cleanup();
-					errorString = QStringLiteral("437 (Allocation Mismatch).");
+					errorString = "437 (Allocation Mismatch).";
 					emit q->error(StunAllocate::ErrorMismatch);
 					return;
 				}
@@ -1024,7 +1024,7 @@ private Q_SLOTS:
 				else if(code == StunTypes::Unauthorized)
 				{
 					cleanup();
-					errorString = QStringLiteral("Unauthorized");
+					errorString = "Unauthorized";
 					emit q->error(StunAllocate::ErrorAuth);
 					return;
 				}
@@ -1041,7 +1041,7 @@ private Q_SLOTS:
 			if(!StunTypes::parseLifetime(response.attribute(StunTypes::LIFETIME), &lifetime))
 			{
 				cleanup();
-				errorString = QStringLiteral("Unable to parse LIFETIME.");
+				errorString = "Unable to parse LIFETIME.";
 				emit q->error(StunAllocate::ErrorProtocol);
 				return;
 			}
@@ -1051,7 +1051,7 @@ private Q_SLOTS:
 			if(!StunTypes::parseXorRelayedAddress(response.attribute(StunTypes::XOR_RELAYED_ADDRESS), response.magic(), response.id(), &raddr, &rport))
 			{
 				cleanup();
-				errorString = QStringLiteral("Unable to parse XOR-RELAYED-ADDRESS.");
+				errorString = "Unable to parse XOR-RELAYED-ADDRESS.";
 				emit q->error(StunAllocate::ErrorProtocol);
 				return;
 			}
@@ -1061,7 +1061,7 @@ private Q_SLOTS:
 			if(!StunTypes::parseXorMappedAddress(response.attribute(StunTypes::XOR_MAPPED_ADDRESS), response.magic(), response.id(), &saddr, &sport))
 			{
 				cleanup();
-				errorString = QStringLiteral("Unable to parse XOR-MAPPED-ADDRESS.");
+				errorString = "Unable to parse XOR-MAPPED-ADDRESS.";
 				emit q->error(StunAllocate::ErrorProtocol);
 				return;
 			}
@@ -1070,7 +1070,7 @@ private Q_SLOTS:
 			{
 				state = Started; // stopWithError requires this
 				stopWithError(StunAllocate::ErrorProtocol,
-					QStringLiteral("LIFETIME is less than two minutes.  That is ridiculous."));
+					"LIFETIME is less than two minutes.  That is ridiculous.");
 				return;
 			}
 
@@ -1139,7 +1139,7 @@ private Q_SLOTS:
 			if(!StunTypes::parseLifetime(response.attribute(StunTypes::LIFETIME), &lifetime))
 			{
 				cleanup();
-				errorString = QStringLiteral("Unable to parse LIFETIME.");
+				errorString = "Unable to parse LIFETIME.";
 				emit q->error(StunAllocate::ErrorProtocol);
 				return;
 			}
@@ -1174,7 +1174,7 @@ private Q_SLOTS:
 			QHostAddress addr = perm->addr;
 			delete perm;
 			perms.removeAll(perm);
-			emit q->debugLine(QStringLiteral("Warning: permission forbidden to %1").arg(addr.toString()));
+			emit q->debugLine(QString("Warning: permission forbidden to %1").arg(addr.toString()));
 			return;
 		}
 
@@ -1214,12 +1214,12 @@ private Q_SLOTS:
 
 		if(e == StunTransaction::ErrorTimeout)
 		{
-			errorString = QStringLiteral("Request timed out.");
+			errorString = "Request timed out.";
 			emit q->error(StunAllocate::ErrorTimeout);
 		}
 		else
 		{
-			errorString = QStringLiteral("Generic transaction error.");
+			errorString = "Generic transaction error.";
 			emit q->error(StunAllocate::ErrorGeneric);
 		}
 	}

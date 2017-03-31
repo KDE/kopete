@@ -42,7 +42,7 @@ QString BytestreamManager::genUniqueSID(const Jid &peer) const
 	// get unused key
 	QString sid;
 	do {
-		sid = QStringLiteral("%1%2").arg(sidPrefix())
+		sid = QString("%1%2").arg(sidPrefix())
 							 .arg(qrand() & 0xffff, 4, 16, QChar('0'));
 	} while(!isAcceptableSID(peer, sid));
 	return sid;

@@ -26,6 +26,7 @@
 #include "xmpp_discoitem.h"
 #include "xmpp_status.h"
 
+
 namespace XMPP {
 
 class CapsInfo
@@ -46,12 +47,13 @@ private:
 	XMPP::DiscoItem _disco;
 };
 
+
 class CapsRegistry : public QObject
 {
 	Q_OBJECT
 
 public:
-	CapsRegistry(QObject *parent = nullptr);
+	CapsRegistry(QObject *parent = 0);
 
 	static CapsRegistry* instance();
 	static void setInstance(CapsRegistry*instance);
@@ -60,10 +62,10 @@ public:
 	bool isRegistered(const QString &) const;
 	DiscoItem disco(const QString&) const;
 
-Q_SIGNALS:
+signals:
 	void registered(const XMPP::CapsSpec&);
 
-public Q_SLOTS:
+public slots:
 	void load();
 	void save();
 
@@ -75,6 +77,7 @@ private:
 	static CapsRegistry *instance_;
 	QHash<QString,CapsInfo> capsInfo_;
 };
+
 
 class CapsManager : public QObject
 {
@@ -100,13 +103,13 @@ public:
 	QString osVersion(const Jid& jid) const;
 	CapsSpec capsSpec(const Jid &jid) const;
 
-Q_SIGNALS:
+signals:
 	/**
 	 * This signal is emitted when the feature list of a given JID have changed.
 	 */
 	void capsChanged(const Jid& jid);
 
-protected Q_SLOTS:
+protected slots:
 	void discoFinished();
 	void capsRegistered(const CapsSpec&);
 

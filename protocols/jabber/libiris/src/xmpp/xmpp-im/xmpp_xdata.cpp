@@ -136,7 +136,7 @@ bool XData::Field::isValid() const
 			return false;
 
 		QString str = _value.first();
-		if ( str == QLatin1String("0") || str == QLatin1String("1") || str == QLatin1String("true") || str == QLatin1String("false") || str == QLatin1String("yes") || str == QLatin1String("no") )
+		if ( str == "0" || str == "1" || str == "true" || str == "false" || str == "yes" || str == "no" )
 			return true;
 	}
 	if ( _type == Field_TextSingle || _type == Field_TextPrivate ) {
@@ -176,30 +176,30 @@ bool XData::Field::isValid() const
 
 void XData::Field::fromXml(const QDomElement &e)
 {
-	if ( e.tagName() != QLatin1String("field") )
+	if ( e.tagName() != "field" )
 		return;
 
-	_var = e.attribute(QStringLiteral("var"));
-	_label = e.attribute(QStringLiteral("label"));
+	_var = e.attribute("var");
+	_label = e.attribute("label");
 
-	QString type = e.attribute(QStringLiteral("type"));
-	if ( type == QLatin1String("boolean") )
+	QString type = e.attribute("type");
+	if ( type == "boolean" )
 		_type = Field_Boolean;
-	else if ( type == QLatin1String("fixed") )
+	else if ( type == "fixed" )
 		_type = Field_Fixed;
-	else if ( type == QLatin1String("hidden") )
+	else if ( type == "hidden" )
 		_type = Field_Hidden;
-	else if ( type == QLatin1String("jid-multi") )
+	else if ( type == "jid-multi" )
 		_type = Field_JidMulti;
-	else if ( type == QLatin1String("jid-single") )
+	else if ( type == "jid-single" )
 		_type = Field_JidSingle;
-	else if ( type == QLatin1String("list-multi") )
+	else if ( type == "list-multi" )
 		_type = Field_ListMulti;
-	else if ( type == QLatin1String("list-single") )
+	else if ( type == "list-single" )
 		_type = Field_ListSingle;
-	else if ( type == QLatin1String("text-multi") )
+	else if ( type == "text-multi" )
 		_type = Field_TextMulti;
-	else if ( type == QLatin1String("text-private") )
+	else if ( type == "text-private" )
 		_type = Field_TextPrivate;
 	else
 		_type = Field_TextSingle;
@@ -216,35 +216,35 @@ void XData::Field::fromXml(const QDomElement &e)
 			continue;
 
 		QString tag = i.tagName();
-		if ( tag == QLatin1String("required") )
+		if ( tag == "required" )
 			_required = true;
-		else if ( tag == QLatin1String("desc") )
+		else if ( tag == "desc" )
 			_desc = i.text().trimmed();
-		else if ( tag == QLatin1String("option") ) {
+		else if ( tag == "option" ) {
 			Option o;
-			o.label = i.attribute(QStringLiteral("label"));
-			o.value = subTagText(i, QStringLiteral("value"));
+			o.label = i.attribute("label");
+			o.value = subTagText(i, "value");
 			_options.append(o);
 		}
-		else if ( tag == QLatin1String("value") ) {
+		else if ( tag == "value" ) {
 			_value.append(i.text());
 		}
-		else if (tag == QLatin1String("media") && (i.namespaceURI() == QLatin1String("urn:xmpp:media-element")
-				 || i.attribute(QStringLiteral("xmlns")) == QLatin1String("urn:xmpp:media-element"))) { // allow only one media element
+		else if (tag == "media" && (i.namespaceURI() == "urn:xmpp:media-element"
+				 || i.attribute("xmlns") == "urn:xmpp:media-element")) { // allow only one media element
 			QSize s;
-			if (i.hasAttribute(QStringLiteral("width"))) {
-				s.setWidth(i.attribute(QStringLiteral("width")).toInt());
+			if (i.hasAttribute("width")) {
+				s.setWidth(i.attribute("width").toInt());
 			}
-			if (i.hasAttribute(QStringLiteral("height"))) {
-				s.setHeight(i.attribute(QStringLiteral("height")).toInt());
+			if (i.hasAttribute("height")) {
+				s.setHeight(i.attribute("height").toInt());
 			}
 			_mediaElement.setMediaSize(s);
 			for(QDomNode un = i.firstChild(); !un.isNull(); un = un.nextSibling()) {
 				QDomElement uel = un.toElement();
-				if(uel.isNull() || uel.tagName() != QLatin1String("uri")) {
+				if(uel.isNull() || uel.tagName() != "uri") {
 					continue;
 				}
-				QStringList type = uel.attribute(QStringLiteral("type")).split(';');
+				QStringList type = uel.attribute("type").split(';');
 				QHash<QString,QString> params;
 				for (int i = 1; i < type.size(); ++i) {
 					QStringList p = type.value(i).split('=');
@@ -261,51 +261,51 @@ void XData::Field::fromXml(const QDomElement &e)
 
 QDomElement XData::Field::toXml(QDomDocument *doc, bool submitForm) const
 {
-	QDomElement f = doc->createElement(QStringLiteral("field"));
+	QDomElement f = doc->createElement("field");
 
 	// setting attributes...
 	if ( !_var.isEmpty() )
-		f.setAttribute(QStringLiteral("var"), _var);
+		f.setAttribute("var", _var);
 	if ( !submitForm && !_label.isEmpty() )
-		f.setAttribute(QStringLiteral("label"), _label);
+		f.setAttribute("label", _label);
 
 	// now we're gonna get the 'type'
-	QString type = QStringLiteral("text-single");
+	QString type = "text-single";
 	if ( _type == Field_Boolean )
-		type = QStringLiteral("boolean");
+		type = "boolean";
 	else if ( _type == Field_Fixed )
-		type = QStringLiteral("fixed");
+		type = "fixed";
 	else if ( _type == Field_Hidden )
-		type = QStringLiteral("hidden");
+		type = "hidden";
 	else if ( _type == Field_JidMulti )
-		type = QStringLiteral("jid-multi");
+		type = "jid-multi";
 	else if ( _type == Field_JidSingle )
-		type = QStringLiteral("jid-single");
+		type = "jid-single";
 	else if ( _type == Field_ListMulti )
-		type = QStringLiteral("list-multi");
+		type = "list-multi";
 	else if ( _type == Field_ListSingle )
-		type = QStringLiteral("list-single");
+		type = "list-single";
 	else if ( _type == Field_TextMulti )
-		type = QStringLiteral("text-multi");
+		type = "text-multi";
 	else if ( _type == Field_TextPrivate )
-		type = QStringLiteral("text-private");
+		type = "text-private";
 
-	f.setAttribute(QStringLiteral("type"), type);
+	f.setAttribute("type", type);
 
 	// now, setting nested tags...
 	if ( !submitForm && _required )
-		f.appendChild( emptyTag(doc, QStringLiteral("required")) );
+		f.appendChild( emptyTag(doc, "required") );
 
 	if ( !submitForm && !_desc.isEmpty() )
-		f.appendChild( textTag(doc, QStringLiteral("desc"), _desc) );
+		f.appendChild( textTag(doc, "desc", _desc) );
 
 	if ( !submitForm && !_options.isEmpty() ) {
 		OptionList::ConstIterator it = _options.begin();
 		for ( ; it != _options.end(); ++it) {
-			QDomElement o = doc->createElement(QStringLiteral("option"));
-			o.appendChild(textTag(doc, QStringLiteral("value"), (*it).value));
+			QDomElement o = doc->createElement("option");
+			o.appendChild(textTag(doc, "value", (*it).value));
 			if ( !(*it).label.isEmpty() )
-				o.setAttribute(QStringLiteral("label"), (*it).label);
+				o.setAttribute("label", (*it).label);
 			f.appendChild(o);
 		}
 	}
@@ -313,23 +313,23 @@ QDomElement XData::Field::toXml(QDomDocument *doc, bool submitForm) const
 	if ( !_value.isEmpty() ) {
 		QStringList::ConstIterator it = _value.begin();
 		for ( ; it != _value.end(); ++it)
-			f.appendChild( textTag(doc, QStringLiteral("value"), *it) );
+			f.appendChild( textTag(doc, "value", *it) );
 	}
 
 	if ( !_mediaElement.isEmpty() ) {
-		QDomElement media = doc->createElementNS(QStringLiteral("urn:xmpp:media-element"), QStringLiteral("media"));
+		QDomElement media = doc->createElementNS("urn:xmpp:media-element", "media");
 		QSize s = _mediaElement.mediaSize();
 		if (!s.isEmpty()) {
-			media.setAttribute(QStringLiteral("width"), s.width());
-			media.setAttribute(QStringLiteral("height"), s.height());
+			media.setAttribute("width", s.width());
+			media.setAttribute("height", s.height());
 		}
 		foreach(const MediaUri &uri, _mediaElement) {
-			QDomElement uriEl = doc->createElement(QStringLiteral("uri"));
+			QDomElement uriEl = doc->createElement("uri");
 			QString type = uri.type;
 			foreach (const QString &k, uri.params.keys()) {
 				type += ";" + k + "=" + uri.params[k];
 			}
-			uriEl.setAttribute(QStringLiteral("type"), type);
+			uriEl.setAttribute("type", type);
 			uriEl.appendChild(doc->createTextNode(uri.uri));
 			media.appendChild(uriEl);
 		}
@@ -338,6 +338,9 @@ QDomElement XData::Field::toXml(QDomDocument *doc, bool submitForm) const
 
 	return f;
 }
+
+
+
 
 //----------------------------------------------------------------------------
 // MediaElement
@@ -375,6 +378,9 @@ bool XData::Field::MediaElement::checkSupport(const QStringList &wildcards)
 	}
 	return false;
 }
+
+
+
 
 //----------------------------------------------------------------------------
 // XData
@@ -453,7 +459,7 @@ void XData::setFields(const FieldList &fl)
 {
 	d->fields = fl;
 	foreach (const Field &f, fl) {
-		if (f.type() == Field::Field_Hidden && f.var() == QLatin1String("FORM_TYPE")) {
+		if (f.type() == Field::Field_Hidden && f.var() == "FORM_TYPE") {
 			d->registrarType = f.value().value(0);
 		}
 	}
@@ -461,21 +467,21 @@ void XData::setFields(const FieldList &fl)
 
 void XData::fromXml(const QDomElement &e)
 {
-	if ( (e.attribute(QStringLiteral("xmlns")) != QLatin1String("jabber:x:data")) && (e.namespaceURI() != QLatin1String("jabber:x:data")) )
+	if ( (e.attribute("xmlns") != "jabber:x:data") && (e.namespaceURI() != "jabber:x:data") )
 		return;
 
-	QString type = e.attribute(QStringLiteral("type"));
-	if ( type == QLatin1String("result") )
+	QString type = e.attribute("type");
+	if ( type == "result" )
 		d->type = Data_Result;
-	else if ( type == QLatin1String("submit") )
+	else if ( type == "submit" )
 		d->type = Data_Submit;
-	else if ( type == QLatin1String("cancel") )
+	else if ( type == "cancel" )
 		d->type = Data_Cancel;
 	else
 		d->type = Data_Form;
 
-	d->title        = subTagText(e, QStringLiteral("title"));
-	d->instructions = subTagText(e, QStringLiteral("instructions"));
+	d->title        = subTagText(e, "title");
+	d->instructions = subTagText(e, "instructions");
 
 	d->fields.clear();
 
@@ -485,15 +491,15 @@ void XData::fromXml(const QDomElement &e)
 		if ( i.isNull() )
 			continue;
 
-		if ( i.tagName() == QLatin1String("field") ) {
+		if ( i.tagName() == "field" ) {
 			Field f;
 			f.fromXml(i);
 			d->fields.append(f);
-			if (f.type() == Field::Field_Hidden && f.var() == QLatin1String("FORM_TYPE")) {
+			if (f.type() == Field::Field_Hidden && f.var() == "FORM_TYPE") {
 				d->registrarType = f.value().value(0);
 			}
 		}
-		else if ( i.tagName() == QLatin1String("reported") ) {
+		else if ( i.tagName() == "reported" ) {
 			d->report.clear();
 			d->reportItems.clear();
 
@@ -503,12 +509,12 @@ void XData::fromXml(const QDomElement &e)
 				if ( ii.isNull() )
 					continue;
 
-				if ( ii.tagName() == QLatin1String("field") ) {
-					d->report.append( ReportField( ii.attribute(QStringLiteral("label")), ii.attribute(QStringLiteral("var")) ) );
+				if ( ii.tagName() == "field" ) {
+					d->report.append( ReportField( ii.attribute("label"), ii.attribute("var") ) );
 				}
 			}
 		}
-		else if ( i.tagName() == QLatin1String("item") ) {
+		else if ( i.tagName() == "item" ) {
 			ReportItem item;
 
 			QDomNode nn = i.firstChild();
@@ -517,8 +523,8 @@ void XData::fromXml(const QDomElement &e)
 				if ( ii.isNull() )
 					continue;
 
-				if ( ii.tagName() == QLatin1String("field") ) {
-					item.insert(ii.attribute(QStringLiteral("var")), subTagText(ii, QStringLiteral("value")));
+				if ( ii.tagName() == "field" ) {
+					item.insert(ii.attribute("var"), subTagText(ii, "value"));
 				}
 			}
 
@@ -529,23 +535,23 @@ void XData::fromXml(const QDomElement &e)
 
 QDomElement XData::toXml(QDomDocument *doc, bool submitForm) const
 {
-	QDomElement x = doc->createElementNS(QStringLiteral("jabber:x:data"), QStringLiteral("x"));
-	x.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:x:data"));
+	QDomElement x = doc->createElementNS("jabber:x:data", "x");
+	x.setAttribute("xmlns", "jabber:x:data");
 
-	QString type = QStringLiteral("form");
+	QString type = "form";
 	if ( d->type == Data_Result )
-		type = QStringLiteral("result");
+		type = "result";
 	else if ( d->type == Data_Submit )
-		type = QStringLiteral("submit");
+		type = "submit";
 	else if ( d->type == Data_Cancel )
-		type = QStringLiteral("cancel");
+		type = "cancel";
 
-	x.setAttribute(QStringLiteral("type"), type);
+	x.setAttribute("type", type);
 
 	if ( !submitForm && !d->title.isEmpty() )
-		x.appendChild( textTag(doc, QStringLiteral("title"), d->title) );
+		x.appendChild( textTag(doc, "title", d->title) );
 	if ( !submitForm && !d->instructions.isEmpty() )
-		x.appendChild( textTag(doc, QStringLiteral("instructions"), d->instructions) );
+		x.appendChild( textTag(doc, "instructions", d->instructions) );
 
 	if ( !d->fields.isEmpty() ) {
 		FieldList::ConstIterator it = d->fields.begin();

@@ -57,13 +57,13 @@ public:
 	// reimplemented
 	bool isOpen() const;
 	void write(const QByteArray &);
-	qint64 bytesToWrite() const Q_DECL_OVERRIDE;
+	qint64 bytesToWrite() const;
 
-Q_SIGNALS:
+signals:
 	void tlsHandshaken();
 	void tlsClosed();
 
-private Q_SLOTS:
+private slots:
 	void bs_readyRead();
 	void bs_bytesWritten(qint64);
 

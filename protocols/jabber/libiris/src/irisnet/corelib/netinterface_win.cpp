@@ -21,42 +21,44 @@
 #include "irisnetplugin.h"
 
 namespace XMPP {
+
 class WinNet : public NetInterfaceProvider
 {
-    Q_OBJECT
-    Q_INTERFACES(XMPP::NetInterfaceProvider)
+	Q_OBJECT
+	Q_INTERFACES(XMPP::NetInterfaceProvider)
 
 public:
-    WinNet()
-    {
-    }
+	WinNet()
+	{
+	}
 
-    void start()
-    {
-    }
+	void start()
+	{
+	}
 
-    QList<Info> interfaces() const
-    {
-        return QList<Info>();
-    }
+	QList<Info> interfaces() const
+	{
+		return QList<Info>();
+	}
 };
 
 class WinNetProvider : public IrisNetProvider
 {
-    Q_OBJECT
-    Q_INTERFACES(XMPP::IrisNetProvider)
+	Q_OBJECT
+	Q_INTERFACES(XMPP::IrisNetProvider)
 
 public:
-    virtual NetInterfaceProvider *createNetInterfaceProvider()
-    {
-        return new WinNet;
-    }
+	virtual NetInterfaceProvider *createNetInterfaceProvider()
+	{
+		return new WinNet;
+	}
 };
 
 IrisNetProvider *irisnet_createWinNetProvider()
 {
-    return new WinNetProvider;
+        return new WinNetProvider;
 }
+
 }
 
 #include "netinterface_win.moc"

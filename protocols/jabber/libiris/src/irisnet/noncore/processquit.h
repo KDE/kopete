@@ -81,7 +81,7 @@ public:
 	*/
 	static void cleanup();
 
-Q_SIGNALS:
+signals:
 	/**
 	   \brief Notification of termination request
 
@@ -98,7 +98,7 @@ private:
 	friend class Private;
 	Private *d;
 
-	ProcessQuit(QObject *parent = nullptr);
+	ProcessQuit(QObject *parent = 0);
 	~ProcessQuit();
 };
 

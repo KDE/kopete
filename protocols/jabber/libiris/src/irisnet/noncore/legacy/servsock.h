@@ -24,7 +24,7 @@
 #include <QtCore>
 #include <QtNetwork>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 typedef int qintptr; // temporary hack until we get rid of file descriptors
 #endif
 
@@ -32,43 +32,43 @@ typedef int qintptr; // temporary hack until we get rid of file descriptors
 
 class ServSock : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    ServSock(QObject *parent = 0);
-    ~ServSock();
+	ServSock(QObject *parent=0);
+	~ServSock();
 
-    bool isActive() const;
-    bool listen(quint16 port);
-    void stop();
-    int port() const;
-    QHostAddress address() const;
+	bool isActive() const;
+	bool listen(quint16 port);
+	void stop();
+	int port() const;
+	QHostAddress address() const;
 
-Q_SIGNALS:
-    void connectionReady(qintptr);
+signals:
+	void connectionReady(qintptr);
 
-private Q_SLOTS:
-    void sss_connectionReady(qintptr);
+private slots:
+	void sss_connectionReady(qintptr);
 
 private:
-    class Private;
-    Private *d;
+	class Private;
+	Private *d;
 };
 
 class ServSockSignal : public QTcpServer
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    ServSockSignal(QObject *parent = nullptr);
+	ServSockSignal(QObject *parent = 0);
 
-Q_SIGNALS:
-    void connectionReady(qintptr);
+signals:
+	void connectionReady(qintptr);
 
 protected:
-    // reimplemented
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    void incomingConnection(int socketDescriptor);
+	// reimplemented
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+	void incomingConnection(int socketDescriptor);
 #else
-    void incomingConnection(qintptr socketDescriptor) Q_DECL_OVERRIDE;
+	void incomingConnection(qintptr socketDescriptor);
 #endif
 };
 

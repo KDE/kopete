@@ -67,6 +67,7 @@
 #include "td.h"
 #endif
 
+
 //#define XMPP_DEBUG
 
 using namespace XMPP;
@@ -92,7 +93,7 @@ static QString genId()
 	//if(!QCA::isSupported(QCA::CAP_SHA1))
 	//	QCA::insertProvider(createProviderHash());
 
-	return QCA::Hash(QStringLiteral("sha1")).hashToString(randomArray(128));
+	return QCA::Hash("sha1").hashToString(randomArray(128));
 }
 
 //----------------------------------------------------------------------------
@@ -174,7 +175,7 @@ public:
 		maximumSSF = 0;
 		doBinding = true;
 		doCompress = false;
-		lang = QLatin1String("");
+		lang = "";
 
 		in_rrsig = false;
 		quiet_reconnection = false;
@@ -833,7 +834,7 @@ void ClientStream::sasl_error()
 #endif
 	// has to be auth error
 	int x = convertedSASLCond();
-	d->errText = tr("Offered mechanisms: ") + d->client.features.sasl_mechs.join(QStringLiteral(", "));
+	d->errText = tr("Offered mechanisms: ") + d->client.features.sasl_mechs.join(", ");
 	reset();
 	d->errCond = x;
 	error(ErrAuth);
@@ -868,7 +869,7 @@ void ClientStream::srvProcessNext()
 
 					QStringList list;
 					// TODO: d->server is probably wrong here
-					d->sasl->startServer(QStringLiteral("xmpp"), d->server, d->defRealm, QCA::SASL::AllowServerSendLast);
+					d->sasl->startServer("xmpp", d->server, d->defRealm, QCA::SASL::AllowServerSendLast);
 					d->sasl_mechlist = list;
 				}
 				d->srv.setSASLMechList(d->sasl_mechlist);
@@ -923,9 +924,9 @@ void ClientStream::srvProcessNext()
 				qDebug("Break (RecvOpen)\n");
 
 				// calculate key
-				QByteArray str = QCA::Hash(QStringLiteral("sha1")).hashToString("secret").toUtf8();
-				str = QCA::Hash(QStringLiteral("sha1")).hashToString(QByteArray(str + "im.pyxa.org")).toUtf8();
-				str = QCA::Hash(QStringLiteral("sha1")).hashToString(QByteArray(str + d->srv.id.toUtf8())).toUtf8();
+				QByteArray str = QCA::Hash("sha1").hashToString("secret").toUtf8();
+				str = QCA::Hash("sha1").hashToString(QByteArray(str + "im.pyxa.org")).toUtf8();
+				str = QCA::Hash("sha1").hashToString(QByteArray(str + d->srv.id.toUtf8())).toUtf8();
 				d->srv.setDialbackKey(str);
 
 				//d->srv.setDialbackKey("3c5d721ea2fcc45b163a11420e4e358f87e3142a");
@@ -1213,7 +1214,7 @@ bool ClientStream::handleNeed()
 			// ensure simplesasl provider is installed
 			bool found = false;
 			foreach(QCA::Provider *p, QCA::providers()) {
-				if(p->name() == QLatin1String("simplesasl")) {
+				if(p->name() == "simplesasl") {
 					found = true;
 					break;
 				}
@@ -1221,7 +1222,7 @@ bool ClientStream::handleNeed()
 			if(!found) {
 				// install with low-priority
 				QCA::insertProvider(createProviderSimpleSASL());
-				QCA::setProviderPriority(QStringLiteral("simplesasl"), 10);
+				QCA::setProviderPriority("simplesasl", 10);
 			}
 
 			QStringList ml;
@@ -1266,7 +1267,7 @@ bool ClientStream::handleNeed()
 #ifdef IRIS_SASLCONNECTHOST
 			d->sasl->startClient("xmpp", QUrl::toAce(d->connectHost), ml, QCA::SASL::AllowClientSendFirst);
 #else
-			d->sasl->startClient(QStringLiteral("xmpp"), QUrl::toAce(d->server), ml, QCA::SASL::AllowClientSendFirst);
+			d->sasl->startClient("xmpp", QUrl::toAce(d->server), ml, QCA::SASL::AllowClientSendFirst);
 #endif
 			return false;
 		}
@@ -1482,6 +1483,7 @@ void ClientStream::setSMEnabled(bool e)
 	d->client.sm.state().setEnabled(e);
 }
 
+
 QStringList ClientStream::hosts() const
 {
 	return d->client.hosts;
@@ -1496,6 +1498,7 @@ QList<QDomElement> ClientStream::unhandledFeatures() const
 {
 	return d->client.unhandledFeatures;
 }
+
 
 //----------------------------------------------------------------------------
 // Debug

@@ -24,24 +24,26 @@
 #include "irisnetglobal.h"
 
 namespace XMPP {
+
 class NetAvailability : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    NetAvailability(QObject *parent = nullptr);
-    ~NetAvailability();
+	NetAvailability(QObject *parent = 0);
+	~NetAvailability();
 
-    bool isAvailable() const;
+	bool isAvailable() const;
 
-Q_SIGNALS:
-    void changed(bool available);
+signals:
+	void changed(bool available);
 
 private:
-    class Private;
-    friend class Private;
-    Private *d;
+	class Private;
+	friend class Private;
+	Private *d;
 };
+
 }
 
 #endif

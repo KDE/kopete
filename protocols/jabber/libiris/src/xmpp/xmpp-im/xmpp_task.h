@@ -56,7 +56,7 @@ namespace XMPP {
 		virtual bool take(const QDomElement &);
 		void safeDelete();
 
-	Q_SIGNALS:
+	signals:
 		void finished();
 
 	protected:
@@ -64,14 +64,14 @@ namespace XMPP {
 		virtual void onDisconnect();
 		virtual void onTimeout();
 		void send(const QDomElement &);
-		void setSuccess(int code=0, const QString &str=QLatin1String(""));
+		void setSuccess(int code=0, const QString &str="");
 		void setError(const QDomElement &);
-		void setError(int code=0, const QString &str=QLatin1String(""));
+		void setError(int code=0, const QString &str="");
 		void debug(const char *, ...);
 		void debug(const QString &);
-		bool iqVerify(const QDomElement &x, const Jid &to, const QString &id, const QString &xmlns=QLatin1String(""));
+		bool iqVerify(const QDomElement &x, const Jid &to, const QString &id, const QString &xmlns="");
 
-	private Q_SLOTS:
+	private slots:
 		void clientDisconnected();
 		void timeoutFinished();
 		void done();

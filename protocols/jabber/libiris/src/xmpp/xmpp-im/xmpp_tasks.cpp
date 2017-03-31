@@ -32,11 +32,12 @@
 
 using namespace XMPP;
 
+
 static QString lineEncode(QString str)
 {
-	str.replace(QRegExp("\\\\"), QStringLiteral("\\\\"));   // backslash to double-backslash
-	str.replace(QRegExp("\\|"), QStringLiteral("\\p"));     // pipe to \p
-	str.replace(QRegExp("\n"), QStringLiteral("\\n"));      // newline to \n
+	str.replace(QRegExp("\\\\"), "\\\\");   // backslash to double-backslash
+	str.replace(QRegExp("\\|"), "\\p");     // pipe to \p
+	str.replace(QRegExp("\n"), "\\n");      // newline to \n
 	return str;
 }
 
@@ -74,7 +75,7 @@ static Roster xmlReadRoster(const QDomElement &q, bool push)
 		if(i.isNull())
 			continue;
 
-		if(i.tagName() == QLatin1String("item")) {
+		if(i.tagName() == "item") {
 			RosterItem item;
 			item.fromXml(i);
 
@@ -100,24 +101,24 @@ JT_Session::JT_Session(Task *parent) : Task(parent)
 
 void JT_Session::onGo()
 {
-	QDomElement iq = createIQ(doc(), QStringLiteral("set"), QLatin1String(""), id());
-	QDomElement session = doc()->createElement(QStringLiteral("session"));
-	session.setAttribute(QStringLiteral("xmlns"),NS_SESSION);
+	QDomElement iq = createIQ(doc(), "set", "", id());
+	QDomElement session = doc()->createElement("session");
+	session.setAttribute("xmlns",NS_SESSION);
 	iq.appendChild(session);
 	send(iq);
 }
 
 bool JT_Session::take(const QDomElement& x)
 {
-	QString from = x.attribute(QStringLiteral("from"));
-	if (!from.endsWith(QLatin1String("chat.facebook.com"))) {
+	QString from = x.attribute("from");
+	if (!from.endsWith("chat.facebook.com")) {
 		// remove this code when chat.facebook.com is disabled completely
 		from.clear();
 	}
 	if(!iqVerify(x, from, id()))
 		return false;
 
-	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+	if(x.attribute("type") == "result") {
 		setSuccess();
 	}
 	else {
@@ -158,49 +159,49 @@ void JT_Register::reg(const QString &user, const QString &pass)
 {
 	d->type = 0;
 	to = client()->host();
-	iq = createIQ(doc(), QStringLiteral("set"), to.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:register"));
+	iq = createIQ(doc(), "set", to.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:register");
 	iq.appendChild(query);
-	query.appendChild(textTag(doc(), QStringLiteral("username"), user));
-	query.appendChild(textTag(doc(), QStringLiteral("password"), pass));
+	query.appendChild(textTag(doc(), "username", user));
+	query.appendChild(textTag(doc(), "password", pass));
 }
 
 void JT_Register::changepw(const QString &pass)
 {
 	d->type = 1;
 	to = client()->host();
-	iq = createIQ(doc(), QStringLiteral("set"), to.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:register"));
+	iq = createIQ(doc(), "set", to.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:register");
 	iq.appendChild(query);
-	query.appendChild(textTag(doc(), QStringLiteral("username"), client()->user()));
-	query.appendChild(textTag(doc(), QStringLiteral("password"), pass));
+	query.appendChild(textTag(doc(), "username", client()->user()));
+	query.appendChild(textTag(doc(), "password", pass));
 }
 
 void JT_Register::unreg(const Jid &j)
 {
 	d->type = 2;
 	to = j.isEmpty() ? client()->host() : j.full();
-	iq = createIQ(doc(), QStringLiteral("set"), to.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:register"));
+	iq = createIQ(doc(), "set", to.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:register");
 	iq.appendChild(query);
 
 	// this may be useful
 	if(!d->form.key().isEmpty())
-		query.appendChild(textTag(doc(), QStringLiteral("key"), d->form.key()));
+		query.appendChild(textTag(doc(), "key", d->form.key()));
 
-	query.appendChild(doc()->createElement(QStringLiteral("remove")));
+	query.appendChild(doc()->createElement("remove"));
 }
 
 void JT_Register::getForm(const Jid &j)
 {
 	d->type = 3;
 	to = j;
-	iq = createIQ(doc(), QStringLiteral("get"), to.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:register"));
+	iq = createIQ(doc(), "get", to.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:register");
 	iq.appendChild(query);
 }
 
@@ -208,14 +209,14 @@ void JT_Register::setForm(const Form &form)
 {
 	d->type = 4;
 	to = form.jid();
-	iq = createIQ(doc(), QStringLiteral("set"), to.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:register"));
+	iq = createIQ(doc(), "set", to.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:register");
 	iq.appendChild(query);
 
 	// key?
 	if(!form.key().isEmpty())
-		query.appendChild(textTag(doc(), QStringLiteral("key"), form.key()));
+		query.appendChild(textTag(doc(), "key", form.key()));
 
 	// fields
 	for(Form::ConstIterator it = form.begin(); it != form.end(); ++it) {
@@ -227,9 +228,9 @@ void JT_Register::setForm(const Form &form)
 void JT_Register::setForm(const Jid& to, const XData& xdata)
 {
 	d->type = 4;
-	iq = createIQ(doc(), QStringLiteral("set"), to.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:register"));
+	iq = createIQ(doc(), "set", to.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:register");
 	iq.appendChild(query);
 	query.appendChild(xdata.toXml(doc(), true));
 }
@@ -259,8 +260,8 @@ bool JT_Register::take(const QDomElement &x)
 	if(!iqVerify(x, to, id()))
 		return false;
 
-	Jid from(x.attribute(QStringLiteral("from")));
-	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+	Jid from(x.attribute("from"));
+	if(x.attribute("type") == "result") {
 		if(d->type == 3) {
 			d->form.clear();
 			d->form.setJid(from);
@@ -271,15 +272,15 @@ bool JT_Register::take(const QDomElement &x)
 				if(i.isNull())
 					continue;
 
-				if(i.tagName() == QLatin1String("instructions"))
+				if(i.tagName() == "instructions")
 					d->form.setInstructions(tagContent(i));
-				else if(i.tagName() == QLatin1String("key"))
+				else if(i.tagName() == "key")
 					d->form.setKey(tagContent(i));
-				else if(i.tagName() == QLatin1String("x") && i.attribute(QStringLiteral("xmlns")) == QLatin1String("jabber:x:data")) {
+				else if(i.tagName() == "x" && i.attribute("xmlns") == "jabber:x:data") {
 					d->xdata.fromXml(i);
 					d->hasXData = true;
 				}
-				else if(i.tagName() == QLatin1String("data") && i.attribute(QStringLiteral("xmlns")) == QLatin1String("urn:xmpp:bob")) {
+				else if(i.tagName() == "data" && i.attribute("xmlns") == "urn:xmpp:bob") {
 					client()->bobManager()->append(BoBData(i)); // xep-0231
 				}
 				else {
@@ -388,9 +389,9 @@ void JT_Roster::get()
 {
 	type = 0;
 	//to = client()->host();
-	iq = createIQ(doc(), QStringLiteral("get"), to.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:roster"));
+	iq = createIQ(doc(), "get", to.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:roster");
 	iq.appendChild(query);
 }
 
@@ -398,12 +399,12 @@ void JT_Roster::set(const Jid &jid, const QString &name, const QStringList &grou
 {
 	type = 1;
 	//to = client()->host();
-	QDomElement item = doc()->createElement(QStringLiteral("item"));
-	item.setAttribute(QStringLiteral("jid"), jid.full());
+	QDomElement item = doc()->createElement("item");
+	item.setAttribute("jid", jid.full());
 	if(!name.isEmpty())
-		item.setAttribute(QStringLiteral("name"), name);
+		item.setAttribute("name", name);
 	for(QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it)
-		item.appendChild(textTag(doc(), QStringLiteral("group"), *it));
+		item.appendChild(textTag(doc(), "group", *it));
 	d->itemList += item;
 }
 
@@ -411,9 +412,9 @@ void JT_Roster::remove(const Jid &jid)
 {
 	type = 1;
 	//to = client()->host();
-	QDomElement item = doc()->createElement(QStringLiteral("item"));
-	item.setAttribute(QStringLiteral("jid"), jid.full());
-	item.setAttribute(QStringLiteral("subscription"), QStringLiteral("remove"));
+	QDomElement item = doc()->createElement("item");
+	item.setAttribute("jid", jid.full());
+	item.setAttribute("subscription", "remove");
 	d->itemList += item;
 }
 
@@ -423,9 +424,9 @@ void JT_Roster::onGo()
 		send(iq);
 	else if(type == 1) {
 		//to = client()->host();
-		iq = createIQ(doc(), QStringLiteral("set"), to.full(), id());
-		QDomElement query = doc()->createElement(QStringLiteral("query"));
-		query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:roster"));
+		iq = createIQ(doc(), "set", to.full(), id());
+		QDomElement query = doc()->createElement("query");
+		query.setAttribute("xmlns", "jabber:iq:roster");
 		iq.appendChild(query);
 		foreach (const QDomElement& it, d->itemList)
 			query.appendChild(it);
@@ -441,14 +442,14 @@ const Roster & JT_Roster::roster() const
 QString JT_Roster::toString() const
 {
 	if(type != 1)
-		return QLatin1String("");
+		return "";
 
-	QDomElement i = doc()->createElement(QStringLiteral("request"));
-	i.setAttribute(QStringLiteral("type"), QStringLiteral("JT_Roster"));
+	QDomElement i = doc()->createElement("request");
+	i.setAttribute("type", "JT_Roster");
 	foreach (const QDomElement& it, d->itemList)
 		i.appendChild(it);
 	return lineEncode(Stream::xmlToString(i));
-	return QLatin1String("");
+	return "";
 }
 
 bool JT_Roster::fromString(const QString &str)
@@ -459,7 +460,7 @@ bool JT_Roster::fromString(const QString &str)
 	QDomElement e = doc()->importNode(dd->documentElement(), true).toElement();
 	delete dd;
 
-	if(e.tagName() != QLatin1String("request") || e.attribute(QStringLiteral("type")) != QLatin1String("JT_Roster"))
+	if(e.tagName() != "request" || e.attribute("type") != "JT_Roster")
 		return false;
 
 	type = 1;
@@ -481,7 +482,7 @@ bool JT_Roster::take(const QDomElement &x)
 
 	// get
 	if(type == 0) {
-		if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+		if(x.attribute("type") == "result") {
 			QDomElement q = queryTag(x);
 			d->roster = xmlReadRoster(q, false);
 			setSuccess();
@@ -494,7 +495,7 @@ bool JT_Roster::take(const QDomElement &x)
 	}
 	// set
 	else if(type == 1) {
-		if(x.attribute(QStringLiteral("type")) == QLatin1String("result"))
+		if(x.attribute("type") == "result")
 			setSuccess();
 		else
 			setError(x);
@@ -509,6 +510,7 @@ bool JT_Roster::take(const QDomElement &x)
 
 	return false;
 }
+
 
 //----------------------------------------------------------------------------
 // JT_PushRoster
@@ -525,17 +527,18 @@ JT_PushRoster::~JT_PushRoster()
 bool JT_PushRoster::take(const QDomElement &e)
 {
 	// must be an iq-set tag
-	if(e.tagName() != QLatin1String("iq") || e.attribute(QStringLiteral("type")) != QLatin1String("set"))
+	if(e.tagName() != "iq" || e.attribute("type") != "set")
 		return false;
 
-	if(!iqVerify(e, client()->host(), QLatin1String(""), QStringLiteral("jabber:iq:roster")))
+	if(!iqVerify(e, client()->host(), "", "jabber:iq:roster"))
 		return false;
 
 	roster(xmlReadRoster(queryTag(e), true));
-	send(createIQ(doc(), QStringLiteral("result"), e.attribute(QStringLiteral("from")), e.attribute(QStringLiteral("id"))));
+	send(createIQ(doc(), "result", e.attribute("from"), e.attribute("id")));
 
 	return true;
 }
+
 
 //----------------------------------------------------------------------------
 // JT_Presence
@@ -554,31 +557,31 @@ void JT_Presence::pres(const Status &s)
 {
 	type = 0;
 
-	tag = doc()->createElement(QStringLiteral("presence"));
+	tag = doc()->createElement("presence");
 	if(!s.isAvailable()) {
-		tag.setAttribute(QStringLiteral("type"), QStringLiteral("unavailable"));
+		tag.setAttribute("type", "unavailable");
 		if(!s.status().isEmpty())
-			tag.appendChild(textTag(doc(), QStringLiteral("status"), s.status()));
+			tag.appendChild(textTag(doc(), "status", s.status()));
 	}
 	else {
 		if(s.isInvisible())
-			tag.setAttribute(QStringLiteral("type"), QStringLiteral("invisible"));
+			tag.setAttribute("type", "invisible");
 
 		if(!s.show().isEmpty())
-			tag.appendChild(textTag(doc(), QStringLiteral("show"), s.show()));
+			tag.appendChild(textTag(doc(), "show", s.show()));
 		if(!s.status().isEmpty())
-			tag.appendChild(textTag(doc(), QStringLiteral("status"), s.status()));
+			tag.appendChild(textTag(doc(), "status", s.status()));
 
-		tag.appendChild( textTag(doc(), QStringLiteral("priority"), QStringLiteral("%1").arg(s.priority()) ) );
+		tag.appendChild( textTag(doc(), "priority", QString("%1").arg(s.priority()) ) );
 
 		if(!s.keyID().isEmpty()) {
-			QDomElement x = textTag(doc(), QStringLiteral("x"), s.keyID());
-			x.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://jabber.org/protocol/e2e"));
+			QDomElement x = textTag(doc(), "x", s.keyID());
+			x.setAttribute("xmlns", "http://jabber.org/protocol/e2e");
 			tag.appendChild(x);
 		}
 		if(!s.xsigned().isEmpty()) {
-			QDomElement x = textTag(doc(), QStringLiteral("x"), s.xsigned());
-			x.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:x:signed"));
+			QDomElement x = textTag(doc(), "x", s.xsigned());
+			x.setAttribute("xmlns", "jabber:x:signed");
 			tag.appendChild(x);
 		}
 
@@ -590,30 +593,30 @@ void JT_Presence::pres(const Status &s)
 		}
 
 		if(s.isMUC()) {
-			QDomElement m = doc()->createElement(QStringLiteral("x"));
-			m.setAttribute(QStringLiteral("xmlns"),QStringLiteral("http://jabber.org/protocol/muc"));
+			QDomElement m = doc()->createElement("x");
+			m.setAttribute("xmlns","http://jabber.org/protocol/muc");
 			if (!s.mucPassword().isEmpty()) {
-				m.appendChild(textTag(doc(),QStringLiteral("password"),s.mucPassword()));
+				m.appendChild(textTag(doc(),"password",s.mucPassword()));
 			}
 			if (s.hasMUCHistory()) {
-				QDomElement h = doc()->createElement(QStringLiteral("history"));
+				QDomElement h = doc()->createElement("history");
 				if (s.mucHistoryMaxChars() >= 0)
-					h.setAttribute(QStringLiteral("maxchars"),s.mucHistoryMaxChars());
+					h.setAttribute("maxchars",s.mucHistoryMaxChars());
 				if (s.mucHistoryMaxStanzas() >= 0)
-					h.setAttribute(QStringLiteral("maxstanzas"),s.mucHistoryMaxStanzas());
+					h.setAttribute("maxstanzas",s.mucHistoryMaxStanzas());
 				if (s.mucHistorySeconds() >= 0)
-					h.setAttribute(QStringLiteral("seconds"),s.mucHistorySeconds());
+					h.setAttribute("seconds",s.mucHistorySeconds());
 				if (!s.mucHistorySince().isNull())
-					h.setAttribute(QStringLiteral("since"), s.mucHistorySince().toUTC().addSecs(1).toString(Qt::ISODate));
+					h.setAttribute("since", s.mucHistorySince().toUTC().addSecs(1).toString(Qt::ISODate));
 				m.appendChild(h);
 			}
 			tag.appendChild(m);
 		}
 
 		if(s.hasPhotoHash()) {
-			QDomElement m = doc()->createElement(QStringLiteral("x"));
-			m.setAttribute(QStringLiteral("xmlns"), QStringLiteral("vcard-temp:x:update"));
-			m.appendChild(textTag(doc(), QStringLiteral("photo"), s.photoHash()));
+			QDomElement m = doc()->createElement("x");
+			m.setAttribute("xmlns", "vcard-temp:x:update");
+			m.appendChild(textTag(doc(), "photo", s.photoHash()));
 			tag.appendChild(m);
 		}
 
@@ -627,19 +630,19 @@ void JT_Presence::pres(const Status &s)
 void JT_Presence::pres(const Jid &to, const Status &s)
 {
 	pres(s);
-	tag.setAttribute(QStringLiteral("to"), to.full());
+	tag.setAttribute("to", to.full());
 }
 
 void JT_Presence::sub(const Jid &to, const QString &subType, const QString& nick)
 {
 	type = 1;
 
-	tag = doc()->createElement(QStringLiteral("presence"));
-	tag.setAttribute(QStringLiteral("to"), to.full());
-	tag.setAttribute(QStringLiteral("type"), subType);
+	tag = doc()->createElement("presence");
+	tag.setAttribute("to", to.full());
+	tag.setAttribute("type", subType);
 	if (!nick.isEmpty()) {
-		QDomElement nick_tag = textTag(doc(),QStringLiteral("nick"),nick);
-		nick_tag.setAttribute(QStringLiteral("xmlns"),QStringLiteral("http://jabber.org/protocol/nick"));
+		QDomElement nick_tag = textTag(doc(),"nick",nick);
+		nick_tag.setAttribute("xmlns","http://jabber.org/protocol/nick");
 		tag.appendChild(nick_tag);
 	}
 }
@@ -648,9 +651,9 @@ void JT_Presence::probe(const Jid &to)
 {
 	type = 2;
 
-	tag = doc()->createElement(QStringLiteral("presence"));
-	tag.setAttribute(QStringLiteral("to"), to.full());
-	tag.setAttribute(QStringLiteral("type"), QStringLiteral("probe"));
+	tag = doc()->createElement("presence");
+	tag.setAttribute("to", to.full());
+	tag.setAttribute("type", "probe");
 }
 
 void JT_Presence::onGo()
@@ -658,6 +661,7 @@ void JT_Presence::onGo()
 	send(tag);
 	setSuccess();
 }
+
 
 //----------------------------------------------------------------------------
 // JT_PushPresence
@@ -673,27 +677,27 @@ JT_PushPresence::~JT_PushPresence()
 
 bool JT_PushPresence::take(const QDomElement &e)
 {
-	if(e.tagName() != QLatin1String("presence"))
+	if(e.tagName() != "presence")
 		return false;
 
-	Jid j(e.attribute(QStringLiteral("from")));
+	Jid j(e.attribute("from"));
 	Status p;
 
-	if(e.hasAttribute(QStringLiteral("type"))) {
-		QString type = e.attribute(QStringLiteral("type"));
-		if(type == QLatin1String("unavailable")) {
+	if(e.hasAttribute("type")) {
+		QString type = e.attribute("type");
+		if(type == "unavailable") {
 			p.setIsAvailable(false);
 		}
-		else if(type == QLatin1String("error")) {
-			QString str = QLatin1String("");
+		else if(type == "error") {
+			QString str = "";
 			int code = 0;
 			getErrorFromElement(e, client()->stream().baseNS(), &code, &str);
 			p.setError(code, str);
 		}
-		else if(type == QLatin1String("subscribe") || type == QLatin1String("subscribed") || type == QLatin1String("unsubscribe") || type == QLatin1String("unsubscribed")) {
+		else if(type == "subscribe" || type == "subscribed" || type == "unsubscribe" || type == "unsubscribed") {
 			QString nick;
-			QDomElement tag = e.firstChildElement(QStringLiteral("nick"));
-			if (!tag.isNull() && tag.attribute(QStringLiteral("xmlns")) == QLatin1String("http://jabber.org/protocol/nick")) {
+			QDomElement tag = e.firstChildElement("nick");
+			if (!tag.isNull() && tag.attribute("xmlns") == "http://jabber.org/protocol/nick") {
 				nick = tagContent(tag);
 			}
 			subscription(j, type, nick);
@@ -703,13 +707,13 @@ bool JT_PushPresence::take(const QDomElement &e)
 
 	QDomElement tag;
 
-	tag = e.firstChildElement(QStringLiteral("status"));
+	tag = e.firstChildElement("status");
 	if(!tag.isNull())
 		p.setStatus(tagContent(tag));
-	tag = e.firstChildElement(QStringLiteral("show"));
+	tag = e.firstChildElement("show");
 	if(!tag.isNull())
 		p.setShow(tagContent(tag));
-	tag = e.firstChildElement(QStringLiteral("priority"));
+	tag = e.firstChildElement("priority");
 	if(!tag.isNull())
 		p.setPriority(tagContent(tag).toInt());
 
@@ -720,70 +724,71 @@ bool JT_PushPresence::take(const QDomElement &e)
 		if(i.isNull())
 			continue;
 
-		if(i.tagName() == QLatin1String("x") && i.attribute(QStringLiteral("xmlns")) == QLatin1String("jabber:x:delay")) {
-			if(i.hasAttribute(QStringLiteral("stamp")) && !stamp.isValid()) {
-				stamp = stamp2TS(i.attribute(QStringLiteral("stamp")));
+		if(i.tagName() == "x" && i.attribute("xmlns") == "jabber:x:delay") {
+			if(i.hasAttribute("stamp") && !stamp.isValid()) {
+				stamp = stamp2TS(i.attribute("stamp"));
 			}
 		}
-		else if(i.tagName() == QLatin1String("delay") && i.attribute(QStringLiteral("xmlns")) == QLatin1String("urn:xmpp:delay")) {
-			if(i.hasAttribute(QStringLiteral("stamp")) && !stamp.isValid()) {
-				stamp = QDateTime::fromString(i.attribute(QStringLiteral("stamp")).left(19), Qt::ISODate);
+		else if(i.tagName() == "delay" && i.attribute("xmlns") == "urn:xmpp:delay") {
+			if(i.hasAttribute("stamp") && !stamp.isValid()) {
+				stamp = QDateTime::fromString(i.attribute("stamp").left(19), Qt::ISODate);
 			}
 		}
-		else if(i.tagName() == QLatin1String("x") && i.attribute(QStringLiteral("xmlns")) == QLatin1String("gabber:x:music:info")) {
+		else if(i.tagName() == "x" && i.attribute("xmlns") == "gabber:x:music:info") {
 			QDomElement t;
 			QString title, state;
 
-			t = i.firstChildElement(QStringLiteral("title"));
+			t = i.firstChildElement("title");
 			if(!t.isNull())
 				title = tagContent(t);
-			t = i.firstChildElement(QStringLiteral("state"));
+			t = i.firstChildElement("state");
 			if(!t.isNull())
 				state = tagContent(t);
 
-			if(!title.isEmpty() && state == QLatin1String("playing"))
+			if(!title.isEmpty() && state == "playing")
 				p.setSongTitle(title);
 		}
-		else if(i.tagName() == QLatin1String("x") && i.attribute(QStringLiteral("xmlns")) == QLatin1String("jabber:x:signed")) {
+		else if(i.tagName() == "x" && i.attribute("xmlns") == "jabber:x:signed") {
 			p.setXSigned(tagContent(i));
 		}
-		else if(i.tagName() == QLatin1String("x") && i.attribute(QStringLiteral("xmlns")) == QLatin1String("http://jabber.org/protocol/e2e")) {
+		else if(i.tagName() == "x" && i.attribute("xmlns") == "http://jabber.org/protocol/e2e") {
 			p.setKeyID(tagContent(i));
 		}
- 		else if(i.tagName() == QLatin1String("c") && i.attribute(QStringLiteral("xmlns")) == NS_CAPS) {
+ 		else if(i.tagName() == "c" && i.attribute("xmlns") == NS_CAPS) {
 			p.setCaps(CapsSpec::fromXml(i));
-			if(!e.hasAttribute(QStringLiteral("type")) && p.caps().isValid()) {
+			if(!e.hasAttribute("type") && p.caps().isValid()) {
 				client()->capsManager()->updateCaps(j, p.caps());
 			}
   		}
-		else if(i.tagName() == QLatin1String("x") && i.attribute(QStringLiteral("xmlns")) == QLatin1String("vcard-temp:x:update")) {
+		else if(i.tagName() == "x" && i.attribute("xmlns") == "vcard-temp:x:update") {
 			QDomElement t;
-			t = i.firstChildElement(QStringLiteral("photo"));
+			t = i.firstChildElement("photo");
 			if (!t.isNull())
 				p.setPhotoHash(tagContent(t));
 			else
-				p.setPhotoHash(QLatin1String(""));
+				p.setPhotoHash("");
 		}
-		else if(i.tagName() == QLatin1String("x") && i.attribute(QStringLiteral("xmlns")) == QLatin1String("http://jabber.org/protocol/muc#user")) {
+		else if(i.tagName() == "x" && i.attribute("xmlns") == "http://jabber.org/protocol/muc#user") {
 			for(QDomNode muc_n = i.firstChild(); !muc_n.isNull(); muc_n = muc_n.nextSibling()) {
 				QDomElement muc_e = muc_n.toElement();
 				if(muc_e.isNull())
 					continue;
 
-				if (muc_e.tagName() == QLatin1String("item"))
+				if (muc_e.tagName() == "item")
 					p.setMUCItem(MUCItem(muc_e));
-				else if (muc_e.tagName() == QLatin1String("status"))
-					p.addMUCStatus(muc_e.attribute(QStringLiteral("code")).toInt());
-				else if (muc_e.tagName() == QLatin1String("destroy"))
+				else if (muc_e.tagName() == "status")
+					p.addMUCStatus(muc_e.attribute("code").toInt());
+				else if (muc_e.tagName() == "destroy")
 					p.setMUCDestroy(MUCDestroy(muc_e));
 			}
 		}
-		else if (i.tagName() == QLatin1String("data") && i.attribute(QStringLiteral("xmlns")) == QLatin1String("urn:xmpp:bob")) {
+		else if (i.tagName() == "data" && i.attribute("xmlns") == "urn:xmpp:bob") {
 			BoBData bd(i);
 			client()->bobManager()->append(bd);
 			p.addBoBData(bd);
 		}
 	}
+
 
 	if (stamp.isValid()) {
 		if (client()->manualTimeZoneOffset()) {
@@ -799,6 +804,7 @@ bool JT_PushPresence::take(const QDomElement &e)
 
 	return true;
 }
+
 
 //----------------------------------------------------------------------------
 // JT_Message
@@ -826,7 +832,7 @@ static QDomElement oldStyleNS(const QDomElement &e)
 		i.setAttributeNode(al.item(x).cloneNode().toAttr());
 
 	if(!noShowNS)
-		i.setAttribute(QStringLiteral("xmlns"), e.namespaceURI());
+		i.setAttribute("xmlns", e.namespaceURI());
 
 	// copy children
 	QDomNodeList nl = e.childNodes();
@@ -860,6 +866,7 @@ void JT_Message::onGo()
 	setSuccess();
 }
 
+
 //----------------------------------------------------------------------------
 // JT_PushMessage
 //----------------------------------------------------------------------------
@@ -874,7 +881,7 @@ JT_PushMessage::~JT_PushMessage()
 
 bool JT_PushMessage::take(const QDomElement &e)
 {
-	if(e.tagName() != QLatin1String("message"))
+	if(e.tagName() != "message")
 		return false;
 
 	QDomElement e1 = e;
@@ -931,6 +938,7 @@ bool JT_PushMessage::take(const QDomElement &e)
 	return true;
 }
 
+
 //----------------------------------------------------------------------------
 // JT_GetServices
 //----------------------------------------------------------------------------
@@ -944,9 +952,9 @@ void JT_GetServices::get(const Jid &j)
 	agentList.clear();
 
 	jid = j;
-	iq = createIQ(doc(), QStringLiteral("get"), jid.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:agents"));
+	iq = createIQ(doc(), "get", jid.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:agents");
 	iq.appendChild(query);
 }
 
@@ -965,7 +973,7 @@ bool JT_GetServices::take(const QDomElement &x)
 	if(!iqVerify(x, jid, id()))
 		return false;
 
-	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+	if(x.attribute("type") == "result") {
 		QDomElement q = queryTag(x);
 
 		// agents
@@ -974,32 +982,32 @@ bool JT_GetServices::take(const QDomElement &x)
 			if(i.isNull())
 				continue;
 
-			if(i.tagName() == QLatin1String("agent")) {
+			if(i.tagName() == "agent") {
 				AgentItem a;
 
-				a.setJid(Jid(i.attribute(QStringLiteral("jid"))));
+				a.setJid(Jid(i.attribute("jid")));
 
 				QDomElement tag;
 
-				tag = i.firstChildElement(QStringLiteral("name"));
+				tag = i.firstChildElement("name");
 				if(!tag.isNull())
 					a.setName(tagContent(tag));
 
 				// determine which namespaces does item support
 				QStringList ns;
 
-				tag = i.firstChildElement(QStringLiteral("register"));
+				tag = i.firstChildElement("register");
 				if(!tag.isNull())
-					ns << QStringLiteral("jabber:iq:register");
-				tag = i.firstChildElement(QStringLiteral("search"));
+					ns << "jabber:iq:register";
+				tag = i.firstChildElement("search");
 				if(!tag.isNull())
-					ns << QStringLiteral("jabber:iq:search");
-				tag = i.firstChildElement(QStringLiteral("groupchat"));
+					ns << "jabber:iq:search";
+				tag = i.firstChildElement("groupchat");
 				if(!tag.isNull())
-					ns << QStringLiteral("jabber:iq:conference");
-				tag = i.firstChildElement(QStringLiteral("transport"));
+					ns << "jabber:iq:conference";
+				tag = i.firstChildElement("transport");
 				if(!tag.isNull())
-					ns << QStringLiteral("jabber:iq:gateway");
+					ns << "jabber:iq:gateway";
 
 				a.setFeatures(ns);
 
@@ -1015,6 +1023,7 @@ bool JT_GetServices::take(const QDomElement &x)
 
 	return true;
 }
+
 
 //----------------------------------------------------------------------------
 // JT_VCard
@@ -1045,9 +1054,9 @@ void JT_VCard::get(const Jid &_jid)
 {
 	type = 0;
 	d->jid = _jid;
-	d->iq = createIQ(doc(), QStringLiteral("get"), type == 1 ? Jid().full() : d->jid.full(), id());
-	QDomElement v = doc()->createElement(QStringLiteral("vCard"));
-	v.setAttribute(QStringLiteral("xmlns"), QStringLiteral("vcard-temp"));
+	d->iq = createIQ(doc(), "get", type == 1 ? Jid().full() : d->jid.full(), id());
+	QDomElement v = doc()->createElement("vCard");
+	v.setAttribute("xmlns", "vcard-temp");
 	d->iq.appendChild(v);
 }
 
@@ -1066,7 +1075,7 @@ void JT_VCard::set(const VCard &card)
 	type = 1;
 	d->vcard = card;
 	d->jid = "";
-	d->iq = createIQ(doc(), QStringLiteral("set"), d->jid.full(), id());
+	d->iq = createIQ(doc(), "set", d->jid.full(), id());
 	d->iq.appendChild(card.toXml(doc()) );
 }
 
@@ -1076,7 +1085,7 @@ void JT_VCard::set(const Jid &j, const VCard &card, bool isTarget)
 	type = 1;
 	d->vcard = card;
 	d->jid = j;
-	d->iq = createIQ(doc(), QStringLiteral("set"), isTarget? j.full() : QLatin1String(""), id());
+	d->iq = createIQ(doc(), "set", isTarget? j.full() : "", id());
 	d->iq.appendChild(card.toXml(doc()) );
 }
 
@@ -1093,14 +1102,14 @@ bool JT_VCard::take(const QDomElement &x)
 	if(!iqVerify(x, to, id()))
 		return false;
 
-	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+	if(x.attribute("type") == "result") {
 		if(type == 0) {
 			for(QDomNode n = x.firstChild(); !n.isNull(); n = n.nextSibling()) {
 				QDomElement q = n.toElement();
 				if(q.isNull())
 					continue;
 
-				if(q.tagName().toUpper() == QLatin1String("VCARD")) {
+				if(q.tagName().toUpper() == "VCARD") {
 					d->vcard = VCard::fromXml(q);
 					if(d->vcard) {
 						setSuccess();
@@ -1123,6 +1132,7 @@ bool JT_VCard::take(const QDomElement &x)
 
 	return true;
 }
+
 
 //----------------------------------------------------------------------------
 // JT_Search
@@ -1157,9 +1167,9 @@ void JT_Search::get(const Jid &jid)
 	d->jid = jid;
 	d->hasXData = false;
 	d->xdata = XData();
-	iq = createIQ(doc(), QStringLiteral("get"), d->jid.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:search"));
+	iq = createIQ(doc(), "get", d->jid.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:search");
 	iq.appendChild(query);
 }
 
@@ -1169,14 +1179,14 @@ void JT_Search::set(const Form &form)
 	d->jid = form.jid();
 	d->hasXData = false;
 	d->xdata = XData();
-	iq = createIQ(doc(), QStringLiteral("set"), d->jid.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:search"));
+	iq = createIQ(doc(), "set", d->jid.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:search");
 	iq.appendChild(query);
 
 	// key?
 	if(!form.key().isEmpty())
-		query.appendChild(textTag(doc(), QStringLiteral("key"), form.key()));
+		query.appendChild(textTag(doc(), "key", form.key()));
 
 	// fields
 	for(Form::ConstIterator it = form.begin(); it != form.end(); ++it) {
@@ -1191,9 +1201,9 @@ void JT_Search::set(const Jid &jid, const XData &form)
 	d->jid = jid;
 	d->hasXData = false;
 	d->xdata = XData();
-	iq = createIQ(doc(), QStringLiteral("set"), d->jid.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:search"));
+	iq = createIQ(doc(), "set", d->jid.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:search");
 	iq.appendChild(query);
 	query.appendChild(form.toXml(doc(), true));
 }
@@ -1228,8 +1238,8 @@ bool JT_Search::take(const QDomElement &x)
 	if(!iqVerify(x, d->jid, id()))
 		return false;
 
-	Jid from(x.attribute(QStringLiteral("from")));
-	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+	Jid from(x.attribute("from"));
+	if(x.attribute("type") == "result") {
 		if(type == 0) {
 			d->form.clear();
 			d->form.setJid(from);
@@ -1240,11 +1250,11 @@ bool JT_Search::take(const QDomElement &x)
 				if(i.isNull())
 					continue;
 
-				if(i.tagName() == QLatin1String("instructions"))
+				if(i.tagName() == "instructions")
 					d->form.setInstructions(tagContent(i));
-				else if(i.tagName() == QLatin1String("key"))
+				else if(i.tagName() == "key")
 					d->form.setKey(tagContent(i));
-				else if(i.tagName() == QLatin1String("x") && i.attribute(QStringLiteral("xmlns")) == QLatin1String("jabber:x:data")) {
+				else if(i.tagName() == "x" && i.attribute("xmlns") == "jabber:x:data") {
 					d->xdata.fromXml(i);
 					d->hasXData = true;
 				}
@@ -1266,27 +1276,27 @@ bool JT_Search::take(const QDomElement &x)
 				if(i.isNull())
 					continue;
 
-				if(i.tagName() == QLatin1String("item")) {
-					SearchResult r(Jid(i.attribute(QStringLiteral("jid"))));
+				if(i.tagName() == "item") {
+					SearchResult r(Jid(i.attribute("jid")));
 
 					QDomElement tag;
 
-					tag = i.firstChildElement(QStringLiteral("nick"));
+					tag = i.firstChildElement("nick");
 					if(!tag.isNull())
 						r.setNick(tagContent(tag));
-					tag = i.firstChildElement(QStringLiteral("first"));
+					tag = i.firstChildElement("first");
 					if(!tag.isNull())
 						r.setFirst(tagContent(tag));
-					tag = i.firstChildElement(QStringLiteral("last"));
+					tag = i.firstChildElement("last");
 					if(!tag.isNull())
 						r.setLast(tagContent(tag));
-					tag = i.firstChildElement(QStringLiteral("email"));
+					tag = i.firstChildElement("email");
 					if(!tag.isNull())
 						r.setEmail(tagContent(tag));
 
 					d->resultList += r;
 				}
-				else if(i.tagName() == QLatin1String("x") && i.attribute(QStringLiteral("xmlns")) == QLatin1String("jabber:x:data")) {
+				else if(i.tagName() == "x" && i.attribute("xmlns") == "jabber:x:data") {
 					d->xdata.fromXml(i);
 					d->hasXData = true;
 				}
@@ -1301,6 +1311,7 @@ bool JT_Search::take(const QDomElement &x)
 	return true;
 }
 
+
 //----------------------------------------------------------------------------
 // JT_ClientVersion
 //----------------------------------------------------------------------------
@@ -1312,9 +1323,9 @@ JT_ClientVersion::JT_ClientVersion(Task *parent)
 void JT_ClientVersion::get(const Jid &jid)
 {
 	j = jid;
-	iq = createIQ(doc(), QStringLiteral("get"), j.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:version"));
+	iq = createIQ(doc(), "get", j.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:version");
 	iq.appendChild(query);
 }
 
@@ -1328,16 +1339,16 @@ bool JT_ClientVersion::take(const QDomElement &x)
 	if(!iqVerify(x, j, id()))
 		return false;
 
-	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+	if(x.attribute("type") == "result") {
 		QDomElement q = queryTag(x);
 		QDomElement tag;
-		tag = q.firstChildElement(QStringLiteral("name"));
+		tag = q.firstChildElement("name");
 		if(!tag.isNull())
 			v_name = tagContent(tag);
-		tag = q.firstChildElement(QStringLiteral("version"));
+		tag = q.firstChildElement("version");
 		if(!tag.isNull())
 			v_ver = tagContent(tag);
-		tag = q.firstChildElement(QStringLiteral("os"));
+		tag = q.firstChildElement("os");
 		if(!tag.isNull())
 			v_os = tagContent(tag);
 
@@ -1370,6 +1381,7 @@ const QString & JT_ClientVersion::os() const
 	return v_os;
 }
 
+
 //----------------------------------------------------------------------------
 // JT_EntityTime
 //----------------------------------------------------------------------------
@@ -1391,9 +1403,9 @@ const Jid & JT_EntityTime::jid() const
 void JT_EntityTime::get(const Jid &jid)
 {
 	j = jid;
-	iq = createIQ(doc(), QStringLiteral("get"), jid.full(), id());
-	QDomElement time = doc()->createElement(QStringLiteral("time"));
-	time.setAttribute(QStringLiteral("xmlns"), QStringLiteral("urn:xmpp:time"));
+	iq = createIQ(doc(), "get", jid.full(), id());
+	QDomElement time = doc()->createElement("time");
+	time.setAttribute("xmlns", "urn:xmpp:time");
 	iq.appendChild(time);
 }
 
@@ -1407,16 +1419,16 @@ bool JT_EntityTime::take(const QDomElement &x)
 	if (!iqVerify(x, j, id()))
 		return false;
 
-	if (x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
-		QDomElement q = x.firstChildElement(QStringLiteral("time"));
+	if (x.attribute("type") == "result") {
+		QDomElement q = x.firstChildElement("time");
 		QDomElement tag;
-		tag = q.firstChildElement(QStringLiteral("utc"));
+		tag = q.firstChildElement("utc");
 		do {
 			if (tag.isNull()) {
 				break;
 			}
 			utc = QDateTime::fromString(tagContent(tag), Qt::ISODate);
-			tag = q.firstChildElement(QStringLiteral("tzo"));
+			tag = q.firstChildElement("tzo");
 			if (!utc.isValid() || tag.isNull()) {
 				break;
 			}
@@ -1447,6 +1459,7 @@ int JT_EntityTime::timezoneOffset() const
 	return tzo;
 }
 
+
 //----------------------------------------------------------------------------
 // JT_ServInfo
 //----------------------------------------------------------------------------
@@ -1461,38 +1474,38 @@ JT_ServInfo::~JT_ServInfo()
 
 bool JT_ServInfo::take(const QDomElement &e)
 {
-	if(e.tagName() != QLatin1String("iq") || e.attribute(QStringLiteral("type")) != QLatin1String("get"))
+	if(e.tagName() != "iq" || e.attribute("type") != "get")
 		return false;
 
 	QString ns = queryNS(e);
-	if(ns == QLatin1String("jabber:iq:version")) {
-		QDomElement iq = createIQ(doc(), QStringLiteral("result"), e.attribute(QStringLiteral("from")), e.attribute(QStringLiteral("id")));
-		QDomElement query = doc()->createElement(QStringLiteral("query"));
-		query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:version"));
+	if(ns == "jabber:iq:version") {
+		QDomElement iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
+		QDomElement query = doc()->createElement("query");
+		query.setAttribute("xmlns", "jabber:iq:version");
 		iq.appendChild(query);
-		query.appendChild(textTag(doc(), QStringLiteral("name"), client()->clientName()));
-		query.appendChild(textTag(doc(), QStringLiteral("version"), client()->clientVersion()));
-		query.appendChild(textTag(doc(), QStringLiteral("os"), client()->OSName() + ' ' + client()->OSVersion()));
+		query.appendChild(textTag(doc(), "name", client()->clientName()));
+		query.appendChild(textTag(doc(), "version", client()->clientVersion()));
+		query.appendChild(textTag(doc(), "os", client()->OSName() + ' ' + client()->OSVersion()));
 		send(iq);
 		return true;
 	}
-	else if(ns == QLatin1String("http://jabber.org/protocol/disco#info")) {
+	else if(ns == "http://jabber.org/protocol/disco#info") {
 		// Find out the node
 		QString node;
-		QDomElement q = e.firstChildElement(QStringLiteral("query"));
+		QDomElement q = e.firstChildElement("query");
 		if(!q.isNull()) // NOTE: Should always be true, since a NS was found above
-			node = q.attribute(QStringLiteral("node"));
+			node = q.attribute("node");
 
 		if (node.isEmpty() || node == client()->caps().flatten()) {
 
-			QDomElement iq = createIQ(doc(), QStringLiteral("result"), e.attribute(QStringLiteral("from")), e.attribute(QStringLiteral("id")));
+			QDomElement iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
 			DiscoItem item = client()->makeDiscoResult(node);
 			iq.appendChild(item.toDiscoInfoResult(doc()));
 			send(iq);
 		}
 		else {
 			// Create error reply
-			QDomElement error_reply = createIQ(doc(), QStringLiteral("result"), e.attribute(QStringLiteral("from")), e.attribute(QStringLiteral("id")));
+			QDomElement error_reply = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
 
 			// Copy children
 			for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling()) {
@@ -1500,11 +1513,11 @@ bool JT_ServInfo::take(const QDomElement &e)
 			}
 
 			// Add error
-			QDomElement error = doc()->createElement(QStringLiteral("error"));
-			error.setAttribute(QStringLiteral("type"),QStringLiteral("cancel"));
+			QDomElement error = doc()->createElement("error");
+			error.setAttribute("type","cancel");
 			error_reply.appendChild(error);
-			QDomElement error_type = doc()->createElement(QStringLiteral("item-not-found"));
-			error_type.setAttribute(QStringLiteral("xmlns"),QStringLiteral("urn:ietf:params:xml:ns:xmpp-stanzas"));
+			QDomElement error_type = doc()->createElement("item-not-found");
+			error_type.setAttribute("xmlns","urn:ietf:params:xml:ns:xmpp-stanzas");
 			error.appendChild(error_type);
 			send(error_reply);
 		}
@@ -1514,23 +1527,23 @@ bool JT_ServInfo::take(const QDomElement &e)
 		return false;
 	}
 
-	ns = e.firstChildElement(QStringLiteral("time")).attribute(QStringLiteral("xmlns"));
-	if (ns == QLatin1String("urn:xmpp:time")) {
-		QDomElement iq = createIQ(doc(), QStringLiteral("result"), e.attribute(QStringLiteral("from")), e.attribute(QStringLiteral("id")));
-		QDomElement time = doc()->createElement(QStringLiteral("time"));
-		time.setAttribute(QStringLiteral("xmlns"), ns);
+	ns = e.firstChildElement("time").attribute("xmlns");
+	if (ns == "urn:xmpp:time") {
+		QDomElement iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
+		QDomElement time = doc()->createElement("time");
+		time.setAttribute("xmlns", ns);
 		iq.appendChild(time);
 
 		QDateTime local = QDateTime::currentDateTime();
 
 		int off = TimeZone::offsetFromUtc();
 		QTime t = QTime(0, 0).addSecs(qAbs(off)*60);
-		QString tzo = (off < 0 ? "-" : "+") + t.toString(QStringLiteral("HH:mm"));
-		time.appendChild(textTag(doc(), QStringLiteral("tzo"), tzo));
+		QString tzo = (off < 0 ? "-" : "+") + t.toString("HH:mm");
+		time.appendChild(textTag(doc(), "tzo", tzo));
 		QString localTimeStr = local.toUTC().toString(Qt::ISODate);
-		if (!localTimeStr.endsWith(QLatin1String("Z")))
+		if (!localTimeStr.endsWith("Z"))
 			localTimeStr.append("Z");
-		time.appendChild(textTag(doc(), QStringLiteral("utc"), localTimeStr));
+		time.appendChild(textTag(doc(), "utc", localTimeStr));
 
 		send(iq);
 		return true;
@@ -1538,6 +1551,7 @@ bool JT_ServInfo::take(const QDomElement &e)
 
 	return false;
 }
+
 
 //----------------------------------------------------------------------------
 // JT_Gateway
@@ -1552,9 +1566,9 @@ void JT_Gateway::get(const Jid &jid)
 {
 	type = 0;
 	v_jid = jid;
-	iq = createIQ(doc(), QStringLiteral("get"), v_jid.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:gateway"));
+	iq = createIQ(doc(), "get", v_jid.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:gateway");
 	iq.appendChild(query);
 }
 
@@ -1563,11 +1577,11 @@ void JT_Gateway::set(const Jid &jid, const QString &prompt)
 	type = 1;
 	v_jid = jid;
 	v_prompt = prompt;
-	iq = createIQ(doc(), QStringLiteral("set"), v_jid.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:gateway"));
+	iq = createIQ(doc(), "set", v_jid.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "jabber:iq:gateway");
 	iq.appendChild(query);
-	query.appendChild(textTag(doc(), QStringLiteral("prompt"), v_prompt));
+	query.appendChild(textTag(doc(), "prompt", v_prompt));
 }
 
 void JT_Gateway::onGo()
@@ -1600,15 +1614,15 @@ bool JT_Gateway::take(const QDomElement &x)
 	if(!iqVerify(x, v_jid, id()))
 		return false;
 
-	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+	if(x.attribute("type") == "result") {
 		if(type == 0) {
 			QDomElement query = queryTag(x);
 			QDomElement tag;
-			tag = query.firstChildElement(QStringLiteral("desc"));
+			tag = query.firstChildElement("desc");
 			if (!tag.isNull()) {
 				v_desc = tagContent(tag);
 			}
-			tag = query.firstChildElement(QStringLiteral("prompt"));
+			tag = query.firstChildElement("prompt");
 			if (!tag.isNull()) {
 				v_prompt = tagContent(tag);
 			}
@@ -1616,13 +1630,13 @@ bool JT_Gateway::take(const QDomElement &x)
 		else {
 			QDomElement query = queryTag(x);
 			QDomElement tag;
-			tag = query.firstChildElement(QStringLiteral("jid"));
+			tag = query.firstChildElement("jid");
 			if (!tag.isNull()) {
 				v_translatedJid = tagContent(tag);
 			}
 			// we used to read 'prompt' in the past
 			// and some gateways still send it
-			tag = query.firstChildElement(QStringLiteral("prompt"));
+			tag = query.firstChildElement("prompt");
 			if (!tag.isNull()) {
 				v_prompt = tagContent(tag);
 			}
@@ -1665,9 +1679,9 @@ void JT_Browse::get (const Jid &j)
 	d->agentList.clear();
 
 	d->jid = j;
-	d->iq = createIQ(doc(), QStringLiteral("get"), d->jid.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("item"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:iq:browse"));
+	d->iq = createIQ(doc(), "get", d->jid.full(), id());
+	QDomElement query = doc()->createElement("item");
+	query.setAttribute("xmlns", "jabber:iq:browse");
 	d->iq.appendChild(query);
 }
 
@@ -1690,23 +1704,23 @@ AgentItem JT_Browse::browseHelper (const QDomElement &i)
 {
 	AgentItem a;
 
-	if ( i.tagName() == QLatin1String("ns") )
+	if ( i.tagName() == "ns" )
 		return a;
 
-	a.setName ( i.attribute(QStringLiteral("name")) );
-	a.setJid  ( i.attribute(QStringLiteral("jid")) );
+	a.setName ( i.attribute("name") );
+	a.setJid  ( i.attribute("jid") );
 
 	// there are two types of category/type specification:
 	//
 	//   1. <item category="category_name" type="type_name" />
 	//   2. <category_name type="type_name" />
 
-	if ( i.tagName() == QLatin1String("item") || i.tagName() == QLatin1String("query") )
-		a.setCategory ( i.attribute(QStringLiteral("category")) );
+	if ( i.tagName() == "item" || i.tagName() == "query" )
+		a.setCategory ( i.attribute("category") );
 	else
 		a.setCategory ( i.tagName() );
 
-	a.setType ( i.attribute(QStringLiteral("type")) );
+	a.setType ( i.attribute("type") );
 
 	QStringList ns;
 	for(QDomNode n = i.firstChild(); !n.isNull(); n = n.nextSibling()) {
@@ -1714,14 +1728,14 @@ AgentItem JT_Browse::browseHelper (const QDomElement &i)
 		if(i.isNull())
 			continue;
 
-		if ( i.tagName() == QLatin1String("ns") )
+		if ( i.tagName() == "ns" )
 			ns << i.text();
 	}
 
 	// For now, conference.jabber.org returns proper namespace only
 	// when browsing individual rooms. So it's a quick client-side fix.
-	if ( !a.features().canGroupchat() && a.category() == QLatin1String("conference") )
-		ns << QStringLiteral("jabber:iq:conference");
+	if ( !a.features().canGroupchat() && a.category() == "conference" )
+		ns << "jabber:iq:conference";
 
 	a.setFeatures (ns);
 
@@ -1733,7 +1747,7 @@ bool JT_Browse::take(const QDomElement &x)
 	if(!iqVerify(x, d->jid, id()))
 		return false;
 
-	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+	if(x.attribute("type") == "result") {
 		for(QDomNode n = x.firstChild(); !n.isNull(); n = n.nextSibling()) {
 			QDomElement i = n.toElement();
 			if(i.isNull())
@@ -1745,7 +1759,7 @@ bool JT_Browse::take(const QDomElement &x)
 				QDomElement e = nn.toElement();
 				if ( e.isNull() )
 					continue;
-				if ( e.tagName() == QLatin1String("ns") )
+				if ( e.tagName() == "ns" )
 					continue;
 
 				d->agentList += browseHelper (e);
@@ -1795,12 +1809,12 @@ void JT_DiscoItems::get (const Jid &j, const QString &node)
 	d->items.clear();
 
 	d->jid = j;
-	d->iq = createIQ(doc(), QStringLiteral("get"), d->jid.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://jabber.org/protocol/disco#items"));
+	d->iq = createIQ(doc(), "get", d->jid.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "http://jabber.org/protocol/disco#items");
 
 	if ( !node.isEmpty() )
-		query.setAttribute(QStringLiteral("node"), node);
+		query.setAttribute("node", node);
 
 	d->iq.appendChild(query);
 }
@@ -1820,7 +1834,7 @@ bool JT_DiscoItems::take(const QDomElement &x)
 	if(!iqVerify(x, d->jid, id()))
 		return false;
 
-	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+	if(x.attribute("type") == "result") {
 		QDomElement q = queryTag(x);
 
 		for(QDomNode n = q.firstChild(); !n.isNull(); n = n.nextSibling()) {
@@ -1828,13 +1842,13 @@ bool JT_DiscoItems::take(const QDomElement &x)
 			if( e.isNull() )
 				continue;
 
-			if ( e.tagName() == QLatin1String("item") ) {
+			if ( e.tagName() == "item" ) {
 				DiscoItem item;
 
-				item.setJid ( e.attribute(QStringLiteral("jid"))  );
-				item.setName( e.attribute(QStringLiteral("name")) );
-				item.setNode( e.attribute(QStringLiteral("node")) );
-				item.setAction( DiscoItem::string2action(e.attribute(QStringLiteral("action"))) );
+				item.setJid ( e.attribute("jid")  );
+				item.setName( e.attribute("name") );
+				item.setNode( e.attribute("node") );
+				item.setAction( DiscoItem::string2action(e.attribute("action")) );
 
 				d->items.append( item );
 			}
@@ -1878,9 +1892,9 @@ void JT_DiscoPublish::set(const Jid &j, const DiscoList &list)
 	d->list = list;
 	d->jid = j;
 
-	d->iq = createIQ(doc(), QStringLiteral("set"), d->jid.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://jabber.org/protocol/disco#items"));
+	d->iq = createIQ(doc(), "set", d->jid.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", "http://jabber.org/protocol/disco#items");
 
 	// FIXME: unsure about this
 	//if ( !node.isEmpty() )
@@ -1888,14 +1902,14 @@ void JT_DiscoPublish::set(const Jid &j, const DiscoList &list)
 
 	DiscoList::ConstIterator it = list.begin();
 	for ( ; it != list.end(); ++it) {
-		QDomElement w = doc()->createElement(QStringLiteral("item"));
+		QDomElement w = doc()->createElement("item");
 
-		w.setAttribute(QStringLiteral("jid"), (*it).jid().full());
+		w.setAttribute("jid", (*it).jid().full());
 		if ( !(*it).name().isEmpty() )
-			w.setAttribute(QStringLiteral("name"), (*it).name());
+			w.setAttribute("name", (*it).name());
 		if ( !(*it).node().isEmpty() )
-		w.setAttribute(QStringLiteral("node"), (*it).node());
-		w.setAttribute(QStringLiteral("action"), DiscoItem::action2string((*it).action()));
+		w.setAttribute("node", (*it).node());
+		w.setAttribute("action", DiscoItem::action2string((*it).action()));
 
 		query.appendChild( w );
 	}
@@ -1913,7 +1927,7 @@ bool JT_DiscoPublish::take(const QDomElement &x)
 	if(!iqVerify(x, d->jid, id()))
 		return false;
 
-	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+	if(x.attribute("type") == "result") {
 		setSuccess(true);
 	}
 	else {
@@ -1922,6 +1936,7 @@ bool JT_DiscoPublish::take(const QDomElement &x)
 
 	return true;
 }
+
 
 // ---------------------------------------------------------
 // JT_BoBServer
@@ -1934,22 +1949,22 @@ JT_BoBServer::JT_BoBServer(Task *parent)
 
 bool JT_BoBServer::take(const QDomElement &e)
 {
-	if (e.tagName() != QLatin1String("iq") || e.attribute(QStringLiteral("type")) != QLatin1String("get"))
+	if (e.tagName() != "iq" || e.attribute("type") != "get")
 		return false;
 
-	QDomElement data = e.firstChildElement(QStringLiteral("data"));
-	if (data.attribute(QStringLiteral("xmlns")) == QLatin1String("urn:xmpp:bob")) {
+	QDomElement data = e.firstChildElement("data");
+	if (data.attribute("xmlns") == "urn:xmpp:bob") {
 		QDomElement iq;
-		BoBData bd = client()->bobManager()->bobData(data.attribute(QStringLiteral("cid")));
+		BoBData bd = client()->bobManager()->bobData(data.attribute("cid"));
 		if (bd.isNull()) {
-			iq = createIQ(client()->doc(), QStringLiteral("error"),
-						  e.attribute(QStringLiteral("from")), e.attribute(QStringLiteral("id")));
+			iq = createIQ(client()->doc(), "error",
+						  e.attribute("from"), e.attribute("id"));
 			Stanza::Error error(Stanza::Error::Cancel,
 								Stanza::Error::ItemNotFound);
 			iq.appendChild(error.toXml(*doc(), client()->stream().baseNS()));
 		}
 		else {
-			iq = createIQ(doc(), QStringLiteral("result"), e.attribute(QStringLiteral("from")), e.attribute(QStringLiteral("id")));
+			iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
 			iq.appendChild(bd.toXml(doc()));
 		}
 		send(iq);
@@ -1957,6 +1972,7 @@ bool JT_BoBServer::take(const QDomElement &e)
 	}
 	return false;
 }
+
 
 //----------------------------------------------------------------------------
 // JT_BitsOfBinary
@@ -1990,10 +2006,10 @@ void JT_BitsOfBinary::get(const Jid &j, const QString &cid)
 
 	d->data = client()->bobManager()->bobData(cid);
 	if (d->data.isNull()) {
-		d->iq = createIQ(doc(), QStringLiteral("get"), d->jid.full(), id());
-		QDomElement data = doc()->createElement(QStringLiteral("data"));
-		data.setAttribute(QStringLiteral("xmlns"), QStringLiteral("urn:xmpp:bob"));
-		data.setAttribute(QStringLiteral("cid"), cid);
+		d->iq = createIQ(doc(), "get", d->jid.full(), id());
+		QDomElement data = doc()->createElement("data");
+		data.setAttribute("xmlns", "urn:xmpp:bob");
+		data.setAttribute("cid", cid);
 		d->iq.appendChild(data);
 	}
 }
@@ -2014,10 +2030,10 @@ bool JT_BitsOfBinary::take(const QDomElement &x)
 		return false;
 	}
 
-	if (x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
-		QDomElement data = x.firstChildElement(QStringLiteral("data"));
+	if (x.attribute("type") == "result") {
+		QDomElement data = x.firstChildElement("data");
 
-		if (!data.isNull() && data.attribute(QStringLiteral("cid")) == d->cid) { // check xmlns?
+		if (!data.isNull() && data.attribute("cid") == d->cid) { // check xmlns?
 			d->data.fromXml(data);
 			client()->bobManager()->append(d->data);
 		}
@@ -2052,12 +2068,12 @@ JT_PongServer::JT_PongServer(Task *parent)
 
 bool JT_PongServer::take(const QDomElement &e)
 {
-	if (e.tagName() != QLatin1String("iq") || e.attribute(QStringLiteral("type")) != QLatin1String("get"))
+	if (e.tagName() != "iq" || e.attribute("type") != "get")
 		return false;
 
-	QDomElement ping = e.firstChildElement(QStringLiteral("ping"));
-	if (!e.isNull() && ping.attribute(QStringLiteral("xmlns")) == QLatin1String("urn:xmpp:ping")) {
-		QDomElement iq = createIQ(doc(), QStringLiteral("result"), e.attribute(QStringLiteral("from")), e.attribute(QStringLiteral("id")));
+	QDomElement ping = e.firstChildElement("ping");
+	if (!e.isNull() && ping.attribute("xmlns") == "urn:xmpp:ping") {
+		QDomElement iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
 		send(iq);
 		return true;
 	}
@@ -2104,14 +2120,14 @@ void JT_CaptchaChallenger::onGo()
 	XData::FieldList fl = form.fields();
 	XData::FieldList::Iterator it;
 	for (it = fl.begin(); it < fl.end(); ++it) {
-		if (it->var() == QLatin1String("challenge") && it->type() == XData::Field::Field_Hidden) {
+		if (it->var() == "challenge" && it->type() == XData::Field::Field_Hidden) {
 			it->setValue(QStringList() << id());
 		}
 	}
 	if (it == fl.end()) {
 		XData::Field f;
 		f.setType(XData::Field::Field_Hidden);
-		f.setVar(QStringLiteral("challenge"));
+		f.setVar("challenge");
 		f.setValue(QStringList() << id());
 		fl.append(f);
 	}
@@ -2124,8 +2140,8 @@ void JT_CaptchaChallenger::onGo()
 
 bool JT_CaptchaChallenger::take(const QDomElement &x)
 {
-	if(x.tagName() == QLatin1String("message") && x.attribute(QStringLiteral("id")) == id() &&
-	        Jid(x.attribute(QStringLiteral("from"))) == d->j && !x.firstChildElement(QStringLiteral("error")).isNull())
+	if(x.tagName() == "message" && x.attribute("id") == id() &&
+	        Jid(x.attribute("from")) == d->j && !x.firstChildElement("error").isNull())
 	{
 		setError(x);
 		return true;
@@ -2133,12 +2149,12 @@ bool JT_CaptchaChallenger::take(const QDomElement &x)
 
 	XDomNodeList nl;
 	XData xd;
-	QString rid = x.attribute(QStringLiteral("id"));
-	if (rid.isEmpty() || x.tagName() != QLatin1String("iq") ||
-	        Jid(x.attribute(QStringLiteral("from"))) != d->j || x.attribute(QStringLiteral("type")) != QLatin1String("set") ||
-	        (nl = childElementsByTagNameNS(x, QStringLiteral("urn:xmpp:captcha"), QStringLiteral("captcha"))).isEmpty() ||
-	        (nl = childElementsByTagNameNS(nl.item(0).toElement(), QStringLiteral("jabber:x:data"), QStringLiteral("x"))).isEmpty() ||
-	        (xd.fromXml(nl.item(0).toElement()), xd.getField(QStringLiteral("challenge")).value().value(0) != id()))
+	QString rid = x.attribute("id");
+	if (rid.isEmpty() || x.tagName() != "iq" ||
+	        Jid(x.attribute("from")) != d->j || x.attribute("type") != "set" ||
+	        (nl = childElementsByTagNameNS(x, "urn:xmpp:captcha", "captcha")).isEmpty() ||
+	        (nl = childElementsByTagNameNS(nl.item(0).toElement(), "jabber:x:data", "x")).isEmpty() ||
+	        (xd.fromXml(nl.item(0).toElement()), xd.getField("challenge").value().value(0) != id()))
 	{
 		return false;
 	}
@@ -2146,7 +2162,7 @@ bool JT_CaptchaChallenger::take(const QDomElement &x)
 	CaptchaChallenge::Result r = d->challenge.validateResponse(xd);
 	QDomElement iq;
 	if (r == CaptchaChallenge::Passed) {
-		iq = createIQ(doc(), QStringLiteral("result"), d->j.full(), rid);
+		iq = createIQ(doc(), "result", d->j.full(), rid);
 	} else {
 		Stanza::Error::ErrorCond ec;
 		if (r == CaptchaChallenge::Unavailable) {
@@ -2154,7 +2170,7 @@ bool JT_CaptchaChallenger::take(const QDomElement &x)
 		} else {
 			ec = Stanza::Error::NotAcceptable;
 		}
-		iq = createIQ(doc(), QStringLiteral("error"), d->j.full(), rid);
+		iq = createIQ(doc(), "error", d->j.full(), rid);
 		Stanza::Error error(Stanza::Error::Cancel, ec);
 		iq.appendChild(error.toXml(*doc(), client()->stream().baseNS()));
 	}
@@ -2164,6 +2180,7 @@ bool JT_CaptchaChallenger::take(const QDomElement &x)
 
 	return true;
 }
+
 
 //---------------------------------------------------------------------------
 // JT_CaptchaSender
@@ -2176,8 +2193,8 @@ void JT_CaptchaSender::set(const Jid &j, const XData &xd)
 {
 	to = j;
 
-	iq = createIQ(doc(), QStringLiteral("set"), to.full(), id());
-	iq.appendChild(doc()->createElementNS(QStringLiteral("urn:xmpp:captcha"), QStringLiteral("captcha")))
+	iq = createIQ(doc(), "set", to.full(), id());
+	iq.appendChild(doc()->createElementNS("urn:xmpp:captcha", "captcha"))
 	        .appendChild(xd.toXml(doc(), true));
 }
 
@@ -2192,7 +2209,7 @@ bool JT_CaptchaSender::take(const QDomElement &x)
 		return false;
 	}
 
-	if (x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+	if (x.attribute("type") == "result") {
 		setSuccess();
 	}
 	else {
@@ -2213,20 +2230,20 @@ JT_MessageCarbons::JT_MessageCarbons(Task *parent)
 
 void JT_MessageCarbons::enable()
 {
-	_iq = createIQ(doc(), QStringLiteral("set"), QLatin1String(""), id());
+	_iq = createIQ(doc(), "set", "", id());
 
-	QDomElement enable = doc()->createElement(QStringLiteral("enable"));
-	enable.setAttribute(QStringLiteral("xmlns"), QStringLiteral("urn:xmpp:carbons:2"));
+	QDomElement enable = doc()->createElement("enable");
+	enable.setAttribute("xmlns", "urn:xmpp:carbons:2");
 
 	_iq.appendChild(enable);
 }
 
 void JT_MessageCarbons::disable()
 {
-	_iq = createIQ(doc(), QStringLiteral("set"), QLatin1String(""), id());
+	_iq = createIQ(doc(), "set", "", id());
 
-	QDomElement disable = doc()->createElement(QStringLiteral("disable"));
-	disable.setAttribute(QStringLiteral("xmlns"), QStringLiteral("urn:xmpp:carbons:2"));
+	QDomElement disable = doc()->createElement("disable");
+	disable.setAttribute("xmlns", "urn:xmpp:carbons:2");
 
 	_iq.appendChild(disable);
 }
@@ -2239,7 +2256,7 @@ void JT_MessageCarbons::onGo()
 
 bool JT_MessageCarbons::take(const QDomElement &e)
 {
-	if (e.tagName() != QLatin1String("iq") || e.attribute(QStringLiteral("type")) != QLatin1String("result"))
+	if (e.tagName() != "iq" || e.attribute("type") != "result")
 		return false;
 
 	bool res = iqVerify(e, Jid(), id());

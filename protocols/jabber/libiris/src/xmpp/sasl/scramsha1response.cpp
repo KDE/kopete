@@ -31,7 +31,7 @@
 
 namespace XMPP {
 	QCA::SecureArray HMAC_SHA_1(const QCA::SecureArray &key, const QCA::SecureArray &str) {
-		QCA::SecureArray result = QCA::MessageAuthenticationCode(QStringLiteral("hmac(sha1)"), key).process(str);
+		QCA::SecureArray result = QCA::MessageAuthenticationCode("hmac(sha1)", key).process(str);
 		return result;
 	}
 
@@ -51,11 +51,11 @@ namespace XMPP {
 
 		size_t dkLen;
 
-		QCA::Hash shaHash(QStringLiteral("sha1"));
+		QCA::Hash shaHash("sha1");
 		shaHash.update("", 0);
 		dkLen = shaHash.final().size();
 
-		QCA::PBKDF2 hi(QStringLiteral("sha1"));
+		QCA::PBKDF2 hi("sha1");
 
 		QByteArray password;
 
@@ -76,7 +76,7 @@ namespace XMPP {
 		QCA::SecureArray client_key(HMAC_SHA_1(salted_password_.toByteArray(), QByteArray("Client Key")));
 
 		// StoredKey       := H(ClientKey)
-		QCA::SecureArray stored_key = QCA::Hash(QStringLiteral("sha1")).process(client_key);
+		QCA::SecureArray stored_key = QCA::Hash("sha1").process(client_key);
 
 		// assemble client-final-message-without-proof
 

@@ -34,7 +34,7 @@ namespace XMPP
 
 		void setBody(const QDomElement &body);
 		const QDomElement& body() const;
-		QString toString(const QString &rootTagName = QStringLiteral("body")) const;
+		QString toString(const QString &rootTagName = "body") const;
 		QString text() const;
 		void filterOutUnwanted(bool strict = false);
 

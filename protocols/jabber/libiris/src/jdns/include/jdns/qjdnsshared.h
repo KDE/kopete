@@ -87,7 +87,7 @@ public:
 	*/
 	QStringList readDebugLines();
 
-Q_SIGNALS:
+signals:
 	/**
 	   \brief Emitted when there is debug information to report
 
@@ -274,7 +274,7 @@ public:
 	*/
 	QList<QJDns::Record> results() const;
 
-Q_SIGNALS:
+signals:
 	/**
 	   \brief Indicates that the operation has something to report
 
@@ -499,7 +499,7 @@ QStringList finalDebugLines = jdnsSharedDebug.readDebugLines();
 	*/
 	static void waitForShutdown(const QList<QJDnsShared*> &instances);
 
-Q_SIGNALS:
+signals:
 	/**
 	   \brief Indicates the object has been shut down
 	*/

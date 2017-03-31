@@ -63,24 +63,24 @@ namespace XMPP
 		IBBConnection(IBBManager *);
 		~IBBConnection();
 
-		void connectToJid(const Jid &peer, const QString &sid) Q_DECL_OVERRIDE;
-		void accept() Q_DECL_OVERRIDE;
-		void close() Q_DECL_OVERRIDE;
+		void connectToJid(const Jid &peer, const QString &sid);
+		void accept();
+		void close();
 
 		int state() const;
-		Jid peer() const Q_DECL_OVERRIDE;
-		QString sid() const Q_DECL_OVERRIDE;
-		BytestreamManager* manager() const Q_DECL_OVERRIDE;
+		Jid peer() const;
+		QString sid() const;
+		BytestreamManager* manager() const;
 
 		bool isOpen() const;
 
 	protected:
-		qint64 writeData(const char *data, qint64 maxSize) Q_DECL_OVERRIDE;
+		qint64 writeData(const char *data, qint64 maxSize);
 
-	Q_SIGNALS:
+	signals:
 		void connected();
 
-	private Q_SLOTS:
+	private slots:
 		void ibb_finished();
 		void trySend();
 
@@ -109,18 +109,18 @@ namespace XMPP
 		static const char* ns();
 		Client *client() const;
 
-		bool isAcceptableSID(const Jid &peer, const QString &sid) const Q_DECL_OVERRIDE;
-		BSConnection *createConnection() Q_DECL_OVERRIDE;
+		bool isAcceptableSID(const Jid &peer, const QString &sid) const;
+		BSConnection *createConnection();
 		IBBConnection *takeIncoming();
 
-	public Q_SLOTS:
+	public slots:
 		void takeIncomingData(const Jid &from, const QString &id,
 							  const IBBData &data, Stanza::Kind);
 
 	protected:
-		const char* sidPrefix() const Q_DECL_OVERRIDE;
+		const char* sidPrefix() const;
 
-	private Q_SLOTS:
+	private slots:
 		void ibb_incomingRequest(const Jid &from, const QString &id,
 								 const QString &sid, int blockSize,
 								 const QString &stanza);
@@ -152,17 +152,17 @@ namespace XMPP
 		void sendData(const Jid &, const IBBData &ibbData);
 		void close(const Jid &, const QString &sid);
 		void respondError(const Jid &, const QString &id,
-						  Stanza::Error::ErrorCond cond, const QString &text = QLatin1String(""));
+						  Stanza::Error::ErrorCond cond, const QString &text = "");
 		void respondAck(const Jid &to, const QString &id);
 
-		void onGo() Q_DECL_OVERRIDE;
-		bool take(const QDomElement &) Q_DECL_OVERRIDE;
+		void onGo();
+		bool take(const QDomElement &);
 
 		Jid jid() const;
 		int mode() const;
 		int bytesWritten() const;
 
-	Q_SIGNALS:
+	signals:
 		void incomingRequest(const Jid &from, const QString &id,
 							 const QString &sid, int blockSize,
 							 const QString &stanza);

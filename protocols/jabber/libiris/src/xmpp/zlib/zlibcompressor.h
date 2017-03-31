@@ -17,7 +17,7 @@ public:
 
 	int write(const QByteArray&);
 
-protected Q_SLOTS:
+protected slots:
 	void flush();
 
 protected:

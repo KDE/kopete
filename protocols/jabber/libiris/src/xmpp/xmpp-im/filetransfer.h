@@ -92,14 +92,14 @@ namespace XMPP
 		void close(); // reject, or stop sending/receiving
 		BSConnection *bsConnection() const; // active link
 
-	Q_SIGNALS:
+	signals:
 		void accepted(); // indicates BSConnection has started
 		void connected();
 		void readyRead(const QByteArray &a);
 		void bytesWritten(qint64);
 		void error(int);
 
-	private Q_SLOTS:
+	private slots:
 		void ft_finished();
 		void stream_connected();
 		void stream_connectionClosed();
@@ -134,10 +134,10 @@ namespace XMPP
 		FileTransfer *createTransfer();
 		FileTransfer *takeIncoming();
 
-	Q_SIGNALS:
+	signals:
 		void incomingReady();
 
-	private Q_SLOTS:
+	private slots:
 		void pft_incoming(const FTRequest &req);
 
 	private:
@@ -170,8 +170,8 @@ namespace XMPP
 		qlonglong rangeLength() const;
 		QString streamType() const;
 
-		void onGo() Q_DECL_OVERRIDE;
-		bool take(const QDomElement &) Q_DECL_OVERRIDE;
+		void onGo();
+		bool take(const QDomElement &);
 
 	private:
 		class Private;
@@ -200,9 +200,9 @@ namespace XMPP
 		void respondError(const Jid &to, const QString &id,
 						  Stanza::Error::ErrorCond cond, const QString &str);
 
-		bool take(const QDomElement &) Q_DECL_OVERRIDE;
+		bool take(const QDomElement &);
 
-	Q_SIGNALS:
+	signals:
 		void incoming(const FTRequest &req);
 	};
 }

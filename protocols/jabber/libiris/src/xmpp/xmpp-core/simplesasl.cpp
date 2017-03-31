@@ -99,7 +99,7 @@ public:
 		reset();
 	}
 
-	void reset() Q_DECL_OVERRIDE
+	void reset()
 	{
 		resetState();
 
@@ -126,7 +126,7 @@ public:
 		authCondition_ = QCA::SASL::AuthFail;
 	}
 
-	void setConstraints(QCA::SASL::AuthFlags flags, int ssfMin, int) Q_DECL_OVERRIDE {
+	virtual void setConstraints(QCA::SASL::AuthFlags flags, int ssfMin, int) {
 		if(flags & (QCA::SASL::RequireForwardSecrecy | QCA::SASL::RequirePassCredentials | QCA::SASL::RequireMutualAuth) || ssfMin > 0)
 			capable = false;
 		else
@@ -134,26 +134,26 @@ public:
 		allow_plain = flags & QCA::SASL::AllowPlain;
 	}
 
-	void setup(const QString& _service, const QString& _host, const QCA::SASLContext::HostPort*, const QCA::SASLContext::HostPort*, const QString&, int) Q_DECL_OVERRIDE {
+	virtual void setup(const QString& _service, const QString& _host, const QCA::SASLContext::HostPort*, const QCA::SASLContext::HostPort*, const QString&, int) {
 		service = _service;
 		host = _host;
 	}
 
-	void startClient(const QStringList &mechlist, bool allowClientSendFirst) Q_DECL_OVERRIDE {
+	virtual void startClient(const QStringList &mechlist, bool allowClientSendFirst) {
 		Q_UNUSED(allowClientSendFirst);
 
 		mechanism_ = QString();
 		foreach(QString mech, mechlist) {
-			if (mech == QLatin1String("SCRAM-SHA-1")) {
-				mechanism_ = QStringLiteral("SCRAM-SHA-1");
+			if (mech == "SCRAM-SHA-1") {
+				mechanism_ = "SCRAM-SHA-1";
 				break;
 			}
-			if (mech == QLatin1String("DIGEST-MD5")) {
-				mechanism_ = QStringLiteral("DIGEST-MD5");
+			if (mech == "DIGEST-MD5") {
+				mechanism_ = "DIGEST-MD5";
 				break;
 			}
-			if (mech == QLatin1String("PLAIN") && allow_plain)
-				mechanism_ = QStringLiteral("PLAIN");
+			if (mech == "PLAIN" && allow_plain)
+				mechanism_ = "PLAIN";
 		}
 
 		if(!capable || mechanism_.isEmpty()) {
@@ -173,19 +173,19 @@ public:
 		tryAgain();
 	}
 
-	void nextStep(const QByteArray &from_net) Q_DECL_OVERRIDE {
+	virtual void nextStep(const QByteArray &from_net) {
 		in_buf = from_net;
 		tryAgain();
 	}
 
-	void tryAgain() Q_DECL_OVERRIDE {
+	virtual void tryAgain() {
 		// All exits of the method must emit the ready signal
 		// so all exits go through a goto ready;
 		if(step == 0) {
 			out_mech = mechanism_;
 
 			// PLAIN
-			if (out_mech == QLatin1String("PLAIN") || out_mech == QLatin1String("SCRAM-SHA-1")) {
+			if (out_mech == "PLAIN" || out_mech == "SCRAM-SHA-1") {
 				// First, check if we have everything
 				if(need.user || need.pass) {
 					qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
@@ -201,9 +201,9 @@ public:
 					goto ready;
 				}
 			}
-			if (out_mech == QLatin1String("PLAIN")) {
+			if (out_mech == "PLAIN") {
 				out_buf = PLAINMessage(authz, user, pass.toByteArray()).getValue();
-			} else if (out_mech == QLatin1String("SCRAM-SHA-1")) {
+			} else if (out_mech == "SCRAM-SHA-1") {
 				// send client-first-message
 				SCRAMSHA1Message msg(authz, user, QByteArray(0, ' '), RandRandomNumberGenerator());
 				if (msg.isValid()) {
@@ -216,13 +216,13 @@ public:
 				}
 			}
 			++step;
-			if (out_mech == QLatin1String("PLAIN"))
+			if (out_mech == "PLAIN")
 				result_ = Success;
 			else
 				result_ = Continue;
 		} else if(step == 1) {
 			Q_ASSERT(out_mech != "PLAIN");
-			if (out_mech == QLatin1String("DIGEST-MD5")) {
+			if (out_mech == "DIGEST-MD5") {
 				// if we still need params, then the app has failed us!
 				if(need.user || need.authzid || need.pass || need.realm) {
 					qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
@@ -251,7 +251,7 @@ public:
 				out_buf = response.getValue();
 				++step;
 				result_ = Continue;
-			} else if (out_mech == QLatin1String("SCRAM-SHA-1")) {
+			} else if (out_mech == "SCRAM-SHA-1") {
 				// if we still need params, then the app has failed us!
 				if(need.user || need.pass) {
 					qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
@@ -288,7 +288,7 @@ public:
 				++step;
 				result_ = Continue;
 			}
-		} else if (step == 2 && out_mech == QLatin1String("SCRAM-SHA-1")) {
+		} else if (step == 2 && out_mech == "SCRAM-SHA-1") {
 			// verify the server's response on success, for SCRAM-SHA-1
 			SCRAMSHA1Signature sig(in_buf, server_signature);
 			if (sig.isValid()) {
@@ -314,7 +314,7 @@ ready:
 		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
 	}
 
-	void update(const QByteArray &from_net, const QByteArray &from_app) Q_DECL_OVERRIDE {
+	virtual void update(const QByteArray &from_net, const QByteArray &from_app) {
 		result_to_app_ = from_net;
 		result_to_net_ = from_app;
 		encoded_ = from_app.size();
@@ -322,58 +322,58 @@ ready:
 		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
 	}
 
-	bool waitForResultsReady(int msecs) Q_DECL_OVERRIDE {
+	virtual bool waitForResultsReady(int msecs) {
 
 		// TODO: for now, all operations block anyway
 		Q_UNUSED(msecs);
 		return true;
 	}
 
-	Result result() const Q_DECL_OVERRIDE {
+	virtual Result result() const {
 		return result_;
 	}
 
-	QStringList mechlist() const Q_DECL_OVERRIDE {
+	virtual QStringList mechlist() const {
 		return QStringList();
 	}
 
-	QString mech() const Q_DECL_OVERRIDE {
+	virtual QString mech() const {
 		return out_mech;
 	}
 
-	bool haveClientInit() const Q_DECL_OVERRIDE {
-		return out_mech == QLatin1String("PLAIN");
+	virtual bool haveClientInit() const {
+		return out_mech == "PLAIN";
 	}
 
-	QByteArray stepData() const Q_DECL_OVERRIDE {
+	virtual QByteArray stepData() const {
 		return out_buf;
 	}
 
-	QByteArray to_net() Q_DECL_OVERRIDE {
+	virtual QByteArray to_net() {
 		return result_to_net_;
 	}
 
-	int encoded() const Q_DECL_OVERRIDE {
+	virtual int encoded() const {
 		return encoded_;
 	}
 
-	QByteArray to_app() Q_DECL_OVERRIDE {
+	virtual QByteArray to_app() {
 		return result_to_app_;
 	}
 
-	int ssf() const Q_DECL_OVERRIDE {
+	virtual int ssf() const {
 		return 0;
 	}
 
-	QCA::SASL::AuthCondition authCondition() const Q_DECL_OVERRIDE {
+	virtual QCA::SASL::AuthCondition authCondition() const {
 		return authCondition_;
 	}
 
-	QCA::SASL::Params clientParams() const Q_DECL_OVERRIDE {
+	virtual QCA::SASL::Params clientParams() const {
 		return QCA::SASL::Params(need.user, need.authzid, need.pass, need.realm);
 	}
 
-	void setClientParams(const QString *_user, const QString *_authzid, const QCA::SecureArray *_pass, const QString *_realm) Q_DECL_OVERRIDE {
+	virtual void setClientParams(const QString *_user, const QString *_authzid, const QCA::SecureArray *_pass, const QString *_realm) {
 		if(_user) {
 			user = *_user;
 			need.user = false;
@@ -396,31 +396,31 @@ ready:
 		}
 	}
 
-	QStringList realmlist() const Q_DECL_OVERRIDE
+	virtual QStringList realmlist() const
 	{
 		// TODO
 		return QStringList();
 	}
 
-	QString username() const Q_DECL_OVERRIDE {
+	virtual QString username() const {
 		return QString();
 	}
 
-	QString authzid() const Q_DECL_OVERRIDE {
+	virtual QString authzid() const {
 		return QString();
 	}
 
-	QCA::Provider::Context* clone() const Q_DECL_OVERRIDE {
+	virtual QCA::Provider::Context* clone() const {
 		SimpleSASLContext* s = new SimpleSASLContext(provider());
 		// TODO: Copy all the members
 		return s;
 	}
 
-	void startServer(const QString &, bool) Q_DECL_OVERRIDE {
+	virtual void startServer(const QString &, bool) {
 		result_ =  QCA::SASLContext::Error;
 		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
 	}
-	void serverFirstStep(const QString &, const QByteArray *) Q_DECL_OVERRIDE {
+	virtual void serverFirstStep(const QString &, const QByteArray *) {
 		result_ =  QCA::SASLContext::Error;
 		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
 	}
@@ -433,25 +433,25 @@ public:
 	QCASimpleSASL() {}
 	~QCASimpleSASL() {}
 
-	void init() Q_DECL_OVERRIDE
+	void init()
 	{
 	}
 
-	QString name() const Q_DECL_OVERRIDE {
-		return QStringLiteral("simplesasl");
+	QString name() const {
+		return "simplesasl";
 	}
 
-	QStringList features() const Q_DECL_OVERRIDE {
-		return QStringList(QStringLiteral("sasl"));
+	QStringList features() const {
+		return QStringList("sasl");
 	}
 
-	QCA::Provider::Context* createContext(const QString& cap) Q_DECL_OVERRIDE
+	QCA::Provider::Context* createContext(const QString& cap)
 	{
-		if(cap == QLatin1String("sasl"))
+		if(cap == "sasl")
 			return new SimpleSASLContext(this);
 		return 0;
 	}
-	int qcaVersion() const Q_DECL_OVERRIDE
+	int qcaVersion() const
 	{
 		return QCA_VERSION;
 	}

@@ -36,7 +36,7 @@ namespace XMPP
 		enum Error { ErrRefused = ErrCustom, ErrConnect, ErrProxy, ErrSocket };
 		enum State { Idle, Requesting, Connecting, WaitingForAccept, Active };
 
-		BSConnection(QObject *parent = nullptr) : ByteStream(parent) {}
+		BSConnection(QObject *parent = 0) : ByteStream(parent) {}
 
 		virtual void connectToJid(const Jid &peer, const QString &sid) = 0;
 		virtual void accept() = 0;
@@ -62,7 +62,7 @@ namespace XMPP
 	protected:
 		virtual const char* sidPrefix() const = 0;
 
-	Q_SIGNALS:
+	signals:
 		void incomingReady();
 	};
 }

@@ -28,49 +28,51 @@
 #include "icetransport.h"
 
 namespace XMPP {
+
 // for the turn transport, only path 0 is used
 
 class IceTurnTransport : public IceTransport
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    enum Error
-    {
-        ErrorTurn = ErrorCustom
-    };
+	enum Error
+	{
+		ErrorTurn = ErrorCustom
+	};
 
-    IceTurnTransport(QObject *parent = nullptr);
-    ~IceTurnTransport();
+	IceTurnTransport(QObject *parent = 0);
+	~IceTurnTransport();
 
-    void setClientSoftwareNameAndVersion(const QString &str);
+	void setClientSoftwareNameAndVersion(const QString &str);
 
-    // set these before calling start()
-    void setUsername(const QString &user);
-    void setPassword(const QCA::SecureArray &pass);
+	// set these before calling start()
+	void setUsername(const QString &user);
+	void setPassword(const QCA::SecureArray &pass);
 
-    void setProxy(const TurnClient::Proxy &proxy);
+	void setProxy(const TurnClient::Proxy &proxy);
 
-    void start(const QHostAddress &addr, int port, TurnClient::Mode mode = TurnClient::PlainMode);
+	void start(const QHostAddress &addr, int port, TurnClient::Mode mode = TurnClient::PlainMode);
 
-    QHostAddress relayedAddress() const;
-    int relayedPort() const;
+	QHostAddress relayedAddress() const;
+	int relayedPort() const;
 
-    TurnClient::Error turnErrorCode() const;
+	TurnClient::Error turnErrorCode() const;
 
-    // reimplemented
-    void stop() Q_DECL_OVERRIDE;
-    bool hasPendingDatagrams(int path) const Q_DECL_OVERRIDE;
-    QByteArray readDatagram(int path, QHostAddress *addr, int *port) Q_DECL_OVERRIDE;
-    void writeDatagram(int path, const QByteArray &buf, const QHostAddress &addr, int port) Q_DECL_OVERRIDE;
-    void addChannelPeer(const QHostAddress &addr, int port) Q_DECL_OVERRIDE;
-    void setDebugLevel(DebugLevel level) Q_DECL_OVERRIDE;
+	// reimplemented
+	virtual void stop();
+	virtual bool hasPendingDatagrams(int path) const;
+	virtual QByteArray readDatagram(int path, QHostAddress *addr, int *port);
+	virtual void writeDatagram(int path, const QByteArray &buf, const QHostAddress &addr, int port);
+	virtual void addChannelPeer(const QHostAddress &addr, int port);
+	virtual void setDebugLevel(DebugLevel level);
 
 private:
-    class Private;
-    friend class Private;
-    Private *d;
+	class Private;
+	friend class Private;
+	Private *d;
 };
+
 }
 
 #endif

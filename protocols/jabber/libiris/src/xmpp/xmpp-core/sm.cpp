@@ -22,6 +22,7 @@
 #include <QDebug>
 #endif
 
+
 #include "sm.h"
 
 using namespace XMPP;
@@ -41,6 +42,7 @@ void SMState::reset()
 	resumption_location.host.clear();
 	resumption_location.port = 0;
 }
+
 
 StreamManagement::StreamManagement(QObject *parent)
 	: QObject(parent)
@@ -163,7 +165,7 @@ QDomElement StreamManagement::generateRequestStanza(QDomDocument &doc)
 #endif
 		sm_timeout_data.pause_mode = false;
 		sm_timeout_data.point_time = QDateTime::currentDateTime();
-		return doc.createElementNS(NS_STREAM_MANAGEMENT, QStringLiteral("r"));
+		return doc.createElementNS(NS_STREAM_MANAGEMENT, "r");
 	}
 	return QDomElement();
 }
@@ -173,7 +175,7 @@ QDomElement StreamManagement::makeResponseStanza(QDomDocument &doc)
 #ifdef IRIS_SM_DEBUG
 	qDebug() << "Stream Management: [-->] Sending acknowledgment with h =" << state_.received_count;
 #endif
-	QDomElement e = doc.createElementNS(NS_STREAM_MANAGEMENT, QStringLiteral("a"));
-	e.setAttribute(QStringLiteral("h"), state_.received_count);
+	QDomElement e = doc.createElementNS(NS_STREAM_MANAGEMENT, "a");
+	e.setAttribute("h", state_.received_count);
 	return e;
 }

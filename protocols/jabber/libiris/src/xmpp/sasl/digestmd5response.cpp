@@ -59,7 +59,7 @@ DIGESTMD5Response::DIGESTMD5Response(const QByteArray& challenge, const QString&
 
 	// build 'response'
 	QByteArray X = user.toUtf8() + ':' + realm.toUtf8() + ':' + password;
-	QByteArray Y = QCA::Hash(QStringLiteral("md5")).hash(X).toByteArray();
+	QByteArray Y = QCA::Hash("md5").hash(X).toByteArray();
 	QByteArray tmp = ':' + nonce + ':' + cnonce;
 	if (!authz.isEmpty())
 		tmp += ':' + authz.toUtf8();
@@ -67,10 +67,10 @@ DIGESTMD5Response::DIGESTMD5Response(const QByteArray& challenge, const QString&
 
 	QByteArray A1(Y + tmp);
 	QByteArray A2 = QByteArray("AUTHENTICATE:") + uri;
-	QByteArray HA1 = QCA::Hash(QStringLiteral("md5")).hashToString(A1).toLatin1();
-	QByteArray HA2 = QCA::Hash(QStringLiteral("md5")).hashToString(A2).toLatin1();
+	QByteArray HA1 = QCA::Hash("md5").hashToString(A1).toLatin1();
+	QByteArray HA2 = QCA::Hash("md5").hashToString(A2).toLatin1();
 	QByteArray KD = HA1 + ':' + nonce + ':' + nc + ':' + cnonce + ':' + qop + ':' + HA2;
-	QByteArray Z = QCA::Hash(QStringLiteral("md5")).hashToString(KD).toLatin1();
+	QByteArray Z = QCA::Hash("md5").hashToString(KD).toLatin1();
 
 	//qDebug() << QString("simplesasl.cpp: A1 = %1").arg(QString(A1));
 	//qDebug() << QString("simplesasl.cpp: A2 = %1").arg(QString(A2));

@@ -313,6 +313,7 @@ TLSHandler::~TLSHandler()
 {
 }
 
+
 //----------------------------------------------------------------------------
 // QCATLSHandler
 //----------------------------------------------------------------------------
@@ -370,6 +371,7 @@ bool QCATLSHandler::certMatchesHostname()
 
 	return false;
 }
+
 
 QCA::TLS *QCATLSHandler::tls() const
 {

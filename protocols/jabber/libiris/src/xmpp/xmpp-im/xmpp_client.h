@@ -132,7 +132,7 @@ namespace XMPP
 		void groupChatLeaveAll(const QString &statusStr = QString());
 		QString groupChatNick(const QString &host, const QString &room) const;
 
-	Q_SIGNALS:
+	signals:
 		void activated();
 		void disconnected();
 		//void authFinished(bool, int, const QString &);
@@ -159,7 +159,7 @@ namespace XMPP
 		void beginImportRoster();
 		void endImportRoster();
 
-	private Q_SLOTS:
+	private slots:
 		//void streamConnected();
 		//void streamHandshaken();
 		//void streamError(const StreamError &);

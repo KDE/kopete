@@ -231,14 +231,14 @@ public:
 		return written;
 	}
 
-Q_SIGNALS:
+signals:
 	void tlsHandshaken();
 	void tlsClosed(const QByteArray &);
 	void readyRead(const QByteArray &);
 	void needWrite(const QByteArray &);
 	void error(int);
 
-private Q_SLOTS:
+private slots:
 	void tls_handshaken()
 	{
 		tls_done = true;

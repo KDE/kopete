@@ -46,7 +46,7 @@ public:
 		DL_Packet
 	};
 
-	IceTransport(QObject *parent = nullptr);
+	IceTransport(QObject *parent = 0);
 	~IceTransport();
 
 	virtual void stop() = 0;
@@ -58,7 +58,7 @@ public:
 
 	virtual void setDebugLevel(DebugLevel level) = 0;
 
-Q_SIGNALS:
+signals:
 	void started();
 	void stopped();
 	void error(int e);

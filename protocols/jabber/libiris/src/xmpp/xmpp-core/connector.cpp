@@ -55,6 +55,7 @@ static const int XMPP_LEGACY_PORT = 5223;
 static const char* XMPP_CLIENT_SRV = "xmpp-client";
 static const char* XMPP_CLIENT_TRANSPORT = "tcp";
 
+
 //----------------------------------------------------------------------------
 // Connector
 //----------------------------------------------------------------------------
@@ -112,6 +113,7 @@ QString Connector::host() const
 {
 	return QString();
 }
+
 
 //----------------------------------------------------------------------------
 // AdvancedConnector::Proxy
@@ -193,6 +195,7 @@ void AdvancedConnector::Proxy::setPollInterval(int secs)
 {
 	v_poll = secs;
 }
+
 
 //----------------------------------------------------------------------------
 // AdvancedConnector

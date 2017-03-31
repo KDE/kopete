@@ -3,7 +3,7 @@ set(jdns_tool_MOC_HDRS
 )
 
 if(NOT Qt5Core_FOUND)
-  qt5_wrap_cpp(jdns_tool_MOC_SRCS ${jdns_tool_MOC_HDRS})
+  qt4_wrap_cpp(jdns_tool_MOC_SRCS ${jdns_tool_MOC_HDRS})
 endif()
 
 set(jdns_tool_SRCS
@@ -19,18 +19,18 @@ set_target_properties(jdns-tool PROPERTIES
 )
 
 install(TARGETS jdns-tool
-        LIBRARY DESTINATION ${KDE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${KDE_INSTALL_BINDIR}
-        ARCHIVE DESTINATION ${KDE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+        RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+        ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
 #       FRAMEWORK DESTINATION ${FRAMEWORK_INSTALL_DIR}
 )
 
 if(MSVC)
   get_target_property(LOCATION jdns-tool LOCATION_DEBUG)
   string(REGEX REPLACE "\\.[^.]*$" ".pdb" LOCATION "${LOCATION}")
-  install(FILES ${LOCATION} DESTINATION ${KDE_INSTALL_BINDIR} CONFIGURATIONS Debug)
+  install(FILES ${LOCATION} DESTINATION ${BIN_INSTALL_DIR} CONFIGURATIONS Debug)
 
   get_target_property(LOCATION jdns-tool LOCATION_RELWITHDEBINFO)
   string(REGEX REPLACE "\\.[^.]*$" ".pdb" LOCATION "${LOCATION}")
-  install(FILES ${LOCATION} DESTINATION ${KDE_INSTALL_BINDIR} CONFIGURATIONS RelWithDebInfo)
+  install(FILES ${LOCATION} DESTINATION ${BIN_INSTALL_DIR} CONFIGURATIONS RelWithDebInfo)
 endif(MSVC)

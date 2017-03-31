@@ -63,8 +63,8 @@ namespace XMPP {
 		QString id() const;
 		QString type() const;
 		QString lang() const;
-		QString subject(const QString &lang=QLatin1String("")) const;
-		QString body(const QString &lang=QLatin1String("")) const;
+		QString subject(const QString &lang="") const;
+		QString body(const QString &lang="") const;
 		QString thread() const;
 		Stanza::Error error() const;
 
@@ -73,8 +73,8 @@ namespace XMPP {
 		void setId(const QString &s);
 		void setType(const QString &s);
 		void setLang(const QString &s);
-		void setSubject(const QString &s, const QString &lang=QLatin1String(""));
-		void setBody(const QString &s, const QString &lang=QLatin1String(""));
+		void setSubject(const QString &s, const QString &lang="");
+		void setBody(const QString &s, const QString &lang="");
 		void setThread(const QString &s, bool send = false);
 		void setError(const Stanza::Error &err);
 
@@ -88,8 +88,8 @@ namespace XMPP {
 		void setTimeStamp(const QDateTime &ts, bool send = false);
 
 		// JEP-0071
-		HTMLElement html(const QString &lang=QLatin1String("")) const;
-		void setHTML(const HTMLElement &s, const QString &lang=QLatin1String(""));
+		HTMLElement html(const QString &lang="") const;
+		void setHTML(const HTMLElement &s, const QString &lang="");
 		bool containsHTML() const;
 
 		// JEP-0066

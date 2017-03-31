@@ -55,6 +55,7 @@ namespace XMPP
 		const QString &fullName() const;
 		void setFullName(const QString &);
 
+
 		const QString &familyName() const;
 		void setFamilyName(const QString &);
 
@@ -70,8 +71,10 @@ namespace XMPP
 		const QString &suffixName() const;
 		void setSuffixName(const QString &);
 
+
 		const QString &nickName() const;
 		void setNickName(const QString &);
+
 
 		const QByteArray &photo() const;
 		void setPhoto(const QByteArray &);
@@ -79,11 +82,13 @@ namespace XMPP
 		const QString &photoURI() const;
 		void setPhotoURI(const QString &);
 
+
 		const QDate bday() const;
 		void setBday(const QDate &);
 
 		const QString &bdayStr() const;
 		void setBdayStr(const QString &);
+
 
 		class Address {
 		public:
@@ -131,6 +136,7 @@ namespace XMPP
 		const LabelList &labelList() const;
 		void setLabelList(const LabelList &);
 
+
 		class Phone {
 		public:
 			Phone();
@@ -155,6 +161,7 @@ namespace XMPP
 		const PhoneList &phoneList() const;
 		void setPhoneList(const PhoneList &);
 
+
 		class Email {
 		public:
 			Email();
@@ -170,6 +177,7 @@ namespace XMPP
 		const EmailList &emailList() const;
 		void setEmailList(const EmailList &);
 
+
 		const QString &jid() const;
 		void setJid(const QString &);
 
@@ -178,6 +186,7 @@ namespace XMPP
 
 		const QString &timezone() const;
 		void setTimezone(const QString &);
+
 
 		class Geo {
 		public:
@@ -189,11 +198,13 @@ namespace XMPP
 		const Geo &geo() const;
 		void setGeo(const Geo &);
 
+
 		const QString &title() const;
 		void setTitle(const QString &);
 
 		const QString &role() const;
 		void setRole(const QString &);
+
 
 		const QByteArray &logo() const;
 		void setLogo(const QByteArray &);
@@ -201,11 +212,13 @@ namespace XMPP
 		const QString &logoURI() const;
 		void setLogoURI(const QString &);
 
+
 		VCard agent() const;
 		void setAgent(const VCard &);
 
 		const QString agentURI() const;
 		void setAgentURI(const QString &);
+
 
 		class Org {
 		public:
@@ -216,6 +229,7 @@ namespace XMPP
 		};
 		const Org &org() const;
 		void setOrg(const Org &);
+
 
 		const QStringList &categories() const;
 		void setCategories(const QStringList &);
@@ -232,6 +246,7 @@ namespace XMPP
 		const QString &sortString() const;
 		void setSortString(const QString &);
 
+
 		const QByteArray &sound() const;
 		void setSound(const QByteArray &);
 
@@ -240,6 +255,7 @@ namespace XMPP
 
 		const QString &soundPhonetic() const;
 		void setSoundPhonetic(const QString &);
+
 
 		const QString &uid() const;
 		void setUid(const QString &);
@@ -250,6 +266,7 @@ namespace XMPP
 		const QString &desc() const;
 		void setDesc(const QString &);
 
+
 		enum PrivacyClass {
 			pcNone = 0,
 			pcPublic = 1,
@@ -258,6 +275,7 @@ namespace XMPP
 		};
 		const PrivacyClass &privacyClass() const;
 		void setPrivacyClass(const PrivacyClass &);
+
 
 		const QByteArray &key() const;
 		void setKey(const QByteArray &);

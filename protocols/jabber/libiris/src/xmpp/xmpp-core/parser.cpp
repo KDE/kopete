@@ -74,24 +74,24 @@ public:
 		delete dec;
 	}
 
-	void reset() Q_DECL_OVERRIDE
+	void reset()
 	{
 		delete dec;
 		dec = 0;
 		in.resize(0);
-		out = QLatin1String("");
+		out = "";
 		at = 0;
 		paused = false;
 		mightChangeEncoding = true;
 		checkBad = true;
 		last = QChar();
-		v_encoding = QLatin1String("");
+		v_encoding = "";
 		resetLastData();
 	}
 
 	void resetLastData()
 	{
-		last_string = QLatin1String("");
+		last_string = "";
 	}
 
 	QString lastString() const
@@ -112,7 +112,7 @@ public:
 		return last;
 	}
 
-	QChar next() Q_DECL_OVERRIDE
+	QChar next()
 	{
 		if(paused)
 			return EndOfData;
@@ -275,17 +275,17 @@ private:
 
 	QString processXmlHeader(const QString &h)
 	{
-		if(h.left(5) != QLatin1String("<?xml"))
-			return QLatin1String("");
+		if(h.left(5) != "<?xml")
+			return "";
 
-		int endPos = h.indexOf(QLatin1String(">"));
-		int startPos = h.indexOf(QLatin1String("encoding"));
+		int endPos = h.indexOf(">");
+		int startPos = h.indexOf("encoding");
 		if(startPos < endPos && startPos != -1) {
 			QString encoding;
 			do {
 				startPos++;
 				if(startPos > endPos) {
-					return QLatin1String("");
+					return "";
 				}
 			} while(h[startPos] != '"' && h[startPos] != '\'');
 			startPos++;
@@ -293,13 +293,13 @@ private:
 				encoding += h[startPos];
 				startPos++;
 				if(startPos > endPos) {
-					return QLatin1String("");
+					return "";
 				}
 			}
 			return encoding;
 		}
 		else
-			return QLatin1String("");
+			return "";
 	}
 
 	bool tryExtractPart(QString *s)
@@ -348,6 +348,7 @@ private:
 	}
 };
 
+
 //----------------------------------------------------------------------------
 // ParserHandler
 //----------------------------------------------------------------------------
@@ -370,18 +371,18 @@ namespace XMPP
 			}
 		}
 
-		bool startDocument() Q_DECL_OVERRIDE
+		bool startDocument()
 		{
 			depth = 0;
 			return true;
 		}
 
-		bool endDocument() Q_DECL_OVERRIDE
+		bool endDocument()
 		{
 			return true;
 		}
 
-		bool startPrefixMapping(const QString &prefix, const QString &uri) Q_DECL_OVERRIDE
+		bool startPrefixMapping(const QString &prefix, const QString &uri)
 		{
 			if(depth == 0) {
 				nsnames += prefix;
@@ -390,7 +391,7 @@ namespace XMPP
 			return true;
 		}
 
-		bool startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts) Q_DECL_OVERRIDE
+		bool startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts)
 		{
 			if(depth == 0) {
 				Parser::Event *e = new Parser::Event;
@@ -440,7 +441,7 @@ namespace XMPP
 			return true;
 		}
 
-		bool endElement(const QString &namespaceURI, const QString &localName, const QString &qName) Q_DECL_OVERRIDE
+		bool endElement(const QString &namespaceURI, const QString &localName, const QString &qName)
 		{
 			--depth;
 			if(depth == 0) {
@@ -474,7 +475,7 @@ namespace XMPP
 			return true;
 		}
 
-		bool characters(const QString &str) Q_DECL_OVERRIDE
+		bool characters(const QString &str)
 		{
 			if(depth >= 1) {
 				QString content = str;
@@ -547,6 +548,7 @@ namespace XMPP
 		bool needMore;
 	};
 };
+
 
 //----------------------------------------------------------------------------
 // Event
@@ -743,8 +745,8 @@ Parser::Parser()
 	// check for evil bug in Qt <= 3.2.1
 	if(!qt_bug_check) {
 		qt_bug_check = true;
-		QDomElement e = d->doc->createElementNS(QStringLiteral("someuri"), QStringLiteral("somename"));
-		if(e.hasAttributeNS(QStringLiteral("someuri"), QStringLiteral("somename")))
+		QDomElement e = d->doc->createElementNS("someuri", "somename");
+		if(e.hasAttributeNS("someuri", "somename"))
 			qt_bug_have = true;
 		else
 			qt_bug_have = false;

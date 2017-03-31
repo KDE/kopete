@@ -64,7 +64,7 @@ static QDomElement stripExtraNS(const QDomElement &e)
 
 		// don't show xml namespace
 		if(a.namespaceURI() == NS_XML)
-			i.setAttribute(QStringLiteral("xml:") + a.name(), a.value());
+			i.setAttribute(QString("xml:") + a.name(), a.value());
 		else
 			i.setAttributeNodeNS(a);
 	}
@@ -128,7 +128,7 @@ static void createRootXmlTags(const QDomElement &root, QString *xmlHeader, QStri
 	QDomElement e = root.cloneNode(false).toElement();
 
 	// insert a dummy element to ensure open and closing tags are generated
-	QDomElement dummy = e.ownerDocument().createElement(QStringLiteral("dummy"));
+	QDomElement dummy = e.ownerDocument().createElement("dummy");
 	e.appendChild(dummy);
 
 	// convert to xml->text
@@ -149,7 +149,7 @@ static void createRootXmlTags(const QDomElement &root, QString *xmlHeader, QStri
 	*tagClose = str.mid(n, n2-n);
 
 	// generate a nice xml processing header
-	*xmlHeader = QStringLiteral("<?xml version=\"1.0\"?>");
+	*xmlHeader = "<?xml version=\"1.0\"?>";
 }
 
 // w3c xml spec:
@@ -171,6 +171,7 @@ static inline bool highSurrogate(const quint32 ch)
 {
 	return  ch >= 0xD800 && ch <= 0xDBFF;
 }
+
 
 // force encoding of '>'.  this function is needed for XMPP-Core, which
 //  requires the '>' character to be encoded as "&gt;" even though this is
@@ -221,7 +222,7 @@ static QString sanitizeForStream(const QString &in)
 		}
 
 		if(escape) {
-			out += QLatin1String("&gt;");
+			out += "&gt;";
 		 } else {
 			// don't silently drop invalid chars in element or attribute names,
 			// because that's something that should not happen.
@@ -242,6 +243,7 @@ static QString sanitizeForStream(const QString &in)
 	}
 	return out;
 }
+
 
 //----------------------------------------------------------------------------
 // Protocol
@@ -422,7 +424,7 @@ QString XmlProtocol::elementToString(const QDomElement &e, bool clip)
 	// first, check root namespace
 	QString pre = e.prefix();
 	if(pre.isNull())
-		pre = QLatin1String("");
+		pre = "";
 	if(pre == elem.prefix()) {
 		ns = elem.namespaceURI();
 	}
@@ -437,7 +439,7 @@ QString XmlProtocol::elementToString(const QDomElement &e, bool clip)
 			if(x != -1)
 				s = s.mid(x+1);
 			else
-				s = QLatin1String("");
+				s = "";
 			if(pre == s) {
 				ns = a.value();
 				break;

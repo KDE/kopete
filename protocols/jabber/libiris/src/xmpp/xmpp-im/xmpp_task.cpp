@@ -270,8 +270,9 @@ void Task::debug(const char *fmt, ...)
 
 void Task::debug(const QString &str)
 {
-	client()->debug(QStringLiteral("%1: ").arg(metaObject()->className()) + str);
+	client()->debug(QString("%1: ").arg(metaObject()->className()) + str);
 }
+
 
 /**
  * \brief verifiys a stanza is a IQ reply for this task
@@ -289,10 +290,10 @@ void Task::debug(const QString &str)
 
 bool Task::iqVerify(const QDomElement &x, const Jid &to, const QString &id, const QString &xmlns)
 {
-	if(x.tagName() != QLatin1String("iq"))
+	if(x.tagName() != "iq")
 		return false;
 
-	Jid from(x.attribute(QStringLiteral("from")));
+	Jid from(x.attribute("from"));
 	Jid local = client()->jid();
 	Jid server = client()->host();
 
@@ -315,7 +316,7 @@ bool Task::iqVerify(const QDomElement &x, const Jid &to, const QString &id, cons
 	}
 
 	if(!id.isEmpty()) {
-		if(x.attribute(QStringLiteral("id")) != id)
+		if(x.attribute("id") != id)
 			return false;
 	}
 

@@ -82,15 +82,15 @@ set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Dir
 set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
 
 if(NOT MSVC)
-  set(JDNS_CONFIG_INSTALL_DIR "${KDE_INSTALL_LIBDIR}/cmake/jdns")
-  set(QJDNS_CONFIG_INSTALL_DIR "${KDE_INSTALL_LIBDIR}/cmake/qjdns")
+  set(JDNS_CONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/jdns")
+  set(QJDNS_CONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/qjdns")
 else(NOT MSVC)
   set(JDNS_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/cmake/")
   set(QJDNS_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/cmake/")
 endif(NOT MSVC)
 
 if(APPLE)
-   set(CMAKE_INSTALL_NAME_DIR ${KDE_INSTALL_LIBDIR})
+   set(CMAKE_INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
 endif(APPLE)
 
 set(JDNS_LIB_MAJOR_VERSION "2")
@@ -111,13 +111,13 @@ if(NOT WIN32)
                  ${CMAKE_CURRENT_BINARY_DIR}/jdns.pc
                  @ONLY)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/jdns.pc
-          DESTINATION ${KDE_INSTALL_LIBDIR}/pkgconfig)
+          DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/qjdns.pc.in
                  ${CMAKE_CURRENT_BINARY_DIR}/qjdns.pc
                  @ONLY)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/qjdns.pc
-          DESTINATION ${KDE_INSTALL_LIBDIR}/pkgconfig)
+          DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 endif(NOT WIN32)
 
 include_directories("include/jdns/")
@@ -138,8 +138,8 @@ configure_file(
 # runtime different from the chosen CMAKE_INSTALL_PREFIX if under Windows the package was installed anywhere)
 # This relative path will be configured into the QJDNSConfig.cmake
 file(RELATIVE_PATH relInstallDir ${JDNS_CONFIG_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX})
-file(RELATIVE_PATH JDNS_INCLUDEDIR_REL ${CMAKE_INSTALL_PREFIX} "${KDE_INSTALL_INCLUDEDIR}/jdns")
-file(RELATIVE_PATH LIB_INSTALL_DIR_REL ${CMAKE_INSTALL_PREFIX} ${KDE_INSTALL_LIBDIR})
+file(RELATIVE_PATH JDNS_INCLUDEDIR_REL ${CMAKE_INSTALL_PREFIX} "${INCLUDE_INSTALL_DIR}/jdns")
+file(RELATIVE_PATH LIB_INSTALL_DIR_REL ${CMAKE_INSTALL_PREFIX} ${LIB_INSTALL_DIR})
 
 # cmake-modules
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/JDnsConfig.cmake.in

@@ -81,18 +81,19 @@ void XDomNodeList::append(const QDomNode &i)
 	list += i;
 }
 
+
 QDateTime stamp2TS(const QString &ts)
 {
 	if(ts.length() != 17)
 		return QDateTime();
 
-	int year  = ts.midRef(0,4).toInt();
-	int month = ts.midRef(4,2).toInt();
-	int day   = ts.midRef(6,2).toInt();
+	int year  = ts.mid(0,4).toInt();
+	int month = ts.mid(4,2).toInt();
+	int day   = ts.mid(6,2).toInt();
 
-	int hour  = ts.midRef(9,2).toInt();
-	int min   = ts.midRef(12,2).toInt();
-	int sec   = ts.midRef(15,2).toInt();
+	int hour  = ts.mid(9,2).toInt();
+	int min   = ts.mid(12,2).toInt();
+	int sec   = ts.mid(15,2).toInt();
 
 	QDate xd;
 	xd.setDate(year, month, day);
@@ -152,8 +153,9 @@ QString tagContent(const QDomElement &e)
 		return i.data();
 	}
 
-	return QLatin1String("");
+	return "";
 }
+
 
 /**
  * \brief obtain direct child elements of a certain kind.  unlike
@@ -177,6 +179,7 @@ XDomNodeList childElementsByTagNameNS(const QDomElement &e, const QString &nsURI
 	return out;
 }
 
+
 /**
  * \brief create a new IQ stanza
  * \param doc
@@ -187,13 +190,13 @@ XDomNodeList childElementsByTagNameNS(const QDomElement &e, const QString &nsURI
 */
 QDomElement createIQ(QDomDocument *doc, const QString &type, const QString &to, const QString &id)
 {
-	QDomElement iq = doc->createElement(QStringLiteral("iq"));
+	QDomElement iq = doc->createElement("iq");
 	if(!type.isEmpty())
-		iq.setAttribute(QStringLiteral("type"), type);
+		iq.setAttribute("type", type);
 	if(!to.isEmpty())
-		iq.setAttribute(QStringLiteral("to"), to);
+		iq.setAttribute("to", to);
 	if(!id.isEmpty())
-		iq.setAttribute(QStringLiteral("id"), id);
+		iq.setAttribute("id", id);
 
 	return iq;
 }
@@ -203,12 +206,12 @@ QDomElement createIQ(QDomDocument *doc, const QString &type, const QString &to, 
 */
 QDomElement queryTag(const QDomElement &e)
 {
-	return e.firstChildElement(QStringLiteral("query"));
+	return e.firstChildElement("query");
 }
 
 QString queryNS(const QDomElement &e)
 {
-	return e.firstChildElement(QStringLiteral("query")).attribute(QStringLiteral("xmlns"));
+	return e.firstChildElement("query").attribute("xmlns");
 }
 
 /**
@@ -234,7 +237,7 @@ QString queryNS(const QDomElement &e)
 
 void getErrorFromElement(const QDomElement &e, const QString &baseNS, int *code, QString *str)
 {
-	QDomElement tag = e.firstChildElement(QStringLiteral("error"));
+	QDomElement tag = e.firstChildElement("error");
 	if(tag.isNull())
 		return;
 
@@ -265,17 +268,17 @@ QDomElement addCorrectNS(const QDomElement &e)
 
 	// find closest xmlns
 	QDomNode n = e;
-	while(!n.isNull() && !n.toElement().hasAttribute(QStringLiteral("xmlns")) && n.toElement().namespaceURI() == QLatin1String("") )
+	while(!n.isNull() && !n.toElement().hasAttribute("xmlns") && n.toElement().namespaceURI() == "" )
 		n = n.parentNode();
 	QString ns;
-	if(n.isNull() || !n.toElement().hasAttribute(QStringLiteral("xmlns"))){
-		if (n.toElement().namespaceURI () == QLatin1String("")){
-			ns = QStringLiteral("jabber:client");
+	if(n.isNull() || !n.toElement().hasAttribute("xmlns")){
+		if (n.toElement().namespaceURI () == ""){
+			ns = "jabber:client";
 		} else {
 			ns = n.toElement().namespaceURI();
 		}
 	} else {
-		ns = n.toElement().attribute(QStringLiteral("xmlns"));
+		ns = n.toElement().attribute("xmlns");
 	}
 	// make a new node
 	QDomElement i = e.ownerDocument().createElementNS(ns, e.tagName());
@@ -284,7 +287,7 @@ QDomElement addCorrectNS(const QDomElement &e)
 	QDomNamedNodeMap al = e.attributes();
 	for(x = 0; x < al.count(); ++x) {
 		QDomAttr a = al.item(x).toAttr();
-		if(a.name() != QLatin1String("xmlns"))
+		if(a.name() != "xmlns")
 			i.setAttributeNodeNS(a.cloneNode().toAttr());
 	}
 
@@ -383,7 +386,7 @@ QDomElement stringListToXml(QDomDocument &doc, const QString &name, const QStrin
 {
 	QDomElement tag = doc.createElement(name);
 	for(QStringList::ConstIterator it = l.begin(); it != l.end(); ++it)
-		tag.appendChild(textTag(doc, QStringLiteral("item"), *it));
+		tag.appendChild(textTag(doc, "item", *it));
 
 	return tag;
 }
@@ -442,7 +445,7 @@ void readBoolEntry(const QDomElement &e, const QString &name, bool *v)
 	QDomElement tag = e.firstChildElement(name);
 	if(tag.isNull())
 		return;
-	*v = (tagContent(tag) == QLatin1String("true")) ? true: false;
+	*v = (tagContent(tag) == "true") ? true: false;
 }
 
 void readSizeEntry(const QDomElement &e, const QString &name, QSize *v)
@@ -496,7 +499,7 @@ void xmlToStringList(const QDomElement &e, const QString &name, QStringList *v)
 		QDomElement i = n.toElement();
 		if(i.isNull())
 			continue;
-		if(i.tagName() == QLatin1String("item"))
+		if(i.tagName() == "item")
 			list += tagContent(i);
 	}
 	*v = list;
@@ -511,7 +514,7 @@ void readBoolAttribute(QDomElement e, const QString &name, bool *v)
 {
 	if(e.hasAttribute(name)) {
 		QString s = e.attribute(name);
-		*v = (s == QLatin1String("true")) ? true: false;
+		*v = (s == "true") ? true: false;
 	}
 }
 

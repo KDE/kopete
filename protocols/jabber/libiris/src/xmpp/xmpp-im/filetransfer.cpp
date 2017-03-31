@@ -460,7 +460,7 @@ void FileTransferManager::pft_incoming(const FTRequest &req)
 
 	if(streamType.isEmpty()) {
 		d->pft->respondError(req.from, req.iq_id, Stanza::Error::NotAcceptable,
-							 QStringLiteral("No valid stream types"));
+							 "No valid stream types");
 		return;
 	}
 
@@ -507,7 +507,7 @@ QString FileTransferManager::link(FileTransfer *ft)
 	bool found;
 	do {
 		found = false;
-		id = QStringLiteral("ft_%1").arg(qrand() & 0xffff, 4, 16, QChar('0'));
+		id = QString("ft_%1").arg(qrand() & 0xffff, 4, 16, QChar('0'));
 		foreach (FileTransfer* ft, d->list) {
 			if (ft->d->peer.compare(ft->d->peer) && ft->d->id == id) {
 				found = true;
@@ -527,7 +527,7 @@ void FileTransferManager::con_accept(FileTransfer *ft)
 
 void FileTransferManager::con_reject(FileTransfer *ft)
 {
-	d->pft->respondError(ft->d->peer, ft->d->iq_id, Stanza::Error::Forbidden, QStringLiteral("Declined"));
+	d->pft->respondError(ft->d->peer, ft->d->iq_id, Stanza::Error::Forbidden, "Declined");
 }
 
 void FileTransferManager::unlink(FileTransfer *ft)
@@ -565,51 +565,51 @@ void JT_FT::request(const Jid &to, const QString &_id, const QString &fname,
 {
 	QDomElement iq;
 	d->to = to;
-	iq = createIQ(doc(), QStringLiteral("set"), to.full(), id());
-	QDomElement si = doc()->createElement(QStringLiteral("si"));
-	si.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://jabber.org/protocol/si"));
-	si.setAttribute(QStringLiteral("id"), _id);
-	si.setAttribute(QStringLiteral("profile"), QStringLiteral("http://jabber.org/protocol/si/profile/file-transfer"));
+	iq = createIQ(doc(), "set", to.full(), id());
+	QDomElement si = doc()->createElement("si");
+	si.setAttribute("xmlns", "http://jabber.org/protocol/si");
+	si.setAttribute("id", _id);
+	si.setAttribute("profile", "http://jabber.org/protocol/si/profile/file-transfer");
 
-	QDomElement file = doc()->createElement(QStringLiteral("file"));
-	file.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://jabber.org/protocol/si/profile/file-transfer"));
-	file.setAttribute(QStringLiteral("name"), fname);
-	file.setAttribute(QStringLiteral("size"), QString::number(size));
+	QDomElement file = doc()->createElement("file");
+	file.setAttribute("xmlns", "http://jabber.org/protocol/si/profile/file-transfer");
+	file.setAttribute("name", fname);
+	file.setAttribute("size", QString::number(size));
 	if(!desc.isEmpty()) {
-		QDomElement de = doc()->createElement(QStringLiteral("desc"));
+		QDomElement de = doc()->createElement("desc");
 		de.appendChild(doc()->createTextNode(desc));
 		file.appendChild(de);
 	}
-	QDomElement range = doc()->createElement(QStringLiteral("range"));
+	QDomElement range = doc()->createElement("range");
 	file.appendChild(range);
 
 	if (!thumb.data.isEmpty()) {
 		BoBData data = client()->bobManager()->append(thumb.data, thumb.mimeType);
-		QDomElement thel = doc()->createElement(QStringLiteral("thumbnail"));
-		thel.setAttribute(QStringLiteral("xmlns"), QStringLiteral("urn:xmpp:thumbs:0"));
-		thel.setAttribute(QStringLiteral("cid"), data.cid());
-		thel.setAttribute(QStringLiteral("mime-type"), thumb.mimeType);
+		QDomElement thel = doc()->createElement("thumbnail");
+		thel.setAttribute("xmlns", "urn:xmpp:thumbs:0");
+		thel.setAttribute("cid", data.cid());
+		thel.setAttribute("mime-type", thumb.mimeType);
 		if (thumb.width && thumb.height) {
-			thel.setAttribute(QStringLiteral("width"), thumb.width);
-			thel.setAttribute(QStringLiteral("height"), thumb.height);
+			thel.setAttribute("width", thumb.width);
+			thel.setAttribute("height", thumb.height);
 		}
 		file.appendChild(thel);
 	}
 
 	si.appendChild(file);
 
-	QDomElement feature = doc()->createElement(QStringLiteral("feature"));
-	feature.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://jabber.org/protocol/feature-neg"));
-	QDomElement x = doc()->createElement(QStringLiteral("x"));
-	x.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:x:data"));
-	x.setAttribute(QStringLiteral("type"), QStringLiteral("form"));
+	QDomElement feature = doc()->createElement("feature");
+	feature.setAttribute("xmlns", "http://jabber.org/protocol/feature-neg");
+	QDomElement x = doc()->createElement("x");
+	x.setAttribute("xmlns", "jabber:x:data");
+	x.setAttribute("type", "form");
 
-	QDomElement field = doc()->createElement(QStringLiteral("field"));
-	field.setAttribute(QStringLiteral("var"), QStringLiteral("stream-method"));
-	field.setAttribute(QStringLiteral("type"), QStringLiteral("list-single"));
+	QDomElement field = doc()->createElement("field");
+	field.setAttribute("var", "stream-method");
+	field.setAttribute("type", "list-single");
 	for(QStringList::ConstIterator it = streamTypes.begin(); it != streamTypes.end(); ++it) {
-		QDomElement option = doc()->createElement(QStringLiteral("option"));
-		QDomElement value = doc()->createElement(QStringLiteral("value"));
+		QDomElement option = doc()->createElement("option");
+		QDomElement value = doc()->createElement("value");
 		value.appendChild(doc()->createTextNode(*it));
 		option.appendChild(value);
 		field.appendChild(option);
@@ -651,36 +651,36 @@ bool JT_FT::take(const QDomElement &x)
 	if(!iqVerify(x, d->to, id()))
 		return false;
 
-	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+	if(x.attribute("type") == "result") {
 		QDomElement si = firstChildElement(x);
-		if(si.attribute(QStringLiteral("xmlns")) != QLatin1String("http://jabber.org/protocol/si") || si.tagName() != QLatin1String("si")) {
-			setError(900, QLatin1String(""));
+		if(si.attribute("xmlns") != "http://jabber.org/protocol/si" || si.tagName() != "si") {
+			setError(900, "");
 			return true;
 		}
 
-		QString id = si.attribute(QStringLiteral("id"));
+		QString id = si.attribute("id");
 
 		qlonglong range_offset = 0;
 		qlonglong range_length = 0;
 
-		QDomElement file = si.elementsByTagName(QStringLiteral("file")).item(0).toElement();
+		QDomElement file = si.elementsByTagName("file").item(0).toElement();
 		if(!file.isNull()) {
-			QDomElement range = file.elementsByTagName(QStringLiteral("range")).item(0).toElement();
+			QDomElement range = file.elementsByTagName("range").item(0).toElement();
 			if(!range.isNull()) {
 				qlonglong x;
 				bool ok;
-				if(range.hasAttribute(QStringLiteral("offset"))) {
-					x = range.attribute(QStringLiteral("offset")).toLongLong(&ok);
+				if(range.hasAttribute("offset")) {
+					x = range.attribute("offset").toLongLong(&ok);
 					if(!ok || x < 0) {
-						setError(900, QLatin1String(""));
+						setError(900, "");
 						return true;
 					}
 					range_offset = x;
 				}
-				if(range.hasAttribute(QStringLiteral("length"))) {
-					x = range.attribute(QStringLiteral("length")).toLongLong(&ok);
+				if(range.hasAttribute("length")) {
+					x = range.attribute("length").toLongLong(&ok);
 					if(!ok || x < 0) {
-						setError(900, QLatin1String(""));
+						setError(900, "");
 						return true;
 					}
 					range_length = x;
@@ -689,18 +689,18 @@ bool JT_FT::take(const QDomElement &x)
 		}
 
 		if(range_offset > d->size || (range_length > (d->size - range_offset))) {
-			setError(900, QLatin1String(""));
+			setError(900, "");
 			return true;
 		}
 
 		QString streamtype;
-		QDomElement feature = si.elementsByTagName(QStringLiteral("feature")).item(0).toElement();
-		if(!feature.isNull() && feature.attribute(QStringLiteral("xmlns")) == QLatin1String("http://jabber.org/protocol/feature-neg")) {
-			QDomElement x = feature.elementsByTagName(QStringLiteral("x")).item(0).toElement();
-			if(!x.isNull() && x.attribute(QStringLiteral("type")) == QLatin1String("submit")) {
-				QDomElement field = x.elementsByTagName(QStringLiteral("field")).item(0).toElement();
-				if(!field.isNull() && field.attribute(QStringLiteral("var")) == QLatin1String("stream-method")) {
-					QDomElement value = field.elementsByTagName(QStringLiteral("value")).item(0).toElement();
+		QDomElement feature = si.elementsByTagName("feature").item(0).toElement();
+		if(!feature.isNull() && feature.attribute("xmlns") == "http://jabber.org/protocol/feature-neg") {
+			QDomElement x = feature.elementsByTagName("x").item(0).toElement();
+			if(!x.isNull() && x.attribute("type") == "submit") {
+				QDomElement field = x.elementsByTagName("field").item(0).toElement();
+				if(!field.isNull() && field.attribute("var") == "stream-method") {
+					QDomElement value = field.elementsByTagName("value").item(0).toElement();
 					if(!value.isNull())
 						streamtype = value.text();
 				}
@@ -738,31 +738,31 @@ JT_PushFT::~JT_PushFT()
 
 void JT_PushFT::respondSuccess(const Jid &to, const QString &id, qlonglong rangeOffset, qlonglong rangeLength, const QString &streamType)
 {
-	QDomElement iq = createIQ(doc(), QStringLiteral("result"), to.full(), id);
-	QDomElement si = doc()->createElement(QStringLiteral("si"));
-	si.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://jabber.org/protocol/si"));
+	QDomElement iq = createIQ(doc(), "result", to.full(), id);
+	QDomElement si = doc()->createElement("si");
+	si.setAttribute("xmlns", "http://jabber.org/protocol/si");
 
 	if(rangeOffset != 0 || rangeLength != 0) {
-		QDomElement file = doc()->createElement(QStringLiteral("file"));
-		file.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://jabber.org/protocol/si/profile/file-transfer"));
-		QDomElement range = doc()->createElement(QStringLiteral("range"));
+		QDomElement file = doc()->createElement("file");
+		file.setAttribute("xmlns", "http://jabber.org/protocol/si/profile/file-transfer");
+		QDomElement range = doc()->createElement("range");
 		if(rangeOffset > 0)
-			range.setAttribute(QStringLiteral("offset"), QString::number(rangeOffset));
+			range.setAttribute("offset", QString::number(rangeOffset));
 		if(rangeLength > 0)
-			range.setAttribute(QStringLiteral("length"), QString::number(rangeLength));
+			range.setAttribute("length", QString::number(rangeLength));
 		file.appendChild(range);
 		si.appendChild(file);
 	}
 
-	QDomElement feature = doc()->createElement(QStringLiteral("feature"));
-	feature.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://jabber.org/protocol/feature-neg"));
-	QDomElement x = doc()->createElement(QStringLiteral("x"));
-	x.setAttribute(QStringLiteral("xmlns"), QStringLiteral("jabber:x:data"));
-	x.setAttribute(QStringLiteral("type"), QStringLiteral("submit"));
+	QDomElement feature = doc()->createElement("feature");
+	feature.setAttribute("xmlns", "http://jabber.org/protocol/feature-neg");
+	QDomElement x = doc()->createElement("x");
+	x.setAttribute("xmlns", "jabber:x:data");
+	x.setAttribute("type", "submit");
 
-	QDomElement field = doc()->createElement(QStringLiteral("field"));
-	field.setAttribute(QStringLiteral("var"), QStringLiteral("stream-method"));
-	QDomElement value = doc()->createElement(QStringLiteral("value"));
+	QDomElement field = doc()->createElement("field");
+	field.setAttribute("var", "stream-method");
+	QDomElement value = doc()->createElement("value");
 	value.appendChild(doc()->createTextNode(streamType));
 	field.appendChild(value);
 
@@ -777,7 +777,7 @@ void JT_PushFT::respondSuccess(const Jid &to, const QString &id, qlonglong range
 void JT_PushFT::respondError(const Jid &to, const QString &id,
 							 Stanza::Error::ErrorCond cond, const QString &str)
 {
-	QDomElement iq = createIQ(doc(), QStringLiteral("error"), to.full(), id);
+	QDomElement iq = createIQ(doc(), "error", to.full(), id);
 	Stanza::Error error(Stanza::Error::Cancel, cond, str);
 	iq.appendChild(error.toXml(*client()->doc(), client()->stream().baseNS()));
 	send(iq);
@@ -786,27 +786,27 @@ void JT_PushFT::respondError(const Jid &to, const QString &id,
 bool JT_PushFT::take(const QDomElement &e)
 {
 	// must be an iq-set tag
-	if(e.tagName() != QLatin1String("iq"))
+	if(e.tagName() != "iq")
 		return false;
-	if(e.attribute(QStringLiteral("type")) != QLatin1String("set"))
+	if(e.attribute("type") != "set")
 		return false;
 
 	QDomElement si = firstChildElement(e);
-	if(si.attribute(QStringLiteral("xmlns")) != QLatin1String("http://jabber.org/protocol/si") || si.tagName() != QLatin1String("si"))
+	if(si.attribute("xmlns") != "http://jabber.org/protocol/si" || si.tagName() != "si")
 		return false;
-	if(si.attribute(QStringLiteral("profile")) != QLatin1String("http://jabber.org/protocol/si/profile/file-transfer"))
+	if(si.attribute("profile") != "http://jabber.org/protocol/si/profile/file-transfer")
 		return false;
 
-	Jid from(e.attribute(QStringLiteral("from")));
-	QString id = si.attribute(QStringLiteral("id"));
+	Jid from(e.attribute("from"));
+	QString id = si.attribute("id");
 
-	QDomElement file = si.elementsByTagName(QStringLiteral("file")).item(0).toElement();
+	QDomElement file = si.elementsByTagName("file").item(0).toElement();
 	if(file.isNull())
 		return true;
 
-	QString fname = file.attribute(QStringLiteral("name"));
+	QString fname = file.attribute("name");
 	if(fname.isEmpty()) {
-		respondError(from, id, Stanza::Error::BadRequest, QStringLiteral("Bad file name"));
+		respondError(from, id, Stanza::Error::BadRequest, "Bad file name");
 		return true;
 	}
 
@@ -817,33 +817,33 @@ bool JT_PushFT::take(const QDomElement &e)
 	}
 
 	bool ok;
-	qlonglong size = file.attribute(QStringLiteral("size")).toLongLong(&ok);
+	qlonglong size = file.attribute("size").toLongLong(&ok);
 	if(!ok || size < 0) {
-		respondError(from, id, Stanza::Error::BadRequest, QStringLiteral("Bad file size"));
+		respondError(from, id, Stanza::Error::BadRequest, "Bad file size");
 		return true;
 	}
 
 	QString desc;
-	QDomElement de = file.elementsByTagName(QStringLiteral("desc")).item(0).toElement();
+	QDomElement de = file.elementsByTagName("desc").item(0).toElement();
 	if(!de.isNull())
 		desc = de.text();
 
 	bool rangeSupported = false;
-	QDomElement range = file.elementsByTagName(QStringLiteral("range")).item(0).toElement();
+	QDomElement range = file.elementsByTagName("range").item(0).toElement();
 	if(!range.isNull())
 		rangeSupported = true;
 
 	QStringList streamTypes;
-	QDomElement feature = si.elementsByTagName(QStringLiteral("feature")).item(0).toElement();
-	if(!feature.isNull() && feature.attribute(QStringLiteral("xmlns")) == QLatin1String("http://jabber.org/protocol/feature-neg")) {
-		QDomElement x = feature.elementsByTagName(QStringLiteral("x")).item(0).toElement();
+	QDomElement feature = si.elementsByTagName("feature").item(0).toElement();
+	if(!feature.isNull() && feature.attribute("xmlns") == "http://jabber.org/protocol/feature-neg") {
+		QDomElement x = feature.elementsByTagName("x").item(0).toElement();
 		if(!x.isNull() /*&& x.attribute("type") == "form"*/) {
-			QDomElement field = x.elementsByTagName(QStringLiteral("field")).item(0).toElement();
-			if(!field.isNull() && field.attribute(QStringLiteral("var")) == QLatin1String("stream-method") && field.attribute(QStringLiteral("type")) == QLatin1String("list-single")) {
-				QDomNodeList nl = field.elementsByTagName(QStringLiteral("option"));
+			QDomElement field = x.elementsByTagName("field").item(0).toElement();
+			if(!field.isNull() && field.attribute("var") == "stream-method" && field.attribute("type") == "list-single") {
+				QDomNodeList nl = field.elementsByTagName("option");
 				for(int n = 0; n < nl.count(); ++n) {
 					QDomElement e = nl.item(n).toElement();
-					QDomElement value = e.elementsByTagName(QStringLiteral("value")).item(0).toElement();
+					QDomElement value = e.elementsByTagName("value").item(0).toElement();
 					if(!value.isNull())
 						streamTypes += value.text();
 				}
@@ -852,17 +852,17 @@ bool JT_PushFT::take(const QDomElement &e)
 	}
 
 	FTThumbnail thumb;
-	QDomElement thel = file.elementsByTagName(QStringLiteral("thumbnail")).item(0).toElement();
-	if(!thel.isNull() && thel.attribute(QStringLiteral("xmlns")) == QLatin1String("urn:xmpp:thumbs:0")) {
-		thumb.data = thel.attribute(QStringLiteral("cid")).toUtf8();
-		thumb.mimeType = thel.attribute(QStringLiteral("mime-type"));
-		thumb.width = thel.attribute(QStringLiteral("width")).toUInt();
-		thumb.height = thel.attribute(QStringLiteral("height")).toUInt();
+	QDomElement thel = file.elementsByTagName("thumbnail").item(0).toElement();
+	if(!thel.isNull() && thel.attribute("xmlns") == QLatin1String("urn:xmpp:thumbs:0")) {
+		thumb.data = thel.attribute("cid").toUtf8();
+		thumb.mimeType = thel.attribute("mime-type");
+		thumb.width = thel.attribute("width").toUInt();
+		thumb.height = thel.attribute("height").toUInt();
 	}
 
 	FTRequest r;
 	r.from = from;
-	r.iq_id = e.attribute(QStringLiteral("id"));
+	r.iq_id = e.attribute("id");
 	r.id = id;
 	r.fname = fname;
 	r.size = size;

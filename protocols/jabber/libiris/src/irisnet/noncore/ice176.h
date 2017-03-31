@@ -107,7 +107,7 @@ public:
 		}
 	};
 
-	Ice176(QObject *parent = nullptr);
+	Ice176(QObject *parent = 0);
 	~Ice176();
 
 	void reset();
@@ -164,7 +164,7 @@ public:
 	// FIXME: this should probably be in netinterface.h or such
 	static bool isIPv6LinkLocalAddress(const QHostAddress &addr);
 
-Q_SIGNALS:
+signals:
 	// indicates that the ice engine is started and is ready to receive
 	//   peer creds and remote candidates
 	void started();

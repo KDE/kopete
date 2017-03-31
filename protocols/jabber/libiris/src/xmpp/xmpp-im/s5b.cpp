@@ -51,7 +51,7 @@ static QString makeKey(const QString &sid, const Jid &requester, const Jid &targ
 		   qPrintable(QCA::Hash("sha1").hashToString(QString(sid + requester.full() + target.full()).toUtf8())));
 #endif
 	QString str = sid + requester.full() + target.full();
-	return QCA::Hash(QStringLiteral("sha1")).hashToString(str.toUtf8());
+	return QCA::Hash("sha1").hashToString(str.toUtf8());
 }
 
 static bool haveHost(const StreamHostList &list, const Jid &j)
@@ -107,7 +107,7 @@ public:
 	void setIncomingClient(SocksClient *sc);
 	void incomingActivate(const Jid &streamHost);
 
-Q_SIGNALS:
+signals:
 	void accepted();
 	void tryingHosts(const StreamHostList &list);
 	void proxyConnect();
@@ -115,7 +115,7 @@ Q_SIGNALS:
 	void connected();
 	void error(int);
 
-private Q_SLOTS:
+private slots:
 	void jt_finished();
 	void conn_result(bool b);
 	void proxy_result(bool b);
@@ -694,7 +694,7 @@ void S5BManager::ps_incoming(const S5BRequest &req)
 		}
 	}
 	if(!ok) {
-		d->ps->respondError(req.from, req.id, Stanza::Error::NotAcceptable, QStringLiteral("SID in use"));
+		d->ps->respondError(req.from, req.id, Stanza::Error::NotAcceptable, "SID in use");
 		return;
 	}
 
@@ -833,7 +833,7 @@ void S5BManager::srv_incomingReady(SocksClient *sc, const QString &key)
 		return;
 	}
 	if(e->c->d->mode == S5BConnection::Datagram)
-		sc->grantUDPAssociate(QLatin1String(""), 0);
+		sc->grantUDPAssociate("", 0);
 	else
 		sc->grantConnect();
 	e->relatedServer = (S5BServer *)sender();
@@ -910,7 +910,7 @@ void S5BManager::con_accept(S5BConnection *c)
 void S5BManager::con_reject(S5BConnection *c)
 {
 	d->ps->respondError(c->d->peer, c->d->req.id, Stanza::Error::NotAcceptable,
-						QStringLiteral("Not acceptable"));
+						"Not acceptable");
 }
 
 void S5BManager::con_unlink(S5BConnection *c)
@@ -922,7 +922,7 @@ void S5BManager::con_unlink(S5BConnection *c)
 	// active incoming request?  cancel it
 	if(e->i && e->i->conn)
 		d->ps->respondError(e->i->peer, e->i->out_id,
-							Stanza::Error::NotAcceptable, QStringLiteral("Not acceptable"));
+							Stanza::Error::NotAcceptable, "Not acceptable");
 	delete e->i;
 	d->activeList.removeAll(e);
 	delete e;
@@ -1202,7 +1202,7 @@ void S5BManager::Item::handleFast(const StreamHostList &hosts, const QString &iq
 
 	// if we already have a stream, then bounce this request
 	if(client) {
-		m->doError(peer, iq_id, Stanza::Error::NotAcceptable, QStringLiteral("Not acceptable"));
+		m->doError(peer, iq_id, Stanza::Error::NotAcceptable, "Not acceptable");
 	}
 	else {
 		in_hosts = hosts;
@@ -1565,7 +1565,7 @@ void S5BManager::Item::doConnectError()
 {
 	localFailed = true;
 	m->doError(peer, in_id, Stanza::Error::RemoteServerNotFound,
-			   QStringLiteral("Could not connect to given hosts"));
+			   "Could not connect to given hosts");
 	checkFailure();
 }
 
@@ -1783,10 +1783,10 @@ public:
 		success();
 	}
 
-Q_SIGNALS:
+signals:
 	void result(bool);
 
-private Q_SLOTS:
+private slots:
 	void sc_connected()
 	{
 		// if udp, need to send init packet before we are good
@@ -2001,10 +2001,10 @@ public:
 		expire.start(30000);
 	}
 
-Q_SIGNALS:
+signals:
 	void result(bool);
 
-private Q_SLOTS:
+private slots:
 	void doError()
 	{
 		expire.stop();
@@ -2212,30 +2212,30 @@ void JT_S5B::request(const Jid &to, const QString &sid, const QString &dstaddr,
 
 	QDomElement iq;
 	d->to = to;
-	iq = createIQ(doc(), QStringLiteral("set"), to.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), S5B_NS);
-	query.setAttribute(QStringLiteral("sid"), sid);
+	iq = createIQ(doc(), "set", to.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", S5B_NS);
+	query.setAttribute("sid", sid);
 	if (!client()->groupChatNick(to.domain(), to.node()).isEmpty()) {
-		query.setAttribute(QStringLiteral("dstaddr"), dstaddr); // special case for muc as in xep-0065rc3
+		query.setAttribute("dstaddr", dstaddr); // special case for muc as in xep-0065rc3
 	}
-	query.setAttribute(QStringLiteral("mode"), udp ? "udp" : "tcp" );
+	query.setAttribute("mode", udp ? "udp" : "tcp" );
 	iq.appendChild(query);
 	for(StreamHostList::ConstIterator it = hosts.begin(); it != hosts.end(); ++it) {
-		QDomElement shost = doc()->createElement(QStringLiteral("streamhost"));
-		shost.setAttribute(QStringLiteral("jid"), (*it).jid().full());
-		shost.setAttribute(QStringLiteral("host"), (*it).host());
-		shost.setAttribute(QStringLiteral("port"), QString::number((*it).port()));
+		QDomElement shost = doc()->createElement("streamhost");
+		shost.setAttribute("jid", (*it).jid().full());
+		shost.setAttribute("host", (*it).host());
+		shost.setAttribute("port", QString::number((*it).port()));
 		if((*it).isProxy()) {
-			QDomElement p = doc()->createElement(QStringLiteral("proxy"));
-			p.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://affinix.com/jabber/stream"));
+			QDomElement p = doc()->createElement("proxy");
+			p.setAttribute("xmlns", "http://affinix.com/jabber/stream");
 			shost.appendChild(p);
 		}
 		query.appendChild(shost);
 	}
 	if(fast) {
-		QDomElement e = doc()->createElement(QStringLiteral("fast"));
-		e.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://affinix.com/jabber/stream"));
+		QDomElement e = doc()->createElement("fast");
+		e.setAttribute("xmlns", "http://affinix.com/jabber/stream");
 		query.appendChild(e);
 	}
 	d->iq = iq;
@@ -2247,9 +2247,9 @@ void JT_S5B::requestProxyInfo(const Jid &to)
 
 	QDomElement iq;
 	d->to = to;
-	iq = createIQ(doc(), QStringLiteral("get"), to.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), S5B_NS);
+	iq = createIQ(doc(), "get", to.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", S5B_NS);
 	iq.appendChild(query);
 	d->iq = iq;
 }
@@ -2260,12 +2260,12 @@ void JT_S5B::requestActivation(const Jid &to, const QString &sid, const Jid &tar
 
 	QDomElement iq;
 	d->to = to;
-	iq = createIQ(doc(), QStringLiteral("set"), to.full(), id());
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), S5B_NS);
-	query.setAttribute(QStringLiteral("sid"), sid);
+	iq = createIQ(doc(), "set", to.full(), id());
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", S5B_NS);
+	query.setAttribute("sid", sid);
 	iq.appendChild(query);
-	QDomElement act = doc()->createElement(QStringLiteral("activate"));
+	QDomElement act = doc()->createElement("activate");
 	act.appendChild(doc()->createTextNode(target.full()));
 	query.appendChild(act);
 	d->iq = iq;
@@ -2295,27 +2295,27 @@ bool JT_S5B::take(const QDomElement &x)
 
 	d->t.stop();
 
-	if(x.attribute(QStringLiteral("type")) == QLatin1String("result")) {
+	if(x.attribute("type") == "result") {
 		QDomElement q = queryTag(x);
 		if(d->mode == 0) {
 			d->streamHost = "";
 			if(!q.isNull()) {
-				QDomElement shost = q.elementsByTagName(QStringLiteral("streamhost-used")).item(0).toElement();
+				QDomElement shost = q.elementsByTagName("streamhost-used").item(0).toElement();
 				if(!shost.isNull())
-					d->streamHost = shost.attribute(QStringLiteral("jid"));
+					d->streamHost = shost.attribute("jid");
 			}
 
 			setSuccess();
 		}
 		else if(d->mode == 1) {
 			if(!q.isNull()) {
-				QDomElement shost = q.elementsByTagName(QStringLiteral("streamhost")).item(0).toElement();
+				QDomElement shost = q.elementsByTagName("streamhost").item(0).toElement();
 				if(!shost.isNull()) {
-					Jid j = shost.attribute(QStringLiteral("jid"));
+					Jid j = shost.attribute("jid");
 					if(j.isValid()) {
-						QString host = shost.attribute(QStringLiteral("host"));
+						QString host = shost.attribute("host");
 						if(!host.isEmpty()) {
-							int port = shost.attribute(QStringLiteral("port")).toInt();
+							int port = shost.attribute("port").toInt();
 							StreamHost h;
 							h.setJid(j);
 							h.setHost(host);
@@ -2343,7 +2343,7 @@ bool JT_S5B::take(const QDomElement &x)
 void JT_S5B::t_timeout()
 {
 	d->mode = -1;
-	setError(500, QStringLiteral("Timed out"));
+	setError(500, "Timed out");
 }
 
 Jid JT_S5B::streamHostUsed() const
@@ -2376,47 +2376,47 @@ int JT_PushS5B::priority() const
 bool JT_PushS5B::take(const QDomElement &e)
 {
 	// look for udpsuccess
-	if(e.tagName() == QLatin1String("message")) {
-		QDomElement x = e.elementsByTagName(QStringLiteral("udpsuccess")).item(0).toElement();
-		if(!x.isNull() && x.attribute(QStringLiteral("xmlns")) == S5B_NS) {
-			incomingUDPSuccess(Jid(x.attribute(QStringLiteral("from"))), x.attribute(QStringLiteral("dstaddr")));
+	if(e.tagName() == "message") {
+		QDomElement x = e.elementsByTagName("udpsuccess").item(0).toElement();
+		if(!x.isNull() && x.attribute("xmlns") == S5B_NS) {
+			incomingUDPSuccess(Jid(x.attribute("from")), x.attribute("dstaddr"));
 			return true;
 		}
-		x = e.elementsByTagName(QStringLiteral("activate")).item(0).toElement();
-		if(!x.isNull() && x.attribute(QStringLiteral("xmlns")) == QLatin1String("http://affinix.com/jabber/stream")) {
-			incomingActivate(Jid(x.attribute(QStringLiteral("from"))), x.attribute(QStringLiteral("sid")), Jid(x.attribute(QStringLiteral("jid"))));
+		x = e.elementsByTagName("activate").item(0).toElement();
+		if(!x.isNull() && x.attribute("xmlns") == "http://affinix.com/jabber/stream") {
+			incomingActivate(Jid(x.attribute("from")), x.attribute("sid"), Jid(x.attribute("jid")));
 			return true;
 		}
 		return false;
 	}
 
 	// must be an iq-set tag
-	if(e.tagName() != QLatin1String("iq"))
+	if(e.tagName() != "iq")
 		return false;
-	if(e.attribute(QStringLiteral("type")) != QLatin1String("set"))
+	if(e.attribute("type") != "set")
 		return false;
 	if(queryNS(e) != S5B_NS)
 		return false;
 
-	Jid from(e.attribute(QStringLiteral("from")));
+	Jid from(e.attribute("from"));
 	QDomElement q = queryTag(e);
-	QString sid = q.attribute(QStringLiteral("sid"));
+	QString sid = q.attribute("sid");
 
 	StreamHostList hosts;
-	QDomNodeList nl = q.elementsByTagName(QStringLiteral("streamhost"));
+	QDomNodeList nl = q.elementsByTagName("streamhost");
 	for(int n = 0; n < nl.count(); ++n) {
 		QDomElement shost = nl.item(n).toElement();
 		if(hosts.count() < MAXSTREAMHOSTS) {
-			Jid j = shost.attribute(QStringLiteral("jid"));
+			Jid j = shost.attribute("jid");
 			if(!j.isValid())
 				continue;
-			QString host = shost.attribute(QStringLiteral("host"));
+			QString host = shost.attribute("host");
 			if(host.isEmpty())
 				continue;
-			int port = shost.attribute(QStringLiteral("port")).toInt();
-			QDomElement p = shost.elementsByTagName(QStringLiteral("proxy")).item(0).toElement();
+			int port = shost.attribute("port").toInt();
+			QDomElement p = shost.elementsByTagName("proxy").item(0).toElement();
 			bool isProxy = false;
-			if(!p.isNull() && p.attribute(QStringLiteral("xmlns")) == QLatin1String("http://affinix.com/jabber/stream"))
+			if(!p.isNull() && p.attribute("xmlns") == "http://affinix.com/jabber/stream")
 				isProxy = true;
 
 			StreamHost h;
@@ -2430,18 +2430,18 @@ bool JT_PushS5B::take(const QDomElement &e)
 
 	bool fast = false;
 	QDomElement t;
-	t = q.elementsByTagName(QStringLiteral("fast")).item(0).toElement();
-	if(!t.isNull() && t.attribute(QStringLiteral("xmlns")) == QLatin1String("http://affinix.com/jabber/stream"))
+	t = q.elementsByTagName("fast").item(0).toElement();
+	if(!t.isNull() && t.attribute("xmlns") == "http://affinix.com/jabber/stream")
 		fast = true;
 
 	S5BRequest r;
 	r.from = from;
-	r.id = e.attribute(QStringLiteral("id"));
+	r.id = e.attribute("id");
 	r.sid = sid;
-	r.dstaddr = q.attribute(QStringLiteral("dstaddr")); // special case for muc as in xep-0065rc3
+	r.dstaddr = q.attribute("dstaddr"); // special case for muc as in xep-0065rc3
 	r.hosts = hosts;
 	r.fast = fast;
-	r.udp = q.attribute(QStringLiteral("mode")) == QLatin1String("udp") ? true: false;
+	r.udp = q.attribute("mode") == "udp" ? true: false;
 
 	emit incoming(r);
 	return true;
@@ -2449,12 +2449,12 @@ bool JT_PushS5B::take(const QDomElement &e)
 
 void JT_PushS5B::respondSuccess(const Jid &to, const QString &id, const Jid &streamHost)
 {
-	QDomElement iq = createIQ(doc(), QStringLiteral("result"), to.full(), id);
-	QDomElement query = doc()->createElement(QStringLiteral("query"));
-	query.setAttribute(QStringLiteral("xmlns"), S5B_NS);
+	QDomElement iq = createIQ(doc(), "result", to.full(), id);
+	QDomElement query = doc()->createElement("query");
+	query.setAttribute("xmlns", S5B_NS);
 	iq.appendChild(query);
-	QDomElement shost = doc()->createElement(QStringLiteral("streamhost-used"));
-	shost.setAttribute(QStringLiteral("jid"), streamHost.full());
+	QDomElement shost = doc()->createElement("streamhost-used");
+	shost.setAttribute("jid", streamHost.full());
 	query.appendChild(shost);
 	send(iq);
 }
@@ -2462,7 +2462,7 @@ void JT_PushS5B::respondSuccess(const Jid &to, const QString &id, const Jid &str
 void JT_PushS5B::respondError(const Jid &to, const QString &id,
 							  Stanza::Error::ErrorCond cond, const QString &str)
 {
-	QDomElement iq = createIQ(doc(), QStringLiteral("error"), to.full(), id);
+	QDomElement iq = createIQ(doc(), "error", to.full(), id);
 	Stanza::Error error(Stanza::Error::Cancel, cond, str);
 	iq.appendChild(error.toXml(*client()->doc(), client()->stream().baseNS()));
 	send(iq);
@@ -2470,23 +2470,23 @@ void JT_PushS5B::respondError(const Jid &to, const QString &id,
 
 void JT_PushS5B::sendUDPSuccess(const Jid &to, const QString &dstaddr)
 {
-	QDomElement m = doc()->createElement(QStringLiteral("message"));
-	m.setAttribute(QStringLiteral("to"), to.full());
-	QDomElement u = doc()->createElement(QStringLiteral("udpsuccess"));
-	u.setAttribute(QStringLiteral("xmlns"), S5B_NS);
-	u.setAttribute(QStringLiteral("dstaddr"), dstaddr);
+	QDomElement m = doc()->createElement("message");
+	m.setAttribute("to", to.full());
+	QDomElement u = doc()->createElement("udpsuccess");
+	u.setAttribute("xmlns", S5B_NS);
+	u.setAttribute("dstaddr", dstaddr);
 	m.appendChild(u);
 	send(m);
 }
 
 void JT_PushS5B::sendActivate(const Jid &to, const QString &sid, const Jid &streamHost)
 {
-	QDomElement m = doc()->createElement(QStringLiteral("message"));
-	m.setAttribute(QStringLiteral("to"), to.full());
-	QDomElement act = doc()->createElement(QStringLiteral("activate"));
-	act.setAttribute(QStringLiteral("xmlns"), QStringLiteral("http://affinix.com/jabber/stream"));
-	act.setAttribute(QStringLiteral("sid"), sid);
-	act.setAttribute(QStringLiteral("jid"), streamHost.full());
+	QDomElement m = doc()->createElement("message");
+	m.setAttribute("to", to.full());
+	QDomElement act = doc()->createElement("activate");
+	act.setAttribute("xmlns", "http://affinix.com/jabber/stream");
+	act.setAttribute("sid", sid);
+	act.setAttribute("jid", streamHost.full());
 	m.appendChild(act);
 	send(m);
 }

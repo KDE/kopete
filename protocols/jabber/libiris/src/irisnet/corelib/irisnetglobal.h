@@ -26,12 +26,14 @@
 #include "irisnetexport.h"
 
 namespace XMPP {
+
 // set the directories for plugins.  call before doing anything else.
 IRISNET_EXPORT void irisNetSetPluginPaths(const QStringList &paths);
 
 // free any shared data and plugins.
 // note: this is automatically called when qapp shuts down.
 IRISNET_EXPORT void irisNetCleanup();
+
 }
 
 #endif

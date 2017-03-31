@@ -44,24 +44,24 @@ QString image2type(const QByteArray &ba)
 	QString format = QImageReader::imageFormat( &buf );
 
 	// TODO: add more formats
-	if ( format.toUpper() == QLatin1String("PNG") || format == QLatin1String("PsiPNG") )
-		return QStringLiteral("image/png");
-	if ( format.toUpper() == QLatin1String("MNG") )
-		return QStringLiteral("video/x-mng");
-	if ( format.toUpper() == QLatin1String("GIF") )
-		return QStringLiteral("image/gif");
-	if ( format.toUpper() == QLatin1String("BMP") )
-		return QStringLiteral("image/bmp");
-	if ( format.toUpper() == QLatin1String("XPM") )
-		return QStringLiteral("image/x-xpm");
-	if ( format.toUpper() == QLatin1String("SVG") )
-		return QStringLiteral("image/svg+xml");
-	if ( format.toUpper() == QLatin1String("JPEG") )
-		return QStringLiteral("image/jpeg");
+	if ( format.toUpper() == "PNG" || format == "PsiPNG" )
+		return "image/png";
+	if ( format.toUpper() == "MNG" )
+		return "video/x-mng";
+	if ( format.toUpper() == "GIF" )
+		return "image/gif";
+	if ( format.toUpper() == "BMP" )
+		return "image/bmp";
+	if ( format.toUpper() == "XPM" )
+		return "image/x-xpm";
+	if ( format.toUpper() == "SVG" )
+		return "image/svg+xml";
+	if ( format.toUpper() == "JPEG" )
+		return "image/jpeg";
 
-	qWarning() << QStringLiteral("WARNING! VCard::image2type: unknown format = '%1'").arg(format.isNull() ? QStringLiteral("UNKNOWN") : format);
+	qWarning() << QString("WARNING! VCard::image2type: unknown format = '%1'").arg(format.isNull() ? QString("UNKNOWN") : format);
 
-	return QStringLiteral("image/unknown");
+	return "image/unknown";
 }
 
 namespace XMPP {
@@ -204,86 +204,86 @@ VCard::~VCard()
 
 QDomElement VCard::toXml(QDomDocument *doc) const
 {
-	QDomElement v = doc->createElement(QStringLiteral("vCard"));
-	v.setAttribute(QStringLiteral("xmlns"), QStringLiteral("vcard-temp"));
+	QDomElement v = doc->createElement("vCard");
+	v.setAttribute("xmlns", "vcard-temp");
 
 	if ( !d->version.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("VERSION"),	d->version) );
+		v.appendChild( textTag(doc, "VERSION",	d->version) );
 	if ( !d->fullName.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("FN"),	d->fullName) );
+		v.appendChild( textTag(doc, "FN",	d->fullName) );
 
 	if ( !d->familyName.isEmpty() || !d->givenName.isEmpty() || !d->middleName.isEmpty() ||
 	     !d->prefixName.isEmpty() || !d->suffixName.isEmpty() ) {
-		QDomElement w = doc->createElement(QStringLiteral("N"));
+		QDomElement w = doc->createElement("N");
 
 		if ( !d->familyName.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("FAMILY"),	d->familyName) );
+			w.appendChild( textTag(doc, "FAMILY",	d->familyName) );
 		if ( !d->givenName.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("GIVEN"),	d->givenName) );
+			w.appendChild( textTag(doc, "GIVEN",	d->givenName) );
 		if ( !d->middleName.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("MIDDLE"),	d->middleName) );
+			w.appendChild( textTag(doc, "MIDDLE",	d->middleName) );
 		if ( !d->prefixName.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("PREFIX"),	d->prefixName) );
+			w.appendChild( textTag(doc, "PREFIX",	d->prefixName) );
 		if ( !d->suffixName.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("SUFFIX"),	d->suffixName) );
+			w.appendChild( textTag(doc, "SUFFIX",	d->suffixName) );
 
 		v.appendChild(w);
 	}
 
 	if ( !d->nickName.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("NICKNAME"),	d->nickName) );
+		v.appendChild( textTag(doc, "NICKNAME",	d->nickName) );
 
 	if ( !d->photo.isEmpty() || !d->photoURI.isEmpty() ) {
-		QDomElement w = doc->createElement(QStringLiteral("PHOTO"));
+		QDomElement w = doc->createElement("PHOTO");
 
 		if ( !d->photo.isEmpty() ) {
-			w.appendChild( textTag(doc, QStringLiteral("TYPE"),	image2type(d->photo)) );
-			w.appendChild( textTag(doc, QStringLiteral("BINVAL"),	foldString( QCA::Base64().arrayToString(d->photo)) ) );
+			w.appendChild( textTag(doc, "TYPE",	image2type(d->photo)) );
+			w.appendChild( textTag(doc, "BINVAL",	foldString( QCA::Base64().arrayToString(d->photo)) ) );
 		}
 		else if ( !d->photoURI.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("EXTVAL"),	d->photoURI) );
+			w.appendChild( textTag(doc, "EXTVAL",	d->photoURI) );
 
 		v.appendChild(w);
 	}
 
 	if ( !d->bday.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("BDAY"),	d->bday) );
+		v.appendChild( textTag(doc, "BDAY",	d->bday) );
 
 	if ( !d->addressList.isEmpty() ) {
 		AddressList::ConstIterator it = d->addressList.constBegin();
 		for ( ; it != d->addressList.end(); ++it ) {
-			QDomElement w = doc->createElement(QStringLiteral("ADR"));
+			QDomElement w = doc->createElement("ADR");
 			const Address &a = *it;
 
 			if ( a.home )
-				w.appendChild( emptyTag(doc, QStringLiteral("HOME")) );
+				w.appendChild( emptyTag(doc, "HOME") );
 			if ( a.work )
-				w.appendChild( emptyTag(doc, QStringLiteral("WORK")) );
+				w.appendChild( emptyTag(doc, "WORK") );
 			if ( a.postal )
-				w.appendChild( emptyTag(doc, QStringLiteral("POSTAL")) );
+				w.appendChild( emptyTag(doc, "POSTAL") );
 			if ( a.parcel )
-				w.appendChild( emptyTag(doc, QStringLiteral("PARCEL")) );
+				w.appendChild( emptyTag(doc, "PARCEL") );
 			if ( a.dom )
-				w.appendChild( emptyTag(doc, QStringLiteral("DOM")) );
+				w.appendChild( emptyTag(doc, "DOM") );
 			if ( a.intl )
-				w.appendChild( emptyTag(doc, QStringLiteral("INTL")) );
+				w.appendChild( emptyTag(doc, "INTL") );
 			if ( a.pref )
-				w.appendChild( emptyTag(doc, QStringLiteral("PREF")) );
+				w.appendChild( emptyTag(doc, "PREF") );
 
 			if ( !a.pobox.isEmpty() )
-				w.appendChild( textTag(doc, QStringLiteral("POBOX"),	a.pobox) );
+				w.appendChild( textTag(doc, "POBOX",	a.pobox) );
 			if ( !a.extaddr.isEmpty() )
-				w.appendChild( textTag(doc, QStringLiteral("EXTADR"),	a.extaddr) );
+				w.appendChild( textTag(doc, "EXTADR",	a.extaddr) );
 			if ( !a.street.isEmpty() )
-				w.appendChild( textTag(doc, QStringLiteral("STREET"),	a.street) );
+				w.appendChild( textTag(doc, "STREET",	a.street) );
 			if ( !a.locality.isEmpty() )
-				w.appendChild( textTag(doc, QStringLiteral("LOCALITY"),	a.locality) );
+				w.appendChild( textTag(doc, "LOCALITY",	a.locality) );
 			if ( !a.region.isEmpty() )
-				w.appendChild( textTag(doc, QStringLiteral("REGION"),	a.region) );
+				w.appendChild( textTag(doc, "REGION",	a.region) );
 			if ( !a.pcode.isEmpty() )
-				w.appendChild( textTag(doc, QStringLiteral("PCODE"),	a.pcode) );
+				w.appendChild( textTag(doc, "PCODE",	a.pcode) );
 			if ( !a.country.isEmpty() )
-				w.appendChild( textTag(doc, QStringLiteral("CTRY"),	a.country) );
+				w.appendChild( textTag(doc, "CTRY",	a.country) );
 
 			v.appendChild(w);
 		}
@@ -292,28 +292,28 @@ QDomElement VCard::toXml(QDomDocument *doc) const
 	if ( !d->labelList.isEmpty() ) {
 		LabelList::ConstIterator it = d->labelList.constBegin();
 		for ( ; it != d->labelList.end(); ++it ) {
-			QDomElement w = doc->createElement(QStringLiteral("LABEL"));
+			QDomElement w = doc->createElement("LABEL");
 			const Label &l = *it;
 
 			if ( l.home )
-				w.appendChild( emptyTag(doc, QStringLiteral("HOME")) );
+				w.appendChild( emptyTag(doc, "HOME") );
 			if ( l.work )
-				w.appendChild( emptyTag(doc, QStringLiteral("WORK")) );
+				w.appendChild( emptyTag(doc, "WORK") );
 			if ( l.postal )
-				w.appendChild( emptyTag(doc, QStringLiteral("POSTAL")) );
+				w.appendChild( emptyTag(doc, "POSTAL") );
 			if ( l.parcel )
-				w.appendChild( emptyTag(doc, QStringLiteral("PARCEL")) );
+				w.appendChild( emptyTag(doc, "PARCEL") );
 			if ( l.dom )
-				w.appendChild( emptyTag(doc, QStringLiteral("DOM")) );
+				w.appendChild( emptyTag(doc, "DOM") );
 			if ( l.intl )
-				w.appendChild( emptyTag(doc, QStringLiteral("INTL")) );
+				w.appendChild( emptyTag(doc, "INTL") );
 			if ( l.pref )
-				w.appendChild( emptyTag(doc, QStringLiteral("PREF")) );
+				w.appendChild( emptyTag(doc, "PREF") );
 
 			if ( !l.lines.isEmpty() ) {
 				QStringList::ConstIterator it = l.lines.constBegin();
 				for ( ; it != l.lines.end(); ++it )
-					w.appendChild( textTag(doc, QStringLiteral("LINE"), *it) );
+					w.appendChild( textTag(doc, "LINE", *it) );
 			}
 
 			v.appendChild(w);
@@ -323,38 +323,38 @@ QDomElement VCard::toXml(QDomDocument *doc) const
 	if ( !d->phoneList.isEmpty() ) {
 		PhoneList::ConstIterator it = d->phoneList.constBegin();
 		for ( ; it != d->phoneList.end(); ++it ) {
-			QDomElement w = doc->createElement(QStringLiteral("TEL"));
+			QDomElement w = doc->createElement("TEL");
 			const Phone &p = *it;
 
 			if ( p.home )
-				w.appendChild( emptyTag(doc, QStringLiteral("HOME")) );
+				w.appendChild( emptyTag(doc, "HOME") );
 			if ( p.work )
-				w.appendChild( emptyTag(doc, QStringLiteral("WORK")) );
+				w.appendChild( emptyTag(doc, "WORK") );
 			if ( p.voice )
-				w.appendChild( emptyTag(doc, QStringLiteral("VOICE")) );
+				w.appendChild( emptyTag(doc, "VOICE") );
 			if ( p.fax )
-				w.appendChild( emptyTag(doc, QStringLiteral("FAX")) );
+				w.appendChild( emptyTag(doc, "FAX") );
 			if ( p.pager )
-				w.appendChild( emptyTag(doc, QStringLiteral("PAGER")) );
+				w.appendChild( emptyTag(doc, "PAGER") );
 			if ( p.msg )
-				w.appendChild( emptyTag(doc, QStringLiteral("MSG")) );
+				w.appendChild( emptyTag(doc, "MSG") );
 			if ( p.cell )
-				w.appendChild( emptyTag(doc, QStringLiteral("CELL")) );
+				w.appendChild( emptyTag(doc, "CELL") );
 			if ( p.video )
-				w.appendChild( emptyTag(doc, QStringLiteral("VIDEO")) );
+				w.appendChild( emptyTag(doc, "VIDEO") );
 			if ( p.bbs )
-				w.appendChild( emptyTag(doc, QStringLiteral("BBS")) );
+				w.appendChild( emptyTag(doc, "BBS") );
 			if ( p.modem )
-				w.appendChild( emptyTag(doc, QStringLiteral("MODEM")) );
+				w.appendChild( emptyTag(doc, "MODEM") );
 			if ( p.isdn )
-				w.appendChild( emptyTag(doc, QStringLiteral("ISDN")) );
+				w.appendChild( emptyTag(doc, "ISDN") );
 			if ( p.pcs )
-				w.appendChild( emptyTag(doc, QStringLiteral("PCS")) );
+				w.appendChild( emptyTag(doc, "PCS") );
 			if ( p.pref )
-				w.appendChild( emptyTag(doc, QStringLiteral("PREF")) );
+				w.appendChild( emptyTag(doc, "PREF") );
 
 			if ( !p.number.isEmpty() )
-				w.appendChild( textTag(doc, QStringLiteral("NUMBER"),	p.number) );
+				w.appendChild( textTag(doc, "NUMBER",	p.number) );
 
 			v.appendChild(w);
 		}
@@ -363,145 +363,145 @@ QDomElement VCard::toXml(QDomDocument *doc) const
 	if ( !d->emailList.isEmpty() ) {
 		EmailList::ConstIterator it = d->emailList.constBegin();
 		for ( ; it != d->emailList.end(); ++it ) {
-			QDomElement w = doc->createElement(QStringLiteral("EMAIL"));
+			QDomElement w = doc->createElement("EMAIL");
 			const Email &e = *it;
 
 			if ( e.home )
-				w.appendChild( emptyTag(doc, QStringLiteral("HOME")) );
+				w.appendChild( emptyTag(doc, "HOME") );
 			if ( e.work )
-				w.appendChild( emptyTag(doc, QStringLiteral("WORK")) );
+				w.appendChild( emptyTag(doc, "WORK") );
 			if ( e.internet )
-				w.appendChild( emptyTag(doc, QStringLiteral("INTERNET")) );
+				w.appendChild( emptyTag(doc, "INTERNET") );
 			if ( e.x400 )
-				w.appendChild( emptyTag(doc, QStringLiteral("X400")) );
+				w.appendChild( emptyTag(doc, "X400") );
 
 			if ( !e.userid.isEmpty() )
-				w.appendChild( textTag(doc, QStringLiteral("USERID"),	e.userid) );
+				w.appendChild( textTag(doc, "USERID",	e.userid) );
 
 			v.appendChild(w);
 		}
 	}
 
 	if ( !d->jid.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("JABBERID"),	d->jid) );
+		v.appendChild( textTag(doc, "JABBERID",	d->jid) );
 	if ( !d->mailer.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("MAILER"),	d->mailer) );
+		v.appendChild( textTag(doc, "MAILER",	d->mailer) );
 	if ( !d->timezone.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("TZ"),	d->timezone) );
+		v.appendChild( textTag(doc, "TZ",	d->timezone) );
 
 	if ( !d->geo.lat.isEmpty() || !d->geo.lon.isEmpty() ) {
-		QDomElement w = doc->createElement(QStringLiteral("GEO"));
+		QDomElement w = doc->createElement("GEO");
 
 		if ( !d->geo.lat.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("LAT"),	d->geo.lat) );
+			w.appendChild( textTag(doc, "LAT",	d->geo.lat) );
 		if ( !d->geo.lon.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("LON"),	d->geo.lon));
+			w.appendChild( textTag(doc, "LON",	d->geo.lon));
 
 		v.appendChild(w);
 	}
 
 	if ( !d->title.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("TITLE"),	d->title) );
+		v.appendChild( textTag(doc, "TITLE",	d->title) );
 	if ( !d->role.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("ROLE"),	d->role) );
+		v.appendChild( textTag(doc, "ROLE",	d->role) );
 
 	if ( !d->logo.isEmpty() || !d->logoURI.isEmpty() ) {
-		QDomElement w = doc->createElement(QStringLiteral("LOGO"));
+		QDomElement w = doc->createElement("LOGO");
 
 		if ( !d->logo.isEmpty() ) {
-			w.appendChild( textTag(doc, QStringLiteral("TYPE"),	image2type(d->logo)) );
-			w.appendChild( textTag(doc, QStringLiteral("BINVAL"),	foldString( QCA::Base64().arrayToString(d->logo)) ) );
+			w.appendChild( textTag(doc, "TYPE",	image2type(d->logo)) );
+			w.appendChild( textTag(doc, "BINVAL",	foldString( QCA::Base64().arrayToString(d->logo)) ) );
 		}
 		else if ( !d->logoURI.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("EXTVAL"),	d->logoURI) );
+			w.appendChild( textTag(doc, "EXTVAL",	d->logoURI) );
 
 		v.appendChild(w);
 	}
 
 	if ( !d->agentURI.isEmpty() || (d->agent && d->agent->isEmpty()) ) {
-		QDomElement w = doc->createElement(QStringLiteral("AGENT"));
+		QDomElement w = doc->createElement("AGENT");
 
 		if ( d->agent && !d->agent->isEmpty() )
 			w.appendChild( d->agent->toXml(doc) );
 		else if ( !d->agentURI.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("EXTVAL"),	d->agentURI) );
+			w.appendChild( textTag(doc, "EXTVAL",	d->agentURI) );
 
 		v.appendChild(w);
 	}
 
 	if ( !d->org.name.isEmpty() || !d->org.unit.isEmpty() ) {
-		QDomElement w = doc->createElement(QStringLiteral("ORG"));
+		QDomElement w = doc->createElement("ORG");
 
 		if ( !d->org.name.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("ORGNAME"),	d->org.name) );
+			w.appendChild( textTag(doc, "ORGNAME",	d->org.name) );
 
 		if ( !d->org.unit.isEmpty() ) {
 			QStringList::ConstIterator it = d->org.unit.constBegin();
 			for ( ; it != d->org.unit.end(); ++it )
-				w.appendChild( textTag(doc, QStringLiteral("ORGUNIT"),	*it) );
+				w.appendChild( textTag(doc, "ORGUNIT",	*it) );
 		}
 
 		v.appendChild(w);
 	}
 
 	if ( !d->categories.isEmpty() ) {
-		QDomElement w = doc->createElement(QStringLiteral("CATEGORIES"));
+		QDomElement w = doc->createElement("CATEGORIES");
 
 		QStringList::ConstIterator it = d->categories.constBegin();
 		for ( ; it != d->categories.end(); ++it )
-			w.appendChild( textTag(doc, QStringLiteral("KEYWORD"), *it) );
+			w.appendChild( textTag(doc, "KEYWORD", *it) );
 
 		v.appendChild(w);
 	}
 
 	if ( !d->note.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("NOTE"),	d->note) );
+		v.appendChild( textTag(doc, "NOTE",	d->note) );
 	if ( !d->prodId.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("PRODID"),	d->prodId) );
+		v.appendChild( textTag(doc, "PRODID",	d->prodId) );
 	if ( !d->rev.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("REV"),	d->rev) );
+		v.appendChild( textTag(doc, "REV",	d->rev) );
 	if ( !d->sortString.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("SORT-STRING"),	d->sortString) );
+		v.appendChild( textTag(doc, "SORT-STRING",	d->sortString) );
 
 	if ( !d->sound.isEmpty() || !d->soundURI.isEmpty() || !d->soundPhonetic.isEmpty() ) {
-		QDomElement w = doc->createElement(QStringLiteral("SOUND"));
+		QDomElement w = doc->createElement("SOUND");
 
 		if ( !d->sound.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("BINVAL"),	foldString( QCA::Base64().arrayToString(d->sound)) ) );
+			w.appendChild( textTag(doc, "BINVAL",	foldString( QCA::Base64().arrayToString(d->sound)) ) );
 		else if ( !d->soundURI.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("EXTVAL"),	d->soundURI) );
+			w.appendChild( textTag(doc, "EXTVAL",	d->soundURI) );
 		else if ( !d->soundPhonetic.isEmpty() )
-			w.appendChild( textTag(doc, QStringLiteral("PHONETIC"),	d->soundPhonetic) );
+			w.appendChild( textTag(doc, "PHONETIC",	d->soundPhonetic) );
 
 		v.appendChild(w);
 	}
 
 	if ( !d->uid.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("UID"),	d->uid) );
+		v.appendChild( textTag(doc, "UID",	d->uid) );
 	if ( !d->url.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("URL"),	d->url) );
+		v.appendChild( textTag(doc, "URL",	d->url) );
 	if ( !d->desc.isEmpty() )
-		v.appendChild( textTag(doc, QStringLiteral("DESC"),	d->desc) );
+		v.appendChild( textTag(doc, "DESC",	d->desc) );
 
 	if ( d->privacyClass != pcNone ) {
-		QDomElement w = doc->createElement(QStringLiteral("CLASS"));
+		QDomElement w = doc->createElement("CLASS");
 
 		if ( d->privacyClass == pcPublic )
-			w.appendChild( emptyTag(doc, QStringLiteral("PUBLIC")) );
+			w.appendChild( emptyTag(doc, "PUBLIC") );
 		else if ( d->privacyClass == pcPrivate )
-			w.appendChild( emptyTag(doc, QStringLiteral("PRIVATE")) );
+			w.appendChild( emptyTag(doc, "PRIVATE") );
 		else if ( d->privacyClass == pcConfidential )
-			w.appendChild( emptyTag(doc, QStringLiteral("CONFIDENTIAL")) );
+			w.appendChild( emptyTag(doc, "CONFIDENTIAL") );
 
 		v.appendChild(w);
 	}
 
 	if ( !d->key.isEmpty() ) {
-		QDomElement w = doc->createElement(QStringLiteral("KEY"));
+		QDomElement w = doc->createElement("KEY");
 
 		// TODO: Justin, please check out this code
-		w.appendChild( textTag(doc, QStringLiteral("TYPE"), QStringLiteral("text/plain"))); // FIXME
-		w.appendChild( textTag(doc, QStringLiteral("CRED"), QString::fromUtf8(d->key)) ); // FIXME
+		w.appendChild( textTag(doc, "TYPE", "text/plain")); // FIXME
+		w.appendChild( textTag(doc, "CRED", QString::fromUtf8(d->key)) ); // FIXME
 
 		v.appendChild(w);
 	}
@@ -511,7 +511,7 @@ QDomElement VCard::toXml(QDomDocument *doc) const
 
 VCard VCard::fromXml(const QDomElement &q)
 {
-	if ( q.tagName().toUpper() != QLatin1String("VCARD") )
+	if ( q.tagName().toUpper() != "VCARD" )
 		return VCard();
 
 	VCard v;
@@ -527,64 +527,64 @@ VCard VCard::fromXml(const QDomElement &q)
 
 		QDomElement e;
 
-		if ( tag == QLatin1String("VERSION") )
+		if ( tag == "VERSION" )
 			v.d->version = i.text().trimmed();
-		else if ( tag == QLatin1String("FN") )
+		else if ( tag == "FN" )
 			v.d->fullName = i.text().trimmed();
-		else if ( tag == QLatin1String("N") ) {
-			v.d->familyName = subTagText(i, QStringLiteral("FAMILY"));
-			v.d->givenName  = subTagText(i, QStringLiteral("GIVEN"));
-			v.d->middleName = subTagText(i, QStringLiteral("MIDDLE"));
-			v.d->prefixName = subTagText(i, QStringLiteral("PREFIX"));
-			v.d->suffixName = subTagText(i, QStringLiteral("SUFFIX"));
+		else if ( tag == "N" ) {
+			v.d->familyName = subTagText(i, "FAMILY");
+			v.d->givenName  = subTagText(i, "GIVEN");
+			v.d->middleName = subTagText(i, "MIDDLE");
+			v.d->prefixName = subTagText(i, "PREFIX");
+			v.d->suffixName = subTagText(i, "SUFFIX");
 		}
-		else if ( tag == QLatin1String("NICKNAME") )
+		else if ( tag == "NICKNAME" )
 			v.d->nickName = i.text().trimmed();
-		else if ( tag == QLatin1String("PHOTO") ) {
-			v.d->photo = QCA::Base64().stringToArray(subTagText(i, QStringLiteral("BINVAL")).replace(QRegExp("[\r\n]+"),QLatin1String(""))).toByteArray();
-			v.d->photoURI = subTagText(i, QStringLiteral("EXTVAL"));
+		else if ( tag == "PHOTO" ) {
+			v.d->photo = QCA::Base64().stringToArray(subTagText(i, "BINVAL").replace(QRegExp("[\r\n]+"),"")).toByteArray();
+			v.d->photoURI = subTagText(i, "EXTVAL");
 		}
-		else if ( tag == QLatin1String("BDAY") )
+		else if ( tag == "BDAY" )
 			v.d->bday = i.text().trimmed();
-		else if ( tag == QLatin1String("ADR") ) {
+		else if ( tag == "ADR" ) {
 			Address a;
 
-			a.home   = hasSubTag(i, QStringLiteral("HOME"));
-			a.work   = hasSubTag(i, QStringLiteral("WORK"));
-			a.postal = hasSubTag(i, QStringLiteral("POSTAL"));
-			a.parcel = hasSubTag(i, QStringLiteral("PARCEL"));
-			a.dom    = hasSubTag(i, QStringLiteral("DOM"));
-			a.intl   = hasSubTag(i, QStringLiteral("INTL"));
-			a.pref   = hasSubTag(i, QStringLiteral("PREF"));
+			a.home   = hasSubTag(i, "HOME");
+			a.work   = hasSubTag(i, "WORK");
+			a.postal = hasSubTag(i, "POSTAL");
+			a.parcel = hasSubTag(i, "PARCEL");
+			a.dom    = hasSubTag(i, "DOM");
+			a.intl   = hasSubTag(i, "INTL");
+			a.pref   = hasSubTag(i, "PREF");
 
-			a.pobox    = subTagText(i, QStringLiteral("POBOX"));
-			a.extaddr  = subTagText(i, QStringLiteral("EXTADR"));
-			a.street   = subTagText(i, QStringLiteral("STREET"));
-			a.locality = subTagText(i, QStringLiteral("LOCALITY"));
-			a.region   = subTagText(i, QStringLiteral("REGION"));
-			a.pcode    = subTagText(i, QStringLiteral("PCODE"));
-			a.country  = subTagText(i, QStringLiteral("CTRY"));
+			a.pobox    = subTagText(i, "POBOX");
+			a.extaddr  = subTagText(i, "EXTADR");
+			a.street   = subTagText(i, "STREET");
+			a.locality = subTagText(i, "LOCALITY");
+			a.region   = subTagText(i, "REGION");
+			a.pcode    = subTagText(i, "PCODE");
+			a.country  = subTagText(i, "CTRY");
 
 			if ( a.country.isEmpty() ) // FIXME: Workaround for Psi prior to 0.9
-				if ( hasSubTag(i, QStringLiteral("COUNTRY")) )
-					a.country = subTagText(i, QStringLiteral("COUNTRY"));
+				if ( hasSubTag(i, "COUNTRY") )
+					a.country = subTagText(i, "COUNTRY");
 
 			if ( a.extaddr.isEmpty() ) // FIXME: Workaround for Psi prior to 0.9
-				if ( hasSubTag(i, QStringLiteral("EXTADD")) )
-					a.extaddr = subTagText(i, QStringLiteral("EXTADD"));
+				if ( hasSubTag(i, "EXTADD") )
+					a.extaddr = subTagText(i, "EXTADD");
 
 			v.d->addressList.append ( a );
 		}
-		else if ( tag == QLatin1String("LABEL") ) {
+		else if ( tag == "LABEL" ) {
 			Label l;
 
-			l.home   = hasSubTag(i, QStringLiteral("HOME"));
-			l.work   = hasSubTag(i, QStringLiteral("WORK"));
-			l.postal = hasSubTag(i, QStringLiteral("POSTAL"));
-			l.parcel = hasSubTag(i, QStringLiteral("PARCEL"));
-			l.dom    = hasSubTag(i, QStringLiteral("DOM"));
-			l.intl   = hasSubTag(i, QStringLiteral("INTL"));
-			l.pref   = hasSubTag(i, QStringLiteral("PREF"));
+			l.home   = hasSubTag(i, "HOME");
+			l.work   = hasSubTag(i, "WORK");
+			l.postal = hasSubTag(i, "POSTAL");
+			l.parcel = hasSubTag(i, "PARCEL");
+			l.dom    = hasSubTag(i, "DOM");
+			l.intl   = hasSubTag(i, "INTL");
+			l.pref   = hasSubTag(i, "PREF");
 
 			QDomNode nn = i.firstChild();
 			for ( ; !nn.isNull(); nn = nn.nextSibling() ) {
@@ -592,46 +592,46 @@ VCard VCard::fromXml(const QDomElement &q)
 				if ( ii.isNull() )
 					continue;
 
-				if ( ii.tagName().toUpper() == QLatin1String("LINE") )
+				if ( ii.tagName().toUpper() == "LINE" )
 					l.lines.append ( ii.text().trimmed() );
 			}
 
 			v.d->labelList.append ( l );
 		}
-		else if ( tag == QLatin1String("TEL") ) {
+		else if ( tag == "TEL" ) {
 			Phone p;
 
-			p.home  = hasSubTag(i, QStringLiteral("HOME"));
-			p.work  = hasSubTag(i, QStringLiteral("WORK"));
-			p.voice = hasSubTag(i, QStringLiteral("VOICE"));
-			p.fax   = hasSubTag(i, QStringLiteral("FAX"));
-			p.pager = hasSubTag(i, QStringLiteral("PAGER"));
-			p.msg   = hasSubTag(i, QStringLiteral("MSG"));
-			p.cell  = hasSubTag(i, QStringLiteral("CELL"));
-			p.video = hasSubTag(i, QStringLiteral("VIDEO"));
-			p.bbs   = hasSubTag(i, QStringLiteral("BBS"));
-			p.modem = hasSubTag(i, QStringLiteral("MODEM"));
-			p.isdn  = hasSubTag(i, QStringLiteral("ISDN"));
-			p.pcs   = hasSubTag(i, QStringLiteral("PCS"));
-			p.pref  = hasSubTag(i, QStringLiteral("PREF"));
+			p.home  = hasSubTag(i, "HOME");
+			p.work  = hasSubTag(i, "WORK");
+			p.voice = hasSubTag(i, "VOICE");
+			p.fax   = hasSubTag(i, "FAX");
+			p.pager = hasSubTag(i, "PAGER");
+			p.msg   = hasSubTag(i, "MSG");
+			p.cell  = hasSubTag(i, "CELL");
+			p.video = hasSubTag(i, "VIDEO");
+			p.bbs   = hasSubTag(i, "BBS");
+			p.modem = hasSubTag(i, "MODEM");
+			p.isdn  = hasSubTag(i, "ISDN");
+			p.pcs   = hasSubTag(i, "PCS");
+			p.pref  = hasSubTag(i, "PREF");
 
-			p.number = subTagText(i, QStringLiteral("NUMBER"));
+			p.number = subTagText(i, "NUMBER");
 
 			if ( p.number.isEmpty() ) // FIXME: Workaround for Psi prior to 0.9
-				if ( hasSubTag(i, QStringLiteral("VOICE")) )
-					p.number = subTagText(i, QStringLiteral("VOICE"));
+				if ( hasSubTag(i, "VOICE") )
+					p.number = subTagText(i, "VOICE");
 
 			v.d->phoneList.append ( p );
 		}
-		else if ( tag == QLatin1String("EMAIL") ) {
+		else if ( tag == "EMAIL" ) {
 			Email m;
 
-			m.home     = hasSubTag(i, QStringLiteral("HOME"));
-			m.work     = hasSubTag(i, QStringLiteral("WORK"));
-			m.internet = hasSubTag(i, QStringLiteral("INTERNET"));
-			m.x400     = hasSubTag(i, QStringLiteral("X400"));
+			m.home     = hasSubTag(i, "HOME");
+			m.work     = hasSubTag(i, "WORK");
+			m.internet = hasSubTag(i, "INTERNET");
+			m.x400     = hasSubTag(i, "X400");
 
-			m.userid = subTagText(i, QStringLiteral("USERID"));
+			m.userid = subTagText(i, "USERID");
 
 			if ( m.userid.isEmpty() ) // FIXME: Workaround for Psi prior to 0.9
 				if ( !i.text().isEmpty() )
@@ -639,26 +639,26 @@ VCard VCard::fromXml(const QDomElement &q)
 
 			v.d->emailList.append ( m );
 		}
-		else if ( tag == QLatin1String("JABBERID") )
+		else if ( tag == "JABBERID" )
 			v.d->jid = i.text().trimmed();
-		else if ( tag == QLatin1String("MAILER") )
+		else if ( tag == "MAILER" )
 			v.d->mailer = i.text().trimmed();
-		else if ( tag == QLatin1String("TZ") )
+		else if ( tag == "TZ" )
 			v.d->timezone = i.text().trimmed();
-		else if ( tag == QLatin1String("GEO") ) {
-			v.d->geo.lat = subTagText(i, QStringLiteral("LAT"));
-			v.d->geo.lon = subTagText(i, QStringLiteral("LON"));
+		else if ( tag == "GEO" ) {
+			v.d->geo.lat = subTagText(i, "LAT");
+			v.d->geo.lon = subTagText(i, "LON");
 		}
-		else if ( tag == QLatin1String("TITLE") )
+		else if ( tag == "TITLE" )
 			v.d->title = i.text().trimmed();
-		else if ( tag == QLatin1String("ROLE") )
+		else if ( tag == "ROLE" )
 			v.d->role = i.text().trimmed();
-		else if ( tag == QLatin1String("LOGO") ) {
-			v.d->logo = QCA::Base64().stringToArray( subTagText(i, QStringLiteral("BINVAL")).replace(QLatin1String("\n"),QLatin1String("")) ).toByteArray();
-			v.d->logoURI = subTagText(i, QStringLiteral("EXTVAL"));
+		else if ( tag == "LOGO" ) {
+			v.d->logo = QCA::Base64().stringToArray( subTagText(i, "BINVAL").replace("\n","") ).toByteArray();
+			v.d->logoURI = subTagText(i, "EXTVAL");
 		}
-		else if ( tag == QLatin1String("AGENT") ) {
-			e = i.firstChildElement(QStringLiteral("VCARD"));
+		else if ( tag == "AGENT" ) {
+			e = i.firstChildElement("VCARD");
 			if ( !e.isNull() ) {
 				VCard a;
 				if ( a.fromXml(e) ) {
@@ -668,10 +668,10 @@ VCard VCard::fromXml(const QDomElement &q)
 				}
 			}
 
-			v.d->agentURI = subTagText(i, QStringLiteral("EXTVAL"));
+			v.d->agentURI = subTagText(i, "EXTVAL");
 		}
-		else if ( tag == QLatin1String("ORG") ) {
-			v.d->org.name = subTagText(i, QStringLiteral("ORGNAME"));
+		else if ( tag == "ORG" ) {
+			v.d->org.name = subTagText(i, "ORGNAME");
 
 			QDomNode nn = i.firstChild();
 			for ( ; !nn.isNull(); nn = nn.nextSibling() ) {
@@ -679,58 +679,58 @@ VCard VCard::fromXml(const QDomElement &q)
 				if ( ii.isNull() )
 					continue;
 
-				if ( ii.tagName().toUpper() == QLatin1String("ORGUNIT") )
+				if ( ii.tagName().toUpper() == "ORGUNIT" )
 					v.d->org.unit.append( ii.text().trimmed() );
 			}
 		}
-		else if ( tag == QLatin1String("CATEGORIES")) {
+		else if ( tag == "CATEGORIES") {
 			QDomNode nn = i.firstChild();
 			for ( ; !nn.isNull(); nn = nn.nextSibling() ) {
 				QDomElement ee = nn.toElement();
 				if ( ee.isNull() )
 					continue;
 
-				if ( ee.tagName().toUpper() == QLatin1String("KEYWORD") )
+				if ( ee.tagName().toUpper() == "KEYWORD" )
 					v.d->categories << ee.text().trimmed();
 			}
 		}
-		else if ( tag == QLatin1String("NOTE") )
+		else if ( tag == "NOTE" )
 			v.d->note = i.text().trimmed();
-		else if ( tag == QLatin1String("PRODID") )
+		else if ( tag == "PRODID" )
 			v.d->prodId = i.text().trimmed();
-		else if ( tag == QLatin1String("REV") )
+		else if ( tag == "REV" )
 			v.d->rev = i.text().trimmed();
-		else if ( tag == QLatin1String("SORT-STRING") )
+		else if ( tag == "SORT-STRING" )
 			v.d->sortString = i.text().trimmed();
-		else if ( tag == QLatin1String("SOUND") ) {
-			v.d->sound = QCA::Base64().stringToArray( subTagText(i, QStringLiteral("BINVAL")).replace(QLatin1String("\n"),QLatin1String("")) ).toByteArray();
-			v.d->soundURI      = subTagText(i, QStringLiteral("EXTVAL"));
-			v.d->soundPhonetic = subTagText(i, QStringLiteral("PHONETIC"));
+		else if ( tag == "SOUND" ) {
+			v.d->sound = QCA::Base64().stringToArray( subTagText(i, "BINVAL").replace("\n","") ).toByteArray();
+			v.d->soundURI      = subTagText(i, "EXTVAL");
+			v.d->soundPhonetic = subTagText(i, "PHONETIC");
 		}
-		else if ( tag == QLatin1String("UID") )
+		else if ( tag == "UID" )
 			v.d->uid = i.text().trimmed();
-		else if ( tag == QLatin1String("URL"))
+		else if ( tag == "URL")
 			v.d->url = i.text().trimmed();
-		else if ( tag == QLatin1String("DESC") )
+		else if ( tag == "DESC" )
 			v.d->desc = i.text().trimmed();
-		else if ( tag == QLatin1String("CLASS") ) {
-			if ( hasSubTag(i, QStringLiteral("PUBLIC")) )
+		else if ( tag == "CLASS" ) {
+			if ( hasSubTag(i, "PUBLIC") )
 				v.d->privacyClass = pcPublic;
-			else if ( hasSubTag(i, QStringLiteral("PRIVATE")) )
+			else if ( hasSubTag(i, "PRIVATE") )
 				v.d->privacyClass = pcPrivate;
-			else if ( hasSubTag(i, QStringLiteral("CONFIDENTIAL")) )
+			else if ( hasSubTag(i, "CONFIDENTIAL") )
 				v.d->privacyClass = pcConfidential;
 		}
-		else if ( tag == QLatin1String("KEY") ) {
+		else if ( tag == "KEY" ) {
 			// TODO: Justin, please check out this code
-			e = i.firstChildElement(QStringLiteral("TYPE"));
-			QString type = QStringLiteral("text/plain");
+			e = i.firstChildElement("TYPE");
+			QString type = "text/plain";
 			if ( !e.isNull() )
 				type = e.text().trimmed();
 
-			e = i.firstChildElement(QStringLiteral("CRED"));
+			e = i.firstChildElement("CRED");
 			if ( e.isNull() )
-				e = i.firstChildElement(QStringLiteral("BINVAL")); // case for very clever clients ;-)
+				e = i.firstChildElement("BINVAL"); // case for very clever clients ;-)
 
 			if ( !e.isNull() )
 				v.d->key = e.text().toUtf8(); // FIXME

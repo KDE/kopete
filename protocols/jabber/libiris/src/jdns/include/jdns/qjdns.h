@@ -143,7 +143,7 @@ public:
 	void publishUpdate(int id, const Record &record);
 	void publishCancel(int id);
 
-Q_SIGNALS:
+signals:
 	void resultsReady(int id, const QJDns::Response &results);
 	void published(int id);
 	void error(int id, QJDns::Error e);

@@ -33,8 +33,8 @@ bool Normalize(const QString &username_in, QString &username_out ) {
 	// SASLprep
 	if (StringPrepCache::saslprep(username_in, 1024, username_out)) {
 		// '=' -> '=3D'	 and ',' -> '=2C'
-		username_out.replace(QLatin1String("="), QLatin1String("=3D"));
-		username_out.replace(QLatin1String(","), QLatin1String("=2C"));
+		username_out.replace("=", "=3D");
+		username_out.replace(",", "=2C");
 		return true;
 	} else {
 		return false;

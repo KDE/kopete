@@ -115,7 +115,7 @@ public:
 		DL_Packet
 	};
 
-	IceComponent(int id, QObject *parent = nullptr);
+	IceComponent(int id, QObject *parent = 0);
 	~IceComponent();
 
 	int id() const;
@@ -155,7 +155,7 @@ public:
 
 	void setDebugLevel(DebugLevel level);
 
-Q_SIGNALS:
+signals:
 	// this is emitted in the same pass of the eventloop that a
 	//   transport/path becomes ready
 	void candidateAdded(const XMPP::IceComponent::Candidate &c);

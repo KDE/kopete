@@ -144,7 +144,7 @@ namespace XMPP
 		BasicProtocol();
 		~BasicProtocol();
 
-		void reset() Q_DECL_OVERRIDE;
+		void reset();
 
 		// for outgoing xml
 		QDomDocument doc;
@@ -165,7 +165,7 @@ namespace XMPP
 
 		// shutdown
 		void shutdown();
-		void shutdownWithError(int cond, const QString &otherHost=QLatin1String(""));
+		void shutdownWithError(int cond, const QString &otherHost="");
 
 		// <stream> information
 		QString to, from, id, lang;
@@ -190,21 +190,21 @@ namespace XMPP
 		static QString streamCondToString(int);
 
 		void send(const QDomElement &e, bool clip=false);
-		void sendStreamError(int cond, const QString &text=QLatin1String(""), const QDomElement &appSpec=QDomElement());
+		void sendStreamError(int cond, const QString &text="", const QDomElement &appSpec=QDomElement());
 		void sendStreamError(const QString &text); // old-style
 
-		bool errorAndClose(int cond, const QString &text=QLatin1String(""), const QDomElement &appSpec=QDomElement());
+		bool errorAndClose(int cond, const QString &text="", const QDomElement &appSpec=QDomElement());
 		bool error(int code);
-		void delayErrorAndClose(int cond, const QString &text=QLatin1String(""), const QDomElement &appSpec=QDomElement());
+		void delayErrorAndClose(int cond, const QString &text="", const QDomElement &appSpec=QDomElement());
 		void delayError(int code);
 
 		// reimplemented
-		QDomElement docElement() Q_DECL_OVERRIDE;
-		void handleDocOpen(const Parser::Event &pe) Q_DECL_OVERRIDE;
-		bool handleError() Q_DECL_OVERRIDE;
-		bool handleCloseFinished() Q_DECL_OVERRIDE;
-		bool doStep(const QDomElement &e) Q_DECL_OVERRIDE;
-		void itemWritten(int id, int size) Q_DECL_OVERRIDE;
+		QDomElement docElement();
+		void handleDocOpen(const Parser::Event &pe);
+		bool handleError();
+		bool handleCloseFinished();
+		bool doStep(const QDomElement &e);
+		void itemWritten(int id, int size);
 
 		virtual QString defaultNamespace();
 		virtual QStringList extraNamespaces(); // stringlist: prefix,uri,prefix,uri, [...]
@@ -262,7 +262,7 @@ namespace XMPP
 		CoreProtocol();
 		~CoreProtocol();
 
-		void reset() Q_DECL_OVERRIDE;
+		void reset();
 		void startTimer(int seconds);
 
 		// reimplemented to do SM
@@ -363,16 +363,16 @@ namespace XMPP
 		bool needSMRequest();
 
 		// reimplemented
-		bool stepAdvancesParser() const Q_DECL_OVERRIDE;
-		bool stepRequiresElement() const Q_DECL_OVERRIDE;
-		void stringSend(const QString &s) Q_DECL_OVERRIDE;
-		void stringRecv(const QString &s) Q_DECL_OVERRIDE;
-		QString defaultNamespace() Q_DECL_OVERRIDE;
-		QStringList extraNamespaces() Q_DECL_OVERRIDE;
-		void handleStreamOpen(const Parser::Event &pe) Q_DECL_OVERRIDE;
-		bool doStep2(const QDomElement &e) Q_DECL_OVERRIDE;
-		void elementSend(const QDomElement &e) Q_DECL_OVERRIDE;
-		void elementRecv(const QDomElement &e) Q_DECL_OVERRIDE;
+		bool stepAdvancesParser() const;
+		bool stepRequiresElement() const;
+		void stringSend(const QString &s);
+		void stringRecv(const QString &s);
+		QString defaultNamespace();
+		QStringList extraNamespaces();
+		void handleStreamOpen(const Parser::Event &pe);
+		bool doStep2(const QDomElement &e);
+		void elementSend(const QDomElement &e);
+		void elementRecv(const QDomElement &e);
 	};
 }
 

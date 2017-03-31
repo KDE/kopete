@@ -160,8 +160,8 @@ bool Features::canDisco() const
 {
 	QSet<QString> ns;
 	ns << FID_DISCO;
-	ns << QStringLiteral("http://jabber.org/protocol/disco#info");
-	ns << QStringLiteral("http://jabber.org/protocol/disco#items");
+	ns << "http://jabber.org/protocol/disco#info";
+	ns << "http://jabber.org/protocol/disco#items";
 
 	return test(ns);
 }

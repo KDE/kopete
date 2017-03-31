@@ -138,18 +138,18 @@ namespace XMPP
 		void setCompress(bool);
 
 		// reimplemented
-		QDomDocument & doc() const Q_DECL_OVERRIDE;
-		QString baseNS() const Q_DECL_OVERRIDE;
-		bool old() const Q_DECL_OVERRIDE;
+		QDomDocument & doc() const;
+		QString baseNS() const;
+		bool old() const;
 
-		void close() Q_DECL_OVERRIDE;
-		bool stanzaAvailable() const Q_DECL_OVERRIDE;
-		Stanza read() Q_DECL_OVERRIDE;
-		void write(const Stanza &s) Q_DECL_OVERRIDE;
+		void close();
+		bool stanzaAvailable() const;
+		Stanza read();
+		void write(const Stanza &s);
 
-		int errorCondition() const Q_DECL_OVERRIDE;
-		QString errorText() const Q_DECL_OVERRIDE;
-		QDomElement errorAppSpec() const Q_DECL_OVERRIDE;
+		int errorCondition() const;
+		QString errorText() const;
+		QDomElement errorAppSpec() const;
 
 		// extra
 		void writeDirect(const QString &s);
@@ -165,7 +165,7 @@ namespace XMPP
 		const StreamFeatures &streamFeatures() const;	
 		QList<QDomElement> unhandledFeatures() const;
 
-	Q_SIGNALS:
+	signals:
 		void connected();
 		void securityLayerActivated(int);
 		void needAuthParams(bool user, bool pass, bool realm);
@@ -176,10 +176,10 @@ namespace XMPP
 		void outgoingXml(const QString &s);
 		void stanzasAcked(int);
 
-	public Q_SLOTS:
+	public slots:
 		void continueAfterWarning();
 
-	private Q_SLOTS:
+	private slots:
 		void cr_connected();
 		void cr_error();
 

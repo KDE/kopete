@@ -43,13 +43,13 @@ public:
 	App();
 	~App();
 	
-public Q_SLOTS:
+public slots:
 	void start();
 	
-Q_SIGNALS:
+signals:
 	void quit();
 
-private Q_SLOTS:
+private slots:
 	void jdns_resultsReady(int id, const QJDns::Response &results);
 	void jdns_published(int id);
 	void jdns_error(int id, QJDns::Error e);

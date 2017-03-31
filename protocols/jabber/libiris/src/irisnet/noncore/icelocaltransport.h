@@ -48,7 +48,7 @@ public:
 		ErrorBind = ErrorCustom
 	};
 
-	IceLocalTransport(QObject *parent = nullptr);
+	IceLocalTransport(QObject *parent = 0);
 	~IceLocalTransport();
 
 	void setClientSoftwareNameAndVersion(const QString &str);
@@ -77,14 +77,14 @@ public:
 	int relayedPort() const;
 
 	// reimplemented
-	void stop() Q_DECL_OVERRIDE;
-	bool hasPendingDatagrams(int path) const Q_DECL_OVERRIDE;
-	QByteArray readDatagram(int path, QHostAddress *addr, int *port) Q_DECL_OVERRIDE;
-	void writeDatagram(int path, const QByteArray &buf, const QHostAddress &addr, int port) Q_DECL_OVERRIDE;
-	void addChannelPeer(const QHostAddress &addr, int port) Q_DECL_OVERRIDE;
-	void setDebugLevel(DebugLevel level) Q_DECL_OVERRIDE;
+	virtual void stop();
+	virtual bool hasPendingDatagrams(int path) const;
+	virtual QByteArray readDatagram(int path, QHostAddress *addr, int *port);
+	virtual void writeDatagram(int path, const QByteArray &buf, const QHostAddress &addr, int port);
+	virtual void addChannelPeer(const QHostAddress &addr, int port);
+	virtual void setDebugLevel(DebugLevel level);
 
-Q_SIGNALS:
+signals:
 	// may be emitted multiple times.
 	// if handling internal ErrorMismatch, then local address may change
 	//   and server reflexive address may disappear.

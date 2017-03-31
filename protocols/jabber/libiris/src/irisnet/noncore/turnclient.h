@@ -113,7 +113,7 @@ public:
 		QString v_user, v_pass;
 	};
 
-	TurnClient(QObject *parent = nullptr);
+	TurnClient(QObject *parent = 0);
 	~TurnClient();
 
 	void setProxy(const Proxy &proxy);
@@ -163,7 +163,7 @@ public:
 
 	void setDebugLevel(DebugLevel level); // default DL_None
 
-Q_SIGNALS:
+signals:
 	void connected(); // tcp connected
 	void tlsHandshaken();
 	void closed();

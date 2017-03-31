@@ -134,6 +134,7 @@ public:
 	QList<GroupChat> groupChatList;
 };
 
+
 Client::Client(QObject *par)
 :QObject(par)
 {
@@ -141,9 +142,9 @@ Client::Client(QObject *par)
 	d->tzoffset = 0;
 	d->useTzoffset = false;
 	d->active = false;
-	d->osName = QStringLiteral("N/A");
-	d->clientName = QStringLiteral("N/A");
-	d->clientVersion = QStringLiteral("0.0");
+	d->osName = "N/A";
+	d->clientName = "N/A";
+	d->clientVersion = "0.0";
 
 	d->id_seed = 0xaaaa;
 	d->root = new Task(this, true);
@@ -311,7 +312,7 @@ bool Client::groupChatJoin(const QString &host, const QString &room, const QStri
 			++it;
 	}
 
-	debug(QStringLiteral("Client: Joined: [%1]\n").arg(jid.full()));
+	debug(QString("Client: Joined: [%1]\n").arg(jid.full()));
 	GroupChat i;
 	i.j = jid;
 	i.status = GroupChat::Connecting;
@@ -363,7 +364,7 @@ void Client::groupChatLeave(const QString &host, const QString &room, const QStr
 			continue;
 
 		i.status = GroupChat::Closing;
-		debug(QStringLiteral("Client: Leaving: [%1]\n").arg(i.j.full()));
+		debug(QString("Client: Leaving: [%1]\n").arg(i.j.full()));
 
 		JT_Presence *j = new JT_Presence(rootTask());
 		Status s;
@@ -495,7 +496,7 @@ static QDomElement oldStyleNS(const QDomElement &e)
 		i.setAttributeNode(al.item(x).cloneNode().toAttr());
 
 	if(!noShowNS)
-		i.setAttribute(QStringLiteral("xmlns"), e.namespaceURI());
+		i.setAttribute("xmlns", e.namespaceURI());
 
 	// copy children
 	QDomNodeList nl = e.childNodes();
@@ -518,7 +519,7 @@ void Client::streamReadyRead()
 		Stanza s = d->stream->read();
 
 		QString out = s.toString();
-		debug(QStringLiteral("Client: incoming: [\n%1]\n").arg(out));
+		debug(QString("Client: incoming: [\n%1]\n").arg(out));
 		emit xmlIncoming(out);
 
 		QDomElement x = oldStyleNS(s.element());
@@ -546,7 +547,7 @@ void Client::parseUnhandledStreamFeatures()
 {
 	QList<QDomElement> nl = d->stream->unhandledFeatures();
 	foreach (const QDomElement &e, nl) {
-		if (e.localName() == QLatin1String("c") && e.namespaceURI() == NS_CAPS) {
+		if (e.localName() == "c" && e.namespaceURI() == NS_CAPS) {
 			d->serverCaps = CapsSpec::fromXml(e);
 			if (d->capsman->isEnabled()) {
 				d->capsman->updateCaps(Jid(d->stream->jid().domain()), d->serverCaps);
@@ -580,19 +581,19 @@ QDomDocument *Client::doc() const
 
 void Client::distribute(const QDomElement &x)
 {
-	if(x.hasAttribute(QStringLiteral("from"))) {
-		Jid j(x.attribute(QStringLiteral("from")));
+	if(x.hasAttribute("from")) {
+		Jid j(x.attribute("from"));
 		if(!j.isValid()) {
-			debug(QStringLiteral("Client: bad 'from' JID\n"));
+			debug("Client: bad 'from' JID\n");
 			return;
 		}
 	}
 
-	if(!rootTask()->take(x) && (x.attribute(QStringLiteral("type")) == QLatin1String("get") || x.attribute(QStringLiteral("type")) == QLatin1String("set")) ) {
-		debug(QStringLiteral("Client: Unrecognized IQ.\n"));
+	if(!rootTask()->take(x) && (x.attribute("type") == "get" || x.attribute("type") == "set") ) {
+		debug("Client: Unrecognized IQ.\n");
 
 		// Create reply element
-		QDomElement reply = createIQ(doc(), QStringLiteral("error"), x.attribute(QStringLiteral("from")), x.attribute(QStringLiteral("id")));
+		QDomElement reply = createIQ(doc(), "error", x.attribute("from"), x.attribute("id"));
 
 		// Copy children
 		for (QDomNode n = x.firstChild(); !n.isNull(); n = n.nextSibling()) {
@@ -600,12 +601,12 @@ void Client::distribute(const QDomElement &x)
 		}
 
 		// Add error
-		QDomElement error = doc()->createElement(QStringLiteral("error"));
-		error.setAttribute(QStringLiteral("type"),QStringLiteral("cancel"));
+		QDomElement error = doc()->createElement("error");
+		error.setAttribute("type","cancel");
 		reply.appendChild(error);
 
-		QDomElement error_type = doc()->createElement(QStringLiteral("feature-not-implemented"));
-		error_type.setAttribute(QStringLiteral("xmlns"),QStringLiteral("urn:ietf:params:xml:ns:xmpp-stanzas"));
+		QDomElement error_type = doc()->createElement("feature-not-implemented");
+		error_type.setAttribute("xmlns","urn:ietf:params:xml:ns:xmpp-stanzas");
 		error.appendChild(error_type);
 
 		send(reply);
@@ -634,7 +635,7 @@ void Client::send(const QDomElement &x)
 	emit stanzaElementOutgoing(e);
 	QString out = s.toString();
 	//qWarning() << "Out: " << out;
-	debug(QStringLiteral("Client: outgoing: [\n%1]\n").arg(out));
+	debug(QString("Client: outgoing: [\n%1]\n").arg(out));
 	emit xmlOutgoing(out);
 
 	//printf("x[%s] x2[%s] s[%s]\n", Stream::xmlToString(x).toLatin1(), Stream::xmlToString(e).toLatin1(), s.toString().toLatin1());
@@ -646,7 +647,7 @@ void Client::send(const QString &str)
 	if(!d->stream)
 		return;
 
-	debug(QStringLiteral("Client: outgoing: [\n%1]\n").arg(str));
+	debug(QString("Client: outgoing: [\n%1]\n").arg(str));
 	emit xmlOutgoing(str);
 	static_cast<ClientStream*>(d->stream)->writeDirect(str);
 }
@@ -713,9 +714,9 @@ void Client::ppSubscription(const Jid &j, const QString &s, const QString& n)
 void Client::ppPresence(const Jid &j, const Status &s)
 {
 	if(s.isAvailable())
-		debug(QStringLiteral("Client: %1 is available.\n").arg(j.full()));
+		debug(QString("Client: %1 is available.\n").arg(j.full()));
 	else
-		debug(QStringLiteral("Client: %1 is unavailable.\n").arg(j.full()));
+		debug(QString("Client: %1 is unavailable.\n").arg(j.full()));
 
 	for(QList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
 		GroupChat &i = *it;
@@ -723,7 +724,7 @@ void Client::ppPresence(const Jid &j, const Status &s)
 		if(i.j.compare(j, false)) {
 			bool us = (i.j.resource() == j.resource() || j.resource().isEmpty()) ? true: false;
 
-			debug(QStringLiteral("for groupchat i=[%1] pres=[%2], [us=%3].\n").arg(i.j.full()).arg(j.full()).arg(us));
+			debug(QString("for groupchat i=[%1] pres=[%2], [us=%3].\n").arg(i.j.full()).arg(j.full()).arg(us));
 			switch(i.status) {
 				case GroupChat::Connecting:
 					if(us && s.hasError()) {
@@ -794,7 +795,7 @@ void Client::updateSelfPresence(const Jid &j, const Status &s)
 	// unavailable?  remove the resource
 	if(!s.isAvailable()) {
 		if(found) {
-			debug(QStringLiteral("Client: Removing self resource: name=[%1]\n").arg(j.resource()));
+			debug(QString("Client: Removing self resource: name=[%1]\n").arg(j.resource()));
 			(*rit).setStatus(s);
 			emit resourceUnavailable(j, *rit);
 			d->resourceList.erase(rit);
@@ -806,12 +807,12 @@ void Client::updateSelfPresence(const Jid &j, const Status &s)
 		if(!found) {
 			r = Resource(j.resource(), s);
 			d->resourceList += r;
-			debug(QStringLiteral("Client: Adding self resource: name=[%1]\n").arg(j.resource()));
+			debug(QString("Client: Adding self resource: name=[%1]\n").arg(j.resource()));
 		}
 		else {
 			(*rit).setStatus(s);
 			r = *rit;
-			debug(QStringLiteral("Client: Updating self resource: name=[%1]\n").arg(j.resource()));
+			debug(QString("Client: Updating self resource: name=[%1]\n").arg(j.resource()));
 		}
 
 		emit resourceAvailable(j, r);
@@ -827,7 +828,7 @@ void Client::updatePresence(LiveRosterItem *i, const Jid &j, const Status &s)
 	if(!s.isAvailable()) {
 		if(found) {
 			(*rit).setStatus(s);
-			debug(QStringLiteral("Client: Removing resource from [%1]: name=[%2]\n").arg(i->jid().full()).arg(j.resource()));
+			debug(QString("Client: Removing resource from [%1]: name=[%2]\n").arg(i->jid().full()).arg(j.resource()));
 			emit resourceUnavailable(j, *rit);
 			i->resourceList().erase(rit);
 			i->setLastUnavailableStatus(s);
@@ -848,12 +849,12 @@ void Client::updatePresence(LiveRosterItem *i, const Jid &j, const Status &s)
 		if(!found) {
 			r = Resource(j.resource(), s);
 			i->resourceList() += r;
-			debug(QStringLiteral("Client: Adding resource to [%1]: name=[%2]\n").arg(i->jid().full()).arg(j.resource()));
+			debug(QString("Client: Adding resource to [%1]: name=[%2]\n").arg(i->jid().full()).arg(j.resource()));
 		}
 		else {
 			(*rit).setStatus(s);
 			r = *rit;
-			debug(QStringLiteral("Client: Updating resource to [%1]: name=[%2]\n").arg(i->jid().full()).arg(j.resource()));
+			debug(QString("Client: Updating resource to [%1]: name=[%2]\n").arg(i->jid().full()).arg(j.resource()));
 		}
 
 		emit resourceAvailable(j, r);
@@ -862,7 +863,7 @@ void Client::updatePresence(LiveRosterItem *i, const Jid &j, const Status &s)
 
 void Client::pmMessage(const Message &m)
 {
-	debug(QStringLiteral("Client: Message from %1\n").arg(m.from().full()));
+	debug(QString("Client: Message from %1\n").arg(m.from().full()));
 
 	// bits of binary. we can't do this in Message, since it knows nothing about Client
 	foreach (const BoBData &b, m.bobDataList()) {
@@ -873,7 +874,7 @@ void Client::pmMessage(const Message &m)
 		d->ibbman->takeIncomingData(m.from(), m.id(), m.ibbData(), Stanza::Message);
 	}
 
-	if(m.type() == QLatin1String("groupchat")) {
+	if(m.type() == "groupchat") {
 		for(QList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
 			const GroupChat &i = *it;
 
@@ -948,22 +949,22 @@ void Client::importRosterItem(const RosterItem &item)
 	QString substr;
 	switch(item.subscription().type()) {
 		case Subscription::Both:
-			substr = QStringLiteral("<-->");  break;
+			substr = "<-->";  break;
 		case Subscription::From:
-			substr = QStringLiteral("  ->");  break;
+			substr = "  ->";  break;
 		case Subscription::To:
-			substr = QStringLiteral("<-  ");  break;
+			substr = "<-  ";  break;
 		case Subscription::Remove:
-			substr = QStringLiteral("xxxx");  break;
+			substr = "xxxx";  break;
 		case Subscription::None:
 		default:
-			substr = QStringLiteral("----");  break;
+			substr = "----";  break;
 	}
 
 	QString dstr, str;
 	str.sprintf("  %s %-32s", qPrintable(substr), qPrintable(item.jid().full()));
 	if(!item.name().isEmpty())
-		str += QStringLiteral(" [") + item.name() + "]";
+		str += QString(" [") + item.name() + "]";
 	str += '\n';
 
 	// Remove
@@ -973,7 +974,7 @@ void Client::importRosterItem(const RosterItem &item)
 			emit rosterItemRemoved(*it);
 			d->roster.erase(it);
 		}
-		dstr = QStringLiteral("Client: (Removed) ");
+		dstr = "Client: (Removed) ";
 	}
 	// Add/Update
 	else {
@@ -983,7 +984,7 @@ void Client::importRosterItem(const RosterItem &item)
 			i.setFlagForDelete(false);
 			i.setRosterItem(item);
 			emit rosterItemUpdated(i);
-			dstr = QStringLiteral("Client: (Updated) ");
+			dstr = "Client: (Updated) ";
                 }
 		else {
 			LiveRosterItem i(item);
@@ -991,7 +992,7 @@ void Client::importRosterItem(const RosterItem &item)
 
 			// signal it
 			emit rosterItemAdded(i);
-			dstr = QStringLiteral("Client: (Added)   ");
+			dstr = "Client: (Added)   ";
 		}
 	}
 
@@ -1149,25 +1150,25 @@ DiscoItem Client::makeDiscoResult(const QString &node) const
 	item.setNode(node);
 	DiscoItem::Identity id = identity();
 	if (id.category.isEmpty() || id.type.isEmpty()) {
-		id.category = QStringLiteral("client");
-		id.type = QStringLiteral("pc");
+		id.category = "client";
+		id.type = "pc";
 	}
 	item.setIdentities(id);
 
 	Features features;
 
 	if (d->ftman) {
-		features.addFeature(QStringLiteral("http://jabber.org/protocol/bytestreams"));
-		features.addFeature(QStringLiteral("http://jabber.org/protocol/ibb"));
-		features.addFeature(QStringLiteral("http://jabber.org/protocol/si"));
-		features.addFeature(QStringLiteral("http://jabber.org/protocol/si/profile/file-transfer"));
+		features.addFeature("http://jabber.org/protocol/bytestreams");
+		features.addFeature("http://jabber.org/protocol/ibb");
+		features.addFeature("http://jabber.org/protocol/si");
+		features.addFeature("http://jabber.org/protocol/si/profile/file-transfer");
 	}
-	features.addFeature(QStringLiteral("http://jabber.org/protocol/disco#info"));
-	features.addFeature(QStringLiteral("jabber:x:data"));
-	features.addFeature(QStringLiteral("urn:xmpp:bob"));
-	features.addFeature(QStringLiteral("urn:xmpp:ping"));
-	features.addFeature(QStringLiteral("urn:xmpp:time"));
-	features.addFeature(QStringLiteral("urn:xmpp:message-correct:0"));
+	features.addFeature("http://jabber.org/protocol/disco#info");
+	features.addFeature("jabber:x:data");
+	features.addFeature("urn:xmpp:bob");
+	features.addFeature("urn:xmpp:ping");
+	features.addFeature("urn:xmpp:time");
+	features.addFeature("urn:xmpp:message-correct:0");
 
 	// Client-specific features
 	foreach (const QString & i, d->features.list()) {
@@ -1182,31 +1183,31 @@ DiscoItem Client::makeDiscoResult(const QString &node) const
 
 	XData::Field si_type_field;
 	si_type_field.setType(XData::Field::Field_Hidden);
-	si_type_field.setVar(QStringLiteral("FORM_TYPE"));
-	si_type_field.setValue(QStringList(QStringLiteral("urn:xmpp:dataforms:softwareinfo")));
+	si_type_field.setVar("FORM_TYPE");
+	si_type_field.setValue(QStringList(QLatin1String("urn:xmpp:dataforms:softwareinfo")));
 	si_fields.append(si_type_field);
 
 	XData::Field software_field;
 	software_field.setType(XData::Field::Field_TextSingle);
-	software_field.setVar(QStringLiteral("software"));
+	software_field.setVar("software");
 	software_field.setValue(QStringList(d->clientName));
 	si_fields.append(software_field);
 
 	XData::Field software_v_field;
 	software_v_field.setType(XData::Field::Field_TextSingle);
-	software_v_field.setVar(QStringLiteral("software_version"));
+	software_v_field.setVar("software_version");
 	software_v_field.setValue(QStringList(d->clientVersion));
 	si_fields.append(software_v_field);
 
 	XData::Field os_field;
 	os_field.setType(XData::Field::Field_TextSingle);
-	os_field.setVar(QStringLiteral("os"));
+	os_field.setVar("os");
 	os_field.setValue(QStringList(d->osName));
 	si_fields.append(os_field);
 
 	XData::Field os_v_field;
 	os_v_field.setType(XData::Field::Field_TextSingle);
-	os_v_field.setVar(QStringLiteral("os_version"));
+	os_v_field.setVar("os_version");
 	os_v_field.setValue(QStringList(d->osVersion));
 	si_fields.append(os_v_field);
 
