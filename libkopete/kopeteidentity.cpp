@@ -25,7 +25,6 @@
 #include <QStringList>
 #include <KDebug>
 #include <KConfigGroup>
-#include <KGlobal>
 #include <KSharedConfigPtr>
 #include <KLocalizedString>
 #include <KRandom>

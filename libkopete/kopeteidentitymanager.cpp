@@ -22,7 +22,6 @@
 #include <QApplication>
 #include <KDebug>
 #include <KConfigGroup>
-#include <KGlobal>
 #include <KSharedConfig>
 #include <KSharedConfigPtr>
 #include <KLocalizedString>

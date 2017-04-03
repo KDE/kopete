@@ -51,6 +51,7 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 	kDebug ( 14140 ) << "New message manager for " << user->contactId();
 
 	// Needed because this is (indirectly) a KXMLGuiClient, so it can find the gui description .rc file
+    setComponentName(QStringLiteral("protocol_qq"), i18n("Kopete"));
     //setComponentData( protocol->componentData() );
 
 	// make sure Kopete knows about this instance

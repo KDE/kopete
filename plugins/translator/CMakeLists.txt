@@ -12,6 +12,9 @@ set(kopete_translator_PART_SRCS
    translatorguiclient.cpp
    translatorlanguages.cpp )
 
+qt5_add_resources(kopete_translator_PART_SRCS translator.qrc)
+
+
 kconfig_add_kcfg_files(kopete_translator_PART_SRCS translatorconfig.kcfgc )
 
 
@@ -44,7 +47,6 @@ install(TARGETS kcm_kopete_translator  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 install( FILES translatorconfig.kcfg  DESTINATION ${KDE_INSTALL_KCFGDIR})
 install( FILES kopete_translator.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
-install( FILES translatorui.rc translatorchatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_translator)
 install( FILES kopete_translator_config.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)
 
 

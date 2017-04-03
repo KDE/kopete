@@ -24,7 +24,6 @@
 
 // KDE includes
 #include <kdebug.h>
-#include <KGlobal>
 #include <kactioncollection.h>
 #include <kactionmenu.h>
 #include <klocalizedstring.h>
@@ -33,6 +32,7 @@
 #include <KConfigGroup>
 
 // Qt includes
+#include <QMimeData>
 #include <QUrl>
 #include <QEvent>
 #include <QAction>

@@ -69,6 +69,7 @@ ChatTextEditPart::ChatTextEditPart(QWidget *parent, QObject *, const QStringList
 
 void ChatTextEditPart::init(Kopete::ChatSession *session, QWidget *parent)
 {
+    setComponentName(QStringLiteral("kopete"), i18n("Kopete"));
     // we need an instance
     //FIXME: setComponentData( ChatTextEditPartFactory::componentData() );
 
