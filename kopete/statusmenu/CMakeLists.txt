@@ -19,6 +19,7 @@ ki18n_wrap_ui( kopetestatusmenu_SRCS
     )
 
 add_library( kopetestatusmenu SHARED ${kopetestatusmenu_SRCS} )
+generate_export_header(kopetestatusmenu BASE_NAME kopetestatusmenu)
 target_link_libraries( kopetestatusmenu kopete  KF5::KCMUtils )
 set_target_properties( kopetestatusmenu PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kopetestatusmenu ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})

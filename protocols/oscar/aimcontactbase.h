@@ -20,7 +20,7 @@
 #define AIMCONTACTBASE_H
 
 #include "oscarcontact.h"
-#include "kopete_export.h"
+#include "oscar_export.h"
 
 namespace Kopete
 {

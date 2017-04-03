@@ -21,7 +21,7 @@
 
 #include <QWidget>
 #include <QListWidgetItem>
-#include <kopete_export.h>
+#include <kopeteidentity_export.h>
 
 namespace Kopete {
 class Account;
@@ -35,7 +35,7 @@ class PropertyContainer;
  *
  * This dialog is used to add a new identity to
  */
-class KOPETE_IDENTITY_EXPORT IdentityStatusWidget : public QWidget
+class KOPETEIDENTITY_EXPORT IdentityStatusWidget : public QWidget
 {
     Q_OBJECT
 

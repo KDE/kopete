@@ -21,7 +21,7 @@
 #include <QtCore/QBitArray>
 #include <QtNetwork/QHostAddress>
 #include "oscartypes.h"
-#include "kopete_export.h"
+#include "oscar_export.h"
 
 class Buffer;
 using namespace Oscar;

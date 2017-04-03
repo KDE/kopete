@@ -27,7 +27,7 @@
 #include <QMenu>
 #include <kopetemessage.h>
 
-#include <kopete_export.h>
+#include <kopetechatwindow_shared_export.h>
 
 namespace Kopete {
 class Message;

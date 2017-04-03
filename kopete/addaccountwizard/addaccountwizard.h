@@ -22,8 +22,7 @@
 #include <qmap.h>
 
 #include <kassistantdialog.h>
-
-#include <kopete_export.h>
+#include "kopeteaddaccountwizard_export.h"
 
 #include "ui_addaccountwizardpage1.h"
 #include "ui_addaccountwizardpage2.h"

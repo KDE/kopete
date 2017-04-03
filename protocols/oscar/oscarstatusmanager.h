@@ -21,7 +21,7 @@
 #include "oscarpresence.h"
 #include <kopeteonlinestatus.h>
 
-#include "kopete_export.h"
+#include "oscar_export.h"
 
 namespace Kopete { class OnlineStatus; }
 

@@ -27,7 +27,7 @@
 #include <QList>
 #include <QByteArray>
 #include <KLocalizedString>
-#include "kopete_export.h"
+#include "oscar_export.h"
 #include "rtf2html.h"
 #include "transfer.h"
 #include "icquserinfo.h"

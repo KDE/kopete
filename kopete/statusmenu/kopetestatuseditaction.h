@@ -19,8 +19,8 @@
 #include <QWidgetAction>
 
 #include <KDialog>
-
-#include "kopete_export.h"
+#include <QObject>
+#include "kopetestatusmenu_export.h"
 
 class KDialogButtonBox;
 
@@ -69,7 +69,7 @@ private:
     Ui::KopeteStatusEditWidget *ui;
 };
 
-class KOPETE_STATUSMENU_EXPORT StatusEditAction : public QWidgetAction
+class KOPETESTATUSMENU_EXPORT StatusEditAction : public QWidgetAction
 {
     Q_OBJECT
 public:

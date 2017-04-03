@@ -21,7 +21,7 @@
 #include <QFlags>
 #include <QString>
 
-#include "kopete_export.h"
+#include "oscar_export.h"
 
 class OscarStatusManager;
 

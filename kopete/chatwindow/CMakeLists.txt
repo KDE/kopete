@@ -23,6 +23,7 @@ set( kopetechatwindow_shared_SRCS
 
 kconfig_add_kcfg_files(kopetechatwindow_shared_SRCS GENERATE_MOC kopetechatwindowsettings.kcfgc )
 add_library(kopetechatwindow_shared SHARED ${kopetechatwindow_shared_SRCS})
+generate_export_header(kopetechatwindow_shared BASE_NAME kopetechatwindow_shared)
 target_link_libraries(kopetechatwindow_shared kopete Phonon::phonon4qt5 KF5::KHtml  )
 set_target_properties(kopetechatwindow_shared PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kopetechatwindow_shared ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
@@ -33,7 +34,7 @@ set(chattexteditpart_PART_SRCS chattexteditpart.cpp )
 
 add_library(chattexteditpart MODULE ${chattexteditpart_PART_SRCS})
 
-
+generate_export_header(chattexteditpart BASE_NAME chattexteditpart)
 target_link_libraries(chattexteditpart kopete kopetechatwindow_shared KF5::Parts )
 
 install(TARGETS chattexteditpart  DESTINATION ${KDE_INSTALL_PLUGINDIR})

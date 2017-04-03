@@ -19,13 +19,13 @@
 #define IDENTITYDIALOG_H
 
 #include <kopeteinfodialog.h>
-#include <kopete_export.h>
+#include <kopeteidentity_export.h>
 
 namespace Kopete {
 class Identity;
 }
 
-class KOPETE_IDENTITY_EXPORT IdentityDialog : public Kopete::UI::InfoDialog
+class KOPETEIDENTITY_EXPORT IdentityDialog : public Kopete::UI::InfoDialog
 {
     Q_OBJECT
 public:

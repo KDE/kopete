@@ -23,7 +23,7 @@
 #include <QtCore/QSet>
 #include <QtGui/QStandardItemModel>
 
-#include "kopete_export.h"
+#include "oscar_export.h"
 
 /**
 	@author Roman Jarosz <kedgedev@centrum.cz>

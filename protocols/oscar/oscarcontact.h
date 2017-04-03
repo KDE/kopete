@@ -27,7 +27,7 @@
 #include "client.h"
 #include "oscartypeclasses.h"
 #include "contact.h"
-#include "kopete_export.h"
+#include "oscar_export.h"
 
 namespace Kopete
 {

@@ -32,7 +32,7 @@
 
 #include <QtCrypto>
 
-#include <kopete_export.h>
+#include <jabber_export.h>
 
 using namespace XMPP;
 

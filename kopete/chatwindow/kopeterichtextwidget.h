@@ -25,7 +25,7 @@
 #include "kopeteprotocol.h"
 
 #include <krichtextwidget.h>
-#include <kopete_export.h>
+#include <kopetechatwindow_shared_export.h>
 
 /**
  * @brief A KopeteRichTextWidget with overridden behaviors

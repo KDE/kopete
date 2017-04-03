@@ -90,6 +90,7 @@ set(liboscar_SRCS
     )
 
 add_library( oscar SHARED ${liboscar_SRCS} )
+generate_export_header(oscar BASE_NAME oscar)
 
 target_link_libraries( oscar KF5::KDELibs4Support Qt5::Gui Qt5::Network Qt5::Xml )
 set_target_properties( oscar PROPERTIES VERSION 1.0.0 SOVERSION 1 )

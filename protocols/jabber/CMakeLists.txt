@@ -164,7 +164,7 @@ if(BUILD_JINGLE)
 endif(BUILD_JINGLE)
 
 add_library(kopete_jabber MODULE ${kopete_jabber_PART_SRCS})
-
+generate_export_header(kopete_jabber BASE_NAME jabber)
 
 target_link_libraries(kopete_jabber  KF5::KIOCore ${QCA2_LIBRARIES}  kopete iris_kopete)
 if(BUILD_JINGLE)	

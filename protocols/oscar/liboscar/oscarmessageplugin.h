@@ -21,7 +21,7 @@
 
 #include <QSharedDataPointer>
 
-#include "kopete_export.h"
+#include "oscar_export.h"
 #include "oscartypes.h"
 
 namespace Oscar

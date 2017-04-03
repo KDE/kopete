@@ -20,7 +20,7 @@
 #define OSCARENCODINGSELECTIONDIALOG_H
 
 #include <kdialog.h>
-#include "kopete_export.h"
+#include "oscar_export.h"
 
 namespace Ui { class OscarEncodingBaseUI; }
 

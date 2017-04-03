@@ -21,7 +21,7 @@
 #define OSCARPROTOCOL_H
 
 #include "kopeteprotocol.h"
-#include "kopete_export.h"
+#include "oscar_export.h"
 #include "kopeteproperty.h"
 
 class OscarStatusManager;

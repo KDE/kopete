@@ -25,7 +25,7 @@
 #include "oscartypeclasses.h"
 #include "oscarcontact.h"
 #include "contact.h"
-#include "kopete_export.h"
+#include "oscar_export.h"
 
 class QDomNode;
 

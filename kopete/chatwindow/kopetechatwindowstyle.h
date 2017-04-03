@@ -20,7 +20,7 @@
 #include <QHash>
 #include <QObject>
 
-#include <kopete_export.h>
+#include <kopetechatwindow_shared_export.h>
 
 /**
  * This class represent a single chat window style.

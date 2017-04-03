@@ -19,7 +19,7 @@
 #define ACCOUNTIDENTITYDIALOG_H
 
 #include <KDialog>
-#include <kopete_export.h>
+#include <kopeteidentity_export.h>
 
 namespace Kopete {
 class Identity;
@@ -31,7 +31,7 @@ class Account;
  *
  * @author Gustavo Pichorim Boiko <gustavo.boiko@kemail.net>
  */
-class KOPETE_IDENTITY_EXPORT AccountIdentityDialog : public KDialog
+class KOPETEIDENTITY_EXPORT AccountIdentityDialog : public KDialog
 {
     Q_OBJECT
 

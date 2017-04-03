@@ -8,4 +8,4 @@ Mutators=true
 SetUserTexts=false
 Singleton=true
 Visibility=KOPETECHATWINDOW_SHARED_EXPORT
-IncludeFiles=kopete_export.h
+IncludeFiles=kopetechatwindow_shared_export.h

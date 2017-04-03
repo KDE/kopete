@@ -24,7 +24,7 @@
 #include <KActionMenu>
 #include <KActionCollection>
 
-#include <kopete_export.h>
+#include <kopetechatwindow_shared_export.h>
 
 class KOPETECHATWINDOW_SHARED_EXPORT KopeteEmoticonAction : public KActionMenu
 {

@@ -18,7 +18,7 @@
 
 #include <QObject>
 
-#include "kopete_export.h"
+#include "kopetestatusmenu_export.h"
 
 class KActionMenu;
 class QAction;
@@ -38,7 +38,7 @@ class Status;
     @author Roman Jarosz <kedgedev@centrum.cz>
 */
 
-class KOPETE_STATUSMENU_EXPORT StatusRootAction : public QObject
+class KOPETESTATUSMENU_EXPORT StatusRootAction : public QObject
 {
     Q_OBJECT
 public:

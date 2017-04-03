@@ -30,8 +30,7 @@
 
 #include <krichtextedit.h>
 #include "kopeterichtextwidget.h"
-// TODO: Use kdelibs export
-#include <kopete_export.h>
+#include <chattexteditpart_export.h>
 
 class KTextEdit;
 class KConfigGroup;
