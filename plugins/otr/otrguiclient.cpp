@@ -22,7 +22,7 @@
 #include "otrplugin.h"
 #include "otrlchatinterface.h"
 
-#include <kaction.h>
+#include <QAction>
 #include <KLocalizedString>
 #include <kactionmenu.h>
 #include <kopetechatsession.h>

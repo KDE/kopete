@@ -28,7 +28,7 @@
 
 #include <kdebug.h>
 #include <kpluginfactory.h>
-#include <kaction.h>
+#include <QAction>
 
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"

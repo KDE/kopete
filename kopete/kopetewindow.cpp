@@ -528,10 +528,10 @@ void KopeteWindow::initActions()
     globalShowContactList->setGlobalShortcut(KShortcut(QKeySequence(Qt::CTRL + Qt::ALT + Qt::Key_T)));
     globalShowContactList->setWhatsThis(i18n("Show or hide the contact list"));
 
-    KAction *globalSetAway = new KAction(i18n("Set Away/Back"), this);
+    QAction *globalSetAway = new QAction(i18n("Set Away/Back"), this);
     actionCollection()->addAction(QStringLiteral("Set_Away_Back"), globalSetAway);
     connect(globalSetAway, SIGNAL(triggered(bool)), this, SLOT(slotToggleAway()));
-    globalSetAway->setGlobalShortcut(KShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W)));
+    //FIXME KF5 globalSetAway->setGlobalShortcut(KShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W)));
 }
 
 void KopeteWindow::slotShowHide()

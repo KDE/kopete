@@ -25,7 +25,7 @@
 #include "kopeteview.h"
 
 #include <kdebug.h>
-#include <kaction.h>
+#include <QAction>
 #include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>

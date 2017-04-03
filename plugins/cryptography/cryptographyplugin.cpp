@@ -24,7 +24,7 @@
 // kde stuff
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kaction.h>
+#include <QAction>
 #include <kpluginfactory.h>
 #include <kaboutdata.h>
 #include <kiconloader.h>

@@ -32,7 +32,7 @@
 #include <kabc/addressbook.h>
 #include "exportkeys.h"
 
-#include <kaction.h>
+#include <QAction>
 #include <klocalizedstring.h>
 #include <kaboutdata.h>
 #include <kicon.h>
