@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>dlgXMPPConsole</class>
- <widget class="QWidget" name="dlgXMPPConsole" >
-  <property name="geometry" >
+ <widget class="QWidget" name="dlgXMPPConsole">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,13 +10,25 @@
     <height>352</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="QTextBrowser" name="brLog" />
+    <widget class="QTextBrowser" name="brLog"/>
    </item>
    <item>
-    <widget class="KTextEdit" name="mTextEdit" >
-     <property name="maximumSize" >
+    <widget class="KTextEdit" name="mTextEdit">
+     <property name="maximumSize">
       <size>
        <width>16777215</width>
        <height>100</height>
