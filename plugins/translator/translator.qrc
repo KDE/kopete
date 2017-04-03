@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/kxmlgui5/kopete_translator">
+        <file>translatorui.rc</file>
+        <file>translatorchatui.rc</file>
+    </qresource>
+</RCC>

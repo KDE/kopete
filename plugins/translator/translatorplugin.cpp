@@ -53,6 +53,8 @@ K_PLUGIN_FACTORY(TranslatorPluginFactory, registerPlugin<TranslatorPlugin>();
 TranslatorPlugin::TranslatorPlugin(QObject *parent, const QVariantList & /* args */)
     : Kopete::Plugin(parent)
 {
+    setComponentName(QStringLiteral("kopete_translator"), i18n("Kopete"));
+
     kDebug(14308);
 
     if (pluginStatic_) {
