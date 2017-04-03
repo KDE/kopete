@@ -30,7 +30,7 @@
 #include <QVBoxLayout>
 #include <QLatin1String>
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 
 #include <kio/netaccess.h>

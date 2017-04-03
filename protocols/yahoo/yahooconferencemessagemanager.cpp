@@ -20,7 +20,7 @@
 
 #include "yahoo_protocol_debug.h"
 #include <QLineEdit>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <QMenu>
 #include <kconfig.h>

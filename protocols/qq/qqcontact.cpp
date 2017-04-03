@@ -27,7 +27,7 @@
 #include <QAction>
 #include <kdebug.h>
 #include <QLineEdit>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include <kmessagebox.h>
 #include <ktoolinvocation.h>

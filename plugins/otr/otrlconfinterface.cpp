@@ -36,7 +36,7 @@
 
 #include "plugin_otr_debug.h"
 #include <kstandarddirs.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kglobal.h>
 
 /*********************** Konstruktor/Destruktor **********************/

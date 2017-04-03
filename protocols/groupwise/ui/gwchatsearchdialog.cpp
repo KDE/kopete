@@ -25,7 +25,7 @@
 
 #include <QPushButton>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include "client.h"
 #include "chatroommanager.h"
 

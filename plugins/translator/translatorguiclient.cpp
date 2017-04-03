@@ -22,7 +22,7 @@
 #include <qvariant.h>
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <QKeySequence>
 #include <kactioncollection.h>
 

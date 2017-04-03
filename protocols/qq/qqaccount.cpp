@@ -21,7 +21,7 @@
 
 #include <qaction.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kactionmenu.h>
 #include <QMenu>
 #include <QIcon>

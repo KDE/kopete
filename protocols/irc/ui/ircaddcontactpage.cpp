@@ -21,7 +21,7 @@
 #include "ircaccount.h"
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 
 struct IRCAddContactPage::Private

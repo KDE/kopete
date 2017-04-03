@@ -25,7 +25,7 @@
 #include "yahoo_protocol_debug.h"
 #include <QLineEdit>
 #include <ktemporaryfile.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>

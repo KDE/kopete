@@ -25,7 +25,7 @@
 #include <QAction>
 #include <kdebug.h>
 #include <kfiledialog.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include <qtimer.h>
 #include <QFileDialog>

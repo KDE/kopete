@@ -24,7 +24,7 @@
 #include <qtimer.h>
 #include <QTime>
 #include "yahoo_protocol_debug.h"
-#include <klocale.h>
+#include <KLocalizedString>
 #include <k3streamsocket.h>
 #include <kio/global.h>
 #include <krandom.h>

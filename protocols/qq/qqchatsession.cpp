@@ -19,7 +19,7 @@
 #include <kdebug.h>
 #include <kdialog.h>
 #include <kinputdialog.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kxmlguiwindow.h>
 #include <kmessagebox.h>
 #include <QMenu>

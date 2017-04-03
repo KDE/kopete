@@ -27,7 +27,7 @@
 #include <QTreeWidget>
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kopeteglobal.h>
 #include <kopeteonlinestatus.h>
 #include <kopetemetacontact.h>

@@ -19,7 +19,7 @@
 #include "yahoochatchatsession.h"
 
 #include "yahoo_protocol_debug.h"
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kcomponentdata.h>
 
 #include <kopetecontactlist.h>

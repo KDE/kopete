@@ -27,7 +27,7 @@
 #include <QPixmap>
 #include <QVBoxLayout>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 QQWebcamDialog::QQWebcamDialog( const QString &contactId, QWidget * parent )
 : KDialog( parent )

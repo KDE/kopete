@@ -52,7 +52,7 @@
 #include <QAction>
 #include <KActionCollection>
 #include <kdialog.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <krun.h>
 #include <QKeySequence>
 #include <kmessagebox.h>

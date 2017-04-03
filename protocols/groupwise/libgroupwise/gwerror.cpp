@@ -17,7 +17,7 @@
 
 #include "gwerror.h"
 
-#include <klocale.h>
+#include <KLocalizedString>
 
 QString GroupWise::errorCodeToString(int errorCode)
 {

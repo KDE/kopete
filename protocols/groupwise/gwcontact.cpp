@@ -33,7 +33,7 @@
 #include <KActionCollection>
 #include <kdebug.h>
 #include <QIcon>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include <kopetemetacontact.h>
 #include <kopeteuiglobal.h>

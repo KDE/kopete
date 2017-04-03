@@ -18,7 +18,7 @@
 #include "ircconst.h"
 
 #include <kaboutdata.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 using namespace Kopete;
 

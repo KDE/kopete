@@ -26,7 +26,7 @@
 
 #include <kdebug.h>
 #include <kaction.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
 #include <kactioncollection.h>

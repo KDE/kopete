@@ -29,7 +29,7 @@
 
 #include <kdebug.h>
 #include <kconfig.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kpassworddialog.h>
 #include <kglobal.h>

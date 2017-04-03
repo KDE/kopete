@@ -34,7 +34,7 @@
 #include <k3bufferedsocket.h>
 #include <k3serversocket.h>
 #include <k3resolver.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kurl.h>
 

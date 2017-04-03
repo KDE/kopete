@@ -24,7 +24,7 @@
 
 #include <QAction>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include <qdom.h>
 #include <QList>

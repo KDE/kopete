@@ -25,7 +25,7 @@
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 using namespace KYahoo;
 

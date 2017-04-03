@@ -27,7 +27,7 @@
 #include <QVBoxLayout>
 
 #include <QListWidget>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kpluginfactory.h>
 
 #include "ui_nowlisteningprefs.h"

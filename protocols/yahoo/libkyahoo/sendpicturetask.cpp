@@ -27,7 +27,7 @@
 #include <kio/jobclasses.h>
 #include <k3bufferedsocket.h>
 #include "yahoo_protocol_debug.h"
-#include <klocale.h>
+#include <KLocalizedString>
 
 using namespace KNetwork;
 using namespace KYahoo;

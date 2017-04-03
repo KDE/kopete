@@ -21,7 +21,7 @@
 #include "client.h"
 #include <qstring.h>
 #include "yahoo_protocol_debug.h"
-#include <klocale.h>
+#include <KLocalizedString>
 
 using namespace KYahoo;
 

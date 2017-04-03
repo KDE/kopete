@@ -21,7 +21,7 @@
 
 #include <qstring.h>
 #include <qmap.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 TranslatorLanguages::TranslatorLanguages()
 {

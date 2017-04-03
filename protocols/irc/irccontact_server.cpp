@@ -25,7 +25,7 @@
 
 #include <QAction>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include <qtimer.h>
 /*

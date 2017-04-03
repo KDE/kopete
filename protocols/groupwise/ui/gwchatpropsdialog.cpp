@@ -25,7 +25,7 @@
 
 #include <kdebug.h>
 #include <QPushButton>
-#include <klocale.h>
+#include <KLocalizedString>
 #include "gwerror.h"
 
 GroupWiseChatPropsDialog::GroupWiseChatPropsDialog( QWidget * parent )

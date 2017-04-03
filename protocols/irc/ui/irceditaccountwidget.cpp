@@ -24,7 +24,7 @@
 #include "kopetepasswordwidget.h"
 
 #include <kmessagebox.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>

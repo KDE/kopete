@@ -32,7 +32,7 @@
 #include "kopeteview.h"
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <qregexp.h>
 
 #include <qtimer.h>

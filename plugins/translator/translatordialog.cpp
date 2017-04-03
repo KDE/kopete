@@ -17,7 +17,7 @@
 
 #include "translatordialog.h"
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <ktextedit.h>
 
 TranslatorDialog::TranslatorDialog(const QString &text, QWidget *parent)

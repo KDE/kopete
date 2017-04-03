@@ -27,7 +27,7 @@
 #include <QPixmap>
 #include <k3streamsocket.h>
 #include "yahoo_protocol_debug.h"
-#include <klocale.h>
+#include <KLocalizedString>
 
 using namespace KNetwork;
 using namespace KYahoo;

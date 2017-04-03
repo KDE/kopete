@@ -23,7 +23,7 @@
 #include <QVBoxLayout>
 #include <QPixmap>
 #include "yahoo_protocol_debug.h"
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include <webcamwidget.h>
 

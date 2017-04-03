@@ -25,7 +25,7 @@
 #include "authenticationwizard.h"
 
 #include "plugin_otr_debug.h"
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kopetecontact.h>
 #include <knotification.h>
 

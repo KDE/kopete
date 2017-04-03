@@ -36,7 +36,7 @@
 #include <QPointer>
 
 // KDE
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kconfig.h>
 #include "yahoo_protocol_debug.h"
 #include <QAction>

@@ -26,7 +26,7 @@
 #include <kio/jobclasses.h>
 #include <kurl.h>
 
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include "yahootypes.h"
 #include "client.h"

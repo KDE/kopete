@@ -23,7 +23,7 @@
 #include "otrlchatinterface.h"
 
 #include <kaction.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kactionmenu.h>
 #include <kopetechatsession.h>
 #include <ui/kopeteview.h>

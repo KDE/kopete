@@ -31,7 +31,7 @@
 #include <QLatin1String>
 
 // KDE Includes
-#include <klocale.h>
+#include <KLocalizedString>
 #include "yahoo_protocol_debug.h"
 #include <kmessagebox.h>
 #include <krun.h>

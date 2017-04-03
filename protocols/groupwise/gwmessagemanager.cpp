@@ -29,7 +29,7 @@
 #include <kactionmenu.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kxmlguiwindow.h>
 #include <kmessagebox.h>
 #include <QMenu>

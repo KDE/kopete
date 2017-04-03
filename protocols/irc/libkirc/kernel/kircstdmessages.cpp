@@ -23,7 +23,7 @@
 #include "kircmessage.h"
 #include "kircsocket.h"
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kuser.h>
 
 #include <QList>

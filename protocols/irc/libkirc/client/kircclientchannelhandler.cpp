@@ -27,7 +27,7 @@
 #include "kirchandler_p.h"
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include <QDateTime>
 #include <qfileinfo.h>

@@ -45,7 +45,7 @@
 #include <kinputdialog.h>
 //#include <QLineEdit>
 //#include <klineeditdlg.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <QMenu>
 #include <kmessagebox.h>
 

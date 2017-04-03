@@ -33,7 +33,7 @@
 #include <QVBoxLayout>
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include "kopeteaccount.h"
 #include "kopetemetacontact.h"
