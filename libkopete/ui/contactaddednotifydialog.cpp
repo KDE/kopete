@@ -21,11 +21,9 @@
 
 #include <KLocalizedString>
 #include <kcombobox.h>
-#include <QLineEdit>
 #include <QPushButton>
 
 #include <kcontacts/addressee.h>
-#include <KConfigGroup>
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QVBoxLayout>

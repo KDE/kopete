@@ -16,7 +16,6 @@
 #include "kopeteutils_private.h"
 
 #include <QApplication>
-#include <QMap>
 
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>

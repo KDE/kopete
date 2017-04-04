@@ -19,7 +19,6 @@
 // Qt includes
 
 #include <QBuffer>
-#include <QCoreApplication>
 #include <QFile>
 #include <QPointer>
 #include <QStringList>

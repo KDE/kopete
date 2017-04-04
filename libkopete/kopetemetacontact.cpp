@@ -21,7 +21,6 @@
 #include "kopetemetacontact.h"
 #include "kopetemetacontact_p.h"
 
-#include <QTextDocument>
 
 #include <kcontacts/addressee.h>
 

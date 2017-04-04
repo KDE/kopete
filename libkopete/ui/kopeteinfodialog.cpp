@@ -25,7 +25,6 @@
 #include <QDialogButtonBox>
 
 #include <KTitleWidget>
-#include <KConfigGroup>
 #include <KLocalizedString>
 
 namespace Kopete {

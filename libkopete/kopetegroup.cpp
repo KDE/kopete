@@ -24,7 +24,6 @@
 #include "kopetecontact.h"
 #include "kopetechatsession.h"
 
-#include <QIcon>
 #include <KLocalizedString>
 
 namespace Kopete {

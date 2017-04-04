@@ -20,12 +20,7 @@
 
 #include <KWallet/kwallet.h>
 
-#include <QApplication>
-#include <QLabel>
-#include <QLineEdit>
 #include <QCheckBox>
-#include <QDialog>
-#include <QDebug>
 
 #include <KGlobal>
 #include <kconfig.h>

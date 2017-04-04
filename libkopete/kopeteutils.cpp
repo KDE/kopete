@@ -19,9 +19,7 @@
 
 #include "kopeteutils.h"
 
-#include <QMap>
 #include <QPixmap>
-#include <QByteArray>
 
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>

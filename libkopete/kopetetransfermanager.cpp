@@ -21,7 +21,6 @@
 
 #include <QDebug>
 #include <QtCore/QTimerEvent>
-#include <QTextDocument>
 
 #include <kfiledialog.h>
 #include <kfileitem.h>

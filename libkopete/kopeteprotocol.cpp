@@ -20,7 +20,6 @@
 #include "kopeteprotocol.h"
 
 #include <kdebug.h>
-#include <QAction>
 #include <KLocalizedString>
 #include <kjob.h>
 

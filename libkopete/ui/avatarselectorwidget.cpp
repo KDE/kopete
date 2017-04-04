@@ -25,14 +25,11 @@
 #include <QListWidgetItem>
 #include <QIcon>
 #include <QPainter>
-#include <QLocale>
 #include <QUrl>
-#include <QDebug>
 
 // KDE includes
 #include <kfiledialog.h>
 #include <kpixmapregionselectordialog.h>
-#include <KConfigGroup>
 
 #include "ui_avatarselectorwidget.h"
 #ifndef VIDEOSUPPORT_DISABLED

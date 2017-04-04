@@ -28,7 +28,6 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QStandardPaths>
-#include <QTextCodec>
 
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>

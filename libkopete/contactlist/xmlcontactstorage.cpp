@@ -25,9 +25,7 @@
 #include <QFile>
 #include <QUuid>
 #include <QRegExp>
-#include <QLocale>
 #include <QSaveFile>
-#include <QTextCodec>
 #include <QTextStream>
 
 #include <QStandardPaths>

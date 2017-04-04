@@ -25,12 +25,9 @@
 #include <valgrind/valgrind.h>
 #endif
 
-#include <QUrl>
-#include <QFile>
 #include <QTimer>
 #include <QStack>
 #include <QRegExp>
-#include <QApplication>
 
 #include <KDebug>
 #include <KConfig>

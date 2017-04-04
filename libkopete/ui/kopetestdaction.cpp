@@ -19,7 +19,6 @@
 #include "kopetestdaction.h"
 
 #include <QIcon>
-#include <QApplication>
 
 #include <KLocalizedString>
 

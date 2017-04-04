@@ -22,7 +22,6 @@
 
 #include "kopetechatsession.h"
 
-#include <QApplication>
 #include <QFile>
 #include <QRegExp>
 #include <QPointer>

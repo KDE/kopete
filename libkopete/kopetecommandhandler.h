@@ -18,7 +18,6 @@
 #define KOPETECOMMANDHANDLER_H
 
 #include <QtCore/QMultiHash>
-#include <QDebug>
 
 #include <QKeySequence>
 #include <kprocess.h>

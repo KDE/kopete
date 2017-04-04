@@ -19,7 +19,6 @@
 #include <QMap>
 #include <QObject>
 #include <QString>
-#include <QDebug>
 
 #include "libkopete_export.h"
 #include "libkopete_debug.h"

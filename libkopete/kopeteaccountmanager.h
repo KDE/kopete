@@ -21,7 +21,6 @@
 
 #include <QtCore/QObject>
 #include <QColor>
-#include <QDebug>
 
 #include "libkopete_export.h"
 #include "libkopete_debug.h"

@@ -17,7 +17,6 @@
 #include "kopeteinfoevent.h"
 
 #include <QApplication>
-#include <QStringList>
 
 namespace Kopete {
 class InfoEventManager::Private

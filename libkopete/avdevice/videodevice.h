@@ -76,7 +76,6 @@
 #include <qstring.h>
 #include <qfile.h>
 #include <qimage.h>
-#include <KLocalizedString>
 
 #include "videoinput.h"
 

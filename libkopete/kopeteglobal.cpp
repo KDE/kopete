@@ -19,7 +19,6 @@
 #include "kopeteuiglobal.h"
 
 #include <QtCore/QLatin1String>
-#include <QApplication>
 
 #include <kdebug.h>
 #include <KLocalizedString>

@@ -19,9 +19,6 @@
 
 #include "kopetecontact.h"
 
-#include <QApplication>
-#include <QTextDocument>
-#include <QTimer>
 #include <QDialog>
 #include <QIcon>
 #include <QMenu>
@@ -52,14 +49,8 @@
 #include "kopetedeletecontacttask.h"
 
 //For the moving to another metacontact dialog
-#include <QLabel>
-#include <QImage>
-#include <QMimeData>
-#include <QMimeType>
 #include <QVBoxLayout>
-#include <QTreeWidget>
 #include <QCheckBox>
-#include <KConfigGroup>
 #include <QDialogButtonBox>
 #include <QPushButton>
 

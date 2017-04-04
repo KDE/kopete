@@ -22,13 +22,11 @@
 #include "kopetecontact.h"
 #include "kopeteprotocol.h"
 
-#include <QStringList>
 #include <KDebug>
 #include <KConfigGroup>
 #include <KSharedConfigPtr>
 #include <KLocalizedString>
 #include <KRandom>
-#include <QMenu>
 
 #include <KSharedConfig>
 

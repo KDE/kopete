@@ -22,7 +22,6 @@
 
 #include <QTimer>
 #include <QWidget>
-#include <QApplication>
 
 static WId mainWindowID()
 {

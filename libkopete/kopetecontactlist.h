@@ -21,9 +21,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
-#include <QStandardItemModel>
 
-#include <QUrl>
 
 #include "libkopete_export.h"
 

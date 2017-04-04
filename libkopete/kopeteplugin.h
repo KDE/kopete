@@ -26,7 +26,6 @@
 #include <KAboutData>
 
 #include <QObject>
-#include <QDebug>
 
 #include "libkopete_debug.h"
 #include "libkopete_export.h"

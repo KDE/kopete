@@ -22,7 +22,6 @@
 #include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
-#include <KConfigGroup>
 
 #include <QString>
 #include <QTimer>

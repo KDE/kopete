@@ -18,7 +18,6 @@
 #ifndef KOPETETASK_H
 #define KOPETETASK_H
 
-#include <QDebug>
 
 #include <kcompositejob.h>
 

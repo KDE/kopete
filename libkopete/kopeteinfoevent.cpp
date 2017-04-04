@@ -16,7 +16,6 @@
 #include "kopeteinfoevent.h"
 #include "kopeteinfoeventmanager.h"
 
-#include <QStringList>
 
 #include <kdebug.h>
 

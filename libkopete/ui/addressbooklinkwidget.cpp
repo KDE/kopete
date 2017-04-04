@@ -24,7 +24,6 @@
 #include "addressbooklinkwidget.h"
 
 #include <qapplication.h>
-#include <QLineEdit>
 #include <KLocalizedString>
 #include <QPushButton>
 

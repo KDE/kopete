@@ -24,7 +24,6 @@
 #include <QDialogButtonBox>
 
 // KDE includes
-#include <KConfigGroup>
 #include <KLocalizedString>
 
 // Kopete includes

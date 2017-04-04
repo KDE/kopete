@@ -20,20 +20,18 @@
 
 #include "kopeteaccount.h"
 
-#include <QApplication>
 #include <QWidget>
 #include <QTimer>
 #include <QPixmap>
 #include <QIcon>
 #include <QPointer>
 #include <QDialog>
-#include <QLocale>
 #include <QIcon>
 #include <QAction>
-#include <QMenu>
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QMenu>
 
 #include <kconfig.h>
 
@@ -41,7 +39,6 @@
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
 #include <KSharedConfig>
-#include <KAboutData>
 #include <kactionmenu.h>
 #include <kconfiggroup.h>
 #include <KConfigGroup>

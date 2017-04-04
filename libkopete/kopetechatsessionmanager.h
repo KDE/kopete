@@ -20,7 +20,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
-#include <QDebug>
 
 #include "kopetechatsession.h"
 #include "kopetemessage.h"

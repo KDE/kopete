@@ -19,7 +19,6 @@
 
 #include <QMultiHash>
 #include <QVariant>
-#include <QDebug>
 
 #include <typeinfo>
 

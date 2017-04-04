@@ -22,7 +22,6 @@
 #include "kopeteglobal.h"
 #include "kopetebehaviorsettings.h"
 
-#include <QApplication>
 #include <QStyleOptionSlider>
 #include <QStyle>
 #include <QWheelEvent>

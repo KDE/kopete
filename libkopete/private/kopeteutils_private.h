@@ -21,7 +21,6 @@
 #include <QMap>
 #include <QObject>
 #include <QString>
-#include <QPixmap>
 
 class KNotification;
 

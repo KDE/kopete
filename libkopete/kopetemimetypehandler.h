@@ -19,7 +19,6 @@
 #define KOPETEMIMETYPEHANDLER_H
 
 #include <QUrl>
-#include <QDebug>
 
 class QString;
 class QStringList;

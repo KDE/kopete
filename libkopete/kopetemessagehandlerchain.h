@@ -18,7 +18,6 @@
 #define KOPETEMESSAGEHANDLERCHAIN_H
 
 #include <QtCore/QObject>
-#include <QDebug>
 
 #include <kdemacros.h>
 #include <QExplicitlySharedDataPointer>

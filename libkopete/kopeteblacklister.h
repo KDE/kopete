@@ -16,7 +16,6 @@
 #ifndef KOPETEBLACKLISTER_H
 #define KOPETEBLACKLISTER_H
 
-#include <QDebug>
 #include <QtCore/QObject>
 
 #include "libkopete_debug.h"

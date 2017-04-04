@@ -23,11 +23,9 @@
 #include <QTreeWidgetItem>
 
 #include <QVBoxLayout>
-#include <KLocalizedString>
 #include <QDialog>
 #include <QPointer>
 #include <ktreewidgetsearchline.h>
-#include <KConfigGroup>
 #include <QDialogButtonBox>
 #include <QPushButton>
 

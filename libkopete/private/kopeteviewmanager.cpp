@@ -17,7 +17,6 @@
 #include "kopeteviewmanager.h"
 
 #include <QList>
-#include <QTextDocument>
 #include <QtAlgorithms>
 
 #include <kconfig.h>

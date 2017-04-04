@@ -19,14 +19,13 @@
 
 #include "collapsiblewidget.h"
 
-#include <QtGui>
 #include <QStyle>
 #include <QTimeLine>
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <QStyleOption>
+#include <QPainter>
 
-#include <KConfigGroup>
 
 /******************************************************************
  * Helper classes

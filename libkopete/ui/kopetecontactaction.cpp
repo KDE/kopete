@@ -20,7 +20,6 @@
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
 
-#include <QIcon>
 
 #include <kactioncollection.h>
 

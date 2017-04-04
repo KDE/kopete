@@ -22,10 +22,7 @@
 #include "libkopete_debug.h"
 
 #include <QObject>
-#include <QFlags>
-#include <QMap>
 #include <QIcon>
-#include <QDebug>
 
 class QPixmap;
 class QColor;

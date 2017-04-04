@@ -18,7 +18,6 @@
 #ifndef KOPETECOMMAND_H
 #define KOPETECOMMAND_H
 
-#include <QDebug>
 #include <QtCore/QObject>
 
 #include <QAction>

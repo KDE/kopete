@@ -22,7 +22,6 @@
 #define KOPETEPROPERTYCONTAINER_H
 
 #include <QtCore/QObject>
-#include <QDebug>
 
 #include <kdemacros.h>
 #include "kopeteglobal.h"

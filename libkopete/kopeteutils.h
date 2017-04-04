@@ -18,7 +18,6 @@
 #ifndef KOPETE_UTILS_H
 #define KOPETE_UTILS_H
 
-#include <QObject>
 #include <QString>
 #include <QPixmap>
 

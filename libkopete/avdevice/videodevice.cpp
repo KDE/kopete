@@ -23,6 +23,7 @@
 #include <cstdlib>
 #include <cerrno>
 #include <cstring>
+#include <KLocalizedString>
 
 #include <kdebug.h>
 

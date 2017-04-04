@@ -25,7 +25,6 @@
 
 #include <QScrollArea>
 #include <QLabel>
-#include <QDebug>
 #include <QAbstractButton>
 
 #include <libkopete_export.h>

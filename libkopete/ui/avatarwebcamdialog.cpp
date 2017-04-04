@@ -24,7 +24,6 @@
 #include <QVBoxLayout>
 
 // KDE includes
-#include <KConfigGroup>
 
 // Kopete includes
 #ifndef VIDEOSUPPORT_DISABLED

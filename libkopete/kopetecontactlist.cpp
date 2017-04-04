@@ -31,7 +31,6 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kglobal.h>
-#include <QSaveFile>
 
 // Kopete includes
 #include "kopeteaccount.h"

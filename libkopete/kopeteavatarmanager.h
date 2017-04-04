@@ -20,7 +20,6 @@
 #include <QtCore/QObject>
 #include <QtCore/QList>
 #include <QImage>
-#include <QDebug>
 
 #include <kjob.h>
 
