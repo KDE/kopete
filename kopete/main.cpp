@@ -24,6 +24,7 @@
 #include <QCommandLineOption>
 #include <QApplication>
 #include <KDBusService>
+#include <KCrash>
 
 #include "kopeteapplication.h"
 #include "kopeteversion.h"
@@ -33,8 +34,11 @@ static const char description[]
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     KopeteApplication kopete(argc, argv);
+    kopete.setAttribute(Qt::AA_UseHighDpiPixmaps, true);
 
+    KCrash::initialize();
     KLocalizedString::setApplicationDomain("kopete");
     KAboutData aboutData("kopete", i18n("Kopete"),
                          QStringLiteral(KOPETE_VERSION_STRING), i18n(description), KAboutLicense::GPL,
