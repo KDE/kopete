@@ -36,6 +36,7 @@ ki18n_wrap_ui(kopetecontactlist_SRCS
     )
 
 add_library( kopetecontactlist SHARED ${kopetecontactlist_SRCS} )
+generate_export_header(kopetecontactlist BASE_NAME kopetecontactlist)
 target_link_libraries(
     kopetecontactlist
     kopete

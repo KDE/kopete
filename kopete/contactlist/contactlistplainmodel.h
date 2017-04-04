@@ -21,7 +21,7 @@
 
 #include "contactlistmodel.h"
 
-#include <kopete_export.h>
+#include <kopetecontactlist_export.h>
 
 namespace Kopete {
 class Group;
@@ -36,7 +36,7 @@ class ContactListPlainModelItem;
 /**
 @author Aleix Pol <aleixpol@gmail.com>
 */
-class KOPETE_CONTACT_LIST_EXPORT ContactListPlainModel : public ContactListModel
+class KOPETECONTACTLIST_EXPORT ContactListPlainModel : public ContactListModel
 {
     Q_OBJECT
 public:

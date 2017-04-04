@@ -24,7 +24,7 @@
 
 #include "contactlistlayoutitemconfig.h"
 
-#include <kopete_export.h>
+#include <kopetecontactlist_export.h>
 
 class QPainter;
 class QAbstractItemView;
@@ -33,7 +33,7 @@ namespace Kopete {
 class Contact;
 }
 
-class KOPETE_CONTACT_LIST_EXPORT KopeteItemDelegate : public QStyledItemDelegate
+class KOPETECONTACTLIST_EXPORT KopeteItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:

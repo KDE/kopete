@@ -20,7 +20,7 @@
 
 #include <QSortFilterProxyModel>
 
-#include <kopete_export.h>
+#include <kopetecontactlist_export.h>
 
 namespace Kopete {
 class Group;
@@ -31,7 +31,7 @@ namespace UI {
 /**
 @author Aleix Pol <aleixpol@gmail.com>
 */
-class KOPETE_CONTACT_LIST_EXPORT ContactListProxyModel : public QSortFilterProxyModel
+class KOPETECONTACTLIST_EXPORT ContactListProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 public:

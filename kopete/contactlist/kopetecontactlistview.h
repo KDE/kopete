@@ -35,7 +35,7 @@
 #include <QMouseEvent>
 #include <QDropEvent>
 
-#include <kopete_export.h>
+#include <kopetecontactlist_export.h>
 
 class KActionCollection;
 class QAction;
@@ -55,7 +55,7 @@ class Account;
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
-class KOPETE_CONTACT_LIST_EXPORT KopeteContactListView : public QTreeView
+class KOPETECONTACTLIST_EXPORT KopeteContactListView : public QTreeView
 {
     Q_OBJECT
 

@@ -26,7 +26,7 @@
 #include <QMap>
 #include <QObject>
 
-#include <kopete_export.h>
+#include <kopetecontactlist_export.h>
 
 #include "contactlistlayoutitemconfig.h"
 
@@ -34,7 +34,7 @@ class QDomElement;
 class QDomDocument;
 
 namespace ContactList {
-class KOPETE_CONTACT_LIST_EXPORT ContactListTokenConfig
+class KOPETECONTACTLIST_EXPORT ContactListTokenConfig
 {
 public:
     ContactListTokenConfig()
@@ -56,7 +56,7 @@ public:
     QString mIconName;
 };
 
-class KOPETE_CONTACT_LIST_EXPORT LayoutManager : public QObject
+class KOPETECONTACTLIST_EXPORT LayoutManager : public QObject
 {
     Q_OBJECT
 

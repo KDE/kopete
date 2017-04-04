@@ -23,7 +23,7 @@
 #include <QHash>
 #include <QAbstractItemModel>
 
-#include <kopete_export.h>
+#include <kopetecontactlist_export.h>
 
 class QDomDocument;
 class QDomElement;
@@ -37,7 +37,7 @@ namespace UI {
 /**
 @author Aleix Pol <aleixpol@gmail.com>
 */
-class KOPETE_CONTACT_LIST_EXPORT ContactListModel : public QAbstractItemModel
+class KOPETECONTACTLIST_EXPORT ContactListModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:

@@ -24,10 +24,10 @@
 #include <QList>
 #include <QString>
 
-#include <kopete_export.h>
+#include <kopetecontactlist_export.h>
 
 namespace ContactList {
-class KOPETE_CONTACT_LIST_EXPORT LayoutItemConfigRowElement
+class KOPETECONTACTLIST_EXPORT LayoutItemConfigRowElement
 {
 public:
     LayoutItemConfigRowElement(int value, qreal size, bool bold, bool italic, bool small, bool optimalSize, Qt::Alignment alignment, const QString &prefix = QString(),
@@ -89,7 +89,7 @@ private:
     QString m_prefix, m_suffix;
 };
 
-class KOPETE_CONTACT_LIST_EXPORT LayoutItemConfigRow
+class KOPETECONTACTLIST_EXPORT LayoutItemConfigRow
 {
 public:
     void addElement(LayoutItemConfigRowElement element);
@@ -103,7 +103,7 @@ private:
     This class wraps the data needed to paint a LayoutItemDelegate. It knows how many vertical
     rows there should be, how many items in each row, whether an image should be displayed and so on.
 */
-class KOPETE_CONTACT_LIST_EXPORT LayoutItemConfig
+class KOPETECONTACTLIST_EXPORT LayoutItemConfig
 {
 public:
     LayoutItemConfig();
@@ -121,7 +121,7 @@ private:
     bool m_showIcon;
 };
 
-class KOPETE_CONTACT_LIST_EXPORT ContactListLayout
+class KOPETECONTACTLIST_EXPORT ContactListLayout
 {
 public:
     LayoutItemConfig layout() const;
