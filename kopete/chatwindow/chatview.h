@@ -27,8 +27,6 @@
 #include <QMap>
 #include <kvbox.h>
 
-#include <kopete_export.h>
-
 class QTimer;
 
 class ChatTextEditPart;

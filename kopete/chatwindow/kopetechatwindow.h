@@ -33,8 +33,6 @@
 #include "kdeversion.h"
 #include <kopetechatsession.h>
 
-#include <kopete_export.h>
-
 class QAction;
 class KToggleAction;
 class KActionMenu;
