@@ -86,4 +86,4 @@ target_link_libraries(kopete_wlm ${kopete_wlm_link_LIBS})
 install(TARGETS kopete_wlm  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 install(FILES  kopete_wlm.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
-install(FILES  wlmchatui.rc DESTINATION ${KDE_INSTALL_DATADIR}/kopete_wlm)
+install(FILES  wlmchatui.rc DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete_wlm)

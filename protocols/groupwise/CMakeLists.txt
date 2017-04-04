@@ -62,4 +62,4 @@ install(TARGETS kopete_groupwise  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 ########### install files ###############
 
 install( FILES kopete_groupwise.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
-install( FILES gwchatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_groupwise)
+install( FILES gwchatui.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete_groupwise)

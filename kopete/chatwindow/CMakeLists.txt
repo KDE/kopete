@@ -70,9 +70,9 @@ install(TARGETS kopete_emailwindow  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 ########### install files ###############
 
-install( FILES kopeterichtexteditpartfull.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopeterichtexteditpart)
+install( FILES kopeterichtexteditpartfull.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopeterichtexteditpart)
 install( FILES chatwindow.desktop emailwindow.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
-install( FILES kopetechatwindow.rc kopeteemailwindow.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete)
+install( FILES kopetechatwindow.rc kopeteemailwindow.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
 
 
 

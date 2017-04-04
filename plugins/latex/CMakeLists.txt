@@ -51,7 +51,7 @@ install(TARGETS kcm_kopete_latex  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 install( FILES latexconfig.kcfg  DESTINATION ${KDE_INSTALL_KCFGDIR})
 install( FILES kopete_latex.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
-install( FILES latexchatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_latex)
+install( FILES latexchatui.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete_latex)
 install( FILES kopete_latex_config.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)
 install( PROGRAMS kopete_latexconvert.sh DESTINATION ${KDE_INSTALL_BINDIR})
 

@@ -222,7 +222,7 @@ install( FILES
     kopetestatussettings.kcfg
     DESTINATION ${KDE_INSTALL_KCFGDIR})
 
-install( FILES kopetecommandui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete)
+install( FILES kopetecommandui.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
 install( FILES kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop  DESTINATION ${KDE_INSTALL_KSERVICETYPES5DIR})
 
 install( FILES

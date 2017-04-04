@@ -53,5 +53,5 @@ install(TARGETS kopete_otr_shared ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(FILES kopete_otr.kcfg DESTINATION ${KDE_INSTALL_KCFGDIR})
 install(FILES kopete_otr.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
-install(FILES otrchatui.rc otrui.rc DESTINATION ${KDE_INSTALL_DATADIR}/kopete_otr)
+install(FILES otrchatui.rc otrui.rc DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete_otr)
 install(FILES kopete_otr_config.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)
