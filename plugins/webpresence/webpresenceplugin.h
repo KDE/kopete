@@ -30,7 +30,6 @@ class QTimer;
 class KTemporaryFile;
 class KJob;
 namespace Kopete {
-class MetaContact;
 }
 namespace Kopete {
 class Protocol;

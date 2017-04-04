@@ -36,7 +36,6 @@ namespace Kopete {
 class Message;
 }
 namespace Kopete {
-class MetaContact;
 }
 namespace Kopete {
 class ChatSession;

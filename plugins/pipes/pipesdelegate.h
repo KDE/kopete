@@ -19,7 +19,6 @@
 
 #include <QItemDelegate>
 
-class QSize;
 
 /**
  * Delegate that allows options for pipes to be edited in place

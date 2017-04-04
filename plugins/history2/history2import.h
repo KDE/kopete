@@ -30,7 +30,6 @@ class QTextEdit;
 class QCheckBox;
 class QModelIndex;
 class QFile;
-class QDomDocument;
 
 namespace Kopete {
 class Contact;

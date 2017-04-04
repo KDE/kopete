@@ -26,17 +26,13 @@
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
 
-class QStringList;
-class QString;
 
 namespace Kopete {
 class Message;
 }
 namespace Kopete {
-class MetaContact;
 }
 namespace Kopete {
-class ChatSession;
 }
 class TextEffectConfig;
 

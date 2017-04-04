@@ -26,14 +26,12 @@
 #include <QMutex>
 
 class QDate;
-class QTimer;
 
 class DMPair;
 
 namespace Kopete {
 class Message;
 class Contact;
-class Account;
 class MetaContact;
 }
 

@@ -27,7 +27,6 @@ namespace Kopete {
 class ChatSession;
 }
 
-class History2Logger;
 
 /**
  *@author Olivier Goffart

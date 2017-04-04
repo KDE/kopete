@@ -26,7 +26,6 @@
 #include "kopeteplugin.h"
 
 class QString;
-class QAction;
 
 namespace Kopete {
 class MetaContact;

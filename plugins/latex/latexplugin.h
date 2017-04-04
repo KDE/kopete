@@ -29,7 +29,6 @@
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
 
-class QStringList;
 class QString;
 
 class KTemporaryFile;
