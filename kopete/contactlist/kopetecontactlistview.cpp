@@ -1021,7 +1021,7 @@ void KopeteContactListView::groupPopup(Kopete::Group *group, const QPoint &pos)
             delete action;
         }
         //FIXME : Possible bug/error ahead
-        popup->actions().first()->menu()->setTitle(title);
+        //FIXME KF5 popup->actions().first()->menu()->setTitle(title);
         d->menuTitleMap.insert(popup, popup->addSection(popup->actions().first()->text()));
         popup->popup(pos);
     }
@@ -1111,17 +1111,17 @@ Kopete::Contact *KopeteContactListView::contactAt(const QPoint &point) const
 {
     QModelIndex index = indexAt(point);
     if (!index.isValid()) {
-        return 0;
+        return nullptr;
     }
 
     QRect rect = visualRect(index);
     if (rect.width() <= 0 || rect.height() <= 0) {
-        return 0;
+        return nullptr;
     }
 
     KopeteItemDelegate *delegate = dynamic_cast<KopeteItemDelegate *>(itemDelegate(index));
     if (!delegate) {
-        return 0;
+        return nullptr;
     }
 
     QStyleOptionViewItem option = viewOptions();
