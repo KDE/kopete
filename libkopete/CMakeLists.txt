@@ -154,6 +154,7 @@ ecm_qt_declare_logging_category(kopete_LIB_SRCS HEADER libkopete_debug.h IDENTIF
 
 find_package(KF5Contacts ${KCONTACTS_LIB_VERSION} CONFIG REQUIRED)
 add_library(kopete SHARED ${kopete_LIB_SRCS})
+generate_export_header(kopete BASE_NAME libkopete)
 
 target_link_libraries(kopete
     KF5::Contacts
@@ -242,7 +243,7 @@ install( FILES
     kopetecontactlistelement.h
     kopetecontactlist.h
     kopeteproperty.h
-    kopete_export.h
+    libkopete_export.h
     kopeteglobal.h
     kopetegroup.h
     kopeteidentity.h

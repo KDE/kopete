@@ -35,7 +35,7 @@ class ChatSession;
  * an Email Window view plugin.
  *
  */
-class KOPETE_EXPORT ViewPlugin : public Plugin
+class LIBKOPETE_EXPORT ViewPlugin : public Plugin
 {
 public:
     /**

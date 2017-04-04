@@ -21,7 +21,7 @@
 #include <QWidget>
 
 #include "../kopetemessage.h"
-#include "../kopete_export.h"
+#include "../libkopete_export.h"
 
 namespace Kopete {
 class ViewPlugin;
@@ -35,7 +35,7 @@ class ViewPlugin;
  *
  * @see Kopete::ViewPlugin
  */
-class KOPETE_EXPORT KopeteView
+class LIBKOPETE_EXPORT KopeteView
 {
 public:
     /**

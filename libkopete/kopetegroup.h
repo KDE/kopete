@@ -23,7 +23,7 @@
 
 #include "kopetecontactlistelement.h"
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 class MetaContact;
@@ -38,7 +38,7 @@ class Message;
  *
  * @author Olivier Goffart <ogoffart@kde.org>
  */
-class KOPETE_EXPORT Group : public ContactListElement
+class LIBKOPETE_EXPORT Group : public ContactListElement
 {
     Q_PROPERTY(QString displayName READ displayName WRITE setDisplayName)
     Q_PROPERTY(uint groupId READ groupId)

@@ -24,7 +24,7 @@
 class QString;
 class QStringList;
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 #include "libkopete_debug.h"
 
 namespace Kopete {
@@ -33,7 +33,7 @@ namespace Kopete {
  * A mime type handler is responsible for handling requests to open files of
  * certain mime types presented to the main application.
  */
-class KOPETE_EXPORT MimeTypeHandler
+class LIBKOPETE_EXPORT MimeTypeHandler
 {
 protected:
     MimeTypeHandler(bool canAcceptRemoteFiles = false);
@@ -69,7 +69,7 @@ public:
     /**
      * @deprecated
      */
-    virtual KDE_DEPRECATED void handleURL(const QUrl &url) const;
+    virtual LIBKOPETE_DEPRECATED void handleURL(const QUrl &url) const;
 
     /**
      * Handles the URL @p url, which has the mime type @p mimeType
@@ -116,7 +116,7 @@ private:
 /**
  * Mime-type handler class for Kopete emoticon files
  */
-class KOPETE_EXPORT EmoticonMimeTypeHandler : public MimeTypeHandler
+class LIBKOPETE_EXPORT EmoticonMimeTypeHandler : public MimeTypeHandler
 {
 public:
     EmoticonMimeTypeHandler();
@@ -124,7 +124,7 @@ public:
     const QStringList mimeTypes() const;
 
     void handleURL(const QString &mimeType, const QUrl &url) const Q_DECL_OVERRIDE;
-    KDE_DEPRECATED void handleURL(const QUrl &url) const Q_DECL_OVERRIDE;
+    LIBKOPETE_DEPRECATED void handleURL(const QUrl &url) const Q_DECL_OVERRIDE;
 };
 } // Kopete
 

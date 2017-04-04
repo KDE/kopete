@@ -26,7 +26,7 @@
 #include <QPixmap>
 #include <QMap>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 #include <kio/job.h>
 
@@ -39,7 +39,7 @@ class ChatSession;
 /**
  * @author Nick Betcher. <nbetcher@kde.org>
  */
-class KOPETE_EXPORT FileTransferInfo
+class LIBKOPETE_EXPORT FileTransferInfo
 {
 public:
     enum KopeteTransferDirection {
@@ -123,7 +123,7 @@ private:
 /**
  * Creates and manages kopete file transfers
  */
-class KOPETE_EXPORT TransferManager : public QObject
+class LIBKOPETE_EXPORT TransferManager : public QObject
 {
     Q_OBJECT
 
@@ -230,7 +230,7 @@ private:
  * A KIO job for a kopete file transfer.
  * @author Richard Smith <kopete@metafoo.co.uk>
  */
-class KOPETE_EXPORT Transfer : public KIO::Job
+class LIBKOPETE_EXPORT Transfer : public KIO::Job
 {
     Q_OBJECT
 

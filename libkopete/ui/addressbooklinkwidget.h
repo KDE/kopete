@@ -25,7 +25,7 @@
 #define ADDRESSBOOKLINKWIDGET_H
 
 #include <kcontacts/addressee.h>
-#include <kopete_export.h>
+#include <libkopete_export.h>
 
 #include "ui_addressbooklinkwidget_base.h"
 
@@ -40,7 +40,7 @@ namespace UI {
  * Comprises a label showing the contact's name, a Clear button, and a Change
  * button that usually invokes the AddressBookSelectorWidget.
  */
-class KOPETE_EXPORT AddressBookLinkWidget : public QWidget, private Ui::AddressBookLinkWidgetBase
+class LIBKOPETE_EXPORT AddressBookLinkWidget : public QWidget, private Ui::AddressBookLinkWidgetBase
 {
     Q_OBJECT
 public:

@@ -28,7 +28,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 namespace UI {
@@ -42,7 +42,7 @@ class AddressBookSelectorWidget;
  *
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  */
-class KOPETE_EXPORT AddressBookSelectorDialog : public QDialog
+class LIBKOPETE_EXPORT AddressBookSelectorDialog : public QDialog
 {
     Q_OBJECT
 public:

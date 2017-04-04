@@ -22,13 +22,13 @@
 #include <QString>
 #include <QPixmap>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 class Account;
 
 namespace Utils {
-void KOPETE_EXPORT notify(QPixmap pic, const QString &eventid, const QString &caption, const QString &message, const QString explanation, const QString debugInfo);
+void LIBKOPETE_EXPORT notify(QPixmap pic, const QString &eventid, const QString &caption, const QString &message, const QString explanation, const QString debugInfo);
 
 /**
  * Notifies the user connection has been lost without coupling plugins with GUI code.
@@ -42,7 +42,7 @@ void KOPETE_EXPORT notify(QPixmap pic, const QString &eventid, const QString &ca
  * You cannot provide debugInfo without an user explanation. If you don't provide a caption, message, or
  * explanation, Kopete will use a default explanation.
  */
-void KOPETE_EXPORT notifyConnectionLost(const Account *account, const QString caption = QString(), const QString message = QString(),
+void LIBKOPETE_EXPORT notifyConnectionLost(const Account *account, const QString caption = QString(), const QString message = QString(),
                                         const QString explanation = QString(), const QString debugInfo = QString());
 
 /**
@@ -55,7 +55,7 @@ void KOPETE_EXPORT notifyConnectionLost(const Account *account, const QString ca
  * You cannot provide debugInfo without an user explanation. If you don't provide a caption, message, or
  * explanation, Kopete will use a default explanation.
  */
-void KOPETE_EXPORT notifyCannotConnect(const Account *account, const QString explanation = QString(), const QString debugInfo = QString());
+void LIBKOPETE_EXPORT notifyCannotConnect(const Account *account, const QString explanation = QString(), const QString debugInfo = QString());
 } // end ns Utils
 } // end ns Kopete
 

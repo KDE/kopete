@@ -63,7 +63,7 @@ class Account;
  *
  * @author Roman Jarosz <kedgedev@centrum.cz>
  */
-class KOPETE_EXPORT AddedInfoEvent : public InfoEvent
+class LIBKOPETE_EXPORT AddedInfoEvent : public InfoEvent
 {
     Q_OBJECT
 public:

@@ -21,7 +21,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 class KPluginInfo;
 
@@ -35,7 +35,7 @@ class PluginManagerPrivate;
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Martijn Klingens <klingens@kde.org>
  */
-class KOPETE_EXPORT PluginManager : public QObject
+class LIBKOPETE_EXPORT PluginManager : public QObject
 {
     friend class PluginManagerPrivate;
     Q_OBJECT

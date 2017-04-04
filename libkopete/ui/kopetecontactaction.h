@@ -19,7 +19,7 @@
 #define __kopetecontactaction_h__
 
 #include <QAction>
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 class KActionCollection;
 namespace Kopete {
@@ -30,7 +30,7 @@ namespace UI {
  * @author Martijn Klingens <klingens@kde.org>
  * @author Matt Rogers <mattr@kde.org>
  */
-class KOPETE_EXPORT ContactAction : public QAction
+class LIBKOPETE_EXPORT ContactAction : public QAction
 {
     Q_OBJECT
 public:

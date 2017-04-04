@@ -21,7 +21,7 @@
 
 #include <QTreeWidget>
 #include <kopetecontact.h>
-#include <kopete_export.h>
+#include <libkopete_export.h>
 
 #include <utility>
 
@@ -32,7 +32,7 @@ namespace UI {
 namespace ListView {
 class Component;
 
-class KOPETE_EXPORT ComponentBase
+class LIBKOPETE_EXPORT ComponentBase
 {
 public:
     ComponentBase();
@@ -79,7 +79,7 @@ private:
 /**
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class KOPETE_EXPORT ToolTipSource
+class LIBKOPETE_EXPORT ToolTipSource
 {
 public:
     virtual ~ToolTipSource()
@@ -102,7 +102,7 @@ public:
  *
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class KOPETE_EXPORT Component : public ComponentBase
+class LIBKOPETE_EXPORT Component : public ComponentBase
 {
 protected:
     Component(ComponentBase *parent);
@@ -236,7 +236,7 @@ private:
     Private *const d;
 };
 
-class KOPETE_EXPORT BoxComponent : public Component
+class LIBKOPETE_EXPORT BoxComponent : public Component
 {
 public:
     enum Direction {
@@ -268,7 +268,7 @@ private:
     Private *const d;
 };
 
-class KOPETE_EXPORT TextComponent : public Component
+class LIBKOPETE_EXPORT TextComponent : public Component
 {
 public:
     explicit TextComponent(ComponentBase *parent, const QFont &font = QFont(), const QString &text = QString());
@@ -301,7 +301,7 @@ private:
     Private *const d;
 };
 
-class KOPETE_EXPORT ImageComponent : public Component
+class LIBKOPETE_EXPORT ImageComponent : public Component
 {
 public:
     explicit ImageComponent(ComponentBase *parent);
@@ -328,7 +328,7 @@ private:
 /**
  * ContactComponent
  */
-class KOPETE_EXPORT ContactComponent : public ImageComponent
+class LIBKOPETE_EXPORT ContactComponent : public ImageComponent
 {
 public:
     ContactComponent(ComponentBase *parent, Kopete::Contact *contact, int iconSize);
@@ -344,7 +344,7 @@ protected:
 /**
  * SpacerComponent
  */
-class KOPETE_EXPORT SpacerComponent : public Component
+class LIBKOPETE_EXPORT SpacerComponent : public Component
 {
 public:
     SpacerComponent(ComponentBase *parent, int w, int h);
@@ -354,7 +354,7 @@ public:
  * DisplayNameComponent
  */
 
-class KOPETE_EXPORT DisplayNameComponent : public BoxComponent
+class LIBKOPETE_EXPORT DisplayNameComponent : public BoxComponent
 {
 public:
     /**
@@ -389,7 +389,7 @@ private:
     Private *const d;
 };
 
-class KOPETE_EXPORT HSpacerComponent : public Component
+class LIBKOPETE_EXPORT HSpacerComponent : public Component
 {
 public:
     explicit HSpacerComponent(ComponentBase *parent);
@@ -402,7 +402,7 @@ public:
     }
 };
 
-class KOPETE_EXPORT VSpacerComponent : public Component
+class LIBKOPETE_EXPORT VSpacerComponent : public Component
 {
 public:
     explicit VSpacerComponent(ComponentBase *parent);
@@ -421,7 +421,7 @@ public:
  *
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class KOPETE_EXPORT Item : public QObject, public QTreeWidgetItem, public ComponentBase
+class LIBKOPETE_EXPORT Item : public QObject, public QTreeWidgetItem, public ComponentBase
 {
     Q_OBJECT
 public:

@@ -21,7 +21,7 @@
 #ifndef kopeteonlinestatus_h
 #define kopeteonlinestatus_h
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 #include <kdemacros.h>
 #include <QExplicitlySharedDataPointer>
@@ -64,7 +64,7 @@ class Contact;
  * to be const after creation as there really shouldn't be a need to change
  * a status' characteristics during runtime!
  */
-class KOPETE_EXPORT OnlineStatus
+class LIBKOPETE_EXPORT OnlineStatus
 {
 public:
     /**
@@ -319,7 +319,7 @@ public:
      * @param contact is the contact the icon should apply to.
      * @param size is the size we the icon should be scaled to
      */
-    KDE_DEPRECATED QPixmap iconFor(const Contact *contact, int size) const
+    LIBKOPETE_DEPRECATED QPixmap iconFor(const Contact *contact, int size) const
     {
         return iconFor(contact).pixmap(size);
     }
@@ -360,7 +360,7 @@ public:
      * The account's color causes tinting, if it's plain QColor(), no tinting takes place.
      * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
      */
-    KDE_DEPRECATED QPixmap iconFor(const Account *account, int size) const
+    LIBKOPETE_DEPRECATED QPixmap iconFor(const Account *account, int size) const
     {
         return iconFor(account).pixmap(size);
     }
@@ -403,7 +403,7 @@ public:
      *
      * A cache is employed to reduce CPU and memory usage.
      */
-    KDE_DEPRECATED QPixmap protocolIcon() const;
+    LIBKOPETE_DEPRECATED QPixmap protocolIcon() const;
 
     /**
      * Assignment operator

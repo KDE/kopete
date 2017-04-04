@@ -22,7 +22,7 @@
 #include <QDialog>
 
 // Kopete includes
-#include <kopete_export.h>
+#include <libkopete_export.h>
 
 namespace Kopete {
 namespace UI {
@@ -51,7 +51,7 @@ void SpamEgg::avatarDialogResult(Kopete::UI::AvatarDialog *dialog)
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
-class KOPETE_EXPORT AvatarDialog : public QDialog
+class LIBKOPETE_EXPORT AvatarDialog : public QDialog
 {
     Q_OBJECT
 public:

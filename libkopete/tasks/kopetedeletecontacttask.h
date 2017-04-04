@@ -17,7 +17,7 @@
 #ifndef KOPETE_DELETECONTACTTASK_H
 #define KOPETE_DELETECONTACTTASK_H
 
-#include <kopete_export.h>
+#include <libkopete_export.h>
 #include <kopetecontacttaskbase.h>
 
 namespace Kopete {
@@ -47,7 +47,7 @@ deleteTask->start();
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
-class KOPETE_EXPORT DeleteContactTask : public Kopete::ContactTaskBase
+class LIBKOPETE_EXPORT DeleteContactTask : public Kopete::ContactTaskBase
 {
     Q_OBJECT
 public:

@@ -18,7 +18,7 @@
 
 #include <QtCore/QObject>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 #include "kopetestatusmessage.h"
 
 class QDomElement;
@@ -40,7 +40,7 @@ class StatusItem;
  *
  * @author Roman Jarosz <kedgedev@centrum.cz>
  */
-class KOPETE_EXPORT StatusManager : public QObject
+class LIBKOPETE_EXPORT StatusManager : public QObject
 {
     Q_OBJECT
 public:

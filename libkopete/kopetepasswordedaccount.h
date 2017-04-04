@@ -19,7 +19,7 @@
 
 #include "kopeteaccount.h"
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 class Password;
@@ -30,7 +30,7 @@ class Password;
  *
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class KOPETE_EXPORT PasswordedAccount : public Account
+class LIBKOPETE_EXPORT PasswordedAccount : public Account
 {
     Q_OBJECT
 

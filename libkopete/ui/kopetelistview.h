@@ -20,7 +20,7 @@
 #define KOPETE_LISTVIEW_H
 
 #include <QTreeWidget>
-#include <kopete_export.h>
+#include <libkopete_export.h>
 
 class QKeyEvent;
 class QTimerEvent;
@@ -33,7 +33,7 @@ namespace ListView {
  * @author Engin AYDOGAN <engin@bzzzt.biz>
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class KOPETE_EXPORT ListView : public QTreeWidget
+class LIBKOPETE_EXPORT ListView : public QTreeWidget
 {
     Q_OBJECT
 

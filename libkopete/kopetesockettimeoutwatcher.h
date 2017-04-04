@@ -16,7 +16,7 @@
 #ifndef KOPETESOCKETTIMEOUTWATCHER_H
 #define KOPETESOCKETTIMEOUTWATCHER_H
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 #include <QObject>
 #include <QAbstractSocket>
@@ -27,7 +27,7 @@ namespace Kopete {
 /**
     @author Roman Jarosz <kedgedev@centrum.cz>
 */
-class KOPETE_EXPORT SocketTimeoutWatcher : public QObject
+class LIBKOPETE_EXPORT SocketTimeoutWatcher : public QObject
 {
     Q_OBJECT
 public:

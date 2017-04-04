@@ -20,7 +20,7 @@
 #include <QtCore/QVariant>
 
 #include <QExplicitlySharedDataPointer>
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 /**
@@ -43,7 +43,7 @@ namespace Kopete {
  * This class is implicit shared.
  * @author Michaël Larouche
  */
-class KOPETE_EXPORT StatusMessage
+class LIBKOPETE_EXPORT StatusMessage
 {
 public:
     /**

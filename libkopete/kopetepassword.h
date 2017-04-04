@@ -20,7 +20,7 @@
 #include <QtCore/QObject>
 #include <QPixmap>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace KWallet {
 class Wallet;
@@ -45,7 +45,7 @@ namespace Kopete {
  * If the KWallet is active, passwords will be stored in it, otherwise, they
  * will be stored in the KConfig, in a slightly mangled form.
  */
-class KOPETE_EXPORT Password : public QObject
+class LIBKOPETE_EXPORT Password : public QObject
 {
     Q_OBJECT
 

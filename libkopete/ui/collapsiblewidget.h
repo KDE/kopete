@@ -28,7 +28,7 @@
 #include <QDebug>
 #include <QAbstractButton>
 
-#include <kopete_export.h>
+#include <libkopete_export.h>
 
 class QScrollArea;
 
@@ -66,7 +66,7 @@ private:
   @short A widget that has a caption and a collapsible widget
   @author Daniel Molkentin <molkentin@kde.org>
  */
-class KOPETE_EXPORT CollapsibleWidget : public QWidget
+class LIBKOPETE_EXPORT CollapsibleWidget : public QWidget
 {
     Q_OBJECT
 public:
@@ -101,7 +101,7 @@ private:
          usually in the form of CollapsibleWidgets.
   @author Daniel Molkentin <molkentin@kde.org>
  */
-class KOPETE_EXPORT SettingsContainer : public QScrollArea
+class LIBKOPETE_EXPORT SettingsContainer : public QScrollArea
 {
     Q_ENUMS(CollapseState)
     Q_OBJECT

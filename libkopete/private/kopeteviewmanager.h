@@ -20,7 +20,7 @@
 #include <QtCore/QObject>
 
 #include "kopetemessage.h"
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 class ChatSession;
@@ -34,7 +34,7 @@ struct KopeteViewManagerPrivate;
 /**
 * Relates an actual chat to the means used to view it.
 */
-class KOPETE_EXPORT KopeteViewManager : public QObject
+class LIBKOPETE_EXPORT KopeteViewManager : public QObject
 {
     Q_OBJECT
 public:

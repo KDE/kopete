@@ -32,7 +32,7 @@
 #include <kcontacts/addresseelist.h>
 
 #include <kdemacros.h>
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 #include "ui_addressbookselectorwidget_base.h"
 
@@ -45,7 +45,7 @@ class AddresseeList;
 
 namespace Kopete {
 namespace UI {
-class KOPETE_EXPORT AddressBookSelectorWidget : public QWidget, private Ui::AddressBookSelectorWidget_Base
+class LIBKOPETE_EXPORT AddressBookSelectorWidget : public QWidget, private Ui::AddressBookSelectorWidget_Base
 {
     Q_OBJECT
 public:

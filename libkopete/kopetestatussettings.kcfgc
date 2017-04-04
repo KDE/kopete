@@ -8,5 +8,5 @@ Mutators=true
 NameSpace=Kopete
 SetUserTexts=false
 Singleton=true
-Visibility=KOPETE_EXPORT
-IncludeFiles=kopete_export.h,klocale.h
+Visibility=LIBKOPETE_EXPORT
+IncludeFiles=libkopete_export.h,klocale.h

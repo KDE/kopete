@@ -21,14 +21,14 @@
 #include <QAbstractListModel>
 
 #include "kopetechatsession.h"
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 class Private;
 
 namespace Kopete {
 class Contact;
 
-class KOPETE_EXPORT ChatSessionMembersListModel : public QAbstractListModel
+class LIBKOPETE_EXPORT ChatSessionMembersListModel : public QAbstractListModel
 {
     Q_OBJECT
 public:

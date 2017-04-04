@@ -26,7 +26,7 @@
 #include <QtCore/QList>
 #include <QtCore/Qt>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 class QByteArray;
 class QColor;
@@ -76,7 +76,7 @@ richTextMessage.setSubject( QString("Kopete API documentation thread") );
 richTextMessage.setHtmlBody( QString("<b>A bold text</b>") );
  * @endcode
  */
-class KOPETE_EXPORT Message
+class LIBKOPETE_EXPORT Message
 {
 public:
     /**
@@ -423,17 +423,17 @@ public:
     /**
      * @brief Does nothing
      */
-    void KDE_DEPRECATED setBackgroundOverride(bool enable);
+    void LIBKOPETE_DEPRECATED setBackgroundOverride(bool enable);
 
     /**
      * @brief Does nothing
      */
-    void KDE_DEPRECATED setForegroundOverride(bool enable);
+    void LIBKOPETE_DEPRECATED setForegroundOverride(bool enable);
 
     /**
      * @brief Does nothing
      */
-    void KDE_DEPRECATED setRichTextOverride(bool enable);
+    void LIBKOPETE_DEPRECATED setRichTextOverride(bool enable);
 
     /**
      * @brief Ignores peer's formatting

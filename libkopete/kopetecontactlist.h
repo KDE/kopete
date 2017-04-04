@@ -25,7 +25,7 @@
 
 #include <QUrl>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 class MetaContact;
@@ -43,7 +43,7 @@ class Contact;
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  */
-class KOPETE_EXPORT ContactList : public QObject
+class LIBKOPETE_EXPORT ContactList : public QObject
 {
     Q_OBJECT
 

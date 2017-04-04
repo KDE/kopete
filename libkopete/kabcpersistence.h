@@ -20,7 +20,7 @@
 
 #include <QObject>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 // Goal is to have all the address book modifying code in one place
 // Currently in
@@ -40,7 +40,7 @@ class Resource;
 namespace Kopete {
 class MetaContact;
 
-class KOPETE_EXPORT KABCPersistence : public QObject
+class LIBKOPETE_EXPORT KABCPersistence : public QObject
 {
     Q_OBJECT
 public:

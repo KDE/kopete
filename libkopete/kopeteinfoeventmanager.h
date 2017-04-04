@@ -17,7 +17,7 @@
 #define KOPETEINFOEVENTMANAGER_H
 
 #include <QObject>
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 class InfoEvent;
@@ -30,7 +30,7 @@ class InfoEvent;
  *
  * @author Roman Jarosz <kedgedev@centrum.cz>
  */
-class KOPETE_EXPORT InfoEventManager : public QObject
+class LIBKOPETE_EXPORT InfoEventManager : public QObject
 {
     Q_OBJECT
 public:

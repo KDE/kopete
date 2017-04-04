@@ -25,7 +25,7 @@
 #include <QtCore/QVariant>
 #include <QtCore/QFlags>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 /**
@@ -36,7 +36,7 @@ namespace Kopete {
  * You need to use this if you want to set properties for a
  * Kopete::Contact
  **/
-class KOPETE_EXPORT PropertyTmpl
+class LIBKOPETE_EXPORT PropertyTmpl
 {
 public:
     enum PropertyOption
@@ -142,7 +142,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(PropertyTmpl::PropertyOptions)
  * A data container for whatever information Kopete or any of its
  * plugins want to store for a Kopete::Contact
  **/
-class KOPETE_EXPORT Property
+class LIBKOPETE_EXPORT Property
 {
 public:
     /**

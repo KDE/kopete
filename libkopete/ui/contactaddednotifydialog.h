@@ -17,7 +17,7 @@
 #define KOPETE_UICONTACTADDEDNOTIFYDIALOG_H
 
 #include <QDialog>
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace KContacts {
 class Addressee;
@@ -63,7 +63,7 @@ namespace UI {
  *
  * @author Olivier Goffart
  */
-class KOPETE_EXPORT ContactAddedNotifyDialog : public QDialog
+class LIBKOPETE_EXPORT ContactAddedNotifyDialog : public QDialog
 {
     Q_OBJECT
 public:

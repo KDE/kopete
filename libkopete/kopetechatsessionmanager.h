@@ -25,7 +25,7 @@
 #include "kopetechatsession.h"
 #include "kopetemessage.h"
 #include "libkopete_debug.h"
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 class KopeteView;
 
@@ -43,7 +43,7 @@ typedef QList<Message> MessageList;
  * Kopete::ChatSessionManager is responsible for creating and tracking Kopete::ChatSession
  * instances for each chat.
  */
-class KOPETE_EXPORT ChatSessionManager : public QObject
+class LIBKOPETE_EXPORT ChatSessionManager : public QObject
 {
     Q_OBJECT
 

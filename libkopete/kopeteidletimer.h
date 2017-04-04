@@ -20,7 +20,7 @@
 
 #include <QtCore/QObject>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 /**
@@ -28,7 +28,7 @@ namespace Kopete {
  *
  * IdleTimer is a singleton, you may uses it with @ref IdleTimer::self()
  */
-class KOPETE_EXPORT IdleTimer : public QObject
+class LIBKOPETE_EXPORT IdleTimer : public QObject
 {
     Q_OBJECT
 

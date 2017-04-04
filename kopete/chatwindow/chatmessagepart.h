@@ -151,7 +151,7 @@ public Q_SLOTS:
      * @deprecated
      * does nothing
      */
-    KDE_DEPRECATED void slotToggleGraphicOverride(bool enable);
+    KOPETECHATWINDOW_SHARED_DEPRECATED_EXPORT void slotToggleGraphicOverride(bool enable);
 
 Q_SIGNALS:
     /**

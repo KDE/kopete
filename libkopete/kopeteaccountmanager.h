@@ -23,7 +23,7 @@
 #include <QColor>
 #include <QDebug>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 #include "libkopete_debug.h"
 #include "kopetestatusmessage.h"
 
@@ -44,7 +44,7 @@ class StatusMessage;
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart\@kde.org>
  */
-class KOPETE_EXPORT AccountManager : public QObject
+class LIBKOPETE_EXPORT AccountManager : public QObject
 {
     Q_OBJECT
 

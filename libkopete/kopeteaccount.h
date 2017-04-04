@@ -23,7 +23,7 @@
 
 #include "kopeteonlinestatus.h"
 #include "kopetestatusmessage.h"
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 #include <QtCore/QObject>
 #include <QPixmap>
@@ -68,7 +68,7 @@ class PropertyContainer;
  *
  * @author Olivier Goffart  <ogoffart\@kde.org>
  */
-class KOPETE_EXPORT Account : public QObject
+class LIBKOPETE_EXPORT Account : public QObject
 {
     Q_OBJECT
 

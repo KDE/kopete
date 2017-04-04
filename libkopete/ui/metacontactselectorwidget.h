@@ -21,7 +21,7 @@
 #include <kdemacros.h>
 #include <qwidget.h>
 #include "kopetelistviewitem.h"
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 class MetaContact;
@@ -32,7 +32,7 @@ namespace UI {
  * This class provides a widget which allows easy selection
  * of available Kopete metacontacts.
  */
-class KOPETE_EXPORT MetaContactSelectorWidget : public QWidget
+class LIBKOPETE_EXPORT MetaContactSelectorWidget : public QWidget
 {
     Q_OBJECT
 public:

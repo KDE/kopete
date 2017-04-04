@@ -19,7 +19,7 @@
 
 #include <kdemacros.h>
 #include <QExplicitlySharedDataPointer>
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 #include <QImage>
 
@@ -56,7 +56,7 @@ namespace Kopete {
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
-class KOPETE_EXPORT Picture
+class LIBKOPETE_EXPORT Picture
 {
 public:
     /**

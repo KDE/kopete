@@ -24,7 +24,7 @@
 #include <kprocess.h>
 #include "kopetemessage.h"
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 #include "libkopete_debug.h"
 
 struct CommandHandlerPrivate;
@@ -45,7 +45,7 @@ typedef QMultiHash<QString, Command *> CommandList;
  *
  * The Kopete::CommandHandler can handle /action like messages
  */
-class KOPETE_EXPORT CommandHandler : public QObject
+class LIBKOPETE_EXPORT CommandHandler : public QObject
 {
     friend class ::KopeteCommandGUIClient;
 

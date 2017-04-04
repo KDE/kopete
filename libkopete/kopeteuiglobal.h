@@ -20,7 +20,7 @@
 
 #include <QWidget>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 namespace UI {
@@ -31,12 +31,12 @@ namespace Global {
 /**
  * Set the main widget to widget
  */
-KOPETE_EXPORT void setMainWidget(QWidget *widget);
+LIBKOPETE_EXPORT void setMainWidget(QWidget *widget);
 /**
  * Returns the main widget - this is the widget that message boxes
  * and KNotify stuff should use as a parent.
  */
-KOPETE_EXPORT QWidget *mainWidget();
+LIBKOPETE_EXPORT QWidget *mainWidget();
 } //Global::UI
 } //UI
 }

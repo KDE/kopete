@@ -23,7 +23,7 @@
 #include "kopeteglobal.h"
 #include "kopetepropertycontainer.h"
 #include "kopeteonlinestatus.h"
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 class KConfigGroup;
 
@@ -36,7 +36,7 @@ class StatusMessage;
  *
  * An identity that might contain one or more accounts associated to it
  */
-class KOPETE_EXPORT Identity : public PropertyContainer
+class LIBKOPETE_EXPORT Identity : public PropertyContainer
 {
     Q_OBJECT
 public:

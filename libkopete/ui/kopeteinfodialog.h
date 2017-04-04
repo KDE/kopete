@@ -20,7 +20,7 @@
 
 #include <QIcon>
 #include <QDialog>
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 namespace UI {
@@ -29,7 +29,7 @@ namespace UI {
  *
  * @author Gustavo Pichorim Boiko <gustavo.boiko AT kdemail.net>
  */
-class KOPETE_EXPORT InfoDialog : public QDialog
+class LIBKOPETE_EXPORT InfoDialog : public QDialog
 {
     Q_OBJECT
 

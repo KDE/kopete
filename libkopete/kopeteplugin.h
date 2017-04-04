@@ -29,7 +29,7 @@
 #include <QDebug>
 
 #include "libkopete_debug.h"
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 class KPluginInfo;
 
@@ -84,7 +84,7 @@ Comment=Plugin that do some nice stuff
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  * @author Olivier Goffart <ogoffart\@kde.org>
  */
-class KOPETE_EXPORT Plugin : public QObject, public KXMLGUIClient
+class LIBKOPETE_EXPORT Plugin : public QObject, public KXMLGUIClient
 {
     Q_OBJECT
 

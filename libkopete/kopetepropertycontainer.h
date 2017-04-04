@@ -26,7 +26,7 @@
 
 #include <kdemacros.h>
 #include "kopeteglobal.h"
-#include "kopete_export.h"
+#include "libkopete_export.h"
 #include "libkopete_debug.h"
 
 namespace Kopete {
@@ -36,7 +36,7 @@ namespace Kopete {
  * This class abstracts a generic contact
  * Use it for inserting contacts in the contact list for example.
  */
-class KOPETE_EXPORT PropertyContainer : public QObject
+class LIBKOPETE_EXPORT PropertyContainer : public QObject
 {
     Q_OBJECT
 

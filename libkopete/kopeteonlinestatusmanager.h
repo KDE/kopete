@@ -18,7 +18,7 @@
 #ifndef kopeteonlinestatusmanager_h__
 #define kopeteonlinestatusmanager_h__
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 #include "libkopete_debug.h"
 
 #include <QObject>
@@ -39,7 +39,7 @@ class Protocol;
  *
  * @author Olivier Goffart
  */
-class KOPETE_EXPORT OnlineStatusManager : public QObject
+class LIBKOPETE_EXPORT OnlineStatusManager : public QObject
 {
     Q_OBJECT
 public:

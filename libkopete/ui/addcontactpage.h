@@ -21,7 +21,7 @@
 #include <QWidget>
 
 #include <kopeteprotocol.h>
-#include <kopete_export.h>
+#include <libkopete_export.h>
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -30,7 +30,7 @@
  *     this could also be useful in the case of MLSN to check if no error
  *     (and also jabber)
  */
-class KOPETE_EXPORT AddContactPage : public QWidget
+class LIBKOPETE_EXPORT AddContactPage : public QWidget
 {
     Q_OBJECT
 

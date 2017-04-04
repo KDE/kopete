@@ -18,7 +18,7 @@
 #define KOPETE_CONTACTTASKBASE_H
 
 #include <kopetetask.h>
-#include <kopete_export.h>
+#include <libkopete_export.h>
 
 namespace Kopete {
 class Contact;
@@ -33,7 +33,7 @@ class Contact;
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
-class KOPETE_EXPORT ContactTaskBase : public Kopete::Task
+class LIBKOPETE_EXPORT ContactTaskBase : public Kopete::Task
 {
     Q_OBJECT
 public:

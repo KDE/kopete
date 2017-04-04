@@ -22,7 +22,7 @@
 #include <QDebug>
 
 #include "libkopete_debug.h"
-#include "kopete_export.h"
+#include "libkopete_export.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteidentity.h"
 #include "kopetestatusmessage.h"
@@ -36,7 +36,7 @@ namespace Kopete {
  *
  * @author Gustavo Pichorim Boiko <gustavo.boiko\@kdemail.net>
  */
-class KOPETE_EXPORT IdentityManager : public QObject
+class LIBKOPETE_EXPORT IdentityManager : public QObject
 {
     Q_OBJECT
 

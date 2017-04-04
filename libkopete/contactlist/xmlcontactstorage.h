@@ -21,7 +21,7 @@
 #define KOPETEXMLCONTACTSTORAGE_H
 
 #include <kopetecontactliststorage.h>
-#include <kopete_export.h>
+#include <libkopete_export.h>
 class QDomElement;
 
 namespace Kopete {
@@ -34,7 +34,7 @@ namespace Kopete {
  * @author Matt Rogers <mattr@kde.org>
  * @author Michaël Larouche <larouche@kde.org>
  */
-class KOPETE_EXPORT XmlContactStorage : public ContactListStorage
+class LIBKOPETE_EXPORT XmlContactStorage : public ContactListStorage
 {
 public:
     XmlContactStorage();

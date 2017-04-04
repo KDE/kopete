@@ -18,7 +18,7 @@
 #include <QDateTime>
 #include <kopetemessage.h>
 #include <kopetechatsession.h>
-
+#include "kopete_export.h"
 class QLabel;
 class QAction;
 class KActionMenu;

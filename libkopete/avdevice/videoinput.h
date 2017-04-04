@@ -29,14 +29,14 @@
 #endif // __u64*/
 
 #include <qstring.h>
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 namespace AV {
 /**
 @author Kopete Developers
 */
-class KOPETE_EXPORT VideoInput
+class LIBKOPETE_EXPORT VideoInput
 {
 public:
     VideoInput();

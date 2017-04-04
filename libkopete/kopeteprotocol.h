@@ -32,7 +32,7 @@ class KopeteEditAccountWidget;
 class AddContactPage;
 class KJob;
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 class Contact;
@@ -58,7 +58,7 @@ class Account;
  * @author Martijn Klingens       <klingens@kde.org>
  * @author Olivier Goffart        <ogoffart\@kde.org>
  */
-class KOPETE_EXPORT Protocol : public Plugin
+class LIBKOPETE_EXPORT Protocol : public Plugin
 {
     Q_OBJECT
 

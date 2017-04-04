@@ -19,7 +19,7 @@
 #ifndef EDITACCOUNTWIDGET_H
 #define EDITACCOUNTWIDGET_H
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 class Account;
@@ -51,7 +51,7 @@ class KopeteEditAccountWidgetPrivate;
  * You may add other custom fields, e.g. the nickname. To save or retrieve these settings use
  * @ref Kopete::ContactListElement::pluginData() with your protocol as plugin.
  */
-class KOPETE_EXPORT KopeteEditAccountWidget
+class LIBKOPETE_EXPORT KopeteEditAccountWidget
 {
 public:
     /**

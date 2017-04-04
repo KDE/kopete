@@ -24,13 +24,13 @@
 #include <QAction>
 #include <QObject>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 class KActionCollection;
 /**
  * @author Ryan Cumming <bodnar42@phalynx.dhs.org>
  */
-class KOPETE_EXPORT KopeteStdAction
+class LIBKOPETE_EXPORT KopeteStdAction
 {
 public:
     /**
@@ -100,7 +100,7 @@ namespace KSettings {
 class Dialog;
 }
 
-class KOPETE_EXPORT KopetePreferencesAction : public QAction
+class LIBKOPETE_EXPORT KopetePreferencesAction : public QAction
 {
     Q_OBJECT
 

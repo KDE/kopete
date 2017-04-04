@@ -20,12 +20,12 @@
 #ifndef kopeteemoticons_h__
 #define kopeteemoticons_h__
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 #include <KEmoticons/kemoticons.h>
 
 class KEmoticons;
 namespace Kopete {
-class KOPETE_EXPORT Emoticons
+class LIBKOPETE_EXPORT Emoticons
 {
 public:
     /**

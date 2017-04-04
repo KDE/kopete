@@ -24,7 +24,7 @@
 
 #include <kjob.h>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 #include "libkopete_debug.h"
 
 class QImage;
@@ -105,7 +105,7 @@ Kopete::AvatarManager::self()->remove(entryToRemove);
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
-class KOPETE_EXPORT AvatarManager : public QObject
+class LIBKOPETE_EXPORT AvatarManager : public QObject
 {
     Q_OBJECT
 public:
@@ -247,7 +247,7 @@ void SwallowAndCoconut::queryResult(KJob* job)
  * @sa Kopete::AvatarManager
  */
 // TODO: Use new Kopete::Task or KCompositeJob
-class KOPETE_EXPORT AvatarQueryJob : public KJob
+class LIBKOPETE_EXPORT AvatarQueryJob : public KJob
 {
     Q_OBJECT
 public:

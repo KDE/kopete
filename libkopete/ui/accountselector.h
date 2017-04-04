@@ -20,7 +20,7 @@
 
 #include <QWidget>
 #include <kopeteprotocol.h>
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 class AccountSelectorPrivate;
 class QTreeWidgetItem;
@@ -28,7 +28,7 @@ class QTreeWidgetItem;
  * \brief widget to select an account, based on QTreeWidget
  * @author Stefan Gehn <metz AT gehn.net>
  */
-class KOPETE_EXPORT AccountSelector : public QWidget
+class LIBKOPETE_EXPORT AccountSelector : public QWidget
 {
     Q_OBJECT
 

@@ -24,16 +24,16 @@
 #include <QString>
 #include <QBuffer>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
-class KOPETE_EXPORT FileEngineHandler : public QAbstractFileEngineHandler
+class LIBKOPETE_EXPORT FileEngineHandler : public QAbstractFileEngineHandler
 {
 public:
     QAbstractFileEngine *create(const QString &fileName) const;
 };
 
-class KOPETE_EXPORT FileEngine : public QAbstractFileEngine
+class LIBKOPETE_EXPORT FileEngine : public QAbstractFileEngine
 {
 public:
     FileEngine();

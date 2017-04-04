@@ -20,7 +20,7 @@
 
 #include "kopeteproperty.h"
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 /**
  * This namespace contains all of Kopete's core classes and functions.
@@ -39,7 +39,7 @@ class PropertiesPrivate;
  * objects for all the properties he wants to set for a Kopete::Contact,
  * everything else is handled behind the scenes.
  **/
-class KOPETE_EXPORT Properties
+class LIBKOPETE_EXPORT Properties
 {
     friend class Kopete::PropertyTmpl;
 public:

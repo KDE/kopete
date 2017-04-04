@@ -32,7 +32,7 @@ class Protocol;
  * that the network is up.  The account receiveds notifications from the daemon of network failures
  * and calls disconnect to set the account offline in a timely manner.
  */
-class KOPETE_EXPORT ManagedConnectionAccount : public PasswordedAccount
+class LIBKOPETE_EXPORT ManagedConnectionAccount : public PasswordedAccount
 {
     Q_OBJECT
 public:

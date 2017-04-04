@@ -20,7 +20,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QLinkedList>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 //FIXME: Message::MessageDirection could be moved into namespace Kopete
 // to avoid this being included everywhere
@@ -39,7 +39,7 @@ class ChatSession;
  * This class implements Handler role in the Chain of Responsibility pattern.
  * The Client role will be filled by the Kopete::MessageHandlerChain class.
  */
-class KOPETE_EXPORT MessageHandler : public QObject
+class LIBKOPETE_EXPORT MessageHandler : public QObject
 {
     Q_OBJECT
 public:
@@ -104,7 +104,7 @@ private:
  * chain to the protocol, then (when it has been delivered) it passes back through the Inbound
  * chain to the chat window to be displayed.
  */
-class KOPETE_EXPORT MessageHandlerFactory
+class LIBKOPETE_EXPORT MessageHandlerFactory
 {
 public:
     /**

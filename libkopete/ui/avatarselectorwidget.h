@@ -21,7 +21,7 @@
 #include <QWidget>
 
 // Kopete includes
-#include <kopete_export.h>
+#include <libkopete_export.h>
 #include <kopeteavatarmanager.h>
 
 class QListWidgetItem;
@@ -37,7 +37,7 @@ namespace UI {
  * @sa AvatarSelectorDialog
  * @author Michaël Larouche <larouche@kde.org>
  */
-class KOPETE_EXPORT AvatarSelectorWidget : public QWidget
+class LIBKOPETE_EXPORT AvatarSelectorWidget : public QWidget
 {
     Q_OBJECT
 public:

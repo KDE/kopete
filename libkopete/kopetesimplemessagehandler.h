@@ -17,7 +17,7 @@
 #ifndef KOPETESIMPLEMESSAGEHANDLER_H
 #define KOPETESIMPLEMESSAGEHANDLER_H
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 #include "kopetemessagehandler.h"
 
 namespace Kopete {
@@ -32,7 +32,7 @@ namespace Kopete {
  * constructor will be called. The slot should take a single argument of type (non-@p const)
  * <tt>Message &</tt>.
  */
-class KOPETE_EXPORT SimpleMessageHandlerFactory : public MessageHandlerFactory
+class LIBKOPETE_EXPORT SimpleMessageHandlerFactory : public MessageHandlerFactory
 {
 public:
     /**

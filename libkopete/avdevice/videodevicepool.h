@@ -26,7 +26,7 @@
 #include <qimage.h>
 #include <kcombobox.h>
 #include "videodevice.h"
-#include "kopete_export.h"
+#include "libkopete_export.h"
 #include <kconfig.h>
 #include <kglobal.h>
 #include <solid/device.h>
@@ -39,7 +39,7 @@ This class allows kopete to check for the existence, open, configure, test, set 
 @author Cláudio da Silveira Pinheiro
 */
 
-class KOPETE_EXPORT VideoDevicePool : public QObject
+class LIBKOPETE_EXPORT VideoDevicePool : public QObject
 {
     Q_OBJECT
 

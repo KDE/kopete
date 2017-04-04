@@ -22,7 +22,7 @@
 #include <QDialog>
 
 // Kopete includes
-#include <kopete_export.h>
+#include <libkopete_export.h>
 
 namespace Kopete {
 namespace UI {
@@ -41,7 +41,7 @@ if( result == QDialog::Ok ) {
  *
  * @author Alex Fiestas <alex@eyeos.org>
  */
-class KOPETE_EXPORT AvatarWebcamDialog : public QDialog
+class LIBKOPETE_EXPORT AvatarWebcamDialog : public QDialog
 {
     Q_OBJECT
 public:

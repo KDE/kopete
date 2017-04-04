@@ -29,7 +29,7 @@
 #include <ktoggleaction.h>
 #include "kopeteglobal.h"
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 class QMenu;
 class QAction;
@@ -54,7 +54,7 @@ typedef QList<Group *> GroupList;
  * This class abstracts a generic contact
  * Use it for inserting contacts in the contact list for example.
  */
-class KOPETE_EXPORT Contact : public ContactListElement
+class LIBKOPETE_EXPORT Contact : public ContactListElement
 {
     Q_OBJECT
 
@@ -245,7 +245,7 @@ public:
     /**
      * @deprecated
      */
-    virtual KDE_DEPRECATED QList<QAction *> *customContextMenuActions(ChatSession *manager);
+    virtual LIBKOPETE_DEPRECATED QList<QAction *> *customContextMenuActions(ChatSession *manager);
 
     /**
      * @brief Get the Context Menu for this contact
@@ -258,7 +258,7 @@ public:
     /**
      * @deprecated
      */
-    KDE_DEPRECATED QMenu *popupMenu(ChatSession *manager);
+    LIBKOPETE_DEPRECATED QMenu *popupMenu(ChatSession *manager);
 
     /**
      * \brief Get whether or not this contact is capable of file transfers
@@ -475,7 +475,7 @@ public Q_SLOTS:
      * (ie. messages to the server, etc)
      * the default implementation simply call deleteLater()
      */
-    virtual KDE_DEPRECATED void deleteContact();
+    virtual LIBKOPETE_DEPRECATED void deleteContact();
 
     /**
      * This is the Contact level slot for sending files. It should be

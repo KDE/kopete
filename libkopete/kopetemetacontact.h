@@ -28,7 +28,7 @@
 #include <QtCore/QUuid>
 
 #include <kdemacros.h>
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 #include "kopeteonlinestatus.h"
 #include "kopetestatusmessage.h"
@@ -49,7 +49,7 @@ class Picture;
  * the metacontact. Plugins can store data in it with all
  * @ref ContactListElement methods
  */
-class KOPETE_EXPORT MetaContact : public ContactListElement
+class LIBKOPETE_EXPORT MetaContact : public ContactListElement
 {
     Q_OBJECT
 
@@ -198,7 +198,7 @@ public:
      * This photo is obtained from the source set with @ref setPhotoSource
      * @deprecated Use picture().image() instead.
      */
-    KDE_DEPRECATED QImage photo() const;
+    LIBKOPETE_DEPRECATED QImage photo() const;
 
     /**
      * Return the correct Kopete::Picture object depending of the metacontact photo source.
@@ -616,10 +616,10 @@ private:
 };
 
 // util functions shared with metacontact property dialog
-KOPETE_EXPORT QImage photoFromContact(Kopete::Contact *c) /*const*/;
-KOPETE_EXPORT QImage photoFromKABC(const QString &id) /*const*/;
-KOPETE_EXPORT QString nameFromContact(Kopete::Contact *c) /*const*/;
-KOPETE_EXPORT QString nameFromKABC(const QString &id) /*const*/;
+LIBKOPETE_EXPORT QImage photoFromContact(Kopete::Contact *c) /*const*/;
+LIBKOPETE_EXPORT QImage photoFromKABC(const QString &id) /*const*/;
+LIBKOPETE_EXPORT QString nameFromContact(Kopete::Contact *c) /*const*/;
+LIBKOPETE_EXPORT QString nameFromKABC(const QString &id) /*const*/;
 } //END namespace Kopete
 
 #endif

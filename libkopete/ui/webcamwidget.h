@@ -21,13 +21,13 @@
 #include <qpixmap.h>
 #include <qstring.h>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 /**
  * A simple widget to display webcam frames.
  */
-class KOPETE_EXPORT WebcamWidget : public QWidget
+class LIBKOPETE_EXPORT WebcamWidget : public QWidget
 {
     Q_OBJECT
 public:

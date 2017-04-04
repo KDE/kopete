@@ -21,7 +21,7 @@
 #include <QString>
 #include <QDebug>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 #include "libkopete_debug.h"
 
 namespace Kopete {
@@ -37,7 +37,7 @@ namespace Kopete {
  *
  *	@author Roman Jarosz <kedgedev@centrum.cz>
  */
-class KOPETE_EXPORT InfoEvent : public QObject
+class LIBKOPETE_EXPORT InfoEvent : public QObject
 {
     Q_OBJECT
 public:

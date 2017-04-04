@@ -19,14 +19,14 @@
 #define KOPETELISTVIEWSEARCHLINE_H
 
 #include <ktreewidgetsearchline.h>
-#include <kopete_export.h>
+#include <libkopete_export.h>
 
 namespace Kopete {
 namespace UI {
 namespace ListView {
 class ListView;
 
-class KOPETE_EXPORT SearchLine : public KTreeWidgetSearchLine
+class LIBKOPETE_EXPORT SearchLine : public KTreeWidgetSearchLine
 {
     Q_OBJECT
 public:

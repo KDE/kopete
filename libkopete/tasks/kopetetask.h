@@ -23,7 +23,7 @@
 #include <kcompositejob.h>
 
 #include "libkopete_debug.h"
-#include "kopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 /**
@@ -48,7 +48,7 @@ namespace Kopete {
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
-class KOPETE_EXPORT Task : public KCompositeJob
+class LIBKOPETE_EXPORT Task : public KCompositeJob
 {
     Q_OBJECT
 public:

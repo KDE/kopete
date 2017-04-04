@@ -20,7 +20,7 @@
 #include <QtCore/QList>
 #include <QtCore/QString>
 
-#include "kopete_export.h"
+#include "libkopete_export.h"
 #include "kopeteonlinestatusmanager.h"
 
 namespace Kopete {
@@ -37,7 +37,7 @@ class StatusGroup;
  *
  *@author Roman Jarosz <kedgedev@centrum.cz>
  */
-class KOPETE_EXPORT StatusItem : public QObject
+class LIBKOPETE_EXPORT StatusItem : public QObject
 {
     Q_OBJECT
 public:
@@ -134,7 +134,7 @@ private:
  *
  *@author Roman Jarosz <kedgedev@centrum.cz>
  */
-class KOPETE_EXPORT StatusGroup : public StatusItem
+class LIBKOPETE_EXPORT StatusGroup : public StatusItem
 {
     Q_OBJECT
 public:
@@ -231,7 +231,7 @@ private:
  *
  *@author Roman Jarosz <kedgedev@centrum.cz>
  */
-class KOPETE_EXPORT Status : public StatusItem
+class LIBKOPETE_EXPORT Status : public StatusItem
 {
     Q_OBJECT
 public:
