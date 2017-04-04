@@ -1243,7 +1243,7 @@ void Item::setHeight(int)
         }
         minHeight = (minHeight * vis) / Private::visibilityFoldSteps;
     }
-    this->setHeight(minHeight);
+    //QTreeWidgetItem::setHeight(minHeight);
 }
 
 int Item::width(const QFontMetrics &, const QTreeWidget *lv, int c) const

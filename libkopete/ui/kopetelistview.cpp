@@ -151,7 +151,7 @@ ListView::ListView(QWidget *parent)
     setAttribute(Qt::WA_AlwaysShowToolTips, false);
 
     connect(this, SIGNAL(customContextMenuRequested(QPoint)),
-            SLOT(slotContextMenu(QTreeWidget *,QTreeWidgetItem *,QPoint)));
+            SLOT(slotContextMenu(QPoint)));
     connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem *,int)),
             SLOT(slotDoubleClicked(QTreeWidgetItem *)));
 
@@ -189,9 +189,9 @@ void ListView::slotDoubleClicked(QTreeWidgetItem *item)
     }
 }
 
-void ListView::slotContextMenu(QTreeWidget * /*listview*/, QTreeWidgetItem *item, const QPoint & /*point*/)
+void ListView::slotContextMenu(const QPoint &point)
 {
-    //KF5 FIXME argument
+    QTreeWidgetItem *item = itemAt(point);
     if (item && !item->isSelected()) {
         clearSelection();
         item->setSelected(true);

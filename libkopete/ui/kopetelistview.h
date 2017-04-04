@@ -154,7 +154,7 @@ Q_SIGNALS:
     void visibleSizeChanged();
 
 private Q_SLOTS:
-    void slotContextMenu(QTreeWidget *, QTreeWidgetItem *item, const QPoint &point);
+    void slotContextMenu(const QPoint &point);
     void slotDoubleClicked(QTreeWidgetItem *item);
     /**
      * To enable smooth scroll to focus on highlighted items when they are highlighted
