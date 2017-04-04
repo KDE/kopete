@@ -36,7 +36,6 @@ extern "C" {
 #include "klineedit.h"
 #include "kcombobox.h"
 #include <QLabel>
-#include <QVBoxLayout>
 #include <QWizard>
 #include <QRadioButton>
 

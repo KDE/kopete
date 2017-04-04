@@ -20,7 +20,6 @@
 #include <qlayout.h>
 
 //#include <kparts/componentfactory.h>
-#include <KLocalizedString>
 #include <kpluginfactory.h>
 #include <kdebug.h>
 #include <KUrl>

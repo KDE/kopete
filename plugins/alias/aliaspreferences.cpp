@@ -19,7 +19,6 @@
 
 #include <QPushButton>
 #include <klocale.h>
-#include <QLineEdit>
 #include <kglobal.h>
 #include <kpluginfactory.h>
 #include <kmessagebox.h>

@@ -19,7 +19,6 @@
 
 // qt stuff
 #include <QList>
-#include <QTextDocument>
 
 // kde stuff
 #include <kapplication.h>

@@ -17,18 +17,16 @@
 
 #include "statisticsdb.h"
 
-#include <QByteArray>
 #include <QSqlDriver>
 #include <QSqlQuery>
-#include <QSqlError>
-#include <QSqlRecord>
-#include <QVariant>
 
 #include <kdebug.h>
 #include <kmessagebox.h>
 
 #include <time.h>
 #include <QStandardPaths>
+#include <QSqlError>
+#include <QSqlRecord>
 
 StatisticsDB::StatisticsDB()
 {

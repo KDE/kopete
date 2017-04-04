@@ -18,7 +18,6 @@
 
 #include <QHeaderView>
 #include <QCheckBox>
-#include <QComboBox>
 
 #include <kpluginfactory.h>
 #include <kfiledialog.h>

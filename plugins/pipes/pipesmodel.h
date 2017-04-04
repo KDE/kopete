@@ -22,7 +22,6 @@
 
 #include <QAbstractTableModel>
 
-#include <QUuid>
 
 /**
  * Model representing pipes' configurations

@@ -19,7 +19,6 @@
 
 #include <qlayout.h>
 #include <qcheckbox.h>
-#include <QVBoxLayout>
 #include <QPointer>
 
 #include <kcombobox.h>

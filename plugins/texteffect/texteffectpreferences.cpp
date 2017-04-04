@@ -25,7 +25,6 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 
-#include <KLocalizedString>
 #include <QColorDialog>
 #include <kpluginfactory.h>
 #include "plugin_texteffect_debug.h"

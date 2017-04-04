@@ -28,15 +28,12 @@
 #include <QtCore/QDate>
 #include <QtGui/QTextDocument>
 #include <QSqlDatabase>
-#include <QSqlDriver>
 #include <QSqlQuery>
-#include <QSqlError>
 #include <QSqlRecord>
 #include <QHash>
 
 #include <kdebug.h>
 
-#include <QSaveFile>
 #include <QStandardPaths>
 
 #include "kopeteglobal.h"

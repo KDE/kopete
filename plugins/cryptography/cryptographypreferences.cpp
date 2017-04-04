@@ -21,7 +21,6 @@
 #include <QCheckBox>
 #include <QVBoxLayout>
 
-#include <QLineEdit>
 #include <kpluginfactory.h>
 #include <klocalizedstring.h>
 #include <kleo/ui/keyrequester.h>

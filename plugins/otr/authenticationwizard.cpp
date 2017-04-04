@@ -33,6 +33,7 @@
 #include <QProgressBar>
 #include <kopeteview.h>
 #include <kopeteaccount.h>
+#include <QGridLayout>
 
 QList<AuthenticationWizard *> wizardList;
 

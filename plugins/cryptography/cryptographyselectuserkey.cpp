@@ -19,7 +19,6 @@
 
 #include <kiconloader.h>
 #include <klocalizedstring.h>
-#include <QLineEdit>
 #include <qlabel.h>
 #include <qboxlayout.h>
 

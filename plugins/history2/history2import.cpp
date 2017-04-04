@@ -30,12 +30,10 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QApplication>
 #include <QtXml/QXmlStreamReader>
-#include <QXmlQuery>
 #include <QFile>
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <KStandardDirs>
 
 #include <kopetecontactlist.h>
 #include <kopetemetacontact.h>

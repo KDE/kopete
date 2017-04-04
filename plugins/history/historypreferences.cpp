@@ -18,7 +18,6 @@
 
 #include "historypreferences.h"
 
-#include <QLayout>
 #include <QVBoxLayout>
 #include <QCheckBox>
 

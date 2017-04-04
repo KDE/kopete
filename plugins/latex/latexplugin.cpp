@@ -21,7 +21,6 @@
 #include <qregexp.h>
 #include <qimage.h>
 #include <qbuffer.h>
-#include <QTextDocument>
 
 #include <kpluginfactory.h>
 #include <kdebug.h>

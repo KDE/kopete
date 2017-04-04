@@ -18,7 +18,6 @@
 
 #include <QStringList>
 
-#include <KLocalizedString>
 #include <kdebug.h>
 
 #include "kopeteprotocol.h"

@@ -23,13 +23,10 @@
 #include <qstring.h>
 #include <QBuffer>
 #include <KDateTable>
-#include <KGlobalSettings>
 #include <KColorScheme>
-#include <QScrollArea>
-#include <QObject>
 #include <QLocale>
-#include <KCoreAddons/KFormat>
 
+#include <KFormat>
 #include <khbox.h>
 #include <kdialog.h>
 #include <klocalizedstring.h>

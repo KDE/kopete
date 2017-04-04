@@ -22,7 +22,6 @@
 #include <QTreeWidget>
 
 #include <KLocalizedString>
-#include <QLineEdit>
 #include <kglobal.h>
 #include <kpluginfactory.h>
 

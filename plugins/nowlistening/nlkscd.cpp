@@ -24,7 +24,6 @@
 #include "nlkscd.h"
 
 #include <kdebug.h>
-#include <QStringList>
 
 #include <QtDBus/QtDBus>
 

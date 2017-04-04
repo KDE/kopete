@@ -36,7 +36,6 @@
 #include <dom/html_element.h>
 #include <khtml_part.h>
 #include <khtmlview.h>
-#include <KConfigGroup>
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QVBoxLayout>

@@ -16,7 +16,6 @@
 
 #include "privacypreferences.h"
 
-#include <QLayout>
 #include <QVBoxLayout>
 #include <QHeaderView>
 #include <QPointer>

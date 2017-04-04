@@ -19,7 +19,6 @@
 #include "highlightconfig.h"
 
 #include <qfile.h>
-#include <QTextDocument>
 #include <qregexp.h>
 #include <qdir.h>
 #include <qdom.h>
