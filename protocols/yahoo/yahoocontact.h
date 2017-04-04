@@ -28,7 +28,6 @@
 #include <kurl.h>
 #include <QAction>
 
-class KTemporaryFile;
 
 namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }

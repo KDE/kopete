@@ -30,9 +30,6 @@ class MetaContact;
 class ContactListElement;
 
 namespace UI {
-class MetaContactModelItem;
-class GroupModelItem;
-class ContactListPlainModelItem;
 /**
 @author Aleix Pol <aleixpol@gmail.com>
 */

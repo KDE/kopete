@@ -41,7 +41,6 @@ class ChatSession;
 class MetaContact;
 }
 
-class QAction;
 class KActionMenu;
 
 class IRCAccount : public Kopete::PasswordedAccount

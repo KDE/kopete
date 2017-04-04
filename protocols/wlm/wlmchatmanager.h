@@ -24,7 +24,6 @@
 #include "wlmaccount.h"
 #include <msn/msn.h>
 
-class WlmContact;
 
 class WlmChatManager : public QObject
 {

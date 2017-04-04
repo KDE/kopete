@@ -24,7 +24,6 @@
 
 namespace Kopete
 {
-class ChatSession;
 }
 
 class OSCAR_EXPORT AIMContactBase : public OscarContact

@@ -36,7 +36,6 @@ namespace Kopete
     class MetaContact;
 }
 
-class WlmContact;
 class WlmProtocol;
 class WlmServer;
 class WlmTransferManager;

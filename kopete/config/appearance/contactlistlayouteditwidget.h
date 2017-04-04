@@ -25,9 +25,7 @@
 
 #include <KVBox>
 
-class KHBox;
 class QCheckBox;
-class QSpinBox;
 class TokenDropTarget;
 class ContactListTokenFactory;
 

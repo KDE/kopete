@@ -31,7 +31,6 @@
 class QTcpServer;
 class QTcpSocket;
 
-class KJob;
 class Transfer;
 namespace Oscar
 {

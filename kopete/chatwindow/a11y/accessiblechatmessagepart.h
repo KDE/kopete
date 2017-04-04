@@ -26,7 +26,6 @@ class KHTMLPart;
 class KHTMLView;
 
 namespace MessageViewer {
-class MailWebView;
 }
 
 class AccessibleChatMessagePart : public QAccessibleWidget

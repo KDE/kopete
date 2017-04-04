@@ -45,7 +45,6 @@ namespace Kopete {
 class Contact;
 class ChatSession;
 class OnlineStatus;
-class PropertyContainer;
 }
 
 typedef QMap<const Kopete::Contact *, QTimer *> TypingMap;

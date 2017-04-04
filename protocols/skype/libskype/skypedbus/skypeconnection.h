@@ -48,7 +48,6 @@ typedef enum {
 } skypeCloseReason;
 
 class SkypeConnectionPrivate;
-class QDBusConnection;
 
 /**
  * This class is classs wrapping DBUS so it can be used easilly to connect to skype, disconnect send and receive messages from it.

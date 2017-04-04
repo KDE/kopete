@@ -29,7 +29,6 @@
 #include <QShowEvent>
 #include <QList>
 
-class QGridLayout;
 class QHideEvent;
 class QShowEvent;
 

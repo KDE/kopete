@@ -20,7 +20,6 @@
 
 #include <QListWidgetItem>
 
-class QLabel;
 
 class EmoticonThemeItem : public QListWidgetItem
 {

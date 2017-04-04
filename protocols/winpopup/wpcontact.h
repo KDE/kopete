@@ -39,7 +39,6 @@
 #include "wpuserinfo.h"
 
 class QTimer;
-class Q3ListView;
 class QAction;
 namespace Kopete {
 class MetaContact;

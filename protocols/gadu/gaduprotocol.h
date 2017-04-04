@@ -31,7 +31,6 @@
 
 #include "gaducommands.h"
 
-class QAction;
 
 class QWidget;
 class QString;

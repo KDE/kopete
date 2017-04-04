@@ -22,7 +22,6 @@
 #include "kopetemessage.h"
 #include "meanwhileaccount.h"
 
-class QAction;
 namespace Kopete { class Account; }
 namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }

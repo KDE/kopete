@@ -27,8 +27,6 @@
 
 #include "bonjourcontactconnection.h"
 
-class QAction;
-class KActionCollection;
 namespace Kopete {
 class Account;
 }

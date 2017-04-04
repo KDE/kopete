@@ -45,7 +45,6 @@ class YahooProtocol;
 class YahooWebcam;
 class YahooConferenceChatSession;
 class YahooChatChatSession;
-class KTemporaryFile;
 
 namespace Kopete{
 class Transfer;

@@ -38,9 +38,6 @@
 #include <kopetecontactlist_export.h>
 
 class KActionCollection;
-class QAction;
-class KSelectAction;
-class KActionMenu;
 
 class KopeteContactListViewPrivate;
 
@@ -48,7 +45,6 @@ namespace Kopete {
 class Contact;
 class MetaContact;
 class Group;
-class MessageEvent;
 class Account;
 }
 

@@ -38,7 +38,6 @@
 #include <mediastreamer2/msfilerec.h>
 #endif
 
-class WlmContact;
 
 class WlmChatSession: public Kopete::ChatSession
 {

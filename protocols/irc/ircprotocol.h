@@ -41,7 +41,6 @@ class AddContactPage;
 class EditAccountWidget;
 class IRCAccount;
 
-class QStringList;
 class QWidget;
 class KopeteView;
 

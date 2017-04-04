@@ -27,10 +27,7 @@
 #include <QtCore/QTimer>
 #include <QtNetwork/QAbstractSocket>
 
-class QTcpServer;
-class QTcpSocket;
 
-class KJob;
 class Transfer;
 namespace Oscar
 {

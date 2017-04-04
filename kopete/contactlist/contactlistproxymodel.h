@@ -23,7 +23,6 @@
 #include <kopetecontactlist_export.h>
 
 namespace Kopete {
-class Group;
 class Contactlist;
 class MetaContact;
 

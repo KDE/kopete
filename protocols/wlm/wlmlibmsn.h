@@ -23,7 +23,6 @@
 
 #include <msn/msn.h>
 
-class WlmAccount;
 class WlmServer;
 
 namespace WlmUtils {

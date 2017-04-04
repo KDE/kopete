@@ -49,7 +49,6 @@ class ChatRoomHandler;
 namespace Kopete
 {
 	class Transfer;
-	class TransferManager;
 }
 
 namespace Oscar

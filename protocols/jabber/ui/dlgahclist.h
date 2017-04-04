@@ -20,8 +20,6 @@
 #include "xmpp_jid.h"
 #include "xmpp_client.h"
 
-class AHCommand;
-class JabberXDataWidget;
 class QVBoxLayout;
 class QRadioButton;
 

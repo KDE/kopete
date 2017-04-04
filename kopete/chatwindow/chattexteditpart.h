@@ -38,7 +38,6 @@ class KCompletion;
 class QTimer;
 
 namespace Sonnet {
-class Highlighter;
 }
 
 namespace Kopete {
@@ -46,8 +45,6 @@ class Message;
 class Contact;
 class OnlineStatus;
 class ChatSession;
-class Protocol;
-class PropertyContainer;
 }
 
 /**

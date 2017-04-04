@@ -29,7 +29,6 @@ namespace Kopete {
 class MetaContact;
 }
 
-class KActionCollection;
 class QAction;
 
 class SMSContact : public Kopete::Contact

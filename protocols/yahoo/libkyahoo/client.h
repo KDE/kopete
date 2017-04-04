@@ -39,7 +39,6 @@ class QDomDocument;
 class ClientStream;
 class KNetworkConnector;
 class Task;
-class KTemporaryFile;
 struct YABEntry;
 
 namespace KYahoo {

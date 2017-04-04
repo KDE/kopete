@@ -28,8 +28,6 @@ class JingleContent;
 class JingleCallsManager;
 class JabberJingleContent;
 class MediaManager;
-class MediaSession;
-class JingleRtpSession;
 
 class JabberJingleSession : public QObject
 {

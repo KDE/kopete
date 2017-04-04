@@ -24,7 +24,6 @@
 
 namespace KIrc {
 class Context;
-class Handler;
 
 class KIRC_EXPORT SocketPrivate : public QObject
 {

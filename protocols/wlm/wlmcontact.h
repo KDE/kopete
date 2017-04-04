@@ -27,7 +27,6 @@
 #include "wlmchatsession.h"
 
 class QAction;
-class KActionCollection;
 class KToggleAction;
 namespace Kopete
 {

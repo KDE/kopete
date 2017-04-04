@@ -23,10 +23,6 @@
 #include <qmap.h>
 
 namespace Kopete {
-class ChatSession;
-class Contact;
-class OnlineStatus;
-class PropertyContainer;
 }
 
 /**

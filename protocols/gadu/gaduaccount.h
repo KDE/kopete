@@ -50,7 +50,6 @@ namespace Kopete {
 class StatusMessage;
 }
 class KActionMenu;
-class GaduDCC;
 
 class GaduAccount : public Kopete::PasswordedAccount
 {

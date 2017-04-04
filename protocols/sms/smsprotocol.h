@@ -27,7 +27,6 @@
 #include "kopeteonlinestatus.h"
 #include "kopetecontact.h"
 
-class QAction;
 
 namespace Kopete {
 class Contact;
@@ -36,10 +35,8 @@ namespace Kopete {
 class MetaContact;
 }
 namespace Kopete {
-class Message;
 }
 namespace Kopete {
-class ChatSession;
 }
 
 class SMSProtocol : public Kopete::Protocol

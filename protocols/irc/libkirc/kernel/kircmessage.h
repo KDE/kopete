@@ -28,7 +28,6 @@
 class QTextCodec;
 
 namespace KIrc {
-class Context;
 
 class MessagePrivate;
 
