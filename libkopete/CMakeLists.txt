@@ -243,7 +243,7 @@ install( FILES
     kopetecontactlistelement.h
     kopetecontactlist.h
     kopeteproperty.h
-    libkopete_export.h
+    ${CMAKE_CURRENT_BINARY_DIR}/libkopete_export.h
     kopeteglobal.h
     kopetegroup.h
     kopeteidentity.h
