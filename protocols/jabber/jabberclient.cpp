@@ -51,8 +51,8 @@ class JabberClient::Private
 {
 public:
 	Private()
-	: jabberClient(0L), jabberClientStream(0L), jabberClientConnector(0L), jabberTLS(0L),
-		       jabberTLSHandler(0L), privacyManager(0L)
+	: jabberClient(nullptr), jabberClientStream(nullptr), jabberClientConnector(nullptr), jabberTLS(nullptr),
+		       jabberTLSHandler(nullptr), privacyManager(nullptr)
 	{}
 	~Private()
 	{
@@ -589,7 +589,7 @@ XMPP::Task *JabberClient::rootTask () const
 	}
 	else
 	{
-		return 0l;
+        return nullptr;
 	}
 
 }
@@ -603,7 +603,7 @@ XMPP::FileTransferManager *JabberClient::fileTransferManager () const
 	}
 	else
 	{
-		return 0L;
+        return nullptr;
 	}
 
 }

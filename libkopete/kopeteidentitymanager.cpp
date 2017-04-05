@@ -84,7 +84,7 @@ Identity *IdentityManager::registerIdentity(Identity *identity)
     foreach (Identity *currident, d->identities) {
         if (identity->id() == currident->id()) {
             identity->deleteLater();
-            return 0L;
+            return nullptr;
         }
     }
 
@@ -121,12 +121,12 @@ Identity *IdentityManager::findIdentity(const QString &id)
             return identity;
         }
     }
-    return 0L;
+    return nullptr;
 }
 
 Identity *IdentityManager::defaultIdentity()
 {
-    Identity *ident = 0;
+    Identity *ident = nullptr;
 
     if (d->defaultIdentity) {
         ident = findIdentity(d->defaultIdentity->id());

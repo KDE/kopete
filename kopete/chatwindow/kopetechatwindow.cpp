@@ -210,7 +210,7 @@ KopeteChatWindow::KopeteChatWindow(Kopete::ChatSession::Form form, QWidget *pare
     m_participantsWidget = new QDockWidget(i18n("Participants"), this);
     m_participantsWidget->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
     m_participantsWidget->setFeatures(QDockWidget::DockWidgetClosable);
-    m_participantsWidget->setTitleBarWidget(0L);
+    m_participantsWidget->setTitleBarWidget(nullptr);
     m_participantsWidget->setObjectName(QStringLiteral("Participants")); //object name is required for automatic position and settings save.
 
     ChatSessionMembersListModel *members_model = new ChatSessionMembersListModel(this);
@@ -876,7 +876,7 @@ void KopeteChatWindow::slotDetachChat(QAction *action)
     }
 
     //if we don't do this, we might crash
-//  createGUI(0L);
+//  createGUI(nullptr);
     guiFactory()->removeClient(detachedView->msgManager());
 
     if (!action) {

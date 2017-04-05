@@ -170,10 +170,10 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 
         // if the contact was a source of property data, clean
         if (displayNameSourceContact() == c) {
-            setDisplayNameSourceContact(0L);
+            setDisplayNameSourceContact(nullptr);
         }
         if (photoSourceContact() == c) {
-            setPhotoSourceContact(0L);
+            setPhotoSourceContact(nullptr);
         }
 
         if (wasTrackingName) {
@@ -258,7 +258,7 @@ Contact *MetaContact::findContact(const QString &protocolId, const QString &acco
     }
 
     // Contact not found
-    return 0L;
+    return nullptr;
 }
 
 void MetaContact::setDisplayNameSource(PropertySource source)
@@ -320,7 +320,7 @@ Contact *MetaContact::sendMessage()
         c->sendMessage();
         return c;
     }
-    return 0L;
+    return nullptr;
 }
 
 Contact *MetaContact::startChat()
@@ -335,7 +335,7 @@ Contact *MetaContact::startChat()
         c->startChat();
         return c;
     }
-    return 0L;
+    return nullptr;
 }
 
 Contact *MetaContact::preferredContact()
@@ -407,7 +407,7 @@ Contact *MetaContact::execute()
         return c;
     }
 
-    return 0L;
+    return nullptr;
 }
 
 quint32 MetaContact::idleTime() const

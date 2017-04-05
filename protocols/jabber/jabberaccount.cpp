@@ -209,6 +209,7 @@ void JabberAccount::setS5BServerPort ( int port )
 
 void JabberAccount::fillActionMenu( KActionMenu *actionMenu )
 {
+    qDebug() << " void JabberAccount::fillActionMenu( KActionMenu *actionMenu )";
 	Kopete::Account::fillActionMenu( actionMenu );
 
 	actionMenu->addSeparator();
@@ -218,7 +219,7 @@ void JabberAccount::fillActionMenu( KActionMenu *actionMenu )
 	action = new QAction( this );
 	action->setIcon( QIcon::fromTheme(QStringLiteral("jabber_group")) );
 	action->setText( i18n("Join Groupchat...") );
-	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotJoinNewChat()) );
+    QObject::connect( action, &QAction::triggered, this, &JabberAccount::slotJoinNewChat );
 	actionMenu->addAction(action);
 	action->setEnabled( isConnected() );
 	
@@ -231,20 +232,20 @@ void JabberAccount::fillActionMenu( KActionMenu *actionMenu )
 	action = new QAction( this );
 	action->setIcon( QIcon::fromTheme(QStringLiteral("jabber_serv_on")) );
 	action->setText( i18n ("Services...") );
-	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGetServices()) );
+    QObject::connect( action, &QAction::triggered, this, &JabberAccount::slotGetServices );
 	action->setEnabled( isConnected() );
 	actionMenu->addAction( action );
 
 	action = new QAction( this );
 	action->setIcon( ( QIcon::fromTheme(QStringLiteral("mail-message-new")) ) );
 	action->setText( i18n ("XML Console") );
-	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotXMPPConsole()) );
+    QObject::connect( action, &QAction::triggered, this, &JabberAccount::slotXMPPConsole );
 	actionMenu->addAction( action );
 
 	action = new QAction( this );
 	action->setIcon( ( QIcon::fromTheme(QStringLiteral("document-properties")) ) );
 	action->setText( i18n ("Edit User Info...") );
-	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotEditVCard()) );
+    QObject::connect( action, &QAction::triggered, this, &JabberAccount::slotEditVCard );
 	action->setEnabled( isConnected() );
 	actionMenu->addAction( action );
 
@@ -254,7 +255,7 @@ void JabberAccount::fillActionMenu( KActionMenu *actionMenu )
 		action = new QAction(mMoodMenu);
 		action->setText(MoodManager::self()->getMoodName((Mood::Type)i));
 		action->setData(QVariant(i));
-		QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetMood()) );
+        QObject::connect( action, &QAction::triggered, this, &JabberAccount::slotSetMood );
 		mMoodMenu->addAction( action );
 	}
 	actionMenu->addAction( mMoodMenu );

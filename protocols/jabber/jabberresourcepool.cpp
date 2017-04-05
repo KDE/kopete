@@ -248,7 +248,7 @@ JabberResource *JabberResourcePool::lockedJabberResource(const XMPP::Jid &jid)
 
         qCDebug(JABBER_PROTOCOL_LOG) << "WARNING: No resource found in pool, returning as offline.";
 
-        return 0L;
+        return nullptr;
     }
 
     // see if we have a locked resource
@@ -262,7 +262,7 @@ JabberResource *JabberResourcePool::lockedJabberResource(const XMPP::Jid &jid)
     qCDebug(JABBER_PROTOCOL_LOG) << "No lock available for " << jid.bare();
 
     // there's no locked resource, return an empty resource
-    return 0L;
+    return nullptr;
 }
 
 const XMPP::Resource &JabberResourcePool::lockedResource(const XMPP::Jid &jid)

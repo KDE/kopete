@@ -257,7 +257,7 @@ Filter *HighlightPreferences::selectedItem()
 {
     QListWidgetItem *lvi = preferencesDialog.m_list->currentItem();
     if (!lvi) {
-        return 0L;
+        return nullptr;
     }
     return qvariant_cast<Filter *>(lvi->data(Qt::UserRole));
 }

@@ -56,10 +56,10 @@
 class NowListeningPlugin::Private
 {
 public:
-    Private() : m_currentMediaPlayer(0L)
-        , m_currentChatSession(0L)
-        , m_currentMetaContact(0L)
-        , advertTimer(0L)
+    Private() : m_currentMediaPlayer(nullptr)
+        , m_currentChatSession(nullptr)
+        , m_currentMetaContact(nullptr)
+        , advertTimer(nullptr)
     {
     }
 

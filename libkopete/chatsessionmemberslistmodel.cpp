@@ -154,17 +154,17 @@ Kopete::Contact *ChatSessionMembersListModel::contactAt(const QModelIndex &index
     qCDebug(LIBKOPETE_LOG) << "memberslistmodel contactat";
     if (d->session) {
         if (!index.isValid()) {
-            return 0L;
+            return nullptr;
         }
 
         if (index.row() >= d->contacts.size()) {
-            return 0L;
+            return nullptr;
         }
 
         return d->contacts.at(index.row());
     }
 
-    return 0L;
+    return nullptr;
 }
 
 int ChatSessionMembersListModel::rowCount(const QModelIndex &parent) const

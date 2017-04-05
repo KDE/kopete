@@ -213,7 +213,7 @@ KopeteView *KopeteViewManager::view(Kopete::ChatSession *session, const QString 
             return newView;
         } else {
             kError(14000) << "Could not create a view, no plugins available!" << endl;
-            return 0L;
+            return nullptr;
         }
     }
 }

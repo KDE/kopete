@@ -49,7 +49,7 @@ MessageHandler *SimpleMessageHandlerFactory::create(ChatSession *manager, Messag
 {
     Q_UNUSED(manager)
     if (direction != d->direction) {
-        return 0;
+        return nullptr;
     }
     MessageHandler *handler = new SimpleMessageHandler;
     QObject::connect(handler, SIGNAL(handle(Kopete::Message&)), d->target, d->slot);

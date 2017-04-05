@@ -69,7 +69,7 @@ Kopete::Group *ContactListStorage::group(unsigned int groupId) const
             return group;
         }
     }
-    return 0L;
+    return nullptr;
 }
 
 Kopete::Group *ContactListStorage::findGroup(const QString &displayName, int type)

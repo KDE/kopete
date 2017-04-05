@@ -397,7 +397,7 @@ Kopete::MetaContact *Account::addContact(const QString &contactId, const QString
     } else {
         if (!createContact(contactId, parentContact)) {
             delete parentContact;
-            return 0L;
+            return nullptr;
         }
     }
 
@@ -418,7 +418,7 @@ bool Account::addContact(const QString &contactId, MetaContact *parent, AddMode 
                                      << "to account" << accountId() << "will not take place.";
         }
 
-        return 0L;
+        return false;
     }
 
     const bool isTemporary = parent->isTemporary();

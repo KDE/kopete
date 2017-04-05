@@ -228,7 +228,7 @@ Kopete::MetaContact *MetaContactSelectorWidget::metaContact()
         return item->metaContact();
     }
 
-    return 0L;
+    return nullptr;
 }
 
 void MetaContactSelectorWidget::selectMetaContact(Kopete::MetaContact *mc)

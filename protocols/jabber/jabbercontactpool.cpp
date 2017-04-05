@@ -117,7 +117,7 @@ JabberBaseContact *JabberContactPool::addGroupContact(const XMPP::RosterItem &co
             mContactItem->setDirty(dirty);
 
             //we must tell to the originating function that no new contact has been added
-            return 0L;//mContactItem->contact ();
+            return nullptr;//mContactItem->contact ();
         } else {
             //this happen if we receive a MUC invitaiton:  when the invitaiton is received, it's from the muc itself
             //and then kopete will create a temporary contact for it. but it will not be a good contact.
@@ -256,7 +256,7 @@ JabberBaseContact *JabberContactPool::findExactMatch(const XMPP::Jid &jid)
         }
     }
 
-    return 0L;
+    return nullptr;
 }
 
 JabberBaseContact *JabberContactPool::findRelevantRecipient(const XMPP::Jid &jid)
@@ -267,7 +267,7 @@ JabberBaseContact *JabberContactPool::findRelevantRecipient(const XMPP::Jid &jid
         }
     }
 
-    return 0L;
+    return nullptr;
 }
 
 QList<JabberBaseContact *> JabberContactPool::findRelevantSources(const XMPP::Jid &jid)

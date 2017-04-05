@@ -44,7 +44,7 @@ public:
     Private()
         : accountPage(0)
         , proto(0)
-        , identity(0L)
+        , identity(nullptr)
     {
     }
 

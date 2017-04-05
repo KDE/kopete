@@ -152,7 +152,7 @@ KopeteView *ChatSessionManager::createView(ChatSession *kmm, const QString &requ
     KopeteView *newView = KopeteViewManager::viewManager()->view(kmm, requestedPlugin);
     if (!newView) {
         qCDebug(LIBKOPETE_LOG) << "View not successfuly created";
-        return 0L;
+        return nullptr;
     }
 
     QObject *viewObject = dynamic_cast<QObject *>(newView);

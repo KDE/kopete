@@ -254,7 +254,7 @@ Account *AccountManager::registerAccount(Account *account)
 
     if (account->accountId().isEmpty()) {
         account->deleteLater();
-        return 0L;
+        return nullptr;
     }
 
     // If this account already exists, do nothing
@@ -264,7 +264,7 @@ Account *AccountManager::registerAccount(Account *account)
         Account *curracc = it.next();
         if ((account->protocol() == curracc->protocol()) && (account->accountId() == curracc->accountId())) {
             account->deleteLater();
-            return 0L;
+            return nullptr;
         }
     }
 
@@ -327,7 +327,7 @@ Account *AccountManager::findAccount(const QString &protocolId, const QString &a
             return a;
         }
     }
-    return 0L;
+    return nullptr;
 }
 
 void AccountManager::removeAccount(Account *account)

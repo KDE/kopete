@@ -558,7 +558,7 @@ void Contact::setIcon(const QString &icon)
 
 QList<QAction *> *Contact::customContextMenuActions()
 {
-    return 0L;
+    return nullptr;
 }
 
 QList<QAction *> *Contact::customContextMenuActions(ChatSession * /* manager */)

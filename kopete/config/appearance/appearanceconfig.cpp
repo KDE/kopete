@@ -71,7 +71,7 @@ class AppearanceConfig::Private
 {
 public:
     Private()
-        : mAppearanceTabCtl(0L)
+        : mAppearanceTabCtl(nullptr)
     {
     }
 

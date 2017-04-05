@@ -70,7 +70,7 @@ Component *ComponentBase::component(uint n)
     if (n < components()) {
         return d->components.at(n);
     }
-    return 0l;
+    return nullptr;
 }
 
 Component *ComponentBase::componentAt(const QPoint &pt)

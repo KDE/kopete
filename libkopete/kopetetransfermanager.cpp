@@ -359,7 +359,7 @@ Kopete::ChatSession *Kopete::Transfer::chatSession() const
 
 Kopete::TransferManager *Kopete::TransferManager::transferManager()
 {
-    static TransferManager s(0L);
+    static TransferManager s(nullptr);
     return &s;
 }
 

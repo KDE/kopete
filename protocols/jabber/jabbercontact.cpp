@@ -70,7 +70,7 @@
  * JabberContact constructor
  */
 JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Account *_account, Kopete::MetaContact * mc, const QString &legacyId)
-	: JabberBaseContact ( rosterItem, _account, mc, legacyId)  , mDiscoDone(false), m_syncTimer(0L)
+	: JabberBaseContact ( rosterItem, _account, mc, legacyId)  , mDiscoDone(false), m_syncTimer(nullptr)
 {
 	///*account()->client()->clientStream()->*/XMPP::setDebug((Debug*) new TD());
 	qCDebug(JABBER_PROTOCOL_LOG) << contactId() << "  is created  - " << this;

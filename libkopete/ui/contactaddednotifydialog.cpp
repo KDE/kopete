@@ -146,12 +146,12 @@ Group *ContactAddedNotifyDialog::group() const
 MetaContact *ContactAddedNotifyDialog::addContact() const
 {
     if (!added() || !d->account) {
-        return 0L;
+        return nullptr;
     }
 
     MetaContact *metacontact = d->account->addContact(d->contactId, displayName(), group());
     if (!metacontact) {
-        return 0L;
+        return nullptr;
     }
 
     metacontact->setKabcId(d->addressbookId);

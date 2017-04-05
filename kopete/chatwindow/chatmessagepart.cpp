@@ -111,7 +111,7 @@ class ChatMessagePart::Private
 {
 public:
     Private()
-        : /*tt(0L),*/ scrollPressed(false)
+        : /*tt(nullptr),*/ scrollPressed(false)
         , scrollToEndDelayed(false)
         , manager(0)
         , copyAction(0)

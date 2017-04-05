@@ -163,11 +163,11 @@ KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Accoun
 	{
 		JabberTransport *transport = dynamic_cast < JabberTransport * >(account);
 		if(!transport || !transport->account()->client() )
-			return 0L;
+            return nullptr;
 		dlgRegister *registerDialog = new dlgRegister (transport->account(), transport->myself()->contactId());
 		registerDialog->show (); 
 		registerDialog->raise ();
-		return 0l; //we make ourself our own dialog, not an editAccountWidget.
+        return nullptr; //we make ourself our own dialog, not an editAccountWidget.
 	}
 }
 
@@ -175,7 +175,7 @@ Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 {
 	qDebug (JABBER_PROTOCOL_LOG) << "Create New Account. ID: " << accountId;
 	if( Kopete::AccountManager::self()->findAccount( pluginId() , accountId ) )
-		return 0L;  //the account may already exist if greated just above
+        return nullptr;  //the account may already exist if greated just above
 
 	int slash=accountId.indexOf('/');
 	if(slash>=0)
@@ -186,10 +186,10 @@ Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 		{
 			realAccount = new JabberAccount( this, realAccountId );
 			if(!Kopete::AccountManager::self()->registerAccount(  realAccount ) )
-				return 0L;
+                return nullptr;
 		}
 		if(!realAccount)
-			return 0L;
+            return nullptr;
 		return new JabberTransport( realAccount , accountId );
 	}
 	else

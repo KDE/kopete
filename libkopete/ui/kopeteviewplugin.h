@@ -49,7 +49,7 @@ public:
     */
     virtual KopeteView *createView(ChatSession * /*session*/)
     {
-        return 0L;
+        return nullptr;
     }
 
     /**

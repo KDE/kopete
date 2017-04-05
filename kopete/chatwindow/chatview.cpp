@@ -84,7 +84,7 @@ public:
 };
 
 ChatView::ChatView(Kopete::ChatSession *mgr, ChatWindowPlugin *parent)
-    : KVBox(0l)
+    : KVBox(nullptr)
     , KopeteView(mgr, parent)
     , d(new KopeteChatViewPrivate)
 {

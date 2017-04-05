@@ -44,7 +44,7 @@ class KopeteEmoticonAction::KopeteEmoticonActionPrivate
 public:
     KopeteEmoticonActionPrivate()
     {
-        m_popup = new QMenu(0L);
+        m_popup = new QMenu(nullptr);
         emoticonSelector = new EmoticonSelector(m_popup);
         emoticonSelector->setObjectName(QStringLiteral("KopeteEmoticonActionPrivate::emoticonSelector"));
 //FIXME do it the kde4 way

@@ -22,6 +22,8 @@
 #include "emoticonthemeitem.h"
 #include "kopetebehaviorsettings.h"
 
+#include <QFileDialog>
+
 #include <QCheckBox>
 #include <QDir>
 #include <QUrl>
@@ -47,7 +49,6 @@
 #include <kstandarddirs.h>
 #include <kurlrequesterdialog.h>
 #include <krun.h>
-#include <kfiledialog.h>
 #include <kemoticons.h>
 #include <KGlobal>
 #include <KCMultiDialog>
@@ -97,7 +98,7 @@ public:
 
     Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags /*c*/) Q_DECL_OVERRIDE
     {
-        return 0L;
+        return nullptr;
     }
 
     void slotUserInfo() Q_DECL_OVERRIDE
@@ -115,17 +116,17 @@ public:
 
     Kopete::Account *createNewAccount(const QString & /*accountId*/) Q_DECL_OVERRIDE
     {
-        return 0L;
+        return nullptr;
     }
 
     AddContactPage *createAddContactWidget(QWidget */*parent*/, Kopete::Account */*account*/) Q_DECL_OVERRIDE
     {
-        return 0L;
+        return nullptr;
     }
 
     KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account */*account*/, QWidget */*parent */) Q_DECL_OVERRIDE
     {
-        return 0L;
+        return nullptr;
     }
 };
 
@@ -185,13 +186,13 @@ private:
 
 ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args)
     : KCModule(parent, args)
-    , m_currentStyle(0L)
+    , m_currentStyle(nullptr)
     , m_loading(false)
-    , m_previewProtocol(0L)
-    , m_previewAccount(0L)
-    , m_jackMetaContact(0L)
-    , m_myself(0L)
-    , m_jack(0L)
+    , m_previewProtocol(nullptr)
+    , m_previewAccount(nullptr)
+    , m_jackMetaContact(nullptr)
+    , m_myself(nullptr)
+    , m_jack(nullptr)
 {
     KConfigGroup config(KSharedConfig::openConfig(), "ChatWindowSettings");
 
@@ -441,7 +442,7 @@ void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 void ChatWindowConfig::slotInstallChatStyle()
 {
     QUrl styleUrl
-        = KFileDialog::getOpenUrl(QUrl(), QStringLiteral("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose Chat Window Style to Install"));
+        = QFileDialog::getOpenFileUrl(this, i18n("Choose Chat Window Style to Install"), QUrl(), QStringLiteral("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"));
 
     if (styleUrl.isEmpty()) { // dialog got canceled
         return;

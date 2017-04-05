@@ -130,7 +130,7 @@ MetaContact *ContactList::metaContact(const QString &metaContactId) const
         }
     }
 
-    return 0L;
+    return nullptr;
 }
 
 Group *ContactList::group(unsigned int groupId) const
@@ -148,7 +148,7 @@ Group *ContactList::group(unsigned int groupId) const
             return curr;
         }
     }
-    return 0L;
+    return nullptr;
 }
 
 Contact *ContactList::findContact(const QString &protocolId, const QString &accountId, const QString &contactId) const
@@ -157,7 +157,7 @@ Contact *ContactList::findContact(const QString &protocolId, const QString &acco
     Account *i = AccountManager::self()->findAccount(protocolId, accountId);
     if (!i) {
         qCDebug(LIBKOPETE_LOG) << "Account not found";
-        return 0L;
+        return nullptr;
     }
     return i->contacts().value(contactId);
 }
@@ -184,7 +184,7 @@ MetaContact *ContactList::findMetaContactByContactId(const QString &contactId) c
             return c->metaContact();
         }
     }
-    return 0L;
+    return nullptr;
 }
 
 Group *ContactList::findGroup(const QString &displayName, int type)

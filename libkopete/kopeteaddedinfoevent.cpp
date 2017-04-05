@@ -109,7 +109,7 @@ void AddedInfoEvent::activate(uint actionId)
 MetaContact *AddedInfoEvent::addContact() const
 {
     if (!d->addDialog) {
-        return 0L;
+        return nullptr;
     }
 
     return d->addDialog->addContact();
