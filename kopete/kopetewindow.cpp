@@ -38,6 +38,7 @@
 #include <QMouseEvent>
 #include <QShowEvent>
 #include <QSignalMapper>
+#include <QStatusBar>
 
 #include <khbox.h>
 #include <kvbox.h>
@@ -58,7 +59,6 @@
 #include <kshortcutsdialog.h>
 #include <kedittoolbar.h>
 #include <QMenuBar>
-#include <kstatusbar.h>
 #include <kwindowsystem.h>
 
 #include <kplugininfo.h>

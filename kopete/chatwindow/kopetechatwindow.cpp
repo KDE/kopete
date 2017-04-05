@@ -49,7 +49,6 @@
 #include <kwindowsystem.h>
 #include <ktemporaryfile.h>
 #include <kedittoolbar.h>
-#include <kstatusbar.h>
 #include <QPushButton>
 #include <ktabwidget.h>
 #include <kdialog.h>
@@ -66,6 +65,7 @@
 #include <ktoggleaction.h>
 #include <kactionmenu.h>
 #include <ktoolbarspaceraction.h>
+#include <QStatusBar>
 
 #include "chatmessagepart.h"
 #include "chattexteditpart.h"
