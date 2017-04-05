@@ -57,6 +57,7 @@
 #include "addressbooklinkwidget.h"
 #include "avatardialog.h"
 
+#include "kopeteitembase.h"
 #include "customnotificationprops.h"
 
 const QLatin1String MC_OFF("user-offline");
@@ -80,8 +81,6 @@ KopeteGVIProps::KopeteGVIProps(Kopete::Group *group, QWidget *parent)
     ui_mainWidget = new Ui::KopeteGVIPropsWidget;
     ui_mainWidget->setupUi(mainWidget);
 
-    ui_mainWidget->icnbOpen->setIconSize(QSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
-    ui_mainWidget->icnbClosed->setIconSize(QSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
     QPair<QString, QString> context = qMakePair(QStringLiteral("group"), QString::number(mGroup->groupId()));
     mNotificationProps = new CustomNotificationProps(this, context);
 
@@ -96,15 +95,17 @@ KopeteGVIProps::KopeteGVIProps(Kopete::Group *group, QWidget *parent)
     ui_mainWidget->edtDisplayName->setText(mGroup->displayName());
 
     ui_mainWidget->chkUseCustomIcons->setChecked(mGroup->useCustomIcon());
+    ui_mainWidget->icnbOpen->setIconSize(KIconLoader::SizeSmall);
+    ui_mainWidget->icnbClosed->setIconSize(KIconLoader::SizeSmall);
 
-//  QString openName = mGroup->icon( Kopete::ContactListElement::Open );
-//  if(openName.isEmpty())
-//      openName = KOPETE_GROUP_DEFAULT_OPEN_ICON;
-//  QString closeName = mGroup->icon( Kopete::ContactListElement::Closed );
-//  if(closeName.isEmpty())
-//      closeName = KOPETE_GROUP_DEFAULT_CLOSED_ICON;
-//	ui_mainWidget->icnbOpen->setIcon( openName );
-//	ui_mainWidget->icnbClosed->setIcon( closeName );
+  QString openName = mGroup->icon( Kopete::ContactListElement::Open );
+  if(openName.isEmpty())
+      openName = KOPETE_GROUP_DEFAULT_OPEN_ICON;
+  QString closeName = mGroup->icon( Kopete::ContactListElement::Closed );
+  if(closeName.isEmpty())
+      closeName = KOPETE_GROUP_DEFAULT_CLOSED_ICON;
+    ui_mainWidget->icnbOpen->setIcon( openName );
+    ui_mainWidget->icnbClosed->setIcon( closeName );
 
     connect(this, SIGNAL(okClicked()), this, SLOT(slotOkClicked()));
     connect(ui_mainWidget->chkUseCustomIcons, SIGNAL(toggled(bool)),
@@ -131,12 +132,12 @@ void KopeteGVIProps::slotOkClicked()
 
     // only call setIcon if the icon was changed
     if (m_dirty) {
-/*		mGroup->setIcon( ui_mainWidget->icnbOpen->icon(),
+        mGroup->setIcon( ui_mainWidget->icnbOpen->icon(),
              Kopete::ContactListElement::Open );
 
         mGroup->setIcon( ui_mainWidget->icnbClosed->icon(),
             Kopete::ContactListElement::Closed );
-*/  }
+  }
 
     mNotificationProps->storeCurrentCustoms();
 }
