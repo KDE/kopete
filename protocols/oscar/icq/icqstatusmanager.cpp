@@ -19,7 +19,7 @@
 
 #include <KLocalizedString>
 #include <ksharedconfig.h>
-#include <kglobal.h>
+
 #include <kconfig.h>
 #include <kconfiggroup.h>
 

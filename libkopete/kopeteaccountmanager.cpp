@@ -25,7 +25,7 @@
 #include <QtDBus/QDBusInterface>
 
 #include <ksharedconfig.h>
-#include <kglobal.h>
+
 #include <kplugininfo.h>
 #include <kconfiggroup.h>
 #include <solid/networking.h>

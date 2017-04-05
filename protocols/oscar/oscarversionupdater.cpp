@@ -22,7 +22,7 @@
 #include <kdebug.h>
 #include <kio/job.h>
 #include <ksharedconfig.h>
-#include <kglobal.h>
+
 #include <kconfiggroup.h>
 
 QMutex updateMutex;

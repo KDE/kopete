@@ -27,7 +27,7 @@
 
 #include <kdatewidget.h>
 #include <kdebug.h>
-#include <kglobal.h>
+
 #include <QIcon>
 #include <KLocalizedString>
 

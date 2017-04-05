@@ -29,7 +29,7 @@
 
 #include <kdatewidget.h>
 #include "yahoo_protocol_debug.h"
-#include <kglobal.h>
+
 #include <QIcon>
 #include <KLocalizedString>
 #include <KDialog>

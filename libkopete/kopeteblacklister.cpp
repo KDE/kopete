@@ -19,7 +19,7 @@
 
 #include <ksharedconfig.h>
 #include <kconfiggroup.h>
-#include <kglobal.h>
+
 
 #include <qstringlist.h>
 #include <KSharedConfig>

@@ -33,7 +33,7 @@
 #include <ktoolinvocation.h>
 #include <ktemporaryfile.h>
 #include <kconfig.h>
-#include <kglobal.h>
+
 #include <qregexp.h>
 #include <kio/job.h>
 #include <kdialog.h>

@@ -28,6 +28,8 @@
 #include <qfile.h>
 #include <qcolor.h>
 
+#include <KLocalizedString>
+#include <KGlobal>
 #include <KStandardDirs>
 #include "plugin_otr_debug.h"
 #include <qaction.h>

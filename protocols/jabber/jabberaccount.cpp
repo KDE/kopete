@@ -50,7 +50,7 @@
 #include <qinputdialog.h>
 #include <QIcon>
 #include <kactionmenu.h>
-#include <kglobal.h>
+
 
 #include "kopetepassword.h"
 #include "kopetemetacontact.h"

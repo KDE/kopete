@@ -22,7 +22,7 @@
 #include <QTreeWidget>
 
 #include <KLocalizedString>
-#include <kglobal.h>
+
 #include <kpluginfactory.h>
 
 #include "ui_autoreplaceprefs.h"

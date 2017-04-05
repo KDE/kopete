@@ -30,7 +30,7 @@
 //#include <kcontacts/stdaddressbook.h>
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kglobal.h>
+
 
 // Kopete includes
 #include "kopeteaccount.h"

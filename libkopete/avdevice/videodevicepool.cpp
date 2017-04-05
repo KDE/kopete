@@ -25,7 +25,7 @@
 #include <cerrno>
 #include <cstring>
 
-#include <kglobal.h>
+#include <QDebug>
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <qapplication.h>

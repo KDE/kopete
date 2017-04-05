@@ -24,7 +24,7 @@
 #include <KLocalizedString>
 #include <kplugininfo.h>
 #include <knotification.h>
-#include <kglobal.h>
+
 #include <kwindowsystem.h>
 
 #include "kopetebehaviorsettings.h"

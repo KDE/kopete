@@ -28,7 +28,7 @@
 #include "videodevice.h"
 #include "libkopete_export.h"
 #include <kconfig.h>
-#include <kglobal.h>
+
 #include <solid/device.h>
 
 namespace Kopete {

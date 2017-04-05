@@ -25,7 +25,7 @@
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kglobal.h>
+
 #include <KLocalizedString>
 #include <kcmdlineargs.h>
 #include <kmessagebox.h>

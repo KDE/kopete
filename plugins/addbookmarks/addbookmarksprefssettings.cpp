@@ -13,7 +13,7 @@
 
 #include <kdebug.h>
 #include <ksharedconfig.h>
-#include <kglobal.h>
+
 #include <kconfiggroup.h>
 
 BookmarksPrefsSettings::BookmarksPrefsSettings(QObject *parent)

@@ -19,7 +19,7 @@
 #include "oscarprotocol.h"
 
 #include <KLocalizedString>
-#include <kglobal.h>
+
 #include <kconfiggroup.h>
 #include <KSharedConfig>
 

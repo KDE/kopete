@@ -24,7 +24,7 @@
 #include <qobject.h>
 #include <kxmlguiclient.h>
 
-#include <kglobal.h>
+
 
 #include <kopetemessage.h>
 #include <kopeteplugin.h>

@@ -22,6 +22,7 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <KLocalizedString>
 
 // KDE includes
 

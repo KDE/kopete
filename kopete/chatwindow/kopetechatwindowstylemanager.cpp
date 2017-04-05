@@ -27,7 +27,7 @@
 #include <kdirlister.h>
 #include <kdebug.h>
 #include <QUrl>
-#include <kglobal.h>
+
 #include <karchive.h>
 #include <kzip.h>
 #include <ktar.h>

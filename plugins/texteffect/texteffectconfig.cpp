@@ -20,7 +20,7 @@
 
 #include <qstring.h>
 
-#include <kglobal.h>
+
 #include <ksharedconfig.h>
 #include <kconfiggroup.h>
 

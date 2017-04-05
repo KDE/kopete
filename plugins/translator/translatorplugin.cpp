@@ -27,10 +27,11 @@
 #include <qstring.h>
 #include <qbytearray.h>
 #include <qmetaobject.h>
+#include <KLocalizedString>
 
 #include <kdebug.h>
 #include <kpluginfactory.h>
-#include <kglobal.h>
+
 #include <kconfig.h>
 #include <kdeversion.h>
 #include <kselectaction.h>

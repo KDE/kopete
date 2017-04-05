@@ -32,7 +32,7 @@
 #include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kpassworddialog.h>
-#include <kglobal.h>
+
 #include <KSharedConfig>
 #include "kopetepasswordedaccount.h"
 #include "kopetepasswordwidget.h"
