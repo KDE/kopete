@@ -35,6 +35,9 @@ TestbedEditAccountWidget::TestbedEditAccountWidget( QWidget* parent, Kopete::Acc
 	m_preferencesWidget = new Ui::TestbedAccountPreferences();
 	m_preferencesWidget->setupUi( widget );
 	layout->addWidget( widget );
+    if (parent) {
+        parent->layout()->addWidget(this);
+    }
 }
 
 TestbedEditAccountWidget::~TestbedEditAccountWidget()

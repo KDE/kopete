@@ -181,7 +181,6 @@ void AddAccountWizard::next()
                                           i18n("Error While Adding Account"));
             return;
         }
-
         KAssistantDialog::next();
     } else if (currentPage()->widget() == d->accountPageWidget) {
         // check the data of the page is valid

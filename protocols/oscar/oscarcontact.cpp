@@ -353,7 +353,7 @@ void OscarContact::setEncoding( int mib )
 
 //here's where a filetransfer usually begins
 //could be called by a QAction or our dcop code or something
-void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint fileSize )
+void OscarContact::sendFile( const QUrl &sourceURL, const QString &altFileName, uint fileSize )
 {
 	kDebug(OSCAR_GEN_DEBUG) << "file: '" << sourceURL
 		<< "' '" << altFileName << "' size " << fileSize << endl;
@@ -362,8 +362,9 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 	//If the file location is null, then get it from a file open dialog
 	if( !sourceURL.isValid() )
 		files = KFileDialog::getOpenFileNames( KUrl() ,"*", 0l  , i18n( "Kopete File Transfer" ));
-	else
-		files << sourceURL.path(KUrl::RemoveTrailingSlash);
+    else {
+        //FIXME KF5 files << sourceURL.path(KUrl::RemoveTrailingSlash);
+    }
 
 	if( files.isEmpty() )
 	{

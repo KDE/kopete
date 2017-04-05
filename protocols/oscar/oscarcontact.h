@@ -131,7 +131,7 @@ public Q_SLOTS:
 	virtual void userOffline( const QString& ) = 0;
 
 	/** send a file to this contact */
-	virtual void sendFile( const KUrl &sourceURL = KUrl(), const QString &fileName = QString(), uint fileSize = 0L );
+    void sendFile( const QUrl &sourceURL = KUrl(), const QString &fileName = QString(), uint fileSize = 0L ) Q_DECL_OVERRIDE;
 
 	/** set a away message */
 	virtual void setAwayMessage( const QString &message );

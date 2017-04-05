@@ -332,7 +332,7 @@ void KopeteDBusInterface::sendFile(const QString &contactId, const QString &file
     if (destMetaContact && destMetaContact->isReachable()) {
         Kopete::Contact *destContact = destMetaContact->execute();
         if (destContact && destContact->isFileCapable()) {
-            destContact->sendFile(QUrl(fileUrl));
+            destContact->sendFile(QUrl::fromLocalFile(fileUrl));
         }
     }
 }

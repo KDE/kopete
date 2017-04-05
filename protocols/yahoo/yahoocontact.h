@@ -77,7 +77,7 @@ public Q_SLOTS:
 	void slotUserInfo() Q_DECL_OVERRIDE;
 	virtual void slotSendFile( const KUrl &file );
 	void deleteContact() Q_DECL_OVERRIDE;
-	virtual void sendFile( const KUrl &sourceURL = KUrl(), const QString &fileName = QString(), uint fileSize = 0L );
+    virtual void sendFile(const QUrl &sourceURL = QUrl(), const QString &fileName = QString(), uint fileSize = 0L ) Q_DECL_OVERRIDE;
 	void slotUserProfile();
 	void stealthContact();
 	void requestWebcam();

@@ -122,6 +122,9 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 		
 		privacyListsButton->setEnabled (false);
 	}
+    if (parent) {
+        parent->layout()->addWidget(this);
+    }
 }
 
 JabberEditAccountWidget::~JabberEditAccountWidget ()

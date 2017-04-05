@@ -132,8 +132,8 @@ public:
 public Q_SLOTS:
 	void slotUserInfo() Q_DECL_OVERRIDE;
 	void deleteContact() Q_DECL_OVERRIDE;
-	virtual void sendFile( const KUrl &sourceURL = KUrl(),
-						   const QString &fileName = QString(), uint fileSize = 0L );
+    void sendFile( const QUrl &sourceURL = QUrl(),
+                           const QString &fileName = QString(), uint fileSize = 0L ) Q_DECL_OVERRIDE;
 
 	/**
 	 * Every time the kopete's contact list is modified, we sync the serverlist with it

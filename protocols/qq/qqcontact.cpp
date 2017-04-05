@@ -401,7 +401,7 @@ void QQContact::slotShowProfile()
 /**
  * FIXME: Make this a standard KMM API call
  */
-void QQContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint /*fileSize*/ )
+void QQContact::sendFile( const QUrl &sourceURL, const QString &altFileName, uint /*fileSize*/ )
 {
 	Q_UNUSED(altFileName);
 
@@ -410,8 +410,9 @@ void QQContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uin
 	//If the file location is null, then get it from a file open dialog
 	if( !sourceURL.isValid() )
 		filePath = QFileDialog::getOpenFileName(0l  , i18n( "Kopete File Transfer" ),  QString(), QStringLiteral("*"));
-	else
-		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
+    else {
+        //FIXME KF5 filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
+    }
 
 	//kDebug(14140) << "QQContact::sendFile: File chosen to send:" << fileName;
 

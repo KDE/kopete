@@ -373,7 +373,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }
 
-void YahooContact::sendFile( const KUrl &sourceURL, const QString &fileName, uint fileSize )
+void YahooContact::sendFile( const QUrl &sourceURL, const QString &fileName, uint fileSize )
 {
 	Kopete::TransferManager::transferManager()->sendFile( sourceURL, fileName, fileSize,
 			false, this, SLOT(slotSendFile(KUrl)) );
