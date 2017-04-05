@@ -74,6 +74,9 @@ InfoEventWidget::~InfoEventWidget()
 
 void InfoEventWidget::setVisible(bool visible)
 {
+    if (d->timeline->state() == QTimeLine::Running) {
+        return;
+    }
     if (visible == isVisible()) {
         return;
     }

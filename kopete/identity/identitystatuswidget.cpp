@@ -129,6 +129,9 @@ Kopete::Identity *IdentityStatusWidget::identity() const
 
 void IdentityStatusWidget::setVisible(bool visible)
 {
+    if (d->timeline->state() == QTimeLine::Running) {
+        return;
+    }
     if (visible == isVisible()) {
         return;
     }

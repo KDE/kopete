@@ -241,6 +241,10 @@ QString CollapsibleWidget::caption() const
 
 void CollapsibleWidget::setExpanded(bool expanded)
 {
+    if (d->timeline->state() == QTimeLine::Running) {
+        return;
+    }
+
     if (!d->innerWidget) {
         return;
     }
