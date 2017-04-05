@@ -25,7 +25,6 @@
 
 #include <kconfig.h>
 #include "yahoo_protocol_debug.h"
-#include <kinputdialog.h>
 #include <KLocalizedString>
 #include <kmessagebox.h>
 #include <QMenu>
