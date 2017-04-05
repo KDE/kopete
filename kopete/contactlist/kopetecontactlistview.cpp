@@ -182,7 +182,7 @@ void KopeteContactListView::initActions(KActionCollection *ac)
     ac->addAction(QStringLiteral("makeMetaContact"), d->actionMakeMetaContact);
     connect(d->actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(mergeMetaContact()));
 
-    d->actionRemove = KopeteStdAction::deleteContact(this, SLOT(removeGroupOrMetaContact()), ac);
+    d->actionRemove = KopeteStdAction::deleteContact(this, SLOT(removeGroupOrMetaContact()), ac, ac);
     ac->addAction(QStringLiteral("contactRemove"), d->actionRemove);
 
     d->actionSendEmail = new QAction(QIcon::fromTheme(QStringLiteral("mail-send")), i18n("Send Email..."), ac);

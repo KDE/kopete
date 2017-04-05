@@ -114,10 +114,14 @@ QAction *KopeteStdAction::changeMetaContact(const QObject *recvr, const char *sl
     return createAction(i18n("Cha&nge Meta Contact..."), QIcon::fromTheme(QStringLiteral("transform-move")), recvr, slot, parent);
 }
 
-QAction *KopeteStdAction::deleteContact(const QObject *recvr, const char *slot, QObject *parent)
+QAction *KopeteStdAction::deleteContact(const QObject *recvr, const char *slot, QObject *parent, KActionCollection *ac)
 {
     QAction *deleteAction = createAction(i18n("&Delete Contact"), QIcon::fromTheme(QStringLiteral("list-remove-user")), recvr, slot, parent);
-    deleteAction->setShortcut(QKeySequence(Qt::Key_Delete));
+    if (ac) {
+        ac->setDefaultShortcut(deleteAction, QKeySequence(Qt::Key_Delete));
+    } else {
+        deleteAction->setShortcut(QKeySequence(Qt::Key_Delete));
+    }
 
     return deleteAction;
 }

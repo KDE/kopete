@@ -68,7 +68,7 @@ public:
     /**
      * Standard action to delete a contact
      */
-    static QAction *deleteContact(const QObject *recvr, const char *slot, QObject *parent);
+    static QAction *deleteContact(const QObject *recvr, const char *slot, QObject *parent, KActionCollection *ac = nullptr);
     /**
      * Standard action to change a contact alias/nickname in your contact list
      */
