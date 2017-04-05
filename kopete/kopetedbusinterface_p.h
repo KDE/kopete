@@ -34,11 +34,11 @@ class ContactStalker : public QObject
     Q_OBJECT
 
 public:
-    ContactStalker(Kopete::MetaContact *contact);
+    explicit ContactStalker(Kopete::MetaContact *contact);
 
 Q_SIGNALS:
     /** Emitted whenever a property of the tracked contact changed */
-    void contactChanged(QString contactId);
+    void contactChanged(const QString &contactId);
 
 private Q_SLOTS:
     void messageAppended(Kopete::Message &message, Kopete::ChatSession *session);

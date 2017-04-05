@@ -96,7 +96,7 @@ BonjourEditAccountWidget::BonjourEditAccountWidget(QWidget *parent, Kopete::Acco
             m_preferencesWidget->kcfg_emailAddress->setText(emailAddress);
         }
     }
-    if (parent) {
+    if (parent && parent->layout()) {
         parent->layout()->addWidget(this);
     }
 

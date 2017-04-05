@@ -210,7 +210,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	QWidget::setTabOrder( mAccountSettings->edtAccountId, mAccountSettings->mPasswordWidget->mRemembered );
 	QWidget::setTabOrder( mAccountSettings->mPasswordWidget->mRemembered, mAccountSettings->mPasswordWidget->mPassword );
 	QWidget::setTabOrder( mAccountSettings->mPasswordWidget->mPassword, mAccountSettings->chkAutoLogin );
-    if (parent) {
+    if (parent && parent->layout()) {
         parent->layout()->addWidget(this);
     }
 }

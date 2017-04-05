@@ -64,7 +64,7 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete:
 	QWidget::setTabOrder( m_ui.userId, m_ui.password->mRemembered );
 	QWidget::setTabOrder( m_ui.password->mRemembered, m_ui.password->mPassword );
 	QWidget::setTabOrder( m_ui.password->mPassword, m_ui.autoConnect );
-    if (parent) {
+    if (parent && parent->layout()) {
         parent->layout()->addWidget(this);
     }
 }

@@ -102,7 +102,7 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 	QWidget::setTabOrder( d->ui->m_login, d->ui->m_password->mRemembered );
 	QWidget::setTabOrder( d->ui->m_password->mRemembered, d->ui->m_password->mPassword );
 	QWidget::setTabOrder( d->ui->m_password->mPassword, d->ui->m_autologin );
-    if (parent) {
+    if (parent && parent->layout()) {
         parent->layout()->addWidget(this);
     }
 }

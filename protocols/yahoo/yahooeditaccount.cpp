@@ -94,7 +94,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 	QWidget::setTabOrder( mScreenName, mPasswordWidget->mRemembered );
 	QWidget::setTabOrder( mPasswordWidget->mRemembered, mPasswordWidget->mPassword );
 	QWidget::setTabOrder( mPasswordWidget->mPassword, mAutoConnect );
-    if (parent) {
+    if (parent && parent->layout()) {
         parent->layout()->addWidget(this);
     }
 

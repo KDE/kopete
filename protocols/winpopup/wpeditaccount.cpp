@@ -89,7 +89,7 @@ WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
     }
 
     connect(doInstallSamba, SIGNAL(clicked()), this, SLOT(installSamba()));
-    if (parent) {
+    if (parent && parent->layout()) {
         parent->layout()->addWidget(this);
     }
 
