@@ -170,10 +170,10 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(Kopete::MetaContact *metaContact, QWidget
     ui_mainWidget = new Ui::KopeteMetaLVIPropsWidget;
     ui_mainWidget->setupUi(mainWidget);
 
-    ui_mainWidget->icnbOffline->setIconSize(QSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
-    ui_mainWidget->icnbOnline->setIconSize(QSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
-    ui_mainWidget->icnbAway->setIconSize(QSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
-    ui_mainWidget->icnbUnknown->setIconSize(QSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
+    ui_mainWidget->icnbOffline->setIconSize(KIconLoader::SizeSmall);
+    ui_mainWidget->icnbOnline->setIconSize(KIconLoader::SizeSmall);
+    ui_mainWidget->icnbAway->setIconSize(KIconLoader::SizeSmall);
+    ui_mainWidget->icnbUnknown->setIconSize(KIconLoader::SizeSmall);
 
     QPair<QString, QString> context = qMakePair(QStringLiteral("contact"), mMetaContact->metaContactId().toString());
     mNotificationProps = new CustomNotificationProps(this, context);
@@ -229,10 +229,10 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(Kopete::MetaContact *metaContact, QWidget
     if (unknownName.isEmpty()) {
         unknownName = MC_UNK; // Default
     }
-//	ui_mainWidget->icnbOffline->setIcon( offlineName );
-//	ui_mainWidget->icnbOnline->setIcon( onlineName );
-//	ui_mainWidget->icnbAway->setIcon( awayName );
-//	ui_mainWidget->icnbUnknown->setIcon( unknownName );
+    ui_mainWidget->icnbOffline->setIcon( offlineName );
+    ui_mainWidget->icnbOnline->setIcon( onlineName );
+    ui_mainWidget->icnbAway->setIcon( awayName );
+    ui_mainWidget->icnbUnknown->setIcon( unknownName );
 
     ui_mainWidget->widAddresseeLink->setMetaContact(mMetaContact);
 
@@ -513,7 +513,6 @@ void KopeteMetaLVIProps::slotOkClicked()
         ui_mainWidget->chkUseCustomIcons->isChecked());
 
     // only call setIcon if any of the icons is not set to default icon
-/*
     if(
         ui_mainWidget->icnbOffline->icon() != MC_OFF ||
         ui_mainWidget->icnbOnline->icon() != MC_ON ||
@@ -532,7 +531,6 @@ void KopeteMetaLVIProps::slotOkClicked()
         mMetaContact->setIcon( ui_mainWidget->icnbUnknown->icon(),
             Kopete::ContactListElement::Unknown );
     }
-*/
     mNotificationProps->storeCurrentCustoms();
 }
 

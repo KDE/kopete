@@ -401,7 +401,7 @@
            </widget>
           </item>
           <item row="1" column="1" >
-           <widget class="QPushButton" name="icnbOnline" >
+           <widget class="KIconButton" name="icnbOnline" >
             <property name="text" >
              <string/>
             </property>
@@ -418,7 +418,7 @@
            </widget>
           </item>
           <item row="1" column="3" >
-           <widget class="QPushButton" name="icnbOffline" >
+           <widget class="KIconButton" name="icnbOffline" >
             <property name="text" >
              <string/>
             </property>
@@ -451,7 +451,7 @@
            </widget>
           </item>
           <item row="2" column="1" >
-           <widget class="QPushButton" name="icnbAway" >
+           <widget class="KIconButton" name="icnbAway" >
             <property name="text" >
              <string/>
             </property>
@@ -468,7 +468,7 @@
            </widget>
           </item>
           <item row="2" column="3" >
-           <widget class="QPushButton" name="icnbUnknown" >
+           <widget class="KIconButton" name="icnbUnknown" >
             <property name="text" >
              <string/>
             </property>
