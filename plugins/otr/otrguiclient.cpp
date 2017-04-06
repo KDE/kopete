@@ -82,7 +82,6 @@ OtrGUIClient::OtrGUIClient(Kopete::ChatSession *parent)
     otrActionMenu->addAction(actionVerifyFingerprint);
 
     setXMLFile(QStringLiteral("otrchatui.rc"));
-//	setupGUI();
 
     encryptionEnabled(parent, OtrlChatInterface::self()->privState(parent));
 }

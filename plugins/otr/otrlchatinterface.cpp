@@ -58,7 +58,7 @@ extern "C" {
 #include <sys/stat.h>
 }
 
-OtrlChatInterface *OtrlChatInterface::mSelf = 0;
+OtrlChatInterface *OtrlChatInterface::mSelf = nullptr;
 static OtrlUserState userstate;
 static OtrlPolicy confPolicy;
 //static void *updateContextList = 0;
