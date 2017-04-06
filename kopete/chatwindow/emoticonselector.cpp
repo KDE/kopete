@@ -31,7 +31,7 @@
 #include <QHideEvent>
 #include <QShowEvent>
 
-#include <kdebug.h>
+#include "kopetechatwindow_debug.h"
 #include <kemoticons.h>
 
 EmoticonItem::EmoticonItem(const QString &emoticonText, const QString &pixmapPath, QListWidget *parent)
@@ -94,7 +94,7 @@ EmoticonSelector::EmoticonSelector(QWidget *parent)
 void EmoticonSelector::prepareList(void)
 {
     m_emoticonList->clear();
-//	kDebug(14000) << "called.";
+//	qCDebug(KOPETE_CHATEWINDOW_LOG) << "called.";
     QHash<QString, QStringList> list = Kopete::Emoticons::self()->theme().emoticonsMap();
 
     for (QHash<QString, QStringList>::const_iterator it = list.constBegin(); it != list.constEnd(); ++it) {

@@ -10,6 +10,8 @@ include_directories(
 
 link_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 ########### next target ###############
+set(kopetechatwindow_shared_common_SRCS)
+ecm_qt_declare_logging_category(kopetechatwindow_shared_common_SRCS HEADER kopetechatwindow_debug.h IDENTIFIER KOPETE_CHATEWINDOW_LOG CATEGORY_NAME org.kde.kopete.chatwindow)
 
 set( kopetechatwindow_shared_SRCS 
     chatmessagepart.cpp
@@ -18,7 +20,8 @@ set( kopetechatwindow_shared_SRCS
     chattexteditpart.cpp
     kopeterichtextwidget.cpp
     kopetechatwindowstylemanager.cpp
-    kopetechatwindowstyle.cpp )
+    kopetechatwindowstyle.cpp
+    ${kopetechatwindow_shared_common_SRCS})
 
 
 kconfig_add_kcfg_files(kopetechatwindow_shared_SRCS GENERATE_MOC kopetechatwindowsettings.kcfgc )
@@ -42,7 +45,7 @@ install(TARGETS chattexteditpart  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 ########### next target ###############
 
-set(kopete_chatwindow_PART_SRCS chatview.cpp kopetechatwindow.cpp chatmemberslistview.cpp)
+set(kopete_chatwindow_PART_SRCS chatview.cpp kopetechatwindow.cpp chatmemberslistview.cpp ${kopetechatwindow_shared_common_SRCS})
 
 
 add_library(kopete_chatwindow MODULE ${kopete_chatwindow_PART_SRCS})

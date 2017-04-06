@@ -28,7 +28,7 @@
 // KDE includes
 #include <kunittest/module.h>
 #include <kcomponentdata.h>
-#include <kdebug.h>
+#include "kopetechatwindow_debug.h"
 #include <kglobal.h>
 #include <klocale.h>
 
@@ -216,7 +216,7 @@ void ChatWindowStyleRendering_Test::testHeaderRendering()
 
     resultHtml = chatPart->formatStyleKeywords(headerHtml);
 
-    kDebug(14000) << "Result HTML: " << resultHtml;
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << "Result HTML: " << resultHtml;
 
     CHECK(resultHtml, expectedHtml);
 }
@@ -258,14 +258,14 @@ void ChatWindowStyleRendering_Test::testMessageRendering()
     tempHtml = d->testStyle->getIncomingHtml();
     resultHtml = chatPart->formatStyleKeywords(tempHtml, msgIn);
 
-    kDebug(14000) << "Message incoming HTML: " << resultHtml;
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << "Message incoming HTML: " << resultHtml;
 
     CHECK(resultHtml, expectedIncomingHtml);
 
     tempHtml = d->testStyle->getOutgoingHtml();
     resultHtml = chatPart->formatStyleKeywords(tempHtml, msgOut);
 
-    kDebug(14000) << "Message outgoing HTML: " << resultHtml;
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << "Message outgoing HTML: " << resultHtml;
 
     CHECK(resultHtml, expectedOutgoingHtml);
 }

@@ -35,7 +35,7 @@
 #include <QColorDialog>
 #include <kconfig.h>
 #include <kcursor.h>
-#include <kdebug.h>
+#include "kopetechatwindow_debug.h"
 
 #include <KConfigGroup>
 #include <kedittoolbar.h>

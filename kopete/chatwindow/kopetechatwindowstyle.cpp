@@ -26,7 +26,7 @@
 #include <QTextStream>
 
 // KDE includes
-#include <kdebug.h>
+#include "kopetechatwindow_debug.h"
 #include <KLocalizedString>
 #include <kstandarddirs.h>
 #include <QStandardPaths>
@@ -78,15 +78,15 @@ void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMo
     QStringList styleDirs = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("/styles/%1/Contents/Resources/").arg(styleName),
                                                       QStandardPaths::LocateDirectory);
     if (styleDirs.isEmpty()) {
-        kDebug(14000) << "Failed to find style" << styleName;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "Failed to find style" << styleName;
         return;
     }
     d->styleName = styleName;
     if (styleDirs.count() > 1) {
-        kDebug(14000) << "found several styles with the same name. using first";
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "found several styles with the same name. using first";
     }
     d->baseHref = styleDirs.at(0);
-    kDebug(14000) << "Using style:" << d->baseHref;
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << "Using style:" << d->baseHref;
     readStyleFiles();
     if (styleBuildMode & StyleBuildNormal) {
         listVariants();
@@ -95,7 +95,7 @@ void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMo
 
 ChatWindowStyle::~ChatWindowStyle()
 {
-    kDebug(14000);
+    qCDebug(KOPETE_CHATEWINDOW_LOG);
     delete d;
 }
 
@@ -259,7 +259,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->headerHtml = headerStream.readAll();
-        kDebug(14000) << "Header HTML: " << d->headerHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "Header HTML: " << d->headerHtml;
         fileAccess.close();
     }
     // Load Footer file
@@ -269,7 +269,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->footerHtml = headerStream.readAll();
-        kDebug(14000) << "Footer HTML: " << d->footerHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "Footer HTML: " << d->footerHtml;
         fileAccess.close();
     }
     // Load incoming file
@@ -279,7 +279,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->incomingHtml = headerStream.readAll();
-        kDebug(14000) << "Incoming HTML: " << d->incomingHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "Incoming HTML: " << d->incomingHtml;
         fileAccess.close();
     }
     // Load next Incoming file
@@ -289,7 +289,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->nextIncomingHtml = headerStream.readAll();
-        kDebug(14000) << "NextIncoming HTML: " << d->nextIncomingHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "NextIncoming HTML: " << d->nextIncomingHtml;
         fileAccess.close();
     }
     // Load outgoing file
@@ -299,7 +299,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->outgoingHtml = headerStream.readAll();
-        kDebug(14000) << "Outgoing HTML: " << d->outgoingHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "Outgoing HTML: " << d->outgoingHtml;
         fileAccess.close();
     }
     // Load next outgoing file
@@ -309,7 +309,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->nextOutgoingHtml = headerStream.readAll();
-        kDebug(14000) << "NextOutgoing HTML: " << d->nextOutgoingHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "NextOutgoing HTML: " << d->nextOutgoingHtml;
         fileAccess.close();
     }
     // Load status file
@@ -319,7 +319,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->statusHtml = headerStream.readAll();
-        kDebug(14000) << "Status HTML: " << d->statusHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "Status HTML: " << d->statusHtml;
         fileAccess.close();
     }
 
@@ -330,7 +330,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->actionIncomingHtml = headerStream.readAll();
-        kDebug(14000) << "ActionIncoming HTML: " << d->actionIncomingHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "ActionIncoming HTML: " << d->actionIncomingHtml;
         fileAccess.close();
     }
     // Load Action Outgoing file
@@ -340,7 +340,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->actionOutgoingHtml = headerStream.readAll();
-        kDebug(14000) << "ActionOutgoing HTML: " << d->actionOutgoingHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "ActionOutgoing HTML: " << d->actionOutgoingHtml;
         fileAccess.close();
     }
     // Load FileTransfer Incoming file
@@ -350,7 +350,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->fileTransferIncomingHtml = headerStream.readAll();
-        kDebug(14000) << "fileTransferIncoming HTML: " << d->fileTransferIncomingHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "fileTransferIncoming HTML: " << d->fileTransferIncomingHtml;
         fileAccess.close();
     }
 
@@ -382,7 +382,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->voiceClipIncomingHtml = headerStream.readAll();
-        kDebug(14000) << "voiceClipIncoming HTML: " << d->voiceClipIncomingHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "voiceClipIncoming HTML: " << d->voiceClipIncomingHtml;
         fileAccess.close();
     }
 
@@ -413,7 +413,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->outgoingStateUnknownHtml = headerStream.readAll();
-        kDebug(14000) << "Outgoing StateUnknown HTML: " << d->outgoingStateUnknownHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "Outgoing StateUnknown HTML: " << d->outgoingStateUnknownHtml;
         fileAccess.close();
     }
 
@@ -423,7 +423,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->outgoingStateSendingHtml = headerStream.readAll();
-        kDebug(14000) << "Outgoing StateSending HTML: " << d->outgoingStateSendingHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "Outgoing StateSending HTML: " << d->outgoingStateSendingHtml;
         fileAccess.close();
     }
 
@@ -433,7 +433,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->outgoingStateSentHtml = headerStream.readAll();
-        kDebug(14000) << "Outgoing StateSent HTML: " << d->outgoingStateSentHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "Outgoing StateSent HTML: " << d->outgoingStateSentHtml;
         fileAccess.close();
     }
 
@@ -443,7 +443,7 @@ void ChatWindowStyle::readStyleFiles()
         QTextStream headerStream(&fileAccess);
         headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
         d->outgoingStateErrorHtml = headerStream.readAll();
-        kDebug(14000) << "Outgoing StateError HTML: " << d->outgoingStateErrorHtml;
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "Outgoing StateError HTML: " << d->outgoingStateErrorHtml;
         fileAccess.close();
     }
 }

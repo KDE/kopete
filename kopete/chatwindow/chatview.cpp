@@ -38,7 +38,7 @@
 #include <KUrlMimeData>
 #include <kconfig.h>
 #include <QTabWidget>
-#include <kdebug.h>
+#include "kopetechatwindow_debug.h"
 #include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kstringhandler.h>
@@ -591,7 +591,7 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 
 void ChatView::slotContactRemoved(const Kopete::Contact *contact, const QString &reason, Qt::TextFormat format, bool suppressNotification)
 {
-//  kDebug(14000) ;
+//  qCDebug(KOPETE_CHATEWINDOW_LOG) ;
     if (contact != m_manager->myself()) {
         TypingMap::iterator it = m_remoteTypingMap.find(contact);
         if (it != m_remoteTypingMap.end()) {
@@ -637,7 +637,7 @@ QString &ChatView::caption() const
 
 void ChatView::setCaption(const QString &text, bool modified)
 {
-//  kDebug(14000) ;
+//  qCDebug(KOPETE_CHATEWINDOW_LOG) ;
     QString newCaption = text;
 
     //Save this caption
@@ -716,7 +716,7 @@ void ChatView::slotToggleRtfToolbar(bool enabled)
 
 void ChatView::slotContactStatusChanged(Kopete::Contact *contact, const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus)
 {
-    kDebug(14000) << contact;
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << contact;
     bool inhibitNotification = (newStatus.status() == Kopete::OnlineStatus::Unknown
                                 || oldStatus.status() == Kopete::OnlineStatus::Unknown);
     if (contact && Kopete::BehaviorSettings::self()->showEvents() && !inhibitNotification) {
@@ -842,7 +842,7 @@ void ChatView::readOptions()
 {
     KConfigGroup kopeteChatWindowMainWinSettings(KSharedConfig::openConfig(), (msgManager()->form() == Kopete::ChatSession::Chatroom ? QStringLiteral("KopeteChatWindowGroupMode") : QStringLiteral(
                                                                                    "KopeteChatWindowIndividualMode")));
-    //kDebug(14000) << "reading splitterpos from key: " << dockKey;
+    //qCDebug(KOPETE_CHATEWINDOW_LOG) << "reading splitterpos from key: " << dockKey;
     QByteArray state;
     state = kopeteChatWindowMainWinSettings.readEntry(QStringLiteral("ChatViewSplitter"), state);
     d->splitter->restoreState(QByteArray::fromBase64(state));

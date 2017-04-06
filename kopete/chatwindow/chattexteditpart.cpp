@@ -30,7 +30,7 @@
 #include <QColorDialog>
 #include <kconfig.h>
 #include <kcompletion.h>
-#include <kdebug.h>
+#include "kopetechatwindow_debug.h"
 #include <kfontaction.h>
 #include <kfontsizeaction.h>
 #include <kglobalsettings.h>
@@ -154,7 +154,7 @@ void ChatTextEditPart::complete()
         }
     }
 
-    //kDebug(14000) << word << "from" << txt
+    //qCDebug(KOPETE_CHATEWINDOW_LOG) << word << "from" << txt
     //			  << "cursor pos=" << cursorPos
     //			  << "start pos=" << startPos << "end pos=" << endPos;
 
@@ -173,16 +173,16 @@ void ChatTextEditPart::complete()
             match += QLatin1String(": ");
         }
 
-        //kDebug(14000) << "Selecting from position" << cursorPos << "to position" << endPos;
+        //qCDebug(KOPETE_CHATEWINDOW_LOG) << "Selecting from position" << cursorPos << "to position" << endPos;
         // Select the text to remove
         textCursor.setPosition(startPos + blockPosition);
         textCursor.setPosition(endPos + blockPosition, QTextCursor::KeepAnchor);
-        //kDebug(14000) << "replacing selection:" << textCursor.selectedText() << "with match:" << match;
+        //qCDebug(KOPETE_CHATEWINDOW_LOG) << "replacing selection:" << textCursor.selectedText() << "with match:" << match;
         // Type the text to replace it
         textCursor.insertText(match);
         textEdit()->setTextCursor(textCursor);
     } else {
-        //kDebug(14000) << "No completions! Tried" << mComplete->items();
+        //qCDebug(KOPETE_CHATEWINDOW_LOG) << "No completions! Tried" << mComplete->items();
     }
 }
 

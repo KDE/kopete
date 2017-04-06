@@ -45,7 +45,7 @@
 #include <QMenuBar>
 #include <kconfig.h>
 #include <kiconloader.h>
-#include <kdebug.h>
+#include "kopetechatwindow_debug.h"
 #include <kwindowsystem.h>
 #include <ktemporaryfile.h>
 #include <kedittoolbar.h>

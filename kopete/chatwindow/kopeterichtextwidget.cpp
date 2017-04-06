@@ -23,7 +23,7 @@
 #include "kopeterichtextwidget.h"
 
 // KDE includes
-#include <kdebug.h>
+#include "kopetechatwindow_debug.h"
 #include <kactioncollection.h>
 #include <kactionmenu.h>
 #include <klocalizedstring.h>
@@ -547,8 +547,8 @@ bool KopeteRichTextWidget::isRichTextEnabled() const
 void KopeteRichTextWidget::slotTextModeChanged(KRichTextEdit::Mode)
 {
     if (d->changingTextMode == false) {
-        kWarning() << "Unexpected text mode change!!!";
-        kWarning() << kBacktrace();
+        qCWarning(KOPETE_CHATEWINDOW_LOG) << "Unexpected text mode change!!!";
+        //kWarning() << kBacktrace();
     }
 }
 

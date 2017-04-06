@@ -25,7 +25,7 @@
 // KDE includes
 #include <kstandarddirs.h>
 #include <kdirlister.h>
-#include <kdebug.h>
+#include "kopetechatwindow_debug.h"
 #include <QUrl>
 
 #include <karchive.h>
@@ -75,13 +75,13 @@ ChatWindowStyleManager::ChatWindowStyleManager(QObject *parent)
     : QObject(parent)
     , d(new Private())
 {
-    kDebug(14000);
+    qCDebug(KOPETE_CHATEWINDOW_LOG);
     loadStyles();
 }
 
 ChatWindowStyleManager::~ChatWindowStyleManager()
 {
-    kDebug(14000);
+    qCDebug(KOPETE_CHATEWINDOW_LOG);
     delete d;
 }
 
@@ -254,7 +254,7 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 
 bool ChatWindowStyleManager::removeStyle(const QString &styleName)
 {
-    kDebug(14000) << styleName;
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << styleName;
     // Find for the current style in avaiableStyles map.
     int foundStyleIdx = d->availableStyles.indexOf(styleName);
 
@@ -270,7 +270,7 @@ bool ChatWindowStyleManager::removeStyle(const QString &styleName)
 
         QStringList styleDirs = QStandardPaths::locateAll(QStandardPaths::DataLocation, QStringLiteral("/styles/%1").arg(styleName), QStandardPaths::LocateDirectory);
         if (styleDirs.isEmpty()) {
-            kDebug(14000) << "Failed to find style" << styleName;
+            qCDebug(KOPETE_CHATEWINDOW_LOG) << "Failed to find style" << styleName;
             return false;
         }
 
@@ -297,14 +297,14 @@ ChatWindowStyle *ChatWindowStyleManager::getValidStyleFromPool(const QString &st
         return style;
     }
 
-    kDebug(14000) << "Trying default style";
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << "Trying default style";
     // Try default style
     style = getStyleFromPool(QStringLiteral("Kopete"));
     if (style) {
         return style;
     }
 
-    kDebug(14000) << "Trying first valid style";
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << "Trying first valid style";
     // Try first valid style
     foreach (const QString &name, d->availableStyles) {
         style = getStyleFromPool(name);
@@ -313,14 +313,14 @@ ChatWindowStyle *ChatWindowStyleManager::getValidStyleFromPool(const QString &st
         }
     }
 
-    kDebug(14000) << "Valid style not found!";
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << "Valid style not found!";
     return 0;
 }
 
 ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &styleName)
 {
     if (d->stylePool.contains(styleName)) {
-        kDebug(14000) << styleName << " was on the pool";
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << styleName << " was on the pool";
 
         // NOTE: This is a hidden config switch for style developers
         // Check in the config if the cache is disabled.
@@ -337,13 +337,13 @@ ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &styleNa
     // Build a chat window style and list its variants, then add it to the pool.
     ChatWindowStyle *style = new ChatWindowStyle(styleName, ChatWindowStyle::StyleBuildNormal);
     if (!style->isValid()) {
-        kDebug(14000) << styleName << " is invalid style!";
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << styleName << " is invalid style!";
         delete style;
         return 0;
     }
 
     d->stylePool.insert(styleName, style);
-    kDebug(14000) << styleName << " is just created";
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << styleName << " is just created";
 
     return style;
 }
@@ -353,12 +353,12 @@ void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)
     foreach (const KFileItem &item, dirList) {
         // Ignore data dir(from deprecated XSLT themes)
         if (!item.url().fileName().contains(QLatin1String("data"))) {
-            kDebug(14000) << "Listing: " << item.url().fileName();
+            qCDebug(KOPETE_CHATEWINDOW_LOG) << "Listing: " << item.url().fileName();
             // If the style path is already in the pool, that's mean the style was updated on disk
             // Reload the style
             QString styleName = item.url().fileName();
             if (d->stylePool.contains(styleName)) {
-                kDebug(14000) << "Updating style: " << styleName;
+                qCDebug(KOPETE_CHATEWINDOW_LOG) << "Updating style: " << styleName;
 
                 d->stylePool[styleName]->reload();
 
@@ -378,7 +378,7 @@ void ChatWindowStyleManager::slotDirectoryFinished()
 {
     // Start another scanning if the directories stack is not empty
     if (!d->styleDirs.isEmpty()) {
-        kDebug(14000) << "Starting another directory.";
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "Starting another directory.";
         d->styleDirLister->openUrl(d->styleDirs.pop(), KDirLister::Keep);
     } else {
         emit loadStylesFinished();

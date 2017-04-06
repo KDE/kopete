@@ -46,6 +46,7 @@ set(kopete_SRCS
     )
 
 qt5_add_dbus_adaptor(kopete_SRCS org.kde.Kopete.xml kopetedbusinterface.h KopeteDBusInterface)
+ecm_qt_declare_logging_category(kopete_SRCS HEADER kopete_debug.h IDENTIFIER KOPETE_LOG CATEGORY_NAME org.kde.kopete.kopete)
 
 ki18n_wrap_ui(kopete_SRCS groupkabcselectorwidget.ui infoeventbase.ui )
 

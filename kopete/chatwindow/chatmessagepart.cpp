@@ -66,7 +66,7 @@
 // KDE includes
 #include <KFormat>
 #include <kactioncollection.h>
-#include <kdebug.h>
+#include "kopetechatwindow_debug.h"
 
 #include <khtmlview.h>
 #include <KLocalizedString>
@@ -297,7 +297,7 @@ ChatMessagePart::ChatMessagePart(Kopete::ChatSession *mgr, QWidget *parent)
 
 ChatMessagePart::~ChatMessagePart()
 {
-    kDebug(14000);
+    qCDebug(KOPETE_CHATEWINDOW_LOG);
 
     // Cancel all pending file transfer requests
     QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
@@ -377,7 +377,7 @@ void ChatMessagePart::pageDown()
 
 void ChatMessagePart::slotOpenURLRequest(const QUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
 {
-    kDebug(14000) << "url=" << url.url();
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << "url=" << url.url();
     if (url.scheme() == QLatin1String("kopetemessage")) {
         Kopete::Contact *contact = d->manager->account()->contacts().value(url.host());
         if (contact) {
@@ -493,7 +493,7 @@ void ChatMessagePart::appendMessage(Kopete::Message &message, bool restoring)
     DOM::HTMLElement chatNode = htmlDocument().getElementById("Chat");
 
     if (chatNode.isNull()) {
-        kDebug(14000) << "WARNING: Chat Node was null !";
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "WARNING: Chat Node was null !";
         return;
     }
 
@@ -624,7 +624,7 @@ void ChatMessagePart::appendMessage(Kopete::Message &message, bool restoring)
     }
 
 #ifdef STYLE_TIMETEST
-    kDebug(14000) << "Message time: " << beforeMessage.msecsTo(QTime::currentTime());
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << "Message time: " << beforeMessage.msecsTo(QTime::currentTime());
 #endif
 }
 
@@ -1021,7 +1021,7 @@ QString ChatMessagePart::formatStyleKeywords(const QString &sourceHTML, const Ko
     // Replace messages.
     // Build the action message if the currentChatStyle do not have Action template.
     if (message.type() == Kopete::Message::TypeAction && !d->currentChatStyle->hasActionTemplate()) {
-        kDebug(14000) << "Map Action message to Status template. ";
+        qCDebug(KOPETE_CHATEWINDOW_LOG) << "Map Action message to Status template. ";
 
         QString boldNick = QStringLiteral("%1<b>%2</b></a> ").arg(nickLink, nick);
         QString newBody = boldNick + message.parsedBody();
@@ -1049,7 +1049,7 @@ QString ChatMessagePart::formatStyleKeywords(const QString &sourceHTML, const Ko
     }
     const QString colorName = nameColors[ hash % nameColorsLen ];
     QString lightColorName; // Do not initialize, QColor::name() is expensive!
-    //kDebug(14000) << "Hash " << hash << " has color " << colorName;
+    //qCDebug(KOPETE_CHATEWINDOW_LOG) << "Hash " << hash << " has color " << colorName;
     QRegExp senderColorRegExp("%senderColor(?:\\{([^}]*)\\})?%");
     textPos = 0;
     while ((textPos = senderColorRegExp.indexIn(resultHTML, textPos)) != -1)
@@ -1243,7 +1243,7 @@ QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)
 
 void ChatMessagePart::slotUpdateHeaderDisplayName()
 {
-    kDebug(14000);
+    qCDebug(KOPETE_CHATEWINDOW_LOG);
     DOM::HTMLElement kopeteChatNameNode = document().getElementById(QStringLiteral("KopeteHeaderChatNameInternal"));
     if (!kopeteChatNameNode.isNull()) {
         kopeteChatNameNode.setInnerText(formatName(d->manager->displayName(), Qt::RichText));
@@ -1274,15 +1274,15 @@ void ChatMessagePart::changeStyle()
         Kopete::Message tempMessage = *it;
         appendMessage(tempMessage, true); // true means that we are restoring.
     }
-    kDebug(14000) << "Finish changing style.";
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << "Finish changing style.";
 #ifdef STYLE_TIMETEST
-    kDebug(14000) << "Change time: " << beforeChange.msecsTo(QTime::currentTime());
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << "Change time: " << beforeChange.msecsTo(QTime::currentTime());
 #endif
 }
 
 void ChatMessagePart::writeTemplate()
 {
-    kDebug(14000);
+    qCDebug(KOPETE_CHATEWINDOW_LOG);
 
 #ifdef STYLE_TIMETEST
     QTime beforeHeader = QTime::currentTime();
@@ -1337,7 +1337,7 @@ void ChatMessagePart::writeTemplate()
     write(xhtmlBase);
     end();
 #ifdef STYLE_TIMETEST
-    kDebug(14000) << "Header time: " << beforeHeader.msecsTo(QTime::currentTime());
+    qCDebug(KOPETE_CHATEWINDOW_LOG) << "Header time: " << beforeHeader.msecsTo(QTime::currentTime());
 #endif
 }
 

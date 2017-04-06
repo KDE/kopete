@@ -26,7 +26,7 @@
 #include <QMenu>
 #include <QAction>
 
-#include <kdebug.h>
+#include "kopetechatwindow_debug.h"
 #include <KLocalizedString>
 #include <QMenuBar>
 #include <ktoolbar.h>
