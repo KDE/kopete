@@ -23,7 +23,7 @@
 
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <kglobal.h>
 
 #include <klocale.h>

@@ -29,7 +29,7 @@
 // KDE includes
 //#include <kcontacts/stdaddressbook.h>
 #include <kapplication.h>
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 
 // Kopete includes

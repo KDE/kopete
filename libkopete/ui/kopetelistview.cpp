@@ -35,7 +35,7 @@
 #include <QTimer>
 #include <QToolTip>
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <kde_file.h>
 
 #include <utility>
@@ -182,7 +182,7 @@ ListView::~ListView()
 
 void ListView::slotDoubleClicked(QTreeWidgetItem *item)
 {
-    kDebug(14000);
+    qCDebug(LIBKOPETE_LOG);
 
     if (item) {
         item->setExpanded(!item->isExpanded());
@@ -228,7 +228,7 @@ void ListView::keyPressEvent(QKeyEvent *e)
 {
     QTreeWidgetItem *item = currentItem();
     if ((e->key() == Qt::Key_F2) && item && !(item->isHidden())) {
-        qDebug() << "\nHelp !" << "\n";
+        qCDebug(LIBKOPETE_LOG) << "\nHelp !" << "\n";
         //FIXME: rename( item, 0 );
     } else if ((e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) && item && !(item->isHidden())) {
         // must provide a point within the item; emitExecute checks for this

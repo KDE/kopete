@@ -20,7 +20,7 @@
 
 #include <QtCore/QLatin1String>
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <KLocalizedString>
 #include <kio/netaccess.h>
 #include <kmimetype.h>
@@ -43,7 +43,7 @@ Properties *Properties::mSelf = nullptr;
 Properties *Properties::self()
 {
     if (!mSelf) {
-        //kDebug(14000) ;
+        //qCDebug(LIBKOPETE_LOG) ;
         mSelf = new Properties();
         // create the templates
         mSelf->fullName();
@@ -67,13 +67,13 @@ Properties *Properties::self()
 
 Properties::Properties()
 {
-    kDebug(14000);
+    qCDebug(LIBKOPETE_LOG);
     d = new PropertiesPrivate();
 }
 
 Properties::~Properties()
 {
-    kDebug(14000);
+    qCDebug(LIBKOPETE_LOG);
     mSelf = nullptr;
     delete d;
 }
@@ -81,7 +81,7 @@ Properties::~Properties()
 const PropertyTmpl &Properties::tmpl(const QString &key) const
 {
     if (d->mTemplates.contains(key)) {
-        /*kDebug(14000) <<
+        /*qCDebug(LIBKOPETE_LOG) <<
             "Found template for key = '" << key << "'" << endl;*/
         return d->mTemplates[key];
     } else {
@@ -92,7 +92,7 @@ const PropertyTmpl &Properties::tmpl(const QString &key) const
 bool Properties::registerTemplate(const QString &key, const PropertyTmpl &tmpl)
 {
     if (d->mTemplates.contains(key)) {
-        kDebug(14000)
+        qCDebug(LIBKOPETE_LOG)
             <<"Called for EXISTING key = '" << key << "'" << endl;
         return false;
     } else {
@@ -103,7 +103,7 @@ bool Properties::registerTemplate(const QString &key, const PropertyTmpl &tmpl)
 
 void Properties::unregisterTemplate(const QString &key)
 {
-    kDebug(14000) << "called for key: '" << key << "'";
+    qCDebug(LIBKOPETE_LOG) << "called for key: '" << key << "'";
     d->mTemplates.remove(key);
 }
 
@@ -216,11 +216,11 @@ const PropertyTmpl &Properties::photo() const
 
 const PropertyTmpl &Properties::createProp(const QString &key, const QString &label, const QString &icon, bool persistent) const
 {
-    /*kDebug(14000) <<
+    /*qCDebug(LIBKOPETE_LOG) <<
         "key = " << key  << ", label = " << label << endl;*/
 
     if (!d->mTemplates.contains(key)) {
-/*		kDebug(14000) <<
+/*		qCDebug(LIBKOPETE_LOG) <<
             "CREATING NEW PropertyTmpl WITH key = " << key  <<
             ", label = " << label << ", persisten = " << persistent << endl;*/
         d->mTemplates.insert(key, PropertyTmpl(key, label, icon, persistent ? PropertyTmpl::PersistentProperty : PropertyTmpl::NoProperty));

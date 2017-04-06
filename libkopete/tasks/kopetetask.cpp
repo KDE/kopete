@@ -18,7 +18,7 @@
 
 #include "kopetetask.h"
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 namespace Kopete {
 class Task::Private

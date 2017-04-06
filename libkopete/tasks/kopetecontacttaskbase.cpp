@@ -20,7 +20,7 @@
 #include <QtCore/QPointer>
 
 // KDE includes
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 // Kopete includes
 #include <kopetecontact.h>

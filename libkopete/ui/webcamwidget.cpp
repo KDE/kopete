@@ -20,7 +20,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 namespace Kopete {
 WebcamWidget::WebcamWidget(QWidget *parent)
     : QWidget(parent)

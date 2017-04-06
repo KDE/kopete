@@ -21,7 +21,7 @@
 
 #include "kopetemessageevent.h"
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"

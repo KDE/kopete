@@ -23,7 +23,7 @@
 #include <QCursor>
 #include <QDateTime>
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 class Kopete::IdleTimer::Private
 {
@@ -54,10 +54,10 @@ Kopete::IdleTimer::IdleTimer()
 
     Kopete::IdlePlatform *p = new Kopete::IdlePlatform();
     if (p->init()) {
-        qDebug() << "Using platform idle timer";
+        qCDebug(LIBKOPETE_LOG) << "Using platform idle timer";
         d->platform = p;
     } else {
-        kWarning() << "Using dummy idle timer";
+        qCWarning(LIBKOPETE_LOG) << "Using dummy idle timer";
         delete p;
 
         d->lastMousePos = QCursor::pos();

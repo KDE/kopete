@@ -23,7 +23,7 @@
 #include "kopeteuiglobal.h"
 
 #include <kauthorized.h>
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <qinputdialog.h>
 #include <KLocalizedString>
 #include <QIcon>

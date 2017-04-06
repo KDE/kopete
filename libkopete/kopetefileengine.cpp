@@ -26,7 +26,7 @@
 #include "kopetemetacontact.h"
 #include "kopetepicture.h"
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <kiconloader.h>
 
 #include <QPixmap>

@@ -30,7 +30,7 @@
 
 #include <kcomponentdata.h>
 #include <kprocess.h>
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 #include "kopeteaccount_mock.h"
 #include "kopeteprotocol_mock.h"
@@ -264,11 +264,11 @@ void KopeteMessage_Test::testLinkParser()
             // if the test case begins with broken, we expect it to fail, then use XFAIL
             // otherwise use QCOMPARE
             if (fileName.section('-', 0, 0) == QString::fromLatin1("broken")) {
-                //kDebug() << "checking known-broken testcase: " << fileName;
+                //qCDebug(LIBKOPETE_LOG) << "checking known-broken testcase: " << fileName;
                 QEXPECT_FAIL("", "Checking know-broken testcase", Continue);
                 QCOMPARE(result, expectedData);
             } else {
-                //kDebug() << "checking known-working testcase: " << fileName;
+                //qCDebug(LIBKOPETE_LOG) << "checking known-working testcase: " << fileName;
                 QCOMPARE(result, expectedData);
             }
         } else {

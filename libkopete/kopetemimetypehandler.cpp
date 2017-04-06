@@ -21,7 +21,7 @@
 
 #include <qwidget.h>
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <KLocalizedString>
 #include <kio/netaccess.h>
 #include <kmimetype.h>

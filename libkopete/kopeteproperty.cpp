@@ -20,7 +20,7 @@
 */
 
 #include "kopeteproperty.h"
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include "kopeteglobal.h"
 
 namespace Kopete {
@@ -48,7 +48,7 @@ PropertyTmpl::PropertyTmpl(const QString &key, const QString &label, const QStri
 {
     PropertyTmpl other = Kopete::Global::Properties::self()->tmpl(key);
     if (other.isNull()) {
-//		kDebug(14000) << "Creating new template for key = '" << key << "'";
+//		qCDebug(LIBKOPETE_LOG) << "Creating new template for key = '" << key << "'";
 
         d = new Private;
         d->refCount = 1;
@@ -58,7 +58,7 @@ PropertyTmpl::PropertyTmpl(const QString &key, const QString &label, const QStri
         d->options = options;
         Kopete::Global::Properties::self()->registerTemplate(key, (*this));
     } else {
-//		kDebug(14000) << "Using existing template for key = '" << key << "'";
+//		qCDebug(LIBKOPETE_LOG) << "Using existing template for key = '" << key << "'";
         d = other.d;
         d->refCount++;
     }
@@ -74,11 +74,11 @@ PropertyTmpl &PropertyTmpl::operator=(
     const PropertyTmpl &other)
 {
     if (this == &other) {
-//		kDebug(14000) << "trying to assign this to itself!";
+//		qCDebug(LIBKOPETE_LOG) << "trying to assign this to itself!";
         return *this;
     }
     if (d == other.d) {
-//		kDebug(14000) << "trying to assign d to itself!";
+//		qCDebug(LIBKOPETE_LOG) << "trying to assign d to itself!";
         return *this;
     }
     d->refCount--;
@@ -202,7 +202,7 @@ Property::~Property()
 Property &Property::operator=(const Property &other)
 {
     if (this == &other) {
-//		kDebug(14000) << "trying to assign this to itself!";
+//		qCDebug(LIBKOPETE_LOG) << "trying to assign this to itself!";
         return *this;
     }
 

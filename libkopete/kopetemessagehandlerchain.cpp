@@ -19,7 +19,7 @@
 #include "kopetemessageevent.h"
 #include "kopetechatsession.h"
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 #include <QMap>
 #include <QTimer>

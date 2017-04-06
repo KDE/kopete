@@ -117,7 +117,7 @@ bool AccountManager::isAnyAccountConnected() const
 
 void AccountManager::setOnlineStatus(uint category, const Kopete::StatusMessage &statusMessage, uint flags, bool forced)
 {
-    qDebug() << "category: " << category << "status title: " << statusMessage.title() << "status message: " << statusMessage.message();
+    qCDebug(LIBKOPETE_LOG) << "category: " << category << "status title: " << statusMessage.title() << "status message: " << statusMessage.message();
     OnlineStatusManager::Categories categories
         = (OnlineStatusManager::Categories)category;
     const bool onlyChangeConnectedAccounts = (!forced && isAnyAccountConnected());

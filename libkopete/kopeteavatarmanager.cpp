@@ -162,7 +162,7 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
         data = f.readAll();
         f.close();
     } else {
-        qDebug() << "Warning: No valid image source!";
+        qCDebug(LIBKOPETE_LOG) << "Warning: No valid image source!";
     }
 
     // Scale avatar

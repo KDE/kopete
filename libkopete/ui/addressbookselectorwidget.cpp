@@ -32,7 +32,7 @@
 #include <qinputdialog.h>
 
 #include <QPushButton>
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <ktreewidgetsearchline.h>
 #include <qlabel.h>
 #include <qcheckbox.h>

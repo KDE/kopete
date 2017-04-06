@@ -17,7 +17,7 @@
 #include "kopeteinfoeventmanager.h"
 
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 namespace Kopete {
 class InfoEvent::Private

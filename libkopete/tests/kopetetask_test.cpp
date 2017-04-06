@@ -21,7 +21,7 @@
 #include <QTimer>
 
 #include <kcmdlineargs.h>
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 #include <kopetetask.h>
 #include <kopeteemoticons.h>

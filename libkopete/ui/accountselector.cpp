@@ -25,7 +25,7 @@
 #include <qlayout.h>
 #include <QVBoxLayout>
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 class AccountListViewItem : public QTreeWidgetItem
 {

@@ -17,7 +17,7 @@
 
 #include "connectionmanager.h"
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <klocale.h>
 #include <kmessagebox.h>
 
@@ -64,28 +64,28 @@ void ConnectionManager::initialise()
 void ConnectionManager::updateStatus()
 {
     NetworkStatus::EnumStatus daemonStatus = (NetworkStatus::EnumStatus)d->m_stub->status(QString());
-    kDebug();
+    qCDebug(LIBKOPETE_LOG);
     switch (daemonStatus) {
     case NetworkStatus::Offline:
     case NetworkStatus::OfflineFailed:
     case NetworkStatus::OfflineDisconnected:
     case NetworkStatus::ShuttingDown:
         if (d->m_state == Online) {
-            kDebug() << "STATE IS PENDING";
+            qCDebug(LIBKOPETE_LOG) << "STATE IS PENDING";
             d->m_state = Pending;
         } else {
-            kDebug() << "STATE IS OFFLINE";
+            qCDebug(LIBKOPETE_LOG) << "STATE IS OFFLINE";
             d->m_state = Offline;
         }
         break;
     case NetworkStatus::Establishing:
     case NetworkStatus::Online:
-        kDebug() << "STATE IS ONLINE";
+        qCDebug(LIBKOPETE_LOG) << "STATE IS ONLINE";
         d->m_state = Online;
         break;
     case NetworkStatus::NoNetworks:
     case NetworkStatus::Unreachable:
-        kDebug() << "STATE IS INACTIVE";
+        qCDebug(LIBKOPETE_LOG) << "STATE IS INACTIVE";
         d->m_state = Inactive;
         break;
     }
@@ -114,7 +114,7 @@ NetworkStatus::EnumStatus ConnectionManager::status(const QString &host)
 
 NetworkStatus::EnumRequestResult ConnectionManager::requestConnection(QWidget *mainWidget, const QString &host, bool userInitiated)
 {
-    kDebug();
+    qCDebug(LIBKOPETE_LOG);
     NetworkStatus::EnumRequestResult result;
     // if offline and the user has previously indicated they didn't want any new connections, suppress it
     if (d->m_state == Offline && !userInitiated && d->m_userInitiatedOnly) {
@@ -144,7 +144,7 @@ void ConnectionManager::relinquishConnection(const QString &host)
 
 void ConnectionManager::slotStatusChanged(QString host, int status)
 {
-    kDebug();
+    qCDebug(LIBKOPETE_LOG);
     updateStatus();
     // reset user initiated only flag if we are now online
     if (d->m_state == Online) {

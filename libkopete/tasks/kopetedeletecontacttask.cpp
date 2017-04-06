@@ -19,7 +19,7 @@
 // Qt includes
 
 // KDE includes
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 // Kopete includes
 #include <kopeteaccount.h>

@@ -31,7 +31,7 @@
 #include <QTextDocument>
 #include <QColor>
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <kstringhandler.h>
 
 #include "kopetemetacontact.h"
@@ -407,7 +407,7 @@ QString Message::escapedBody() const
 
 QString Message::parsedBody() const
 {
-    //kDebug(14000) << "messageformat: " << d->format;
+    //qCDebug(LIBKOPETE_LOG) << "messageformat: " << d->format;
     if (!d->parsedBodyDirty) {
         return d->parsedBody;
     }
@@ -776,7 +776,7 @@ QString Message::decodeString(const QByteArray &message, const QTextCodec *provi
     if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
     {
         //All chars decodable.
-        kDebug(14000) << "Using locale's codec";
+        qCDebug(LIBKOPETE_LOG) << "Using locale's codec";
         return testCodec->toUnicode( message );
     }
 
@@ -785,11 +785,11 @@ QString Message::decodeString(const QByteArray &message, const QTextCodec *provi
     if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
     {
         //All chars decodable.
-        kDebug(14000) << "Using latin1";
+        qCDebug(LIBKOPETE_LOG) << "Using latin1";
         return testCodec->toUnicode( message );
     }
 
-    kDebug(14000) << "Using latin1 and cleaning string";
+    qCDebug(LIBKOPETE_LOG) << "Using latin1 and cleaning string";
     //No codec decoded. Just decode latin1, and clean out any junk.
     QString result = QLatin1String( message );
     const uint length = message.length();

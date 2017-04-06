@@ -16,7 +16,7 @@
 
 #include "kopeteproperties.h"
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 #include <qdom.h>
 #include <qvariant.h>

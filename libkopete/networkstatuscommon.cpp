@@ -1,9 +1,9 @@
 #include "networkstatuscommon.h"
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 QDataStream & operator<<(QDataStream &s, const NetworkStatus::Properties p)
 {
-    kDebug() << "status is: " << (int)p.status;
+    qCDebug(LIBKOPETE_LOG) << "status is: " << (int)p.status;
     s << (int)p.status;
     s << (int)p.onDemandPolicy;
     s << p.service;
@@ -16,7 +16,7 @@ QDataStream &operator>>(QDataStream &s, NetworkStatus::Properties &p)
 {
     int status, onDemandPolicy, internet;
     s >> status;
-    kDebug() << "status is: " << status;
+    qCDebug(LIBKOPETE_LOG) << "status is: " << status;
     p.status = (NetworkStatus::EnumStatus)status;
     s >> onDemandPolicy;
     p.onDemandPolicy = (NetworkStatus::EnumOnDemandPolicy)onDemandPolicy;
@@ -28,6 +28,6 @@ QDataStream &operator>>(QDataStream &s, NetworkStatus::Properties &p)
         p.internet = false;
     }
     s >> p.netmasks;
-    kDebug() << "enum converted status is: " << p.status;
+    qCDebug(LIBKOPETE_LOG) << "enum converted status is: " << p.status;
     return s;
 }

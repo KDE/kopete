@@ -20,7 +20,7 @@
 #include <QtAlgorithms>
 
 #include <kconfig.h>
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <KLocalizedString>
 #include <kplugininfo.h>
 #include <knotification.h>
@@ -87,7 +87,7 @@ static QString squashMessage(const Kopete::Message &msg, const int len = 30)
                             fullUrl.length(), shorterUrl);
         }
     }
-    kDebug(14000) << msgText;
+    qCDebug(LIBKOPETE_LOG) << msgText;
     return msgText;
 }
 
@@ -151,7 +151,7 @@ KopeteViewManager::KopeteViewManager()
 
 KopeteViewManager::~KopeteViewManager()
 {
-//  kDebug(14000) ;
+//  qCDebug(LIBKOPETE_LOG) ;
 
     //delete all open chatwindow.
     SessionMap::Iterator it;
@@ -179,7 +179,7 @@ void KopeteViewManager::slotPrefsChanged()
 
 KopeteView *KopeteViewManager::view(Kopete::ChatSession *session, const QString &requestedPlugin)
 {
-    // kDebug(14000) ;
+    // qCDebug(LIBKOPETE_LOG) ;
 
     if (d->sessionMap.contains(session) && d->sessionMap[ session ]) {
         return d->sessionMap[ session ];
@@ -192,7 +192,7 @@ KopeteView *KopeteViewManager::view(Kopete::ChatSession *session, const QString 
             viewPlugin = (Kopete::ViewPlugin *)pluginManager->loadPlugin(pluginName);
 
             if (!viewPlugin) {
-                kWarning(14000) << "Requested view plugin, " << pluginName
+                qCWarning(LIBKOPETE_LOG) << "Requested view plugin, " << pluginName
                                 << ", was not found. Falling back to chat window plugin" << endl;
             }
         }
@@ -212,7 +212,7 @@ KopeteView *KopeteViewManager::view(Kopete::ChatSession *session, const QString 
 
             return newView;
         } else {
-            kError(14000) << "Could not create a view, no plugins available!" << endl;
+            qCCritical(LIBKOPETE_LOG) << "Could not create a view, no plugins available!" << endl;
             return nullptr;
         }
     }
@@ -440,7 +440,7 @@ void KopeteViewManager::slotEventDeleted(Kopete::MessageEvent *event)
     // d->eventList.remove( event );
     d->eventList.removeAll(event);
 
-//    kDebug(14000) ;
+//    qCDebug(LIBKOPETE_LOG) ;
     Kopete::ChatSession *kmm = event->message().manager();
     if (!kmm) {
         // this can be NULL for example if KopeteViewManager::slotViewActivated()

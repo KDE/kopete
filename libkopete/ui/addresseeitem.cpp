@@ -25,7 +25,7 @@
 #include <QPixmap>
 #include <QIcon>
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 AddresseeItem::AddresseeItem(QTreeWidget *parent, const KContacts::Addressee &addressee)
     : QTreeWidgetItem(parent)

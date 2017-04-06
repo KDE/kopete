@@ -19,7 +19,7 @@
 
 #include "kopeteprotocol.h"
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <KLocalizedString>
 #include <kjob.h>
 

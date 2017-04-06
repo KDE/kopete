@@ -32,7 +32,7 @@
 #include <kiconloader.h>
 
 #include <QPushButton>
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <QTreeWidget>
 #include <ktreewidgetsearchline.h>
 

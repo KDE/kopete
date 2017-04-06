@@ -21,7 +21,7 @@
 #include <netinet/tcp.h>
 #endif
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 #include <QAbstractSocket>
 #include <QTimer>
@@ -33,7 +33,7 @@ QSet<QAbstractSocket *> SocketTimeoutWatcher::watchedSocketSet;
 SocketTimeoutWatcher *SocketTimeoutWatcher::watch(QAbstractSocket *socket, quint32 msecTimeout)
 {
     if (watchedSocketSet.contains(socket)) {
-        qDebug() << "Socket is already being watched " << socket;
+        qCDebug(LIBKOPETE_LOG) << "Socket is already being watched " << socket;
         return 0;
     }
 
@@ -91,7 +91,7 @@ void SocketTimeoutWatcher::ackTimeoutCheck()
             if (info.tcpi_last_ack_recv < info.tcpi_last_data_sent || info.tcpi_last_data_sent <= 0) {
                 mAckCheckTimer->stop();
             } else if (info.tcpi_last_ack_recv > info.tcpi_last_data_sent && info.tcpi_last_data_sent > mTimeoutThreshold) {
-                kWarning() << "Connection timeout for " << mSocket->peerAddress();
+                qCWarning(LIBKOPETE_LOG) << "Connection timeout for " << mSocket->peerAddress();
                 mAckCheckTimer->stop();
                 emit error(QAbstractSocket::RemoteHostClosedError);
                 emit errorInt(QAbstractSocket::RemoteHostClosedError);
@@ -104,7 +104,7 @@ void SocketTimeoutWatcher::ackTimeoutCheck()
         if (mActive) {
             mAckCheckTimer->stop();
             mActive = false;
-            kWarning() << "Timeout watcher not active for " << mSocket->peerAddress();
+            qCWarning(LIBKOPETE_LOG) << "Timeout watcher not active for " << mSocket->peerAddress();
         }
     } else {
         mAckCheckTimer->stop();

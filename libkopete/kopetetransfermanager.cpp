@@ -178,7 +178,7 @@ void Kopete::Transfer::slotNextFile(const QString &sourceFile, const QString &de
     QUrl src;
     QUrl dest;
 
-    //qDebug() << "source: " << sourceFile << " destination: " << destinationFile;
+    //qCDebug(LIBKOPETE_LOG) << "source: " << sourceFile << " destination: " << destinationFile;
     if (d->info.direction() == Kopete::FileTransferInfo::Incoming) {
         QUrl url(sourceFile);
         src = displayURL(d->info.contact(), url.fileName());

@@ -227,7 +227,7 @@ void IdentityManager::load()
                 <<"Failed to create identity for '" << identityId << "'" << endl;
             continue;
         }
-        qDebug() << "Created identity " << identityId;
+        qCDebug(LIBKOPETE_LOG) << "Created identity " << identityId;
     }
 
     // get the default identity

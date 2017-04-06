@@ -26,7 +26,7 @@
 #include <QRegExp>
 #include <QPointer>
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 
 #include <KLocalizedString>
@@ -273,7 +273,7 @@ void Kopete::ChatSession::clearChains()
 Kopete::MessageHandlerChain::Ptr Kopete::ChatSession::chainForDirection(Kopete::Message::MessageDirection dir)
 {
     if (dir < 0 || dir >= CHAIN_COUNT) {
-        kFatal(14000) << "invalid message direction " << dir;
+        qCCritical(LIBKOPETE_LOG) << "invalid message direction " << dir;
     }
     if (!d->chains[dir]) {
         TempFactory theTempFactory;
@@ -405,7 +405,7 @@ QString Kopete::ChatSession::initLastUrl(const Kopete::Contact *c)
                 }
                 file.close();
             } else {
-                kDebug(14310) << "cant open lasturls file for " << c->contactId();
+                qCDebug(LIBKOPETE_LOG) << "cant open lasturls file for " << c->contactId();
             }
         }
         if (!lastUrl.isEmpty()) {
@@ -414,7 +414,7 @@ QString Kopete::ChatSession::initLastUrl(const Kopete::Contact *c)
             return QLatin1String("");
         }
     } else {
-        kDebug(14310) << "cant find lasturls file for " << c->contactId();
+        qCDebug(LIBKOPETE_LOG) << "cant find lasturls file for " << c->contactId();
         return QLatin1String("");
     }
 }

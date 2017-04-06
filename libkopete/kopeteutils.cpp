@@ -23,7 +23,7 @@
 
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <kiconloader.h>
 #include <KLocalizedString>
 

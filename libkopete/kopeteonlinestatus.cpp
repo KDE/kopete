@@ -27,7 +27,7 @@
 #include "kopetecontact.h"
 #include <kiconloader.h>
 #include <kiconeffect.h>
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <KLocalizedString>
 #include <QPixmap>
 #include <QIconEngineV2>

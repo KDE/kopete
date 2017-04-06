@@ -61,7 +61,7 @@ public:
      *
      * if( !storage->isValid() )
      * {
-     *     qDebug() << "Contact list storage failed. Reason: " << storage->errorMessage();
+     *     qCDebug(LIBKOPETE_LOG) << "Contact list storage failed. Reason: " << storage->errorMessage();
      * }
      * @endcode
      *

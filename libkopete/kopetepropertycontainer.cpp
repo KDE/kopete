@@ -125,7 +125,7 @@ const Kopete::Property &PropertyContainer::property(
 void PropertyContainer::setProperty(const Kopete::PropertyTmpl &tmpl, const QVariant &value)
 {
     if (tmpl.isNull() || tmpl.key().isEmpty()) {
-        kDebug(14000)
+        qCDebug(LIBKOPETE_LOG)
             <<"No valid template for property passed!" << endl;
         return;
     }

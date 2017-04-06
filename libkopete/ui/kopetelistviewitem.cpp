@@ -275,7 +275,7 @@ void Component::layout(const QRect &newRect)
         d->startRect = rect();
     }
     d->targetRect = newRect;
-    //kDebug(14000) << "At " << rect;
+    //qCDebug(LIBKOPETE_LOG) << "At " << rect;
 }
 
 void Component::setRect(const QRect &rect)
@@ -919,7 +919,7 @@ public:
         if (users++ == 0) {
             start(period);
         }
-        //kDebug(14000) << "SharedTimer::attach: users is now " << users << "\n";
+        //qCDebug(LIBKOPETE_LOG) << "SharedTimer::attach: users is now " << users << "\n";
     }
 
     void detach(QObject *target, const char *slot)
@@ -928,7 +928,7 @@ public:
         if (--users == 0) {
             stop();
         }
-        //kDebug(14000) << "SharedTimer::detach: users is now " << users << "\n";
+        //qCDebug(LIBKOPETE_LOG) << "SharedTimer::detach: users is now " << users << "\n";
     }
 };
 
@@ -1096,7 +1096,7 @@ void Item::slotLayoutItems()
 
         int height = component(n)->heightForWidth(width);
         component(n)->layout(QRect(0, 0, width, height));
-        //kDebug(14000) << "Component " << n << " is " << width << " x " << height;
+        //qCDebug(LIBKOPETE_LOG) << "Component " << n << " is " << width << " x " << height;
     }
 
     if (Private::animateChanges && d->animateLayout && !d->visibilityTimer.isActive()) {
@@ -1146,7 +1146,7 @@ void Item::setSearchMatch(bool match, bool searching)
     if (!match) {
         mySetVisible(false);
     } else {
-        /*kDebug(14000) << " match: " << match << ", vis timer active: " << d->visibilityTimer.isActive()
+        /*qCDebug(LIBKOPETE_LOG) << " match: " << match << ", vis timer active: " << d->visibilityTimer.isActive()
                        << ", target visibility: " << targetVisibility() << endl;*/
         if (d->visibilityTimer.isActive() || searching) {
             mySetVisible(true);
@@ -1235,7 +1235,7 @@ void Item::setHeight(int)
     for (uint n = 0; n < components(); ++n) {
         minHeight = qMax(minHeight, component(n)->rect().height());
     }
-    //kDebug(14000) << "Height is " << minHeight;
+    //qCDebug(LIBKOPETE_LOG) << "Height is " << minHeight;
     if (Private::foldVisibility && d->visibilityTimer.isActive()) {
         int vis = d->visibilityLevel;
         if (vis > Private::visibilityFoldSteps) {

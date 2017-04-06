@@ -20,7 +20,7 @@
 #include "kopetecontactlistelement.h"
 
 #include <kconfig.h>
-#include <kdebug.h>
+#include "libkopete_debug.h"
 
 
 #include "kopeteplugin.h"

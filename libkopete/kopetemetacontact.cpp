@@ -24,7 +24,7 @@
 
 #include <kcontacts/addressee.h>
 
-#include <kdebug.h>
+#include "libkopete_debug.h"
 #include <KLocalizedString>
 
 #include <kmessagebox.h>
