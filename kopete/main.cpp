@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 
     KCrash::initialize();
     KLocalizedString::setApplicationDomain("kopete");
-    KAboutData aboutData("kopete", i18n("Kopete"),
+    KAboutData aboutData(QStringLiteral("kopete"), i18n("Kopete"),
                          QStringLiteral(KOPETE_VERSION_STRING), i18n(description), KAboutLicense::GPL,
                          i18n("(c) 2001-2004, Duncan Mac-Vicar Prett\n(c) 2002-2017, Kopete Development Team"),
                          i18n("kopete-devel@kde.org"), "http://kopete.kde.org");
@@ -95,8 +95,8 @@ int main(int argc, char *argv[])
     aboutData.setTranslator(i18nc("NAME OF TRANSLATORS", "Your names"),
                             i18nc("EMAIL OF TRANSLATORS", "Your emails"));
 
-    QCommandLineParser parser;
     KAboutData::setApplicationData(aboutData);
+    QCommandLineParser parser;
     parser.addVersionOption();
     parser.addHelpOption();
     parser.addOption(QCommandLineOption(QStringList() << QLatin1String("noplugins"), i18n("Do not load plugins. This option overrides all other options.")));
