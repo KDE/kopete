@@ -6,4 +6,3 @@ if test -n "$LIST"; then
 	$XGETTEXT $LIST rc.cpp -o $podir/kopete.pot
 fi
 rm xml_doc.cpp
-rm -f rc.cpp
