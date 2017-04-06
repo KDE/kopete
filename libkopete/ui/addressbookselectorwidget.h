@@ -31,7 +31,7 @@
 #include <kcontacts/addressee.h>
 #include <kcontacts/addresseelist.h>
 
-#include <kdemacros.h>
+
 #include "libkopete_export.h"
 
 #include "ui_addressbookselectorwidget_base.h"

@@ -25,7 +25,7 @@
 
 #include <QUrl>
 
-#include <kdemacros.h>
+
 #include <ktoggleaction.h>
 #include "kopeteglobal.h"
 

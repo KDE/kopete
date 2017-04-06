@@ -18,7 +18,7 @@
 #ifndef MetaContactSelectorWidget_H
 #define MetaContactSelectorWidget_H
 
-#include <kdemacros.h>
+
 #include <qwidget.h>
 #include "kopetelistviewitem.h"
 #include "libkopete_export.h"

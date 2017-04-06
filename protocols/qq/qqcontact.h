@@ -24,7 +24,7 @@
 
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
-
+#include <kdemacros.h>
 #include <kurl.h>
 #include <QPixmap>
 #include <QList>

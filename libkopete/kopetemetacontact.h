@@ -27,7 +27,7 @@
 #include <QtCore/QList>
 #include <QtCore/QUuid>
 
-#include <kdemacros.h>
+
 #include "libkopete_export.h"
 
 #include "kopeteonlinestatus.h"

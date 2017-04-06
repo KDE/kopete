@@ -19,7 +19,7 @@
 #ifndef KOPETEIDENTITY_H
 #define KOPETEIDENTITY_H
 
-#include <kdemacros.h>
+
 #include "kopeteglobal.h"
 #include "kopetepropertycontainer.h"
 #include "kopeteonlinestatus.h"

@@ -22,7 +22,7 @@
 
 #include <kxmlguiclient.h>
 
-#include <kdemacros.h>
+
 #include <KAboutData>
 
 #include <QObject>

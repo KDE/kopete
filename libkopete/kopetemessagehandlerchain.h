@@ -19,7 +19,7 @@
 
 #include <QtCore/QObject>
 
-#include <kdemacros.h>
+
 #include <QExplicitlySharedDataPointer>
 #include "kopetemessage.h"
 #include "kopetetask.h"

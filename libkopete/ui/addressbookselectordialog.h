@@ -21,7 +21,7 @@
 
 #include "addressbookselectorwidget.h"
 
-#include <kdemacros.h>
+
 #include <ktreewidgetsearchline.h>
 
 #include <QDialog>

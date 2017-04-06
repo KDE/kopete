@@ -23,7 +23,7 @@
 
 #include "libkopete_export.h"
 
-#include <kdemacros.h>
+
 #include <QExplicitlySharedDataPointer>
 #include <kiconloader.h>
 

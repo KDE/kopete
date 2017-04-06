@@ -19,7 +19,7 @@
 
 #include <QObject>
 
-#include <kdemacros.h>
+
 
 #include "libkopete_export.h"
 #include "libkopete_debug.h"

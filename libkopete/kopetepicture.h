@@ -17,7 +17,7 @@
 #ifndef KOPETEPICTURE_H
 #define KOPETEPICTURE_H
 
-#include <kdemacros.h>
+
 #include <QExplicitlySharedDataPointer>
 #include "libkopete_export.h"
 
