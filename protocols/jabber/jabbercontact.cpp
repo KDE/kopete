@@ -184,7 +184,7 @@ QList<QAction *> *JabberContact::customContextMenuActions ()
 
 #define QAction(status, text, name, slot) \
 	{ QAction *tmp = new QAction(this); \
-	tmp->setIcon( KIcon(QIcon((status).iconFor(this)))); \
+    tmp->setIcon( QIcon((status).iconFor(this))); \
 	tmp->setText( text ); \
 	connect(tmp, SIGNAL(triggered(bool)), (slot));\
 	actionSetAvailability->addAction(tmp); }

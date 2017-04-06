@@ -90,13 +90,13 @@ CryptographyPlugin::CryptographyPlugin (QObject *parent, const QVariantList & /*
             SLOT(slotOutgoingMessage(Kopete::Message&)));
 
     // actions in the contact list
-    QAction *action = new QAction(KIcon("document-encrypt"), i18nc("@action", "&Select Public Key..."), this);
+    QAction *action = new QAction(QIcon::fromTheme("document-encrypt"), i18nc("@action", "&Select Public Key..."), this);
     actionCollection()->addAction("contactSelectKey", action);
     connect(action, SIGNAL(triggered(bool)), this, SLOT(slotSelectContactKey()));
     connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), action, SLOT(setEnabled(bool)));
     action->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count() == 1);
 
-    action = new QAction(KIcon("document-export-key"), i18nc("@action", "&Export Public Keys To Address Book..."), this);
+    action = new QAction(QIcon::fromTheme("document-export-key"), i18nc("@action", "&Export Public Keys To Address Book..."), this);
     actionCollection()->addAction("exportKey", action);
     connect(action, SIGNAL(triggered(bool)), this, SLOT(slotExportSelectedMetaContactKeys()));
     connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), action, SLOT(setEnabled(bool)));
@@ -437,7 +437,7 @@ QString CryptographyPlugin::kabcKeySelector(QString displayName, QString address
         ui.label->setText(i18nc("@info", "Cryptography plugin has found multiple encryption keys for %1 (%2) in your KDE address book. To use one of these keys, select it and choose OK.",
                                 displayName, addresseeName));
         for (int i = 0; i < keys.count(); i++) {
-            ui.keyList->addItem(new QListWidgetItem(KIcon("application-pgp-keys"), keys[i].right(8).prepend("0x"), ui.keyList));
+            ui.keyList->addItem(new QListWidgetItem(QIcon::fromTheme("application-pgp-keys"), keys[i].right(8).prepend("0x"), ui.keyList));
         }
         ui.keyList->addItems(keys);
         QString ret;

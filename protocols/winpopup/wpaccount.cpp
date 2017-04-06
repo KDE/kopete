@@ -167,13 +167,13 @@ void WPAccount::fillActionMenu(KActionMenu *actionMenu)
     actionMenu->menu()->addAction(QIcon(myself()->onlineStatus().iconFor(this)), i18n("WinPopup (%1)", accountId()));
 
     if (mProtocol) {
-        QAction *goOnline = new QAction(KIcon(QIcon(mProtocol->WPOnline.iconFor(this))), i18n("Online"), this);
+        QAction *goOnline = new QAction(QIcon(mProtocol->WPOnline.iconFor(this)), i18n("Online"), this);
         //, "actionGoAvailable" );
         QObject::connect(goOnline, SIGNAL(triggered(bool)), this, SLOT(connect()));
         goOnline->setEnabled(isConnected() && isAway());
         actionMenu->addAction(goOnline);
 
-        QAction *goAway = new QAction(KIcon(QIcon(mProtocol->WPAway.iconFor(this))), i18n("Away"), this);
+        QAction *goAway = new QAction(QIcon(mProtocol->WPAway.iconFor(this)), i18n("Away"), this);
         //, "actionGoAway" );
         QObject::connect(goAway, SIGNAL(triggered(bool)), this, SLOT(goAway()));
         goAway->setEnabled(isConnected() && !isAway());

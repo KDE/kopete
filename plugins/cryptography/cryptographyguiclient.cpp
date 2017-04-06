@@ -35,7 +35,7 @@
 #include <QAction>
 #include <klocalizedstring.h>
 #include <kaboutdata.h>
-#include <kicon.h>
+#include <qicon.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 
@@ -79,9 +79,9 @@ CryptographyGUIClient::CryptographyGUIClient (Kopete::ChatSession *parent)
         }
     }
 
-    m_encAction = new KToggleAction(KIcon("document-encrypt"), i18nc("@action toggle action", "Encrypt Messages"), this);
+    m_encAction = new KToggleAction(QIcon::fromTheme("document-encrypt"), i18nc("@action toggle action", "Encrypt Messages"), this);
     actionCollection()->addAction("encryptionToggle", m_encAction);
-    m_signAction = new KToggleAction(KIcon("document-sign"), i18nc("@action toggle action", "Sign Messages"), this);
+    m_signAction = new KToggleAction(QIcon::fromTheme("document-sign"), i18nc("@action toggle action", "Sign Messages"), this);
     actionCollection()->addAction("signToggle", m_signAction);
     m_exportAction = new QAction(i18nc("@action toggle action", "Export Contacts' Keys to Address Book"), this);
     actionCollection()->addAction("export", m_exportAction);
