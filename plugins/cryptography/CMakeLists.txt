@@ -17,7 +17,7 @@ ki18n_wrap_ui(kopete_cryptography_PART_SRCS kabckeyselectorbase.ui exportkeysbas
 
 add_library(kopete_cryptography MODULE ${kopete_cryptography_PART_SRCS})
 
-target_link_libraries(kopete_cryptography Qt5::Gui  KF5::KDELibs4Support kopete QGpgme )
+target_link_libraries(kopete_cryptography Qt5::Gui  KF5::KDELibs4Support kopete Gpgmepp )
 
 install(TARGETS kopete_cryptography  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 

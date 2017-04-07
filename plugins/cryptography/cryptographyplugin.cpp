@@ -42,15 +42,15 @@
 #include "kabcpersistence.h"
 
 // crypto stuff
-#include <kleo/cryptobackendfactory.h>
-#include <kleo/decryptverifyjob.h>
-#include <kleo/decryptjob.h>
-#include <kleo/verifyopaquejob.h>
-#include <kleo/encryptjob.h>
-#include <kleo/signencryptjob.h>
-#include <kleo/signjob.h>
-#include <kleo/keylistjob.h>
-#include <kleo/job.h>
+//#include <qgpgme/cryptobackendfactory.h>
+#include <qgpgme/decryptverifyjob.h>
+#include <qgpgme/decryptjob.h>
+#include <qgpgme/verifyopaquejob.h>
+#include <qgpgme/encryptjob.h>
+#include <qgpgme/signencryptjob.h>
+#include <qgpgme/signjob.h>
+#include <qgpgme/keylistjob.h>
+#include <qgpgme/job.h>
 #include <gpgme++/decryptionresult.h>
 #include <gpgme++/verificationresult.h>
 #include <gpgme++/keylistresult.h>
@@ -59,7 +59,7 @@
 #include <gpgme++/key.h>
 
 // kabc stuff
-#include <kabc/addressbook.h>
+//#include <kabc/addressbook.h>
 
 // our own stuff
 #include "cryptographyselectuserkey.h"
@@ -385,7 +385,7 @@ void CryptographyPlugin::slotNewKMM(Kopete::ChatSession *KMM)
 
 QStringList CryptographyPlugin::getKabcKeys(QString uid)
 {
-    KABC::Addressee addressee = Kopete::KABCPersistence::self()->addressBook()->findByUid(uid);
+    KContacts::Addressee addressee = Kopete::KABCPersistence::self()->addressBook()->findByUid(uid);
     QStringList keys;
 
     // each 'if' block here is one way of getting a key.
@@ -396,8 +396,8 @@ QStringList CryptographyPlugin::getKabcKeys(QString uid)
     }
 
     // this is the standard key field in Addressee, (which no app seems to use, but here it is anyways)
-    if (!(addressee.key(KABC::Key::PGP).textData()).isEmpty()) {
-        keys << addressee.key(KABC::Key::PGP).textData();
+    if (!(addressee.key(KContacts::Key::PGP).textData()).isEmpty()) {
+        keys << addressee.key(KContacts::Key::PGP).textData();
     }
 
     // remove duplicates

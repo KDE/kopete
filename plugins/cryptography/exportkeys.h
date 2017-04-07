@@ -19,7 +19,7 @@
 
 #include <kdialog.h>
 
-#include <kabc/addresseelist.h>
+#include <KContacts/AddresseeList>
 
 namespace Kopete {
 class MetaContact;
@@ -46,7 +46,7 @@ protected slots:
 
 private:
     Ui::ExportKeysUI *mUi;
-    KABC::AddresseeList mAddressees;
+    KContacts::AddresseeList mAddressees;
     QList<Kopete::MetaContact *> mMetaContacts;
 };
 

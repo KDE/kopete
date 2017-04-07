@@ -16,8 +16,7 @@
 */
 #include "exportkeys.h"
 
-#include <kabc/addressee.h>
-#include <kabc/addressbook.h>
+#include <KContacts/Addressee>
 
 #include <kiconloader.h>
 #include <QPushButton>
@@ -43,7 +42,7 @@ ExportKeys::ExportKeys (QList<Kopete::MetaContact *> mcs, QWidget *parent)
     connect(this, SIGNAL(user1Clicked()), this, SLOT(accept()));
 
     QString key;
-    KABC::Addressee addressee;
+    KContacts::Addressee addressee;
     // this loop creates the list widget items
     foreach (Kopete::MetaContact *mc, mcs) {
         // see if there is a key. if not, go to top of loop and start again with a new metacontact
@@ -85,7 +84,7 @@ ExportKeys::~ExportKeys()
 
 void ExportKeys::accept()
 {
-    KABC::AddressBook *ab = Kopete::KABCPersistence::self()->addressBook();
+    KContacts::AddressBook *ab = Kopete::KABCPersistence::self()->addressBook();
 
     // add addressees to address book
     for (int i = 0; i < mUi->keyList->count(); i++) {
