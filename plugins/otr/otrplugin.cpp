@@ -30,7 +30,7 @@
 
 #include <KLocalizedString>
 #include <KGlobal>
-#include <KStandardDirs>
+
 #include "plugin_otr_debug.h"
 #include <qaction.h>
 #include <kconfig.h>
@@ -50,6 +50,7 @@
 #include <kopetemessageevent.h>
 #include <kopeteprotocol.h>
 #include <ui/kopeteview.h>
+#include <QStandardPaths>
 
 /**
   * @author Michael Zanetti
@@ -83,8 +84,8 @@ OTRPlugin::OTRPlugin (QObject *parent, const QVariantList & /*args*/)
     otrlChatInterface->setPlugin(this);
 
     // Checking file Permissions
-    OtrlChatInterface::self()->checkFilePermissions(QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true)) + "privkeys");
-    OtrlChatInterface::self()->checkFilePermissions(QString(KGlobal::dirs()->saveLocation("data", QStringLiteral("kopete_otr/"), true)) + "fingerprints");
+    OtrlChatInterface::self()->checkFilePermissions(QString(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QStringLiteral("kopete_otr/")));
+    OtrlChatInterface::self()->checkFilePermissions(QString(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QStringLiteral("kopete_otr/")));
 
     //setting the policy
     slotSettingsChanged();

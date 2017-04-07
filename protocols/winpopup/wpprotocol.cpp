@@ -30,7 +30,7 @@
 #include <kpluginfactory.h>
 #include <kmessagebox.h>
 #include <kconfig.h>
-#include <kstandarddirs.h>
+#include <QStandardPaths>
 #include <ktoolinvocation.h>
 #include <KSharedConfig>
 
@@ -148,8 +148,8 @@ void WPProtocol::installSamba()
 //	kDebug(14170) <<  "WPProtocol::installSamba()" endl;
 
     QStringList args;
-    args += KStandardDirs::findExe(QStringLiteral("winpopup-install"));
-    args += KStandardDirs::findExe(QStringLiteral("winpopup-send"));
+    args += QStandardPaths::findExecutable(QStringLiteral("winpopup-install"));
+    args += QStandardPaths::findExecutable(QStringLiteral("winpopup-send"));
     if (KToolInvocation::kdeinitExecWait(QStringLiteral("kdesu"), args) == 0) {
         KMessageBox::information(Kopete::UI::Global::mainWidget(), i18n("The Samba configuration file has been modified."), i18n("Configuration Successful"));
     } else {

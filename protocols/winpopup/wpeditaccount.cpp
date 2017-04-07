@@ -36,9 +36,8 @@
 #include <QLineEdit>
 #include <kmessagebox.h>
 #include <kconfig.h>
-#include <kstandarddirs.h>
 #include <ksharedconfig.h>
-
+#include <QStandardPaths>
 // Kopete Includes
 #include <addcontactpage.h>
 
@@ -55,7 +54,7 @@ WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
 
     mProtocol = WPProtocol::protocol();
 
-    QString tmpSmbcPath = KStandardDirs::findExe(QStringLiteral("smbclient"));
+    QString tmpSmbcPath = QStandardPaths::findExecutable(QStringLiteral("smbclient"));
 
     if (account()) {
         mHostName->setText(account()->accountId());

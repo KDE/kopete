@@ -24,7 +24,7 @@
 
 #include <kpluginfactory.h>
 #include <kdebug.h>
-#include <kstandarddirs.h>
+#include <QStandardPaths>
 #include <kprocess.h>
 #include <ktemporaryfile.h>
 #include <kcodecs.h>
@@ -57,7 +57,7 @@ LatexPlugin::LatexPlugin(QObject *parent, const QVariantList & /*args*/)
     connect(Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession *)),
             this, SLOT(slotNewChatSession(Kopete::ChatSession *)));
 
-    m_convScript = KStandardDirs::findExe(QStringLiteral("kopete_latexconvert.sh"));
+    m_convScript = QStandardPaths::findExecutable(QStringLiteral("kopete_latexconvert.sh"));
 
     //Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
     const QList<Kopete::ChatSession *> sessions = Kopete::ChatSessionManager::self()->sessions();
@@ -86,7 +86,7 @@ void LatexPlugin::slotNewChatSession(Kopete::ChatSession *KMM)
 
 void LatexPlugin::slotMessageAboutToShow(Kopete::Message &msg)
 {
-    QString mMagick = KStandardDirs::findExe(QStringLiteral("convert"));
+    QString mMagick = QStandardPaths::findExecutable(QStringLiteral("convert"));
     if (mMagick.isEmpty()) {
         // show just once
         if (!mMagickNotFoundShown) {
