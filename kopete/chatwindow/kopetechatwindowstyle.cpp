@@ -28,7 +28,6 @@
 // KDE includes
 #include "kopetechatwindow_debug.h"
 #include <KLocalizedString>
-#include <kstandarddirs.h>
 #include <QStandardPaths>
 
 class ChatWindowStyle::Private

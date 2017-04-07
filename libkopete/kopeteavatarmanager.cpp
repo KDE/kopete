@@ -31,7 +31,6 @@
 #include <QStandardPaths>
 
 // KDE includes
-#include <kstandarddirs.h>
 #include <KSharedConfig>
 #include <kconfig.h>
 #include <kcodecs.h>

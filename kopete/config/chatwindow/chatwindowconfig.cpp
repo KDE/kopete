@@ -46,7 +46,6 @@
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
 #include <QPushButton>
-#include <kstandarddirs.h>
 #include <kurlrequesterdialog.h>
 #include <krun.h>
 #include <kemoticons.h>
@@ -713,8 +712,6 @@ void ChatWindowConfig::slotUpdateChatPreview()
 
 void ChatWindowConfig::updateEmoticonList()
 {
-    KStandardDirs dir;
-
     m_emoticonsUi.icon_theme_list->clear(); // Wipe out old list
     // Get a list of directories in our icon theme dir
     QStringList themeDirs = KGlobal::dirs()->findDirs("emoticons", QLatin1String(""));

@@ -23,7 +23,6 @@
 #include <QDir>
 
 // KDE includes
-#include <kstandarddirs.h>
 #include <kdirlister.h>
 #include "kopetechatwindow_debug.h"
 #include <QUrl>
