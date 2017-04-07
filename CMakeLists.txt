@@ -136,7 +136,7 @@ set_package_properties(Qca-qt5 PROPERTIES DESCRIPTION "Support for encryption"
                        URL "http://download.kde.org/stable/qca-qt5/"
                        TYPE RECOMMENDED)
 
-set(GPGMEPP_LIB_VERSION "1.7.1")
+set(GPGMEPP_LIB_VERSION "1.8.0")
 find_package(Gpgmepp ${GPGMEPP_LIB_VERSION} CONFIG REQUIRED)
 
 find_package(Sqlite QUIET)
