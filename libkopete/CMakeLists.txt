@@ -149,6 +149,7 @@ kconfig_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC
     kopetebehaviorsettings.kcfgc
     kopetestatussettings.kcfgc
     )
+qt5_add_resources(kopete_LIB_SRCS libkopete.qrc)
 
 ecm_qt_declare_logging_category(kopete_LIB_SRCS HEADER libkopete_debug.h IDENTIFIER LIBKOPETE_LOG CATEGORY_NAME org.kde.kopete.libkopete)
 
@@ -222,7 +223,6 @@ install( FILES
     kopetestatussettings.kcfg
     DESTINATION ${KDE_INSTALL_KCFGDIR})
 
-install( FILES kopetecommandui.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
 install( FILES kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop  DESTINATION ${KDE_INSTALL_KSERVICETYPES5DIR})
 
 install( FILES
