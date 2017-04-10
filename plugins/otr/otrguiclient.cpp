@@ -43,6 +43,7 @@ OtrGUIClient::OtrGUIClient(Kopete::ChatSession *parent)
     : QObject(parent)
     , KXMLGUIClient(parent)
 {
+    setComponentName(QStringLiteral("kopete_otr"), i18n("Kopete"));
     connect(OTRPlugin::plugin(),
             SIGNAL(destroyed(QObject *)), this,
             SLOT(deleteLater())
