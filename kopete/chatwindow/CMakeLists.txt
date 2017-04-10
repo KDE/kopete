@@ -12,6 +12,7 @@ link_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 ########### next target ###############
 set(kopetechatwindow_shared_common_SRCS)
 ecm_qt_declare_logging_category(kopetechatwindow_shared_common_SRCS HEADER kopetechatwindow_debug.h IDENTIFIER KOPETE_CHATEWINDOW_LOG CATEGORY_NAME org.kde.kopete.chatwindow)
+qt5_add_resources(kopetechatwindow_shared_common_SRCS kopetechatwindow.qrc)
 
 set( kopetechatwindow_shared_SRCS 
     chatmessagepart.cpp
@@ -73,7 +74,6 @@ install(TARGETS kopete_emailwindow  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 ########### install files ###############
 
-install( FILES kopeterichtexteditpartfull.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopeterichtexteditpart)
 install( FILES chatwindow.desktop emailwindow.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
 install( FILES kopetechatwindow.rc kopeteemailwindow.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
 
