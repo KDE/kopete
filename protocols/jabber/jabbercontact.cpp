@@ -76,6 +76,8 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 	qCDebug(JABBER_PROTOCOL_LOG) << contactId() << "  is created  - " << this;
 	// this contact is able to transfer files
 	setFileCapable ( true );
+    const QString jabberPhotoPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "jabberphotos/";
+    QDir().mkpath(jabberPhotoPath);
 
 	/*
 	 * Catch when we're going online for the first time to
@@ -814,8 +816,9 @@ void JabberContact::setPhoto( const QString &photoPath )
 	QString newPhotoPath = photoPath;
 	if(contactPhoto.width() > 96 || contactPhoto.height() > 96)
 	{
+        const QString jabberPhotoPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "jabberphotos/";
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + "jabberphotos/"+ QUrl(photoPath).fileName().toLower() ) ;
+        QString newLocation( jabberPhotoPath + QUrl(photoPath).fileName().toLower() ) ;
 	
 		// Scale and crop the picture.
 		contactPhoto = contactPhoto.scaled( 96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation );

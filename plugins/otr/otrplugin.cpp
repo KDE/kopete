@@ -27,6 +27,7 @@
 #include <qregexp.h>
 #include <qfile.h>
 #include <qcolor.h>
+#include <QDir>
 
 #include <KLocalizedString>
 #include <KGlobal>
@@ -84,8 +85,9 @@ OTRPlugin::OTRPlugin (QObject *parent, const QVariantList & /*args*/)
     otrlChatInterface->setPlugin(this);
 
     // Checking file Permissions
-    OtrlChatInterface::self()->checkFilePermissions(QString(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QStringLiteral("kopete_otr/")));
-    OtrlChatInterface::self()->checkFilePermissions(QString(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QStringLiteral("kopete_otr/")));
+    const QString otrPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QStringLiteral("kopete_otr/");
+    QDir().mkdir(otrPath);
+    OtrlChatInterface::self()->checkFilePermissions(otrPath);
 
     //setting the policy
     slotSettingsChanged();
