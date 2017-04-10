@@ -25,6 +25,7 @@
 #include <QFile>
 #include <QRegExp>
 #include <QPointer>
+#include <QDir>
 
 #include "libkopete_debug.h"
 
@@ -421,15 +422,17 @@ QString Kopete::ChatSession::initLastUrl(const Kopete::Contact *c)
 
 QString Kopete::ChatSession::getUrlsFileName(const Kopete::Contact *c)
 {
-    QString name = c->protocol()->pluginId().replace(QRegExp(QLatin1String("[./~?*]")), QLatin1String("-"))
-                   +QLatin1String("/")
-                   +c->account()->accountId().replace(QRegExp(QLatin1String("[./~?*]")), QLatin1String("-"))
-                   +QLatin1String("/")
+    QString lastFolder = c->protocol()->pluginId().replace(QRegExp(QLatin1String("[./~?*]")), QLatin1String("-"))
+            +QLatin1String("/")
+            +c->account()->accountId().replace(QRegExp(QLatin1String("[./~?*]")), QLatin1String("-"))
+            +QLatin1String("/");
+    QString name = lastFolder
                    +c->contactId().replace(QRegExp(QLatin1String("[./~?*]")), QLatin1String("-"))
                    +QLatin1String(".lasturls");
 
-    QString filename = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QLatin1String("kopete/urls/") + name + QLatin1String(".txt");
-
+    const QString urlPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QLatin1String("kopete/urls/") + lastFolder;
+    const QString filename = urlPath + name + QLatin1String(".txt");
+    QDir().mkpath(urlPath);
     return filename;
 }
 
