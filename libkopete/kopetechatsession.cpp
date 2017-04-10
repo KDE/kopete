@@ -426,8 +426,7 @@ QString Kopete::ChatSession::getUrlsFileName(const Kopete::Contact *c)
             +QLatin1String("/")
             +c->account()->accountId().replace(QRegExp(QLatin1String("[./~?*]")), QLatin1String("-"))
             +QLatin1String("/");
-    QString name = lastFolder
-                   +c->contactId().replace(QRegExp(QLatin1String("[./~?*]")), QLatin1String("-"))
+    QString name = c->contactId().replace(QRegExp(QLatin1String("[./~?*]")), QLatin1String("-"))
                    +QLatin1String(".lasturls");
 
     const QString urlPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QLatin1String("kopete/urls/") + lastFolder;
