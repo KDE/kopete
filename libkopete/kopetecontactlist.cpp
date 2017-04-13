@@ -191,11 +191,9 @@ Group *ContactList::findGroup(const QString &displayName, int type)
 {
     if (type == Group::Temporary) {
         return Group::temporary();
-    }
-    if (type == Group::TopLevel) {
+    } else if (type == Group::TopLevel) {
         return Group::topLevel();
-    }
-    if (type == Group::Offline) {
+    } else if (type == Group::Offline) {
         return Group::offline();
     }
 

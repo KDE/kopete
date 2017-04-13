@@ -186,7 +186,7 @@ void IdentityManager::removeIdentity(Identity *identity)
     configgroup->deleteGroup();
     configgroup->sync();
     if (d->defaultIdentity == identity) {
-        d->defaultIdentity = 0;
+        d->defaultIdentity = nullptr;
     }
     delete identity;
 }

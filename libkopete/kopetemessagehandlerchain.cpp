@@ -47,7 +47,7 @@ public:
 class MessageHandlerChain::Private
 {
 public:
-    Private() : first(0)
+    Private() : first(nullptr)
     {
     }
 

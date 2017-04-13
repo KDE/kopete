@@ -256,7 +256,7 @@ void ChatSessionMembersListModel::slotSessionClosed()
 {
     if (d->session) {
         disconnect(d->session, 0, this, 0);
-        d->session = 0;
+        d->session = nullptr;
         reset();
     }
 }
