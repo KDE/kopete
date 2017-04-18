@@ -27,7 +27,7 @@
 #include <kaboutdata.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kinputdialog.h>
+#include <qinputdialog.h>
 #include <KLocalizedString>
 #include <kmessagebox.h>
 #include <knotification.h>
@@ -1454,11 +1454,9 @@ void GroupWiseAccount::slotLeavingConference( GroupWiseChatSession * sess )
 void GroupWiseAccount::slotSetAutoReply()
 {
 	bool ok;
-	QRegExp rx( ".*" );
-    QRegExpValidator validator( rx, this );
-	QString newAutoReply = KInputDialog::getText( i18n( "Enter Auto-Reply Message" ),
-			 i18n( "Please enter an Auto-Reply message that will be shown to users who message you while Away or Busy" ), configGroup()->readEntry( "AutoReply", "" ),
-			 &ok, Kopete::UI::Global::mainWidget(), &validator );
+    QString newAutoReply = QInputDialog::getText(Kopete::UI::Global::mainWidget(), i18n( "Enter Auto-Reply Message" ),
+             i18n( "Please enter an Auto-Reply message that will be shown to users who message you while Away or Busy" ), QLineEdit::Normal, configGroup()->readEntry( "AutoReply", "" ),
+             &ok);
 	if ( ok )
 		configGroup()->writeEntry( "AutoReply", newAutoReply );
 }
