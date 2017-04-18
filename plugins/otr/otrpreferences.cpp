@@ -37,10 +37,8 @@
 #include <kurlrequester.h>
 #include <kmessagebox.h>
 #include <kconfig.h>
-#include <kapplication.h>
 #include <kpassivepopup.h>
 
-#include <kcomponentdata.h>
 
 #include <kopeteaccountmanager.h>
 #include <kopeteaccount.h>

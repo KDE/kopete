@@ -30,7 +30,6 @@
 #include <QDir>
 
 #include <KLocalizedString>
-#include <KGlobal>
 
 #include "plugin_otr_debug.h"
 #include <qaction.h>
