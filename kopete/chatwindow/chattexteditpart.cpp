@@ -95,7 +95,7 @@ void ChatTextEditPart::init(Kopete::ChatSession *session, QWidget *parent)
     m_typingStopTimer = new QTimer(this);
     m_typingStopTimer->setObjectName(QStringLiteral("m_typingStopTimer"));
 
-    connect(m_typingRepeatTimer, SIGNAL(timeout()), this, SLOT(slotRepeatTypingTimer()));
+    connect(m_typingRepeatTimer, &QTimer::timeout, this, &ChatTextEditPart::slotRepeatTypingTimer);
     connect(m_typingStopTimer, SIGNAL(timeout()), this, SLOT(slotStoppedTypingTimer()));
 
     connect(session, SIGNAL(contactAdded(const Kopete::Contact *,bool)),
@@ -111,7 +111,7 @@ void ChatTextEditPart::init(Kopete::ChatSession *session, QWidget *parent)
     connect(KGlobalSettings::self(), SIGNAL(kdisplayFontChanged()),
             this, SLOT(slotAppearanceChanged()));
 
-    connect(editor, SIGNAL(richTextSupportChanged()), this, SLOT(slotRichTextSupportChanged()));
+    connect(editor, &KopeteRichTextWidget::richTextSupportChanged, this, &ChatTextEditPart::slotRichTextSupportChanged);
 
     slotAppearanceChanged();
 
