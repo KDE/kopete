@@ -11,6 +11,8 @@ set(kopete_statistics_PART_SRCS
 
 ki18n_wrap_ui(kopete_statistics_PART_SRCS statisticswidgetbase.ui )
 
+qt5_add_resources(kopete_statistics_PART_SRCS statistics.qrc)
+
 qt5_add_dbus_adaptor(kopete_statistics_PART_SRCS org.kde.kopete.Statistics.xml
                      statisticsplugin.h StatisticsPlugin)
 
@@ -25,4 +27,3 @@ install(TARGETS kopete_statistics  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 ########### install files ###############
 install( FILES org.kde.kopete.Statistics.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR} )
 install( FILES kopete_statistics.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
-install( FILES statisticsui.rc  DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
