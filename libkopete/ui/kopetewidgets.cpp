@@ -10,8 +10,9 @@
 #include <addressbooklinkwidget.h>
 #include <kopetelistview.h>
 #include <kopetelistviewsearchline.h>
+#include <QStandardPaths>
 #ifndef EMBED_IMAGES
-#include <kstandarddirs.h>
+
 #endif
 
 class KopeteWidgets : public QWidgetPlugin
@@ -24,21 +25,21 @@ public:
     virtual QStringList keys() const
     {
         QStringList result;
+        result.reserve(m_widgets.count());
         for (WidgetInfos::ConstIterator it = m_widgets.begin(); it != m_widgets.end(); ++it) {
             result << it.key();
         }
         return result;
     }
 
-    virtual QWidget *create(const QString &key, QWidget *parent = 0, const char *name = 0);
+    virtual QWidget *create(const QString &key, QWidget *parent = nullptr, const char *name = nullptr);
 
     virtual QIcon iconSet(const QString &key) const
     {
 #ifdef EMBED_IMAGES
         QPixmap pix(m_widgets[key].iconSet);
 #else
-        QPixmap pix(KStandardDirs::locate("data",
-                                          QLatin1String("kopetewidgets/pics/") + m_widgets[key].iconSet));
+        QPixmap pix(QStandardPaths::locate(QStandardPaths::GenericDataLocation, QLatin1String("kopetewidgets/pics/") + m_widgets[key].iconSet));
 #endif
         return QIcon(pix);
     }
@@ -137,13 +138,9 @@ QWidget *KopeteWidgets::create(const QString &key, QWidget *parent, const char *
 {
     if (key == QLatin1String("Kopete::UI::AddressBookLinkWidget")) {
         return new Kopete::UI::AddressBookLinkWidget(parent, name);
-    }
-
-    if (key == QLatin1String("Kopete::UI::ListView::ListView")) {
+    } else if (key == QLatin1String("Kopete::UI::ListView::ListView")) {
         return new Kopete::UI::ListView::ListView(parent, name);
-    }
-
-    if (key == QLatin1String("Kopete::UI::ListView::SearchLine")) {
+    } else if (key == QLatin1String("Kopete::UI::ListView::SearchLine")) {
         return new Kopete::UI::ListView::SearchLine(parent, 0, name);
     }
 
