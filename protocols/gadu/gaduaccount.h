@@ -35,7 +35,6 @@
 #include <qmap.h>
 #include <qstring.h>
 #include <QAction>
-#include <kfiledialog.h>
 
 class GaduAccountPrivate;
 

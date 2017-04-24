@@ -37,7 +37,7 @@
 
 #include <qinputdialog.h>
 
-#include <kfiledialog.h>
+#include <qfiledialog.h>
 
 #include "kopeteaccount.h"
 #include "kopetechatsessionmanager.h"
@@ -360,9 +360,9 @@ void OscarContact::sendFile( const QUrl &sourceURL, const QString &altFileName, 
 	QStringList files;
 
 	//If the file location is null, then get it from a file open dialog
-	if( !sourceURL.isValid() )
-		files = KFileDialog::getOpenFileNames( KUrl() ,"*", 0l  , i18n( "Kopete File Transfer" ));
-    else {
+    if( !sourceURL.isValid() ) {
+        files = QFileDialog::getOpenFileNames( nullptr, i18n( "Kopete File Transfer" ), QString() , "*");
+    } else {
         //FIXME KF5 files << sourceURL.path(KUrl::RemoveTrailingSlash);
     }
 

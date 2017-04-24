@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QtCore/QTimerEvent>
 
-#include <kfiledialog.h>
+#include <qfiledialog.h>
 #include <kfileitem.h>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
@@ -548,7 +548,7 @@ QUrl Kopete::TransferManager::getSaveFile(const QUrl &startDir) const
 {
     QUrl url = startDir;
     for (;;) {
-        url = KFileDialog::getSaveUrl(url, QStringLiteral("*"), 0, i18n("File Transfer"));
+        url = QFileDialog::getSaveFileUrl(nullptr, i18n("File Transfer"), url, QStringLiteral("*"));
         if (!url.isValid()) {
             return url;
         }
@@ -589,7 +589,7 @@ QUrl Kopete::TransferManager::getSaveDir(const QUrl &startDir) const
 {
     QUrl url = startDir;
     for (;;) {
-        url = KFileDialog::getExistingDirectoryUrl(url, 0, i18n("File Transfer"));
+        url = QFileDialog::getExistingDirectoryUrl(nullptr,i18n("File Transfer"), url);
         if (!url.isValid()) {
             return url;
         }
