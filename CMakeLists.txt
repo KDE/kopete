@@ -2,10 +2,6 @@ project(kopete)
 
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 
-if (POLICY CMP0063)
-    cmake_policy(SET CMP0063 NEW)
-endif()
-
 set(KOPETE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(KOPETE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -42,7 +38,7 @@ find_package(KF5Contacts ${KCONTACTS_LIB_VERSION} CONFIG REQUIRED)
 find_package(KF5IdentityManagement ${KCONTACTS_LIB_VERSION} CONFIG REQUIRED)
 
 include(KDEInstallDirs)
-include(KDECompilerSettings)
+include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDECMakeSettings)
 include(FeatureSummary)
 include(ECMAddTests)
