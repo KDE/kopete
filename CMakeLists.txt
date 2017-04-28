@@ -16,24 +16,22 @@ find_package(Phonon4Qt5 REQUIRED NO_MODULE)
 find_package(Qt5 ${REQUIRED_QT_VERSION} NO_MODULE REQUIRED Core)
 find_package(Qt5 ${REQUIRED_QT_VERSION} REQUIRED COMPONENTS Widgets Xml Sql Test)
 find_package(KF5 ${KF5_VERSION} REQUIRED COMPONENTS
-	CoreAddons
-	I18n
-	DocTools
-	KCMUtils
-	KHtml
-	NotifyConfig
-	Parts
-	Wallet
-	KDELibs4Support
-        TextEditor
-        Crash
-        DBusAddons
-	#[[Phonon]]
+    Config
+    CoreAddons
+    Crash
+    DBusAddons
+    DocTools
+    Emoticons
+    I18n
+    KCMUtils
+    KHtml
+    NotifyConfig
+    Parts
+    TextEditor
+    Wallet
+    KDELibs4Support
 )
 
-find_package(KF5Config ${KF5_VERSION} CONFIG REQUIRED)
-find_package(KF5Emoticons ${KF5_VERSION} CONFIG REQUIRED)
-find_package(KF5DBusAddons ${KF5_VERSION} CONFIG REQUIRED)
 find_package(KF5Contacts ${KCONTACTS_LIB_VERSION} CONFIG REQUIRED)
 find_package(KF5IdentityManagement ${KCONTACTS_LIB_VERSION} CONFIG REQUIRED)
 
@@ -45,7 +43,6 @@ include(ECMAddTests)
 include(ECMAddAppIcon)
 include(ECMInstallIcons)
 include(ECMQtDeclareLoggingCategory)
-include_directories(${PHONON_INCLUDES})
 
 if(WIN32)
     set(CMAKE_REQUIRED_LIBRARIES ${KDEWIN32_LIBRARIES})
