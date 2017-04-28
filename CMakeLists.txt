@@ -1,6 +1,6 @@
-project(kopete)
-
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+
+project(kopete)
 
 set(KOPETE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(KOPETE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
