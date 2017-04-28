@@ -50,20 +50,20 @@ include_directories(${PHONON_INCLUDES})
 if(WIN32)
     set(CMAKE_REQUIRED_LIBRARIES ${KDEWIN32_LIBRARIES})
     set(CMAKE_REQUIRED_INCLUDES ${KDEWIN32_INCLUDES})
-endif(WIN32)
+endif()
 
 add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
 
 if(WIN32)
     set(DISABLE_VIDEOSUPPORT ON)
-else (WIN32)
+else()
     option(DISABLE_VIDEOSUPPORT "Build Kopete without video-support" OFF)
-endif(WIN32)
+endif()
 
 if(DISABLE_VIDEOSUPPORT)
     add_definitions(-DVIDEOSUPPORT_DISABLED)
-endif(DISABLE_VIDEOSUPPORT)
+endif()
 
 set(LIBKLEO_LIB_VERSION_LIB "5.4.0")
 find_package(KF5Libkleo ${LIBKLEO_LIB_VERSION_LIB} CONFIG REQUIRED)
@@ -152,7 +152,7 @@ set_package_properties(ZLIB PROPERTIES DESCRIPTION "Zlib is a library implementi
 
 if(Q_WS_X11)
     macro_log_feature(X11_Xss_FOUND "libXss" "libXss provides access to screen server X11 extension" "" FALSE "" "Required for idle timer on X11")
-endif(Q_WS_X11)
+endif()
 
 set(KOPETE_INCLUDES
 
