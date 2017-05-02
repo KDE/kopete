@@ -43,6 +43,7 @@ include(ECMAddTests)
 include(ECMAddAppIcon)
 include(ECMInstallIcons)
 include(ECMQtDeclareLoggingCategory)
+include_directories(${PHONON_INCLUDES})
 
 if(WIN32)
     set(CMAKE_REQUIRED_LIBRARIES ${KDEWIN32_LIBRARIES})
