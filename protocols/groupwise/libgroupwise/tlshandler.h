@@ -32,7 +32,7 @@ class TLSHandler : public QObject
 {
     Q_OBJECT
 public:
-    TLSHandler(QObject *parent = 0);
+    TLSHandler(QObject *parent = nullptr);
     virtual ~TLSHandler();
 
     virtual void reset() = 0;

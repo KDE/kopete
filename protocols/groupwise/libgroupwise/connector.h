@@ -31,7 +31,7 @@ class LIBGROUPWISE_EXPORT Connector : public QObject
 {
     Q_OBJECT
 public:
-    Connector(QObject *parent = 0);
+    Connector(QObject *parent = nullptr);
     virtual ~Connector();
 
     virtual void connectToServer(const QString &server) = 0;

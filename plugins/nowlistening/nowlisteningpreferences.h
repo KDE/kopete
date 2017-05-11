@@ -36,7 +36,7 @@ class NowListeningPreferences : public KCModule
 {
     Q_OBJECT
 public:
-    explicit NowListeningPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+    explicit NowListeningPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
     virtual ~NowListeningPreferences();
     virtual void save();
     virtual void load();

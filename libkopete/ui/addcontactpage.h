@@ -35,7 +35,7 @@ class LIBKOPETE_EXPORT AddContactPage : public QWidget
     Q_OBJECT
 
 public:
-    AddContactPage(QWidget *parent = 0);
+    AddContactPage(QWidget *parent = nullptr);
     virtual ~AddContactPage();
     //Kopete::Protocol *protocol;
 

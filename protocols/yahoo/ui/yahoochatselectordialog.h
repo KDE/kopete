@@ -28,7 +28,7 @@ class YahooChatSelectorDialog : public KDialog
 {
 	Q_OBJECT
 public:
-	YahooChatSelectorDialog( QWidget *parent = 0);
+	YahooChatSelectorDialog( QWidget *parent = nullptr);
 	~YahooChatSelectorDialog();
 
 	Yahoo::ChatRoom selectedRoom();

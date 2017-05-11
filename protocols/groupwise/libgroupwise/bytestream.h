@@ -35,7 +35,7 @@ public:
     enum Error {
         ErrRead, ErrWrite, ErrCustom = 10
     };
-    ByteStream(QObject *parent = 0);
+    ByteStream(QObject *parent = nullptr);
     virtual ~ByteStream() = 0;
 
     virtual bool isOpen() const;

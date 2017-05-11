@@ -34,7 +34,7 @@ class JabberJingleContent : public QObject
 {
     Q_OBJECT
 public:
-    JabberJingleContent(JabberJingleSession *parent = 0, XMPP::JingleContent *c = 0);
+    JabberJingleContent(JabberJingleSession *parent = nullptr, XMPP::JingleContent *c = 0);
     ~JabberJingleContent();
 
     void setContent(XMPP::JingleContent *);

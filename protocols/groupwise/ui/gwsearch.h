@@ -38,7 +38,7 @@ class GroupWiseContactSearch : public QWidget, public Ui::GroupWiseContactSearch
 Q_OBJECT
 public:
 	GroupWiseContactSearch( GroupWiseAccount * account, QAbstractItemView::SelectionMode mode, bool onlineOnly, 
-			QWidget *parent = 0 );
+			QWidget *parent = nullptr );
 	virtual ~GroupWiseContactSearch();
 	QList< GroupWise::ContactDetails > selectedResults();
 Q_SIGNALS:

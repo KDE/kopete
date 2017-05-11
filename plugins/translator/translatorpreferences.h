@@ -35,7 +35,7 @@ class TranslatorPreferences : public KCModule
 {
     Q_OBJECT
 public:
-    explicit TranslatorPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+    explicit TranslatorPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
     ~TranslatorPreferences();
 
     virtual void save();

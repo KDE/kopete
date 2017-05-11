@@ -71,7 +71,7 @@ public:
 	/**
 	   \brief Constructs a new object with the given \a parent
 	*/
-	QJDnsSharedDebug(QObject *parent = 0);
+	QJDnsSharedDebug(QObject *parent = nullptr);
 
 	/**
 	   \brief Destroys the object
@@ -225,7 +225,7 @@ public:
 	/**
 	   \brief Constructs a new object with the given \a jdnsShared and \a parent
 	*/
-	QJDnsSharedRequest(QJDnsShared *jdnsShared, QObject *parent = 0);
+	QJDnsSharedRequest(QJDnsShared *jdnsShared, QObject *parent = nullptr);
 
 	/**
 	   \brief Destroys the object
@@ -434,7 +434,7 @@ public:
 	/**
 	   \brief Constructs a new object with the given \a mode and \a parent
 	*/
-	QJDnsShared(Mode mode, QObject *parent = 0);
+	QJDnsShared(Mode mode, QObject *parent = nullptr);
 
 	/**
 	   \brief Destroys the object

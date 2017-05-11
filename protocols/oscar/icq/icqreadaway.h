@@ -32,7 +32,7 @@ class ICQReadAway : public KDialog
 	Q_OBJECT
 
 	public:
-		explicit ICQReadAway(ICQContact *, QWidget *parent = 0, const char* name = "ICQReadAway");
+		explicit ICQReadAway(ICQContact *, QWidget *parent = nullptr, const char* name = "ICQReadAway");
 
 	private Q_SLOTS:
 		void slotFetchAwayMessage();

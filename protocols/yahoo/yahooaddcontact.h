@@ -40,7 +40,7 @@ private:
 	Ui::YahooAddContactBase *theDialog;
 
 public:
-	explicit YahooAddContact(YahooProtocol *owner, QWidget *parent = 0);
+	explicit YahooAddContact(YahooProtocol *owner, QWidget *parent = nullptr);
 	~YahooAddContact();
 
 	bool validateData() Q_DECL_OVERRIDE;

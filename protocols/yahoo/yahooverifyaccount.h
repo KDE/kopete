@@ -38,7 +38,7 @@ private:
 	KTemporaryFile *mFile;
 	Ui::YahooVerifyAccountBase *mTheDialog;
 public:
-	explicit YahooVerifyAccount(Kopete::Account *account, QWidget *parent = 0);
+	explicit YahooVerifyAccount(Kopete::Account *account, QWidget *parent = nullptr);
 	~YahooVerifyAccount();
 
 	virtual bool validateData();

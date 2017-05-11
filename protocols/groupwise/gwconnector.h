@@ -36,7 +36,7 @@ class KNetworkConnector : public Connector
 Q_OBJECT
 
 public:
-	KNetworkConnector ( QObject *parent = 0 );
+	KNetworkConnector ( QObject *parent = nullptr );
 
 	virtual ~KNetworkConnector ();
 

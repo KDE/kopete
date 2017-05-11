@@ -50,7 +50,7 @@ Q_OBJECT
 		  EXTERNAL API 
 		 *************/
 		  
-		explicit Client( QObject *parent = 0, uint protocolVersion = 2 );
+		explicit Client( QObject *parent = nullptr, uint protocolVersion = 2 );
 		~Client();
 		void setOSName( const QString &name );
 		void setClientName( const QString &s );

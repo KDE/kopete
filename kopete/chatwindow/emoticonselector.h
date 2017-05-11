@@ -35,7 +35,7 @@ class QShowEvent;
 class EmoticonItem : public QListWidgetItem
 {
 public:
-    EmoticonItem(const QString &emoticonText, const QString &pixmapPath, QListWidget *parent = 0);
+    EmoticonItem(const QString &emoticonText, const QString &pixmapPath, QListWidget *parent = nullptr);
 //	~EmoticonLabel();
 
     QString text() const;

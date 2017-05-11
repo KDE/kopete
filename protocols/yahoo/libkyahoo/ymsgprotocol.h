@@ -26,7 +26,7 @@ class YMSGProtocol : public InputProtocolBase
 Q_OBJECT
 public:
 
-	YMSGProtocol( QObject *parent = 0 );
+	YMSGProtocol( QObject *parent = nullptr );
 	~YMSGProtocol();
 	
 	/** 

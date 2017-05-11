@@ -45,7 +45,7 @@ public:
 	/**
 	 * Display properties given a GroupWise::ContactDetails
 	 */
-	explicit GroupWiseContactProperties( GroupWise::ContactDetails contactDetails, QWidget *parent = 0 );
+	explicit GroupWiseContactProperties( GroupWise::ContactDetails contactDetails, QWidget *parent = nullptr );
 	~GroupWiseContactProperties();
 protected:
 	void setupProperties( QMap< QString, QVariant > serverProps );

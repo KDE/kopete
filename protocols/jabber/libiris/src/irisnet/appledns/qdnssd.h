@@ -116,7 +116,7 @@ public:
 		QByteArray domain;
 	};
 
-	QDnsSd(QObject *parent = 0);
+	QDnsSd(QObject *parent = nullptr);
 	~QDnsSd();
 
 	int query(const QByteArray &name, int qType);

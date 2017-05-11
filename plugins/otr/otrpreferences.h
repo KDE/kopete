@@ -36,7 +36,7 @@ class OTRPreferences : public KCModule
     Q_OBJECT
 
 public:
-    explicit OTRPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+    explicit OTRPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
     ~OTRPreferences();
 
 private:

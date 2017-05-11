@@ -58,7 +58,7 @@ class ServSockSignal : public QTcpServer
 {
 	Q_OBJECT
 public:
-	ServSockSignal(QObject *parent = 0);
+	ServSockSignal(QObject *parent = nullptr);
 
 signals:
 	void connectionReady(qintptr);

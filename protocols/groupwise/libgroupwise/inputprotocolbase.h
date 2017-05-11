@@ -36,7 +36,7 @@ public:
     enum EventProtocolState {
         Success, NeedMore, OutOfSync, ProtocolError
     };
-    InputProtocolBase(QObject *parent = 0);
+    InputProtocolBase(QObject *parent = nullptr);
     ~InputProtocolBase();
 
     /**

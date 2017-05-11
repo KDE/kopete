@@ -123,7 +123,7 @@ public:
 		QList<Record> additionalRecords;
 	};
 
-	QJDns(QObject *parent = 0);
+	QJDns(QObject *parent = nullptr);
 	~QJDns();
 
 	bool init(Mode mode, const QHostAddress &address);

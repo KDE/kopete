@@ -44,7 +44,7 @@ class StatisticsDialog : public KDialog
 public:
     typedef QPair<QDate, QString> StatusPair;
 
-    StatisticsDialog(StatisticsContact *contact, StatisticsDB *db, QWidget *parent = 0);
+    StatisticsDialog(StatisticsContact *contact, StatisticsDB *db, QWidget *parent = nullptr);
     ~StatisticsDialog();
 
     QSize sizeHint() const Q_DECL_OVERRIDE

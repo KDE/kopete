@@ -34,7 +34,7 @@ public:
         AllowAllMessages, AllowNoMessagesExceptWhiteList, AllowAllMessagesExceptBlackList
     };
 
-    explicit PrivacyPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+    explicit PrivacyPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
     ~PrivacyPreferences();
 
     void save() Q_DECL_OVERRIDE;

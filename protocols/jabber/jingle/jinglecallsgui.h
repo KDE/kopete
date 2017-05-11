@@ -57,7 +57,7 @@ class TreeItem;
 class JingleCallsModel : public QAbstractItemModel
 {
 public:
-    JingleCallsModel(const QList<JabberJingleSession *> &, QObject *parent = 0);
+    JingleCallsModel(const QList<JabberJingleSession *> &, QObject *parent = nullptr);
     ~JingleCallsModel();
 
     QModelIndex index(int, int, const QModelIndex &parent = QModelIndex()) const;
@@ -86,7 +86,7 @@ private:
 class TreeItem
 {
 public:
-    TreeItem(const QVector<QVariant> &data, TreeItem *parent = 0);
+    TreeItem(const QVector<QVariant> &data, TreeItem *parent = nullptr);
     ~TreeItem();
 
     void appendChild(TreeItem *child);

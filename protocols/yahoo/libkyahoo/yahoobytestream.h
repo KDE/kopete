@@ -33,7 +33,7 @@ class KNetworkByteStream : public ByteStream
 Q_OBJECT
 
 public:
-	KNetworkByteStream ( QObject *parent = 0 );
+	KNetworkByteStream ( QObject *parent = nullptr );
 
 	~KNetworkByteStream ();
 

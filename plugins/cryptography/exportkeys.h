@@ -37,7 +37,7 @@ class ExportKeys : public KDialog
 {
     Q_OBJECT
 public:
-    explicit ExportKeys (QList<Kopete::MetaContact *> mcs, QWidget *parent = 0);
+    explicit ExportKeys (QList<Kopete::MetaContact *> mcs, QWidget *parent = nullptr);
 
     ~ExportKeys();
 

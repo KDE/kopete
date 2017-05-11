@@ -46,7 +46,7 @@ public:
         SystemShutdown
     };
 
-    Stream(QObject *parent = 0);
+    Stream(QObject *parent = nullptr);
     virtual ~Stream();
 
     virtual void close() = 0;

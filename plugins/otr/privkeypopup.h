@@ -34,7 +34,7 @@ class PrivKeyPopup : public KDialog
 {
     Q_OBJECT
 public:
-    PrivKeyPopup(QWidget *parent = 0);
+    PrivKeyPopup(QWidget *parent = nullptr);
     ~PrivKeyPopup();
 
     void setCloseLock(bool locked);

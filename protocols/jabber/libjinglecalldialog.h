@@ -37,7 +37,7 @@ class LibjingleCallDialog : public QDialog, public Ui::LibjingleCallDialog
 		 * use method show() to open and show voice call dialog
 		 * use method hide() to close and hide voice call dialog
 		 */
-		LibjingleCallDialog(QWidget *parent = 0);
+		LibjingleCallDialog(QWidget *parent = nullptr);
 
 	protected:
 

@@ -31,7 +31,7 @@ class JingleContentDialog : public QDialog
 {
     Q_OBJECT
 public:
-    JingleContentDialog(QWidget *parent = 0);
+    JingleContentDialog(QWidget *parent = nullptr);
     ~JingleContentDialog();
     void setContents(QList<XMPP::JingleContent *> c);
     void setSession(XMPP::JingleSession *s);

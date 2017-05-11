@@ -443,7 +443,7 @@ private:
 		return calc_priority(typePref, localPref, componentId);
 	}
 
-	static QUdpSocket *takeFromSocketList(QList<QUdpSocket*> *socketList, const QHostAddress &addr, QObject *parent = 0)
+	static QUdpSocket *takeFromSocketList(QList<QUdpSocket*> *socketList, const QHostAddress &addr, QObject *parent = nullptr)
 	{
 		for(int n = 0; n < socketList->count(); ++n)
 		{

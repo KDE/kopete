@@ -39,7 +39,7 @@ public:
      * The parameter @p parent is handled by
      * QTreeWidget.
      */
-    AccountSelector(QWidget *parent = 0);
+    AccountSelector(QWidget *parent = nullptr);
 
     /**
      * Constructor for a list of accounts for one protocol only
@@ -48,7 +48,7 @@ public:
      * QTreeWidget. @p proto defines the protocol whose accounts are
      * shown in the list
      */
-    explicit AccountSelector(Kopete::Protocol *proto, QWidget *parent = 0);
+    explicit AccountSelector(Kopete::Protocol *proto, QWidget *parent = nullptr);
 
     /**
      * Destructor.

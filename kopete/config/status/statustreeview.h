@@ -23,7 +23,7 @@
 class StatusTreeView : public QTreeView
 {
 public:
-    StatusTreeView(QWidget *parent = 0) : QTreeView(parent)
+    StatusTreeView(QWidget *parent = nullptr) : QTreeView(parent)
     {
     }
 

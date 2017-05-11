@@ -42,7 +42,7 @@ private:
 	QString m_photoPath;
 
 public:
-	YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0);
+	YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = nullptr);
 
 	bool validateData() Q_DECL_OVERRIDE;
 

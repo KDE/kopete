@@ -40,7 +40,7 @@ class CryptographyPreferences : public KCModule
     Q_OBJECT
 
 public:
-    explicit CryptographyPreferences (QWidget *parent = 0, const QVariantList &args = QVariantList());
+    explicit CryptographyPreferences (QWidget *parent = nullptr, const QVariantList &args = QVariantList());
     virtual ~CryptographyPreferences();
     virtual void save();
     virtual void load();

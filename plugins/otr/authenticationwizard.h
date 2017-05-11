@@ -43,7 +43,7 @@ class AuthenticationWizard : public QWizard
 {
     Q_OBJECT
 public:
-    explicit AuthenticationWizard(QWidget *parent = 0, ConnContext *context = 0, Kopete::ChatSession *session = 0, bool initiate = true, const QString &question = QString());
+    explicit AuthenticationWizard(QWidget *parent = nullptr, ConnContext *context = 0, Kopete::ChatSession *session = 0, bool initiate = true, const QString &question = QString());
     ~AuthenticationWizard();
 
     static AuthenticationWizard *findWizard(Kopete::ChatSession *session);
