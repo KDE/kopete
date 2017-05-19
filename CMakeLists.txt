@@ -171,6 +171,7 @@ add_subdirectory(icons)
 add_subdirectory(sounds)
 add_subdirectory(styles)
 add_subdirectory(doc)
+add_subdirectory(tests)
 
 install( FILES kopete.categories DESTINATION ${KDE_INSTALL_CONFDIR} )
 

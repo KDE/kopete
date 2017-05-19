@@ -9,7 +9,6 @@ add_subdirectory( private )
 if(NOT DISABLE_VIDEOSUPPORT)
     add_subdirectory( avdevice )
 endif(NOT DISABLE_VIDEOSUPPORT)
-#add_subdirectory( tests )
 
 include_directories( ${KOPETE_INCLUDES} )
 

@@ -1,6 +1,3 @@
-
-add_subdirectory( tests ) 
-
 include_directories(
     ${KOPETE_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/utils ${CMAKE_CURRENT_SOURCE_DIR}/tasks
     )
@@ -8,7 +5,7 @@ include_directories(
 
 ########### next target ###############
 
-set(liboscar_SRCS 
+set(liboscar_SRCS
     oscarutils.cpp
     client.cpp
     inputprotocolbase.cpp
@@ -99,8 +96,3 @@ set_target_properties( oscar PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS oscar ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
-
-
-
-
-
