@@ -37,7 +37,7 @@ class PipesPreferences : public KCModule
     Q_OBJECT
 
 public:
-    explicit PipesPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+    explicit PipesPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
     ~PipesPreferences();
 
     /*

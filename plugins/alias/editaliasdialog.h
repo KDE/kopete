@@ -28,7 +28,7 @@ class EditAliasDialog : public QDialog, public Ui::AliasDialog
 {
     Q_OBJECT
 public:
-    EditAliasDialog(QWidget *parent = 0);
+    EditAliasDialog(QWidget *parent = nullptr);
     virtual ~EditAliasDialog();
 
 public slots:

@@ -32,7 +32,7 @@ class SMSEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
     Q_OBJECT
 public:
-    SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0);
+    SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = nullptr);
     ~SMSEditAccountWidget();
 
     bool validateData();

@@ -32,7 +32,7 @@ class HistoryPreferences : public KCModule
 {
     Q_OBJECT
 public:
-    explicit HistoryPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+    explicit HistoryPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
     ~HistoryPreferences();
 
     virtual void save();

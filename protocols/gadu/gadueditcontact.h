@@ -42,8 +42,8 @@ class GaduEditContact : public KDialog
     Q_OBJECT
 
 public:
-    GaduEditContact(GaduAccount *, GaduContact *, QWidget *parent = 0);
-    GaduEditContact(GaduAccount *, GaduContactsList::ContactLine *, QWidget *parent = 0);
+    GaduEditContact(GaduAccount *, GaduContact *, QWidget *parent = nullptr);
+    GaduEditContact(GaduAccount *, GaduContactsList::ContactLine *, QWidget *parent = nullptr);
     ~GaduEditContact();
 protected slots:
     void slotApply();

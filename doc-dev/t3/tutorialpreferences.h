@@ -28,7 +28,7 @@ class TutorialPreferences : public KCModule
 {
     Q_OBJECT
 public:
-    explicit TutorialPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
+    explicit TutorialPreferences(QWidget *parent = nullptr, const QStringList &args = QStringList());
     ~TutorialPreferences();
     virtual void save();
     virtual void load();

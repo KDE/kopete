@@ -43,8 +43,8 @@ class GaduPublicDir : public KDialog
     Q_OBJECT
 
 public:
-    explicit GaduPublicDir(GaduAccount *, QWidget *parent = 0);
-    GaduPublicDir(GaduAccount *, int searchFor, QWidget *parent = 0);
+    explicit GaduPublicDir(GaduAccount *, QWidget *parent = nullptr);
+    GaduPublicDir(GaduAccount *, int searchFor, QWidget *parent = nullptr);
     ~GaduPublicDir();
     QPixmap iconForStatus(uint status);
 

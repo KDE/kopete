@@ -38,7 +38,7 @@ class GaduEditAccount : public QWidget, private Ui::GaduAccountEditUI, public Ko
     Q_OBJECT
 
 public:
-    GaduEditAccount(GaduProtocol *, Kopete::Account *, QWidget *parent = 0);
+    GaduEditAccount(GaduProtocol *, Kopete::Account *, QWidget *parent = nullptr);
     virtual bool validateData();
     Kopete::Account *apply();
 

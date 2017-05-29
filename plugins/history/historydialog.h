@@ -96,7 +96,7 @@ class HistoryDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit HistoryDialog(Kopete::MetaContact *mc, QWidget *parent = 0);
+    explicit HistoryDialog(Kopete::MetaContact *mc, QWidget *parent = nullptr);
     ~HistoryDialog();
 
     /**

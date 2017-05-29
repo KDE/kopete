@@ -53,7 +53,7 @@ Q_OBJECT
 		 * @param account The account we are editing. 0 if new should be created.
 		 * @param parent Inside what it will be showed.
 		 */
-		skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *account, QWidget *parent = 0L);
+		skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *account, QWidget *parent = nullptrL);
 		/**
 		 * Destructor.
 		 */
