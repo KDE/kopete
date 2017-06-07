@@ -22,12 +22,12 @@
 
 #include "filetransfertask.h"
 
-#include <QtCore/QFileInfo>
-#include <QtCore/QTextCodec>
-#include <QtNetwork/QHostAddress>
-#include <QtNetwork/QTcpServer>
-#include <QtNetwork/QTcpSocket>
-#include <QtXml/QDomDocument>
+#include <QFileInfo>
+#include <QTextCodec>
+#include <QHostAddress>
+#include <QTcpServer>
+#include <QTcpSocket>
+#include <QDomDocument>
 
 #include <ksocketfactory.h>
 #include <krandom.h>

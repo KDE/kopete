@@ -18,7 +18,7 @@
 #ifndef KOPETEIDLETIMER_H
 #define KOPETEIDLETIMER_H
 
-#include <QtCore/QObject>
+#include <QObject>
 
 #include "libkopete_export.h"
 

@@ -19,7 +19,7 @@
 
 #include <KApplication>
 
-#include <QtGui/QDrag>
+#include <QDrag>
 #include <QMimeData>
 #include <QMouseEvent>
 

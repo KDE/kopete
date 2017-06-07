@@ -25,7 +25,7 @@
 #ifndef NLMPRIS2_H
 #define NLMPRIS2_H
 
-#include <QtDBus/QtDBus>
+#include <QtDBus>
 #include "nlmediaplayer.h"
 
 class QDBusInterface;

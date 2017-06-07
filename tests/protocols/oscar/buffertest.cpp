@@ -13,7 +13,7 @@
     *************************************************************************
 */
 
-#include <QtTest/QtTest>
+#include <QtTest>
 #include "buffer.h"
 
 class BufferTest : public QObject

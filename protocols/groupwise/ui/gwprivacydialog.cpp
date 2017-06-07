@@ -22,8 +22,8 @@
 #include <QList>
 #include <QListWidget>
 #include <QStringList>
-#include <QtGui/QPainter>
-#include <QtGui/QPixmap>
+#include <QPainter>
+#include <QPixmap>
 #include <QLabel>
 
 #include <kdebug.h>

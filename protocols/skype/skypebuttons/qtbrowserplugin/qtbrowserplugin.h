@@ -23,10 +23,10 @@
 #ifndef QTBROWSERPLUGIN_H
 #define QTBROWSERPLUGIN_H
 
-#include <QtCore/QMetaObject>
-#include <QtCore/QFile>
-#include <QtCore/QDateTime>
-#include <QtGui/QPainter>
+#include <QMetaObject>
+#include <QFile>
+#include <QDateTime>
+#include <QPainter>
 #include <QMetaClassInfo>
 
 struct QtNPInstance;

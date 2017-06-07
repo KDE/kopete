@@ -25,7 +25,7 @@
 
 #include "logintask.h"
 
-#include <QtCore/QList>
+#include <QList>
 
 using namespace GroupWise;
 

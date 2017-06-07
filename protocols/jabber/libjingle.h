@@ -16,7 +16,7 @@
 #ifndef Libjingle_H
 #define Libjingle_H
 
-#include <QtCore/QObject>
+#include <QObject>
 #include <QProcess>
 #include <QHash>
 

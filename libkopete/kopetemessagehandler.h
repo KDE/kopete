@@ -17,8 +17,8 @@
 #ifndef KOPETEMESSAGEHANDLER_H
 #define KOPETEMESSAGEHANDLER_H
 
-#include <QtCore/QObject>
-#include <QtCore/QLinkedList>
+#include <QObject>
+#include <QLinkedList>
 
 #include "libkopete_export.h"
 

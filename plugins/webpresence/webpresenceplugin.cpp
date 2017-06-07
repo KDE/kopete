@@ -20,13 +20,13 @@
 
 #include "webpresenceplugin.h"
 
-#include <QtCore/QTimer>
-#include <QtCore/QFile>
-#include <QtCore/QTextCodec>
-#include <QtCore/QTextStream>
-#include <QtCore/QList>
-#include <QtCore/QDateTime>
-#include <QtXml/QDomDocument>
+#include <QTimer>
+#include <QFile>
+#include <QTextCodec>
+#include <QTextStream>
+#include <QList>
+#include <QDateTime>
+#include <QDomDocument>
 
 #include <kdebug.h>
 #include <kpluginfactory.h>

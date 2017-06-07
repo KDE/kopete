@@ -27,8 +27,8 @@
 #include <QExplicitlySharedDataPointer>
 #include <kiconloader.h>
 
-#include <QtCore/QObject>
-#include <QtCore/QFlags>
+#include <QObject>
+#include <QFlags>
 #include <QIcon>
 
 #include "kopeteonlinestatusmanager.h"

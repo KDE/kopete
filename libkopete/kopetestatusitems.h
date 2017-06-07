@@ -16,9 +16,9 @@
 #ifndef KOPETESTATUSITEMS_H
 #define KOPETESTATUSITEMS_H
 
-#include <QtCore/QObject>
-#include <QtCore/QList>
-#include <QtCore/QString>
+#include <QObject>
+#include <QList>
+#include <QString>
 
 #include "libkopete_export.h"
 #include "kopeteonlinestatusmanager.h"

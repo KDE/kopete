@@ -20,7 +20,7 @@
 #ifndef WEBPRESENCEPLUGIN_H
 #define WEBPRESENCEPLUGIN_H
 
-#include <QtCore/QList>
+#include <QList>
 
 #include <kurl.h>
 

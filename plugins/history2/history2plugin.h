@@ -18,8 +18,8 @@
 #ifndef HISTORYPLUGIN_H
 #define HISTORYPLUGIN_H
 
-#include <QtCore/QPointer>
-#include <QtCore/QMap>
+#include <QPointer>
+#include <QMap>
 
 #include "kopeteplugin.h"
 #include "kopetemessagehandler.h"

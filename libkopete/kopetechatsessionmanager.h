@@ -18,8 +18,8 @@
 #ifndef KOPETECHATSESSIONMANAGER_H
 #define KOPETECHATSESSIONMANAGER_H
 
-#include <QtCore/QObject>
-#include <QtCore/QList>
+#include <QObject>
+#include <QList>
 
 #include "kopetechatsession.h"
 #include "kopetemessage.h"

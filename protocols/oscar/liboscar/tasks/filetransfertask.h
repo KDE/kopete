@@ -24,9 +24,9 @@
 
 #include "task.h"
 
-#include <QtCore/QFile>
-#include <QtCore/QTimer>
-#include <QtNetwork/QAbstractSocket>
+#include <QFile>
+#include <QTimer>
+#include <QAbstractSocket>
 
 class QTcpServer;
 class QTcpSocket;

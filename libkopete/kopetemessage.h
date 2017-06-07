@@ -22,9 +22,9 @@
 #ifndef KOPETEMESSAGE_H
 #define KOPETEMESSAGE_H
 
-#include <QtCore/QSharedData>
-#include <QtCore/QList>
-#include <QtCore/Qt>
+#include <QSharedData>
+#include <QList>
+#include <Qt>
 
 #include "libkopete_export.h"
 

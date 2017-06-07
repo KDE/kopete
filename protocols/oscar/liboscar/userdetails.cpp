@@ -24,7 +24,7 @@
 #include "buffer.h"
 #include "oscarutils.h"
 #include "oscardebug.h"
-#include <QtCore/QTextCodec>
+#include <QTextCodec>
 
 #define OSCAR_USERINFO_DEBUG
 

@@ -19,7 +19,7 @@
 #ifndef KOPETEGROUP_H
 #define KOPETEGROUP_H
 
-#include <QtCore/QList>
+#include <QList>
 
 #include "kopetecontactlistelement.h"
 

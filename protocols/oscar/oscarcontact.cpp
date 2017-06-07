@@ -22,11 +22,11 @@
 #include <qtextcodec.h>
 #include <qtimer.h>
 #include <QCryptographicHash>
-#include <QtXml/QDomDocument>
-#include <QtXml/QDomNodeList>
-#include <QtGui/QTextDocument>
-#include <QtGui/QTextCharFormat>
-#include <QtGui/QTextBlock>
+#include <QDomDocument>
+#include <QDomNodeList>
+#include <QTextDocument>
+#include <QTextCharFormat>
+#include <QTextBlock>
 
 #include <QAction>
 #include <kdebug.h>

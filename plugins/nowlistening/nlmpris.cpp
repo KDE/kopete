@@ -25,7 +25,7 @@
 
 #include <kdebug.h>
 
-#include <QtDBus/QtDBus>
+#include <QtDBus>
 
 struct mprisPlayerStatus
 {

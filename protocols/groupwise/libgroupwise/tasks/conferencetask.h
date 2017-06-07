@@ -23,7 +23,7 @@
 
 #include "gwerror.h"
 #include "eventtask.h"
-#include <QtCore/QList>
+#include <QList>
 
 /**
  * This Task is responsible for handling all conference related events, and signalling them up to @ref GroupWiseAccount

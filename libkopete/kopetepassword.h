@@ -17,7 +17,7 @@
 #ifndef KOPETEPASSWORD_H
 #define KOPETEPASSWORD_H
 
-#include <QtCore/QObject>
+#include <QObject>
 #include <QPixmap>
 
 #include "libkopete_export.h"

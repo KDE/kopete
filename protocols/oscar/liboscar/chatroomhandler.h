@@ -20,7 +20,7 @@
 #ifndef CHATROOMHANDLER_H
 #define CHATROOMHANDLER_H
 
-#include <QtCore/QObject>
+#include <QObject>
 #include "oscartypes.h"
 
 #include "liboscar_export.h"

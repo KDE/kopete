@@ -25,7 +25,7 @@
 
 #include <kdebug.h>
 
-#include <QtDBus/QtDBus>
+#include <QtDBus>
 
 NLmpris2::NLmpris2() : NLMediaPlayer()
 {

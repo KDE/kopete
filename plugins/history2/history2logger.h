@@ -18,10 +18,10 @@
 #ifndef HISTORYLOGGER_H
 #define HISTORYLOGGER_H
 
-#include <QtCore/QObject>
-#include <QtCore/QList>
-#include <QtCore/QMap>
-#include <QtXml/QDomDocument>
+#include <QObject>
+#include <QList>
+#include <QMap>
+#include <QDomDocument>
 #include <QSqlDatabase>
 #include <QMutex>
 

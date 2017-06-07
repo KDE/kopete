@@ -17,7 +17,7 @@
 #ifndef OSCARVERSIONUPDATER_H
 #define OSCARVERSIONUPDATER_H
 
-#include <QtCore/QObject>
+#include <QObject>
 
 #include <oscartypes.h>
 #include <kconfiggroup.h>

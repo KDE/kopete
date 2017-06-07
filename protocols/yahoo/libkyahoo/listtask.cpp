@@ -16,8 +16,8 @@
 
 #include "listtask.h"
 
-#include <QtCore/QString>
-#include <QtCore/QStringList>
+#include <QString>
+#include <QStringList>
 
 #include "transfer.h"
 #include "ymsgtransfer.h"

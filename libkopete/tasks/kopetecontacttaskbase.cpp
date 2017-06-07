@@ -17,7 +17,7 @@
 #include "kopetecontacttaskbase.h"
 
 // Qt includes
-#include <QtCore/QPointer>
+#include <QPointer>
 
 // KDE includes
 #include "libkopete_debug.h"

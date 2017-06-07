@@ -19,8 +19,8 @@
 
 #include "oftmetatransfer.h"
 
-#include <QtCore/QFileInfo>
-#include <QtNetwork/QTcpSocket>
+#include <QFileInfo>
+#include <QTcpSocket>
 
 #include <kdebug.h>
 

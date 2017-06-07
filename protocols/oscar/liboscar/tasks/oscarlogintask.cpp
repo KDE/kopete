@@ -18,7 +18,7 @@
 */
 #include "oscarlogintask.h"
 
-#include <QtCore/QCryptographicHash>
+#include <QCryptographicHash>
 
 #include <stdlib.h>
 #include <kdebug.h>

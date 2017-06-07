@@ -17,7 +17,7 @@
 #ifndef OSCARTESTBASE_H
 #define OSCARTESTBASE_H
 
-#include <QtTest/QtTest>
+#include <QtTest>
 #include <QObject>
 
 class Buffer;

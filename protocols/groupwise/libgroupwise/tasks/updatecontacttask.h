@@ -25,7 +25,7 @@
 
 #include "libgroupwise_export.h"
 #include "updateitemtask.h"
-#include <QtCore/QList>
+#include <QList>
 
 /**
  * Renames a contact on the server

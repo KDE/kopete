@@ -16,7 +16,7 @@
 #ifndef KOPETESTATUSMANAGER_H
 #define KOPETESTATUSMANAGER_H
 
-#include <QtCore/QObject>
+#include <QObject>
 
 #include "libkopete_export.h"
 #include "kopetestatusmessage.h"

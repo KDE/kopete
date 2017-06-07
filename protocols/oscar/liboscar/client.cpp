@@ -26,7 +26,7 @@
 #include <QByteArray>
 #include <QPointer>
 #include <QTextCodec>
-#include <QtNetwork/QSslSocket>
+#include <QSslSocket>
 
 #include <kdebug.h> //for qDebug()
 #include <KLocalizedString>

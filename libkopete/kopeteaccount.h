@@ -25,9 +25,9 @@
 #include "kopetestatusmessage.h"
 #include "libkopete_export.h"
 
-#include <QtCore/QObject>
+#include <QObject>
 #include <QPixmap>
-#include <QtCore/QHash>
+#include <QHash>
 
 #include <kconfiggroup.h>
 #include <kiconloader.h>

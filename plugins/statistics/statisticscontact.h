@@ -21,9 +21,9 @@
 #include "kopeteonlinestatus.h"
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
-#include <QtCore/QList>
-#include <QtCore/QTime>
-#include <QtCore/QPointer>
+#include <QList>
+#include <QTime>
+#include <QPointer>
 
 class StatisticsDB;
 class QDateTime;

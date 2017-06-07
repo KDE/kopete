@@ -23,11 +23,11 @@
 
 #include <stdlib.h>
 
-#include <QtCore/QDateTime>
-#include <QtCore/QLatin1String>
-#include <QtCore/QPointer>
-#include <QtCore/QRegExp>
-#include <QtCore/QTextCodec>
+#include <QDateTime>
+#include <QLatin1String>
+#include <QPointer>
+#include <QRegExp>
+#include <QTextCodec>
 #include <QTextDocument>
 #include <QColor>
 

@@ -18,7 +18,7 @@
 #ifndef __kopeteidentitymanager_h__
 #define __kopeteidentitymanager_h__
 
-#include <QtCore/QObject>
+#include <QObject>
 
 #include "libkopete_debug.h"
 #include "libkopete_export.h"

@@ -21,9 +21,9 @@
 
 #include "oscarclientstream.h"
 
-#include <QtCore/QQueue>
-#include <QtCore/QTimer>
-#include <QtNetwork/QHostAddress>
+#include <QQueue>
+#include <QTimer>
+#include <QHostAddress>
 
 #include <kdebug.h>
 

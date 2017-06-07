@@ -19,8 +19,8 @@
 #ifndef KOPETECONTACTLISTELEMENT_H
 #define KOPETECONTACTLISTELEMENT_H
 
-#include <QtCore/QList>
-#include <QtCore/QMap>
+#include <QList>
+#include <QMap>
 
 #include "libkopete_export.h"
 #include "kopetepropertycontainer.h"

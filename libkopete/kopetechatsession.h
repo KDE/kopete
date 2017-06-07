@@ -24,7 +24,7 @@
 #ifndef KOPETECHATSESSION_H
 #define KOPETECHATSESSION_H
 
-#include <QtCore/QObject>
+#include <QObject>
 #include <kxmlguiclient.h>
 
 #include "libkopete_export.h"

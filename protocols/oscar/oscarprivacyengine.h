@@ -17,11 +17,11 @@
 #ifndef OSCARPRIVACYENGINE_H
 #define OSCARPRIVACYENGINE_H
 
-#include <QtCore/QObject>
+#include <QObject>
 
-#include <QtCore/QMap>
-#include <QtCore/QSet>
-#include <QtGui/QStandardItemModel>
+#include <QMap>
+#include <QSet>
+#include <QStandardItemModel>
 
 #include "oscar_export.h"
 

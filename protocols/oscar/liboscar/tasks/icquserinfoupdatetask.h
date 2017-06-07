@@ -19,7 +19,7 @@
 #ifndef ICQUSERINFOUPDATETASK_H
 #define ICQUSERINFOUPDATETASK_H
 
-#include <QtCore/QList>
+#include <QList>
 
 #include "icqtask.h"
 #include "icquserinfo.h"

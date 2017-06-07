@@ -20,8 +20,8 @@
 #ifndef OFTMETATRANSFER_H
 #define OFTMETATRANSFER_H
 
-#include <QtCore/QFile>
-#include <QtNetwork/QAbstractSocket>
+#include <QFile>
+#include <QAbstractSocket>
 
 #include "oscartypes.h"
 

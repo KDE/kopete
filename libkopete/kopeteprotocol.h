@@ -21,7 +21,7 @@
 #ifndef KOPETEPROTOCOL_H
 #define KOPETEPROTOCOL_H
 
-#include <QtCore/QFlags>
+#include <QFlags>
 
 #include "kopeteplugin.h"
 #include "kopeteonlinestatus.h"

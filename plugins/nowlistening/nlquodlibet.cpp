@@ -26,9 +26,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <QtCore/QDir>
-#include <QtCore/QFileInfo>
-#include <QtCore/QStringList>
+#include <QDir>
+#include <QFileInfo>
+#include <QStringList>
 
 #include <KDebug>
 #include <KDirWatch>

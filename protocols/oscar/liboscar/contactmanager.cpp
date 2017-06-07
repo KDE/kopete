@@ -20,7 +20,7 @@
 
 #include "contactmanager.h"
 
-#include <QtCore/QSet>
+#include <QSet>
 
 #include <kdebug.h>
 

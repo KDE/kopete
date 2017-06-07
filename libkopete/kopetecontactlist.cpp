@@ -21,10 +21,10 @@
 #include "kopetecontactlist.h"
 
 // Qt includes
-#include <QtCore/QDir>
-#include <QtCore/QRegExp>
-#include <QtCore/QTimer>
-#include <QtCore/QTextStream>
+#include <QDir>
+#include <QRegExp>
+#include <QTimer>
+#include <QTextStream>
 
 // KDE includes
 //#include <kcontacts/stdaddressbook.h>

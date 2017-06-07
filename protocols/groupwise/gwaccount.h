@@ -22,7 +22,7 @@
 #ifndef GW_ACCOUNT_H
 #define GW_ACCOUNT_H
 
-#include <QtCore/QList>
+#include <QList>
 #include <QtCrypto>
 
 #include <qaction.h>

@@ -19,7 +19,7 @@
 #ifndef HISTORYDIALOG_H
 #define HISTORYDIALOG_H
 
-#include <QtCore/QList>
+#include <QList>
 
 #include <QDialog>
 #include <QUrl>

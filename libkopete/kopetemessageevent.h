@@ -21,7 +21,7 @@
 #ifndef KOPETEMESSAGEEVENT_H
 #define KOPETEMESSAGEEVENT_H
 
-#include <QtCore/QObject>
+#include <QObject>
 
 #include "kopetemessage.h"
 #include "libkopete_export.h"

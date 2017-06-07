@@ -22,7 +22,7 @@
 #include "icqtask.h"
 #include "icquserinfo.h"
 
-#include <QtCore/QMap>
+#include <QMap>
 
 class Transfer;
 

@@ -20,7 +20,7 @@
 #include "kopetetransfermanager.h"
 
 #include <QDebug>
-#include <QtCore/QTimerEvent>
+#include <QTimerEvent>
 
 #include <qfiledialog.h>
 #include <kfileitem.h>

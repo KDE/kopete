@@ -17,7 +17,7 @@
 #ifndef HISTORYGUICLIENT_H
 #define HISTORYGUICLIENT_H
 
-#include <QtCore/QObject>
+#include <QObject>
 
 #include <kxmlguiclient.h>
 

@@ -23,7 +23,7 @@
 
 #include <libgadu.h>
 
-#include <QtGui/QColor>
+#include <QColor>
 class QString;
 
 namespace Kopete {

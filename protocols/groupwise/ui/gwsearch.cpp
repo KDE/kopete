@@ -18,7 +18,7 @@
 */
 
 #include "gwsearch.h"
-#include <QtCore/QAbstractItemModel>
+#include <QAbstractItemModel>
 #include <QComboBox>
 #include <QHeaderView>
 #include <QLabel>

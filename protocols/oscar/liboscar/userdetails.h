@@ -18,8 +18,8 @@
 #ifndef USERDETAILS_H
 #define USERDETAILS_H
 
-#include <QtCore/QBitArray>
-#include <QtNetwork/QHostAddress>
+#include <QBitArray>
+#include <QHostAddress>
 #include "oscartypes.h"
 #include "oscar_export.h"
 

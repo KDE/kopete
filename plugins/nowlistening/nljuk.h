@@ -26,7 +26,7 @@
 #ifndef NLJUK_H
 #define NLJUK_H
 
-#include <QtDBus/QtDBus>
+#include <QtDBus>
 #include "nlmediaplayer.h"
 
 class QDBusInterface;

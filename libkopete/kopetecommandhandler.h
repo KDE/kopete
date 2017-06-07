@@ -17,7 +17,7 @@
 #ifndef KOPETECOMMANDHANDLER_H
 #define KOPETECOMMANDHANDLER_H
 
-#include <QtCore/QMultiHash>
+#include <QMultiHash>
 
 #include <QKeySequence>
 #include <kprocess.h>

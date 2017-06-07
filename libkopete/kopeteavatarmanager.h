@@ -17,8 +17,8 @@
 #ifndef KOPETE_AVATARMANAGER_H
 #define KOPETE_AVATARMANAGER_H
 
-#include <QtCore/QObject>
-#include <QtCore/QList>
+#include <QObject>
+#include <QList>
 #include <QImage>
 
 #include <kjob.h>

@@ -16,8 +16,8 @@
 
 #include "oscarversionupdater.h"
 
-#include <QtXml/QDomDocument>
-#include <QtCore/QMutex>
+#include <QDomDocument>
+#include <QMutex>
 
 #include <kdebug.h>
 #include <kio/job.h>

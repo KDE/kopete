@@ -17,7 +17,7 @@
 #ifndef KOPETEVIEWMANAGER_H
 #define KOPETEVIEWMANAGER_H
 
-#include <QtCore/QObject>
+#include <QObject>
 
 #include "kopetemessage.h"
 #include "libkopete_export.h"

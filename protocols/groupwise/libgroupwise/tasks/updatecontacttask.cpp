@@ -21,7 +21,7 @@
 #include "updatecontacttask.h"
 #include "gwfield.h"
 
-#include <QtCore/QList>
+#include <QList>
 
 using namespace GroupWise;
 

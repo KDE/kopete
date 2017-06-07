@@ -19,8 +19,8 @@
 #ifndef KOPETEPLUGINMANAGER_H
 #define KOPETEPLUGINMANAGER_H
 
-#include <QtCore/QObject>
-#include <QtCore/QList>
+#include <QObject>
+#include <QList>
 #include "libkopete_export.h"
 
 class KPluginInfo;

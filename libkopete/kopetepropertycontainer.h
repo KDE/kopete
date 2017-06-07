@@ -21,7 +21,7 @@
 #ifndef KOPETEPROPERTYCONTAINER_H
 #define KOPETEPROPERTYCONTAINER_H
 
-#include <QtCore/QObject>
+#include <QObject>
 
 
 #include "kopeteglobal.h"

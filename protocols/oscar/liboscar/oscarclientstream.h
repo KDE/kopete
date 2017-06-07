@@ -25,7 +25,7 @@
 #include "stream.h"
 #include "liboscar_export.h"
 
-#include <QtNetwork/QSslSocket>
+#include <QSslSocket>
 
 class Connection;
 class QHostAddress;

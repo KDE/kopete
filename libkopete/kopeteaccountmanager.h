@@ -19,7 +19,7 @@
 #ifndef KOPETEACCOUNTMANAGER_H
 #define KOPETEACCOUNTMANAGER_H
 
-#include <QtCore/QObject>
+#include <QObject>
 #include <QColor>
 
 #include "libkopete_export.h"

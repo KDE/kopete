@@ -19,8 +19,8 @@
 #ifndef KOPETECONTACTLIST_H__
 #define KOPETECONTACTLIST_H__
 
-#include <QtCore/QObject>
-#include <QtCore/QList>
+#include <QObject>
+#include <QList>
 
 
 #include "libkopete_export.h"

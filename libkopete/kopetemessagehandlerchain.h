@@ -17,7 +17,7 @@
 #ifndef KOPETEMESSAGEHANDLERCHAIN_H
 #define KOPETEMESSAGEHANDLERCHAIN_H
 
-#include <QtCore/QObject>
+#include <QObject>
 
 
 #include <QExplicitlySharedDataPointer>

@@ -25,7 +25,7 @@
 #ifndef NLKAFFEINE_H
 #define NLKAFFEINE_H
 
-#include <QtDBus/QtDBus>
+#include <QtDBus>
 #include "nlmediaplayer.h"
 
 class QDBusInterface;

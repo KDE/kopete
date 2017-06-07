@@ -24,8 +24,8 @@
 #include "kopetecontactlistelement.h"
 
 #include <QUrl>
-#include <QtCore/QList>
-#include <QtCore/QUuid>
+#include <QList>
+#include <QUuid>
 
 
 #include "libkopete_export.h"

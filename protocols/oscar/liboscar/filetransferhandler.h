@@ -16,8 +16,8 @@
 #ifndef FILETRANSFERHANDLER_H
 #define FILETRANSFERHANDLER_H
 
-#include <QtCore/QObject>
-#include <QtCore/QPointer>
+#include <QObject>
+#include <QPointer>
 #include "oscartypes.h"
 
 #include "liboscar_export.h"

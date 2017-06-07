@@ -16,7 +16,7 @@
 
 #include <qinputdialog.h>
 
-#include <QtCore/QAbstractListModel>
+#include <QAbstractListModel>
 
 class JabberBookmarkModel : public QAbstractListModel
 {

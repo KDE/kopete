@@ -19,10 +19,10 @@
 #include "kopeteaccountmanager.h"
 
 #include <QApplication>
-#include <QtCore/QRegExp>
-#include <QtCore/QTimer>
-#include <QtCore/QHash>
-#include <QtDBus/QDBusInterface>
+#include <QRegExp>
+#include <QTimer>
+#include <QHash>
+#include <QDBusInterface>
 
 #include <ksharedconfig.h>
 

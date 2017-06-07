@@ -15,7 +15,7 @@
 */
 #include "kopetestatusitems.h"
 
-#include <QtCore/QUuid>
+#include <QUuid>
 
 namespace Kopete {
 namespace Status {

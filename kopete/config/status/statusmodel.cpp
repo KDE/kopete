@@ -19,7 +19,7 @@
 #include <QIcon>
 
 #include <QMimeData>
-#include <QtXml/QDomDocument>
+#include <QDomDocument>
 
 #include "kopetestatusitems.h"
 #include "kopetestatusmanager.h"
