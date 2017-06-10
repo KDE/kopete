@@ -104,6 +104,7 @@ void LatexPlugin::slotMessageAboutToShow(Kopete::Message &msg)
 
     QString messageText = msg.plainBody();
     if (!messageText.contains(QLatin1String("$$"))) {
+        // return when no latex strings found 
         return;
     }
 

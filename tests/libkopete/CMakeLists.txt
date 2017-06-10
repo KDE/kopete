@@ -7,3 +7,5 @@ set( KOPETE_TEST_LIBRARIES
   KF5::KIOCore
   kopete
 )
+ecm_add_test(kopetetasktest.cpp LINK_LIBRARIES ${KOPETE_TEST_LIBRARIES})
+ecm_add_test(kopetestatusmessagetest.cpp LINK_LIBRARIES ${KOPETE_TEST_LIBRARIES})
