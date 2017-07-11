@@ -21,138 +21,55 @@
 
 #include <QObject>
 #include <QtTest>
-
+Q_DECLARE_METATYPE(Kopete::PropertyTmpl::PropertyOption);
 class GlobalPropertiesTest : public QObject
 {
     Q_OBJECT
 private slots:
     void testDefaultProperties();
     void testCustomProperties();
+    void testDefaultProperties_data();
 };
+
+void GlobalPropertiesTest::testDefaultProperties_data()
+{
+    QTest::addColumn<QString>("PropertyName");
+    QTest::addColumn<QString>("Key");
+    QTest::addColumn<QString>("Label");
+    QTest::addColumn<QString>("Icon");
+    QTest::addColumn<Kopete::PropertyTmpl::PropertyOption>("Option");
+    QTest::newRow("Test Fromatted Name") << QStringLiteral("FormattedName") << QStringLiteral("FormattedName") << QStringLiteral("Full Name") << QString() << Kopete::PropertyTmpl::NoProperty;
+    QTest::newRow("Test Idle Time") << QStringLiteral("idleTime") << QStringLiteral("idleTime") << QStringLiteral("Idle Time") << QString() << Kopete::PropertyTmpl::NoProperty;
+    QTest::newRow("Test Online Since") << QStringLiteral("onlineSince") << QStringLiteral("onlineSince") << QStringLiteral("Online Since") << QString() << Kopete::PropertyTmpl::NoProperty;
+    QTest::newRow("Test Last Seen") << QStringLiteral("lastSeen") << QStringLiteral("lastSeen") << QStringLiteral("Last Seen") << QString() << Kopete::PropertyTmpl::PersistentProperty;
+    QTest::newRow("Test Status Message") << QStringLiteral("statusMessage") << QStringLiteral("statusMessage") << QStringLiteral("Status Message") << QString() << Kopete::PropertyTmpl::NoProperty;
+    QTest::newRow("Test First Name") << QStringLiteral("firstName") << QStringLiteral("firstName") << QStringLiteral("First Name") << QString() << Kopete::PropertyTmpl::PersistentProperty;
+    QTest::newRow("Test Last Name") << QStringLiteral("lastName") << QStringLiteral("lastName") << QStringLiteral("Last Name") << QString() << Kopete::PropertyTmpl::PersistentProperty;    
+    QTest::newRow("Test Private Phone") << QStringLiteral("privatePhoneNumber") << QStringLiteral("privatePhoneNumber") << QStringLiteral("Private Phone") << QString() << Kopete::PropertyTmpl::PersistentProperty;
+    QTest::newRow("Test Private Mobile Phone") << QStringLiteral("privateMobilePhoneNumber") << QStringLiteral("privateMobilePhoneNumber") << QStringLiteral("Private Mobile Phone") << QString() << Kopete::PropertyTmpl::PersistentProperty;
+    QTest::newRow("Test Work Phone") << QStringLiteral("workPhoneNumber") << QStringLiteral("workPhoneNumber") << QStringLiteral("Work Phone") << QString() << Kopete::PropertyTmpl::PersistentProperty;
+    QTest::newRow("Test Work Mobile Phone") << QStringLiteral("workMobilePhoneNumber") << QStringLiteral("workMobilePhoneNumber") << QStringLiteral("Work Mobile Phone") << QString() << Kopete::PropertyTmpl::PersistentProperty;
+    QTest::newRow("Test Email Address") << QStringLiteral("emailAddress") << QStringLiteral("emailAddress") << QStringLiteral("Email Address") << QStringLiteral("mail") << Kopete::PropertyTmpl::PersistentProperty;
+    QTest::newRow("Test Nick Name") << QStringLiteral("nickName") << QStringLiteral("nickName") << QStringLiteral("Nick Name") << QString() << Kopete::PropertyTmpl::PersistentProperty;
+    QTest::newRow("Test Custom Name") << QStringLiteral("customName") << QStringLiteral("customName") << QStringLiteral("Custom Name") << QString() << Kopete::PropertyTmpl::PersistentProperty;
+    QTest::newRow("Test Photo") << QStringLiteral("photo") << QStringLiteral("photo") << QStringLiteral("Photo") << QString() << Kopete::PropertyTmpl::PersistentProperty;
+}
 
 void GlobalPropertiesTest::testDefaultProperties()
 {
-    Kopete::Global::Properties *A = Kopete::Global::Properties::self();
+    Kopete::Global::Properties *dummy = Kopete::Global::Properties::self();
     
-    const QString fromattedName = QStringLiteral("FormattedName");
-    QVERIFY(A->isRegistered(fromattedName));
-    Kopete::PropertyTmpl temp = A->tmpl(fromattedName);
-    QCOMPARE(temp.key(), fromattedName);
-    QCOMPARE(temp.label(), QStringLiteral("Full Name"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::NoProperty);
-    
-    const QString idleTime = QStringLiteral("idleTime");
-    QVERIFY(A->isRegistered(idleTime));
-    temp = A->tmpl(idleTime);
-    QCOMPARE(temp.key(), idleTime);
-    QCOMPARE(temp.label(), QStringLiteral("Idle Time"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::NoProperty);
-
-    const QString onlineSince = QStringLiteral("onlineSince");
-    QVERIFY(A->isRegistered(onlineSince));
-    temp = A->tmpl(onlineSince);
-    QCOMPARE(temp.key(), onlineSince);
-    QCOMPARE(temp.label(), QStringLiteral("Online Since"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::NoProperty);
-
-    const QString lastSeen = QStringLiteral("lastSeen");
-    QVERIFY(A->isRegistered(lastSeen));
-    temp = A->tmpl(lastSeen);
-    QCOMPARE(temp.key(), lastSeen);
-    QCOMPARE(temp.label(), QStringLiteral("Last Seen"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::PersistentProperty);
-
-    const QString statusMessage = QStringLiteral("statusMessage");
-    QVERIFY(A->isRegistered(statusMessage));
-    temp = A->tmpl(statusMessage);
-    QCOMPARE(temp.key(), statusMessage);
-    QCOMPARE(temp.label(), QStringLiteral("Status Message"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::NoProperty);
-
-    const QString firstName = QStringLiteral("firstName");
-    QVERIFY(A->isRegistered(firstName));
-    temp = A->tmpl(firstName);
-    QCOMPARE(temp.key(), firstName);
-    QCOMPARE(temp.label(), QStringLiteral("First Name"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::PersistentProperty);
-
-    const QString lastName = QStringLiteral("lastName");
-    QVERIFY(A->isRegistered(lastName));
-    temp = A->tmpl(lastName);
-    QCOMPARE(temp.key(), lastName);
-    QCOMPARE(temp.label(), QStringLiteral("Last Name"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::PersistentProperty);    
-
-    const QString privatePhoneNumber = QStringLiteral("privatePhoneNumber");
-    QVERIFY(A->isRegistered(privatePhoneNumber));
-    temp = A->tmpl(privatePhoneNumber);
-    QCOMPARE(temp.key(), privatePhoneNumber);
-    QCOMPARE(temp.label(), QStringLiteral("Private Phone"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::PersistentProperty);        
-    
-    const QString privateMobilePhoneNumber = QStringLiteral("privateMobilePhoneNumber");
-    QVERIFY(A->isRegistered(privateMobilePhoneNumber));
-    temp = A->tmpl(privateMobilePhoneNumber);
-    QCOMPARE(temp.key(), privateMobilePhoneNumber);
-    QCOMPARE(temp.label(), QStringLiteral("Private Mobile Phone"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::PersistentProperty);       
-
-    const QString workPhoneNumber = QStringLiteral("workPhoneNumber");
-    QVERIFY(A->isRegistered(workPhoneNumber));
-    temp = A->tmpl(workPhoneNumber);
-    QCOMPARE(temp.key(), workPhoneNumber);
-    QCOMPARE(temp.label(), QStringLiteral("Work Phone"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::PersistentProperty);     
-
-    const QString workMobilePhoneNumber = QStringLiteral("workMobilePhoneNumber");
-    QVERIFY(A->isRegistered(workMobilePhoneNumber));
-    temp = A->tmpl(workMobilePhoneNumber);
-    QCOMPARE(temp.key(), workMobilePhoneNumber);
-    QCOMPARE(temp.label(), QStringLiteral("Work Mobile Phone"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::PersistentProperty);     
-
-    const QString emailAddress = QStringLiteral("emailAddress");
-    QVERIFY(A->isRegistered(emailAddress));
-    temp = A->tmpl(emailAddress);
-    QCOMPARE(temp.key(), emailAddress);
-    QCOMPARE(temp.label(), QStringLiteral("Email Address"));
-    QCOMPARE(temp.icon(), QStringLiteral("mail"));
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::PersistentProperty);        
-
-    const QString nickName = QStringLiteral("nickName");
-    QVERIFY(A->isRegistered(nickName));
-    temp = A->tmpl(nickName);
-    QCOMPARE(temp.key(), nickName);
-    QCOMPARE(temp.label(), QStringLiteral("Nick Name"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::PersistentProperty);        
-
-    const QString customName = QStringLiteral("customName");
-    QVERIFY(A->isRegistered(customName));
-    temp = A->tmpl(customName);
-    QCOMPARE(temp.key(), customName);
-    QCOMPARE(temp.label(), QStringLiteral("Custom Name"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::PersistentProperty);            
-
-    const QString photo QStringLiteral("photo");
-    QVERIFY(A->isRegistered(photo));
-    temp = A->tmpl(photo);
-    QCOMPARE(temp.key(), photo);
-    QCOMPARE(temp.label(), QStringLiteral("Photo"));
-    QCOMPARE(temp.icon(), QStringLiteral());
-    QCOMPARE(temp.options(), Kopete::PropertyTmpl::PersistentProperty);
+    QFETCH(QString, PropertyName);
+    QFETCH(QString, Key);
+    QFETCH(QString, Label);
+    QFETCH(QString, Icon);
+    QFETCH(Kopete::PropertyTmpl::PropertyOption, Option);
+    QVERIFY(dummy->isRegistered(PropertyName));
+    Kopete::PropertyTmpl temp = dummy->tmpl(PropertyName);
+    QCOMPARE(temp.key(), Key);
+    QCOMPARE(temp.label(), Label);
+    QCOMPARE(temp.icon(), Icon);
+    QCOMPARE(temp.options(), Option);    
 }
 
 void GlobalPropertiesTest::testCustomProperties()
