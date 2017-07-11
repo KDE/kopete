@@ -19,5 +19,13 @@
 			<label>Never encrypt outgoing messages</label>
 			<default>false</default>
 		</entry>
+		<entry name="cbAllowUnenc" type="Bool">
+			<label>Allow unencrypted messages</label>
+			<default>false</default>
+		</entry>
+		<entry name="cbEndOnLeave" type="Bool">
+			<label>Automatically end the OTR connection if conversation Partner leaves</label>
+			<default>false</default>
+		</entry>
 	</group> 
 </kcfg>

@@ -568,7 +568,7 @@ OtrlUserState OtrlChatInterface::getUserstate(){
 }
 
 
-int OtrlChatInterface::decryptMessage( Kopete::Message &message){
+int OtrlChatInterface::decryptMessage( Kopete::Message &message, bool allowNonOtr, bool autoEnd){
 
 	if (m_blackistIds.contains(message.id())) {
 		m_blackistIds.removeAll(message.id());
@@ -596,6 +596,7 @@ int OtrlChatInterface::decryptMessage( Kopete::Message &message){
 		return 1;
 	}
 
+
 	int ignoremessage = otrl_message_receiving( userstate, &ui_ops, chatSession, accountId.toLocal8Bit(), protocol.toLocal8Bit(), contactId.toLocal8Bit(), body.toLocal8Bit(), &newMessage, &tlvs, &context, NULL, NULL );
 	if (context && !ignoremessage && newMessage != NULL) {
 		otrl_instag_t instance = message.manager()->property("otr-instag").toUInt();
@@ -608,11 +609,20 @@ int OtrlChatInterface::decryptMessage( Kopete::Message &message){
 	if (tlvs) {
 		OtrlTLV *tlv = otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED);
 		if( tlv ){
-			Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
-			msg.setHtmlBody( i18n("<b>%1</b> has ended the OTR session. You should do the same.",chatSession->members().first()->contactId() ) );
-			msg.setDirection( Kopete::Message::Internal );
-			chatSession->appendMessage( msg );
-			OtrlChatInterface::self()->emitGoneSecure( chatSession, 3 );
+			if (autoEnd) {
+				OtrlChatInterface::self()->disconnectSession(chatSession);
+				Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
+				msg.setHtmlBody( i18n("<b>%1</b> has ended the OTR session. Your OTR session has been ended as well.",chatSession->members().first()->contactId() ) );
+				msg.setDirection( Kopete::Message::Internal );
+				chatSession->appendMessage( msg );
+				OtrlChatInterface::self()->emitGoneSecure( chatSession, 3 );
+			} else {
+				Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
+				msg.setHtmlBody( i18n("<b>%1</b> has ended the OTR session. You should do the same.",chatSession->members().first()->contactId() ) );
+				msg.setDirection( Kopete::Message::Internal );
+				chatSession->appendMessage( msg );
+				OtrlChatInterface::self()->emitGoneSecure( chatSession, 3 );
+			}
 		}
 		otrl_tlv_free(tlvs);
 	}
@@ -628,6 +638,7 @@ int OtrlChatInterface::decryptMessage( Kopete::Message &message){
 
 			return 0; // message is decrypted and ready to deliver
 		} else {
+			if(allowNonOtr) return 0;  //message is plaintext and unencrypted messages are allowed
 			return 1; // message was a plaintext message. Better not touching it :)
 		}
 	}
