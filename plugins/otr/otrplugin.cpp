@@ -259,7 +259,8 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 			MessageHandler::handleMessage( event );
 			return;
 		}
-        int retValue = OtrlChatInterface::self()->decryptMessage( msg );
+
+        int retValue = OtrlChatInterface::self()->decryptMessage( msg, KopeteOtrKcfg::self()->cbAllowUnenc(), KopeteOtrKcfg::self()->cbEndOnLeave());
         if( (retValue == 2) | OtrlChatInterface::self()->shouldDiscard( msg.plainBody() ) ){
 			// internal OTR message
 			event->discard();
