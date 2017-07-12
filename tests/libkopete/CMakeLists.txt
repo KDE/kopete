@@ -19,3 +19,4 @@ ecm_add_test(${BLACKLIST_LIB} TEST_NAME blacklisttest LINK_LIBRARIES ${KOPETE_TE
 ecm_add_test(kopetecontactlistelementtest.cpp LINK_LIBRARIES ${KOPETE_TEST_LIBRARIES})
 ecm_add_test(kopeteglobaltest.cpp LINK_LIBRARIES ${KOPETE_TEST_LIBRARIES})
 ecm_add_test(kopeteidentitytest.cpp LINK_LIBRARIES ${KOPETE_TEST_LIBRARIES})
+ecm_add_test(kopeteonlinestatusmanagertest.cpp LINK_LIBRARIES ${KOPETE_TEST_LIBRARIES})
