@@ -69,13 +69,13 @@ ChatTextEditPart::ChatTextEditPart(QWidget *parent, QObject *, const QStringList
 
 void ChatTextEditPart::init(Kopete::ChatSession *session, QWidget *parent)
 {
-    setComponentName(QStringLiteral("kopete"), i18n("Kopete"));
+    setComponentName(QStringLiteral("kopeterichtexteditpart"), i18n("Kopete"));
 
     editor = new KopeteRichTextWidget(parent, m_session->protocol()->capabilities(), actionCollection());
     setWidget(editor);
 
     // TODO: Rename rc file
-    setXMLFile(QStringLiteral("kopeterichtexteditpart/kopeterichtexteditpartfull.rc"));
+    setXMLFile(QStringLiteral("kopeterichtexteditpartfull.rc"));
 
     historyPos = -1;
 

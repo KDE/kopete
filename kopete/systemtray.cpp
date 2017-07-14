@@ -89,7 +89,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget *parent)
     QAction *quit = newActionList->action(QStringLiteral("file_quit"));
     quit->disconnect();
     KopeteWindow *myParent = static_cast<KopeteWindow *>(parent);
-    connect(quit, SIGNAL(activated()), myParent, SLOT(slotQuit()));
+    connect(quit, SIGNAL(triggered()), myParent, SLOT(slotQuit()));
 
     setIconByName(mKopeteIcon);
     setAttentionMovieByName(QStringLiteral("newmessage"));

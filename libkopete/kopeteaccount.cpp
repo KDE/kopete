@@ -451,7 +451,7 @@ bool Account::addContact(const QString &contactId, MetaContact *parent, AddMode 
 void Account::fillActionMenu(KActionMenu *actionMenu)
 {
     //default implementation
-//  KActionMenu *menu = new KActionMenu( QIcon(myself()->onlineStatus().iconFor( this )), accountId(), 0, 0);
+    KActionMenu *menu = new KActionMenu( QIcon(myself()->onlineStatus().iconFor( this )), accountId(), this);
 #ifdef __GNUC__
 #warning No icon shown, we should go away from QPixmap genered icons with overlays.
 #endif

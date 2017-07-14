@@ -731,7 +731,7 @@ void KopeteChatWindow::addTab(ChatView *view)
     view->setParent(m_tabBar);
     view->setWindowFlags(0);
     view->move(QPoint());
-    //view->show();
+    view->show();
 
     m_tabBar->addTab(view, pluginIcon, QLatin1String(""));
     view->setVisible(view == m_activeView);
@@ -876,7 +876,7 @@ void KopeteChatWindow::slotDetachChat(QAction *action)
     }
 
     //if we don't do this, we might crash
-//  createGUI(nullptr);
+    createGUI(nullptr);
     guiFactory()->removeClient(detachedView->msgManager());
 
     if (!action) {

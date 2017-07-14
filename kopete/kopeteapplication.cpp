@@ -23,7 +23,6 @@
 #include <qtimer.h>
 #include <qregexp.h>
 
-#include <kconfig.h>
 #include <kdebug.h>
 
 #include <KLocalizedString>
@@ -116,14 +115,14 @@ KopeteApplication::~KopeteApplication()
             (*it)->close();
         }
 
-        // shutdown plugin manager
-        Kopete::PluginManager::self()->shutdown();
-
         // destroy all plugins until KopeteApplication is alive
         Kopete::PluginList list = Kopete::PluginManager::self()->loadedPlugins();
         foreach (Kopete::Plugin *plugin, list) {
             delete plugin;
         }
+
+        // shutdown plugin manager
+        Kopete::PluginManager::self()->shutdown();
     }
 
     //delete m_fileEngineHandler;
@@ -198,7 +197,7 @@ void KopeteApplication::slotLoadPlugins()
     config->sync();
 
     // Disable plugins altogether? (--noplugins)
-    if (/*!args->isSet("plugins")*/1) { //KF5 FIXME
+    if (/*!args->isSet("plugins")*/0) { //KF5 FIXME
         // If anybody reenables this I'll get a sword and make a nice chop-suy out
         // of your body :P [mETz - 29.05.2004]
         // This screws up kopeterc because there is no way to get the Plugins group back!
@@ -367,6 +366,12 @@ void KopeteApplication::quitKopete()
         }
     }
 
+    // destroy all plugins until KopeteApplication is alive
+    const Kopete::PluginList &list = Kopete::PluginManager::self()->loadedPlugins();
+    foreach (Kopete::Plugin *plugin, list) {
+        delete plugin;
+    }
+    
     // shutdown plugin manager
     Kopete::PluginManager::self()->shutdown();
 
@@ -379,7 +384,7 @@ void KopeteApplication::quitKopete()
 void KopeteApplication::commitData(QSessionManager &sm)
 {
     m_isShuttingDown = true;
-    //FIXME KUniqueApplication::commitData(sm);
+    QGuiApplication::saveStateRequest(sm);
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

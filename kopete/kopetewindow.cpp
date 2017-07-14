@@ -432,23 +432,23 @@ void KopeteWindow::initActions()
     actionCollection()->addAction(QStringLiteral("ExportContacts"), d->actionExportContacts);
     connect(d->actionExportContacts, SIGNAL(triggered(bool)), this, SLOT(showExportDialog()));
 
-    d->actionSetAway = new KAction(KIcon(QStringLiteral("user-identity"), 0, QStringList() << QString() << QStringLiteral("user-away")), i18n("&Away"), this);
+    d->actionSetAway = new QAction(QIcon::fromTheme(QStringLiteral("user-away")), i18n("&Away"), this);
     actionCollection()->addAction(QStringLiteral("SetAwayAll"), d->actionSetAway);
     connect(d->actionSetAway, SIGNAL(triggered(bool)), this, SLOT(slotGlobalAway()));
 
-    d->actionSetBusy = new KAction(KIcon(QStringLiteral("user-identity"), 0, QStringList() << QString() << QStringLiteral("user-busy")), i18n("&Busy"), this);
+    d->actionSetBusy = new QAction(QIcon::fromTheme(QStringLiteral("user-busy")), i18n("&Busy"), this);
     actionCollection()->addAction(QStringLiteral("SetBusyAll"), d->actionSetBusy);
     connect(d->actionSetBusy, SIGNAL(triggered(bool)), this, SLOT(slotGlobalBusy()));
 
-    d->actionSetInvisible = new KAction(KIcon(QStringLiteral("user-identity"), 0, QStringList() << QString() << QStringLiteral("user-invisible")), i18n("&Invisible"), this);
+    d->actionSetInvisible = new QAction(QIcon::fromTheme(QStringLiteral("user-invisible")), i18n("&Invisible"), this);
     actionCollection()->addAction(QStringLiteral("SetInvisibleAll"), d->actionSetInvisible);
     connect(d->actionSetInvisible, SIGNAL(triggered(bool)), this, SLOT(slotSetInvisibleAll()));
 
-    d->actionSetAvailable = new KAction(KIcon(QStringLiteral("user-identity"), 0, QStringList() << QString() << QStringLiteral("user-online")), i18n("&Online"), this);
+    d->actionSetAvailable = new QAction(QIcon::fromTheme(QStringLiteral("user-online")), i18n("&Online"), this);
     actionCollection()->addAction(QStringLiteral("SetAvailableAll"), d->actionSetAvailable);
     connect(d->actionSetAvailable, SIGNAL(triggered(bool)), this, SLOT(slotGlobalAvailable()));
 
-    d->actionStatusMenu = new KActionMenu(KIcon(QStringLiteral("user-identity"), 0, QStringList() << QString() << QStringLiteral("user-online")), i18n("&Set Status"), this);
+    d->actionStatusMenu = new KActionMenu(QIcon::fromTheme(QStringLiteral("user-online")), i18n("&Set Status"), this);
     d->actionStatusMenu->setIconText(i18n("Status"));
     actionCollection()->addAction(QStringLiteral("Status"), d->actionStatusMenu);
     d->actionStatusMenu->setDelayed(false);
@@ -507,7 +507,7 @@ void KopeteWindow::initActions()
 
     KFilterProxySearchLine *searchLine = new KFilterProxySearchLine(this);
     searchLine->setProxy(d->proxyModel);
-    KAction *quickSearch = new KAction(i18n("Quick Search Bar"), this);
+    QWidgetAction *quickSearch = new QWidgetAction(this);
     actionCollection()->addAction(QStringLiteral("quicksearch_bar"), quickSearch);
     quickSearch->setDefaultWidget(searchLine);
 
@@ -516,22 +516,23 @@ void KopeteWindow::initActions()
     slotConfigChanged();
 
     // Global actions
-    KAction *globalReadMessage = new KAction(i18n("Read Message"), this);
+    QAction *globalReadMessage = new QAction(i18n("Read Message"), this);
     actionCollection()->addAction(QStringLiteral("ReadMessage"), globalReadMessage);
     connect(globalReadMessage, SIGNAL(triggered(bool)), Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()));
-    globalReadMessage->setGlobalShortcut(KShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_I)));
+    actionCollection()->setDefaultShortcut(globalReadMessage, QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_I));
     globalReadMessage->setWhatsThis(i18n("Read the next pending message"));
 
-    KAction *globalShowContactList = new KAction(i18n("Show/Hide Contact List"), this);
+    QAction *globalShowContactList = new QAction(i18n("Show/Hide Contact List"), this);
     actionCollection()->addAction(QStringLiteral("ShowContactList"), globalShowContactList);
     connect(globalShowContactList, SIGNAL(triggered(bool)), this, SLOT(slotShowHide()));
-    globalShowContactList->setGlobalShortcut(KShortcut(QKeySequence(Qt::CTRL + Qt::ALT + Qt::Key_T)));
+    actionCollection()->setDefaultShortcut(globalShowContactList, QKeySequence(Qt::CTRL + Qt::ALT + Qt::Key_T));
     globalShowContactList->setWhatsThis(i18n("Show or hide the contact list"));
 
     QAction *globalSetAway = new QAction(i18n("Set Away/Back"), this);
     actionCollection()->addAction(QStringLiteral("Set_Away_Back"), globalSetAway);
     connect(globalSetAway, SIGNAL(triggered(bool)), this, SLOT(slotToggleAway()));
-    //FIXME KF5 globalSetAway->setGlobalShortcut(KShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W)));
+    actionCollection()->setDefaultShortcut(globalSetAway, QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W));
+    globalSetAway->setWhatsThis(i18n("Set Away/Back"));
 }
 
 void KopeteWindow::slotShowHide()
@@ -587,8 +588,8 @@ void KopeteWindow::initSystray()
 
         QObject::connect(d->tray, SIGNAL(aboutToShowMenu(QMenu *)),
                          this, SLOT(slotTrayAboutToShowMenu(QMenu *)));
-        // :FIXME: The signal quitSelected does not exist on KopeteSystemTray
-        // QObject::connect ( d->tray, SIGNAL (quitSelected()), this, SLOT (slotQuit()) );
+        d->tray->setStandardActionsEnabled(true);
+        QObject::connect(d->tray, SIGNAL(quit()), this, SLOT(slotQuit()));
     }
 }
 
@@ -629,7 +630,7 @@ void KopeteWindow::loadOptions()
 
     QSize size = cg.readEntry("Geometry", QSize());
     if (size.isEmpty()) { // Default size
-        resize(QSize(272, 400));
+        resize(QSize(375, 425));
     } else {
         resize(size);
     }
@@ -858,18 +859,19 @@ bool KopeteWindow::queryClose()
                                       "system tray. Use 'Quit' from the 'File' menu to quit the application.</qt>"),
                                  i18n("Docking in System Tray"), QStringLiteral("hideOnCloseInfo"));
     }
-//	else	// we are shutting down either user initiated or session management
-//	Kopete::PluginManager::self()->shutdown();
-
+	else{
+        // we are shutting down either user initiated or session management
+        Kopete::PluginManager::self()->shutdown();
+    }
     return true;
 }
 
 bool KopeteWindow::shouldExitOnClose() const
 {
-    Kopete::PluginList list = Kopete::PluginManager::self()->loadedPlugins();
+    const Kopete::PluginList &list = Kopete::PluginManager::self()->loadedPlugins();
     foreach (Kopete::Plugin *plugin, list) {
         bool ok = true;
-        QMetaObject::invokeMethod(plugin, "shouldExitOnClose", Qt::DirectConnection, Q_RETURN_ARG(bool, ok));
+        QMetaObject::invokeMethod(plugin, "shouldExitOnclose", Qt::DirectConnection, Q_RETURN_ARG(bool, ok));
         if (!ok) {
             kDebug(14000) << "plugin" << plugin->displayName() << "does not want to exit";
             return false;

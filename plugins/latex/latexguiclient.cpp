@@ -38,7 +38,7 @@ LatexGUIClient::LatexGUIClient(Kopete::ChatSession *parent)
     : QObject(parent)
     , KXMLGUIClient(parent)
 {
-    setComponentName(QStringLiteral("kopete"), i18n("Kopete"));
+    setComponentName(QStringLiteral("kopete_latex"), i18n("Kopete"));
     connect(LatexPlugin::plugin(), &QObject::destroyed, this, &QObject::deleteLater);
 
     m_manager = parent;
