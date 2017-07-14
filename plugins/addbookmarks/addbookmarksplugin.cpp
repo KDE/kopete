@@ -49,8 +49,8 @@ void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message &msg)
     if (msg.direction() != Kopete::Message::Inbound) {
         return;
     }
-    KUrl::List::iterator it;
-    KUrl::List *URLsList = extractURLsFromString(msg.parsedBody());
+    QList<QUrl>::iterator it;
+    QList<QUrl> *URLsList = extractURLsFromString(msg.parsedBody());
     if (!URLsList->empty()) {
         for (it = URLsList->begin(); it != URLsList->end(); ++it) {
             if (msg.from()->metaContact()) {
@@ -82,24 +82,23 @@ void BookmarksPlugin::slotAddKopeteBookmark(KIO::Job *transfer, const QByteArray
     if (pos == -1) {
         URLandName arg1 = m_map[(KIO::TransferJob *)transfer];
         URLandName arg2 = m_map[(KIO::TransferJob *)transfer];
-        //group.addBookmark( m_map[(KIO::TransferJob*)transfer].url.prettyUrl(), m_map[(KIO::TransferJob*)transfer].url.url() );
-        //FIXME: group.addBookmark( arg1.url.prettyUrl(), arg2.url );
+        group.addBookmark( arg1.url.url(), arg2.url, QString());
         kDebug(14501) << "failed to extract title from first data chunk";
     } else {
         URLandName arg = m_map[(KIO::TransferJob *)transfer];
-        //FIXME: group.addBookmark( rx.cap( 1 ).simplified(), arg.url);
+        group.addBookmark( rx.cap( 1 ).simplified(), arg.url, QString());
     }
     mgr->emitChanged(group);
     m_map.remove((KIO::TransferJob *)transfer);
     transfer->kill();
 }
 
-KUrl::List *BookmarksPlugin::extractURLsFromString(const QString &text)
+QList<QUrl> *BookmarksPlugin::extractURLsFromString(const QString &text)
 {
-    KUrl::List *list = new KUrl::List;
+    QList<QUrl> *list = new QList<QUrl>;
     QRegExp rx("<a href=\"[^\\s\"]+\"");
     int pos = 0;
-    KUrl url;
+    QUrl url;
 
     for (; (pos = rx.indexIn(text, pos)) != -1; pos += rx.matchedLength()) {
         //as long as there is a matching URL in text
@@ -112,7 +111,7 @@ KUrl::List *BookmarksPlugin::extractURLsFromString(const QString &text)
     return list;
 }
 
-void BookmarksPlugin::addKopeteBookmark(const KUrl &url, const QString &sender)
+void BookmarksPlugin::addKopeteBookmark(const QUrl &url, const QString &sender)
 {
     KBookmarkGroup group = getKopeteFolder();
 
@@ -137,7 +136,7 @@ KBookmarkGroup BookmarksPlugin::getKopeteFolder()
     return getFolder(mgr->root(), QStringLiteral("kopete"));
 }
 
-bool BookmarksPlugin::isURLInGroup(const KUrl &url, KBookmarkGroup group)
+bool BookmarksPlugin::isURLInGroup(const QUrl &url, KBookmarkGroup group)
 {
     KBookmark bookmark = group.first();
 
