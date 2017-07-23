@@ -60,8 +60,11 @@ QString InfoEvent::title() const
 
 void InfoEvent::setTitle(const QString &title)
 {
-    d->title = title;
-    emit changed();
+    if(d->title != title)
+    {
+        d->title = title;
+        emit changed();    
+    }
 }
 
 QString InfoEvent::text() const
@@ -71,8 +74,11 @@ QString InfoEvent::text() const
 
 void InfoEvent::setText(const QString &text)
 {
-    d->text = text;
-    emit changed();
+    if(d->text != text)
+    {
+        d->text = text;
+        emit changed();    
+    }
 }
 
 QString InfoEvent::additionalText() const
@@ -82,8 +88,11 @@ QString InfoEvent::additionalText() const
 
 void InfoEvent::setAdditionalText(const QString &text)
 {
-    d->additionalText = text;
-    emit changed();
+    if(d->additionalText != text)
+    {
+        d->additionalText = text;
+        emit changed();
+    }
 }
 
 QMap<uint, QString> InfoEvent::actions() const
@@ -93,8 +102,11 @@ QMap<uint, QString> InfoEvent::actions() const
 
 void InfoEvent::addAction(uint actionId, const QString &actionText)
 {
-    d->actions[actionId] = actionText;
-    emit changed();
+    if(d->actions[actionId] != actionText)
+    {
+        d->actions[actionId] = actionText;
+        emit changed();
+    }
 }
 
 bool InfoEvent::showOnSend() const
