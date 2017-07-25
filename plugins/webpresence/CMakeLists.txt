@@ -8,7 +8,15 @@ kconfig_add_kcfg_files(kopete_webpresence_PART_SRCS webpresenceconfig.kcfgc )
 
 add_library(kopete_webpresence MODULE ${kopete_webpresence_PART_SRCS})
 
-target_link_libraries(kopete_webpresence  KF5::KIOCore kopete ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} Qt5::Xml)
+target_link_libraries(
+	kopete_webpresence  
+	KF5::KIOCore 
+	kopete 
+	${LIBXML2_LIBRARIES} 
+	${LIBXSLT_LIBRARIES} 
+	Qt5::Xml 
+	KF5::I18n
+)
 
 install(TARGETS kopete_webpresence  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
@@ -23,7 +31,12 @@ kconfig_add_kcfg_files(kcm_kopete_webpresence_PART_SRCS webpresenceconfig.kcfgc 
 
 add_library(kcm_kopete_webpresence MODULE ${kcm_kopete_webpresence_PART_SRCS})
 
-target_link_libraries(kcm_kopete_webpresence   KF5::KIOCore kopete )
+target_link_libraries(
+	kcm_kopete_webpresence  
+	KF5::I18n 
+	KF5::KIOCore 
+	kopete 
+)
 
 install(TARGETS kcm_kopete_webpresence  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 

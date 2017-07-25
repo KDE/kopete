@@ -22,12 +22,12 @@
 
 #include <QList>
 
-#include <kurl.h>
+#include <QUrl>
 
 #include "kopeteplugin.h"
 
 class QTimer;
-class KTemporaryFile;
+class QTemporaryFile;
 class KJob;
 namespace Kopete {
 }
@@ -48,7 +48,7 @@ class WebPresencePlugin : public Kopete::Plugin
     Q_OBJECT
 
 private:
-    KUrl userStyleSheet;
+    QUrl userStyleSheet;
 
     // Is set to true when Kopete has notified us
     // that we're about to be unloaded.
@@ -99,11 +99,11 @@ protected:
     /**
      * Generate the file (HTML, text) to be uploaded
      */
-    KTemporaryFile *generateFile();
+    QTemporaryFile *generateFile();
     /**
     * Apply named stylesheet to get content and presentation
     */
-    bool transform(KTemporaryFile *src, KTemporaryFile *dest);
+    bool transform(QTemporaryFile *src, QTemporaryFile *dest);
     /**
      * Helper method, generates list of all IM protocols
      */
@@ -118,7 +118,7 @@ protected:
     QTimer *m_writeScheduler;
 
     // The file to be uploaded to the WWW
-    KTemporaryFile *m_output;
+    QTemporaryFile *m_output;
 };
 
 #endif

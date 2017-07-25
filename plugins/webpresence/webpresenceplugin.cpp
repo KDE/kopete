@@ -27,12 +27,13 @@
 #include <QList>
 #include <QDateTime>
 #include <QDomDocument>
+#include <KLocalizedString>
 
 #include <kdebug.h>
 #include <kpluginfactory.h>
 #include <kio/job.h>
 #include <kmessagebox.h>
-#include <ktemporaryfile.h>
+#include <QTemporaryFile>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -62,13 +63,11 @@ WebPresencePlugin::WebPresencePlugin(QObject *parent, const QVariantList & /*arg
     , m_output(0)
 {
     m_writeScheduler = new QTimer(this);
-    connect(m_writeScheduler, SIGNAL(timeout()), this, SLOT(slotWriteFile()));
-    connect(Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account *)),
-            this, SLOT(listenToAllAccounts()));
-    connect(Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account *)),
-            this, SLOT(listenToAllAccounts()));
+    connect(m_writeScheduler, &QTimer::timeout, this, &WebPresencePlugin::slotWriteFile);
+    connect(Kopete::AccountManager::self(), &Kopete::AccountManager::accountRegistered, this, &WebPresencePlugin::listenToAllAccounts);
+    connect(Kopete::AccountManager::self(), &Kopete::AccountManager::accountUnregistered, this, &WebPresencePlugin::listenToAllAccounts);
 
-    connect(this, SIGNAL(settingsChanged()), this, SLOT(slotSettingsChanged()));
+    connect(this, &WebPresencePlugin::settingsChanged, this, &WebPresencePlugin::slotSettingsChanged);
     slotSettingsChanged();
     listenToAllAccounts();
 }
@@ -125,18 +124,8 @@ void WebPresencePlugin::listenToAccount(Kopete::Account *account)
     if (account && account->myself()) {
         // Connect to the account's status changed signal
         // because we can't know if the account has already connected
-        QObject::disconnect(account->myself(),
-                            SIGNAL(onlineStatusChanged(Kopete::Contact *,
-                                                       const Kopete::OnlineStatus&,
-                                                       const Kopete::OnlineStatus&)),
-                            this,
-                            SLOT(slotWaitMoreStatusChanges()));
-        QObject::connect(account->myself(),
-                         SIGNAL(onlineStatusChanged(Kopete::Contact *,
-                                                    const Kopete::OnlineStatus&,
-                                                    const Kopete::OnlineStatus&)),
-                         this,
-                         SLOT(slotWaitMoreStatusChanges()));
+        QObject::disconnect(account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact *, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)), this, SLOT(slotWaitMoreStatusChanges()));
+        QObject::connect(account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact *, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)), this, SLOT(slotWaitMoreStatusChanges()));
     }
 }
 
@@ -152,13 +141,13 @@ void WebPresencePlugin::slotWriteFile()
     m_writeScheduler->stop();
 
     // generate the (temporary) XML file representing the current contact list
-    const KUrl dest = WebPresenceConfig::self()->uploadURL();
+    const QUrl dest = WebPresenceConfig::self()->uploadURL();
     if (dest.isEmpty() || !dest.isValid()) {
         kDebug(14309) << "url is empty or not valid. NOT UPDATING!";
         return;
     }
 
-    KTemporaryFile *xml = generateFile();
+    QTemporaryFile *xml = generateFile();
     xml->setAutoRemove(true);
 
     switch (resultFormatting) {
@@ -169,7 +158,7 @@ void WebPresencePlugin::slotWriteFile()
     case WEB_HTML:
     case WEB_XHTML:
     case WEB_CUSTOM:
-        m_output = new KTemporaryFile();
+        m_output = new QTemporaryFile();
         m_output->open();
 
         if (!transform(xml, m_output)) {
@@ -188,10 +177,9 @@ void WebPresencePlugin::slotWriteFile()
     }
 
     // upload it to the specified URL
-    KUrl src(m_output->fileName());
+    QUrl src(m_output->fileName());
     KIO::FileCopyJob *job = KIO::file_move(src, dest, -1, KIO::Overwrite | KIO::HideProgressInfo);
-    connect(job, SIGNAL(result(KJob *)),
-            SLOT(slotUploadJobResult(KJob *)));
+    connect(job, &KIO::FileCopyJob::result, this, &WebPresencePlugin::slotUploadJobResult);
 }
 
 void WebPresencePlugin::slotUploadJobResult(KJob *job)
@@ -204,7 +192,7 @@ void WebPresencePlugin::slotUploadJobResult(KJob *job)
     }
 }
 
-KTemporaryFile *WebPresencePlugin::generateFile()
+QTemporaryFile *WebPresencePlugin::generateFile()
 {
     // generate the (temporary) XML file representing the current contact list
     kDebug(14309);
@@ -220,8 +208,7 @@ KTemporaryFile *WebPresencePlugin::generateFile()
 
     // insert the current date/time
     QDomElement date = doc.createElement(QStringLiteral("listdate"));
-    QDomText t = doc.createTextNode(
-        KLocale::global()->formatDateTime(QDateTime::currentDateTime()));
+    QDomText t = doc.createTextNode(QLocale().toString(QDateTime::currentDateTime()));
     date.appendChild(t);
     root.appendChild(date);
 
@@ -302,7 +289,7 @@ KTemporaryFile *WebPresencePlugin::generateFile()
     }
 
     // write the XML to a temporary file
-    KTemporaryFile *file = new KTemporaryFile();
+    QTemporaryFile *file = new QTemporaryFile();
     file->setAutoRemove(false);
     file->open();
 
@@ -315,7 +302,7 @@ KTemporaryFile *WebPresencePlugin::generateFile()
     return file;
 }
 
-bool WebPresencePlugin::transform(KTemporaryFile *src, KTemporaryFile *dest)
+bool WebPresencePlugin::transform(QTemporaryFile *src, QTemporaryFile *dest)
 {
     bool retval = true;
     xmlSubstituteEntitiesDefault(1);
