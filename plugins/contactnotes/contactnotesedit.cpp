@@ -22,25 +22,35 @@
 
 #include <KLocalizedString>
 #include <QVBoxLayout>
+#include <KConfigGroup>
+#include <QDialogButtonBox>
+#include <QPushButton>
 
 #include "kopetemetacontact.h"
 
 #include "contactnotesplugin.h"
 
 ContactNotesEdit::ContactNotesEdit(Kopete::MetaContact *m, ContactNotesPlugin *p)
-    : KDialog()
+    : QDialog()
 {
-    setCaption(i18n("Contact Notes"));
-    setButtons(KDialog::Ok | KDialog::Cancel);
-    setDefaultButton(KDialog::Ok);
-
+    setWindowTitle(i18n("Contact Notes"));
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+    QWidget *mainWidget = new QWidget(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    setLayout(mainLayout);
+    mainLayout->addWidget(mainWidget);
+    QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+    okButton->setDefault(true);
+    okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &ContactNotesEdit::slotOkButtonClicked);
+    buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+    
     m_plugin = p;
     m_metaContact = m;
 
     QWidget *w = new QWidget(this);
     QVBoxLayout *wVBoxLayout = new QVBoxLayout(w);
     wVBoxLayout->setMargin(0);
-    wVBoxLayout->setSpacing(KDialog::spacingHint());
     m_label = new QLabel(i18n("Notes about %1:", m->displayName()), w);
     wVBoxLayout->addWidget(m_label);
     m_label->setObjectName(QStringLiteral("m_label"));
@@ -49,18 +59,15 @@ ContactNotesEdit::ContactNotesEdit(Kopete::MetaContact *m, ContactNotesPlugin *p
 
     m_linesEdit->setText(p->notes(m));
 
-    showButtonSeparator(true);
-    setMainWidget(w);
+    mainLayout->addWidget(w);
+    mainLayout->addWidget(buttonBox);
 }
 
 ContactNotesEdit::~ContactNotesEdit()
 {
 }
 
-void ContactNotesEdit::slotButtonClicked(int buttonCode)
+void ContactNotesEdit::slotOkButtonClicked()
 {
-    KDialog::slotButtonClicked(buttonCode);
-    if (buttonCode == KDialog::Ok) {
-        emit notesChanged(m_linesEdit->toPlainText(), m_metaContact);
-    }
+    emit notesChanged(m_linesEdit->toPlainText(), m_metaContact);
 }

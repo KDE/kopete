@@ -21,7 +21,7 @@
 #include <qwidget.h>
 #include <qstring.h>
 #include <QLabel>
-#include <kdialog.h>
+#include <QDialog>
 
 class QLabel;
 class QTextEdit;
@@ -34,11 +34,11 @@ class ContactNotesPlugin;
   *@author Olivier Goffart
   */
 
-class ContactNotesEdit : public KDialog
+class ContactNotesEdit : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ContactNotesEdit(Kopete::MetaContact *m, ContactNotesPlugin *p = 0);
+    explicit ContactNotesEdit(Kopete::MetaContact *m, ContactNotesPlugin *p = nullptr);
     ~ContactNotesEdit();
 
 private:
@@ -49,7 +49,7 @@ private:
     QTextEdit *m_linesEdit;
 
 protected Q_SLOTS: // Protected slots
-    void slotButtonClicked(int buttonCode) Q_DECL_OVERRIDE;
+    void slotOkButtonClicked();
 Q_SIGNALS: // Signals
     void notesChanged(const QString &, Kopete::MetaContact *);
 };

@@ -44,9 +44,9 @@ ContactNotesPlugin::ContactNotesPlugin(QObject *parent, const QVariantList & /* 
     setComponentName(QStringLiteral("contactnotes"), i18n("Kopete"));
     QAction *m_actionEdit = new QAction(QIcon::fromTheme(QStringLiteral("user-identity")), i18n("&Notes"), this);
     actionCollection()->addAction(QStringLiteral("editContactNotes"), m_actionEdit);
-    connect(m_actionEdit, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()));
+    connect(m_actionEdit, &QAction::triggered, this, &ContactNotesPlugin::slotEditInfo);
 
-    connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), m_actionEdit, SLOT(setEnabled(bool)));
+    connect(Kopete::ContactList::self(), &Kopete::ContactList::metaContactSelected, m_actionEdit, &QAction::setEnabled);
     m_actionEdit->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count() == 1);
 
     setXMLFile(QStringLiteral("contactnotesui.rc"));
@@ -71,8 +71,7 @@ void ContactNotesPlugin::slotEditInfo()
         return;
     }
     ContactNotesEdit *e = new ContactNotesEdit(m, this);
-    connect(e, SIGNAL(notesChanged(QString,Kopete::MetaContact *)), this,
-            SLOT(setNotes(QString,Kopete::MetaContact *)));
+    connect(e, &ContactNotesEdit::notesChanged, this, &ContactNotesPlugin::setNotes);
     e->show();
 }
 
