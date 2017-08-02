@@ -105,8 +105,7 @@ Kopete::ChatSession* AIMMyselfContact::manager( Kopete::Contact::CanCreateFlags 
 		session = new AIMChatSession( this, chatMembers, account()->protocol(), exchange, room );
 		session->setEngine( m_acct->engine() );
 
-		connect( session, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
-				this, SLOT(sendMessage(Kopete::Message&,Kopete::ChatSession*)) );
+		connect(session, &AIMChatSession::messageSent, this, &AIMMyselfContact::sendMessage);
 		m_chatRoomSessions.append( session );
 	}
 	return session;
@@ -237,13 +236,13 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 
 	// Create actions
 	mJoinChatAction = new QAction( i18n( "Join Chat..." ), this );
-	QObject::connect( mJoinChatAction, SIGNAL(triggered(bool)), this, SLOT(slotJoinChat()) );
+	QObject::connect(mJoinChatAction, &QAction::triggered, this, &AIMAccount::slotJoinChat);
 
     mEditInfoAction = new QAction( QIcon::fromTheme("user-properties"), i18n( "Edit User Info..." ), this );
-	QObject::connect( mEditInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()) );
+	QObject::connect(mEditInfoAction, &QAction::triggered, this, &AIMAccount::slotEditInfo);
 
 	mActionInvisible = new KToggleAction( i18n( "In&visible" ), this );
-	QObject::connect( mActionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
+	QObject::connect(mActionInvisible, &KToggleAction::triggered, this, &AIMAccount::slotToggleInvisible);
 }
 
 AIMAccount::~AIMAccount()
@@ -420,8 +419,7 @@ void AIMAccount::slotJoinChat()
 	if ( !m_joinChatDialog )
 	{
 		m_joinChatDialog = new AIMJoinChatUI( this, Kopete::UI::Global::mainWidget() );
-		QObject::connect( m_joinChatDialog, SIGNAL(closing(int)),
-				this, SLOT(joinChatDialogClosed(int)) );
+		QObject::connect(m_joinChatDialog, &AIMJoinChatUI::closing, this, &AIMAccount::joinChatDialogClosed);
 		QList<int> list = engine()->chatExchangeList();
 		m_joinChatDialog->setExchangeList( list );
 		m_joinChatDialog->show();

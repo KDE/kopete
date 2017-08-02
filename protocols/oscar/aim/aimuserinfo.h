@@ -19,6 +19,7 @@
 #define AIMUSERINFO_H
 
 #include <kdialog.h>
+#include "aimcontact.h"
 
 namespace Kopete { class Contact; }
 namespace Ui { class AIMUserInfoWidget; }
@@ -30,12 +31,12 @@ class AIMUserInfoDialog : public KDialog
 {
 	Q_OBJECT
 	public:
-		AIMUserInfoDialog(Kopete::Contact *c, AIMAccount *acc, QWidget *parent = nullptr);
+		AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, QWidget *parent = nullptr);
 		~AIMUserInfoDialog();
 
 	private:
 		AIMAccount *mAccount;
-		Kopete::Contact* m_contact;
+		AIMContact* m_contact;
 		Ui::AIMUserInfoWidget *mMainWidget;
         QTextBrowser *userInfoView;
 		KTextEdit *userInfoEdit;
@@ -45,11 +46,12 @@ class AIMUserInfoDialog : public KDialog
 		void slotCloseClicked();
 		void slotUpdateClicked();
 		void slotUpdateProfile();
-		void slotUrlClicked(const QString&);
+		void slotUpdatedStatus(const Kopete::Contact*);
+		void slotUrlClicked(const QUrl&);
 		void slotMailClicked(const QString&, const QString&);
 
 	Q_SIGNALS:
-//		void updateNickname(const QString &);
+		void updateNickname(const QString &);
 		void closing();
 };
 

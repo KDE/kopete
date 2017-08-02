@@ -70,15 +70,15 @@ QList<QAction*> *AIMContact::customContextMenuActions()
 	{
 		m_warnUserAction = new QAction( i18n( "&Warn User" ), this );
                 //, "warnAction" );
-		QObject::connect( m_warnUserAction, SIGNAL(triggered(bool)), this, SLOT(warnUser()) );
+		QObject::connect(m_warnUserAction, &QAction::triggered, this, &AIMContact::warnUser);
 	}
 	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), this );
         //, "actionVisibleTo");
-	QObject::connect( m_actionVisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotVisibleTo()) );
+	QObject::connect(m_actionVisibleTo, &KToggleAction::triggered, this, &AIMContact::slotVisibleTo);
 
 	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), this );
         //, "actionInvisibleTo");
-	QObject::connect( m_actionInvisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotInvisibleTo()) );
+	QObject::connect(m_actionInvisibleTo, &KToggleAction::triggered, this, &AIMContact::slotInvisibleTo);
 
 	bool on = account()->isConnected();
 
@@ -129,7 +129,7 @@ void AIMContact::slotUserInfo()
 		m_infoDialog = new AIMUserInfoDialog( this, static_cast<AIMAccount*>( account() ), Kopete::UI::Global::mainWidget() );
 		if( !m_infoDialog )
 			return;
-		connect( m_infoDialog, SIGNAL(finished()), this, SLOT(closeUserInfoDialog()) );
+		connect(m_infoDialog, &AIMUserInfoDialog::finished, this, &AIMContact::closeUserInfoDialog);
 		m_infoDialog->show();
 		if ( mAccount->isConnected() )
 		{

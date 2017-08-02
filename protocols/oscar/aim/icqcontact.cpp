@@ -149,11 +149,11 @@ QList<QAction*> *ICQContact::customContextMenuActions()
 
 	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), this );
         //, "actionVisibleTo");
-	QObject::connect( m_actionVisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotVisibleTo()) );
+	QObject::connect(m_actionVisibleTo, &KToggleAction::triggered, this, &ICQContact::slotVisibleTo);
 
 	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), this );
         //, "actionInvisibleTo");
-	QObject::connect( m_actionInvisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotInvisibleTo()) );
+	QObject::connect(m_actionInvisibleTo, &KToggleAction::triggered, this, &ICQContact::slotInvisibleTo);
 
 	bool on = account()->isConnected();
 

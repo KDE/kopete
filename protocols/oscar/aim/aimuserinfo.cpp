@@ -27,7 +27,7 @@
 #include <qpushbutton.h>
 #include <QVBoxLayout>
 #include <qtimer.h>
-
+#include <QDesktopServices>
 #include <KLocalizedString>
 
 #include <qtextbrowser.h>
@@ -36,7 +36,7 @@
 #include <ktextedit.h>
 #include <krun.h>
 
-AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidget *parent )
+AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, QWidget *parent)
 	: KDialog( parent )
 {
 	setCaption( i18n( "User Information on %1" ,
@@ -55,11 +55,11 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 	mMainWidget->setupUi( w );
 	setMainWidget( w );
 
-	QObject::connect(this, SIGNAL(okClicked()), this, SLOT(slotSaveClicked()));
-	QObject::connect(this, SIGNAL(user1Clicked()), this, SLOT(slotUpdateClicked()));
-	QObject::connect(this, SIGNAL(cancelClicked()), this, SLOT(slotCloseClicked()));
-	QObject::connect(c, SIGNAL(updatedProfile()), this, SLOT(slotUpdateProfile()));
-	QObject::connect(c, SIGNAL(statusMessageChanged(Kopete::Contact*)), this, SLOT(slotUpdateProfile()));
+	QObject::connect(this, &AIMUserInfoDialog::okClicked, this, &AIMUserInfoDialog::slotSaveClicked);
+	QObject::connect(this, &AIMUserInfoDialog::user1Clicked, this, &AIMUserInfoDialog::slotUpdateClicked);
+	QObject::connect(this, &AIMUserInfoDialog::cancelClicked, this, &AIMUserInfoDialog::slotCloseClicked);
+	QObject::connect(c, &AIMContact::updatedProfile, this, &AIMUserInfoDialog::slotUpdateProfile);
+	QObject::connect(c, &AIMContact::statusMessageChanged, this, &AIMUserInfoDialog::slotUpdatedStatus);
 
 	mMainWidget->txtScreenName->setText( c->contactId() );
 	mMainWidget->txtNickName->setText( c->customName() );
@@ -99,13 +99,10 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		l->setContentsMargins( 0, 0, 0, 0 );
         userInfoView = new QTextBrowser(mMainWidget->userInfoFrame);
 		userInfoView->setObjectName("userInfoView");
-        //KF5 PORT ME userInfoView->setNotifyClick(true);
-		QObject::connect(
-			userInfoView, SIGNAL(urlClick(QString)),
-			this, SLOT(slotUrlClicked(QString)));
-		QObject::connect(
-			userInfoView, SIGNAL(mailClick(QString,QString)),
-			this, SLOT(slotMailClicked(QString,QString)));
+        userInfoView->setOpenLinks(true);
+		QObject::connect(userInfoView, &QTextBrowser::anchorClicked, this, &AIMUserInfoDialog::slotUrlClicked);
+		// This is not doing anything at present as in their slots they are unused. 
+		// QObject::connect(userInfoView, SIGNAL(mailClick(QString,QString)), this, SLOT(slotMailClicked(QString,QString)));
 		showButton(Cancel, false);
 		setButtonText(Ok, i18n("&Close"));
 		setEscapeButton(Ok);
@@ -116,7 +113,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 			// Update the user view to indicate that we're requesting the user's profile
 			userInfoView->setPlainText(i18n("Requesting User Profile, please wait..."));
 		}
-		QTimer::singleShot(0, this, SLOT(slotUpdateProfile()));
+		QTimer::singleShot(0, this, &AIMUserInfoDialog::slotUpdateProfile);
 	}
 }
 
@@ -133,8 +130,8 @@ void AIMUserInfoDialog::slotUpdateClicked()
 	QString currentNick = m_contact->displayName();
 	if ( newNick != currentNick )
 	{
-		//m_contact->rename(newNick);
-		//emit updateNickname(newNick);
+		m_contact->setNickName(newNick);
+		emit updateNickname(newNick);
 		setCaption(i18n("User Information on %1", newNick));
 	}
 
@@ -150,8 +147,8 @@ void AIMUserInfoDialog::slotSaveClicked()
 		QString currentNick = m_contact->displayName();
 		if(!newNick.isEmpty() && ( newNick != currentNick ) )
 		{
-			//m_contact->rename(newNick);
-			//emit updateNickname(newNick);
+			m_contact->setNickName(newNick);
+			emit updateNickname(newNick);
 			setCaption(i18n("User Information on %1", newNick));
 		}
 
@@ -186,7 +183,6 @@ void AIMUserInfoDialog::slotUpdateProfile()
 	}
 
 	QString onlineSince =  m_contact->property("onlineSince").value().toString();
-	//QString onlineSince = m_details.onlineSinceTime().toString();
 	mMainWidget->txtOnlineSince->setText( onlineSince );
 
 	AIMContact* c = static_cast<AIMContact*>( m_contact );
@@ -211,13 +207,18 @@ void AIMUserInfoDialog::slotUpdateProfile()
 
 }
 
-//KRun changed, so comment it so it compiles FIXME
-void AIMUserInfoDialog::slotUrlClicked(const QString &url)
+void AIMUserInfoDialog::slotUpdatedStatus(const Kopete::Contact* contact)
 {
-	Q_UNUSED(url);
-	//new KRun(KUrl(url));
+	Q_UNUSED(contact);
+	slotUpdateProfile();
 }
 
+void AIMUserInfoDialog::slotUrlClicked(const QUrl &url)
+{
+	QDesktopServices::openUrl(url);
+}
+
+//KRun changed, so comment it so it compiles FIXME
 void AIMUserInfoDialog::slotMailClicked(const QString&, const QString &address)
 {
 	Q_UNUSED(address);
