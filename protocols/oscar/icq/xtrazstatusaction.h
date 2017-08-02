@@ -31,10 +31,10 @@ public:
 	StatusAction( const Xtraz::Status &status, QObject *parent );
 
 public Q_SLOTS:
-	void triggered();
+	void slotTriggered(bool);
 
 Q_SIGNALS:
-	void triggered( const Xtraz::Status &status );
+	void triggeredStatus( const Xtraz::Status &status );
 
 private:
 	Xtraz::Status mStatus;

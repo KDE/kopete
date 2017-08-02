@@ -136,10 +136,10 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 
 	// Create actions
     mEditInfoAction = new QAction( QIcon::fromTheme("user-properties"), i18n( "Edit User Info..." ), this );
-	QObject::connect( mEditInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
+	QObject::connect(mEditInfoAction, &QAction::triggered, this, &ICQAccount::slotUserInfo);
 
 	mActionInvisible = new KToggleAction( i18n( "In&visible" ), this );
-	QObject::connect( mActionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
+	QObject::connect(mActionInvisible, &KToggleAction::triggered, this, &ICQAccount::slotToggleInvisible);
 
 	//setIgnoreUnknownContacts(pluginData(protocol(), "IgnoreUnknownContacts").toUInt() == 1);
 
@@ -189,11 +189,11 @@ void ICQAccount::fillActionMenu( KActionMenu *actionMenu )
 	KActionMenu *xtrazStatusMenu = new KActionMenu( i18n( "Set Xtraz Status" ), actionMenu );
 
 	QAction* xtrazStatusSetAction = new QAction( i18n( "Set Status..." ), xtrazStatusMenu );
-	QObject::connect( xtrazStatusSetAction, SIGNAL(triggered(bool)), this, SLOT(setXtrazStatus()) );
+	QObject::connect(xtrazStatusSetAction, &QAction::triggered, this, &ICQAccount::setXtrazStatus);
 	xtrazStatusMenu->addAction( xtrazStatusSetAction );
 
 	QAction* xtrazStatusEditAction = new QAction( i18n( "Edit Statuses..." ), xtrazStatusMenu );
-	QObject::connect( xtrazStatusEditAction, SIGNAL(triggered(bool)), this, SLOT(editXtrazStatuses()) );
+	QObject::connect(xtrazStatusEditAction, &QAction::triggered, this, &ICQAccount::editXtrazStatuses);
 	xtrazStatusMenu->addAction( xtrazStatusEditAction );
 
 	ICQStatusManager* mgr = static_cast<ICQStatusManager *>(protocol()->statusManager());
@@ -205,8 +205,7 @@ void ICQAccount::fillActionMenu( KActionMenu *actionMenu )
 	for ( int i = 0; i < xtrazStatusList.count(); i++ )
 	{
 		Xtraz::StatusAction* xtrazAction = new Xtraz::StatusAction( xtrazStatusList.at(i), xtrazStatusMenu );
-		QObject::connect( xtrazAction, SIGNAL(triggered(Xtraz::Status)),
-		                  this, SLOT(setPresenceXStatus(Xtraz::Status)) );
+		QObject::connect(xtrazAction, &Xtraz::StatusAction::triggeredStatus, this, &ICQAccount::setPresenceXStatus);
 		xtrazStatusMenu->addAction( xtrazAction );
 	}
 
@@ -314,8 +313,8 @@ void ICQAccount::slotUserInfo()
 			return;
 
 		mInfoWidget = new ICQUserInfoWidget( this, engine()->userId(), Kopete::UI::Global::mainWidget(), true );
-		QObject::connect( mInfoWidget, SIGNAL(finished()), this, SLOT(closeUserInfoDialog()) );
-		QObject::connect( mInfoWidget, SIGNAL(okClicked()), this, SLOT(storeUserInfoDialog()) );
+		QObject::connect(mInfoWidget, &ICQUserInfoWidget::finished, this, &ICQAccount::closeUserInfoDialog);
+		// QObject::connect(mInfoWidget, &ICQUserInfoWidget::okClicked, this, &ICQAccount::storeUserInfoDialog);
 		mInfoWidget->show();
 	}
 }
@@ -487,7 +486,7 @@ void ICQAccount::slotGotAuthRequest( const QString& contact, const QString& reas
 	QString contactId = Oscar::normalize( contact );
 
 	Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent( contactId, this );
-	QObject::connect( event, SIGNAL(actionActivated(uint)), this, SLOT(addedInfoEventActionActivated(uint)) );
+	QObject::connect(event, &Kopete::AddedInfoEvent::actionActivated, this, &ICQAccount::addedInfoEventActionActivated);
 
 	Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
 	actions |= Kopete::AddedInfoEvent::BlockAction;
@@ -532,8 +531,8 @@ void ICQAccount::addedInfoEventActionActivated( uint actionId )
 			else
 				info = new ICQUserInfoWidget( this, event->contactId(), Kopete::UI::Global::mainWidget() );
 
-			QObject::connect( info, SIGNAL(finished()), info, SLOT(delayedDestruct()) );
-			QObject::connect( event, SIGNAL(eventClosed(Kopete::InfoEvent*)), info, SLOT(delayedDestruct()) );
+			// QObject::connect(info, &ICQUserInfoWidget::finished, info, &ICQUserInfoWidget::delayedDestruct);
+			// QObject::connect(event, &Kopete::AddedInfoEvent::eventClosed, info, &ICQUserInfoWidget::delayedDestruct);
 			info->setModal( false );
 			info->show();
 		}

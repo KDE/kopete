@@ -37,10 +37,10 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent)
 
 	addUI = new Ui::icqAddUI();
 	addUI->setupUi(this);
-	connect( addUI->searchButton, SIGNAL(clicked()), this, SLOT(showSearchDialog()) );
-	connect( addUI->icqRadioButton, SIGNAL(toggled(bool)), addUI->icqEdit, SLOT(setEnabled(bool)) );
-	connect( addUI->icqRadioButton, SIGNAL(toggled(bool)), addUI->searchButton, SLOT(setEnabled(bool)) );
-	connect( addUI->aimRadioButton, SIGNAL(toggled(bool)), addUI->aimEdit, SLOT(setEnabled(bool)) );
+	connect(addUI->searchButton, &QPushButton::clicked, this, &ICQAddContactPage::showSearchDialog);
+	connect(addUI->icqRadioButton, &QRadioButton::toggled, addUI->icqEdit, &QLineEdit::setEnabled);
+	connect(addUI->icqRadioButton, &QRadioButton::toggled, addUI->searchButton, &QPushButton::setEnabled);
+	connect(addUI->aimRadioButton, &QRadioButton::toggled, addUI->aimEdit, &QLineEdit::setEnabled);
 	addUI->icqEdit->setFocus();
 }
 
@@ -117,7 +117,7 @@ void ICQAddContactPage::showSearchDialog()
 	{
 		m_searchDialog = new ICQSearchDialog( mAccount, this );
 		m_searchDialog->show();
-		connect( m_searchDialog, SIGNAL(finished()), this, SLOT(searchDialogDestroyed()) );
+		connect(m_searchDialog, &ICQSearchDialog::finished, this, &ICQAddContactPage::searchDialogDestroyed);
 	}
 }
 

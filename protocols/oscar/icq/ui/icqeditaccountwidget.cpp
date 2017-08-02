@@ -131,20 +131,20 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 			m_visibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Visible );
 			m_visibleEngine->setAllContactsView( mAccountSettings->visibleAllContacts );
 			m_visibleEngine->setContactsView( mAccountSettings->visibleContacts );
-			QObject::connect( mAccountSettings->visibleAdd, SIGNAL(clicked()), m_visibleEngine, SLOT(slotAdd()) );
-			QObject::connect( mAccountSettings->visibleRemove, SIGNAL(clicked()), m_visibleEngine, SLOT(slotRemove()) );
+			QObject::connect(mAccountSettings->visibleAdd, &QPushButton::clicked, m_visibleEngine, &OscarPrivacyEngine::slotAdd);
+			QObject::connect(mAccountSettings->visibleRemove, &QPushButton::clicked, m_visibleEngine, &OscarPrivacyEngine::slotRemove);
 
 			m_invisibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Invisible );
 			m_invisibleEngine->setAllContactsView( mAccountSettings->invisibleAllContacts );
 			m_invisibleEngine->setContactsView( mAccountSettings->invisibleContacts );
-			QObject::connect( mAccountSettings->invisibleAdd, SIGNAL(clicked()), m_invisibleEngine, SLOT(slotAdd()) );
-			QObject::connect( mAccountSettings->invisibleRemove, SIGNAL(clicked()), m_invisibleEngine, SLOT(slotRemove()) );
+			QObject::connect(mAccountSettings->invisibleAdd, &QPushButton::clicked, m_invisibleEngine, &OscarPrivacyEngine::slotAdd);
+			QObject::connect(mAccountSettings->invisibleRemove, &QPushButton::clicked, m_invisibleEngine, &OscarPrivacyEngine::slotRemove);
 
 			m_ignoreEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Ignore );
 			m_ignoreEngine->setAllContactsView( mAccountSettings->ignoreAllContacts );
 			m_ignoreEngine->setContactsView( mAccountSettings->ignoreContacts );
-			QObject::connect( mAccountSettings->ignoreAdd, SIGNAL(clicked()), m_ignoreEngine, SLOT(slotAdd()) );
-			QObject::connect( mAccountSettings->ignoreRemove, SIGNAL(clicked()), m_ignoreEngine, SLOT(slotRemove()) );
+			QObject::connect(mAccountSettings->ignoreAdd, &QPushButton::clicked, m_ignoreEngine, &OscarPrivacyEngine::slotAdd);
+			QObject::connect(mAccountSettings->ignoreRemove, &QPushButton::clicked, m_ignoreEngine, &OscarPrivacyEngine::slotRemove);
 		}
 		// Hide the registration UI when editing an existing account
 		mAccountSettings->registrationGroupBox->hide();
@@ -203,8 +203,8 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->buttonChangePassword->setEnabled( false );
 	}
 
-	QObject::connect(mAccountSettings->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
-	QObject::connect(mAccountSettings->buttonChangePassword, SIGNAL(clicked()), this, SLOT(slotChangePassword()));
+	QObject::connect(mAccountSettings->buttonRegister, &QPushButton::clicked, this, &ICQEditAccountWidget::slotOpenRegister);
+	QObject::connect(mAccountSettings->buttonChangePassword, &QPushButton::clicked, this, &ICQEditAccountWidget::slotChangePassword);
 
 	/* Set tab order to password custom widget correctly */
 	QWidget::setTabOrder( mAccountSettings->edtAccountId, mAccountSettings->mPasswordWidget->mRemembered );

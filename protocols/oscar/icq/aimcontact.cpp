@@ -58,20 +58,20 @@ QList<QAction*> *AIMContact::customContextMenuActions()
 
 	m_actionIgnore = new KToggleAction(i18n("&Ignore"), this );
         //, "actionIgnore");
-	QObject::connect( m_actionIgnore, SIGNAL(triggered(bool)), this, SLOT(slotIgnore()) );
+	QObject::connect(m_actionIgnore, &KToggleAction::triggered, this, &AIMContact::slotIgnore);
 
 	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), this );
         //, "actionVisibleTo");
-	QObject::connect( m_actionVisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotVisibleTo()) );
+	QObject::connect(m_actionVisibleTo, &KToggleAction::triggered, this, &AIMContact::slotVisibleTo);
 
 	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), this );
         //, "actionInvisibleTo");
-	QObject::connect( m_actionInvisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotInvisibleTo()) );
+	QObject::connect(m_actionInvisibleTo, &KToggleAction::triggered, this, &AIMContact::slotInvisibleTo);
 
 	m_selectEncoding = new QAction( i18n( "Select Encoding..." ), this );
         //, "changeEncoding" );
     m_selectEncoding->setIcon( QIcon::fromTheme(QStringLiteral("character-set")) );
-	QObject::connect( m_selectEncoding, SIGNAL(triggered(bool)), this, SLOT(changeContactEncoding()) );
+	QObject::connect(m_selectEncoding, &QAction::triggered, this, &AIMContact::changeContactEncoding);
 
 	bool on = account()->isConnected();
 	m_actionIgnore->setEnabled(on);

@@ -42,7 +42,7 @@ EditorWithIcon::EditorWithIcon( const QList<QIcon> &icons, QWidget *parent )
 	mLineEdit = new QLineEdit( this );
 	layout->addWidget( mLineEdit );
 
-	connect( mIconButton, SIGNAL(clicked()), this, SLOT(popupIcons()) );
+	connect(mIconButton, &QToolButton::clicked, this, &EditorWithIcon::popupIcons);
 	setIconIndex( 0 );
 	setTabOrder( mIconButton, mLineEdit );
 	setFocusProxy( mLineEdit );
@@ -84,8 +84,8 @@ void EditorWithIcon::popupIcons()
 	iconCells->setColumnCount( 7 );
 	iconCells->setIcons( mIcons );
 	iconCells->setSelectedIndex( mIconIndex );
-	connect( iconCells, SIGNAL(selected(int)), this, SLOT(setIconIndex(int)) );
-	connect( iconCells, SIGNAL(selected(int)), popupFrame, SLOT(close()) );
+	connect(iconCells, &IconCells::selected, this, &EditorWithIcon::setIconIndex);
+	connect(iconCells, &IconCells::selected, popupFrame, &QFrame::close);
 	layout->addWidget( iconCells );
 
 	popupFrame->resize( QSize(150, 100).expandedTo(popupFrame->minimumSizeHint()) );	

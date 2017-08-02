@@ -57,8 +57,8 @@ IconCells::IconCells( QWidget *parent )
 	QFont timesFont( QStringLiteral("Times"), 10, QFont::Normal );
 	setFont( timesFont );
 
-	connect( this, SIGNAL(cellActivated(int,int)), this, SLOT(selected(int,int)) );
-	connect( this, SIGNAL(cellPressed(int,int)), this, SLOT(selected(int,int)) );
+	connect(this, &IconCells::cellActivated, this, &IconCells::slotSelected);
+	connect(this, &IconCells::cellPressed, this, &IconCells::slotSelected);
 }
 
 IconCells::~IconCells()
@@ -128,7 +128,7 @@ void IconCells::setIcons( const QList<QIcon> &icons )
 	setMinimumSize( sizeHint() );
 }
 
-void IconCells::selected( int row, int column )
+void IconCells::slotSelected( int row, int column )
 {
 	int index = row * columnCount() + column;
 	

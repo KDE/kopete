@@ -566,29 +566,29 @@ QList<QAction*> *ICQContact::customContextMenuActions()
 	actionRequestAuth = new QAction( i18n("&Request Authorization"), this );
         //, "actionRequestAuth");
     actionRequestAuth->setIcon( QIcon::fromTheme(QStringLiteral("mail-reply-sender")) );
-	QObject::connect( actionRequestAuth, SIGNAL(triggered(bool)), this, SLOT(slotRequestAuth()) );
+	QObject::connect(actionRequestAuth, &QAction::triggered, this, &ICQContact::slotRequestAuth);
 
 	actionSendAuth = new QAction( i18n("&Grant Authorization"), this );
         //, "actionSendAuth");
     actionSendAuth->setIcon( QIcon::fromTheme(QStringLiteral("mail-forward")) );
-	QObject::connect( actionSendAuth, SIGNAL(triggered(bool)), this, SLOT(slotSendAuth()) );
+	QObject::connect(actionSendAuth, &QAction::triggered, this, &ICQContact::slotSendAuth);
 
 	m_actionIgnore = new KToggleAction(i18n("&Ignore"), this );
         //, "actionIgnore");
-	QObject::connect( m_actionIgnore, SIGNAL(triggered(bool)), this, SLOT(slotIgnore()) );
+	QObject::connect(m_actionIgnore, &KToggleAction::triggered, this, &ICQContact::slotIgnore);
 
 	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), this );
         //, "actionVisibleTo");
-	QObject::connect( m_actionVisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotVisibleTo()) );
+	QObject::connect(m_actionVisibleTo, &KToggleAction::triggered, this, &ICQContact::slotVisibleTo);
 
 	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), this );
         //, "actionInvisibleTo");
-	QObject::connect( m_actionInvisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotInvisibleTo()) );
+	QObject::connect(m_actionInvisibleTo, &KToggleAction::triggered, this, &ICQContact::slotInvisibleTo);
 
 	m_selectEncoding = new QAction( i18n( "Select Encoding..." ), this );
         //, "changeEncoding" );
     m_selectEncoding->setIcon( QIcon::fromTheme(QStringLiteral("character-set")) );
-	QObject::connect( m_selectEncoding, SIGNAL(triggered(bool)), this, SLOT(changeContactEncoding()) );
+	QObject::connect(m_selectEncoding, &QAction::triggered, this, &ICQContact::changeContactEncoding);
 
 	bool on = account()->isConnected();
 	if ( m_ssiItem.waitingAuth() )
@@ -635,8 +635,8 @@ void ICQContact::slotUserInfo()
 	}
 
 	m_infoWidget = new ICQUserInfoWidget( this, Kopete::UI::Global::mainWidget() );
-	QObject::connect( m_infoWidget, SIGNAL(finished()), this, SLOT(closeUserInfoDialog()) );
-	QObject::connect( m_infoWidget, SIGNAL(okClicked()), this, SLOT(storeUserInfoDialog()) );
+	QObject::connect(m_infoWidget, &ICQUserInfoWidget::finished, this, &ICQContact::closeUserInfoDialog);
+	// QObject::connect(m_infoWidget, &ICQUserInfoWidget::okClicked, this, &ICQContact::storeUserInfoDialog);
 	m_infoWidget->show();
 }
 
@@ -683,7 +683,7 @@ void ICQContact::slotReadAwayMessage()
 		awayMessageDialog = new ICQReadAway(this, 0L, "awayMessageDialog");
 		if(!awayMessageDialog)
 			return;
-		QObject::connect(awayMessageDialog, SIGNAL(closing()), this, SLOT(slotCloseAwayMessageDialog()));
+		QObject::connect(awayMessageDialog, &ICQReadAway::closing, this, &ICQContact::slotCloseAwayMessageDialog);
 		awayMessageDialog->show();
 	}
 	else

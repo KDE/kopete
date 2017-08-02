@@ -156,32 +156,32 @@ void ICQUserInfoWidget::init()
 	m_otherInfoWidget->emailTableView->horizontalHeader()->setStretchLastSection( true );
 	m_otherInfoWidget->emailTableView->setSelectionMode( QAbstractItemView::SingleSelection );
 
-	connect( m_genInfoWidget->birthdayYearSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateDay()) );
-	connect( m_genInfoWidget->birthdayMonthSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateDay()) );
+	connect(m_genInfoWidget->birthdayYearSpin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &ICQUserInfoWidget::slotUpdateDay);
+	connect(m_genInfoWidget->birthdayMonthSpin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &ICQUserInfoWidget::slotUpdateDay);
 
-	connect( m_genInfoWidget->birthdayYearSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateAge()) );
-	connect( m_genInfoWidget->birthdayMonthSpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateAge()) );
-	connect( m_genInfoWidget->birthdayDaySpin, SIGNAL(valueChanged(int)), this, SLOT(slotUpdateAge()) );
+	connect(m_genInfoWidget->birthdayYearSpin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &ICQUserInfoWidget::slotUpdateAge);
+	connect(m_genInfoWidget->birthdayMonthSpin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &ICQUserInfoWidget::slotUpdateAge);
+	connect(m_genInfoWidget->birthdayDaySpin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &ICQUserInfoWidget::slotUpdateAge);
 
-	connect( m_orgAffInfoWidget->org1CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotOrg1CategoryChanged(int)) );
-	connect( m_orgAffInfoWidget->org2CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotOrg2CategoryChanged(int)) );
-	connect( m_orgAffInfoWidget->org3CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotOrg3CategoryChanged(int)) );
+	connect(m_orgAffInfoWidget->org1CategoryCombo, static_cast<void (InfoComboBox::*)(int)>(&InfoComboBox::currentIndexChanged), this, &ICQUserInfoWidget::slotOrg1CategoryChanged);
+	connect(m_orgAffInfoWidget->org2CategoryCombo, static_cast<void (InfoComboBox::*)(int)>(&InfoComboBox::currentIndexChanged), this, &ICQUserInfoWidget::slotOrg2CategoryChanged);
+	connect(m_orgAffInfoWidget->org3CategoryCombo, static_cast<void (InfoComboBox::*)(int)>(&InfoComboBox::currentIndexChanged), this, &ICQUserInfoWidget::slotOrg3CategoryChanged);
 
-	connect( m_orgAffInfoWidget->aff1CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotAff1CategoryChanged(int)) );
-	connect( m_orgAffInfoWidget->aff2CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotAff2CategoryChanged(int)) );
-	connect( m_orgAffInfoWidget->aff3CategoryCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotAff3CategoryChanged(int)) );
+	connect(m_orgAffInfoWidget->aff1CategoryCombo, static_cast<void (InfoComboBox::*)(int)>(&InfoComboBox::currentIndexChanged), this, &ICQUserInfoWidget::slotAff1CategoryChanged);
+	connect(m_orgAffInfoWidget->aff2CategoryCombo, static_cast<void (InfoComboBox::*)(int)>(&InfoComboBox::currentIndexChanged), this, &ICQUserInfoWidget::slotAff2CategoryChanged);
+	connect(m_orgAffInfoWidget->aff3CategoryCombo, static_cast<void (InfoComboBox::*)(int)>(&InfoComboBox::currentIndexChanged), this, &ICQUserInfoWidget::slotAff3CategoryChanged);
 
-	connect( m_interestInfoWidget->topic1Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic1Changed(int)) );
-	connect( m_interestInfoWidget->topic2Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic2Changed(int)) );
-	connect( m_interestInfoWidget->topic3Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic3Changed(int)) );
-	connect( m_interestInfoWidget->topic4Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic4Changed(int)) );
+	connect(m_interestInfoWidget->topic1Combo, static_cast<void (InfoComboBox::*)(int)>(&InfoComboBox::currentIndexChanged), this, &ICQUserInfoWidget::slotInterestTopic1Changed);
+	connect(m_interestInfoWidget->topic2Combo, static_cast<void (InfoComboBox::*)(int)>(&InfoComboBox::currentIndexChanged), this, &ICQUserInfoWidget::slotInterestTopic2Changed);
+	connect(m_interestInfoWidget->topic3Combo, static_cast<void (InfoComboBox::*)(int)>(&InfoComboBox::currentIndexChanged), this, &ICQUserInfoWidget::slotInterestTopic3Changed);
+	connect(m_interestInfoWidget->topic4Combo, static_cast<void (InfoComboBox::*)(int)>(&InfoComboBox::currentIndexChanged), this, &ICQUserInfoWidget::slotInterestTopic4Changed);
 
 	if ( m_ownInfo )
 	{
-		connect( m_otherInfoWidget->addEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotAddEmail()) );
-		connect( m_otherInfoWidget->removeEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotRemoveEmail()) );
-		connect( m_otherInfoWidget->upEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotUpEmail()) );
-		connect( m_otherInfoWidget->downEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotDownEmail()) );
+		connect(m_otherInfoWidget->addEmailButton, &QPushButton::clicked, this, &ICQUserInfoWidget::slotAddEmail);
+		connect(m_otherInfoWidget->removeEmailButton, &QPushButton::clicked, this, &ICQUserInfoWidget::slotRemoveEmail);
+		connect(m_otherInfoWidget->upEmailButton, &QPushButton::clicked, this, &ICQUserInfoWidget::slotUpEmail);
+		connect(m_otherInfoWidget->downEmailButton, &QPushButton::clicked, this, &ICQUserInfoWidget::slotDownEmail);
 		connect( m_otherInfoWidget->emailTableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
 		         this, SLOT(slotEmailSelectionChanged(QItemSelection)) );
 	}

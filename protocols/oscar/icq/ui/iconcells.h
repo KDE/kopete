@@ -60,7 +60,7 @@ Q_SIGNALS:
 	void selected( int index );
 
 protected Q_SLOTS:
-	void selected( int row, int column );
+	void slotSelected( int row, int column );
 
 protected:
 	// the three methods below are used to ensure equal column widths and row heights

@@ -58,11 +58,11 @@ ICQStatusEditor::ICQStatusEditor( ICQStatusManager *statusManager, QWidget *pare
 	mUi->statusView->setModel( mXtrazStatusModel );
 	mUi->statusView->setCurrentIndex( mXtrazStatusModel->index( 0, 0 ) );
 
-	connect( mUi->buttonAdd, SIGNAL(clicked()), this, SLOT(addStatus()) );
-	connect( mUi->buttonDelete, SIGNAL(clicked()), this, SLOT(deleteStatus()) );
-	connect( mUi->buttonUp, SIGNAL(clicked()), this, SLOT(moveUp()) );
-	connect( mUi->buttonDown, SIGNAL(clicked()), this, SLOT(moveDown()) );
-	connect( this, SIGNAL(okClicked()), this, SLOT(save()) );
+	connect(mUi->buttonAdd, &QPushButton::clicked, this, &ICQStatusEditor::addStatus);
+	connect(mUi->buttonDelete, &QPushButton::clicked, this, &ICQStatusEditor::deleteStatus);
+	connect(mUi->buttonUp, &QPushButton::clicked, this, &ICQStatusEditor::moveUp);
+	connect(mUi->buttonDown, &QPushButton::clicked, this, &ICQStatusEditor::moveDown);
+	connect(this, &ICQStatusEditor::okClicked, this, &ICQStatusEditor::save);
 	connect( mUi->statusView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
 	         this, SLOT(updateButtons()) );
 

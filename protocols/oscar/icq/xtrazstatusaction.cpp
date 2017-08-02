@@ -27,12 +27,13 @@ StatusAction::StatusAction( const Xtraz::Status &status, QObject *parent )
 	this->setIcon( QIcon::fromTheme( QStringLiteral( "icq_xstatus%1" ).arg( mStatus.status() ) ) );
 	this->setToolTip( mStatus.message() );
 
-	QObject::connect( this, SIGNAL(triggered(bool)), this, SLOT(triggered()) );
+	QObject::connect(this, &StatusAction::triggered, this, &StatusAction::slotTriggered);
 }
 
-void StatusAction::triggered()
+void StatusAction::slotTriggered(bool value)
 {
-	emit triggered( mStatus );
+    Q_UNUSED(value);
+	emit triggeredStatus(mStatus);
 }
 
 }

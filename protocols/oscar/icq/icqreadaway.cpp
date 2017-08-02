@@ -44,17 +44,11 @@ ICQReadAway::ICQReadAway(ICQContact *c, QWidget *parent, const char* name)
 	awayMessageBrowser->setNotifyClick(true);
 	awayMessageBrowser->setText(mContact->awayMessage());
 
-	QObject::connect(
-		awayMessageBrowser, SIGNAL(urlClick(QString)),
-		this, SLOT(slotUrlClicked(QString)));
-	QObject::connect(
-		awayMessageBrowser, SIGNAL(mailClick(QString,QString)),
-		this, SLOT(slotMailClicked(QString,QString)));
+	QObject::connect(awayMessageBrowser, &KTextBrowser::urlClick, this, &ICQReadAway::slotUrlClicked);
+	QObject::connect(awayMessageBrowser, &KTextBrowser::mailClick, this, &ICQReadAway::slotMailClicked);
 
-	connect(this, SIGNAL(user1Clicked()),
-		this, SLOT(slotFetchAwayMessage()));
-	connect(this, SIGNAL(closeClicked()),
-		this, SLOT(slotCloseClicked()));
+	connect(this, &ICQReadAway::user1Clicked, this, &ICQReadAway::slotFetchAwayMessage);
+	connect(this, &ICQReadAway::closeClicked, this, &ICQReadAway::slotCloseClicked);
 
 	connect(c, SIGNAL(awayMessageChanged()),
 		this, SLOT(slotAwayMessageChanged()));
