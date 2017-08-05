@@ -124,9 +124,14 @@ void WebPresencePlugin::listenToAccount(Kopete::Account *account)
     if (account && account->myself()) {
         // Connect to the account's status changed signal
         // because we can't know if the account has already connected
-        QObject::disconnect(account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact *, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)), this, SLOT(slotWaitMoreStatusChanges()));
-        QObject::connect(account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact *, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)), this, SLOT(slotWaitMoreStatusChanges()));
+        QObject::disconnect(account->myself(), &Kopete::Contact::onlineStatusChanged, this, &WebPresencePlugin::slotRecieveStatusUpdate);
+        QObject::connect(account->myself(), &Kopete::Contact::onlineStatusChanged, this, &WebPresencePlugin::slotRecieveStatusUpdate);
     }
+}
+
+void WebPresencePlugin::slotRecieveStatusUpdate(Kopete::Contact * /* args */, const Kopete::OnlineStatus& /* args */, const Kopete::OnlineStatus& /* args */)
+{
+    slotWaitMoreStatusChanges();
 }
 
 void WebPresencePlugin::slotWaitMoreStatusChanges()
@@ -141,7 +146,7 @@ void WebPresencePlugin::slotWriteFile()
     m_writeScheduler->stop();
 
     // generate the (temporary) XML file representing the current contact list
-    const QUrl dest = WebPresenceConfig::self()->uploadURL();
+    const QUrl dest = QUrl::fromLocalFile(WebPresenceConfig::self()->uploadURL().path());
     if (dest.isEmpty() || !dest.isValid()) {
         kDebug(14309) << "url is empty or not valid. NOT UPDATING!";
         return;
@@ -177,7 +182,7 @@ void WebPresencePlugin::slotWriteFile()
     }
 
     // upload it to the specified URL
-    QUrl src(m_output->fileName());
+    QUrl src = QUrl::fromLocalFile(m_output->fileName());
     KIO::FileCopyJob *job = KIO::file_move(src, dest, -1, KIO::Overwrite | KIO::HideProgressInfo);
     connect(job, &KIO::FileCopyJob::result, this, &WebPresencePlugin::slotUploadJobResult);
 }

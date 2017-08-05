@@ -24,6 +24,7 @@
 
 #include <QUrl>
 
+#include "kopetecontact.h"
 #include "kopeteplugin.h"
 
 class QTimer;
@@ -81,6 +82,10 @@ protected Q_SLOTS:
      * Called when an upload finished, displays error if needed
      */
     void slotUploadJobResult(KJob *);
+    /**
+     * This slot is used for normalising the signal recieved
+     */
+    void slotRecieveStatusUpdate(Kopete::Contact *, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&);
     /**
      * Called to schedule a write, after waiting to see if more changes
      * occur (accounts tend to change status together)
