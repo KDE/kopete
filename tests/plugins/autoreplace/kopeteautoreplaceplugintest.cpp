@@ -22,6 +22,7 @@
 #include <QObject>
 #include <QtTest>
 Q_DECLARE_METATYPE(Kopete::Message);
+Q_DECLARE_METATYPE(Kopete::Message::MessageDirection);
 
 
 class AutoReplacePluginTest : public QObject
@@ -30,32 +31,46 @@ class AutoReplacePluginTest : public QObject
 private slots:
     void testDefaultAutoReplace();
     void testAutoReplaceConfig();
+    void testDefaultAutoReplace_data();
 };
+
+void AutoReplacePluginTest::testDefaultAutoReplace_data() {
+    QTest::addColumn<QString>("messageTest");
+    QTest::addColumn<QString>("messageExpected");
+    QTest::addColumn<Kopete::Message::MessageDirection>("direction");
+    QTest::newRow("Unaffected Outbound") << QStringLiteral("hello") << QStringLiteral("hello") << Kopete::Message::Outbound;
+    QTest::newRow("Empty Outbound") << QString() << QString() << Kopete::Message::Outbound;
+    QTest::newRow("Affected Case 1") << QStringLiteral("arent") << QStringLiteral("are not") << Kopete::Message::Outbound;
+    QTest::newRow("Affected Case 2") << QStringLiteral("r") << QStringLiteral("are") << Kopete::Message::Outbound;
+    QTest::newRow("Affected Case 3") << QStringLiteral("ur") << QStringLiteral("your") << Kopete::Message::Outbound;
+    QTest::newRow("Affected Case 4") << QStringLiteral("u") << QStringLiteral("you") << Kopete::Message::Outbound;
+    QTest::newRow("Unaffected Inbound") << QStringLiteral("hello") << QStringLiteral("hello") << Kopete::Message::Inbound;
+    QTest::newRow("Empty Inbound") << QString() << QString() << Kopete::Message::Inbound;
+    QTest::newRow("UnAffected Case 1") << QStringLiteral("arent") << QStringLiteral("arent") << Kopete::Message::Inbound;
+    QTest::newRow("UnAffected Case 2") << QStringLiteral("r") << QStringLiteral("r") << Kopete::Message::Inbound;
+    QTest::newRow("UnAffected Case 3") << QStringLiteral("ur") << QStringLiteral("ur") << Kopete::Message::Inbound;
+    QTest::newRow("UnAffected Case 4") << QStringLiteral("u") << QStringLiteral("u") << Kopete::Message::Inbound;
+}
 
 void AutoReplacePluginTest::testDefaultAutoReplace()
 {
-    Kopete::Message msg;
-    msg.setPlainBody("arent");  
-    msg.setDirection(Kopete::Message::Outbound);
+    QFETCH(QString, messageExpected);
+    QFETCH(QString, messageTest);
+    QFETCH(Kopete::Message::MessageDirection, direction);
+
     AutoReplacePlugin *A = new AutoReplacePlugin(nullptr, QVariantList());
     Kopete::ChatSessionManager *csm = Kopete::ChatSessionManager::self();
     QSignalSpy spy(csm, &Kopete::ChatSessionManager::aboutToSend);
+    
+    Kopete::Message msg;
+    msg.setPlainBody(messageTest);  
+    msg.setDirection(direction);
     QVERIFY(spy.isValid());
     emit csm->aboutToSend(msg);
-    QCOMPARE(msg.plainBody(), QStringLiteral("are not"));
-    msg.setPlainBody("u");
-    emit csm->aboutToSend(msg);
-    QCOMPARE(spy.count(), 2);
-    QCOMPARE(msg.plainBody(), QStringLiteral("you"));
-    msg.setPlainBody("r");
-    emit csm->aboutToSend(msg);
-    QCOMPARE(spy.count(), 3);
-    QCOMPARE(msg.plainBody(), QStringLiteral("are"));
-    msg.setPlainBody("ur");
-    emit csm->aboutToSend(msg);
-    QCOMPARE(spy.count(), 4);
-    QCOMPARE(msg.plainBody(), QStringLiteral("your"));
-    Q_UNUSED(A);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(msg.plainBody(), messageExpected);
+    delete A;
+    delete csm;
 }
 
 void AutoReplacePluginTest::testAutoReplaceConfig()
@@ -78,6 +93,7 @@ void AutoReplacePluginTest::testAutoReplaceConfig()
     config->setMap(map);
     AutoReplaceConfig::WordsToReplace newMap = config->map();
     QCOMPARE(newMap[key], map[key]);
+    delete config;
 }
 
 QTEST_MAIN(AutoReplacePluginTest)
