@@ -1,5 +1,5 @@
-option(WITH_latex "Enable Kopete latex plugin" ON)
-option(WITH_autoreplace "Enable Kopete autoreplace plugin" ON)
+option(WITH_latex "Enable Kopete latex plugin" OFF) # to be fixed or rewritten
+option(WITH_autoreplace "Enable Kopete autoreplace plugin" ON) 
 option(WITH_history "Enable Kopete history plugin" OFF) # To be re-written
 option(WITH_history2 "Enable Kopete history2 plugin" OFF) # To be re-written
 option(WITH_contactnotes "Enable Kopete contactnotes plugin" ON)

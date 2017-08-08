@@ -19,7 +19,6 @@
 
 #include <stdlib.h>
 
-#include "plugin_texteffect_debug.h"
 #include <kpluginfactory.h>
 #include <QColor>
 
@@ -42,9 +41,8 @@ TextEffectPlugin::TextEffectPlugin(QObject *parent, const QVariantList & /*args*
 
     connect(this, SIGNAL(settingsChanged()), this, SLOT(slotSettingsChanged()));
 
-    connect(Kopete::ChatSessionManager::self(),
-            SIGNAL(aboutToSend(Kopete::Message&)),
-            SLOT(slotOutgoingMessage(Kopete::Message&)));
+    connect(Kopete::ChatSessionManager::self(), SIGNAL(aboutToSend(Kopete::Message&)), 
+            this, SLOT(slotOutgoingMessage(Kopete::Message&)));
 
     last_color = 0;
 }
