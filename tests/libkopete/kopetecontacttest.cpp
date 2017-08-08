@@ -130,24 +130,27 @@ void ContactTest::testContactCreation_data()
 {
     QTest::addColumn<Kopete::Contact::NameType>("TypeInEnum");
     QTest::addColumn<QString>("TypeInString");
+    QTest::addColumn<QString>("contactId");
+    QTest::addColumn<QString>("icon");
 
-    QTest::newRow("nickName") << Kopete::Contact::NickName << QStringLiteral("nickName");
-    QTest::newRow("formattedName") << Kopete::Contact::FormattedName << QStringLiteral("formattedName");
-    QTest::newRow("contactId") << Kopete::Contact::ContactId << QStringLiteral("contactId");
-    QTest::newRow("customName") << Kopete::Contact::CustomName << QStringLiteral("customName");
+    QTest::newRow("nickName") << Kopete::Contact::NickName << QStringLiteral("nickName") << QStringLiteral("ContactId") << QStringLiteral("Icon");
+    QTest::newRow("formattedName") << Kopete::Contact::FormattedName << QStringLiteral("formattedName") << QStringLiteral("ContactId") << QStringLiteral("Icon");
+    QTest::newRow("contactId") << Kopete::Contact::ContactId << QStringLiteral("contactId") << QStringLiteral("ContactId") << QStringLiteral("Icon");
+    QTest::newRow("customName") << Kopete::Contact::CustomName << QStringLiteral("customName") << QStringLiteral("ContactId") << QStringLiteral("Icon");
 }
 
 void ContactTest::testContactCreation()
 {
-    Kopete::MetaContact *parentMetaContact = new Kopete::MetaContact();
-    DummyProtocol *dummyProtocol = new DummyProtocol();
-    DummyAccount *dummyAccount = new DummyAccount(dummyProtocol);
-    const QString contactId = QStringLiteral("ContactId");
-    const QString icon = QStringLiteral("Icon");
-    DummyContact *testContact = new DummyContact(dummyAccount, contactId, parentMetaContact, icon);
     // test conversion of nametype to string and string to name 
     QFETCH(Kopete::Contact::NameType, TypeInEnum);
     QFETCH(QString, TypeInString);
+    QFETCH(QString, contactId);
+    QFETCH(QString, icon);
+
+    Kopete::MetaContact *parentMetaContact = new Kopete::MetaContact();
+    DummyProtocol *dummyProtocol = new DummyProtocol();
+    DummyAccount *dummyAccount = new DummyAccount(dummyProtocol);
+    DummyContact *testContact = new DummyContact(dummyAccount, contactId, parentMetaContact, icon);
     QCOMPARE(testContact->nameTypeToString(TypeInEnum), TypeInString);
     QCOMPARE(testContact->nameTypeFromString(TypeInString), TypeInEnum);
 }
@@ -158,22 +161,27 @@ void ContactTest::testContactStatus_data()
     QTest::addColumn<QString>("Message");
     QTest::addColumn<int>("SpyCount");
 
-    QTest::newRow("EmptyMessage") << QString("") << QString("") << 0;
-    QTest::newRow("FullMessage") << QStringLiteral("Hello fromm the server") << QStringLiteral("This is a test") << 1;
+    QTest::newRow("EmptyMessage") << QString() << QString() << 0;
+    QTest::newRow("FullMessage 1") << QString() << QStringLiteral("This is a test") << 1;
+    QTest::newRow("FullMessage 1") << QStringLiteral("Hello fromm the server") << QStringLiteral("This is a test") << 1;
+    QTest::newRow("FullMessage 2") << QStringLiteral("Hello fromm the server *//*me") << QStringLiteral("This is a test") << 1;
+    QTest::newRow("FullMessage 3") << QStringLiteral("Hello fromm the server \\me") << QStringLiteral("This is a test") << 1;
+    QTest::newRow("FullMessage 4") << QStringLiteral("Hello fromm the server") << QString() << 1;
 }
 
 void ContactTest::testContactStatus()
 {
+    // test Status Message 
+    QFETCH(QString, Title);
+    QFETCH(QString, Message);
+    QFETCH(int, SpyCount);
+    
     Kopete::MetaContact *parentMetaContact = new Kopete::MetaContact();
     DummyProtocol *dummyProtocol = new DummyProtocol();
     DummyAccount *dummyAccount = new DummyAccount(dummyProtocol);
     const QString contactId = QStringLiteral("ContactId");
     const QString icon = QStringLiteral("Icon");
     DummyContact *testContact = new DummyContact(dummyAccount, contactId, parentMetaContact, icon);
-    // test Status Message 
-    QFETCH(QString, Title);
-    QFETCH(QString, Message);
-    QFETCH(int, SpyCount);
     Kopete::StatusMessage testStatus = Kopete::StatusMessage(Title, Message);
     QSignalSpy spy(testContact, &Kopete::Contact::statusMessageChanged);
     testContact->setStatusMessage(testStatus);
