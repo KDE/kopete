@@ -22,3 +22,5 @@ ecm_add_test(kopeteidentitytest.cpp LINK_LIBRARIES ${KOPETE_TEST_LIBRARIES})
 ecm_add_test(kopeteonlinestatusmanagertest.cpp LINK_LIBRARIES ${KOPETE_TEST_LIBRARIES})
 ecm_add_test(kopeteinfoeventtest.cpp LINK_LIBRARIES ${KOPETE_TEST_LIBRARIES})
 ecm_add_test(kopetecontacttest.cpp LINK_LIBRARIES ${KOPETE_TEST_LIBRARIES})
+ecm_add_test(kopetemessagetest.cpp LINK_LIBRARIES ${KOPETE_TEST_LIBRARIES})
+

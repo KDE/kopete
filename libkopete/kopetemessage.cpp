@@ -345,6 +345,7 @@ QString Message::unescape(const QString &xml)
     }
 
     // Replace stuff starting with '&'
+    data.replace(QLatin1String("&nbsp;&nbsp;&nbsp;&nbsp;"), QLatin1String("\t"));
     data.replace(QLatin1String("&gt;"), QLatin1String(">"));
     data.replace(QLatin1String("&lt;"), QLatin1String("<"));
     data.replace(QLatin1String("&quot;"), QLatin1String("\""));
