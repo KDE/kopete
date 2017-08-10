@@ -70,7 +70,6 @@ void TextEffectPluginTest::testDefaultTextEffect()
     msg.setDirection(direction);
     emit csm->aboutToSend(msg);
     QCOMPARE(msg.foregroundColor().name(QColor::HexRgb), colorExpected);
-    delete plugin;
     delete config;
 }
 
