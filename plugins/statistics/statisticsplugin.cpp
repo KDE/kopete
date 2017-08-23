@@ -75,7 +75,7 @@ StatisticsPlugin::StatisticsPlugin(QObject *parent, const QVariantList & /*args*
     connect(Kopete::ContactList::self(), SIGNAL(metaContactRemoved(Kopete::MetaContact *)),
             this, SLOT(slotMetaContactRemoved(Kopete::MetaContact *)));
 
-    setComponentName(QStringLiteral("statistics"), i18n("Kopete"));
+    setComponentName(QStringLiteral("kopete_statistics"), i18n("Kopete"));
     setXMLFile(QStringLiteral("statisticsui.rc"));
 
     /* Initialization reads the database, so it could be a bit time-consuming

@@ -21,10 +21,13 @@
 #include <QPointer>
 
 #include <kpluginfactory.h>
-#include <kdialog.h>
-#include <kvbox.h>
+#include <QDialog>
+#include <QVBoxLayout>
 #include <KLocalizedString>
 #include <KDebug>
+#include <KConfigGroup>
+#include <QDialogButtonBox>
+#include <QPushButton>
 
 #include "kopeteuiglobal.h"
 #include "kopetemetacontact.h"
@@ -162,16 +165,28 @@ void PrivacyPreferences::slotChkDropAllToggled(bool enabled)
 
 void PrivacyPreferences::slotBtnAddToWhiteListClicked()
 {
-    QPointer <KDialog> addDialog = new KDialog(this);
-    addDialog->setCaption(i18n("Add Contact to Whitelist"));
-    addDialog->setButtons(KDialog::Ok | KDialog::Cancel);
-    addDialog->setDefaultButton(KDialog::Ok);
-    addDialog->showButtonSeparator(true);
+    QPointer <QDialog> addDialog = new QDialog(this);
+    addDialog->setWindowTitle(i18n("Add Contact to Whitelist"));
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+    QWidget *mainWidget = new QWidget(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    addDialog->setLayout(mainLayout);
+    mainLayout->addWidget(mainWidget);
+    QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+    okButton->setDefault(true);
+    okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+    connect(buttonBox, &QDialogButtonBox::accepted, addDialog, &QDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, addDialog, &QDialog::reject);
 
-    QPointer <KVBox> box = new KVBox(addDialog);
-    box->setSpacing(KDialog::spacingHint());
+    buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+
+    QPointer <QWidget> box = new QWidget(addDialog);
+    QVBoxLayout *boxVBoxLayout = new QVBoxLayout(box);
+    boxVBoxLayout->setMargin(0);
     QPointer <ContactSelectorWidget> selector = new ContactSelectorWidget(box);
-    addDialog->setMainWidget(box);
+    boxVBoxLayout->addWidget(selector);
+    mainLayout->addWidget(box);
+    mainLayout->addWidget(buttonBox);
 
     if (addDialog->exec() == QDialog::Accepted && addDialog && selector) {
         foreach (const AccountListEntry &entry, selector->contacts()) {
@@ -186,17 +201,26 @@ void PrivacyPreferences::slotBtnAddToWhiteListClicked()
 
 void PrivacyPreferences::slotBtnAddToBlackListClicked()
 {
-    QPointer <KDialog> addDialog = new KDialog(this);
-    addDialog->setCaption(i18n("Add Contact to Blacklist"));
-    addDialog->setButtons(KDialog::Ok | KDialog::Cancel);
-    addDialog->setDefaultButton(KDialog::Ok);
-    addDialog->showButtonSeparator(true);
+    QPointer <QDialog> addDialog = new QDialog(this);
+    addDialog->setWindowTitle(i18n("Add Contact to Blacklist"));
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+    QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    okButton->setDefault(true);
+    okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+    connect(buttonBox, &QDialogButtonBox::accepted, addDialog, &QDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, addDialog, &QDialog::reject);
+    buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 
-    QPointer <KVBox> box = new KVBox(addDialog);
-    box->setSpacing(KDialog::spacingHint());
+    QPointer <QWidget> box = new QWidget(addDialog);
+    QVBoxLayout *boxVBoxLayout = new QVBoxLayout(box);
+    boxVBoxLayout->setMargin(0);
     QPointer <ContactSelectorWidget> selector = new ContactSelectorWidget(box);
-    addDialog->setMainWidget(box);
-
+    boxVBoxLayout->addWidget(selector);
+    mainLayout->addWidget(selector);
+    mainLayout->addWidget(box);
+    mainLayout->addWidget(buttonBox);
+    
     if (addDialog->exec() == QDialog::Accepted && addDialog && selector) {
         foreach (const AccountListEntry &entry, selector->contacts()) {
             m_blackListModel->addAccount(entry);
