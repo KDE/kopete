@@ -77,7 +77,7 @@ void HighlightConfig::load()
 {
     m_filters.clear(); //clear filters
 
-    const QString filename = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("highlight.xml");
+    const QString filename = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QLatin1Char('/') + QStringLiteral("highlight.xml");
     if (filename.isEmpty()) {
         return;
     }
@@ -135,7 +135,7 @@ void HighlightConfig::load()
 
 void HighlightConfig::save()
 {
-    const QString fileName = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QStringLiteral("highlight.xml");
+    const QString fileName = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QLatin1Char('/') + QStringLiteral("highlight.xml");
 
     QSaveFile file(fileName);
     if (file.open(QIODevice::WriteOnly)) {

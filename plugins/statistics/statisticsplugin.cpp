@@ -60,20 +60,15 @@ StatisticsPlugin::StatisticsPlugin(QObject *parent, const QVariantList & /*args*
     QAction *viewMetaContactStatistics = new QAction(QIcon::fromTheme(QStringLiteral("view-statistics")), i18n("View &Statistics"),
                                                      this);
     actionCollection()->addAction(QStringLiteral("viewMetaContactStatistics"), viewMetaContactStatistics);
-    connect(viewMetaContactStatistics, SIGNAL(triggered(bool)), this, SLOT(slotViewStatistics()));
+    connect(viewMetaContactStatistics, &QAction::triggered, this, &StatisticsPlugin::slotViewStatistics);
     viewMetaContactStatistics->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count() == 1);
 
-    connect(Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession *)),
-            this, SLOT(slotViewCreated(Kopete::ChatSession *)));
-    connect(Kopete::ChatSessionManager::self(), SIGNAL(aboutToReceive(Kopete::Message&)),
-            this, SLOT(slotAboutToReceive(Kopete::Message&)));
+    connect(Kopete::ChatSessionManager::self(), &Kopete::ChatSessionManager::chatSessionCreated, this, &StatisticsPlugin::slotViewCreated);
+    connect(Kopete::ChatSessionManager::self(), &Kopete::ChatSessionManager::aboutToReceive, this, &StatisticsPlugin::slotAboutToReceive);
 
-    connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)),
-            viewMetaContactStatistics, SLOT(setEnabled(bool)));
-    connect(Kopete::ContactList::self(), SIGNAL(metaContactAdded(Kopete::MetaContact *)),
-            this, SLOT(slotMetaContactAdded(Kopete::MetaContact *)));
-    connect(Kopete::ContactList::self(), SIGNAL(metaContactRemoved(Kopete::MetaContact *)),
-            this, SLOT(slotMetaContactRemoved(Kopete::MetaContact *)));
+    connect(Kopete::ContactList::self(), &Kopete::ContactList::metaContactSelected, viewMetaContactStatistics, &QAction::setEnabled);
+    connect(Kopete::ContactList::self(), &Kopete::ContactList::metaContactAdded, this, &StatisticsPlugin::slotMetaContactAdded);
+    connect(Kopete::ContactList::self(), &Kopete::ContactList::metaContactRemoved, this, &StatisticsPlugin::slotMetaContactRemoved);
 
     setComponentName(QStringLiteral("kopete_statistics"), i18n("Kopete"));
     setXMLFile(QStringLiteral("statisticsui.rc"));
@@ -99,8 +94,7 @@ void StatisticsPlugin::slotInitialize()
             slotMetaContactAdded(metaContact);
             slotOnlineStatusChanged(metaContact, metaContact->status());
         } else {
-            connect(metaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact *,Kopete::OnlineStatus::StatusType)), this,
-                    SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact *,Kopete::OnlineStatus::StatusType)));
+            connect(metaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact *,Kopete::OnlineStatus::StatusType)), this, SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact *,Kopete::OnlineStatus::StatusType)));
         }
     }
 }
@@ -183,8 +177,7 @@ void StatisticsPlugin::slotOnlineStatusChanged(Kopete::MetaContact *metaContact,
 
 void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 {
-    connect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact *,Kopete::OnlineStatus::StatusType)), this,
-            SLOT(slotOnlineStatusChanged(Kopete::MetaContact *,Kopete::OnlineStatus::StatusType)));
+    connect(mc, &Kopete::MetaContact::onlineStatusChanged, this, &StatisticsPlugin::slotOnlineStatusChanged);
 
     if (!statisticsContactMap.contains(mc)) {
         statisticsContactMap[mc] = new StatisticsContact(mc, db());
@@ -194,8 +187,7 @@ void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 void StatisticsPlugin::slotDelayedMetaContactAdded(Kopete::MetaContact *mc, Kopete::OnlineStatus::StatusType status)
 {
     if (status != Kopete::OnlineStatus::Unknown) {
-        disconnect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact *,Kopete::OnlineStatus::StatusType)), this,
-                   SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact *,Kopete::OnlineStatus::StatusType)));
+        disconnect(mc, &Kopete::MetaContact::onlineStatusChanged, this, &StatisticsPlugin::slotDelayedMetaContactAdded);
 
         slotMetaContactAdded(mc);
         slotOnlineStatusChanged(mc, status);

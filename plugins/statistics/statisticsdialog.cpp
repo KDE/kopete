@@ -91,8 +91,8 @@ StatisticsDialog::StatisticsDialog (StatisticsContact *contact, StatisticsDB *db
                                         m_offlineColor.name()));
 
     dialogUi->datePicker->setDate(QDate::currentDate());
-    connect(dialogUi->datePicker, SIGNAL(dateChanged(QDate)), this, SLOT(fillCalendarCells()));
-    connect(dialogUi->datePicker, SIGNAL(dateChanged(QDate)), this, SLOT(generateOneDayStats()));
+    connect(dialogUi->datePicker, &KDatePicker::dateChanged, this, &StatisticsDialog::fillCalendarCells);
+    connect(dialogUi->datePicker, &KDatePicker::dateChanged, this, &StatisticsDialog::generateOneDayStats);
 
     setFocus();
     setEscapeButton(Close);
