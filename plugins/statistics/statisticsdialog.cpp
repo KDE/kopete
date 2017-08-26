@@ -56,8 +56,7 @@ StatisticsDialog::StatisticsDialog (StatisticsContact *contact, StatisticsDB *db
     KHBox *generalHBox = new KHBox(this);
 
     generalHTMLPart = new KHTMLPart(generalHBox);
-    connect(generalHTMLPart->browserExtension(), SIGNAL(openUrlRequestDelayed(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)),
-            this, SLOT(slotOpenURLRequest(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)));
+    connect(generalHTMLPart->browserExtension(), &KParts::BrowserExtension::openUrlRequestDelayed, this, &StatisticsDialog::slotOpenURLRequest);
     generalHTMLPart->setJScriptEnabled(false);
     generalHTMLPart->setJavaEnabled(false);
     generalHTMLPart->setMetaRefreshEnabled(false);
@@ -108,13 +107,13 @@ StatisticsDialog::~StatisticsDialog()
 }
 
 // We only generate pages when the user clicks on a link
-void StatisticsDialog::slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
+void StatisticsDialog::slotOpenURLRequest(const QUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
 {
-    if (url.protocol() == QLatin1String("main")) {
+    if (url.scheme() == QLatin1String("main")) {
         generatePageGeneral();
-    } else if (url.protocol() == QLatin1String("dayofweek")) {
+    } else if (url.scheme() == QLatin1String("dayofweek")) {
         generatePageForDay(url.path().toInt());
-    } else if (url.protocol() == QLatin1String("monthofyear")) {
+    } else if (url.scheme() == QLatin1String("monthofyear")) {
         generatePageForMonth(url.path().toInt());
     }
 }

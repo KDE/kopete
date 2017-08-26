@@ -20,7 +20,7 @@
 
 #include <qwidget.h>
 #include <kdialog.h>
-#include <kurl.h>
+#include <QUrl>
 #include "kopetemetacontact.h"
 
 class QStringList;
@@ -89,7 +89,7 @@ private Q_SLOTS:
      * We manage the openUrlRequestDelayed signal from the generalHTMLPart->browserExtension() in order to
      * generate requested pages on the fly.
      */
-    void slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &);
+    void slotOpenURLRequest(const QUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &);
 
     /**
      * Color the calendar cells to show statuses across entire months
