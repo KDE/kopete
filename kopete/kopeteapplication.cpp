@@ -56,6 +56,7 @@ KopeteApplication::KopeteApplication(int &argc, char *argv[])
     : QApplication(argc, argv)
 {
     m_isShuttingDown = false;
+    KLocalizedString::setApplicationDomain("kopete");
 
     //Create the identity manager
     Kopete::IdentityManager::self()->load();

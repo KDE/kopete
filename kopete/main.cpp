@@ -39,7 +39,6 @@ int main(int argc, char *argv[])
     kopete.setAttribute(Qt::AA_UseHighDpiPixmaps, true);
 
     KCrash::initialize();
-    KLocalizedString::setApplicationDomain("kopete");
     KAboutData aboutData(QStringLiteral("kopete"), i18n("Kopete"),
                          QStringLiteral(KOPETE_VERSION_STRING), i18n(description), KAboutLicense::GPL,
                          i18n("(c) 2001-2004, Duncan Mac-Vicar Prett\n(c) 2002-2017, Kopete Development Team"),
