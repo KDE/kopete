@@ -41,7 +41,7 @@
 #include <qtabwidget.h>
 #include "IdGuiElements.h"
 
-//K_PLUGIN_FACTORY( KopeteAVDeviceConfigFactory, registerPlugin<AVDeviceConfig>(); )
+K_PLUGIN_FACTORY( KopeteAVDeviceConfigFactory, registerPlugin<AVDeviceConfig>(); )
 
 AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
     : KCModule(parent, args)
@@ -436,3 +436,5 @@ void AVDeviceConfig::hideEvent(QHideEvent *event)
     KCModule::hideEvent(event);
 }
 */
+
+#include "avdeviceconfig.moc"
