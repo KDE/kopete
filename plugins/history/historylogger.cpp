@@ -346,6 +346,9 @@ void HistoryLogger::saveToDisk()
     QTime t;
     t.start(); //mesure the time needed to save.
 
+    // create directory if it does not exist
+    QDir().mkpath(QFileInfo(m_toSaveFileName).absolutePath());
+
     QSaveFile file(m_toSaveFileName);
     if (file.open(QIODevice::WriteOnly)) {
         QString buf;

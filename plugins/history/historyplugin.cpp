@@ -28,6 +28,8 @@
 #include <kdeversion.h>
 #include <QIcon>
 #include <kactioncollection.h>
+#include <klocalizedstring.h>
+#include <kdebug.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"

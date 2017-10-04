@@ -24,6 +24,7 @@
 #include <kcolorbutton.h>
 #include <knuminput.h>
 #include <kpluginfactory.h>
+#include <kdebug.h>
 
 #include "historyconfig.h"
 #include "ui_historyprefsui.h"

@@ -21,7 +21,7 @@
 #include <QWidget>
 
 #include "../kopetemessage.h"
-#include "../libkopete_export.h"
+#include "libkopete_export.h"
 
 namespace Kopete {
 class ViewPlugin;

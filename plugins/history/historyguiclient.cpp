@@ -27,6 +27,7 @@
 #include <kpluginfactory.h>
 #include <QIcon>
 #include <kactioncollection.h>
+#include <kdebug.h>
 
 #include "kopetechatsession.h"
 #include "kopetechatsessionmanager.h"
