@@ -25,6 +25,7 @@
 #include <qpoint.h>
 #include <qhostaddress.h>
 #include <qlist.h>
+#include <KUrl>
 
 #include "gaducontactlist.h"
 

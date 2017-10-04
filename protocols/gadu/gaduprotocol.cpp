@@ -45,7 +45,7 @@ K_EXPORT_PLUGIN(GaduProtocolFactory("kopete_gadu"))
 GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
 
 GaduProtocol::GaduProtocol(QObject *parent, const QVariantList &)
-    : Kopete::Protocol(GaduProtocolFactory::componentData(), parent)
+    : Kopete::Protocol(parent)
     , propFirstName(Kopete::Global::Properties::self()->firstName())
     , propLastName(Kopete::Global::Properties::self()->lastName())
     , propEmail(Kopete::Global::Properties::self()->emailAddress())

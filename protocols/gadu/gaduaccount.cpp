@@ -43,6 +43,7 @@
 #include <kmessagebox.h>
 #include <knotification.h>
 #include <ktemporaryfile.h>
+#include <KFileDialog>
 #include <kactionmenu.h>
 #include <ktoggleaction.h>
 #include <kio/netaccess.h>
@@ -282,10 +283,8 @@ GaduAccount::fillActionMenu(KActionMenu *actionMenu)
     kDebug(14100);
 
     actionMenu->setIcon(myself()->onlineStatus().iconFor(this));
-    actionMenu->menu()->addTitle(myself()->onlineStatus().iconFor(myself()), i18n("%1 <%2> ",
-                                                                                  myself()->
-                                                                                  displayName(),
-                                                                                  accountId()));
+    actionMenu->menu()->setIcon(myself()->onlineStatus().iconFor(myself()));
+    actionMenu->menu()->setTitle(i18n("%1 <%2> ", myself()->displayName(), accountId()));
 
     if (p->session_->isConnected()) {
         p->searchAction->setEnabled(true);
@@ -321,32 +320,28 @@ GaduAccount::fillActionMenu(KActionMenu *actionMenu)
     }
 
     QAction *action = new QAction(
-        QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus(GG_STATUS_AVAIL).iconFor(
-                                   this))),
+        GaduProtocol::protocol()->convertStatus(GG_STATUS_AVAIL).iconFor(this),
         i18n("Go O&nline"), this);
     //, "actionGaduConnect" );
     QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(slotGoOnline()));
     actionMenu->addAction(action);
 
     action = new QAction(
-        QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus(GG_STATUS_BUSY).iconFor(
-                                   this))),
+        GaduProtocol::protocol()->convertStatus(GG_STATUS_BUSY).iconFor(this),
         i18n("Set &Busy"), this);
     //, "actionGaduConnect" );
     QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(slotGoBusy()));
     actionMenu->addAction(action);
 
     action = new QAction(
-        QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus(GG_STATUS_INVISIBLE).iconFor(
-                                   this))),
+        GaduProtocol::protocol()->convertStatus(GG_STATUS_INVISIBLE).iconFor(this),
         i18n("Set &Invisible"), this);
     //, "actionGaduConnect" );
     QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(slotGoInvisible()));
     actionMenu->addAction(action);
 
     action = new QAction(
-        QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus(GG_STATUS_NOT_AVAIL).iconFor(
-                                   this))),
+        GaduProtocol::protocol()->convertStatus(GG_STATUS_NOT_AVAIL).iconFor(this),
         i18n("Go &Offline"), this);
     //, "actionGaduConnect" );
     QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(slotGoOffline()));
@@ -1038,9 +1033,8 @@ GaduAccount::slotExportContactsListToFile()
 
     p->saveListDialog = new KFileDialog(QString("::kopete-gadu" + accountId()), QString(),
                                         Kopete::UI::Global::mainWidget());
-    p->saveListDialog->setCaption(
-        i18n("Save Contacts List for Account %1 As",
-             myself()->displayName()));
+    p->saveListDialog->setWindowTitle(
+            i18n("Save Contacts List for Account %1 As", myself()->displayName()));
 
     if (p->saveListDialog->exec() == QDialog::Accepted) {
         QByteArray list = p->textcodec_->fromUnicode(userlist()->asString());
@@ -1082,9 +1076,8 @@ GaduAccount::slotImportContactsFromFile()
 
     p->loadListDialog = new KFileDialog(QString("::kopete-gadu" + accountId()), QString(),
                                         Kopete::UI::Global::mainWidget());
-    p->loadListDialog->setCaption(
-        i18n("Load Contacts List for Account %1 As",
-             myself()->displayName()));
+    p->loadListDialog->setWindowTitle(
+            i18n("Load Contacts List for Account %1 As", myself()->displayName()));
 
     if (p->loadListDialog->exec() == QDialog::Accepted) {
         url = p->loadListDialog->selectedUrl();
