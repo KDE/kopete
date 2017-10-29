@@ -43,6 +43,8 @@ public:
     KopeteApplication(int &argc, char *argv[]);
     ~KopeteApplication();
 
+    void initializeUI();
+
     /**
      * Method to return whether or not we're shutting down
      * or not at this point.

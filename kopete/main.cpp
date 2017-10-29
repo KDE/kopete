@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     KopeteApplication kopete(argc, argv);
+    KLocalizedString::setApplicationDomain("kopete");
     kopete.setAttribute(Qt::AA_UseHighDpiPixmaps, true);
 
     KCrash::initialize();
@@ -95,6 +96,7 @@ int main(int argc, char *argv[])
                             i18nc("EMAIL OF TRANSLATORS", "Your emails"));
 
     KAboutData::setApplicationData(aboutData);
+
     QCommandLineParser parser;
     parser.addVersionOption();
     parser.addHelpOption();
@@ -114,8 +116,9 @@ int main(int argc, char *argv[])
     parser.process(kopete);
     aboutData.processCommandLine(&parser);
 
-
     KDBusService service(KDBusService::Unique);
+
+    kopete.initializeUI();
 
     return kopete.exec();
 }

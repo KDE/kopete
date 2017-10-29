@@ -53,11 +53,13 @@
 #include "kopetedbusinterface.h"
 
 KopeteApplication::KopeteApplication(int &argc, char *argv[])
-    : QApplication(argc, argv)
+    : QApplication(argc, argv),
+      m_isShuttingDown(false)
 {
-    m_isShuttingDown = false;
-    KLocalizedString::setApplicationDomain("kopete");
+}
 
+void KopeteApplication::initializeUI()
+{
     //Create the identity manager
     Kopete::IdentityManager::self()->load();
 
