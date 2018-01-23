@@ -66,7 +66,6 @@ Name[ug]=ئالاقەداش تىزىمى
 Name[uk]=Список контактів
 Name[wa]=Djivêye des soçons
 Name[x-test]=xxContact Listxx
-Name[zh_CN]=联系人列表
 Name[zh_TW]=聯絡人清單
 Comment=Configure Contact List Look and Feel
 Comment[ar]=اضبط  مظهر و ملمس نافذة الدردشة
@@ -122,7 +121,6 @@ Comment[tr]=Kişi Listesinin Görünümünü Yapılandır
 Comment[ug]=ئالاقەداش تىزىمىنىڭ كۆرۈنۈشى ۋە سېزىمىنى سەپلەيدۇ
 Comment[uk]=Налаштувати вигляд і поведінку списку контактів
 Comment[x-test]=xxConfigure Contact List Look and Feelxx
-Comment[zh_CN]=配置联系人列表的观感
 Comment[zh_TW]=設定聯絡人清單的外觀與感覺
 X-DocPath=kopete/configure-dialog.html#configuring-appearance
 

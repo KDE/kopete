@@ -83,7 +83,7 @@ Name[uz@cyrillic]=Ҳисоблар
 Name[vi]=Tài khoản
 Name[wa]=Contes
 Name[x-test]=xxAccountsxx
-Name[zh_CN]=账户
+Name[zh_CN]=帐户
 Name[zh_HK]=帳號
 Name[zh_TW]=帳號
 Comment=Manage Your Accounts and Identities
@@ -142,7 +142,6 @@ Comment[ug]=ھېسابات ۋە كىملىكلىرىڭىزنى باشقۇرىد�
 Comment[uk]=Керування вашими обліковими записами та профілями
 Comment[wa]=Manaedjî vos contes et idintités
 Comment[x-test]=xxManage Your Accounts and Identitiesxx
-Comment[zh_CN]=管理您的账户和身份
 Comment[zh_TW]=管理您的帳號與身份
 X-DocPath=kopete/configure-dialog.html#configuring-accounts
 

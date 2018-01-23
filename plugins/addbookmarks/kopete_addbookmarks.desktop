@@ -140,7 +140,6 @@ Comment[tr]=Otomatik olarak gelen mesajları yer imine bağlar
 Comment[uk]=Автоматично робити закладки посилань з вхідних повідомлень
 Comment[vi]=Tự động thêm dấu hiệu từ các liên kết trong tin nhận gửi đến
 Comment[x-test]=xxAutomatically bookmark links in incoming messagesxx
-Comment[zh_CN]=自动将收到消息中的链接加入书签
 Comment[zh_HK]=自動將收到的訊息內的連結加到書籤
 Comment[zh_TW]=自動將接收訊息中的連結加入書籤
 Icon=bookmark-new
