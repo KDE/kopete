@@ -11,7 +11,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/libiris/include/iris
     ${CMAKE_CURRENT_SOURCE_DIR}/libiris/src
     ${QCA2_INCLUDE_DIR}
-    ${QJSON_INCLUDE_DIR}
     )
 
 if(BUILD_LIBJINGLE)
