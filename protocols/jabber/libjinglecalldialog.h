@@ -16,6 +16,8 @@
 #ifndef LibjingleCallDialog_H
 #define LibjingleCallDialog_H
 
+#include <QDialog>
+
 #include "ui_libjinglecalldialog.h"
 
 class QCloseEvent;
