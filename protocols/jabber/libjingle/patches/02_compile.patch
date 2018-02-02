@@ -61,3 +61,25 @@ Index: talk/session/phone/v4llookup.cc
  
  #include <cstring>
  
+Index: talk/sound/platformsoundsystem.cc
+===================================================================
+--- talk/sound/platformsoundsystem.cc
++++ talk/sound/platformsoundsystem.cc
+@@ -28,7 +28,7 @@
+ #include "talk/sound/platformsoundsystem.h"
+ 
+ #include "talk/base/common.h"
+-#ifdef LINUX
++#if 0
+ #include "talk/sound/linuxsoundsystem.h"
+ #else
+ #include "talk/sound/nullsoundsystem.h"
+@@ -37,7 +37,7 @@
+ namespace cricket {
+ 
+ SoundSystemInterface *CreatePlatformSoundSystem() {
+-#ifdef LINUX
++#if 0
+   return new LinuxSoundSystem();
+ #else
+   ASSERT(false && "Not implemented");

@@ -86,9 +86,6 @@ set ( call_SRCS
 	talk/session/phone/libudevsymboltable.cc
 	talk/session/phone/linuxdevicemanager.cc
 	talk/session/phone/v4llookup.cc
-	talk/sound/alsasoundsystem.cc
-	talk/sound/alsasymboltable.cc
-	talk/sound/linuxsoundsystem.cc
 	talk/sound/pulseaudiosoundsystem.cc
 	talk/sound/pulseaudiosymboltable.cc
 	talk/base/unixfilesystem.cc
