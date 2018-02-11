@@ -1,6 +1,5 @@
 <?xml version="1.0" ?>
 <!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
-  <!ENTITY kopete "<application>Kopete</application>">
   <!ENTITY Will.Stephenson "<personname><firstname>Will</firstname><surname>Stephenson</surname></personname>">
   <!ENTITY Will.Stephenson.mail "<email>lists@stevello.free-online.co.uk</email>">
   <!ENTITY Matt.Rogers "<personname><firstname>Matt</firstname><surname>Rogers</surname></personname>">
@@ -11,15 +10,10 @@
   <!ENTITY Olivier.Goffart.mail "<email>ogoffart@kde.org</email>">
   <!ENTITY Charles.Connell "<personname><firstname>Charles</firstname><surname>Connell</surname></personname>">
   <!ENTITY Charles.Connell.mail "<email>charles@connells.org</email>">
-  <!ENTITY package "kopete">
-  <!ENTITY kappname "&kopete;">
   <!ENTITY im "<acronym>IM</acronym>">
   <!ENTITY ascii "<acronym>ASCII</acronym>">
-  <!ENTITY html "<acronym>HTML</acronym>">
-  <!ENTITY xml "<acronym>XML</acronym>">
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
-  <!ENTITY kopetewww "<ulink url='http://kopete.kde.org'>http://kopete.kde.org</ulink>">
   <!ENTITY kopete-menus SYSTEM "menus.docbook">
   <!ENTITY kopete-chatstyle SYSTEM "chatstyle.docbook">
   <!ENTITY kopete-pipes SYSTEM "pipes.docbook">
@@ -105,7 +99,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 
 <abstract>
 <para>
-&kopete; is &kde;'s multi-protocol instant messenger client.
+&kopete; is the multi-protocol instant messenger client by the &kde; community.
 </para>
 </abstract>
 
@@ -132,21 +126,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 
 <chapter id="introduction">
 <title>Introduction</title>
-<!--
-<chapterinfo>
-<authorgroup>
-<author>
-<firstname>Will</firstname>
-<surname>Stephenson</surname>
-<affiliation><address>
-<email>lists@stevello.free-online.co.uk</email>
-</address></affiliation>
-</author>
-</authorgroup>
-<date>2003-10-05</date>
-<releaseinfo>0.8</releaseinfo>
-</chapterinfo>
--->
+
 <sect1 id="intro-to-kopete">
 <title>&kopete;, the &kde; instant messaging client</title>
 <sect2 id="intro-to-kopete-next">
@@ -161,7 +141,6 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 </sect2>
 <sect2 id="intro-to-kopete-web">
 <title>More &kopete; Information on the Web</title>
-<para>For more info about the &kopete; project; the team maintains a website at &kopetewww;.  The latest news and updates are always available there.</para>
 <para>If you need to contact the team, the &kopete; developers' mailing list is hosted at <ulink url="https://mail.kde.org/mailman/listinfo/kopete-devel">https://mail.kde.org/mailman/listinfo/kopete-devel</ulink>.</para>
 <para>If you want live support, there is an Internet Relay Chat channel for &kopete; where you can find the team discussing technical (well, not always) issues or just hanging out. You can use any IRC client to join the channel (including &kopete;), just add an IRC contact and use <userinput>irc.freenode.org</userinput> as the server and <userinput>#kopete</userinput> as the channel name. See you there!</para>
 </sect2>
@@ -617,7 +596,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <sect4 id="configuring-appearance-chat-styles">
 <title>Styles</title>
 <para>The style of the chat view can be altered to look like other clients. Installed styles are shown in the list on the left and are previewed in the main panel. See <link linkend="chatwindowstyleguide">Chat Window Style guide</link> for a document how to make your own style.</para>
-<para>Third party styles are available at <ulink url="http://kde-look.org">http://kde-look.org</ulink>. &kopete; 0.12 now supports styles from Adium(an &im; program on &Mac; OS X). So you can download styles from Adium here: <ulink url="http://www.adiumxtras.com/">Adium Xtras</ulink> and select Message View Styles.</para>
+<para>Third party styles are available at the <ulink url="https://store.kde.org/">KDE Store</ulink>. &kopete; 0.12 now supports styles from Adium(an &im; program on &Mac; OS X). So you can download styles from Adium here: <ulink url="http://www.adiumxtras.com/">Adium Xtras</ulink> and select Message View Styles.</para>
 <para>To install a style, click <guibutton>Install...</guibutton>. Select an archive file containing the style. To delete a style, select a style in the list and click 
 <guibutton>Delete</guibutton>.</para>
 <para><guilabel>Group consecutive messages</guilabel> is a useful option to make your chats more readable.  If you receive several messages in a row from the same contact, they are grouped without repeating the sender name.</para>
@@ -746,7 +725,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 		</sect2>
 		<sect2 id="protocols-others">
 			<title>Other protocols</title>
-			<para>As well as the protocols named above, &kopete; has support for several other protocols.  In most cases, this is not enabled by default or an additional plugin must be installed.  Meanwhile, SMS, Skype and SILC are provided in this way.  See &kopetewww; for details, however, the &kopete; team are not responsible for these protocols.</para>
+			<para>As well as the protocols named above, &kopete; has support for several other protocols.  In most cases, this is not enabled by default or an additional plugin must be installed.  Meanwhile, SMS, Skype and SILC are provided in this way.  However, the &kopete; team are not responsible for these protocols.</para>
 		</sect2>
 	</sect1>
 </chapter>
@@ -987,15 +966,15 @@ sect2 id="plugins-motion-auto-away">
 <listitem><para>The body of the message, in plain &ascii; text</para></listitem>
 </varlistentry>
 <varlistentry>
-<term>&html; text body</term>
-<listitem><para>The body of the message, in &html;, as it would be if your chat peer had sent &html; to you, which will be rendered in the chat window</para></listitem>
+<term>&HTML; text body</term>
+<listitem><para>The body of the message, in &HTML;, as it would be if your chat peer had sent &HTML; to you, which will be rendered in the chat window</para></listitem>
 </varlistentry>
 <varlistentry>
-<term>&xml; full message</term>
-<listitem><para>An &xml; document that describes all the characteristics of the message, including the &html; body.</para></listitem>
+<term>&XML; full message</term>
+<listitem><para>An &XML; document that describes all the characteristics of the message, including the &HTML; body.</para></listitem>
 </varlistentry>
 </variablelist>
-For most purposes, you probably want to use the plain text body or &html; text body options. These can be used with programs such as translators or summarizers. The &xml; format is only appropriate for use with a program or script written specifically to work with this plugin. If you would like to write a program or script that does work with this plugin, see <link linkend="pipes">the more detailed documentation</link>.
+For most purposes, you probably want to use the plain text body or &HTML; text body options. These can be used with programs such as translators or summarizers. The &XML; format is only appropriate for use with a program or script written specifically to work with this plugin. If you would like to write a program or script that does work with this plugin, see <link linkend="pipes">the more detailed documentation</link>.
 </para>
 </sect2>
 <!--FIXME missing
@@ -1075,7 +1054,7 @@ in konsole "khelpcenter khelpcenter:kioslaves" works-->
 <qandaentry>
 <question><para>Is it possible to customize the icons I see in &kopete;?</para></question>
 <answer><para>You can switch between different emoticons using the Emoticons tab of the Appearance page of the Configure &kopete; dialog.</para>
-<para>To install new emoticons, first look at <ulink url="http://www.kde-look.org/content/search.php">KDE-Look.org</ulink>, where there are a lot of additional emoticon sets to download.</para>
+<para>To install new emoticons, first look at the <ulink url="https://store.kde.org/">KDE Store</ulink>, where there are a lot of additional emoticon sets to download.</para>
 
 <para>The emoticons are easy to install - you just place a folder containing
 the icon files along with an &XML; file describing the mapping from text to picture in
@@ -1222,25 +1201,6 @@ Documentation copyright 2003,2004,2005 &Will.Stephenson; (lists at stevello free
 </sect2>
 </sect1>
 </chapter><!-- credits-and-license -->
-
-<appendix id="installation">
-<title>Installation</title>
-<sect1 id="getting-kopete">
-<title>How to obtain &kopete;</title>
-&install.intro.documentation;
-<para>Development versions may be downloaded at &kopetewww;.</para>
-</sect1>
-<sect1 id="requirements">
-<title>Required Libraries</title>
-<para>If you installed &kopete; as part of your distribution, you probably have these installed already.</para>
-<para>The Gadu-gadu plugin requires the libgadu package, see <ulink url="http://gj.pointblue.com.pl/projects/kopete/">this page</ulink> for details.</para>
-<para>The Now Listening plugin needs libxmms if you want to access what <application>xmms</application> is currently playing; this should be available in your distribution but is available as part of the xmms package at <ulink url="http://www.xmms.org">the xmms homepage</ulink>.</para>
-</sect1>
-<sect1 id="compilation">
-<title>Compilation and Installation</title>
-&install.compile.documentation;
-</sect1>
-</appendix>
 
 &kopete-chatstyle;
 &kopete-pipes;
