@@ -119,6 +119,7 @@ Comment[tr]=Normal insanları Süper Kopete Geliştiricisi haline getirir
 Comment[uk]=Перетворює звичайних людей на супер-розробників Kopete
 Comment[vi]=Giúp người thường trở thành Siêu Nhà Phát triển Kopete
 Comment[x-test]=xxTurns normal people into Super Kopete Developerxx
+Comment[zh_CN]=将普通人训练成杰出的 Kopete 开发者
 Comment[zh_TW]=將一般人變成超級 Kopete 開發者
 X-KDE-Library=kcm_kopete_tutorialplugin
 X-KDE-FactoryName=kcm_kopete_tutorialplugin

@@ -126,5 +126,6 @@ Comment[tr]=Video Aygıtlarını Yapılandır
 Comment[ug]=سىن ئۈسكۈنىلىرىنى سەپلەيدۇ
 Comment[uk]=Налаштувати відеопристрої
 Comment[x-test]=xxConfigure Video Devicesxx
+Comment[zh_CN]=配置视频设备
 Comment[zh_TW]=設定影像裝置
 X-DocPath=kopete/configure-dialog.html#configuring-avdevice
