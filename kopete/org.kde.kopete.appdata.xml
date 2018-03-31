@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component type="desktop-application">
+  <id>org.kde.kopete</id>
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>GPL-2.0+</project_license>
+  <name>Kopete</name>
+  <summary>Instant Messenger</summary>
+  <description>
+    <p>
+      Kopete is an instant messenger supporting AIM, ICQ, Windows Live Messenger, Yahoo, Jabber, Gadu-Gadu, Novell GroupWise Messenger, and more. It is designed to be a flexible and extensible multi-protocol system suitable for personal and enterprise use.
+    </p>
+    <p>
+      The goal of Kopete is to provide users with a single easy-to-use way to access all of their instant messaging systems. The interface puts people first, and is integrated with the system address book to let you access your contacts from other KDE applications.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Kopete features tools to enhance your instant messeging experience, such as message encryption, archiving, and many other fun and useful effects.</li>
+      <li>Kopete supports all commonly used instant messaging protocols, and the Kopete team provides templates for developers to base new plugins on.</li>
+      <li>The API provides developers with many features to make it easy to support a new protocol.</li>
+      <li>All protocols are plugins and allow for modular installation, configuration, and usage.</li>
+    </ul>
+  </description>
+  <url type="bugtracker">https://bugs.kde.org/enter_bug.cgi?format=guided&amp;product=kopete</url>
+  <url type="donation">https://www.kde.org/community/donations/</url>
+  <url type="help">https://docs.kde.org/?application=kopete</url>
+  <url type="homepage">https://userbase.kde.org/Kopete</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://www.kde.org/images/screenshots/kopete.png</image>
+    </screenshot>
+  </screenshots>
+  <project_group>KDE</project_group>
+  <provides>
+    <binary>kopete</binary>
+  </provides>
+  <launchable type="desktop-id">org.kde.kopete.desktop</launchable>
+</component>
