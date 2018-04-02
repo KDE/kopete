@@ -4,20 +4,44 @@
   <metadata_license>FSFAP</metadata_license>
   <project_license>GPL-2.0+</project_license>
   <name>Kopete</name>
+  <name xml:lang="ca">Kopete</name>
+  <name xml:lang="es">Kopete</name>
+  <name xml:lang="nl">Kopete</name>
+  <name xml:lang="x-test">xxKopetexx</name>
   <summary>Instant Messenger</summary>
+  <summary xml:lang="ca">Missatgeria instantània</summary>
+  <summary xml:lang="nl">Instant-messenger</summary>
+  <summary xml:lang="x-test">xxInstant Messengerxx</summary>
   <description>
     <p>
       Kopete is an instant messenger supporting AIM, ICQ, Windows Live Messenger, Yahoo, Jabber, Gadu-Gadu, Novell GroupWise Messenger, and more. It is designed to be a flexible and extensible multi-protocol system suitable for personal and enterprise use.
     </p>
+    <p xml:lang="ca">El Kopete és un missatger instantani que admet AIM, ICQ, Windows Live Messenger, Yahoo, Jabber, Gadu-Gadu, GroupWise Messenger de Novell i molt més. Està dissenyat per a ser un sistema multi-protocol flexible i extensible, adequat per a ús personal i empresarial.</p>
+    <p xml:lang="x-test">xxKopete is an instant messenger supporting AIM, ICQ, Windows Live Messenger, Yahoo, Jabber, Gadu-Gadu, Novell GroupWise Messenger, and more. It is designed to be a flexible and extensible multi-protocol system suitable for personal and enterprise use.xx</p>
     <p>
       The goal of Kopete is to provide users with a single easy-to-use way to access all of their instant messaging systems. The interface puts people first, and is integrated with the system address book to let you access your contacts from other KDE applications.
     </p>
+    <p xml:lang="ca">L'objectiu del Kopete és proporcionar als usuaris una única manera fàcil d'accedir a tots els seus sistemes de missatgeria instantània. La interfície posa les persones primer, i s'integra amb la llibreta d'adreces del sistema per a permetre-us accedir als vostres contactes des d'altres aplicacions del KDE.</p>
+    <p xml:lang="x-test">xxThe goal of Kopete is to provide users with a single easy-to-use way to access all of their instant messaging systems. The interface puts people first, and is integrated with the system address book to let you access your contacts from other KDE applications.xx</p>
     <p>Features:</p>
+    <p xml:lang="ca">Característiques:</p>
+    <p xml:lang="es">Funcionalidades:</p>
+    <p xml:lang="nl">Mogelijkheden:</p>
+    <p xml:lang="x-test">xxFeatures:xx</p>
     <ul>
       <li>Kopete features tools to enhance your instant messeging experience, such as message encryption, archiving, and many other fun and useful effects.</li>
+      <li xml:lang="ca">El Kopete disposa d'eines per a millorar la vostra experiència de missatgeria instantània, com ara l'encriptatge dels missatges, arxiu i molts altres efectes divertits i útils.</li>
+      <li xml:lang="x-test">xxKopete features tools to enhance your instant messeging experience, such as message encryption, archiving, and many other fun and useful effects.xx</li>
       <li>Kopete supports all commonly used instant messaging protocols, and the Kopete team provides templates for developers to base new plugins on.</li>
+      <li xml:lang="ca">El Kopete admet tots els protocols de missatgeria instantània que s'utilitzen habitualment, i l'equip del Kopete proporciona plantilles per als desenvolupadors com a base pels connectors nous.</li>
+      <li xml:lang="x-test">xxKopete supports all commonly used instant messaging protocols, and the Kopete team provides templates for developers to base new plugins on.xx</li>
       <li>The API provides developers with many features to make it easy to support a new protocol.</li>
+      <li xml:lang="ca">L'API proporciona als desenvolupadors moltes funcions per a facilitar el suport d'un protocol nou.</li>
+      <li xml:lang="x-test">xxThe API provides developers with many features to make it easy to support a new protocol.xx</li>
       <li>All protocols are plugins and allow for modular installation, configuration, and usage.</li>
+      <li xml:lang="ca">Tots els protocols són connectors i permeten la instal·lació, configuració i un ús modular.</li>
+      <li xml:lang="nl">Alle protocollen zijn plug-ins en bieden modulaire installatie, configuratie en gebruik.</li>
+      <li xml:lang="x-test">xxAll protocols are plugins and allow for modular installation, configuration, and usage.xx</li>
     </ul>
   </description>
   <url type="bugtracker">https://bugs.kde.org/enter_bug.cgi?format=guided&amp;product=kopete</url>
