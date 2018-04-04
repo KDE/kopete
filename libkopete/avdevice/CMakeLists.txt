@@ -34,7 +34,7 @@ else (LIBV4L2_FOUND)
     target_link_libraries(kopete_videodevice Qt5::Gui KF5::KDELibs4Support )
 endif (LIBV4L2_FOUND)
 
-set_target_properties(kopete_videodevice PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+set_target_properties(kopete_videodevice PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kopete_videodevice ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 
