@@ -39,7 +39,7 @@ add_library(kopete_oscar SHARED ${kopete_oscar_LIB_SRCS})
 
 target_link_libraries(kopete_oscar KF5::KIOCore kopete oscar)
 
-set_target_properties(kopete_oscar PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+set_target_properties(kopete_oscar PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kopete_oscar ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 
