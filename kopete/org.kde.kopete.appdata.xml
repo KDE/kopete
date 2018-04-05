@@ -10,6 +10,7 @@
   <name xml:lang="es">Kopete</name>
   <name xml:lang="nl">Kopete</name>
   <name xml:lang="pt">Kopete</name>
+  <name xml:lang="sk">Kopete</name>
   <name xml:lang="sv">Kopete</name>
   <name xml:lang="uk">Kopete</name>
   <name xml:lang="x-test">xxKopetexx</name>
@@ -19,6 +20,7 @@
   <summary xml:lang="cs">Internetový komunikátor</summary>
   <summary xml:lang="nl">Instant-messenger</summary>
   <summary xml:lang="pt">Mensagens Instantâneas</summary>
+  <summary xml:lang="sk">Instant Messenger</summary>
   <summary xml:lang="sv">Direktmeddelandeklient</summary>
   <summary xml:lang="uk">Програма для миттєвого зв'язку</summary>
   <summary xml:lang="x-test">xxInstant Messengerxx</summary>
@@ -50,6 +52,7 @@
     <p xml:lang="es">Funcionalidades:</p>
     <p xml:lang="nl">Mogelijkheden:</p>
     <p xml:lang="pt">Funcionalidades:</p>
+    <p xml:lang="sk">Funkcie:</p>
     <p xml:lang="sv">Funktioner:</p>
     <p xml:lang="uk">Можливості:</p>
     <p xml:lang="x-test">xxFeatures:xx</p>
