@@ -24,5 +24,6 @@ install(TARGETS kcm_kopete_avdeviceconfig  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 install( FILES kopete_avdeviceconfig.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
 
+file(GLOB icons_png "*.png")
+ecm_install_icons(ICONS ${icons_png} DESTINATION ${KDE_INSTALL_ICONDIR} THEME oxygen)
 #ecm_install_icons( ${KDE_INSTALL_DATADIR}/kopete/icons  )
-ecm_install_icons(${KDE_INSTALL_ICONDIR})
