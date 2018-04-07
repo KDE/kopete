@@ -50,7 +50,7 @@ ecm_qt_declare_logging_category(kopete_SRCS HEADER kopete_debug.h IDENTIFIER KOP
 
 ki18n_wrap_ui(kopete_SRCS groupkabcselectorwidget.ui infoeventbase.ui )
 
-file(GLOB ICONS_SRCS "hi*-apps-kopete.png")
+file(GLOB ICONS_SRCS "*-apps-kopete.png")
 ecm_add_app_icon(kopete_SRCS ICONS ${ICONS_SRCS})
 
 add_executable(kopete_bin ${kopete_SRCS})
@@ -85,5 +85,6 @@ install( FILES kopeterc DESTINATION ${KDE_INSTALL_CONFDIR} )
 install( FILES org.kde.Kopete.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR} )
 
 file(GLOB icons_png "*.png")
-ecm_install_icons(ICONS ${icons_png}  DESTINATION ${KDE_INSTALL_ICONDIR} THEME oxygen)
+file(GLOB icons_svg "*.svgz")
+ecm_install_icons(ICONS ${icons_png} ${icons_svg} DESTINATION ${KDE_INSTALL_ICONDIR} THEME hicolor)
 

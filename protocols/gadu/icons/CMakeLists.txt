@@ -1,1 +1,5 @@
-ecm_install_icons( ${KDE_INSTALL_DATADIR}/kopete/icons  )
+file(GLOB icons_png "[0-9]*.png")
+file(GLOB icons_svg "[0-9]*.svg")
+file(GLOB icons_mng "[0-9]*.mng")
+set(all_icons ${icons_png} ${icons_svg} ${icons_mng})
+ecm_install_icons(ICONS ${all_icons} DESTINATION ${KDE_INSTALL_DATADIR}/kopete/icons THEME hicolor)
