@@ -11,6 +11,7 @@
   <name xml:lang="en-GB">Kopete</name>
   <name xml:lang="es">Kopete</name>
   <name xml:lang="fr">Kopete</name>
+  <name xml:lang="gl">Kopete</name>
   <name xml:lang="ia">Kopete</name>
   <name xml:lang="it">Kopete</name>
   <name xml:lang="nl">Kopete</name>
@@ -26,6 +27,7 @@
   <summary xml:lang="cs">Internetový komunikátor</summary>
   <summary xml:lang="de">Instant-Messenger</summary>
   <summary xml:lang="en-GB">Instant Messenger</summary>
+  <summary xml:lang="gl">Mensaxaría instantánea</summary>
   <summary xml:lang="ia">Messagero Instantanee</summary>
   <summary xml:lang="it">Messaggistica istantanea</summary>
   <summary xml:lang="nl">Instant-messenger</summary>
@@ -42,6 +44,7 @@
     <p xml:lang="ca">El Kopete és un missatger instantani que admet AIM, ICQ, Windows Live Messenger, Yahoo, Jabber, Gadu-Gadu, GroupWise Messenger de Novell i molt més. Està dissenyat per a ser un sistema multi-protocol flexible i extensible, adequat per a ús personal i empresarial.</p>
     <p xml:lang="ca-valencia">El Kopete és un missatger instantani que admet AIM, ICQ, Windows Live Messenger, Yahoo, Jabber, Gadu-Gadu, GroupWise Messenger de Novell i molt més. Està dissenyat per a ser un sistema multi-protocol flexible i extensible, adequat per a ús personal i empresarial.</p>
     <p xml:lang="en-GB">Kopete is an instant messenger supporting AIM, ICQ, Windows Live Messenger, Yahoo, Jabber, Gadu-Gadu, Novell GroupWise Messenger, and more. It is designed to be a flexible and extensible multi-protocol system suitable for personal and enterprise use.</p>
+    <p xml:lang="gl">Kopete é un mensaxeiro instantáneo compatíbel con AIM, ICQ, Windows Live Messenger, Yahoo, Jabber, Gadu-Gadu, Novell GroupWise Messenger e máis. Está deseñado para ser un sistema flexíbel e compatíbel con varios protocolos, axeitado tanto para uso personal como empresarial.</p>
     <p xml:lang="it">Kopete è un programma di messaggistica istantanea che supporta AIM, ICQ, Windows Live Messenger, Yahoo, Jabber, Gadu-Gadu, Novell GroupWise Messenger e altri. È progettato per essere un sistema multi-protocollo flessibile ed estensibile, utile per uso personale e professionale.</p>
     <p xml:lang="nl">Kopete is een instant messenger die AIM, ICQ, Windows Live Messenger, Yahoo, Jabber, Gadu-Gadu, Novell GroupWise Messenger en meer ondersteunt. Het is ontworpen om een flexibel en uitbreidbaar multi-protocol systeem te zijn geschikt voor persoonlijk gebruik en in ondernemingen.</p>
     <p xml:lang="pt">O Kopete é um mensageiro instantâneo que suporta o AIM, o ICQ, o Windows Live Messenger, o Yahoo, o Jabber, o Gadu-Gadu, o Novell GroupWise Messenger, entre outros. Está desenhado para ser um sistema flexível e extensível para vários protocolos, para uso pessoal e empresarial.</p>
@@ -54,6 +57,7 @@
     <p xml:lang="ca">L'objectiu del Kopete és proporcionar als usuaris una única manera fàcil d'accedir a tots els seus sistemes de missatgeria instantània. La interfície posa les persones primer, i s'integra amb la llibreta d'adreces del sistema per a permetre-us accedir als vostres contactes des d'altres aplicacions del KDE.</p>
     <p xml:lang="ca-valencia">L'objectiu del Kopete és proporcionar als usuaris una única manera fàcil d'accedir a tots els seus sistemes de missatgeria instantània. La interfície posa les persones primer, i s'integra amb la llibreta d'adreces del sistema per a permetre-vos accedir als vostres contactes des d'altres aplicacions del KDE.</p>
     <p xml:lang="en-GB">The goal of Kopete is to provide users with a single easy-to-use way to access all of their instant messaging systems. The interface puts people first, and is integrated with the system address book to let you access your contacts from other KDE applications.</p>
+    <p xml:lang="gl">O obxectivo de Kopete é fornecer aos usuarios unha forma única e fácil de usar para acceder a todos os seus sistemas de mensaxaría instantánea. A interface antepón ás persoas, e está integrada co caderno de enderezos do sistema para permitirlle acceder aos seus contactos doutros aplicativos de KDE.</p>
     <p xml:lang="it">L'obbiettivo di Kopete è mettere a disposizione degli utenti un singolo modo facile da usare per accedere a tutti i loro sistemi di messaggistica istantanea. L'interfaccia mette le persone al centro, e si integra con la rubrica degli indirizzi di sistema, consentendoti di accedere ai tuoi contatti da altre applicazioni KDE.</p>
     <p xml:lang="nl">Het doel van Kopete is om gebruikers te voorzien van een enkel, gemakkelijk te gebruiken manier om teoegang te geven tot alle hun instant messaging systemen. Het interface zet mensen op de eerste plaats en is geïntegreerd met het adresboek van het systeem om u toegang te geven tot uw contacten vanuit andere KDE-toepassingen.</p>
     <p xml:lang="pt">O objectivo do Kopete é oferecer aos utilizadores uma única forma simples de aceder a todos os seus sistemas de mensagens instantâneas. A interface coloca as pessoas em primeiro lugar, e está integrada com o livro de endereços do sistema para que possa aceder aos seus contactos a partir das outras aplicações do KDE.</p>
@@ -68,6 +72,7 @@
     <p xml:lang="en-GB">Features:</p>
     <p xml:lang="es">Funcionalidades:</p>
     <p xml:lang="fr">Fonctionnalités :</p>
+    <p xml:lang="gl">Funcionalidades:</p>
     <p xml:lang="ia">Characteristicas:</p>
     <p xml:lang="it">Caratteristiche:</p>
     <p xml:lang="nl">Mogelijkheden:</p>
@@ -82,6 +87,7 @@
       <li xml:lang="ca">El Kopete disposa d'eines per a millorar la vostra experiència de missatgeria instantània, com ara l'encriptatge dels missatges, arxiu i molts altres efectes divertits i útils.</li>
       <li xml:lang="ca-valencia">El Kopete disposa d'eines per a millorar la vostra experiència de missatgeria instantània, com ara l'encriptatge dels missatges, arxiu i molts altres efectes divertits i útils.</li>
       <li xml:lang="en-GB">Kopete features tools to enhance your instant messaging experience, such as message encryption, archiving, and many other fun and useful effects.</li>
+      <li xml:lang="gl">Kopete conta con ferramentas para mellorar a súa experiencia de mensaxaría instantánea, como cifraxe de mensaxes, arquivado, e moitos outros efectos divertidos e útiles.</li>
       <li xml:lang="it">Kopete include degli strumenti per migliorare l'esperienza d'uso della messaggistica istantanea, come ad esempio la cifratura dei messaggi, l'archiviazione, e vari altri effetti divertenti e utili.</li>
       <li xml:lang="nl">Kopete bevat hulpmiddelen om uw ervaring met instant messeging te verbeteren, zoals versleuteling van berichten, archivering en vele andere grappige en nuttige effecten.</li>
       <li xml:lang="pt">O Kopete oferece ferramentas para melhorar a sua experiência de mensagens instantâneas, como a encriptação e arquivo de mensagens, assim como outros efeitos úteis e engraçados.</li>
@@ -92,6 +98,7 @@
       <li xml:lang="ca">El Kopete admet tots els protocols de missatgeria instantània que s'utilitzen habitualment, i l'equip del Kopete proporciona plantilles per als desenvolupadors com a base pels connectors nous.</li>
       <li xml:lang="ca-valencia">El Kopete admet tots els protocols de missatgeria instantània que s'utilitzen habitualment, i l'equip del Kopete proporciona plantilles per als desenvolupadors com a base pels connectors nous.</li>
       <li xml:lang="en-GB">Kopete supports all commonly used instant messaging protocols, and the Kopete team provides templates for developers to base new plugins on.</li>
+      <li xml:lang="gl">Kopete é compatíbel con todos os protocolos de mensaxaría instantánea usados habitualmente, e o equipo de Kopete fornece modelos para que os desenvolvedores creen novos complementos.</li>
       <li xml:lang="it">Kopete supporta tutti i protocolli più usati di messaggistica istantanea, e i suoi sviluppatori mettono a disposizione dei modelli per gli sviluppatori da usare come base per nuove estensioni.</li>
       <li xml:lang="nl">Kopete ondersteunt alle algemeen gebruikte instant messaging protocollen en het team van Kopete biedt sjablonen voor ontwikkelaars om nieuwe plug-ins op te baseren.</li>
       <li xml:lang="pt">O Kopete suporta todos os protocolos de mensagens instantâneas usados normalmente, e a equipa do Kopete oferece modelos para os programadores poderem basear os novos 'plugins'.</li>
@@ -102,6 +109,7 @@
       <li xml:lang="ca">L'API proporciona als desenvolupadors moltes funcions per a facilitar el suport d'un protocol nou.</li>
       <li xml:lang="ca-valencia">L'API proporciona als desenvolupadors moltes funcions per a facilitar el suport d'un protocol nou.</li>
       <li xml:lang="en-GB">The API provides developers with many features to make it easy to support a new protocol.</li>
+      <li xml:lang="gl">A API fornece aos desenvolvedores moitas funcionalidades para facilitar dar compatibilidade cun novo protocolo.</li>
       <li xml:lang="it">L'API fornisce agli sviluppatori varie funzionalità per rendere semplice il supporto di nuovi protocolli.</li>
       <li xml:lang="nl">De API biedt ontwikkelaars vele functies om het gemakkelijk te maken om een nieuw protocol te ondersteunen.</li>
       <li xml:lang="pt">A API oferece aos programadores muitas funcionalidades que facilitam o suporte para um novo protocolo.</li>
@@ -112,6 +120,7 @@
       <li xml:lang="ca">Tots els protocols són connectors i permeten la instal·lació, configuració i un ús modular.</li>
       <li xml:lang="ca-valencia">Tots els protocols són connectors i permeten la instal·lació, configuració i un ús modular.</li>
       <li xml:lang="en-GB">All protocols are plugins and allow for modular installation, configuration, and usage.</li>
+      <li xml:lang="gl">Todos os protocolos son complementos e permiten unha instalación, configuración e uso modulares.</li>
       <li xml:lang="it">Tutti i protocolli sono estensioni e permettono modularità nell'installazione, configurazione ed uso.</li>
       <li xml:lang="nl">Alle protocollen zijn plug-ins en bieden modulaire installatie, configuratie en gebruik.</li>
       <li xml:lang="pt">Todos os protocolos são 'plugins' e permitem uma instalação, configuração e utilização modulares.</li>
