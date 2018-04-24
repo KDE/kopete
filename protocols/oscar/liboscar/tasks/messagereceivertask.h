@@ -21,6 +21,7 @@
 #include <QByteArray>
 #include "oscarmessage.h"
 #include "oscartypeclasses.h"
+#include "buffer.h"
 
 class QTextCodec;
 
