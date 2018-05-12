@@ -9,8 +9,6 @@ option(WITH_gadu "Enable Kopete Gadu-Gadu protocol" ON)
 option(WITH_jabber "Enable Kopete Jabber protocol" ON)
 option(WITH_libjingle "Enable Kopete Jabber libjingle support" ON)
 option(WITH_bonjour "Enable Kopete Bonjour protocol" ON)
-option(WITH_wlm "Enable Window Live Messenger support" ON)
-option(WITH_WLM_MEDIASTREAMER "Enable Windows Live Messenger voice clip support" ON)
 option(WITH_meanwhile "Enable Kopete meanwhile protocol" ON)
 option(WITH_skype "Enable Kopete Skype protocol" ON)
 
@@ -37,19 +35,7 @@ else()
   set(BUILD_LIBJINGLE FALSE)
 endif()
 
-if(MEDIASTREAMER_FOUND AND LIBORTP_FOUND AND WITH_WLM_MEDIASTREAMER)
-  message(STATUS "Building Windows Live Messenger voice clip support")
-  set(BUILD_WLM_MEDIASTREAMER TRUE)
-else()
-  message(STATUS "Not building Windows Live Messenger voice clip support")
-  set(BUILD_WLM_MEDIASTREAMER FALSE)
-endif()
-
 include_directories(${KOPETE_INCLUDES})
-
-if(WITH_wlm AND LIBMSN_FOUND AND Boost_FOUND)
-  add_subdirectory( wlm )
-endif()
 
 if(WITH_oscar)
   add_subdirectory( oscar )
