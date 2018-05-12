@@ -111,7 +111,6 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 <keyword>Messaging</keyword>
 <keyword>Jabber</keyword>
 <keyword>IRC</keyword>
-<keyword>WLM</keyword>
 <keyword>ICQ</keyword>
 <keyword>AIM</keyword>
 <keyword>Yahoo</keyword>
@@ -158,7 +157,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 <para>To use &kopete; you need to set up one or more accounts for the instant messaging services you wish to use.</para>
 <para>You've probably already chosen a messaging service, either because you already use &im;, or you need to use the same service as your friends.  If you don't fit into either of these categories, please consider using a messaging service based on open standards, because these are designed for use by Free Software.  Other messaging services are prone to changing the underlying technology without making the details freely available, making them harder for Free Software developers to support.</para>
 <para>The messaging services that &kopete; supports that are based on open standards are Jabber and IRC.</para>
-<para>The following section assumes you are registered with an &im; service already.  If not, you can register with Gadu-Gadu, Jabber, and <trademark>WLM</trademark> from inside &kopete;; for other services, you'll have to register using their respective web site before creating an account in &kopete;.</para>
+<para>The following section assumes you are registered with an &im; service already.  If not, you can register with Gadu-Gadu, and Jabber from inside &kopete;; for other services, you'll have to register using their respective web site before creating an account in &kopete;.</para>
 <sect1 id="creating-accounts">
 <title>Creating Accounts</title>
 <para>To create an account, use <menuchoice><guimenu>Settings</guimenu> <guimenuitem>Configure...</guimenuitem> </menuchoice> to display the Configure window.</para>
@@ -693,11 +692,6 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 			<title>ICQ</title>
 			<para>ICQ has an Invisibility feature which allows you to hide from selected contacts.  You may also search the ICQ user folder when adding a contact.  A wide range of contact details can be set using the <guilabel>Properties</guilabel> option.</para>
 		</sect2>
-		<sect2 id="protocols-msn">
-			<title>WLM</title> 
-			<para>File transfer and multi user chats work.  To transfer a file,  drag the file from &dolphin; or the desktop into the chat window.  To invite someone else into a chat, drag them from the Contact List into the chat window.  The <menuchoice><guimenu>File</guimenu></menuchoice> menu also contains these commands.  In addition, WLM supports custom emoticons.</para>
-			<para>To use file transfer, make sure port 6891 is forwarded to your computer.</para>
-		</sect2>
 		<sect2 id="protocols-yahoo">
 			<title>Yahoo</title>
 			<para>Yahoo can send and receive webcam video.  It also supports Yahoo mail and the Yahoo address book from the account menu.  Conferencing is also possible.</para>
@@ -1047,7 +1041,7 @@ in konsole "khelpcenter khelpcenter:kioslaves" works-->
 <question><para>I need to connect via a SOCKS proxy, but I cannot find any proxy configuration options in &kopete;.  How do I set up &kopete; to use SOCKS?</para>
 </question>
 <answer><itemizedlist>
-<listitem><para><trademark>WLM</trademark>, <trademark>ICQ</trademark>, <trademark>AIM</trademark>, Jabber, and <trademark>Yahoo</trademark> use the &kde; network infrastructure.  Their SOCKS proxy details are configured with the rest of &kde;, in &systemsettings;, <menuchoice><guimenu>Network and Connectivity</guimenu><guisubmenu>Network Settings</guisubmenu><guimenuitem>Proxy</guimenuitem></menuchoice>.</para></listitem>
+<listitem><para><trademark>ICQ</trademark>, <trademark>AIM</trademark>, Jabber, and <trademark>Yahoo</trademark> use the &kde; network infrastructure.  Their SOCKS proxy details are configured with the rest of &kde;, in &systemsettings;, <menuchoice><guimenu>Network and Connectivity</guimenu><guisubmenu>Network Settings</guisubmenu><guimenuitem>Proxy</guimenuitem></menuchoice>.</para></listitem>
 </itemizedlist>
 </answer>
 </qandaentry>
@@ -1122,12 +1116,6 @@ sets that you can simply extract there.</para>
 <question><para>Jabber SSL support stopped working, I get the message that the QCA TLS plugin is probably missing. What am I supposed to do?</para>
 </question>
 <answer><para>As the error message indicates, you are missing the QCA TLS plugin, which handles the Jabber plugin's TLS/SSL encryption. Install the package <application>qca-tls</application> (and eventually <application>qca-ossl</application>) or retrieve the plugin from <ulink url="http://delta.affinix.com/qca">its homepage</ulink>. Please note that you only need to install the <application>qca-tls</application> plugin, <emphasis>not</emphasis> the QCA library itself. A recompilation of &kopete; is not necessary, in fact not even a restart. In case you have installed the plugin and it still won't work, Qt can probably not find it. Since qca-tls installs itself as a &Qt; plugin, you will have to make sure that it gets installed to the plugin directory of the &Qt; version you are using to run &kopete;.</para>
-</answer>
-</qandaentry>
-<qandaentry>
-<question><para>I AM behind a firewall.  Which ports need to be open for WLM file transfers?</para>
-</question>
-<answer><para>If you are behind a firewall, port 6891 needs to be open to inbound TCP traffic.</para>
 </answer>
 </qandaentry>
 <qandaentry>
