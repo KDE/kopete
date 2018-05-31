@@ -80,7 +80,7 @@ install(FILES
     kopeteui.rc
     DESTINATION  ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
 
-install( FILES kopete.notifyrc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete)
+install( FILES kopete.notifyrc  DESTINATION ${KDE_INSTALL_KNOTIFY5RCDIR})
 install( FILES kopeterc DESTINATION ${KDE_INSTALL_CONFDIR} )
 install( FILES org.kde.Kopete.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR} )
 
