@@ -353,3 +353,5 @@ void PipesPlugin::readXml(PipeOptions pipeOptions, Kopete::Message &msg, const Q
         msg.setHtmlBody(body.text());
     }
 }
+
+#include "pipesplugin.moc"
