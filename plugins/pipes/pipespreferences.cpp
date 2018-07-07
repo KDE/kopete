@@ -108,3 +108,5 @@ void PipesPreferences::slotListChanged()
     mPrefs->pipesList->resizeColumnToContents(PipesDelegate::ContentsColumn);
     changed();
 }
+
+#include "pipespreferences.moc"
