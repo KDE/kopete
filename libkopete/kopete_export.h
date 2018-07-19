@@ -37,14 +37,6 @@
 # endif
 #endif
 
-#ifndef YAHOO_EXPORT
-# if defined(MAKE_KOPETE_YAHOO_LIB)
-#  define YAHOO_EXPORT KDE_EXPORT
-# else
-#  define YAHOO_EXPORT KDE_IMPORT
-# endif
-#endif
-
 #ifndef QQ_EXPORT
 # if defined(MAKE_KOPETE_QQ_LIB)
 #  define QQ_EXPORT KDE_EXPORT

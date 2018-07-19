@@ -1,8 +1,0 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
-    <qresource prefix="/kxmlgui5/yahoo_protocol">
-         <file>yahoochatui.rc</file> 
-         <file>yahooconferenceui.rc</file>
-         <file>yahooimui.rc</file>
-    </qresource>
-</RCC>

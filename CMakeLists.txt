@@ -80,9 +80,6 @@ set_package_properties(GLIB2 PROPERTIES DESCRIPTION "GLib library" URL "http://w
 find_package(IDN QUIET)
 set_package_properties(IDN PROPERTIES DESCRIPTION "GNU Libidn International Domain Name(IDN) implementation" URL "http://www.gnu.org/software/libidn/" TYPE OPTIONAL PURPOSE "Required for the Jabber protocol")
 
-find_package(Jasper QUIET)
-set_package_properties(Jasper PROPERTIES DESCRIPTION "Jasper library implements the codec specified in the JPEG-200 Part-1 standard" URL "http://www.ece.uvic.ca/~mdadams/jasper/" TYPE OPTIONAL PURPOSE "Required for the Yahoo protocol")
-
 find_package(JsonCpp QUIET)
 set_package_properties(JsonCpp PROPERTIES DESCRIPTION "JsonCpp is an implementation of a JSON reader and writer in C++" URL "http://jsoncpp.sourceforge.net/" TYPE OPTIONAL PURPOSE "Required for the jabber protocol")
 

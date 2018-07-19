@@ -113,7 +113,6 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 <keyword>IRC</keyword>
 <keyword>ICQ</keyword>
 <keyword>AIM</keyword>
-<keyword>Yahoo</keyword>
 <keyword>Gadu-Gadu</keyword>
 <keyword>GroupWise</keyword>
 <keyword>Novell</keyword>
@@ -692,10 +691,6 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 			<title>ICQ</title>
 			<para>ICQ has an Invisibility feature which allows you to hide from selected contacts.  You may also search the ICQ user folder when adding a contact.  A wide range of contact details can be set using the <guilabel>Properties</guilabel> option.</para>
 		</sect2>
-		<sect2 id="protocols-yahoo">
-			<title>Yahoo</title>
-			<para>Yahoo can send and receive webcam video.  It also supports Yahoo mail and the Yahoo address book from the account menu.  Conferencing is also possible.</para>
-		</sect2>
 		<sect2 id="protocols-jabber">
 			<title>Jabber</title>
 			<para>Jabber, also known as XMPP, supports file transfer, conferencing and any other services supplied by the Jabber server.  For example, many Jabber servers have a user directory, and some provide transports to other messaging systems.  To access services, use <menuchoice><guimenu>Services...</guimenu></menuchoice> on the account menu.  Jabber file transfer can work without port forwarding, but enjoys better performance where a direct connection is possible.  By default, port 8010 is used for port forwarding, but this is configurable in each account's settings.</para>
@@ -1041,7 +1036,7 @@ in konsole "khelpcenter khelpcenter:kioslaves" works-->
 <question><para>I need to connect via a SOCKS proxy, but I cannot find any proxy configuration options in &kopete;.  How do I set up &kopete; to use SOCKS?</para>
 </question>
 <answer><itemizedlist>
-<listitem><para><trademark>ICQ</trademark>, <trademark>AIM</trademark>, Jabber, and <trademark>Yahoo</trademark> use the &kde; network infrastructure.  Their SOCKS proxy details are configured with the rest of &kde;, in &systemsettings;, <menuchoice><guimenu>Network and Connectivity</guimenu><guisubmenu>Network Settings</guisubmenu><guimenuitem>Proxy</guimenuitem></menuchoice>.</para></listitem>
+<listitem><para><trademark>ICQ</trademark>, <trademark>AIM</trademark>, and Jabber use the &kde; network infrastructure.  Their SOCKS proxy details are configured with the rest of &kde;, in &systemsettings;, <menuchoice><guimenu>Network and Connectivity</guimenu><guisubmenu>Network Settings</guisubmenu><guimenuitem>Proxy</guimenuitem></menuchoice>.</para></listitem>
 </itemizedlist>
 </answer>
 </qandaentry>
