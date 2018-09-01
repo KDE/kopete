@@ -89,7 +89,7 @@ public:
 
     /**
      * These functions do conversion between enum NameType and QString
-     * Usefull for protocol serialize/deserialize funcions
+     * Useful for protocol serialize/deserialize functions
      */
     static NameType nameTypeFromString(const QString &nameType);
     static const QString nameTypeToString(NameType nameType);
@@ -378,7 +378,7 @@ public:
     void setPreferredNameType(NameType type);
 
     /**
-     * Returns prefered name type, used by displayName function
+     * Returns preferred name type, used by displayName function
      * Default is CustomName
      */
     NameType preferredNameType() const;

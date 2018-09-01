@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef HISTORYLOGGER_H
-#define HISTORYLOGGER_H
+#ifndef HISTORY2LOGGER_H
+#define HISTORY2LOGGER_H
 
 #include <QObject>
 #include <QList>

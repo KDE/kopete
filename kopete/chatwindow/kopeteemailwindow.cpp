@@ -51,7 +51,6 @@
 #include <kwindowsystem.h>
 #include <kpluginfactory.h>
 #include <kxmlguifactory.h>
-#include <kpluginfactory.h>
 #include <kvbox.h>
 #include <ktoolbar.h>
 #include <kactioncollection.h>

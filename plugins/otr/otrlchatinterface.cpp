@@ -39,7 +39,6 @@
 #include "plugin_otr_debug.h"
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <KLocalizedString>
 #include <kpassivepopup.h>
 #include <QPushButton>
 

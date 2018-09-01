@@ -1027,7 +1027,7 @@ GaduAccount::slotExportContactsListToFile()
     KTemporaryFile tempFile;
 
     if (p->saveListDialog) {
-        kDebug(14100) << " save contacts to file: alread waiting for input ";
+        kDebug(14100) << " save contacts to file: already waiting for input ";
         return;
     }
 
@@ -1070,7 +1070,7 @@ GaduAccount::slotImportContactsFromFile()
     QString oname;
 
     if (p->loadListDialog) {
-        kDebug(14100) << "load contacts from file: alread waiting for input ";
+        kDebug(14100) << "load contacts from file: already waiting for input ";
         return;
     }
 

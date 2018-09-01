@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef SERVERVERSIONSTASKTEST_H
-#define SERVERVERSIONSTASKTEST_H
+#ifndef SERVERVERSIONSTEST_H
+#define SERVERVERSIONSTEST_H
 
 #include "oscartestbase.h"
 

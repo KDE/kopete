@@ -18,11 +18,11 @@
 
 #include "history2dialog.h"
 
-#include <QtCore/QPointer>
-#include <QtCore/QDir>
-#include <QtCore/QTextStream>
-#include <QtGui/QClipboard>
-#include <QtGui/QTextDocument>
+#include <QPointer>
+#include <QDir>
+#include <QTextStream>
+#include <QClipboard>
+#include <QTextDocument>
 #include <QtAlgorithms>
 
 #include <kdebug.h>

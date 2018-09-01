@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef KOPETE_AVATARFROMWEBCAMDIALOG_H
-#define KOPETE_AVATARFROMWEBCAMDIALOG_H
+#ifndef KOPETE_AVATARWEBCAMDIALOG_H
+#define KOPETE_AVATARWEBCAMDIALOG_H
 
 // KDE includes
 #include <QDialog>

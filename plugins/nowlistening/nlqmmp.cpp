@@ -26,8 +26,6 @@
 
 #include <kdebug.h>
 
-#include <QtDBus/QtDBus>
-
 #include "nlmediaplayer.h"
 
 struct qmmpPlayerStatus

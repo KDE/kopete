@@ -25,8 +25,6 @@
 
 #include <kdebug.h>
 
-#include <QtDBus>
-
 NLmpris2::NLmpris2() : NLMediaPlayer()
 {
     m_type = Audio;

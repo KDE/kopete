@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef HISTORYIMPORT_H
-#define HISTORYIMPORT_H
+#ifndef HISTORY2IMPORT_H
+#define HISTORY2IMPORT_H
 
 #include <QTextCursor>
 #include <QHash>

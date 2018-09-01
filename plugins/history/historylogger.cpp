@@ -17,15 +17,15 @@
 
 #include "historylogger.h"
 
-#include <QtCore/QRegExp>
-#include <QtCore/QFile>
-#include <QtCore/QDir>
-#include <QtCore/QDateTime>
-#include <QtCore/QTimer>
-#include <QtCore/QTextStream>
-#include <QtCore/QList>
-#include <QtCore/QDate>
-#include <QtGui/QTextDocument>
+#include <QRegExp>
+#include <QFile>
+#include <QDir>
+#include <QDateTime>
+#include <QTimer>
+#include <QTextStream>
+#include <QList>
+#include <QDate>
+#include <QTextDocument>
 
 #include <kdebug.h>
 

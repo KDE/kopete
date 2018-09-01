@@ -18,12 +18,12 @@
 
 #include "historydialog.h"
 
-#include <QtCore/QPointer>
-#include <QtCore/QDir>
-#include <QtCore/QTextStream>
-#include <QtCore/QTimer>
-#include <QtGui/QClipboard>
-#include <QtGui/QTextDocument>
+#include <QPointer>
+#include <QDir>
+#include <QTextStream>
+#include <QTimer>
+#include <QClipboard>
+#include <QTextDocument>
 
 #include <kdebug.h>
 #include <krun.h>

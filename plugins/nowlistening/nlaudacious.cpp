@@ -26,8 +26,6 @@
 
 #include <kdebug.h>
 
-#include <QtDBus/QtDBus>
-
 struct audaciousPlayerStatus
 {
     int state;  // 0 = Playing, 1 = Paused, 2 = Stopped.

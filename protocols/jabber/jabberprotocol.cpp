@@ -357,7 +357,6 @@ XMPP::Status JabberProtocol::kosToStatus( const Kopete::OnlineStatus & status , 
 #include <KConfigGroup>
 #include <QDialogButtonBox>
 #include <QPushButton>
-#include <QVBoxLayout>
 
 void JabberProtocol::handleURL(const QString&, const QUrl &url) const
 {

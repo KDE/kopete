@@ -39,8 +39,8 @@
 #include <qfile.h>
 #include <qdom.h>
 #include <QHash>
-#include <QtNetwork/QSslSocket>
-#include <QtNetwork/QNetworkProxy>
+#include <QSslSocket>
+#include <QNetworkProxy>
 #include <QTextDocument> // Qt::escape
 #include <QAbstractButton>
 

@@ -25,8 +25,6 @@
 
 #include <kdebug.h>
 
-#include <QtDBus>
-
 #include "nlmediaplayer.h"
 
 NLKaffeine::NLKaffeine() : NLMediaPlayer()

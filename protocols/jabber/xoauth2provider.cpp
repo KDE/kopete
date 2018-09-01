@@ -13,6 +13,8 @@
     *************************************************************************
 */
 
+#include "xoauth2provider.h"
+
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -20,8 +22,6 @@
 
 #include <QJsonDocument>
 #include <QUrlQuery>
-
-#include "xoauth2provider.h"
 
 class XOAuth2SASLContext : public QCA::SASLContext
 {

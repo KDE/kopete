@@ -14,8 +14,8 @@
     *                                                                       *
     *************************************************************************
 */
-#ifndef HISTORYGUICLIENT_H
-#define HISTORYGUICLIENT_H
+#ifndef HISTORY2GUICLIENT_H
+#define HISTORY2GUICLIENT_H
 
 #include <QObject>
 

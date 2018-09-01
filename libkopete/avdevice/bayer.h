@@ -26,4 +26,9 @@
  * SUCH DAMAGE.
  */
 
+#ifndef _KOPETE_BAYER_H_
+#define _KOPETE_BAYER_H_
+
 void bayer2rgb24(unsigned char *dst, unsigned char *src, long int WIDTH, long int HEIGHT);
+
+#endif

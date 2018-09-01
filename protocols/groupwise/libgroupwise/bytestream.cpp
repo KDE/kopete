@@ -18,8 +18,8 @@
  *
  */
 
-#include <kdebug.h>
 #include "bytestream.h"
+#include <kdebug.h>
 #include <QByteArray>
 
 // CS_NAMESPACE_BEGIN

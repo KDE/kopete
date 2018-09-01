@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef OSCARSPRESENCEDATACLASSES_H
-#define OSCARSPRESENCEDATACLASSES_H
+#ifndef OSCARSPRESENCESDATACLASSES_H
+#define OSCARSPRESENCESDATACLASSES_H
 
 #include "oscarpresence.h"
 

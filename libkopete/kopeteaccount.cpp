@@ -26,7 +26,6 @@
 #include <QIcon>
 #include <QPointer>
 #include <QDialog>
-#include <QIcon>
 #include <QAction>
 #include <QDialogButtonBox>
 #include <QPushButton>

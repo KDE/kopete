@@ -203,7 +203,7 @@ class Libjingle : public QObject
 
 		/**
 		 * This signal is emitted when user go offline or not support voice call
-		 * After succesfull login it is all user who are online, but dont support voice call
+		 * After succesful login it is all user who are online, but don't support voice call
 		 * @param user name of user who go offline
 		 * @param resource jabber resource of user
 		 */

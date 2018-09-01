@@ -26,6 +26,8 @@
 #ifndef NLQMMP_H
 #define NLQMMP_H
 
+#include <QtDBus>
+
 class QDBusInterface;
 
 class NLqmmp : public NLMediaPlayer

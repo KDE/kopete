@@ -25,7 +25,6 @@
 
 #include <kcontacts/addressee.h>
 #include <QDialogButtonBox>
-#include <QPushButton>
 #include <QVBoxLayout>
 
 #include "kopetegroup.h"

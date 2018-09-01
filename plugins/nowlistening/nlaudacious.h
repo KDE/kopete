@@ -26,6 +26,8 @@
 #ifndef NLaudacious_H
 #define NLaudacious_H
 
+#include <QtDBus>
+
 #include "nlmediaplayer.h"
 
 class QDBusInterface;

@@ -18,10 +18,10 @@
 
 #include "history2preferences.h"
 
-#include <QtCore/QPointer>
-#include <QtGui/QLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QCheckBox>
+#include <QPointer>
+#include <QLayout>
+#include <QVBoxLayout>
+#include <QCheckBox>
 
 #include <kcolorbutton.h>
 #include <knuminput.h>

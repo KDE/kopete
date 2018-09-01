@@ -28,7 +28,6 @@
 #include <KGlobal>
 #include <K4AboutData>
 #include <KComponentData>
-#include <KLocalizedString>
 #include <KActionCollection>
 
 #include "kopetechatsessionmanager.h"

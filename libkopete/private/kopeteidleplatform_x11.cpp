@@ -17,11 +17,11 @@
 
 #include "kopeteidleplatform_p.h"
 
-#include <QtCore/QObject>
-#include <QtCore/QDateTime>
+#include <QObject>
+#include <QDateTime>
 #include <QX11Info>
-#include <QtDBus/QDBusInterface>
-#include <QtDBus/QDBusReply>
+#include <QDBusInterface>
+#include <QDBusReply>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

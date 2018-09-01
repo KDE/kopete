@@ -25,8 +25,8 @@
 
 #include "gadusession.h"
 
-#include <QtCore/QString>
-#include <QtCore/QRegExp>
+#include <QString>
+#include <QRegExp>
 
 GaduRichTextFormat::GaduRichTextFormat()
 {

@@ -83,7 +83,7 @@ protected Q_SLOTS:
      */
     void slotUploadJobResult(KJob *);
     /**
-     * This slot is used for normalising the signal recieved
+     * This slot is used for normalizing the signal received
      */
     void slotRecieveStatusUpdate(Kopete::Contact *, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&);
     /**

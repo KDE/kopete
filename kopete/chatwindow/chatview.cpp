@@ -47,7 +47,6 @@
 #include <kpluginfactory.h>
 #include <khtmlview.h>
 #include <kxmlguifactory.h>
-#include <kpluginfactory.h>
 
 #include <QMenu>
 #include <QTimer>

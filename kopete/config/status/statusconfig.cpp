@@ -22,7 +22,6 @@
 #include <QTabWidget>
 
 #include <kpluginfactory.h>
-#include <kpluginfactory.h>
 #include "kopetestatussettings.h"
 
 K_PLUGIN_FACTORY(KopeteStatusConfigFactory, registerPlugin<StatusConfig>();

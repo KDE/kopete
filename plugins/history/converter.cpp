@@ -12,11 +12,11 @@
  * the accountId, to know each protocol id, and more
  *-----------------------------------------------------------*/
 
-#include <QtCore/QDir>
-#include <QtCore/QRegExp>
-#include <QtCore/QTextStream>
+#include <QDir>
+#include <QRegExp>
+#include <QTextStream>
 #include <QApplication>
-#include <QtXml/QDomDocument>
+#include <QDomDocument>
 
 #include <kconfig.h>
 #include <kdebug.h>

@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#ifndef HISTORYDIALOG_H
-#define HISTORYDIALOG_H
+#ifndef HISTORY2DIALOG_H
+#define HISTORY2DIALOG_H
 
 #include <QList>
 

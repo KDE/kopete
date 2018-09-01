@@ -17,9 +17,9 @@
 
 #include "historyguiclient.h"
 
-#include <QtCore/QList>
-#include <QtGui/QTextCursor>
-#include <QtGui/QTextDocument>
+#include <QList>
+#include <QTextCursor>
+#include <QTextDocument>
 
 #include <QAction>
 #include <kstandardaction.h>

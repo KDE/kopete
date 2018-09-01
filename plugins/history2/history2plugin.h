@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef HISTORYPLUGIN_H
-#define HISTORYPLUGIN_H
+#ifndef HISTORY2PLUGIN_H
+#define HISTORY2PLUGIN_H
 
 #include <QPointer>
 #include <QMap>

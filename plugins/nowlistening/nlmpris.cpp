@@ -25,8 +25,6 @@
 
 #include <kdebug.h>
 
-#include <QtDBus>
-
 struct mprisPlayerStatus
 {
     int state;  // 0 = Playing, 1 = Paused, 2 = Stopped.

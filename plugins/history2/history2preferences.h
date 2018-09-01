@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#ifndef HISTORYPREFERENCES_H
-#define HISTORYPREFERENCES_H
+#ifndef HISTORY2PREFERENCES_H
+#define HISTORY2PREFERENCES_H
 
 #include <kcmodule.h>
 

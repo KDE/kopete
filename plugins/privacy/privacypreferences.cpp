@@ -22,7 +22,6 @@
 
 #include <kpluginfactory.h>
 #include <QDialog>
-#include <QVBoxLayout>
 #include <KLocalizedString>
 #include <KDebug>
 #include <KConfigGroup>

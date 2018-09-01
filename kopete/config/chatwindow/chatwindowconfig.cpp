@@ -52,7 +52,6 @@
 #include <KGlobal>
 #include <KCMultiDialog>
 #include <KComponentData>
-#include <KLocalizedString>
 
 // KNewStuff
 //#include <knewstuff2/engine.h>

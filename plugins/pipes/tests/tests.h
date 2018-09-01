@@ -14,6 +14,10 @@
     *                                                                       *
     *************************************************************************
 */
+
+#ifndef _PIPES_TESTS_H_
+#define _PIPES_TESTS_H_
+
 #include <QString>
 
 class KopeteXmlParserTests
@@ -25,3 +29,5 @@ public:
     */
     static QString test1(const QString &str);
 };
+
+#endif

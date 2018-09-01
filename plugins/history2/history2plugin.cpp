@@ -18,7 +18,7 @@
 
 #include "history2plugin.h"
 
-#include <QtCore/QList>
+#include <QList>
 
 #include <kpluginfactory.h>
 #include <kaboutdata.h>

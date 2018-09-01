@@ -17,8 +17,8 @@
 
 #include "historyimport.h"
 
-#include <QtCore/QStack>
-#include <QtCore/QDir>
+#include <QStack>
+#include <QDir>
 #include <QTextEdit>
 #include <QTreeView>
 #include <QPushButton>
