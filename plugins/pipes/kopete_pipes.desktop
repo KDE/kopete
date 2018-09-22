@@ -66,6 +66,7 @@ Name[sv]=Skicka genom
 Name[tr]=Borular
 Name[uk]=Канали
 Name[x-test]=xxPipesxx
+Name[zh_CN]=管道
 Name[zh_TW]=管線
 Comment=Pipe messages through an external program or script
 Comment[ar]=استخلص الرسائل عن طريق برنامج أو سكريبت خارجي
