@@ -67,6 +67,7 @@
     <p xml:lang="sv">Kopete är en direktmeddelandeklient som stöder AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger, med flera. Den är konstruerad att vara ett flexibelt och utökningsbart flerprotokollsystem lämpligt för både personlig och företagsanvändning.</p>
     <p xml:lang="uk">Kopete — програма для миттєвого обміну повідомленнями, у якій передбачено підтримку AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger та інших систем зв'язку. Програму створено гнучкою, із можливістю розширення списку протоколів для особистого та службового користування.</p>
     <p xml:lang="x-test">xxKopete is an instant messenger supporting AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger, and more. It is designed to be a flexible and extensible multi-protocol system suitable for personal and enterprise use.xx</p>
+    <p xml:lang="zh-CN">Kopete 是一个即时消息软件，它支持 AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger 等协议。它被设计成一个灵活可扩展的多协议系统，适合个人及企业使用。</p>
     <p>
       The goal of Kopete is to provide users with a single easy-to-use way to access all of their instant messaging systems. The interface puts people first, and is integrated with the system address book to let you access your contacts from other KDE applications.
     </p>
