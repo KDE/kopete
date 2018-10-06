@@ -60,13 +60,13 @@ AddressBookSelectorWidget::AddressBookSelectorWidget(QWidget *parent, const char
     connect(addAddresseeButton, SIGNAL(clicked()), SLOT(slotAddAddresseeClicked()));
     connect(addAddresseeButton, SIGNAL(clicked()), SIGNAL(addAddresseeClicked()));
 
-    connect(addresseeListView, SIGNAL(itemClicked(QTreeWidgetItem *,int)),
-            SIGNAL(addresseeListClicked(QTreeWidgetItem *)));
-    connect(addresseeListView, SIGNAL(currentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *)),
-            SIGNAL(addresseeListClicked(QTreeWidgetItem *)));
+    connect(addresseeListView, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
+            SIGNAL(addresseeListClicked(QTreeWidgetItem*)));
+    connect(addresseeListView, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+            SIGNAL(addresseeListClicked(QTreeWidgetItem*)));
     //FIXME: Find the correct replacement for Q3ListView::spacePressed(Q3ListViewItem*)
-    connect(addresseeListView, SIGNAL(itemPressed(QTreeWidgetItem *,int)),
-            SIGNAL(addresseeListClicked(QTreeWidgetItem *)));
+    connect(addresseeListView, SIGNAL(itemPressed(QTreeWidgetItem*,int)),
+            SIGNAL(addresseeListClicked(QTreeWidgetItem*)));
 
     //connect( m_addressBook, SIGNAL(addressBookChanged(AddressBook*)), this, SLOT(slotLoadAddressees()) );
 

@@ -597,8 +597,8 @@ void KopeteMetaLVIProps::slotOpenSoundDialog(KUrlRequester *requester)
 {
     // taken from kdelibs/kio/kfile/knotifydialog.cpp
     // only need to init this once
-    requester->disconnect(SIGNAL(openFileDialog(KUrlRequester *)),
-                          this, SLOT(slotOpenSoundDialog(KUrlRequester *)));
+    requester->disconnect(SIGNAL(openFileDialog(KUrlRequester*)),
+                          this, SLOT(slotOpenSoundDialog(KUrlRequester*)));
 
     QFileDialog *fileDialog = requester->fileDialog();
     fileDialog->setWindowTitle(i18n("Select Sound File"));

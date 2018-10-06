@@ -433,10 +433,10 @@ bool XmlContactStorage::parseMetaContact(Kopete::MetaContact *metaContact, const
     metaContact->setDisplayNameSource(nameSourcePID, nameSourceAID, nameSourceCID);
 
     // If a plugin is loaded, load data cached
-    QObject::connect(Kopete::PluginManager::self(), SIGNAL(pluginLoaded(Kopete::Plugin *)),
-                     metaContact, SLOT(slotPluginLoaded(Kopete::Plugin *)));
-    QObject::connect(Kopete::PluginManager::self(), SIGNAL(protocolLoaded(Kopete::Protocol *)),
-                     metaContact, SLOT(slotProtocolLoaded(Kopete::Protocol *)));
+    QObject::connect(Kopete::PluginManager::self(), SIGNAL(pluginLoaded(Kopete::Plugin*)),
+                     metaContact, SLOT(slotPluginLoaded(Kopete::Plugin*)));
+    QObject::connect(Kopete::PluginManager::self(), SIGNAL(protocolLoaded(Kopete::Protocol*)),
+                     metaContact, SLOT(slotProtocolLoaded(Kopete::Protocol*)));
 
     // All plugins are already loaded, call manually the contact setting slot.
     if (Kopete::PluginManager::self()->isAllPluginsLoaded()) {

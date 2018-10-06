@@ -608,7 +608,7 @@ int OtrlChatInterface::decryptMessage(Kopete::Message &message)
 
         if (otrl_proto_message_type(body.toLatin1()) == OTRL_MSGTYPE_DATA) {
             // an OTR message while we are generating the key... cache the message and replay once the key is generated...
-            connect(message.manager(), SIGNAL(closing(Kopete::ChatSession *)), SLOT(chatSessionDestroyed(Kopete::ChatSession *)));
+            connect(message.manager(), SIGNAL(closing(Kopete::ChatSession*)), SLOT(chatSessionDestroyed(Kopete::ChatSession*)));
             m_storedMessages.append(message);
         }
         return 1;

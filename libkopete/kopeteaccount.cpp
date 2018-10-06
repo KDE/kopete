@@ -138,7 +138,7 @@ Account::~Account()
 {
     // Delete all registered child contacts first
     foreach (Contact *c, d->contacts) {
-        QObject::disconnect(c, SIGNAL(contactDestroyed(Kopete::Contact *)), this, 0);
+        QObject::disconnect(c, SIGNAL(contactDestroyed(Kopete::Contact*)), this, 0);
     }
     qDeleteAll(d->contacts);
     d->contacts.clear();
@@ -323,8 +323,8 @@ bool Account::registerContact(Contact *c)
     }
 
     d->contacts.insert(c->contactId(), c);
-    QObject::connect(c, SIGNAL(contactDestroyed(Kopete::Contact *)),
-                     SLOT(contactDestroyed(Kopete::Contact *)));
+    QObject::connect(c, SIGNAL(contactDestroyed(Kopete::Contact*)),
+                     SLOT(contactDestroyed(Kopete::Contact*)));
 
     return true;
 }
@@ -527,10 +527,10 @@ void Account::setMyself(Contact *myself)
 
     d->myself = myself;
 
-    QObject::connect(d->myself, SIGNAL(onlineStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)),
-                     this, SLOT(slotOnlineStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)));
-    QObject::connect(d->myself, SIGNAL(propertyChanged(Kopete::PropertyContainer *,QString,QVariant,QVariant)),
-                     this, SLOT(slotContactPropertyChanged(Kopete::PropertyContainer *,QString,QVariant,QVariant)));
+    QObject::connect(d->myself, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+                     this, SLOT(slotOnlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)));
+    QObject::connect(d->myself, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+                     this, SLOT(slotContactPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)));
 
     if (isConnected()) {
         emit isConnectedChanged();

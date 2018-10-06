@@ -61,8 +61,8 @@ HistoryPlugin::HistoryPlugin(QObject *parent, const QVariantList & /* args */)
     connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)),
             viewMetaContactHistory, SLOT(setEnabled(bool)));
 
-    connect(Kopete::ChatSessionManager::self(), SIGNAL(viewCreated(KopeteView *)),
-            this, SLOT(slotViewCreated(KopeteView *)));
+    connect(Kopete::ChatSessionManager::self(), SIGNAL(viewCreated(KopeteView*)),
+            this, SLOT(slotViewCreated(KopeteView*)));
 
     connect(this, SIGNAL(settingsChanged()), this, SLOT(slotSettingsChanged()));
 
@@ -83,8 +83,8 @@ HistoryPlugin::HistoryPlugin(QObject *parent, const QVariantList & /* args */)
     for (QList<Kopete::ChatSession *>::Iterator it = sessions.begin(); it != sessions.end(); ++it) {
         if (!m_loggers.contains(*it)) {
             m_loggers.insert(*it, new HistoryGUIClient(*it));
-            connect(*it, SIGNAL(closing(Kopete::ChatSession *)),
-                    this, SLOT(slotKMMClosed(Kopete::ChatSession *)));
+            connect(*it, SIGNAL(closing(Kopete::ChatSession*)),
+                    this, SLOT(slotKMMClosed(Kopete::ChatSession*)));
         }
     }
 }
@@ -111,8 +111,8 @@ void HistoryPlugin::messageDisplayed(const Kopete::Message &m)
 
     if (!m_loggers.contains(m.manager())) {
         m_loggers.insert(m.manager(), new HistoryGUIClient(m.manager()));
-        connect(m.manager(), SIGNAL(closing(Kopete::ChatSession *)),
-                this, SLOT(slotKMMClosed(Kopete::ChatSession *)));
+        connect(m.manager(), SIGNAL(closing(Kopete::ChatSession*)),
+                this, SLOT(slotKMMClosed(Kopete::ChatSession*)));
     }
 
     HistoryLogger *l = m_loggers[m.manager()]->logger();
@@ -155,8 +155,8 @@ void HistoryPlugin::slotViewCreated(KopeteView *v)
 
     if (!m_loggers.contains(m_currentChatSession)) {
         m_loggers.insert(m_currentChatSession, new HistoryGUIClient(m_currentChatSession));
-        connect(m_currentChatSession, SIGNAL(closing(Kopete::ChatSession *)),
-                this, SLOT(slotKMMClosed(Kopete::ChatSession *)));
+        connect(m_currentChatSession, SIGNAL(closing(Kopete::ChatSession*)),
+                this, SLOT(slotKMMClosed(Kopete::ChatSession*)));
     }
 
     if (!autoChatWindow || nbAutoChatWindow == 0) {

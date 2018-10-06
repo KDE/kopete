@@ -60,7 +60,7 @@ InfoEventWidget::InfoEventWidget(QWidget *parent)
     d->currentEventIndex = 0;
     d->enableUpdates = false;
     connect(Kopete::InfoEventManager::self(), SIGNAL(changed()), this, SLOT(updateInfo()));
-    connect(Kopete::InfoEventManager::self(), SIGNAL(eventAdded(Kopete::InfoEvent *)), this, SLOT(eventAdded(Kopete::InfoEvent *)));
+    connect(Kopete::InfoEventManager::self(), SIGNAL(eventAdded(Kopete::InfoEvent*)), this, SLOT(eventAdded(Kopete::InfoEvent*)));
     connect(d->ui.lblActions, SIGNAL(linkActivated(QString)), this, SLOT(linkClicked(QString)));
     connect(d->ui.buttonPrev, SIGNAL(clicked(bool)), this, SLOT(prevInfoEvent()));
     connect(d->ui.buttonNext, SIGNAL(clicked(bool)), this, SLOT(nextInfoEvent()));

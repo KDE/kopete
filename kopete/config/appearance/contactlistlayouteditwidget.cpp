@@ -38,7 +38,7 @@ LayoutEditWidget::LayoutEditWidget(QWidget *parent)
     m_tokenFactory = new ContactListTokenFactory;
     m_tokenDropTarget = new TokenDropTarget(QStringLiteral("application/x-kopete-contactlist-token"), this);
     m_tokenDropTarget->setCustomTokenFactory(m_tokenFactory);
-    connect(m_tokenDropTarget, SIGNAL(focussed(QWidget *)), this, SIGNAL(focussed(QWidget *)));
+    connect(m_tokenDropTarget, SIGNAL(focussed(QWidget*)), this, SIGNAL(focussed(QWidget*)));
     connect(m_tokenDropTarget, SIGNAL(changed()), this, SIGNAL(changed()));
 
     m_showIconCheckBox = new QCheckBox(i18n("Show Icon"), this);

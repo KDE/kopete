@@ -140,8 +140,8 @@ KopeteViewManager::KopeteViewManager()
 
     connect(Kopete::BehaviorSettings::self(), SIGNAL(configChanged()), this, SLOT(slotPrefsChanged()));
 
-    connect(Kopete::ChatSessionManager::self(), SIGNAL(display(Kopete::Message&,Kopete::ChatSession *)),
-            this, SLOT(messageAppended(Kopete::Message&,Kopete::ChatSession *)));
+    connect(Kopete::ChatSessionManager::self(), SIGNAL(display(Kopete::Message&,Kopete::ChatSession*)),
+            this, SLOT(messageAppended(Kopete::Message&,Kopete::ChatSession*)));
 
     connect(Kopete::ChatSessionManager::self(), SIGNAL(readMessage()),
             this, SLOT(nextEvent()));
@@ -207,8 +207,8 @@ KopeteView *KopeteViewManager::view(Kopete::ChatSession *session, const QString 
             d->foreignMessage = false;
             d->sessionMap.insert(session, newView);
 
-            connect(session, SIGNAL(closing(Kopete::ChatSession *)),
-                    this, SLOT(slotChatSessionDestroyed(Kopete::ChatSession *)));
+            connect(session, SIGNAL(closing(Kopete::ChatSession*)),
+                    this, SLOT(slotChatSessionDestroyed(Kopete::ChatSession*)));
 
             return newView;
         } else {
@@ -295,8 +295,8 @@ void KopeteViewManager::messageAppended(Kopete::Message &msg, Kopete::ChatSessio
 
             // Don't call readMessages twice. We call it later in this method. Fixes bug 168978.
             if (d->useQueue) {
-                connect(event, SIGNAL(done(Kopete::MessageEvent *)),
-                        this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
+                connect(event, SIGNAL(done(Kopete::MessageEvent*)),
+                        this, SLOT(slotEventDeleted(Kopete::MessageEvent*)));
             }
         }
     }
@@ -411,7 +411,7 @@ void KopeteViewManager::createNotification(Kopete::Message &msg, const QString &
     connect(notify, SIGNAL(activated()), session, SLOT(raiseView()));
     connect(notify, SIGNAL(action1Activated()), session, SLOT(raiseView()));
     connect(notify, SIGNAL(action2Activated()), event, SLOT(discard()));
-    connect(event, SIGNAL(done(Kopete::MessageEvent *)), notify, SLOT(close()));
+    connect(event, SIGNAL(done(Kopete::MessageEvent*)), notify, SLOT(close()));
     notify->sendEvent();
 }
 

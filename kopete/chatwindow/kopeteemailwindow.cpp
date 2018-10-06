@@ -150,10 +150,10 @@ KopeteEmailWindow::KopeteEmailWindow(Kopete::ChatSession *manager, EmailWindowPl
             manager, SLOT(typing(bool)));
 
     //Connections to the manager and the ViewManager that every view should have
-    connect(this, SIGNAL(closing(KopeteView *)),
-            KopeteViewManager::viewManager(), SLOT(slotViewDestroyed(KopeteView *)));
-    connect(this, SIGNAL(activated(KopeteView *)),
-            KopeteViewManager::viewManager(), SLOT(slotViewActivated(KopeteView *)));
+    connect(this, SIGNAL(closing(KopeteView*)),
+            KopeteViewManager::viewManager(), SLOT(slotViewDestroyed(KopeteView*)));
+    connect(this, SIGNAL(activated(KopeteView*)),
+            KopeteViewManager::viewManager(), SLOT(slotViewActivated(KopeteView*)));
     connect(this, SIGNAL(messageSent(Kopete::Message&)),
             manager, SLOT(sendMessage(Kopete::Message&)));
     connect(manager, SIGNAL(messageSuccess()),

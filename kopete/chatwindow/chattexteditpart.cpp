@@ -98,12 +98,12 @@ void ChatTextEditPart::init(Kopete::ChatSession *session, QWidget *parent)
     connect(m_typingRepeatTimer, &QTimer::timeout, this, &ChatTextEditPart::slotRepeatTypingTimer);
     connect(m_typingStopTimer, SIGNAL(timeout()), this, SLOT(slotStoppedTypingTimer()));
 
-    connect(session, SIGNAL(contactAdded(const Kopete::Contact *,bool)),
-            this, SLOT(slotContactAdded(const Kopete::Contact *)));
-    connect(session, SIGNAL(contactRemoved(const Kopete::Contact *,QString,Qt::TextFormat,bool)),
-            this, SLOT(slotContactRemoved(const Kopete::Contact *)));
-    connect(session, SIGNAL(onlineStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)),
-            this, SLOT(slotContactStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)));
+    connect(session, SIGNAL(contactAdded(const Kopete::Contact*,bool)),
+            this, SLOT(slotContactAdded(const Kopete::Contact*)));
+    connect(session, SIGNAL(contactRemoved(const Kopete::Contact*,QString,Qt::TextFormat,bool)),
+            this, SLOT(slotContactRemoved(const Kopete::Contact*)));
+    connect(session, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+            this, SLOT(slotContactStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)));
 
     connect(Kopete::AppearanceSettings::self(), SIGNAL(appearanceChanged()),
             this, SLOT(slotAppearanceChanged()));

@@ -84,7 +84,7 @@ CryptographyPlugin::CryptographyPlugin (QObject *parent, const QVariantList & /*
 
     // set up slots to handle incoming and outgoing messages
     mInboundHandler = new CryptographyMessageHandlerFactory(Kopete::Message::Inbound,
-                                                            Kopete::MessageHandlerFactory::InStageToSent, this, SLOT(slotIncomingMessage(Kopete::MessageEvent *)));
+                                                            Kopete::MessageHandlerFactory::InStageToSent, this, SLOT(slotIncomingMessage(Kopete::MessageEvent*)));
     connect(Kopete::ChatSessionManager::self(),
             SIGNAL(aboutToSend(Kopete::Message&)),
             SLOT(slotOutgoingMessage(Kopete::Message&)));
@@ -105,7 +105,7 @@ CryptographyPlugin::CryptographyPlugin (QObject *parent, const QVariantList & /*
     setXMLFile("cryptographyui.rc");
 
     // add functionality to chat window when one opens
-    connect(Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession *)), SLOT(slotNewKMM(Kopete::ChatSession *)));
+    connect(Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession*)), SLOT(slotNewKMM(Kopete::ChatSession*)));
 
     //Add GUI action to all already existing kmm (if the plugin is launched when kopete already running)
     QList<Kopete::ChatSession *> sessions = Kopete::ChatSessionManager::self()->sessions();
@@ -366,7 +366,7 @@ void CryptographyPlugin::slotSelectContactKey()
 void CryptographyPlugin::slotNewKMM(Kopete::ChatSession *KMM)
 {
     CryptographyGUIClient *gui = new CryptographyGUIClient(KMM);
-    connect(this, SIGNAL(destroyed(QObject *)), gui, SLOT(deleteLater()));
+    connect(this, SIGNAL(destroyed(QObject*)), gui, SLOT(deleteLater()));
 
     // warn about unfriendly protocols
     if (KMM->protocol()) {

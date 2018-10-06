@@ -215,7 +215,7 @@ KopeteChatWindow::KopeteChatWindow(Kopete::ChatSession::Form form, QWidget *pare
 
     ChatSessionMembersListModel *members_model = new ChatSessionMembersListModel(this);
 
-    connect(this, SIGNAL(chatSessionChanged(Kopete::ChatSession *)), members_model, SLOT(setChatSession(Kopete::ChatSession *)));
+    connect(this, SIGNAL(chatSessionChanged(Kopete::ChatSession*)), members_model, SLOT(setChatSession(Kopete::ChatSession*)));
 
     ChatMembersListView *chatmembers = new ChatMembersListView(m_participantsWidget);
     chatmembers->setModel(members_model);
@@ -434,12 +434,12 @@ void KopeteChatWindow::initActions(void)
     actionDetachMenu->setDelayed(false);
 
     connect(actionDetachMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareDetachMenu()));
-    connect(actionDetachMenu->menu(), SIGNAL(triggered(QAction *)), this, SLOT(slotDetachChat(QAction *)));
+    connect(actionDetachMenu->menu(), SIGNAL(triggered(QAction*)), this, SLOT(slotDetachChat(QAction*)));
 
     actionTabPlacementMenu = new KActionMenu(i18n("&Tab Placement"), coll);
     coll->addAction(QStringLiteral("tabs_placement"), actionTabPlacementMenu);
     connect(actionTabPlacementMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPreparePlacementMenu()));
-    connect(actionTabPlacementMenu->menu(), SIGNAL(triggered(QAction *)), this, SLOT(slotPlaceTabs(QAction *)));
+    connect(actionTabPlacementMenu->menu(), SIGNAL(triggered(QAction*)), this, SLOT(slotPlaceTabs(QAction*)));
 
     coll->setDefaultShortcut(tabDetach, QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_B));
 
@@ -673,7 +673,7 @@ void KopeteChatWindow::createTabBar()
         m_tabBar->setTabsClosable(cg.readEntry(QStringLiteral("HoverClose"), true));
         m_tabBar->setMovable(true);
         m_tabBar->setAutomaticResizeTabs(true);
-        connect(m_tabBar, SIGNAL(closeRequest(QWidget *)), this, SLOT(slotCloseChat(QWidget *)));
+        connect(m_tabBar, SIGNAL(closeRequest(QWidget*)), this, SLOT(slotCloseChat(QWidget*)));
 
         m_UpdateChatLabel = cg.readEntry(QStringLiteral("ShowContactName"), true);
 
@@ -691,10 +691,10 @@ void KopeteChatWindow::createTabBar()
             addTab(*it);
         }
 
-        connect(m_tabBar, SIGNAL(testCanDecode(const QDragMoveEvent *,bool&)), this, SLOT(testCanDecode(const QDragMoveEvent *,bool&)));
-        connect(m_tabBar, SIGNAL(receivedDropEvent(QWidget *,QDropEvent *)), this, SLOT(receivedDropEvent(QWidget *,QDropEvent *)));
-        connect(m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)));
-        connect(m_tabBar, SIGNAL(contextMenu(QWidget *,QPoint)), this, SLOT(slotTabContextMenu(QWidget *,QPoint)));
+        connect(m_tabBar, SIGNAL(testCanDecode(const QDragMoveEvent*,bool&)), this, SLOT(testCanDecode(const QDragMoveEvent*,bool&)));
+        connect(m_tabBar, SIGNAL(receivedDropEvent(QWidget*,QDropEvent*)), this, SLOT(receivedDropEvent(QWidget*,QDropEvent*)));
+        connect(m_tabBar, SIGNAL(currentChanged(QWidget*)), this, SLOT(setActiveView(QWidget*)));
+        connect(m_tabBar, SIGNAL(contextMenu(QWidget*,QPoint)), this, SLOT(slotTabContextMenu(QWidget*,QPoint)));
 
         if (m_activeView) {
             m_tabBar->setCurrentWidget(m_activeView);
@@ -735,7 +735,7 @@ void KopeteChatWindow::addTab(ChatView *view)
 
     m_tabBar->addTab(view, pluginIcon, QLatin1String(""));
     view->setVisible(view == m_activeView);
-    connect(view, SIGNAL(updateStatusIcon(ChatView *)), this, SLOT(slotUpdateCaptionIcons(ChatView *)));
+    connect(view, SIGNAL(updateStatusIcon(ChatView*)), this, SLOT(slotUpdateCaptionIcons(ChatView*)));
 
     if (m_UpdateChatLabel) {
         connect(view, SIGNAL(captionChanged(bool)), this, SLOT(updateChatLabel()));
@@ -759,8 +759,8 @@ void KopeteChatWindow::setPrimaryChatView(ChatView *view)
 void KopeteChatWindow::deleteTabBar()
 {
     if (m_tabBar) {
-        disconnect(m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)));
-        disconnect(m_tabBar, SIGNAL(contextMenu(QWidget *,QPoint)), this, SLOT(slotTabContextMenu(QWidget *,QPoint)));
+        disconnect(m_tabBar, SIGNAL(currentChanged(QWidget*)), this, SLOT(setActiveView(QWidget*)));
+        disconnect(m_tabBar, SIGNAL(contextMenu(QWidget*,QPoint)), this, SLOT(slotTabContextMenu(QWidget*,QPoint)));
 
         if (!chatViewList.isEmpty()) {
             setPrimaryChatView(chatViewList.first());
@@ -791,17 +791,17 @@ void KopeteChatWindow::attachChatView(ChatView *newView)
 
     KCursor::setAutoHideCursor(newView->editWidget(), true, true);
     connect(newView, SIGNAL(captionChanged(bool)), this, SLOT(slotSetCaption(bool)));
-    connect(newView, SIGNAL(messageSuccess(ChatView *)), this, SLOT(slotStopAnimation(ChatView *)));
-    connect(newView, SIGNAL(updateStatusIcon(ChatView *)), this, SLOT(slotUpdateCaptionIcons(ChatView *)));
+    connect(newView, SIGNAL(messageSuccess(ChatView*)), this, SLOT(slotStopAnimation(ChatView*)));
+    connect(newView, SIGNAL(updateStatusIcon(ChatView*)), this, SLOT(slotUpdateCaptionIcons(ChatView*)));
 
     if (m_UpdateChatLabel) {
-        connect(newView, SIGNAL(updateChatState(ChatView *,int)), this, SLOT(updateChatState(ChatView *,int)));
+        connect(newView, SIGNAL(updateChatState(ChatView*,int)), this, SLOT(updateChatState(ChatView*,int)));
     }
 
     updateActions();
     checkDetachEnable();
-    connect(newView, SIGNAL(autoSpellCheckEnabled(ChatView *,bool)),
-            this, SLOT(slotAutoSpellCheckEnabled(ChatView *,bool)));
+    connect(newView, SIGNAL(autoSpellCheckEnabled(ChatView*,bool)),
+            this, SLOT(slotAutoSpellCheckEnabled(ChatView*,bool)));
 }
 
 void KopeteChatWindow::checkDetachEnable()
@@ -823,8 +823,8 @@ void KopeteChatWindow::detachChatView(ChatView *view)
     chatViewList.removeAt(chatViewList.indexOf(view));
 
     disconnect(view, SIGNAL(captionChanged(bool)), this, SLOT(slotSetCaption(bool)));
-    disconnect(view, SIGNAL(updateStatusIcon(ChatView *)), this, SLOT(slotUpdateCaptionIcons(ChatView *)));
-    disconnect(view, SIGNAL(updateChatState(ChatView *,int)), this, SLOT(updateChatState(ChatView *,int)));
+    disconnect(view, SIGNAL(updateStatusIcon(ChatView*)), this, SLOT(slotUpdateCaptionIcons(ChatView*)));
+    disconnect(view, SIGNAL(updateChatState(ChatView*,int)), this, SLOT(updateChatState(ChatView*,int)));
     view->editWidget()->removeEventFilter(this);
 
     if (m_tabBar) {

@@ -118,7 +118,7 @@ Contact::Contact(Account *account, const QString &contactId, MetaContact *parent
 
     d->contactId = contactId;
     d->metaContact = parent;
-    connect(d->metaContact, SIGNAL(destroyed(QObject *)), this, SLOT(slotMetaContactDestroyed(QObject *)));
+    connect(d->metaContact, SIGNAL(destroyed(QObject*)), this, SLOT(slotMetaContactDestroyed(QObject*)));
 
     d->fileCapable = false;
     d->account = account;
@@ -127,8 +127,8 @@ Contact::Contact(Account *account, const QString &contactId, MetaContact *parent
     d->preferredNameType = Kopete::Contact::CustomName;
     d->oldName = displayName();
 
-    connect(this, SIGNAL(propertyChanged(Kopete::PropertyContainer *,QString,QVariant,QVariant)),
-            this, SLOT(slotPropertyChanged(Kopete::PropertyContainer *,QString,QVariant,QVariant)));
+    connect(this, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+            this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)));
 
     bool duplicate = false;
     // If can happend that a MetaContact may be used without a account
@@ -435,7 +435,7 @@ void Contact::setMetaContact(MetaContact *m)
 
     if (old) {
         old->removeContact(this);
-        disconnect(old, SIGNAL(destroyed(QObject *)), this, SLOT(slotMetaContactDestroyed(QObject *)));
+        disconnect(old, SIGNAL(destroyed(QObject*)), this, SLOT(slotMetaContactDestroyed(QObject*)));
 
         if (old->contacts().isEmpty()) {
             //remove the old metacontact.  (this delete the MC)
@@ -452,7 +452,7 @@ void Contact::setMetaContact(MetaContact *m)
 
     if (m) {
         m->addContact(this);
-        connect(m, SIGNAL(destroyed(QObject *)), this, SLOT(slotMetaContactDestroyed(QObject *)));
+        connect(m, SIGNAL(destroyed(QObject*)), this, SLOT(slotMetaContactDestroyed(QObject*)));
         // it is necessary to call this write here, because MetaContact::addContact() does not differentiate
         // between adding completely new contacts (which should be written to kabc) and restoring upon restart
         // (where no write is needed).

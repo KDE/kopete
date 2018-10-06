@@ -127,8 +127,8 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
     connect(d->mainWidget.buttonAddAvatar, SIGNAL(clicked()), this, SLOT(buttonAddAvatarClicked()));
     connect(d->mainWidget.buttonRemoveAvatar, SIGNAL(clicked()), this, SLOT(buttonRemoveAvatarClicked()));
     connect(d->mainWidget.buttonFromWebcam, SIGNAL(clicked()), this, SLOT(buttonFromWebcamClicked()));
-    connect(d->mainWidget.listUserAvatar, SIGNAL(itemClicked(QListWidgetItem *)),
-            this, SLOT(listSelectionChanged(QListWidgetItem *)));
+    connect(d->mainWidget.listUserAvatar, SIGNAL(itemClicked(QListWidgetItem*)),
+            this, SLOT(listSelectionChanged(QListWidgetItem*)));
     connect(Kopete::AvatarManager::self(), SIGNAL(avatarAdded(Kopete::AvatarManager::AvatarEntry)),
             this, SLOT(avatarAdded(Kopete::AvatarManager::AvatarEntry)));
     connect(Kopete::AvatarManager::self(), SIGNAL(avatarRemoved(Kopete::AvatarManager::AvatarEntry)),
@@ -143,7 +143,7 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 
     // List avatars of User category
     Kopete::AvatarQueryJob *queryJob = new Kopete::AvatarQueryJob(this);
-    connect(queryJob, SIGNAL(result(KJob *)), this, SLOT(queryJobFinished(KJob *)));
+    connect(queryJob, SIGNAL(result(KJob*)), this, SLOT(queryJobFinished(KJob*)));
     queryJob->setQueryFilter(Kopete::AvatarManager::User);
 
     queryJob->start();

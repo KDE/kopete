@@ -124,20 +124,20 @@ void ChatSessionMembersListModel::setChatSession(ChatSession *session)
 
     d->session = session;
 
-    connect(session, SIGNAL(closing(Kopete::ChatSession *)),
+    connect(session, SIGNAL(closing(Kopete::ChatSession*)),
             this, SLOT(slotSessionClosed()));
-    connect(session, SIGNAL(contactAdded(const Kopete::Contact *,bool)),
-            this, SLOT(slotContactAdded(const Kopete::Contact *)));
-    connect(session, SIGNAL(contactRemoved(const Kopete::Contact *,QString,Qt::TextFormat,bool)),
-            this, SLOT(slotContactRemoved(const Kopete::Contact *)));
-    connect(session, SIGNAL(onlineStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)),
-            this, SLOT(slotContactStatusChanged(Kopete::Contact *,Kopete::OnlineStatus)));
+    connect(session, SIGNAL(contactAdded(const Kopete::Contact*,bool)),
+            this, SLOT(slotContactAdded(const Kopete::Contact*)));
+    connect(session, SIGNAL(contactRemoved(const Kopete::Contact*,QString,Qt::TextFormat,bool)),
+            this, SLOT(slotContactRemoved(const Kopete::Contact*)));
+    connect(session, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+            this, SLOT(slotContactStatusChanged(Kopete::Contact*,Kopete::OnlineStatus)));
     connect(session, SIGNAL(displayNameChanged()),
             this, SLOT(slotSessionChanged()));
     connect(session, SIGNAL(photoChanged()),
             this, SLOT(slotSessionChanged()));
-    connect(session, SIGNAL(nickNameChanged(Kopete::Contact *,QString)),
-            this, SLOT(slotContactNickNameChanged(Kopete::Contact *)));
+    connect(session, SIGNAL(nickNameChanged(Kopete::Contact*,QString)),
+            this, SLOT(slotContactNickNameChanged(Kopete::Contact*)));
 
     d->contacts.clear();
     d->insertMultiple(d->session->members());

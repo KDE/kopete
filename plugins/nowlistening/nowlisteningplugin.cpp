@@ -136,7 +136,7 @@ NowListeningPlugin::NowListeningPlugin(QObject *parent, const QVariantList & /*a
     Kopete::CommandHandler::commandHandler()->registerCommand(
         this,
         "media",
-        SLOT(slotMediaCommand(QString,Kopete::ChatSession *)),
+        SLOT(slotMediaCommand(QString,Kopete::ChatSession*)),
         i18n("USAGE: /media - Displays information on current song"),
         0
         );

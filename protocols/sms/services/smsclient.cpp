@@ -84,9 +84,9 @@ void SMSClient::send(const Kopete::Message &msg)
     *p << provider + ':' + nr;
     *p << message;
 
-    QObject::connect(p, SIGNAL(processExited(K3Process *)), this, SLOT(slotSendFinished(K3Process *)));
-    QObject::connect(p, SIGNAL(receivedStdout(K3Process *,char *,int)), this, SLOT(slotReceivedOutput(K3Process *,char *,int)));
-    QObject::connect(p, SIGNAL(receivedStderr(K3Process *,char *,int)), this, SLOT(slotReceivedOutput(K3Process *,char *,int)));
+    QObject::connect(p, SIGNAL(processExited(K3Process*)), this, SLOT(slotSendFinished(K3Process*)));
+    QObject::connect(p, SIGNAL(receivedStdout(K3Process*,char*,int)), this, SLOT(slotReceivedOutput(K3Process*,char*,int)));
+    QObject::connect(p, SIGNAL(receivedStderr(K3Process*,char*,int)), this, SLOT(slotReceivedOutput(K3Process*,char*,int)));
 
     p->start(K3Process::Block, K3Process::AllOutput);
 }

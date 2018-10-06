@@ -50,7 +50,7 @@ MessageHandler *PrivacyMessageHandlerFactory::create(ChatSession *manager, Messa
         return 0;
     }
     MessageHandler *handler = new PrivacyMessageHandler;
-    QObject::connect(handler, SIGNAL(handle(Kopete::MessageEvent *)), d->target, d->slot);
+    QObject::connect(handler, SIGNAL(handle(Kopete::MessageEvent*)), d->target, d->slot);
     return handler;
 }
 

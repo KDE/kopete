@@ -149,10 +149,10 @@ void JingleCallsManager::init()
     d->mediaManager = new MediaManager(inputDev, outputDev);
 
     d->client->jingleSessionManager()->setSupportedVideoPayloads(d->videoPayloads);
-    connect((const QObject *)d->client->jingleSessionManager(), SIGNAL(newJingleSession(XMPP::JingleSession *)),
-            this, SLOT(slotNewSession(XMPP::JingleSession *)));
-    connect((const QObject *)d->client->jingleSessionManager(), SIGNAL(sessionTerminate(XMPP::JingleSession *)),
-            this, SLOT(slotSessionTerminate(XMPP::JingleSession *)));
+    connect((const QObject *)d->client->jingleSessionManager(), SIGNAL(newJingleSession(XMPP::JingleSession*)),
+            this, SLOT(slotNewSession(XMPP::JingleSession*)));
+    connect((const QObject *)d->client->jingleSessionManager(), SIGNAL(sessionTerminate(XMPP::JingleSession*)),
+            this, SLOT(slotSessionTerminate(XMPP::JingleSession*)));
 }
 
 bool JingleCallsManager::startNewSession(const XMPP::Jid &toJid)

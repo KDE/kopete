@@ -74,7 +74,7 @@ StatusGroup::StatusGroup(const QString &uid)
 void StatusGroup::insertChild(int i, StatusItem *item)
 {
     item->setParent(this);
-    connect(item, SIGNAL(destroyed(QObject *)), this, SLOT(childDestroyed(QObject *)));
+    connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(childDestroyed(QObject*)));
     mChildItems.insert(i, item);
     emit childInserted(i, item);
 }

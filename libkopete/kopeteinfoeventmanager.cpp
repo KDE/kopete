@@ -53,8 +53,8 @@ void InfoEventManager::addEvent(Kopete::InfoEvent *event)
     emit eventAboutToBeAdded(event);
 
     if (!event->isClosed()) {
-        connect(event, SIGNAL(eventClosed(Kopete::InfoEvent *)),
-                this, SLOT(eventClosed(Kopete::InfoEvent *)));
+        connect(event, SIGNAL(eventClosed(Kopete::InfoEvent*)),
+                this, SLOT(eventClosed(Kopete::InfoEvent*)));
 
         d->eventList.append(event);
         emit eventAdded(event);

@@ -94,7 +94,7 @@ void StatisticsPlugin::slotInitialize()
             slotMetaContactAdded(metaContact);
             slotOnlineStatusChanged(metaContact, metaContact->status());
         } else {
-            connect(metaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact *,Kopete::OnlineStatus::StatusType)), this, SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact *,Kopete::OnlineStatus::StatusType)));
+            connect(metaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)), this, SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)));
         }
     }
 }
@@ -131,7 +131,7 @@ void StatisticsPlugin::slotAboutToReceive(Kopete::Message &m)
 
 void StatisticsPlugin::slotViewCreated(Kopete::ChatSession *session)
 {
-    connect(session, SIGNAL(closing(Kopete::ChatSession *)), this, SLOT(slotViewClosed(Kopete::ChatSession *)));
+    connect(session, SIGNAL(closing(Kopete::ChatSession*)), this, SLOT(slotViewClosed(Kopete::ChatSession*)));
 }
 
 void StatisticsPlugin::slotViewClosed(Kopete::ChatSession *session)

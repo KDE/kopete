@@ -66,8 +66,8 @@ KopeteSystemTray::KopeteSystemTray(QWidget *parent)
     connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(slotAboutToShowMenu()));
 
     connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
-    connect(Kopete::ChatSessionManager::self(), SIGNAL(newEvent(Kopete::MessageEvent *)),
-            this, SLOT(slotNewEvent(Kopete::MessageEvent *)));
+    connect(Kopete::ChatSessionManager::self(), SIGNAL(newEvent(Kopete::MessageEvent*)),
+            this, SLOT(slotNewEvent(Kopete::MessageEvent*)));
     connect(Kopete::BehaviorSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()));
 
     connect(Kopete::AccountManager::self(),
@@ -164,8 +164,8 @@ void KopeteSystemTray::slotNewEvent(Kopete::MessageEvent *event)
 {
     mEventList.append(event);
 
-    connect(event, SIGNAL(done(Kopete::MessageEvent *)),
-            this, SLOT(slotEventDone(Kopete::MessageEvent *)));
+    connect(event, SIGNAL(done(Kopete::MessageEvent*)),
+            this, SLOT(slotEventDone(Kopete::MessageEvent*)));
 
     // tray animation
     if (Kopete::BehaviorSettings::self()->trayflashNotify()) {

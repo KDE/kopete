@@ -226,7 +226,7 @@ ChatMessagePart::ChatMessagePart(Kopete::ChatSession *mgr, QWidget *parent)
     d->manager = mgr;
     d->currentChatStyle = ChatWindowStyleManager::self()->getValidStyleFromPool(KopeteChatWindowSettings::self()->styleName());
     if (d->currentChatStyle) {
-        connect(d->currentChatStyle, SIGNAL(destroyed(QObject *)), this, SLOT(clearStyle()));
+        connect(d->currentChatStyle, SIGNAL(destroyed(QObject*)), this, SLOT(clearStyle()));
     }
 
     connect(this, SIGNAL(completed()), this, SLOT(slotRenderingFinished()));
@@ -423,12 +423,12 @@ void ChatMessagePart::setStyle(ChatWindowStyle *style)
 {
     // Change the current style
     if (d->currentChatStyle) {
-        disconnect(d->currentChatStyle, SIGNAL(destroyed(QObject *)), this, SLOT(clearStyle()));
+        disconnect(d->currentChatStyle, SIGNAL(destroyed(QObject*)), this, SLOT(clearStyle()));
     }
 
     d->currentChatStyle = style;
     if (d->currentChatStyle) {
-        connect(d->currentChatStyle, SIGNAL(destroyed(QObject *)), this, SLOT(clearStyle()));
+        connect(d->currentChatStyle, SIGNAL(destroyed(QObject*)), this, SLOT(clearStyle()));
     }
 
     // Do the actual style switch

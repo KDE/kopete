@@ -53,15 +53,15 @@ Identity::Identity(const QString &id, const QString &label)
     : d(new Private(id, label))
 {
     load();
-    connect(this, SIGNAL(propertyChanged(Kopete::PropertyContainer *,QString,QVariant,QVariant)),
-            this, SLOT(slotSaveProperty(Kopete::PropertyContainer *,QString,QVariant,QVariant)));
+    connect(this, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+            this, SLOT(slotSaveProperty(Kopete::PropertyContainer*,QString,QVariant,QVariant)));
 }
 
 Identity::Identity(const QString &label)
     : d(new Private(KRandom::randomString(10), label))
 {
-    connect(this, SIGNAL(propertyChanged(Kopete::PropertyContainer *,QString,QVariant,QVariant)),
-            this, SLOT(slotSaveProperty(Kopete::PropertyContainer *,QString,QVariant,QVariant)));
+    connect(this, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+            this, SLOT(slotSaveProperty(Kopete::PropertyContainer*,QString,QVariant,QVariant)));
 }
 
 Identity *Identity::clone() const
@@ -71,8 +71,8 @@ Identity *Identity::clone() const
     serializeProperties(props);
     id->deserializeProperties(props);
 
-    connect(id, SIGNAL(propertyChanged(Kopete::PropertyContainer *,QString,QVariant,QVariant)),
-            id, SLOT(slotSaveProperty(Kopete::PropertyContainer *,QString,QVariant,QVariant)));
+    connect(id, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+            id, SLOT(slotSaveProperty(Kopete::PropertyContainer*,QString,QVariant,QVariant)));
     return id;
 }
 
@@ -194,11 +194,11 @@ void Identity::addAccount(Kopete::Account *account)
 
     if (account->myself()) {
         connect(account->myself(),
-                SIGNAL(onlineStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+                SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
                 this, SLOT(updateOnlineStatus()));
     }
-    connect(account, SIGNAL(accountDestroyed(const Kopete::Account *)),
-            this, SLOT(removeAccount(const Kopete::Account *)));
+    connect(account, SIGNAL(accountDestroyed(const Kopete::Account*)),
+            this, SLOT(removeAccount(const Kopete::Account*)));
 
     updateOnlineStatus();
     emit identityChanged(this);

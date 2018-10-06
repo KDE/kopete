@@ -54,8 +54,8 @@ LatexPlugin::LatexPlugin(QObject *parent, const QVariantList & /*args*/)
     mMagickNotFoundShown = false;
     connect(Kopete::ChatSessionManager::self(), SIGNAL(aboutToDisplay(Kopete::Message&)), SLOT(slotMessageAboutToShow(Kopete::Message&)));
     connect(Kopete::ChatSessionManager::self(), SIGNAL(aboutToSend(Kopete::Message&)), this, SLOT(slotMessageAboutToSend(Kopete::Message&)));
-    connect(Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession *)),
-            this, SLOT(slotNewChatSession(Kopete::ChatSession *)));
+    connect(Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession*)),
+            this, SLOT(slotNewChatSession(Kopete::ChatSession*)));
 
     m_convScript = QStandardPaths::findExecutable(QStringLiteral("kopete_latexconvert.sh"));
 

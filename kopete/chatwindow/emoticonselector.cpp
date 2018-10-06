@@ -83,12 +83,12 @@ EmoticonSelector::EmoticonSelector(QWidget *parent)
     m_currentMovie = new QMovie(this);
     m_currentEmoticon->setMovie(m_currentMovie);
 
-    connect(m_emoticonList, SIGNAL(itemEntered(QListWidgetItem *)),
-            this, SLOT(mouseOverItem(QListWidgetItem *)));
+    connect(m_emoticonList, SIGNAL(itemEntered(QListWidgetItem*)),
+            this, SLOT(mouseOverItem(QListWidgetItem*)));
     connect(m_emoticonList, SIGNAL(itemSelectionChanged()),
             this, SLOT(currentChanged()));
-    connect(m_emoticonList, SIGNAL(itemClicked(QListWidgetItem *)),
-            this, SLOT(emoticonClicked(QListWidgetItem *)));
+    connect(m_emoticonList, SIGNAL(itemClicked(QListWidgetItem*)),
+            this, SLOT(emoticonClicked(QListWidgetItem*)));
 }
 
 void EmoticonSelector::prepareList(void)

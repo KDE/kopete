@@ -314,7 +314,7 @@ KopeteWindow::KopeteWindow (QWidget *parent)
     connect(infoLabel, SIGNAL(clicked()), this, SLOT(slotInfoIconClicked()));
     statusBarMessageLayout->addWidget(infoLabel);
     statusBarMessageLayout->addSpacing(1);
-    connect(Kopete::InfoEventManager::self(), SIGNAL(eventAdded(Kopete::InfoEvent *)), this, SLOT(slotNewInfoEvent()));
+    connect(Kopete::InfoEventManager::self(), SIGNAL(eventAdded(Kopete::InfoEvent*)), this, SLOT(slotNewInfoEvent()));
 
     d->globalStatusMessage = new KSqueezedTextLabel(statusBarMessage);
     connect(Kopete::StatusManager::self(), SIGNAL(globalStatusChanged()),
@@ -334,16 +334,16 @@ KopeteWindow::KopeteWindow (QWidget *parent)
     // --------------------------------------------------------------------------------
 
     // Trap all loaded plugins, so we can add their status bar icons accordingly , also used to add XMLGUIClient
-    connect(Kopete::PluginManager::self(), SIGNAL(pluginLoaded(Kopete::Plugin *)),
-            this, SLOT(slotPluginLoaded(Kopete::Plugin *)));
+    connect(Kopete::PluginManager::self(), SIGNAL(pluginLoaded(Kopete::Plugin*)),
+            this, SLOT(slotPluginLoaded(Kopete::Plugin*)));
     connect(Kopete::PluginManager::self(), SIGNAL(allPluginsLoaded()),
             this, SLOT(slotAllPluginsLoaded()));
 
     // Connect all identity signals
-    connect(Kopete::IdentityManager::self(), SIGNAL(identityRegistered(Kopete::Identity *)),
-            this, SLOT(slotIdentityRegistered(Kopete::Identity *)));
-    connect(Kopete::IdentityManager::self(), SIGNAL(identityUnregistered(const Kopete::Identity *)),
-            this, SLOT(slotIdentityUnregistered(const Kopete::Identity *)));
+    connect(Kopete::IdentityManager::self(), SIGNAL(identityRegistered(Kopete::Identity*)),
+            this, SLOT(slotIdentityRegistered(Kopete::Identity*)));
+    connect(Kopete::IdentityManager::self(), SIGNAL(identityUnregistered(const Kopete::Identity*)),
+            this, SLOT(slotIdentityUnregistered(const Kopete::Identity*)));
 
     connect(d->autoHideTimer, SIGNAL(timeout()), this, SLOT(slotAutoHide()));
     connect(d->contactlist, SIGNAL(visibleContentHeightChanged()), this, SLOT(slotStartAutoResizeTimer()));
@@ -458,8 +458,8 @@ void KopeteWindow::initActions()
 
     connect(statusAction, SIGNAL(changeStatus(uint,Kopete::StatusMessage)),
             this, SLOT(setOnlineStatus(uint,Kopete::StatusMessage)));
-    connect(statusAction, SIGNAL(updateMessage(Kopete::StatusRootAction *)),
-            this, SLOT(updateStatusMenuMessage(Kopete::StatusRootAction *)));
+    connect(statusAction, SIGNAL(updateMessage(Kopete::StatusRootAction*)),
+            this, SLOT(updateStatusMenuMessage(Kopete::StatusRootAction*)));
     connect(statusAction, SIGNAL(changeMessage(Kopete::StatusMessage)),
             this, SLOT(setStatusMessage(Kopete::StatusMessage)));
 
@@ -586,8 +586,8 @@ void KopeteWindow::initSystray()
     if (Kopete::BehaviorSettings::self()->showSystemTray()) {
         d->tray = KopeteSystemTray::systemTray(this);
 
-        QObject::connect(d->tray, SIGNAL(aboutToShowMenu(QMenu *)),
-                         this, SLOT(slotTrayAboutToShowMenu(QMenu *)));
+        QObject::connect(d->tray, SIGNAL(aboutToShowMenu(QMenu*)),
+                         this, SLOT(slotTrayAboutToShowMenu(QMenu*)));
         d->tray->setStandardActionsEnabled(true);
         QObject::connect(d->tray, SIGNAL(quit()), this, SLOT(slotQuit()));
     }
@@ -751,8 +751,8 @@ void KopeteWindow::slotConfigChanged()
             Kopete::Identity::List identityList = Kopete::IdentityManager::self()->identities();
             foreach (Kopete::Identity *identity, identityList) {
                 KopeteIdentityStatusBarIcon *sbIcon = new KopeteIdentityStatusBarIcon(identity, d->statusBarWidget);
-                connect(sbIcon, SIGNAL(leftClicked(Kopete::Identity *,QPoint)), this,
-                        SLOT(slotIdentityStatusIconLeftClicked(Kopete::Identity *,QPoint)));
+                connect(sbIcon, SIGNAL(leftClicked(Kopete::Identity*,QPoint)), this,
+                        SLOT(slotIdentityStatusIconLeftClicked(Kopete::Identity*,QPoint)));
 
                 d->identityStatusBarIcons.insert(identity, sbIcon);
                 slotIdentityStatusIconChanged(identity);
@@ -958,10 +958,10 @@ void KopeteWindow::slotAllPluginsLoaded()
     //Connect the appropriate account signals
     /* Please note that I tried to put this in the slotAllPluginsLoaded() function
      * but it seemed to break the account icons in the statusbar --Matt */
-    connect(Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account *)),
-            this, SLOT(slotAccountRegistered(Kopete::Account *)));
-    connect(Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account *)),
-            this, SLOT(slotAccountUnregistered(const Kopete::Account *)));
+    connect(Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account*)),
+            this, SLOT(slotAccountRegistered(Kopete::Account*)));
+    connect(Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
+            this, SLOT(slotAccountUnregistered(const Kopete::Account*)));
 
     if (d->showIdentityIcons) {
         QString identityId = cg.readEntry("ShownIdentityId", Kopete::IdentityManager::self()->defaultIdentity()->id());
@@ -980,17 +980,17 @@ void KopeteWindow::slotIdentityRegistered(Kopete::Identity *identity)
         return;
     }
 
-    connect(identity, SIGNAL(onlineStatusChanged(Kopete::Identity *)),
-            this, SLOT(slotIdentityStatusIconChanged(Kopete::Identity *)));
-    connect(identity, SIGNAL(identityChanged(Kopete::Identity *)),
-            this, SLOT(slotIdentityStatusIconChanged(Kopete::Identity *)));
-    connect(identity, SIGNAL(toolTipChanged(Kopete::Identity *)),
-            this, SLOT(slotIdentityToolTipChanged(Kopete::Identity *)));
+    connect(identity, SIGNAL(onlineStatusChanged(Kopete::Identity*)),
+            this, SLOT(slotIdentityStatusIconChanged(Kopete::Identity*)));
+    connect(identity, SIGNAL(identityChanged(Kopete::Identity*)),
+            this, SLOT(slotIdentityStatusIconChanged(Kopete::Identity*)));
+    connect(identity, SIGNAL(toolTipChanged(Kopete::Identity*)),
+            this, SLOT(slotIdentityToolTipChanged(Kopete::Identity*)));
 
     if (d->showIdentityIcons) {
         KopeteIdentityStatusBarIcon *sbIcon = new KopeteIdentityStatusBarIcon(identity, d->statusBarWidget);
-        connect(sbIcon, SIGNAL(leftClicked(Kopete::Identity *,QPoint)),
-                SLOT(slotIdentityStatusIconLeftClicked(Kopete::Identity *,QPoint)));
+        connect(sbIcon, SIGNAL(leftClicked(Kopete::Identity*,QPoint)),
+                SLOT(slotIdentityStatusIconLeftClicked(Kopete::Identity*,QPoint)));
 
         d->identityStatusBarIcons.insert(identity, sbIcon);
     }

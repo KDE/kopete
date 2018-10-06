@@ -65,8 +65,8 @@ JabberFileTransfer::JabberFileTransfer (JabberAccount *account, XMPP::FileTransf
         Kopete::ContactList::self()->addMetaContact(metaContact);
     }
 
-    connect(Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer *,QString)),
-            this, SLOT(slotIncomingTransferAccepted(Kopete::Transfer *,QString)));
+    connect(Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer*,QString)),
+            this, SLOT(slotIncomingTransferAccepted(Kopete::Transfer*,QString)));
     connect(Kopete::TransferManager::transferManager(), SIGNAL(refused(Kopete::FileTransferInfo)),
             this, SLOT(slotTransferRefused(Kopete::FileTransferInfo)));
 
@@ -123,7 +123,7 @@ JabberFileTransfer::JabberFileTransfer (JabberAccount *account, JabberBaseContac
                                                                               contact->contactId(),
                                                                               Kopete::FileTransferInfo::Outgoing);
 
-    connect(mKopeteTransfer, SIGNAL(result(KJob *)), this, SLOT(slotTransferResult()));
+    connect(mKopeteTransfer, SIGNAL(result(KJob*)), this, SLOT(slotTransferResult()));
 
     mXMPPTransfer = mAccount->client()->fileTransferManager()->createTransfer();
 
@@ -224,7 +224,7 @@ void JabberFileTransfer::slotIncomingTransferAccepted(Kopete::Transfer *transfer
 
         deleteLater();
     } else {
-        connect(mKopeteTransfer, SIGNAL(result(KJob *)), this, SLOT(slotTransferResult()));
+        connect(mKopeteTransfer, SIGNAL(result(KJob*)), this, SLOT(slotTransferResult()));
         connect(mXMPPTransfer, SIGNAL(readyRead(QByteArray)), this, SLOT(slotIncomingDataReady(QByteArray)));
         connect(mXMPPTransfer, SIGNAL(error(int)), this, SLOT(slotTransferError(int)));
         mXMPPTransfer->accept(offset, length);

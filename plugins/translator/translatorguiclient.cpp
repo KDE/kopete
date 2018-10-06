@@ -42,7 +42,7 @@ TranslatorGUIClient::TranslatorGUIClient(Kopete::ChatSession *parent)
     setComponentName(QStringLiteral("kopete_translator"), i18n("Kopete"));
 
     //setComponentData( TranslatorPlugin::plugin()->componentData() );
-    connect(TranslatorPlugin::plugin(), SIGNAL(destroyed(QObject *)), this, SLOT(deleteLater()));
+    connect(TranslatorPlugin::plugin(), SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
 
     m_manager = parent;
 

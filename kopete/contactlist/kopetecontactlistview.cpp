@@ -207,10 +207,10 @@ void KopeteContactListView::initActions(KActionCollection *ac)
 
 //  connect( Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), this, SLOT(slotMetaContactSelected(bool)) );
 
-    connect(Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account *)),
-            this, SLOT(addToAddContactMenu(Kopete::Account *)));
-    connect(Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account *)),
-            this, SLOT(removeToAddContactMenu(const Kopete::Account *)));
+    connect(Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account*)),
+            this, SLOT(addToAddContactMenu(Kopete::Account*)));
+    connect(Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
+            this, SLOT(removeToAddContactMenu(const Kopete::Account*)));
 
     d->actionProperties = new QAction(QIcon::fromTheme(QStringLiteral("user-properties")), i18n("&Properties"), ac);
     ac->addAction(QStringLiteral("contactProperties"), d->actionProperties);
@@ -767,14 +767,14 @@ void KopeteContactListView::selectionChanged(const QItemSelection &selected, con
     updateActions();
 
     if (d->selectedMetaContact) { // Delete previous connection
-        disconnect(d->selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact *,Kopete::OnlineStatus::StatusType)),
+        disconnect(d->selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)),
                    this, SLOT(updateMetaContactActions()));
         d->selectedMetaContact = 0;
     }
 
     if (contacts.count() == 1 && groups.empty()) {
         d->selectedMetaContact = contacts.values().first();
-        connect(d->selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact *,Kopete::OnlineStatus::StatusType)),
+        connect(d->selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)),
                 this, SLOT(updateMetaContactActions()));
     }
 

@@ -75,7 +75,7 @@ Kopete::ChatSession *BonjourContact::manager(CanCreateFlags canCreateFlags)
         Kopete::ChatSession::Form form = (Kopete::ChatSession::Small);
         m_msgManager = Kopete::ChatSessionManager::self()->create(
             account()->myself(), contacts, protocol(), form);
-        connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession *)),
+        connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
                 this, SLOT(sendMessage(Kopete::Message&)));
         connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
         return m_msgManager;
@@ -197,8 +197,8 @@ void BonjourContact::setConnection(BonjourContactConnection *c)
     // can delete the connection (and the socket hence)
     connection->setParent(this);
 
-    connect(connection, SIGNAL(disconnected(BonjourContactConnection *)),
-            this, SLOT(connectionDisconnected(BonjourContactConnection *)));
+    connect(connection, SIGNAL(disconnected(BonjourContactConnection*)),
+            this, SLOT(connectionDisconnected(BonjourContactConnection*)));
 
     connect(connection, SIGNAL(messageReceived(Kopete::Message)),
             this, SLOT(receivedMessage(Kopete::Message)));

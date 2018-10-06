@@ -51,8 +51,8 @@ void KopeteIdentityStatusBarIcon::mousePressEvent(QMouseEvent *me)
 
         connect(statusAction, SIGNAL(changeStatus(uint,Kopete::StatusMessage)),
                 m_identity, SLOT(setOnlineStatus(uint,Kopete::StatusMessage)));
-        connect(statusAction, SIGNAL(updateMessage(Kopete::StatusRootAction *)),
-                this, SLOT(updateMessage(Kopete::StatusRootAction *)));
+        connect(statusAction, SIGNAL(updateMessage(Kopete::StatusRootAction*)),
+                this, SLOT(updateMessage(Kopete::StatusRootAction*)));
         connect(statusAction, SIGNAL(changeMessage(Kopete::StatusMessage)),
                 m_identity, SLOT(setStatusMessage(Kopete::StatusMessage)));
 

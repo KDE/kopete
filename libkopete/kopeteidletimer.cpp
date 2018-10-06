@@ -109,7 +109,7 @@ void Kopete::IdleTimer::registerTimeout(int idleSeconds, QObject *receiver, cons
 {
     Private::TimeoutReceiver item = { true, idleSeconds * 1000, receiver, memberActive, memberIdle };
     d->receiverList.append(item);
-    connect(receiver, SIGNAL(destroyed(QObject *)), this, SLOT(unregisterTimeout(QObject *)));
+    connect(receiver, SIGNAL(destroyed(QObject*)), this, SLOT(unregisterTimeout(QObject*)));
 }
 
 void Kopete::IdleTimer::unregisterTimeout(QObject *receiver)

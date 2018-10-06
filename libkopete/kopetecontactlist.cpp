@@ -94,11 +94,11 @@ ContactList::ContactList()
     d->saveTimer->setSingleShot(true);
     connect(d->saveTimer, SIGNAL(timeout()), SLOT(save()));
 
-    connect(this, SIGNAL(metaContactAdded(Kopete::MetaContact *)), SLOT(slotSaveLater()));
-    connect(this, SIGNAL(metaContactRemoved(Kopete::MetaContact *)), SLOT(slotSaveLater()));
-    connect(this, SIGNAL(groupAdded(Kopete::Group *)), SLOT(slotSaveLater()));
-    connect(this, SIGNAL(groupRemoved(Kopete::Group *)), SLOT(slotSaveLater()));
-    connect(this, SIGNAL(groupRenamed(Kopete::Group *,QString)), SLOT(slotSaveLater()));
+    connect(this, SIGNAL(metaContactAdded(Kopete::MetaContact*)), SLOT(slotSaveLater()));
+    connect(this, SIGNAL(metaContactRemoved(Kopete::MetaContact*)), SLOT(slotSaveLater()));
+    connect(this, SIGNAL(groupAdded(Kopete::Group*)), SLOT(slotSaveLater()));
+    connect(this, SIGNAL(groupRemoved(Kopete::Group*)), SLOT(slotSaveLater()));
+    connect(this, SIGNAL(groupRenamed(Kopete::Group*,QString)), SLOT(slotSaveLater()));
 }
 
 ContactList::~ContactList()
@@ -238,10 +238,10 @@ void ContactList::addMetaContact(MetaContact *mc)
 
     emit metaContactAdded(mc);
     connect(mc, SIGNAL(persistentDataChanged()), SLOT(slotSaveLater()));
-    connect(mc, SIGNAL(addedToGroup(Kopete::MetaContact *,Kopete::Group *)), SIGNAL(metaContactAddedToGroup(Kopete::MetaContact *,Kopete::Group *)));
-    connect(mc, SIGNAL(removedFromGroup(Kopete::MetaContact *,Kopete::Group *)), SIGNAL(metaContactRemovedFromGroup(Kopete::MetaContact *,Kopete::Group *)));
-    connect(mc, SIGNAL(movedToGroup(Kopete::MetaContact *,Kopete::Group *,Kopete::Group *)),
-            SIGNAL(metaContactMovedToGroup(Kopete::MetaContact *,Kopete::Group *,Kopete::Group *)));
+    connect(mc, SIGNAL(addedToGroup(Kopete::MetaContact*,Kopete::Group*)), SIGNAL(metaContactAddedToGroup(Kopete::MetaContact*,Kopete::Group*)));
+    connect(mc, SIGNAL(removedFromGroup(Kopete::MetaContact*,Kopete::Group*)), SIGNAL(metaContactRemovedFromGroup(Kopete::MetaContact*,Kopete::Group*)));
+    connect(mc, SIGNAL(movedToGroup(Kopete::MetaContact*,Kopete::Group*,Kopete::Group*)),
+            SIGNAL(metaContactMovedToGroup(Kopete::MetaContact*,Kopete::Group*,Kopete::Group*)));
 }
 
 void ContactList::removeMetaContact(MetaContact *m)
@@ -298,7 +298,7 @@ void ContactList::addGroup(Group *g)
     if (!d->groups.contains(g)) {
         d->groups.append(g);
         emit groupAdded(g);
-        connect(g, SIGNAL(displayNameChanged(Kopete::Group *,QString)), this, SIGNAL(groupRenamed(Kopete::Group *,QString)));
+        connect(g, SIGNAL(displayNameChanged(Kopete::Group*,QString)), this, SIGNAL(groupRenamed(Kopete::Group*,QString)));
     }
 }
 

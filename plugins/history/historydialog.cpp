@@ -170,7 +170,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget *parent)
 
     connect(mHtmlPart->browserExtension(), SIGNAL(openUrlRequestDelayed(QUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)),
             this, SLOT(slotOpenURLRequest(QUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)));
-    connect(mMainWidget->dateTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *,int)), this, SLOT(dateSelected(QTreeWidgetItem *)));
+    connect(mMainWidget->dateTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(dateSelected(QTreeWidgetItem*)));
     connect(mMainWidget->searchButton, SIGNAL(clicked()), this, SLOT(slotSearch()));
     connect(mMainWidget->searchLine, SIGNAL(returnPressed()), this, SLOT(slotSearch()));
     connect(mMainWidget->searchLine, SIGNAL(textChanged(QString)), this, SLOT(slotSearchTextChanged(QString)));

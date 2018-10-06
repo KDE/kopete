@@ -122,8 +122,8 @@ void BookmarksPlugin::addKopeteBookmark(const QUrl &url, const QString &sender)
         KIO::TransferJob *transfer;
         // make asynchronous transfer to avoid GUI freezing due to overloaded web servers
         transfer = KIO::get(url, KIO::NoReload, KIO::HideProgressInfo);
-        connect(transfer, SIGNAL(data(KIO::Job *,QByteArray)),
-                this, SLOT(slotAddKopeteBookmark(KIO::Job *,QByteArray)));
+        connect(transfer, SIGNAL(data(KIO::Job*,QByteArray)),
+                this, SLOT(slotAddKopeteBookmark(KIO::Job*,QByteArray)));
         m_map[transfer].url = url;
         m_map[transfer].sender = sender;
     }

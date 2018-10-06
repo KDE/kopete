@@ -194,15 +194,15 @@ MetaContactSelectorWidget::MetaContactSelectorWidget(QWidget *parent, const char
     d->widget->setupUi(w);
     l->addWidget(w);
 
-    connect(d->widget->metaContactListView, SIGNAL(itemClicked(QTreeWidgetItem *,int)),
-            SIGNAL(metaContactListClicked(QTreeWidgetItem *)));
-    connect(d->widget->metaContactListView, SIGNAL(currentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *)),
-            SIGNAL(metaContactListClicked(QTreeWidgetItem *)));
+    connect(d->widget->metaContactListView, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
+            SIGNAL(metaContactListClicked(QTreeWidgetItem*)));
+    connect(d->widget->metaContactListView, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+            SIGNAL(metaContactListClicked(QTreeWidgetItem*)));
     //FIXME: Find the correct replacement for Q3ListView::spacePressed(Q3ListViewItem*)
-    connect(d->widget->metaContactListView, SIGNAL(itemPressed(QTreeWidgetItem *,int)),
-            SIGNAL(metaContactListClicked(QTreeWidgetItem *)));
+    connect(d->widget->metaContactListView, SIGNAL(itemPressed(QTreeWidgetItem*,int)),
+            SIGNAL(metaContactListClicked(QTreeWidgetItem*)));
 
-    connect(Kopete::ContactList::self(), SIGNAL(metaContactAdded(Kopete::MetaContact *)), this, SLOT(slotLoadMetaContacts()));
+    connect(Kopete::ContactList::self(), SIGNAL(metaContactAdded(Kopete::MetaContact*)), this, SLOT(slotLoadMetaContacts()));
 
     d->widget->kListViewSearchLine->setTreeWidget(d->widget->metaContactListView);
     d->widget->kListViewSearchLine->setFocus();
@@ -214,7 +214,7 @@ MetaContactSelectorWidget::MetaContactSelectorWidget(QWidget *parent, const char
 
 MetaContactSelectorWidget::~MetaContactSelectorWidget()
 {
-    disconnect(Kopete::ContactList::self(), SIGNAL(metaContactAdded(Kopete::MetaContact *)), this, SLOT(slotLoadMetaContacts()));
+    disconnect(Kopete::ContactList::self(), SIGNAL(metaContactAdded(Kopete::MetaContact*)), this, SLOT(slotLoadMetaContacts()));
     delete d->widget;
     delete d;
 }

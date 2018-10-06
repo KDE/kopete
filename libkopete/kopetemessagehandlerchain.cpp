@@ -157,7 +157,7 @@ ProcessMessageTask::ProcessMessageTask(MessageHandlerChain::Ptr chain, MessageEv
     : d(new Private(chain, event))
 {
     QTimer::singleShot(0, this, SLOT(start()));
-    connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotDone()));
+    connect(event, SIGNAL(done(Kopete::MessageEvent*)), this, SLOT(slotDone()));
     event->message().manager()->ref();
 }
 

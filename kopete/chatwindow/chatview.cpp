@@ -139,24 +139,24 @@ ChatView::ChatView(Kopete::ChatSession *mgr, ChatWindowPlugin *parent)
     //Manager signals
     connect(mgr, SIGNAL(displayNameChanged()),
             this, SLOT(slotChatDisplayNameChanged()));
-    connect(mgr, SIGNAL(statusMessageChanged(Kopete::Contact *)),
-            this, SLOT(slotStatusMessageChanged(Kopete::Contact *)));
-    connect(mgr, SIGNAL(contactAdded(const Kopete::Contact *,bool)),
-            this, SLOT(slotContactAdded(const Kopete::Contact *,bool)));
-    connect(mgr, SIGNAL(contactRemoved(const Kopete::Contact *,QString,Qt::TextFormat,bool)),
-            this, SLOT(slotContactRemoved(const Kopete::Contact *,QString,Qt::TextFormat,bool)));
-    connect(mgr, SIGNAL(onlineStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)),
-            this, SLOT(slotContactStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)));
-    connect(mgr, SIGNAL(remoteTyping(const Kopete::Contact *,bool)),
-            this, SLOT(remoteTyping(const Kopete::Contact *,bool)));
+    connect(mgr, SIGNAL(statusMessageChanged(Kopete::Contact*)),
+            this, SLOT(slotStatusMessageChanged(Kopete::Contact*)));
+    connect(mgr, SIGNAL(contactAdded(const Kopete::Contact*,bool)),
+            this, SLOT(slotContactAdded(const Kopete::Contact*,bool)));
+    connect(mgr, SIGNAL(contactRemoved(const Kopete::Contact*,QString,Qt::TextFormat,bool)),
+            this, SLOT(slotContactRemoved(const Kopete::Contact*,QString,Qt::TextFormat,bool)));
+    connect(mgr, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+            this, SLOT(slotContactStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)));
+    connect(mgr, SIGNAL(remoteTyping(const Kopete::Contact*,bool)),
+            this, SLOT(remoteTyping(const Kopete::Contact*,bool)));
     connect(mgr, SIGNAL(eventNotification(QString)),
             this, SLOT(setStatusText(QString)));
 
     //Connections to the manager and the ViewManager that every view should have
-    connect(this, SIGNAL(closing(KopeteView *)),
-            KopeteViewManager::viewManager(), SLOT(slotViewDestroyed(KopeteView *)));
-    connect(this, SIGNAL(activated(KopeteView *)),
-            KopeteViewManager::viewManager(), SLOT(slotViewActivated(KopeteView *)));
+    connect(this, SIGNAL(closing(KopeteView*)),
+            KopeteViewManager::viewManager(), SLOT(slotViewDestroyed(KopeteView*)));
+    connect(this, SIGNAL(activated(KopeteView*)),
+            KopeteViewManager::viewManager(), SLOT(slotViewActivated(KopeteView*)));
     connect(this, SIGNAL(messageSent(Kopete::Message&)),
             mgr, SLOT(sendMessage(Kopete::Message&)));
     connect(mgr, SIGNAL(messageSuccess()),
@@ -979,7 +979,7 @@ void ChatView::dropEvent(QDropEvent *event)
 void ChatView::registerContextMenuHandler(QObject *target, const char *slot)
 {
     connect(m_messagePart,
-            SIGNAL(contextMenuEvent(Kopete::Message&,QString,QMenu *)),
+            SIGNAL(contextMenuEvent(Kopete::Message&,QString,QMenu*)),
             target,
             slot
             );

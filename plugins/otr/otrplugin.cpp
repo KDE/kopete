@@ -74,8 +74,8 @@ OTRPlugin::OTRPlugin (QObject *parent, const QVariantList & /*args*/)
     connect(Kopete::ChatSessionManager::self(), SIGNAL(aboutToSend(Kopete::Message&)),
             SLOT(slotOutgoingMessage(Kopete::Message&)));
 
-    connect(Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession *)),
-            this, SLOT(slotNewChatSessionWindow(Kopete::ChatSession *)));
+    connect(Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession*)),
+            this, SLOT(slotNewChatSessionWindow(Kopete::ChatSession*)));
 
     connect(this, SIGNAL(settingsChanged()), this, SLOT(slotSettingsChanged()));
 

@@ -96,7 +96,7 @@ public:
     {
         qCDebug(LIBKOPETE_LOG);
 
-        Kopete::WalletManager::self()->openWallet(this, SLOT(walletReceived(KWallet::Wallet *)));
+        Kopete::WalletManager::self()->openWallet(this, SLOT(walletReceived(KWallet::Wallet*)));
     }
 
     void walletReceived(KWallet::Wallet *wallet) Q_DECL_OVERRIDE

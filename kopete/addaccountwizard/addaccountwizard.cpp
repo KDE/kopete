@@ -112,11 +112,11 @@ AddAccountWizard::AddAccountWizard(QWidget *parent, bool firstRun)
     protocol_list->setFocus();
 
     // hook up the user input
-    connect(d->uiSelectService.protocolListView, SIGNAL(itemClicked(QTreeWidgetItem *,int)),
+    connect(d->uiSelectService.protocolListView, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
             this, SLOT(slotProtocolListClicked()));
     connect(d->uiSelectService.protocolListView, SIGNAL(itemSelectionChanged()),
             this, SLOT(slotProtocolListClicked()));
-    connect(d->uiSelectService.protocolListView, SIGNAL(itemDoubleClicked(QTreeWidgetItem *,int)),
+    connect(d->uiSelectService.protocolListView, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
             this, SLOT(slotProtocolListDoubleClicked()));
     //FIXME : KDialog::setHelp(QString(),"kopete");
 }

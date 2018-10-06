@@ -138,8 +138,8 @@ void Protocol::aboutToUnload()
                                        <<" is still connected, disconnecting..." << endl;
 
                 QObject::connect(a->myself(),
-                                 SIGNAL(onlineStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)),
-                                 this, SLOT(slotAccountOnlineStatusChanged(Kopete::Contact *)));
+                                 SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+                                 this, SLOT(slotAccountOnlineStatusChanged(Kopete::Contact*)));
                 a->disconnect();
             } else {
                 // Remove account, it's already disconnected

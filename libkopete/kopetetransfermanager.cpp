@@ -96,7 +96,7 @@ Kopete::Transfer::Transfer(const Kopete::FileTransferInfo &kfti, const QString &
     : KIO::Job()
     , d(new Private(kfti))
 {
-    connect(kfti.contact(), SIGNAL(destroyed(QObject *)), this, SLOT(slotContactDestroyed()));
+    connect(kfti.contact(), SIGNAL(destroyed(QObject*)), this, SLOT(slotContactDestroyed()));
     this->setUiDelegate(new KIO::JobUiDelegate());
     if (showProgressInfo) {
         KIO::getJobTracker()->registerJob(this);
@@ -112,7 +112,7 @@ Kopete::Transfer::Transfer(const Kopete::FileTransferInfo &kfti, bool showProgre
     : KIO::Job()
     , d(new Private(kfti))
 {
-    connect(kfti.contact(), SIGNAL(destroyed(QObject *)), this, SLOT(slotContactDestroyed()));
+    connect(kfti.contact(), SIGNAL(destroyed(QObject*)), this, SLOT(slotContactDestroyed()));
     this->setUiDelegate(new KIO::JobUiDelegate());
     if (showProgressInfo) {
         KIO::getJobTracker()->registerJob(this);
@@ -134,7 +134,7 @@ void Kopete::Transfer::init(const QUrl &target, bool showProgressInfo)
         emitCopying(sourceURL(), destinationURL());
     }
 
-    connect(this, SIGNAL(result(KJob *)), SLOT(slotResultEmitted()));
+    connect(this, SIGNAL(result(KJob*)), SLOT(slotResultEmitted()));
 
     ui()->setAutoErrorHandlingEnabled(false);
 }
@@ -380,7 +380,7 @@ Kopete::Transfer *Kopete::TransferManager::addTransfer(Kopete::Contact *contact,
     uint id = Kopete::Message::nextId();
     Kopete::FileTransferInfo info(contact, files, size, recipient, di, id);
     Kopete::Transfer *trans = new Kopete::Transfer(info);
-    connect(trans, SIGNAL(result(KJob *)), this, SLOT(slotComplete(KJob *)));
+    connect(trans, SIGNAL(result(KJob*)), this, SLOT(slotComplete(KJob*)));
     mTransfersMap.insert(id, trans);
     return trans;
 }
@@ -465,7 +465,7 @@ void Kopete::TransferManager::saveIncomingTransfer(unsigned int id)
     }
 
     Kopete::Transfer *trans = new Kopete::Transfer(info, url.toLocalFile());
-    connect(trans, SIGNAL(result(KJob *)), this, SLOT(slotComplete(KJob *)));
+    connect(trans, SIGNAL(result(KJob*)), this, SLOT(slotComplete(KJob*)));
     mTransfersMap.insert(info.transferId(), trans);
     emit askIncomingDone(id);
     emit accepted(trans, url.toLocalFile());

@@ -55,11 +55,11 @@ MetaContact::MetaContact()
     connect(this, SIGNAL(iconChanged(Kopete::ContactListElement::IconState,QString)), SIGNAL(persistentDataChanged()));
     connect(this, SIGNAL(useCustomIconChanged(bool)), SIGNAL(persistentDataChanged()));
     connect(this, SIGNAL(displayNameChanged(QString,QString)), SIGNAL(persistentDataChanged()));
-    connect(this, SIGNAL(movedToGroup(Kopete::MetaContact *,Kopete::Group *,Kopete::Group *)), SIGNAL(persistentDataChanged()));
-    connect(this, SIGNAL(removedFromGroup(Kopete::MetaContact *,Kopete::Group *)), SIGNAL(persistentDataChanged()));
-    connect(this, SIGNAL(addedToGroup(Kopete::MetaContact *,Kopete::Group *)), SIGNAL(persistentDataChanged()));
-    connect(this, SIGNAL(contactAdded(Kopete::Contact *)), SIGNAL(persistentDataChanged()));
-    connect(this, SIGNAL(contactRemoved(Kopete::Contact *)), SIGNAL(persistentDataChanged()));
+    connect(this, SIGNAL(movedToGroup(Kopete::MetaContact*,Kopete::Group*,Kopete::Group*)), SIGNAL(persistentDataChanged()));
+    connect(this, SIGNAL(removedFromGroup(Kopete::MetaContact*,Kopete::Group*)), SIGNAL(persistentDataChanged()));
+    connect(this, SIGNAL(addedToGroup(Kopete::MetaContact*,Kopete::Group*)), SIGNAL(persistentDataChanged()));
+    connect(this, SIGNAL(contactAdded(Kopete::Contact*)), SIGNAL(persistentDataChanged()));
+    connect(this, SIGNAL(contactRemoved(Kopete::Contact*)), SIGNAL(persistentDataChanged()));
 
     // TODO: speed up: this slot is called when any kabc contact is changed and is called in *every* metacontact instance. also slot is slow because it finding kabc id
     // Update the KABC picture when the KDE Address book change.
@@ -94,20 +94,20 @@ void MetaContact::addContact(Contact *c)
         const QString oldDisplayName = displayName();
 
         d->contacts.append(c);
-        connect(c, SIGNAL(onlineStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)),
-                SLOT(slotContactStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)));
+        connect(c, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+                SLOT(slotContactStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)));
 
-        connect(c, SIGNAL(propertyChanged(Kopete::PropertyContainer *,QString,QVariant,QVariant)),
-                this, SLOT(slotPropertyChanged(Kopete::PropertyContainer *,QString,QVariant,QVariant)));
+        connect(c, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+                this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)));
 
         connect(c, SIGNAL(displayNameChanged(QString,QString)),
                 this, SLOT(slotContactDisplayNameChanged(QString,QString)));
 
-        connect(c, SIGNAL(contactDestroyed(Kopete::Contact *)),
-                this, SLOT(slotContactDestroyed(Kopete::Contact *)));
+        connect(c, SIGNAL(contactDestroyed(Kopete::Contact*)),
+                this, SLOT(slotContactDestroyed(Kopete::Contact*)));
 
-        connect(c, SIGNAL(idleStateChanged(Kopete::Contact *)),
-                this, SIGNAL(contactIdleStateChanged(Kopete::Contact *)));
+        connect(c, SIGNAL(idleStateChanged(Kopete::Contact*)),
+                this, SIGNAL(contactIdleStateChanged(Kopete::Contact*)));
 
         emit contactAdded(c);
 
@@ -211,16 +211,16 @@ void MetaContact::removeContact(Contact *c, bool deleted)
         }
 
         if (!deleted) { //If this function is tell by slotContactRemoved, c is maybe just a QObject
-            disconnect(c, SIGNAL(onlineStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)),
-                       this, SLOT(slotContactStatusChanged(Kopete::Contact *,Kopete::OnlineStatus,Kopete::OnlineStatus)));
-            disconnect(c, SIGNAL(propertyChanged(Kopete::PropertyContainer *,QString,QVariant,QVariant)),
-                       this, SLOT(slotPropertyChanged(Kopete::PropertyContainer *,QString,QVariant,QVariant)));
+            disconnect(c, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+                       this, SLOT(slotContactStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)));
+            disconnect(c, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+                       this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)));
             disconnect(c, SIGNAL(displayNameChanged(QString,QString)),
                        this, SLOT(slotContactDisplayNameChanged(QString,QString)));
-            disconnect(c, SIGNAL(contactDestroyed(Kopete::Contact *)),
-                       this, SLOT(slotContactDestroyed(Kopete::Contact *)));
-            disconnect(c, SIGNAL(idleStateChanged(Kopete::Contact *)),
-                       this, SIGNAL(contactIdleStateChanged(Kopete::Contact *)));
+            disconnect(c, SIGNAL(contactDestroyed(Kopete::Contact*)),
+                       this, SLOT(slotContactDestroyed(Kopete::Contact*)));
+            disconnect(c, SIGNAL(idleStateChanged(Kopete::Contact*)),
+                       this, SIGNAL(contactIdleStateChanged(Kopete::Contact*)));
 
             qCDebug(LIBKOPETE_LOG) << "Contact disconnected";
 

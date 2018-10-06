@@ -150,10 +150,10 @@ void StatusRootAction::init()
     connect(statusManager, SIGNAL(changed()), this, SLOT(rootChanged()));
     d->group = statusManager->getRootGroup();
 
-    connect(d->group, SIGNAL(childRemoved(Kopete::Status::StatusItem *)),
-            this, SLOT(childRemoved(Kopete::Status::StatusItem *)));
-    connect(d->group, SIGNAL(childInserted(int,Kopete::Status::StatusItem *)),
-            this, SLOT(childInserted(int,Kopete::Status::StatusItem *)));
+    connect(d->group, SIGNAL(childRemoved(Kopete::Status::StatusItem*)),
+            this, SLOT(childRemoved(Kopete::Status::StatusItem*)));
+    connect(d->group, SIGNAL(childInserted(int,Kopete::Status::StatusItem*)),
+            this, SLOT(childInserted(int,Kopete::Status::StatusItem*)));
 
     foreach (Kopete::Status::StatusItem *child, d->group->childList()) {
         insertChild(d->insertBefore, child);
@@ -294,10 +294,10 @@ void StatusRootAction::rootChanged()
     Kopete::StatusManager *statusManager = Kopete::StatusManager::self();
     d->group = statusManager->getRootGroup();
 
-    connect(d->group, SIGNAL(childRemoved(Kopete::Status::StatusItem *)),
-            this, SLOT(childRemoved(Kopete::Status::StatusItem *)));
-    connect(d->group, SIGNAL(childInserted(int,Kopete::Status::StatusItem *)),
-            this, SLOT(childInserted(int,Kopete::Status::StatusItem *)));
+    connect(d->group, SIGNAL(childRemoved(Kopete::Status::StatusItem*)),
+            this, SLOT(childRemoved(Kopete::Status::StatusItem*)));
+    connect(d->group, SIGNAL(childInserted(int,Kopete::Status::StatusItem*)),
+            this, SLOT(childInserted(int,Kopete::Status::StatusItem*)));
 
     foreach (Kopete::Status::StatusItem *child, d->group->childList()) {
         insertChild(d->statusSeparator, child);

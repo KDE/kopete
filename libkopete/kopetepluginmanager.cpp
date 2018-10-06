@@ -67,7 +67,7 @@ public:
             KPluginInfo info = it.key();
             Plugin *plugin = it.value();
             loadedPlugins.remove(info);
-            plugin->disconnect(&instance, SLOT(slotPluginDestroyed(QObject *)));
+            plugin->disconnect(&instance, SLOT(slotPluginDestroyed(QObject*)));
             delete plugin;
         }
     }
@@ -364,7 +364,7 @@ Plugin *PluginManager::loadPluginInternal(const QString &pluginId)
         _kpmp->loadedPlugins.insert(info, plugin);
         info.setPluginEnabled(true);
 
-        connect(plugin, SIGNAL(destroyed(QObject *)), this, SLOT(slotPluginDestroyed(QObject *)));
+        connect(plugin, SIGNAL(destroyed(QObject*)), this, SLOT(slotPluginDestroyed(QObject*)));
         connect(plugin, SIGNAL(readyForUnload()), this, SLOT(slotPluginReadyForUnload()));
 
         qCDebug(LIBKOPETE_LOG) << "Successfully loaded plugin '" << pluginId << "'";

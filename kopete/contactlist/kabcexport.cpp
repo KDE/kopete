@@ -61,8 +61,8 @@ KabcExportWizard::KabcExportWizard(QWidget *parent)
     m_page2.setupUi(page2Widget);
     m_page2WidgetItem = addPage(page2Widget, i18n("Select Contact"));
 
-    connect(m_page1.addrBooks, SIGNAL(currentItemChanged(QListWidgetItem *,QListWidgetItem *)),
-            SLOT(slotResourceSelectionChanged(QListWidgetItem *)));
+    connect(m_page1.addrBooks, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+            SLOT(slotResourceSelectionChanged(QListWidgetItem*)));
 
     connect(m_page2.btnSelectAll, SIGNAL(clicked()), SLOT(slotSelectAll()));
     connect(m_page2.btnDeselectAll, SIGNAL(clicked()), SLOT(slotDeselectAll()));

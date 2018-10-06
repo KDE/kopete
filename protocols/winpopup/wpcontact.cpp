@@ -79,8 +79,8 @@ Kopete::ChatSession *WPContact::manager(Kopete::Contact::CanCreateFlags /*canCre
 
         m_manager = Kopete::ChatSessionManager::self()->create(account()->myself(), singleContact, protocol());
 
-        connect(m_manager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession *)), this, SLOT(slotSendMessage(Kopete::Message&)));
-        connect(m_manager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession *)), m_manager, SLOT(appendMessage(Kopete::Message&)));
+        connect(m_manager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)), this, SLOT(slotSendMessage(Kopete::Message&)));
+        connect(m_manager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)), m_manager, SLOT(appendMessage(Kopete::Message&)));
         connect(m_manager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
     }
 

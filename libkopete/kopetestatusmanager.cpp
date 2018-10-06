@@ -80,10 +80,10 @@ StatusManager::StatusManager()
     connect(Kopete::BehaviorSettings::self(), SIGNAL(configChanged()),
             this, SLOT(loadBehaviorSettings()));
 
-    connect(Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account *)),
-            this, SLOT(accountUnregistered(const Kopete::Account *)));
+    connect(Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
+            this, SLOT(accountUnregistered(const Kopete::Account*)));
 
-    connect(Kopete::AccountManager::self(), SIGNAL(accountOnlineStatusChanged(Kopete::Account *,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+    connect(Kopete::AccountManager::self(), SIGNAL(accountOnlineStatusChanged(Kopete::Account*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
             this, SLOT(checkIdleTimer()));
 }
 

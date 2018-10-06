@@ -30,22 +30,22 @@ ContactStalker::ContactStalker(Kopete::MetaContact *contact)
 {
     m_contact = contact;
     QObject::connect(Kopete::ContactList::self(),
-                     SIGNAL(metaContactRemoved(Kopete::MetaContact *)),
-                     this, SLOT(slotMetaContactRemoved(Kopete::MetaContact *)));
-    QObject::connect(contact, SIGNAL(onlineStatusChanged(Kopete::MetaContact *,Kopete::OnlineStatus::StatusType)),
+                     SIGNAL(metaContactRemoved(Kopete::MetaContact*)),
+                     this, SLOT(slotMetaContactRemoved(Kopete::MetaContact*)));
+    QObject::connect(contact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)),
                      this, SLOT(slotEmitSignalDelayed()));
     QObject::connect(contact, SIGNAL(displayNameChanged(QString,QString)),
                      this, SLOT(slotEmitSignalDelayed()));
     QObject::connect(contact, SIGNAL(photoChanged()),
                      this, SLOT(slotEmitSignalDelayed()));
-    QObject::connect(contact, SIGNAL(contactAdded(Kopete::Contact *)),
+    QObject::connect(contact, SIGNAL(contactAdded(Kopete::Contact*)),
                      this, SLOT(slotEmitSignalDelayed()));
-    QObject::connect(contact, SIGNAL(contactRemoved(Kopete::Contact *)),
+    QObject::connect(contact, SIGNAL(contactRemoved(Kopete::Contact*)),
                      this, SLOT(slotEmitSignalDelayed()));
 
     QObject::connect(Kopete::ChatSessionManager::self(),
-                     SIGNAL(display(Kopete::Message&,Kopete::ChatSession *)),
-                     this, SLOT(messageAppended(Kopete::Message&,Kopete::ChatSession *)));
+                     SIGNAL(display(Kopete::Message&,Kopete::ChatSession*)),
+                     this, SLOT(messageAppended(Kopete::Message&,Kopete::ChatSession*)));
 
     m_lastChange = QTime::currentTime();
     slotEmitSignal();
@@ -81,7 +81,7 @@ void ContactStalker::messageAppended(Kopete::Message &message, Kopete::ChatSessi
             foreach (Kopete::Contact *subContact, m_contact->contacts()) {
                 QList<Kopete::MessageEvent *> pendingMessages = KopeteViewManager::viewManager()->pendingMessages(subContact);
                 foreach (Kopete::MessageEvent *event, pendingMessages) {
-                    connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEmitSignalDelayed()));
+                    connect(event, SIGNAL(done(Kopete::MessageEvent*)), this, SLOT(slotEmitSignalDelayed()));
                 }
             }
 
@@ -101,8 +101,8 @@ void ContactStalker::slotMetaContactRemoved(Kopete::MetaContact *contact)
 KopeteDBusInterfacePrivate::KopeteDBusInterfacePrivate()
 {
     QObject::connect(Kopete::ContactList::self(),
-                     SIGNAL(metaContactAdded(Kopete::MetaContact *)),
-                     this, SLOT(slotMetaContactAdded(Kopete::MetaContact *)));
+                     SIGNAL(metaContactAdded(Kopete::MetaContact*)),
+                     this, SLOT(slotMetaContactAdded(Kopete::MetaContact*)));
 
     foreach (Kopete::MetaContact *contact, Kopete::ContactList::self()->metaContacts()) {
         this->slotMetaContactAdded(contact);

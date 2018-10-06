@@ -45,17 +45,17 @@ OtrGUIClient::OtrGUIClient(Kopete::ChatSession *parent)
 {
     setComponentName(QStringLiteral("kopete_otr"), i18n("Kopete"));
     connect(OTRPlugin::plugin(),
-            SIGNAL(destroyed(QObject *)), this,
+            SIGNAL(destroyed(QObject*)), this,
             SLOT(deleteLater())
 
             );
 
-    connect(this, SIGNAL(signalOtrChatsession(Kopete::ChatSession *,bool)), OTRPlugin::plugin(), SLOT(slotEnableOtr(Kopete::ChatSession *,bool)));
+    connect(this, SIGNAL(signalOtrChatsession(Kopete::ChatSession*,bool)), OTRPlugin::plugin(), SLOT(slotEnableOtr(Kopete::ChatSession*,bool)));
 
-    connect(OtrlChatInterface::self(), SIGNAL(goneSecure(Kopete::ChatSession *,int)),
-            this, SLOT(encryptionEnabled(Kopete::ChatSession *,int)));
+    connect(OtrlChatInterface::self(), SIGNAL(goneSecure(Kopete::ChatSession*,int)),
+            this, SLOT(encryptionEnabled(Kopete::ChatSession*,int)));
 
-    connect(this, SIGNAL(signalVerifyFingerprint(Kopete::ChatSession *)), OTRPlugin::plugin(), SLOT(slotVerifyFingerprint(Kopete::ChatSession *)));
+    connect(this, SIGNAL(signalVerifyFingerprint(Kopete::ChatSession*)), OTRPlugin::plugin(), SLOT(slotVerifyFingerprint(Kopete::ChatSession*)));
 
     m_manager = parent;
 

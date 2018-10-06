@@ -123,15 +123,15 @@ void ChatSessionManager::registerChatSession(ChatSession *result)
      * There's no need for a slot here... just add a public remove()
      * method and call from KMM's destructor
      */
-    connect(result, SIGNAL(messageAppended(Kopete::Message&,Kopete::ChatSession *)),
+    connect(result, SIGNAL(messageAppended(Kopete::Message&,Kopete::ChatSession*)),
             SIGNAL(aboutToDisplay(Kopete::Message&)));
-    connect(result, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession *)),
+    connect(result, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
             SIGNAL(aboutToSend(Kopete::Message&)));
-    connect(result, SIGNAL(messageReceived(Kopete::Message&,Kopete::ChatSession *)),
+    connect(result, SIGNAL(messageReceived(Kopete::Message&,Kopete::ChatSession*)),
             SIGNAL(aboutToReceive(Kopete::Message&)));
 
-    connect(result, SIGNAL(messageAppended(Kopete::Message&,Kopete::ChatSession *)),
-            SIGNAL(display(Kopete::Message&,Kopete::ChatSession *)));
+    connect(result, SIGNAL(messageAppended(Kopete::Message&,Kopete::ChatSession*)),
+            SIGNAL(display(Kopete::Message&,Kopete::ChatSession*)));
 
     emit chatSessionCreated(result);
 }
@@ -157,10 +157,10 @@ KopeteView *ChatSessionManager::createView(ChatSession *kmm, const QString &requ
 
     QObject *viewObject = dynamic_cast<QObject *>(newView);
     if (viewObject) {
-        connect(viewObject, SIGNAL(activated(KopeteView *)),
-                this, SIGNAL(viewActivated(KopeteView *)));
-        connect(viewObject, SIGNAL(closing(KopeteView *)),
-                this, SIGNAL(viewClosing(KopeteView *)));
+        connect(viewObject, SIGNAL(activated(KopeteView*)),
+                this, SIGNAL(viewActivated(KopeteView*)));
+        connect(viewObject, SIGNAL(closing(KopeteView*)),
+                this, SIGNAL(viewClosing(KopeteView*)));
     } else {
         qCWarning(LIBKOPETE_LOG) << "Failed to cast view to QObject *";
     }

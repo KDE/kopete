@@ -180,7 +180,7 @@ void Group::sendMessage()
     c = onlineMembers().first()->preferredContact();
     c->sendMessage();
     if (c->manager(Contact::CanCreate)) {
-        connect(c->manager(), SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession *)), this, SLOT(sendMessage(Kopete::Message&)));
+        connect(c->manager(), SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)), this, SLOT(sendMessage(Kopete::Message&)));
     }
 }
 
@@ -189,7 +189,7 @@ void Group::sendMessage(Message &msg)
     QList<MetaContact *> list = onlineMembers();
     ChatSession *cs = msg.manager();
     if (cs) {
-        disconnect(cs, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession *)), this, SLOT(sendMessage(Kopete::Message&)));
+        disconnect(cs, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)), this, SLOT(sendMessage(Kopete::Message&)));
     } else {
         return;
     }

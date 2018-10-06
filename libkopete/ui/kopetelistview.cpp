@@ -152,8 +152,8 @@ ListView::ListView(QWidget *parent)
 
     connect(this, SIGNAL(customContextMenuRequested(QPoint)),
             SLOT(slotContextMenu(QPoint)));
-    connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem *,int)),
-            SLOT(slotDoubleClicked(QTreeWidgetItem *)));
+    connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+            SLOT(slotDoubleClicked(QTreeWidgetItem*)));
 
     // set up flags for nicer painting
     setAttribute(Qt::WA_StaticContents, false);
@@ -274,7 +274,7 @@ void ListView::setSmoothScrolling(bool b)
         // Install the timer
         d->smoothScrollingTimer = startTimer((int)d->smoothScrollingTimerInterval);
         // If we want to enable smooth scrolling when item has changed with keypresses etc, we need this
-        connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *)), this, SLOT(slotCurrentChanged(QTreeWidgetItem *)));
+        connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(slotCurrentChanged(QTreeWidgetItem*)));
         // Disable autoscroll, we will do it the smooth way.
         d->smoothScrollDragAutoScroll = hasAutoScroll();
         setAutoScroll(false);
@@ -290,7 +290,7 @@ void ListView::setSmoothScrolling(bool b)
         killTimer((int)d->smoothScrollingTimer);
         d->smoothScrollingTimer = 0;
         // We don't need to list currentChanged anymore
-        disconnect(this, SIGNAL(currentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *)), this, SLOT(slotCurrentChanged(QTreeWidgetItem *)));
+        disconnect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(slotCurrentChanged(QTreeWidgetItem*)));
         // Restore the autoscroll
         setAutoScroll(d->smoothScrollDragAutoScroll);
         // Kill the continuous press timers

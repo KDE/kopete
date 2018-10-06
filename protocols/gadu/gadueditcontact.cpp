@@ -130,8 +130,8 @@ GaduEditContact::init()
 
     show();
     connect(this, SIGNAL(okClicked()), SLOT(slotApply()));
-    connect(ui_->groups, SIGNAL(itemClicked(QTreeWidgetItem *,0)),
-            SLOT(listClicked(QTreeWidgetItem *)));
+    connect(ui_->groups, SIGNAL(itemClicked(QTreeWidgetItem*,0)),
+            SLOT(listClicked(QTreeWidgetItem*)));
 }
 
 void

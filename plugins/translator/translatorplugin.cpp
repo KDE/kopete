@@ -70,8 +70,8 @@ TranslatorPlugin::TranslatorPlugin(QObject *parent, const QVariantList & /* args
             this, SLOT(slotIncomingMessage(Kopete::Message&)));
     connect(Kopete::ChatSessionManager::self(), SIGNAL(aboutToSend(Kopete::Message&)),
             this, SLOT(slotOutgoingMessage(Kopete::Message&)));
-    connect(Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession *)),
-            this, SLOT(slotNewKMM(Kopete::ChatSession *)));
+    connect(Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession*)),
+            this, SLOT(slotNewKMM(Kopete::ChatSession*)));
 
     m_actionLanguage = new KSelectAction(QIcon::fromTheme("preferences-desktop-locale"), i18n("Set &Language"), this);
     actionCollection()->addAction("contactLanguage", m_actionLanguage);
@@ -275,8 +275,8 @@ QString TranslatorPlugin::googleTranslateMessage(const QString &msg, const QStri
     //job->addMetaData( "content-type", "application/x-www-form-urlencoded" );
     //job->addMetaData( "referrer", "http://www.google.com" );
 
-    QObject::connect(job, SIGNAL(data(KIO::Job *,QByteArray)), this, SLOT(slotDataReceived(KIO::Job *,QByteArray)));
-    QObject::connect(job, SIGNAL(result(KJob *)), this, SLOT(slotJobDone(KJob *)));
+    QObject::connect(job, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(slotDataReceived(KIO::Job*,QByteArray)));
+    QObject::connect(job, SIGNAL(result(KJob*)), this, SLOT(slotJobDone(KJob*)));
 
     // KIO is async and we use a sync API, so use the processEvents hack to work around that
     // FIXME: We need to make the libkopete API async to get rid of this processEvents.
@@ -317,8 +317,8 @@ QString TranslatorPlugin::babelTranslateMessage(const QString &msg, const QStrin
     job->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
     job->addMetaData("referrer", "http://babelfish.yahoo.com/translate_txt");
 
-    QObject::connect(job, SIGNAL(data(KIO::Job *,QByteArray)), this, SLOT(slotDataReceived(KIO::Job *,QByteArray)));
-    QObject::connect(job, SIGNAL(result(KJob *)), this, SLOT(slotJobDone(KJob *)));
+    QObject::connect(job, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(slotDataReceived(KIO::Job*,QByteArray)));
+    QObject::connect(job, SIGNAL(result(KJob*)), this, SLOT(slotJobDone(KJob*)));
 
     // KIO is async and we use a sync API, so use the processEvents hack to work around that
     // FIXME: We need to make the libkopete API async to get rid of this processEvents.
@@ -405,8 +405,8 @@ void TranslatorPlugin::slotJobDone(KJob *job)
 {
     KIO::Job *kioJob = static_cast<KIO::Job *>(job);
     m_completed[ kioJob ] = true;
-    QObject::disconnect(kioJob, SIGNAL(data(KIO::Job *,QByteArray)), this, SLOT(slotDataReceived(KIO::Job *,QByteArray)));
-    QObject::disconnect(kioJob, SIGNAL(result(KJob *)), this, SLOT(slotJobDone(KJob *)));
+    QObject::disconnect(kioJob, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(slotDataReceived(KIO::Job*,QByteArray)));
+    QObject::disconnect(kioJob, SIGNAL(result(KJob*)), this, SLOT(slotJobDone(KJob*)));
 }
 
 void TranslatorPlugin::slotSetLanguage()

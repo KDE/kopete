@@ -102,8 +102,8 @@ void AccountSelector::initUI()
         }
     }
 
-    connect(d->lv, SIGNAL(currentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *)),
-            this, SLOT(slotSelectionChanged(QTreeWidgetItem *)));
+    connect(d->lv, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+            this, SLOT(slotSelectionChanged(QTreeWidgetItem*)));
 }
 
 void AccountSelector::setSelected(Kopete::Account *account)
