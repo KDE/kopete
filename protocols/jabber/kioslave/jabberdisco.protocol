@@ -11,7 +11,6 @@ moving=false
 Icon=remote
 Description=A KIO slave for Jabber Service Discovery
 Description[ar]=تابع KIO إكتشف لخدمة جابر
-Description[ast]=Un esclavu KIO pal serviciu de descubrimientu jabber
 Description[bg]=Приставка KIO за откриване на Jabber услуги
 Description[bn]=Jabber সার্ভিস ডিসকভারির জন্য একটি কে-আই-ও স্লেভ
 Description[bs]=KIO rob za Jabber Servis Otkrivanja

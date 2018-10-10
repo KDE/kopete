@@ -9,7 +9,6 @@ X-KDE-ParentComponents=kopete_highlight
 
 Name=Highlight
 Name[ar]=إبراز
-Name[ast]=Resaltar
 Name[bg]=Открояване
 Name[bn]=গুরুত্বপূর্ণ
 Name[br]=Splannadur
@@ -83,7 +82,6 @@ Name[zh_HK]=加強顯示
 Name[zh_TW]=高亮度
 Comment=Highlights text based on filters
 Comment[ar]=إبراز النصوص المعتمدة على الترشيحات
-Comment[ast]=Realza'l testu basándose en filtros
 Comment[bg]=Открояване на текст в съобщенията на базата на ключови думи
 Comment[bn]=ফিল্টারের ওপর ভিত্তি করে টেক্সট প্রজ্জ্বল করে
 Comment[bs]=Označava tekst baziran na filterima

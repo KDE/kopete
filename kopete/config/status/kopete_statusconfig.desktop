@@ -10,7 +10,6 @@ X-KDE-ParentComponents=kopete
 
 Name=Status
 Name[ar]=الحالة
-Name[ast]=Estáu
 Name[bg]=Състояние
 Name[bs]=Stanje
 Name[ca]=Estat
@@ -70,7 +69,6 @@ Name[zh_CN]=状态
 Name[zh_TW]=狀態
 Comment=Manage Your Statuses
 Comment[ar]=أدِر حالاتك
-Comment[ast]=Xestionar les tos cuentes ya identidaes
 Comment[bg]=Управление на състоянието
 Comment[bs]=Uredi svoj status
 Comment[ca]=Gestioneu els vostres estats

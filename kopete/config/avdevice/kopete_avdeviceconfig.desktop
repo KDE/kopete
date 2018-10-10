@@ -11,7 +11,6 @@ X-KDE-Weight=180
 
 Name=Video
 Name[ar]=فيديو
-Name[ast]=Videu
 Name[bg]=Видео
 Name[bs]=Video
 Name[ca]=Vídeo
@@ -72,7 +71,6 @@ Name[zh_CN]=视频
 Name[zh_TW]=影像
 Comment=Configure Video Devices
 Comment[ar]=اضبط أجهزة الفيديو
-Comment[ast]=Configurar preseos de videu
 Comment[bg]=Настройки на видео устройствата
 Comment[bs]=Konfiguriši video uređaje
 Comment[ca]=Configura els dispositius de vídeo

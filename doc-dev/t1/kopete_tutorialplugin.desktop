@@ -2,7 +2,6 @@
 Type=Service
 Name=Tutorial Plugin
 Name[ar]=ملحق التعليمات
-Name[ast]=Tutorial del complementu
 Name[bg]=Учебна приставка
 Name[bs]=Tutorial Dodatak
 Name[ca]=Connector de la guia d'aprenentatge
@@ -64,7 +63,6 @@ Name[zh_CN]=教程插件
 Name[zh_TW]=教學外掛程式
 Comment=Demonstration plugin for teaching Kopete development
 Comment[ar]=ملحق عرض تعليم تطوير Kopete
-Comment[ast]=Complementu de demostración pa enseñar desendolcu de Kopete
 Comment[bg]=Приставка за демонстрация развитието на Kopete
 Comment[bs]=Demonstrativni dodatak za učenje Kopete razvoja
 Comment[ca]=Connexió de demostració per ensenyar el desenvolupament del Kopete
