@@ -193,6 +193,7 @@
     <screenshot type="default">
       <caption>Kopete contact list</caption>
       <caption xml:lang="ca">Llista de contactes del Kopete</caption>
+      <caption xml:lang="ca-valencia">Llista de contactes del Kopete</caption>
       <caption xml:lang="gl">Lista de contactos de Kopete</caption>
       <caption xml:lang="nl">Contactenlijst van Kopete</caption>
       <caption xml:lang="pt">Lista de contactos do Kopete</caption>
