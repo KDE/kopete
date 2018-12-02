@@ -305,7 +305,7 @@ class Skype : public QObject
 		/**
 		 * Edit sent message
 		 * @param messageId Id of sent message
-		 * @parma newMessage Body of new message
+		 * @param newMessage Body of new message
 		 */
 		void editMessage(int messageId, const QString &newMessage);
 		/**
@@ -572,7 +572,7 @@ class Skype : public QObject
 		/**
 		 * Emitted when we receive auth request
 		 * @param contactId who send request
-		 * @parma info info in request
+		 * @param info info in request
 		 */
 		void receivedAuth(const QString &contactId, const QString &info);
 
