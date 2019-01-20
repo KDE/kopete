@@ -74,6 +74,7 @@
     <p xml:lang="uk">Kopete — програма для миттєвого обміну повідомленнями, у якій передбачено підтримку AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger та інших систем зв'язку. Програму створено гнучкою, із можливістю розширення списку протоколів для особистого та службового користування.</p>
     <p xml:lang="x-test">xxKopete is an instant messenger supporting AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger, and more. It is designed to be a flexible and extensible multi-protocol system suitable for personal and enterprise use.xx</p>
     <p xml:lang="zh-CN">Kopete 是一个即时消息软件，它支持 AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger 等协议。它被设计成一个灵活可扩展的多协议系统，适合个人及企业使用。</p>
+    <p xml:lang="zh-TW">Kopete 是款支援 AIM、ICQ、Jabber、Gadu-Gadu、Novell GroupWise Messenger 以及更多聊天平台的即時通訊軟體。Kopete 的設計理念是希望做成一款適用於個人和企業、靈活且允許擴充的多協定系統。</p>
     <p>
       The goal of Kopete is to provide users with a single easy-to-use way to access all of their instant messaging systems. The interface puts people first, and is integrated with the system address book to let you access your contacts from other KDE applications.
     </p>
@@ -140,6 +141,7 @@
       <li xml:lang="uk">У Kopete передбачено засоби, які зроблять зручним обмін повідомленнями, зокрема шифрування повідомлень, архівування, а також багато цікавих і корисних ефектів.</li>
       <li xml:lang="x-test">xxKopete features tools to enhance your instant messaging experience, such as message encryption, archiving, and many other fun and useful effects.xx</li>
       <li xml:lang="zh-CN">Kopete 提供了增强您即时消息体验的工具，例如消息加密，存档，及其它有趣和有用的功能。</li>
+      <li xml:lang="zh-TW">Kopete 包含一些特殊功能，能增強您的即時通訊體驗，大致有訊息加密、訊息封存、以及許多其他有趣且實用的特效效果。</li>
       <li>Kopete supports all commonly used instant messaging protocols, and the Kopete team provides templates for developers to base new plugins on.</li>
       <li xml:lang="ca">El Kopete admet tots els protocols de missatgeria instantània que s'utilitzen habitualment, i l'equip del Kopete proporciona plantilles per als desenvolupadors com a base pels connectors nous.</li>
       <li xml:lang="ca-valencia">El Kopete admet tots els protocols de missatgeria instantània que s'utilitzen habitualment, i l'equip del Kopete proporciona plantilles per als desenvolupadors com a base pels connectors nous.</li>
@@ -159,6 +161,7 @@
       <li xml:lang="uk">У Kopete передбачено підтримку усіх поширених протоколів миттєвого обміну повідомленнями. Крім того, команда розробників надає зручні шаблони для створення нових додатків.</li>
       <li xml:lang="x-test">xxKopete supports all commonly used instant messaging protocols, and the Kopete team provides templates for developers to base new plugins on.xx</li>
       <li xml:lang="zh-CN">Kopete 支持所有常用即时消息协议。Kopete 团队也为开发者提供了用于开发新插件的模板。</li>
+      <li xml:lang="zh-TW">Kopete 支援所有常用的即時通訊協定，且 Kopete 團隊提供開發者範本，以讓開發者能基於這個範本製作新的外掛程式。</li>
       <li>The API provides developers with many features to make it easy to support a new protocol.</li>
       <li xml:lang="ca">L'API proporciona als desenvolupadors moltes funcions per a facilitar el suport d'un protocol nou.</li>
       <li xml:lang="ca-valencia">L'API proporciona als desenvolupadors moltes funcions per a facilitar el suport d'un protocol nou.</li>
@@ -178,6 +181,7 @@
       <li xml:lang="uk">Програмний інтерфейс надає розробникам доступ до багатьох можливостей, які спрощують підтримку нових протоколів.</li>
       <li xml:lang="x-test">xxThe API provides developers with many features to make it easy to support a new protocol.xx</li>
       <li xml:lang="zh-CN">API 为开发者提供了许多功能，让他们可以很容易地支持一个新协议。</li>
+      <li xml:lang="zh-TW">API 帶給開發者許多功能，以讓支援新的通訊協定簡單化。</li>
       <li>All protocols are plugins and allow for modular installation, configuration, and usage.</li>
       <li xml:lang="ca">Tots els protocols són connectors i permeten la instal·lació, configuració i un ús modular.</li>
       <li xml:lang="ca-valencia">Tots els protocols són connectors i permeten la instal·lació, configuració i un ús modular.</li>
@@ -197,6 +201,7 @@
       <li xml:lang="uk">Усі протоколи реалізовано як додатки, що уможливлює модульне встановлення, налаштовування та користування програмою.</li>
       <li xml:lang="x-test">xxAll protocols are plugins and allow for modular installation, configuration, and usage.xx</li>
       <li xml:lang="zh-CN">所有协议都由插件支持，可以模块化地安装，配置及使用。</li>
+      <li xml:lang="zh-TW">所有通訊協定皆為模組，並允許用模組化的方式安裝、設定以及使用。</li>
     </ul>
   </description>
   <url type="bugtracker">https://bugs.kde.org/enter_bug.cgi?format=guided&amp;product=kopete</url>
