@@ -163,16 +163,15 @@ protected:
     /**
      * @brief Constructor for Protocol
      *
-     * @param instance The protocol's instance, every plugin needs to have a KAboutData of its own
      * @param parent The protocol's parent object
-     * @param name The protocol's name
+     * @param canAddMyself Whether it is possible to add user himself
      */
     Protocol(QObject *parent, bool canAddMyself = false);
 
     /**
-     * @brief Sets the capabilities of this protcol.
+     * @brief Sets the capabilities of this protocol.
      *
-     * The subclass contructor is a good place for calling it.
+     * The subclass constructor is a good place for calling it.
      * @sa @ref capabilities()
      */
     void setCapabilities(Capabilities);

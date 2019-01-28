@@ -61,7 +61,7 @@ public:
     /**
      * @brief Duplicates an existing identity
      *
-     * This will create a new identity name @param id, that clones all properties
+     * This will create a new identity name that clones all properties
      * @return duplicate Identity
      */
     Identity *clone() const;
@@ -79,7 +79,7 @@ public:
 
     /**
      * Sets the label
-     * @param newLabel a new label for the identity
+     * @param label a new label for the identity
      */
     void setLabel(const QString &label);
 
@@ -123,7 +123,7 @@ public:
     void addAccount(Kopete::Account *account);
 
     /**
-     * Returns the @ref KConfigGroup that should be used to read/write settings
+     * Returns the KConfigGroup that should be used to read/write settings
      * of this identity
      */
     KConfigGroup *configGroup() const;

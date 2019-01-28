@@ -135,7 +135,7 @@ public Q_SLOTS:
      *
      * Need to rebuild all the XHTML content.
      *
-     * @param chatWindowStyle ChatWindowStyle object.
+     * @param style ChatWindowStyle object.
      */
     void setStyle(ChatWindowStyle *style);
 

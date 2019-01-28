@@ -69,7 +69,7 @@ protected Q_SLOTS:
 
     /**
      * @internal
-     * A button has been clicked. Reimplemented from @ref QDialog::slotButtonClicked()
+     * A button has been clicked. Reimplemented from QDialog::slotButtonClicked()
      */
     virtual void slotButtonClicked(int button);
 

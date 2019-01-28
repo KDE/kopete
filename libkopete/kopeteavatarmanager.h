@@ -191,7 +191,7 @@ public Q_SLOTS:
 
     /**
      * @brief Check if an avatar exists
-     * @param entryToCheck Avatar entry to check
+     * @param avatarToCheck Avatar entry to check
      */
     bool exists(Kopete::AvatarManager::AvatarEntry avatarToCheck);
 

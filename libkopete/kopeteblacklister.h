@@ -52,7 +52,6 @@ public:
      * @param protocolId is the ID of the protocol owning accountId
      * @param accountId is the ID of the owning Account.
      * @param parent The QObject parent for this class.
-     * @param name The QObject name for this class.
      */
     BlackLister(const QString &protocolId, const QString &accountId, QObject *parent = nullptr);
     ~BlackLister();

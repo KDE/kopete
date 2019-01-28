@@ -109,7 +109,7 @@ public:
 
     /**
      * Returns the message currently in the edit area
-     * @return The @ref Kopete::Message object for the message
+     * @return The Kopete::Message object for the message
      */
     Kopete::Message contents();
 

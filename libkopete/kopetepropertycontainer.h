@@ -52,9 +52,9 @@ public:
     /**
      * @brief Serialize the persistent properties for storage in the contact list.
      *
-     * Does the same as @ref serialize() does but for KopeteContactProperties
+     * Does the same as serialize() does but for KopeteContactProperties
      * set in this contact with their persistency flag turned on.
-     * In contrary to @ref serialize() this does not need to be reimplemented.
+     * In contrary to serialize() this does not need to be reimplemented.
      *
      */
     void serializeProperties(QMap<QString, QString> &serializedData) const;

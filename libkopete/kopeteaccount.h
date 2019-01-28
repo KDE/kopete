@@ -57,10 +57,10 @@ class PropertyContainer;
  *
  * The accountId is an @em constant unique id, which represents the login.
  * The @ref myself() contact is one of the most important contacts, which represents
- * the user tied to this account. You must create this contact in the contructor of your
+ * the user tied to this account. You must create this contact in the constructor of your
  * account and pass it to @ref setMyself().
  *
- * All account data is saved to @ref KConfig. This includes the accountId, the autoconnect flag and
+ * All account data is saved to KConfig. This includes the accountId, the autoconnect flag and
  * the color. You can save more data using @ref configGroup()
  *
  * When you create a new account, you have to register it with the account manager by calling
@@ -127,7 +127,6 @@ public:
      * @param parent the protocol for this account. The account is a child object of the
      * protocol, so it will be automatically deleted when the protocol is.
      * @param accountID the unique ID of this account.
-     * @param name the name of this QObject.
      */
     Account(Protocol *parent, const QString &accountID);
 
@@ -382,7 +381,7 @@ public:
     bool isBusy() const;
 
     /**
-     * Return the @ref KConfigGroup used to write and read special properties
+     * Return the KConfigGroup used to write and read special properties
      *
      * "Protocol", "AccountId" , "Color", "AutoConnect", "Priority", "Enabled" , "Icon" are reserved keyword
      * already in use in that group.

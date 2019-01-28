@@ -233,7 +233,7 @@ public:
      * This is used mostly by Jabber plugin to select between
      * the email window or the chat window depending of the
      * type of message.
-     * @param requesedPlugin View plugin name
+     * @param requestedPlugin View plugin name
      */
     void setRequestedPlugin(const QString &requestedPlugin);
 
@@ -314,8 +314,9 @@ public:
 
     /**
      * @brief Set the importance.
-     * @see importance and @see MessageImportance
-     * @param importance The message importance to set
+     * @see importance
+     * @see MessageImportance
+     * @param i The message importance to set
      */
     void setImportance(MessageImportance importance);
 
@@ -503,7 +504,7 @@ public:
     /**
      * @brief Add a class
      * @see classes
-     * @param class class to add
+     * @param classe class to add
      */
     void addClass(const QString &classe);
 

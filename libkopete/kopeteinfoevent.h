@@ -92,8 +92,9 @@ public:
     QMap<uint, QString> actions() const;
 
     /**
-     * Set the list of actions link.
-     * @param actions the list of actions
+     * Set the action link.
+     * @param actionId the identifier of action
+     * @param actionText the action text
      */
     void addAction(uint actionId, const QString &actionText);
 

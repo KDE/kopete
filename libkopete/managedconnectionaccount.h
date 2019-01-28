@@ -40,7 +40,6 @@ public:
     * @brief ManagedConnectionAccount constructor.
     * @param parent The protocol this account connects via
     * @param acctId The ID of this account - should be unique within this protocol
-    * @param maxPasswordLength The maximum length for passwords for this account, or 0 for no limit
     */
     ManagedConnectionAccount(Protocol *parent, const QString &acctId);
 public Q_SLOTS:

@@ -40,10 +40,7 @@ public:
      * KopetePasswordedAccount constructor
      * @param parent The protocol this account connects via
      * @param acctId The ID of this account - should be unique within this protocol
-     * @param maxPasswordLength The maximum length for passwords for this account, or 0 for no limit
      * @param allowBlankPassword If this protocol allows blank passwords. Note that this will mean that
-     *
-     * @param name The name for this QObject
      */
     PasswordedAccount(Protocol *parent, const QString &acctId, bool allowBlankPassword = false);
 

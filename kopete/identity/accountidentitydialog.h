@@ -76,8 +76,8 @@ public:
      * @endcode
      *
      * @param parent the parent widget to be used by the dialog
-     * @param account the @ref Kopete::Account that needs to change the identity
-     * @param hidden_ident the @ref Kopete::Identity that should be hidden in the
+     * @param account the Kopete::Account that needs to change the identity
+     * @param hidden_ident the Kopete::Identity that should be hidden in the
      *                     dialog (in case it is being removed we don't want any
      *                     account to be assigned to it). The default behavior is
      *                     to show all identities
@@ -86,11 +86,11 @@ public:
     static bool changeAccountIdentity(QWidget *parent, Kopete::Account *account, Kopete::Identity *hidden_ident = 0, const QString &message = QString());
     /**
      * This behaves essentially like the above function, but can be used to change
-     * the identity of more than one @ref Kopete::Account at a time
+     * the identity of more than one Kopete::Account at a time
      *
      * @param parent the parent widget to be used by the dialog
      * @param accountList a list of accounts to change the identity of
-     * @param hidden_ident the @ref Kopete::Identity that should be hidden in the
+     * @param hidden_ident the Kopete::Identity that should be hidden in the
      *                     dialog (in case it is being removed we don't want any
      *                     account to be assigned to it). The default behavior is
      *                     to show all identities

@@ -347,7 +347,6 @@ public:
      * A cache is employed to reduce CPU and memory usage.
      * @param account is the account the icon should apply to.
      * The account's color causes tinting, if it's plain QColor(), no tinting takes place.
-     * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
      */
     QIcon iconFor(const Account *account) const;
 

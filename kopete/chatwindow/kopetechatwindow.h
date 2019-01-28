@@ -68,7 +68,7 @@ public:
     /**
      * Find the appropriate window for a ChatView of the given protocol to
      * dock into. If no such window exists, create one.
-     * @param protocol The protocol we are creating a view for
+     * @param manager The manager we are creating a view for
      * @return A KopeteChatWindow suitable for docking a ChatView into. Guaranteed
      *  to be a valid pointer.
      */

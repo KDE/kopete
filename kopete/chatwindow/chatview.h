@@ -128,7 +128,7 @@ public:
 
     /**
      * Sets the current message in the chat window
-     * @param parent The new chat window
+     * @param newMessage The new message window
      *
      * Reimplemented from KopeteView
      */
@@ -247,7 +247,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     /**
      * Emitted when a message is sent
-     * @param message The message sent
+     * Parameter is the message sent
      */
     void messageSent(Kopete::Message &);
 

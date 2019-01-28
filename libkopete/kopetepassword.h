@@ -55,7 +55,6 @@ public:
      *
      * @param configGroup The configuration group to save passwords in.
      * @param allowBlankPassword If this password is allowed to be blank
-     * @param name The name for this object
      */
     explicit Password(const QString &configGroup, bool allowBlankPassword = false);
 

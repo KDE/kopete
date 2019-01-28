@@ -75,7 +75,7 @@ k_dcop:
     /**
      * Obtain the IM app's idea of the contact's display name
      * Useful if KABC lookups may be too slow
-     * @param KABC uid.
+     * @param uid KABC uid.
      * @return The corresponding display name.
      */
     virtual QString displayName(const QString &uid) = 0;
