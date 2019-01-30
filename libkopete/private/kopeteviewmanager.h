@@ -71,6 +71,7 @@ public Q_SLOTS:
     * Make a view visible and on top.
     * @param manager The originating Kopete::ChatSession.
     * @param isOutboundMessage Whether the message is inbound or outbound.
+    * @param activate Whether the view should be activated.
     *
     * @todo Document @p activate
     */

@@ -101,6 +101,7 @@ public:
      *    the entire argument string
      * @param help An optional help string to be shown when the user uses
      *   /help \<command\>
+     * @param type the command type
      * @param minArgs the minimum number of arguments for this command
      * @param maxArgs the maximum number of arguments this command takes
      * @param cut a default keyboard shortcut

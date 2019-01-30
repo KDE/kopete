@@ -457,6 +457,7 @@ public:
      * Show or hide this item in a clean way depending on whether it matches
      * the current quick search
      * @param match If true, show or hide the item as normal. If false, hide the item immediately.
+     * @param searching If true, the search is active.
      */
     virtual void setSearchMatch(bool match, bool searching);
 

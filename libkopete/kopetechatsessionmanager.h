@@ -58,6 +58,7 @@ public:
      * @param user The local user in the session.
      * @param chatContacts The list of contacts taking part in the chat.
      * @param protocol The protocol that the chat is using.
+     * @param form The session form.
      * @return A pointer to a new or reused Kopete::ChatSession.
      */
     Kopete::ChatSession *create(const Kopete::Contact *user, Kopete::ContactPtrList chatContacts, Kopete::Protocol *protocol, Kopete::ChatSession::Form form = Kopete::ChatSession::Small);

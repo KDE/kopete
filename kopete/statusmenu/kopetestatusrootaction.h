@@ -60,12 +60,13 @@ public:
      * @param menu the parent menu
      * @param filter menu filter type
      * @param account kopete account
-     * @param account online status
+     * @param onlineStatus online status
+     * @param before an action before the inserted root action
      *
      * The menu actions are automatically recreated if anything changes
      * @note you should catch @p updateMessage signal
      **/
-    StatusRootAction(KActionMenu *menu, Filter filter, Account *account, const OnlineStatus &onlineStatus, QAction *before = 0);
+    StatusRootAction(KActionMenu *menu, Filter filter, Account *account, const OnlineStatus &onlineStatus, QAction *before = nullptr);
     ~StatusRootAction();
 
     /**

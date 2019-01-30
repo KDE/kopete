@@ -81,6 +81,9 @@ public:
      * This method will open the avatar dialog for the user to choose
      * an avatar.
      * @param parent Parent widget
+     * @param currentAvatar The current avatar
+     * @param ok If ok is nonnull, *ok will be set to true
+     * if the user pressed OK and to false if the user pressed Cancel.
      * @return The path of the selected avatar, or QString() if no avatar
      * was chosen or if the Cancel button was pressed.
      */
