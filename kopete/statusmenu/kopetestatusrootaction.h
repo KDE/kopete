@@ -78,6 +78,7 @@ public:
      *
      * @param account the account
      * @param parent  the ActionMenu where action are inserted
+     * @param before  an action before the created actions
      */
     static void createAccountStatusActions(Account *account, KActionMenu *parent, QAction *before = 0);
 
