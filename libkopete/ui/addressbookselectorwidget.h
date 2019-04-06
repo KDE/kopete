@@ -40,7 +40,6 @@ namespace KContacts {
 class Picture;
 class Address;
 class Addressee;
-class AddresseeList;
 }
 
 namespace Kopete {
