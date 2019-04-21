@@ -1080,7 +1080,7 @@ sets that you can simply extract there.</para>
 <qandaentry>
 <question><para>How come file transfers don't work?</para>
 </question>
-<answer><para>There are many reasons for this. WLM was the the first protocol in which we've implemented support for file transfers.  Support for file transfers in Jabber and IRC was added in &kopete; 0.9.0 (included in &kde; 3.3), and ICQ and AIM in &kopete; 0.50.0 (included in &kde; 4.0.0). Also, file transfers may not work if you're behind a firewall - see WLM section in the protocol chapter.</para>
+<answer><para>There are many reasons for this. WLM was the first protocol in which we've implemented support for file transfers.  Support for file transfers in Jabber and IRC was added in &kopete; 0.9.0 (included in &kde; 3.3), and ICQ and AIM in &kopete; 0.50.0 (included in &kde; 4.0.0). Also, file transfers may not work if you're behind a firewall - see WLM section in the protocol chapter.</para>
 </answer>
 </qandaentry>
 <qandaentry>
