@@ -222,30 +222,8 @@
   <url type="homepage">https://userbase.kde.org/Kopete</url>
   <screenshots>
     <screenshot type="default">
-      <caption>Kopete contact list</caption>
-      <caption xml:lang="ca">Llista de contactes del Kopete</caption>
-      <caption xml:lang="ca-valencia">Llista de contactes del Kopete</caption>
-      <caption xml:lang="cs">Seznam kontaktů Kopete</caption>
-      <caption xml:lang="da">Kopete-kontaktliste</caption>
-      <caption xml:lang="de">Kontaktliste von Kopete</caption>
-      <caption xml:lang="en-GB">Kopete contact list</caption>
-      <caption xml:lang="es">Lista de contactos de Kopete</caption>
-      <caption xml:lang="fi">Kopeten yhteystietoluettelo</caption>
-      <caption xml:lang="fr">Liste de contacts Kopete</caption>
-      <caption xml:lang="gl">Lista de contactos de Kopete</caption>
-      <caption xml:lang="id">Daftar kontak Kopete</caption>
-      <caption xml:lang="it">Lista dei contatti di Kopete</caption>
-      <caption xml:lang="ko">Kopete 대화 상대 목록</caption>
-      <caption xml:lang="nl">Contactenlijst van Kopete</caption>
-      <caption xml:lang="pl">Spis kontaktów Kopete</caption>
-      <caption xml:lang="pt">Lista de contactos do Kopete</caption>
-      <caption xml:lang="pt-BR">Lista de contatos do Kopete</caption>
-      <caption xml:lang="sv">Kontaktlistan i Kopete</caption>
-      <caption xml:lang="uk">Список контактів у Kopete</caption>
-      <caption xml:lang="x-test">xxKopete contact listxx</caption>
-      <caption xml:lang="zh-CN">Kopete 联系人列表</caption>
-      <caption xml:lang="zh-TW">Kopete 通訊錄</caption>
-      <image>https://www.kde.org/images/screenshots/kopete.png</image>
+      <caption>Kopete chat</caption>
+      <image>https://cdn.kde.org/screenshots/</image>
     </screenshot>
   </screenshots>
   <project_group>KDE</project_group>
