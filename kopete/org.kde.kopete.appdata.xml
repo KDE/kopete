@@ -230,5 +230,5 @@
   <provides>
     <binary>kopete</binary>
   </provides>
-  <launchable type="desktop-id">org.kde.kopete.desktop</launchable>
+  <launchable type="desktop-id">org.kde.kopete</launchable>
 </component>
