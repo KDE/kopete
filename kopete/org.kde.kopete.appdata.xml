@@ -223,6 +223,12 @@
   <screenshots>
     <screenshot type="default">
       <caption>Kopete chat</caption>
+      <caption xml:lang="ca">Xat del Kopete</caption>
+      <caption xml:lang="ca-valencia">Xat del Kopete</caption>
+      <caption xml:lang="pt">Conversa no Kopete</caption>
+      <caption xml:lang="sv">Kopete chatt</caption>
+      <caption xml:lang="uk">Спілкування у Kopete</caption>
+      <caption xml:lang="x-test">xxKopete chatxx</caption>
       <image>https://cdn.kde.org/screenshots/</image>
     </screenshot>
   </screenshots>
