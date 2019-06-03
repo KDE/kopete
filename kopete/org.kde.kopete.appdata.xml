@@ -227,6 +227,7 @@
       <caption xml:lang="ca-valencia">Xat del Kopete</caption>
       <caption xml:lang="en-GB">Kopete chat</caption>
       <caption xml:lang="es">Charla de Kopete</caption>
+      <caption xml:lang="it">Chat Kopete</caption>
       <caption xml:lang="ko">Kopete 채팅</caption>
       <caption xml:lang="nl">Kopete chat</caption>
       <caption xml:lang="pt">Conversa no Kopete</caption>
@@ -234,6 +235,7 @@
       <caption xml:lang="sv">Kopete chatt</caption>
       <caption xml:lang="uk">Спілкування у Kopete</caption>
       <caption xml:lang="x-test">xxKopete chatxx</caption>
+      <caption xml:lang="zh-TW">Kopete 對話</caption>
       <image>https://cdn.kde.org/screenshots/kopete/kopete.png</image>
     </screenshot>
   </screenshots>
