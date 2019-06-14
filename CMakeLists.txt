@@ -161,7 +161,11 @@ add_subdirectory(styles)
 add_subdirectory(doc)
 add_subdirectory(tests)
 
-install( FILES kopete.categories DESTINATION ${KDE_INSTALL_CONFDIR} )
+if (${ECM_VERSION} STRGREATER "5.58.0")
+    install( FILES kopete.categories DESTINATION ${KDE_INSTALL_LOGGINGCATEGORIESDIR} )
+else()
+    install( FILES kopete.categories DESTINATION ${KDE_INSTALL_CONFDIR} )
+endif()
 
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
