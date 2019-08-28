@@ -847,7 +847,7 @@ void ChatMessagePart::slotScrollView()
 {
     if (inProgress()) {
         d->scrollToEndDelayed = true;
-    } else {
+    } else if (view()) {
         view()->scrollBy(0, view()->contentsHeight());
     }
 }

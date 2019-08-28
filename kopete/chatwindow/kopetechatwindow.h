@@ -187,6 +187,7 @@ Q_SIGNALS:
 public Q_SLOTS:
     void slotSmileyActivated(const QString &);
     void setActiveView(QWidget *active);
+    void setActiveView(int);
     void updateBackground(const QPixmap &pm);
 
 private Q_SLOTS:

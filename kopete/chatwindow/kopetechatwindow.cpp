@@ -693,7 +693,7 @@ void KopeteChatWindow::createTabBar()
 
         connect(m_tabBar, SIGNAL(testCanDecode(const QDragMoveEvent*,bool&)), this, SLOT(testCanDecode(const QDragMoveEvent*,bool&)));
         connect(m_tabBar, SIGNAL(receivedDropEvent(QWidget*,QDropEvent*)), this, SLOT(receivedDropEvent(QWidget*,QDropEvent*)));
-        connect(m_tabBar, SIGNAL(currentChanged(QWidget*)), this, SLOT(setActiveView(QWidget*)));
+        connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(setActiveView(int)));
         connect(m_tabBar, SIGNAL(contextMenu(QWidget*,QPoint)), this, SLOT(slotTabContextMenu(QWidget*,QPoint)));
 
         if (m_activeView) {
@@ -759,7 +759,7 @@ void KopeteChatWindow::setPrimaryChatView(ChatView *view)
 void KopeteChatWindow::deleteTabBar()
 {
     if (m_tabBar) {
-        disconnect(m_tabBar, SIGNAL(currentChanged(QWidget*)), this, SLOT(setActiveView(QWidget*)));
+        disconnect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(setActiveView(int)));
         disconnect(m_tabBar, SIGNAL(contextMenu(QWidget*,QPoint)), this, SLOT(slotTabContextMenu(QWidget*,QPoint)));
 
         if (!chatViewList.isEmpty()) {
@@ -1035,6 +1035,11 @@ void KopeteChatWindow::setActiveView(QWidget *widget)
     updateSendKeySequence();
 
     emit chatSessionChanged(m_activeView->msgManager());
+}
+
+void KopeteChatWindow::setActiveView(int idx)
+{
+    setActiveView(m_tabBar->widget(idx));
 }
 
 void KopeteChatWindow::slotUpdateCaptionIcons(ChatView *view)
