@@ -30,17 +30,6 @@ include_directories(
     ${DNSSD_INCLUDE_DIR}
     )
 
-qt_wrap_cpp(iris_kopete iris_MOC_SRCS
-    src/xmpp/xmpp-im/xmpp_client.h
-    src/xmpp/xmpp-core/xmpp.h
-    src/xmpp/xmpp-core/xmpp_clientstream.h
-    src/xmpp/xmpp-core/xmpp_stream.h
-    src/xmpp/xmpp-core/td.h
-    src/jdns/src/qjdns/qjdnsshared_p.h
-    src/jdns/include/jdns/qjdns.h
-    src/jdns/include/jdns/qjdnsshared.h
-    )
-
 set(iris_SRCS
     src/xmpp/base/randomnumbergenerator.cpp
     src/xmpp/base/timezone.cpp
@@ -131,7 +120,6 @@ endif(WIN32)
 set(libiris_SRCS 
     ${cutestuff_SRCS}
     ${iris_SRCS}
-    ${iris_MOC_SRCS}
     )
 
 add_definitions(-DIRISNET_STATIC)

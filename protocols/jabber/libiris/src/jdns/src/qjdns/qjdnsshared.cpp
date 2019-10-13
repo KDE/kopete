@@ -1206,3 +1206,6 @@ void QJDnsSharedPrivate::jdns_debugLinesReady()
 
 	doDebug(jdns, instanceForQJDns.value(jdns)->index);
 }
+
+#include "moc_qjdnsshared.cpp"
+#include "moc_qjdnsshared_p.cpp"
