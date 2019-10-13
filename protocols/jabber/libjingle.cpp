@@ -26,7 +26,7 @@
 #include <QMessageBox>
 #include <QEventLoop>
 
-#define isRunning() callProcess->state() == QProcess::Running
+#define isRunning() (callProcess->state() == QProcess::Running)
 #define callExe "libjingle-call"
 
 #define RESTART_INTERVAL 100000
