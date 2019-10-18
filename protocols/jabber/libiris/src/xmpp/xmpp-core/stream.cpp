@@ -1546,3 +1546,6 @@ void TD::incomingXml(const QDomElement &e)
 		debug_ptr->incomingXml(e);
 }
 #endif
+
+#include "moc_xmpp_clientstream.cpp"
+#include "moc_xmpp_stream.cpp"

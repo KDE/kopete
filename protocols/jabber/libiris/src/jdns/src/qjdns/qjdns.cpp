@@ -1014,3 +1014,5 @@ void QJDns::publishCancel(int id)
 	d->removeCancelled(id);
 	d->process();
 }
+
+#include "moc_qjdns.cpp"

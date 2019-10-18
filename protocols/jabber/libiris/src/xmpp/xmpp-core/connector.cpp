@@ -574,3 +574,5 @@ QString AdvancedConnector::host() const
 {
 	return d->host;
 }
+
+#include "moc_xmpp.cpp"
