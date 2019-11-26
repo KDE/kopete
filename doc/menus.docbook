@@ -275,7 +275,7 @@ performs a menu item function, the default shortcut is listed with the menu item
 <sect2 id="menus-settings">
 <title>Settings Menu</title>
 <para>&kopete; has a default &kde; Settings menu as described in the 
-<ulink url="help:/fundamentals/ui.html#menus-settings">&kde; Fundamentals</ulink> 
+<ulink url="help:/fundamentals/menus.html#menus-settings">&kde; Fundamentals</ulink> 
 with additional entries:</para>
 
 <variablelist>
@@ -323,7 +323,7 @@ with additional entries:</para>
 <sect2 id="menus-help">
 <title>Help Menu</title>
 <para>
-The contact list window has the common &kde; Help menu items, for more information read the section about the <ulink url="help:/fundamentals/ui.html#menus-help">Help Menu</ulink> of the &kde; Fundamentals.
+The contact list window has the common &kde; Help menu items, for more information read the section about the <ulink url="help:/fundamentals/menus.html#menus-help">Help Menu</ulink> of the &kde; Fundamentals.
 </para>
 </sect2>
 </sect1>  <!-- menus-contactlist -->
@@ -582,7 +582,7 @@ clipboard is pasted at the current cursor position.</para>
 <sect2 id="menus-chatwindow-settings">
 <title>Settings Menu</title>
 <para>&kopete; has a default &kde; Settings menu as described in the 
-<ulink url="help:/fundamentals/ui.html#menus-settings">&kde; Fundamentals</ulink> 
+<ulink url="help:/fundamentals/menus.html#menus-settings">&kde; Fundamentals</ulink> 
 with additional entries:</para>
 
 <variablelist>
@@ -604,7 +604,7 @@ with additional entries:</para>
 <sect2 id="menus-chatwindow-help">
 <title>Help Menu</title>
 <para>
-The chat window has the common &kde; Help menu items, for more information read the section about the <ulink url="help:/fundamentals/ui.html#menus-help">Help Menu</ulink> of the &kde; Fundamentals.
+The chat window has the common &kde; Help menu items, for more information read the section about the <ulink url="help:/fundamentals/menus.html#menus-help">Help Menu</ulink> of the &kde; Fundamentals.
 </para>
 
 </sect2>
