@@ -98,8 +98,6 @@ int main(int argc, char *argv[])
     KAboutData::setApplicationData(aboutData);
 
     QCommandLineParser parser;
-    parser.addVersionOption();
-    parser.addHelpOption();
     parser.addOption(QCommandLineOption(QStringList() << QLatin1String("noplugins"), i18n("Do not load plugins. This option overrides all other options.")));
     parser.addOption(QCommandLineOption(QStringList() << QLatin1String("noconnect"), i18n("Disable auto-connection")));
     parser.addOption(QCommandLineOption(QStringList() << QLatin1String("!+[URL]"), i18n("URLs to pass to kopete / emoticon themes to install")));
