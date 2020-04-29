@@ -1306,7 +1306,7 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 		else
 		{
 			reason = i18n( "The %1 server thinks the client you are using is " \
-			               "too old. Please report this as a bug at http://bugs.kde.org",
+			               "too old. Please report this as a bug at https://bugs.kde.org",
 			               acctType );
 		}
 		break;

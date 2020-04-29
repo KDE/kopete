@@ -1098,13 +1098,13 @@ sets that you can simply extract there.</para>
 <qandaentry>
 <question><para>I would like a feature in the next version of Kopete.</para>
 </question>
-<answer><para>Please go to <ulink url="http://bugs.kde.org">&kde; Bugzilla</ulink> and file a wishlist item under the application 'kopete'. Please be very detailed and proof-read what you have written to us. This is NOT a guarantee that we will add this feature in any version, but allows us to consider it.</para>
+<answer><para>Please go to <ulink url="https://bugs.kde.org">&kde; Bugzilla</ulink> and file a wishlist item under the application 'kopete'. Please be very detailed and proof-read what you have written to us. This is NOT a guarantee that we will add this feature in any version, but allows us to consider it.</para>
 </answer>
 </qandaentry>
 <qandaentry>
 <question><para>My &kopete; crashed or has/had unexpected behavior (unexpected behavior does NOT fall in the category of &quot;Kopete doesn't act like Pidgin&quot;, &etc;).</para>
 </question>
-<answer><para>Please report this bug to us by going to <ulink url="http://bugs.kde.org">&kde; Bugzilla</ulink> and file a bug report under the application 'kopete'. Bugs will only be accepted if they are in English, they are detailed, and if a crash was involved they contain a backtrace (the text in the tab marked <guilabel>Backtrace</guilabel> once &kopete; has crashed).  If you are using &kopete; git, however, please mail us at <ulink url="mailto:kopete-devel@kde.org">&kopete; developers mailing list</ulink> instead of filing a bug report.</para>
+<answer><para>Please report this bug to us by going to <ulink url="https://bugs.kde.org">&kde; Bugzilla</ulink> and file a bug report under the application 'kopete'. Bugs will only be accepted if they are in English, they are detailed, and if a crash was involved they contain a backtrace (the text in the tab marked <guilabel>Backtrace</guilabel> once &kopete; has crashed).  If you are using &kopete; git, however, please mail us at <ulink url="mailto:kopete-devel@kde.org">&kopete; developers mailing list</ulink> instead of filing a bug report.</para>
 </answer>
 </qandaentry>
 <qandaentry>

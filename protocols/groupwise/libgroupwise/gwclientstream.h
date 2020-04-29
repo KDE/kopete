@@ -127,7 +127,7 @@ public:
     QString errorText() const Q_DECL_OVERRIDE;
 // #	QDomElement errorAppSpec() const; // redondo
 
-    // extrahttp://bugs.kde.org/show_bug.cgi?id=85158
+    // extra https://bugs.kde.org/show_bug.cgi?id=85158
 /*#	void writeDirect(const QString &s); // must be for debug testing*/
     void setNoopTime(int mills);
 
