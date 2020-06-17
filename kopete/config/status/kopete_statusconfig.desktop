@@ -64,7 +64,6 @@ Name[tr]=Durum
 Name[ug]=ھالىتى
 Name[uk]=Стан
 Name[wa]=Statut
-Name[x-test]=xxStatusxx
 Name[zh_CN]=状态
 Name[zh_TW]=狀態
 Comment=Manage Your Statuses
@@ -120,7 +119,6 @@ Comment[tr]=Durumlarınızı Yapılandırın
 Comment[ug]=ھالىتىڭىزنى باشقۇرىدۇ
 Comment[uk]=Керування вашими станами
 Comment[wa]=Manaedjî vos status
-Comment[x-test]=xxManage Your Statusesxx
 Comment[zh_CN]=管理您的状态
 Comment[zh_TW]=管理您的狀態
 
