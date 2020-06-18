@@ -66,6 +66,7 @@ Description[sv]=En I/O-slav för Jabber tjänstupptäckt
 Description[tr]=Jabber Servis Bulucu için KIO slave
 Description[uk]=Підлеглий В/В для виявлення служби Jabber
 Description[vi]=Một KIO phụ để tìm dịch vụ trên mạng Jabber
+Description[x-test]=xxA KIO slave for Jabber Service Discoveryxx
 Description[zh_CN]=Jabber 服务探索的 KIO slave
 Description[zh_HK]=用於發現 Jabber 服務的 KIO slave
 Description[zh_TW]=Jabber 服務的 kioslave
