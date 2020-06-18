@@ -64,6 +64,7 @@ Name[tr]=Sohbet Penceresi
 Name[ug]=پاراڭ كۆزنىكى
 Name[uk]=Вікно балачки
 Name[wa]=Purnea di berdelaedje
+Name[x-test]=xxChat Windowxx
 Name[zh_CN]=聊天窗口
 Name[zh_TW]=聊天視窗
 Comment=Configure Chat Window Look and Feel
@@ -119,6 +120,7 @@ Comment[th]=ปรับแต่งลักษณะรูปลักษณ�
 Comment[tr]=Sohbet Penceresinin Görünümünü Yapılandır
 Comment[ug]=سۆھبەت كۆزنەكنىڭ كۆرۈنۈشى ۋە سېزىمىنى سەپلەيدۇ
 Comment[uk]=Налаштувати вигляд і поведінку вікна балачки
+Comment[x-test]=xxConfigure Chat Window Look and Feelxx
 Comment[zh_CN]=配置聊天窗口的观感
 Comment[zh_TW]=設定聊天視窗的外觀與感覺
 
