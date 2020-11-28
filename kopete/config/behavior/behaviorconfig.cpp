@@ -32,7 +32,6 @@
 #include <KLocalizedString>
 #include <QPushButton>
 #include <KPluginFactory>
-#include <KPluginLoader>
 #include <KGenericFactory>
 #include <kconfig.h>
 #include <QLineEdit>
