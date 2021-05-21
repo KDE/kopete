@@ -158,6 +158,7 @@
       <li xml:lang="ca">El Kopete disposa d'eines per a millorar la vostra experiència de missatgeria instantània, com ara l'encriptatge dels missatges, arxiu i molts altres efectes divertits i útils.</li>
       <li xml:lang="ca-valencia">El Kopete disposa d'eines per a millorar la vostra experiència de missatgeria instantània, com ara l'encriptatge dels missatges, arxiu i molts altres efectes divertits i útils.</li>
       <li xml:lang="da">Kopete har værktøjer til at forbedre din oplevelse med strakbeskeder, såsom beskedkryptering, arkivering og mange andre sjove og nyttige effekter.</li>
+      <li xml:lang="de">Kopete bietet Funktionen zur Verbesserung Ihrer Instant-Messaging-Erfahrung, wie z. B. Nachrichtenverschlüsselung, Archivierung und viele andere lustige und nützliche Effekte.</li>
       <li xml:lang="el">Το Kopete περιλαμβάνει εργαλεία βελτίωσης της εμπειρίας με τα στιγμιαία μηνύματα, όπως κρυπτογράφηση μηνυμάτων, αρχειθέτηση και πολλά άλλα διασκεδαστικά και χρήσιμα εφέ.</li>
       <li xml:lang="en-GB">Kopete features tools to enhance your instant messaging experience, such as message encryption, archiving, and many other fun and useful effects.</li>
       <li xml:lang="es">Kopete contiene herramientas para mejorar su experiencia de mensajería instantánea, como el cifrado de mensajes y su archivado, entre otros efectos divertidos y útiles.</li>
@@ -185,6 +186,7 @@
       <li xml:lang="ca">El Kopete admet tots els protocols de missatgeria instantània que s'utilitzen habitualment, i l'equip del Kopete proporciona plantilles per als desenvolupadors com a base per als connectors nous.</li>
       <li xml:lang="ca-valencia">El Kopete admet tots els protocols de missatgeria instantània que s'utilitzen habitualment, i l'equip del Kopete proporciona plantilles per als desenvolupadors com a base per als connectors nous.</li>
       <li xml:lang="da">Kopete understøtter alle de protokoller som normalt bruges, og Kopete-teamet leverer skabeloner til udviklere som de kan bruge til at skabe nye plugins.</li>
+      <li xml:lang="de">Kopete unterstützt alle gängigen Instant-Messaging-Protokolle, und das Kopete-Team stellt Vorlagen für Entwickler bereit, auf denen neue Module basieren können.</li>
       <li xml:lang="el">Το Kopete υποστηρίζει όλα τα γνωστά πρωτόκολλα στιγμιαίων μηνυμάτων και η ομάδα του Kopete παρέχει πρότυπα για προγραμματιστές ως υποδομή για νέα πρόσθετα.</li>
       <li xml:lang="en-GB">Kopete supports all commonly used instant messaging protocols, and the Kopete team provides templates for developers to base new plugins on.</li>
       <li xml:lang="es">Kopete permite usar todos los protocolos de mensajería instantánea más utilizados, y el equipo de Kopete proporciona plantillas para que los desarrolladores puedan basar nuevos complementos en ellas.</li>
@@ -212,6 +214,7 @@
       <li xml:lang="ca">L'API proporciona als desenvolupadors moltes funcions per a facilitar el suport d'un protocol nou.</li>
       <li xml:lang="ca-valencia">L'API proporciona als desenvolupadors moltes funcions per a facilitar el suport d'un protocol nou.</li>
       <li xml:lang="da">API'et giver udviklerne mange funktioner for at gøre det let at understøtte en ny protokol.</li>
+      <li xml:lang="de">Die API bietet Entwicklern viele Funktionen, die Unterstützung eines neues Protokolls erleichtert.</li>
       <li xml:lang="el">Το API παρέχει στους προγραμματιστές πολλές λειτουργίες για τη διευκόλυνση υποστήριξης ενός νέου πρωτοκόλλου.</li>
       <li xml:lang="en-GB">The API provides developers with many features to make it easy to support a new protocol.</li>
       <li xml:lang="es">La API proporciona a los desarrolladores muchas funcionalidades para facilitar la implementación de nuevos protocolos.</li>
@@ -239,6 +242,7 @@
       <li xml:lang="ca">Tots els protocols són connectors i permeten la instal·lació, configuració i un ús modular.</li>
       <li xml:lang="ca-valencia">Tots els protocols són connectors i permeten la instal·lació, configuració i un ús modular.</li>
       <li xml:lang="da">Alle protokoller er plugins og giver mulighed for modulær installation, konfiguration og anvendelse.</li>
+      <li xml:lang="de">Alle Protokolle sind als Module ausgeführt und ermöglichen eine modulare Installation, Einrichtung und Nutzung.</li>
       <li xml:lang="el">Όλα τα πρωτόκολλα είναι πρόσθετα και επιτρέπουν αρθρωτή εγκατάσταση, διαμόρφωση και χρήση.</li>
       <li xml:lang="en-GB">All protocols are plugins and allow for modular installation, configuration, and usage.</li>
       <li xml:lang="es">Todos los protocolos son complementos y permiten una instalación, configuración y uso modular.</li>
