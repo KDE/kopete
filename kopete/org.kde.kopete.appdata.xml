@@ -121,7 +121,7 @@
     <p xml:lang="sv">Kopetes mål är att ge användare ett enda lättanvänt sätt att komma åt alla sina direktmeddelandesystem. Gränssnittet låter människan komma först, och är integrerat med systemets adressbok för att ge tillgång till kontakter från andra KDE-program.</p>
     <p xml:lang="uk">Метою розробників Kopete є надання користувачам єдиного простого у користуванні способу доступу до їхньої системи обміну повідомленнями. На першому місці у інтерфейсі є користувач. Програму інтегровано із адресною книгою, яка надає вам доступ до записів контактів у інших програмах KDE.</p>
     <p xml:lang="x-test">xxThe goal of Kopete is to provide users with a single easy-to-use way to access all of their instant messaging systems. The interface puts people first, and is integrated with the system address book to let you access your contacts from other KDE applications.xx</p>
-    <p xml:lang="zh-CN">Kopete 的目标是给用户提供一个一体化易于使用的访问各种即时消息系统的方法。界面以人为本，与系统地址簿紧密结合，让您可以访问其它 KDE 应用程序中的联系人。</p>
+    <p xml:lang="zh-CN">Kopete 的目标是给用户提供一个一体化易于使用的访问各种即时消息系统的方法。界面以人为本，与系统地址簿紧密结合，让您可以访问其他 KDE 应用程序中的联系人。</p>
     <p xml:lang="zh-TW">Kopete 的目標是能讓使用者能一次簡單存取使用者所使用的所有即時通訊系統。介面十分人性化，且已與系統的通訊錄整合，讓您能從其他 KDE 應用程式存取您的聯絡人。</p>
     <p>Features:</p>
     <p xml:lang="ca">Característiques:</p>
@@ -180,7 +180,7 @@
       <li xml:lang="sv">Kopete har verktyg för att förbättra direktmeddelandeupplevelsen, såsom meddelandekryptering, arkivering, och många andra roliga och användbara effekter.</li>
       <li xml:lang="uk">У Kopete передбачено засоби, які зроблять зручним обмін повідомленнями, зокрема шифрування повідомлень, архівування, а також багато цікавих і корисних ефектів.</li>
       <li xml:lang="x-test">xxKopete features tools to enhance your instant messaging experience, such as message encryption, archiving, and many other fun and useful effects.xx</li>
-      <li xml:lang="zh-CN">Kopete 提供了增强您即时消息体验的工具，例如消息加密，存档，及其它有趣和有用的功能。</li>
+      <li xml:lang="zh-CN">Kopete 提供了增强您即时消息体验的工具，例如消息加密，存档，及其他有趣和实用的功能。</li>
       <li xml:lang="zh-TW">Kopete 包含一些特殊功能，能增強您的即時通訊體驗，大致有訊息加密、訊息封存、以及許多其他有趣且實用的特效效果。</li>
       <li>Kopete supports all commonly used instant messaging protocols, and the Kopete team provides templates for developers to base new plugins on.</li>
       <li xml:lang="ca">El Kopete admet tots els protocols de missatgeria instantània que s'utilitzen habitualment, i l'equip del Kopete proporciona plantilles per als desenvolupadors com a base per als connectors nous.</li>
