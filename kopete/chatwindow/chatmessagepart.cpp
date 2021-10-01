@@ -1262,6 +1262,10 @@ void ChatMessagePart::changeStyle()
 #ifdef STYLE_TIMETEST
     QTime beforeChange = QTime::currentTime();
 #endif
+    if (!view()) {
+        return;
+    }
+
     // Make latestContact null to reset consecutives messages.
     d->latestContact = 0;
 
