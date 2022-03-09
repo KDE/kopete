@@ -1,7 +1,4 @@
 
-include_directories( ${KOPETE_SOURCE_DIR}/protocols/groupwise/libgroupwise/qca/src  )
-
-
 ########### next target ###############
 
 set(task_take_test_SRCS task_take_test.cpp )

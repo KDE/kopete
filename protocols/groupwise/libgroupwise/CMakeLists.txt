@@ -3,7 +3,6 @@ add_definitions( -DKDE_DEFAULT_DEBUG_AREA=${GROUPWISE_DEBUG_LIBGW} )
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/tasks
-	${QCA2_INCLUDE_DIR}
 )
 
 ########### tasks target ###############
@@ -82,7 +81,7 @@ set( libqgroupwise_SRCS
 
 add_library( qgroupwise SHARED ${libqgroupwise_tasks_SRCS} ${libqgroupwise_SRCS} )
 
-target_link_libraries( qgroupwise Qt5::Core Qt5::Gui Qt5::Network qca-qt5 ${ZLIB_LIBRARIES} KF5::KDELibs4Support)
+target_link_libraries( qgroupwise Qt5::Core Qt5::Gui Qt5::Network qca-qt5 ZLIB::ZLIB KF5::KDELibs4Support)
 
 ########### install files ###############
 

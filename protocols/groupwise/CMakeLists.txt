@@ -1,4 +1,4 @@
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/libgroupwise/tasks ${CMAKE_CURRENT_SOURCE_DIR}/libgroupwise ${CMAKE_CURRENT_SOURCE_DIR}/ui ${QCA2_INCLUDE_DIR} )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/libgroupwise/tasks ${CMAKE_CURRENT_SOURCE_DIR}/libgroupwise ${CMAKE_CURRENT_SOURCE_DIR}/ui )
 
 add_subdirectory( libgroupwise ) 
 add_subdirectory( icons ) 
@@ -55,7 +55,7 @@ add_library(kopete_groupwise MODULE ${kopete_groupwise_PART_SRCS})
 
 link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libgroupwise )
 
-target_link_libraries(kopete_groupwise  KF5::KDELibs4Support qgroupwise kopete ${QCA2_LIBRARIES})
+target_link_libraries(kopete_groupwise  KF5::KDELibs4Support qgroupwise kopete qca-qt5)
 
 install(TARGETS kopete_groupwise  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16)
 
 project(kopete)
 
@@ -68,11 +68,11 @@ find_package(KF5Libkleo ${LIBKLEO_LIB_VERSION_LIB} CONFIG REQUIRED)
 
 ### Alphabetical list of optional packages ###
 
-find_package(Alsa QUIET)
-set_package_properties(Alsa PROPERTIES DESCRIPTION "Alsa is advanced linux sound Architecture" URL "http://www.alsa-project.org" TYPE OPTIONAL PURPOSE "Required for the Jabber protocol with libjingle support")
+find_package(ALSA QUIET)
+set_package_properties(ALSA PROPERTIES DESCRIPTION "Alsa is advanced linux sound Architecture" URL "http://www.alsa-project.org" TYPE OPTIONAL PURPOSE "Required for the Jabber protocol with libjingle support")
 
-find_package(Expat QUIET)
-set_package_properties(Expat PROPERTIES DESCRIPTION "Expat is a stream oriented XML parser" URL "http://expat.sourceforge.net/" TYPE OPTIONAL PURPOSE "Required for the Jabber protocol with libjingle support")
+find_package(EXPAT QUIET)
+set_package_properties(EXPAT PROPERTIES DESCRIPTION "Expat is a stream oriented XML parser" URL "http://expat.sourceforge.net/" TYPE OPTIONAL PURPOSE "Required for the Jabber protocol with libjingle support")
 
 find_package(GLIB2 QUIET)
 set_package_properties(GLIB2 PROPERTIES DESCRIPTION "GLib library" URL "http://www.gtk.org" TYPE OPTIONAL PURPOSE "Required for the Nowlistening plugin with XMMS player support")

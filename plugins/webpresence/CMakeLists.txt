@@ -1,4 +1,4 @@
-include_directories(${KOPETE_INCLUDES} ${LIBXML2_INCLUDE_DIR} ${LIBXSLT_INCLUDE_DIR})
+include_directories(${KOPETE_INCLUDES} ${LIBXSLT_INCLUDE_DIR})
 
 ########### next target ###############
 
@@ -12,8 +12,8 @@ target_link_libraries(
 	kopete_webpresence  
 	KF5::KIOCore 
 	kopete 
-	${LIBXML2_LIBRARIES} 
-	${LIBXSLT_LIBRARIES} 
+	LibXml2::LibXml2
+	${LIBXSLT_LIBRARIES}
 	Qt5::Xml 
 	KF5::I18n
 )

@@ -10,7 +10,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/tasks/
     ${CMAKE_CURRENT_SOURCE_DIR}/libiris/include/iris
     ${CMAKE_CURRENT_SOURCE_DIR}/libiris/src
-    ${QCA2_INCLUDE_DIR}
     )
 
 if(BUILD_LIBJINGLE)
@@ -21,7 +20,7 @@ endif(BUILD_LIBJINGLE)
 IF(BUILD_JINGLE)
 add_definitions(-DJINGLE_SUPPORT)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/jingle)
-include_directories(${LIBORTP_INCLUDE_DIR} ${ALSA_INCLUDES} ${SPEEX_INCLUDE_DIR})
+include_directories(${LIBORTP_INCLUDE_DIR} ${SPEEX_INCLUDE_DIR})
 ENDIF(BUILD_JINGLE)
 
 #link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libiris/ ${CMAKE_CURRENT_BINARY_DIR}/jingle/ )
@@ -165,9 +164,9 @@ endif(BUILD_JINGLE)
 add_library(kopete_jabber MODULE ${kopete_jabber_PART_SRCS})
 generate_export_header(kopete_jabber BASE_NAME jabber)
 
-target_link_libraries(kopete_jabber  KF5::KIOCore ${QCA2_LIBRARIES}  kopete iris_kopete)
+target_link_libraries(kopete_jabber  KF5::KIOCore qca-qt5  kopete iris_kopete)
 if(BUILD_JINGLE)	
-    target_link_libraries(kopete_jabber ${LIBORTP_LIBRARY} ${ASOUND_LIBRARY} ${SPEEX_LIBRARY})
+    target_link_libraries(kopete_jabber ${LIBORTP_LIBRARY} ALSA::ALSA ${SPEEX_LIBRARY})
 endif(BUILD_JINGLE)
 
 install(TARGETS kopete_jabber  DESTINATION ${KDE_INSTALL_PLUGINDIR})

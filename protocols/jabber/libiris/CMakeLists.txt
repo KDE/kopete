@@ -26,7 +26,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/irisnet/appledns
 
     ${IDN_INCLUDE_DIR}
-    ${ZLIB_INCLUDE_DIR}
     ${DNSSD_INCLUDE_DIR}
     )
 
@@ -132,7 +131,7 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 add_library(iris_kopete STATIC ${libiris_SRCS})
 
 set(iris_kopete_libs Qt5::Core Qt5::Network Qt5::Xml Qt5::Gui Qt5::Widgets
-    ${IDN_LIBRARIES} qca-qt5 ${ZLIB_LIBRARIES} )
+    ${IDN_LIBRARIES} qca-qt5 ZLIB::ZLIB )
 
 if(WIN32)
     set(iris_kopete_libs ${iris_kopete_libs} ws2_32)
