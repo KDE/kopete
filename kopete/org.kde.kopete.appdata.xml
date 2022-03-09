@@ -306,6 +306,9 @@
       <image>https://cdn.kde.org/screenshots/kopete/kopete.png</image>
     </screenshot>
   </screenshots>
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-chat">intense</content_attribute>
+  </content_rating>
   <project_group>KDE</project_group>
   <provides>
     <binary>kopete</binary>
