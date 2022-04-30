@@ -338,8 +338,6 @@ QString DiscoItem::action2string(Action a)
 		s = "update";
 	else if ( a == Remove )
 		s = "remove";
-	else
-		s = QString::null;
 
 	return s;
 }
