@@ -125,8 +125,8 @@ OnlineStatus::OnlineStatus(StatusType status, unsigned weight, Protocol *protoco
     d->overlayIcons = overlayIcons;
     d->protocol = protocol;
     d->description = description;
-    d->categories = 0x00;
-    d->options = 0x00;
+    d->categories = OnlineStatusManager::Categories();
+    d->options = OnlineStatusManager::Options();
 }
 
 OnlineStatus::OnlineStatus(StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus, const QStringList &overlayIcons, const QString &description, const QString &caption,
@@ -153,8 +153,8 @@ OnlineStatus::OnlineStatus(StatusType status)
     d->internalStatus = 0;
     d->weight = 0;
     d->protocol = nullptr;
-    d->categories = 0x00;
-    d->options = 0x00;
+    d->categories = OnlineStatusManager::Categories();
+    d->options = OnlineStatusManager::Options();
 
     switch (status) {
     case Online:
@@ -188,8 +188,8 @@ OnlineStatus::OnlineStatus()
     d->weight = 0;
     d->protocol = nullptr;
     d->overlayIcons = QStringList(QLatin1String("status_unknown"));
-    d->categories = 0x00;
-    d->options = 0x00;
+    d->categories = OnlineStatusManager::Categories();
+    d->options = OnlineStatusManager::Options();
 }
 
 OnlineStatus::OnlineStatus(const OnlineStatus &other)

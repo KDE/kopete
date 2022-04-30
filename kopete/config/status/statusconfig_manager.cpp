@@ -70,7 +70,7 @@ StatusConfig_Manager::StatusConfig_Manager(QWidget *parent)
     cbStatusCategory->addItem(icon, i18n("Invisible"), Kopete::OnlineStatusManager::Invisible);
     icon = Kopete::OnlineStatusManager::pixmapForCategory(Kopete::OnlineStatusManager::Offline);
     cbStatusCategory->addItem(icon, i18n("Offline"), Kopete::OnlineStatusManager::Offline);
-    icon = Kopete::OnlineStatusManager::pixmapForCategory(0x00);
+    icon = Kopete::OnlineStatusManager::pixmapForCategory(Kopete::OnlineStatusManager::Category());
     cbStatusCategory->addItem(icon, i18n("Do Not Change"), 0x00);
 
     statusView->expandAll();

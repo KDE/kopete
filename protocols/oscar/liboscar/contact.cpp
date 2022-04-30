@@ -29,7 +29,7 @@ OContact::OContact()
 	m_type = 0xFFFF;
 	m_tlvLength = 0;
 	m_waitingAuth = false;
-	m_caps = 0;
+	m_caps = Oscar::Capabilities();
 }
 
 OContact::OContact( const QString &name, int gid, int bid, int type, const QList<TLV> &tlvlist, int tlvLength )

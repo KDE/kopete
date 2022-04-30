@@ -221,8 +221,10 @@ public:
      * A status may be in several categories, or in none.
      * There shouldn't be more than one status per protocol per categories.
      */
-    OnlineStatus(StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus, const QStringList &overlayIcon, const QString &description, const QString &caption,
-                 OnlineStatusManager::Categories categories = 0x0, OnlineStatusManager::Options options = 0x0);
+    OnlineStatus(StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus,
+                 const QStringList &overlayIcon, const QString &description, const QString &caption,
+                 OnlineStatusManager::Categories categories = OnlineStatusManager::Categories(),
+                 OnlineStatusManager::Options options = OnlineStatusManager::Options());
 
     /**
      * Constructor.

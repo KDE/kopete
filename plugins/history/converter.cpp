@@ -106,7 +106,7 @@ void HistoryPlugin::convertOldHistory()
 
                 if (!contactId.isEmpty()) {
                     progressDlg->setLabelText(i18n("Parsing the old history in %1:\n%2", fi.fileName(), contactId));
-                    qApp->processEvents(0); //make sure the text is updated in the progressDlg
+                    qApp->processEvents(); //make sure the text is updated in the progressDlg
 
                     int month = 0;
                     int year = 0;

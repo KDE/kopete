@@ -35,9 +35,9 @@ OscarProtocol::OscarProtocol( QObject *parent, bool canAddMyself )
 	clientFeatures("clientFeatures", i18n("Client Features"), 0),
 	buddyIconHash("iconHash", i18n("Buddy Icon MD5 Hash"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty),
 	contactEncoding("contactEncoding", i18n("Contact Encoding"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty),
-	memberSince("memberSince", i18n("Member Since"), QString(), 0),
-	client("client", i18n("Client"), QString(), 0),
-	protocolVersion("protocolVersion", i18n("Protocol Version"), QString(), 0)
+	memberSince("memberSince", i18n("Member Since"), QString(), Kopete::PropertyTmpl::PropertyOption()),
+	client("client", i18n("Client"), QString(), Kopete::PropertyTmpl::PropertyOption()),
+	protocolVersion("protocolVersion", i18n("Protocol Version"), QString(), Kopete::PropertyTmpl::PropertyOption())
 {
 	KConfigGroup config( KSharedConfig::openConfig(), "OscarProtocol" );
 	if ( config.hasKey( "StartFlapSequences" ) )

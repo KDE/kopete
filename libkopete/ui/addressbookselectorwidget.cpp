@@ -150,7 +150,7 @@ void AddressBookSelectorWidget::slotAddAddresseeClicked()
         //Kopete::KABCPersistence::self()->writeAddressBook( 0 );
         slotLoadAddressees();
         // select the addressee we just added
-        QList<QTreeWidgetItem *> added = addresseeListView->findItems(addresseeName, 0, 1);
+        QList<QTreeWidgetItem *> added = addresseeListView->findItems(addresseeName, Qt::MatchFlag(), 1);
         foreach (QTreeWidgetItem *wi, added) {
             wi->setSelected(true);
             addresseeListView->scrollToItem(wi, QAbstractItemView::EnsureVisible);

@@ -729,7 +729,7 @@ void KopeteChatWindow::addTab(ChatView *view)
                        : QIcon::fromTheme(view->msgManager()->protocol()->pluginIcon());
 
     view->setParent(m_tabBar);
-    view->setWindowFlags(0);
+    view->setWindowFlags(Qt::WindowFlags());
     view->move(QPoint());
     view->show();
 
@@ -748,7 +748,7 @@ void KopeteChatWindow::setPrimaryChatView(ChatView *view)
     //TODO figure out what else we have to save here besides the font
     //reparent clears a lot of stuff out
     view->setParent(mainArea);
-    view->setWindowFlags(0);
+    view->setWindowFlags(Qt::WindowFlags());
     view->move(QPoint());
     view->show();
 

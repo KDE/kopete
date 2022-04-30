@@ -117,7 +117,7 @@ KabcExportWizard::KabcExportWizard(QWidget *parent)
             lvi->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
         } else {
             lvi->setText(lvi->text() + alreadyIn);
-            lvi->setFlags(0);
+            lvi->setFlags(Qt::ItemFlags());
         }
     }
 }
