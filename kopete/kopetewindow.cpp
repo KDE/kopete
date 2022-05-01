@@ -760,7 +760,7 @@ void KopeteWindow::slotConfigChanged()
             }
         } else {
             QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
-            qSort(accountList.begin(), accountList.end(), invertedCompareOnlineStatus);
+            std::sort(accountList.begin(), accountList.end(), invertedCompareOnlineStatus);
             foreach (Kopete::Account *account, accountList) {
                 KopeteAccountStatusBarIcon *sbIcon = new KopeteAccountStatusBarIcon(account, d->statusBarWidget);
                 d->accountStatusBarIcons.insert(account, sbIcon);
@@ -950,7 +950,7 @@ void KopeteWindow::slotAllPluginsLoaded()
 
     // If some account already loaded, build the status icon
     QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
-    qSort(accountList.begin(), accountList.end(), invertedCompareOnlineStatus);
+    std::sort(accountList.begin(), accountList.end(), invertedCompareOnlineStatus);
     foreach (Kopete::Account *a, accountList) {
         slotAccountRegistered(a);
     }
@@ -1135,7 +1135,7 @@ void KopeteWindow::makeTrayToolTip()
     if (d->tray) {
         QString tt = QStringLiteral("<qt>");
         QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
-        qSort(accountList.begin(), accountList.end(), compareOnlineStatus);
+        std::sort(accountList.begin(), accountList.end(), compareOnlineStatus);
         foreach (Kopete::Account *a, accountList) {
             Kopete::Contact *self = a->myself();
             /*tt += i18nc ( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)</nobr><br />",
@@ -1267,7 +1267,7 @@ void KopeteWindow::slotTrayAboutToShowMenu(QMenu *popup)
     popup->addSection(qApp->windowIcon(), KGlobal::caption());
 
     QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
-    qSort(accountList.begin(), accountList.end(), invertedCompareOnlineStatus);
+    std::sort(accountList.begin(), accountList.end(), invertedCompareOnlineStatus);
     foreach (Kopete::Account *account, accountList) {
         KActionMenu *menu = new KActionMenu(account->accountId(), account);
         menu->setIcon(account->myself()->onlineStatus().iconFor(account));

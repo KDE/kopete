@@ -269,7 +269,7 @@ Account *AccountManager::registerAccount(Account *account)
     }
 
     d->accounts.append(account);
-    qSort(d->accounts.begin(), d->accounts.end(), compareAccountsByPriority);
+    std::sort(d->accounts.begin(), d->accounts.end(), compareAccountsByPriority);
 
     // Connect to the account's status changed signal
     connect(account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact *,
@@ -349,7 +349,7 @@ void AccountManager::removeAccount(Account *account)
 void AccountManager::save()
 {
     //qCDebug(LIBKOPETE_LOG) ;
-    qSort(d->accounts.begin(), d->accounts.end(), compareAccountsByPriority);
+    std::sort(d->accounts.begin(), d->accounts.end(), compareAccountsByPriority);
 
     for (QListIterator<Account *> it(d->accounts); it.hasNext();) {
         Account *a = it.next();

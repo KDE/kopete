@@ -150,7 +150,7 @@ void KopeteAccountConfig::load()
 
     // Sort by priority, the priority is take from identity accounts because identity doesn't have priority
     QList<Kopete::Identity *> identityList = Kopete::IdentityManager::self()->identities();
-    qSort(identityList.begin(), identityList.end(), identityPriorityLessThan);
+    std::sort(identityList.begin(), identityList.end(), identityPriorityLessThan);
 
     foreach (Kopete::Identity *i, identityList) {
         //KopeteIdentityLVI *lvi = new KopeteIdentityLVI( i, mIdentityList );
@@ -175,7 +175,7 @@ void KopeteAccountConfig::load()
 
     // Sort by priority
     QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
-    qSort(accountList.begin(), accountList.end(), accountPriorityLessThan);
+    std::sort(accountList.begin(), accountList.end(), accountPriorityLessThan);
 
     foreach (Kopete::Account *account, accountList) {
         Kopete::Identity *idnt = account->identity();

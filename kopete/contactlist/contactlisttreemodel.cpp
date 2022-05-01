@@ -843,7 +843,7 @@ void GroupModelItem::sort(bool (*lessThan)(const ContactListModelItem *, const C
         clmi->sort(lessThan);
     }
 
-    qStableSort(mItems.begin(), mItems.end(), lessThan);
+    std::stable_sort(mItems.begin(), mItems.end(), lessThan);
 }
 
 int GroupModelItem::indexOf(const ContactListModelItem *item) const

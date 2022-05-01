@@ -379,7 +379,7 @@ void ContactListPlainModel::loadModelSettingsImpl(QDomElement &rootElement)
                 }
             }
 
-            qStableSort(m_contacts.begin(), m_contacts.end(), manualMetaContactSort);
+            std::stable_sort(m_contacts.begin(), m_contacts.end(), manualMetaContactSort);
 
             delete _metaContactPositionPlain;
             _metaContactPositionPlain = 0;
