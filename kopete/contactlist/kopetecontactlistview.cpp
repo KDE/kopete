@@ -762,7 +762,7 @@ void KopeteContactListView::selectionChanged(const QItemSelection &selected, con
         }
     }
 
-    Kopete::ContactList::self()->setSelectedItems(contacts.toList(), groups.toList());
+    Kopete::ContactList::self()->setSelectedItems(contacts.values(), groups.values());
 
     updateActions();
 

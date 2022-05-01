@@ -55,12 +55,12 @@ Features::~Features()
 
 QStringList Features::list() const
 {
-	return _list.toList();
+	return _list.values();
 }
 
 void Features::setList(const QStringList &l)
 {
-	_list = QSet<QString>::fromList(l);
+	_list = QSet<QString>(l.begin(), l.end());
 }
 
 void Features::setList(const QSet<QString> &l)
@@ -75,7 +75,7 @@ void Features::addFeature(const QString& s)
 
 bool Features::test(const QStringList &ns) const
 {
-	return _list.contains(QSet<QString>::fromList(ns));
+	return _list.contains(QSet<QString>(ns.begin(), ns.end()));
 }
 
 bool Features::test(const QSet<QString> &ns) const

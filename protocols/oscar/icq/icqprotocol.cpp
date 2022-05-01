@@ -537,7 +537,8 @@ void ICQProtocol::initLang()
 
 void ICQProtocol::initEncodings()
 {
-	QSet<int> availableMibs = QSet<int>::fromList( QTextCodec::availableMibs() );
+	const QList<int> mibs = QTextCodec::availableMibs();
+	QSet<int> availableMibs( mibs.begin(), mibs.end() );
 
 	addEncoding( availableMibs, 2026, i18n("Big5") );
 	addEncoding( availableMibs, 2101, i18n("Big5-HKSCS") );
