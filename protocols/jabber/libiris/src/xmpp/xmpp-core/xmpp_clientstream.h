@@ -138,18 +138,18 @@ namespace XMPP
 		void setCompress(bool);
 
 		// reimplemented
-		QDomDocument & doc() const;
-		QString baseNS() const;
-		bool old() const;
+		QDomDocument & doc() const override;
+		QString baseNS() const override;
+		bool old() const override;
 
-		void close();
-		bool stanzaAvailable() const;
-		Stanza read();
-		void write(const Stanza &s);
+		void close() override;
+		bool stanzaAvailable() const override;
+		Stanza read() override;
+		void write(const Stanza &s) override;
 
-		int errorCondition() const;
-		QString errorText() const;
-		QDomElement errorAppSpec() const;
+		int errorCondition() const override;
+		QString errorText() const override;
+		QDomElement errorAppSpec() const override;
 
 		// extra
 		void writeDirect(const QString &s);

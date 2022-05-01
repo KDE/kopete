@@ -56,8 +56,8 @@ namespace XMPP
 		void setForm(const Form &);
 		void setForm(const Jid&, const XData &);
 
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() override;
+		bool take(const QDomElement &) override;
 
 	private:
 		QDomElement iq;
@@ -76,7 +76,7 @@ namespace XMPP
 
 		void unreg(const Jid &);
 
-		void onGo();
+		void onGo() override;
 
 	private slots:
 		void getFormFinished();
@@ -103,8 +103,8 @@ namespace XMPP
 		QString toString() const;
 		bool fromString(const QString &);
 
-		void onGo();
-		bool take(const QDomElement &x);
+		void onGo() override;
+		bool take(const QDomElement &x) override;
 
 	private:
 		int type;
@@ -122,7 +122,7 @@ namespace XMPP
 		JT_PushRoster(Task *parent);
 		~JT_PushRoster();
 
-		bool take(const QDomElement &);
+		bool take(const QDomElement &) override;
 
 	signals:
 		void roster(const Roster &);
@@ -144,7 +144,7 @@ namespace XMPP
 		void sub(const Jid &, const QString &subType, const QString& nick = QString());
 		void probe(const Jid &to);
 
-		void onGo();
+		void onGo() override;
 
 	private:
 		QDomElement tag;
@@ -161,7 +161,7 @@ namespace XMPP
 		JT_PushPresence(Task *parent);
 		~JT_PushPresence();
 
-		bool take(const QDomElement &);
+		bool take(const QDomElement &) override;
 
 	signals:
 		void presence(const Jid &, const Status &);
@@ -176,8 +176,8 @@ namespace XMPP
 	{
 	public:
 		JT_Session(Task *parent);
-		void onGo();
-		bool take(const QDomElement&);
+		void onGo() override;
+		bool take(const QDomElement&) override;
 	};
 
 	class JT_Message : public Task
@@ -187,7 +187,7 @@ namespace XMPP
 		JT_Message(Task *parent, const Message &);
 		~JT_Message();
 
-		void onGo();
+		void onGo() override;
 
 	private:
 		Message m;
@@ -203,7 +203,7 @@ namespace XMPP
 		JT_PushMessage(Task *parent);
 		~JT_PushMessage();
 
-		bool take(const QDomElement &);
+		bool take(const QDomElement &) override;
 
 	signals:
 		void message(const Message &);
@@ -223,8 +223,8 @@ namespace XMPP
 
 		const AgentList & agents() const;
 
-		void onGo();
-		bool take(const QDomElement &x);
+		void onGo() override;
+		bool take(const QDomElement &x) override;
 
 	private:
 		class Private;
@@ -249,8 +249,8 @@ namespace XMPP
 		const Jid & jid() const;
 		const VCard  & vcard() const;
 
-		void onGo();
-		bool take(const QDomElement &x);
+		void onGo() override;
+		bool take(const QDomElement &x) override;
 
 	private:
 		int type;
@@ -276,8 +276,8 @@ namespace XMPP
 		void set(const Form &);
 		void set(const Jid &, const XData &);
 
-		void onGo();
-		bool take(const QDomElement &x);
+		void onGo() override;
+		bool take(const QDomElement &x) override;
 
 	private:
 		QDomElement iq;
@@ -294,8 +294,8 @@ namespace XMPP
 		JT_ClientVersion(Task *);
 
 		void get(const Jid &);
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() override;
+		bool take(const QDomElement &) override;
 
 		const Jid & jid() const;
 		const QString & name() const;
@@ -314,8 +314,8 @@ namespace XMPP
 	public:
 		JT_EntityTime(Task*);
 
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() override;
+		bool take(const QDomElement &) override;
 		void get(const XMPP::Jid &j);
 		const XMPP::Jid & jid() const;
 
@@ -336,7 +336,7 @@ namespace XMPP
 		JT_ServInfo(Task *);
 		~JT_ServInfo();
 
-		bool take(const QDomElement &);
+		bool take(const QDomElement &) override;
 	};
 
 	class JT_Gateway : public Task
@@ -347,8 +347,8 @@ namespace XMPP
 
 		void get(const Jid &);
 		void set(const Jid &, const QString &prompt);
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() override;
+		bool take(const QDomElement &) override;
 
 		Jid jid() const;
 
@@ -377,8 +377,8 @@ namespace XMPP
 		const AgentList & agents() const;
 		const AgentItem & root() const;
 
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() override;
+		bool take(const QDomElement &) override;
 
 	private:
 		class Private;
@@ -399,8 +399,8 @@ namespace XMPP
 
 		const DiscoList &items() const;
 
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() override;
+		bool take(const QDomElement &) override;
 
 	private:
 		class Private;
@@ -416,8 +416,8 @@ namespace XMPP
 
 		void set(const Jid &, const DiscoList &);
 
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() override;
+		bool take(const QDomElement &) override;
 
 	private:
 		class Private;
@@ -430,7 +430,7 @@ namespace XMPP
 
 	public:
 		JT_BoBServer(Task *parent);
-		bool take(const QDomElement &);
+		bool take(const QDomElement &) override;
 	};
 
 	class JT_BitsOfBinary : public Task
@@ -442,8 +442,8 @@ namespace XMPP
 
 		void get(const Jid &, const QString &);
 
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() override;
+		bool take(const QDomElement &) override;
 		BoBData &data();
 
 	private:
@@ -456,7 +456,7 @@ namespace XMPP
 		Q_OBJECT
 	public:
 		JT_PongServer(Task *);
-		bool take(const QDomElement &);
+		bool take(const QDomElement &) override;
 	};
 
 	class JT_MessageCarbons : public Task
@@ -468,8 +468,8 @@ namespace XMPP
 		void enable();
 		void disable();
 
-		void onGo();
-		bool take(const QDomElement &e);
+		void onGo() override;
+		bool take(const QDomElement &e) override;
 
 	private:
 		QDomElement _iq;
@@ -486,8 +486,8 @@ namespace XMPP
 
 		void set(const Jid &, const CaptchaChallenge &);
 
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() override;
+		bool take(const QDomElement &) override;
 
 	private:
 		class Private;
@@ -502,8 +502,8 @@ namespace XMPP
 
 		void set(const Jid &, const XData &);
 
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() override;
+		bool take(const QDomElement &) override;
 
 	private:
 		Jid to;

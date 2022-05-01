@@ -41,9 +41,9 @@ public:
 	ByteStream(QObject *parent=0);
 	~ByteStream()=0;
 
-	bool isSequential() const { return true; }
-	qint64 bytesAvailable() const;
-	qint64 bytesToWrite() const;
+	bool isSequential() const override { return true; }
+	qint64 bytesAvailable() const override;
+	qint64 bytesToWrite() const override;
 
 	static QByteArray takeArray(QByteArray &from, int size=0, bool del=true);
 
@@ -58,8 +58,8 @@ signals:
 	void error(int);
 
 protected:
-	qint64 writeData(const char *data, qint64 maxSize);
-	qint64 readData(char *data, qint64 maxSize);
+	qint64 writeData(const char *data, qint64 maxSize) override;
+	qint64 readData(char *data, qint64 maxSize) override;
 
 	void setError(int code = ErrOk, const QString &text = QString());
 	void clearReadBuffer();

@@ -48,8 +48,8 @@ namespace XMPP
 		const Jid& jid() const;
 		const QString& node() const;
 
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() override;
+		bool take(const QDomElement &) override;
 
 	private slots:
 		void cachedReady();

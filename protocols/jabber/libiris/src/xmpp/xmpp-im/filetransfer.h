@@ -170,8 +170,8 @@ namespace XMPP
 		qlonglong rangeLength() const;
 		QString streamType() const;
 
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() override;
+		bool take(const QDomElement &) override;
 
 	private:
 		class Private;
@@ -200,7 +200,7 @@ namespace XMPP
 		void respondError(const Jid &to, const QString &id,
 						  Stanza::Error::ErrorCond cond, const QString &str);
 
-		bool take(const QDomElement &);
+		bool take(const QDomElement &) override;
 
 	signals:
 		void incoming(const FTRequest &req);

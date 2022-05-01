@@ -66,9 +66,9 @@ signals:
 protected:
 	// reimplemented
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-	void incomingConnection(int socketDescriptor);
+	void incomingConnection(int socketDescriptor) override;
 #else
-	void incomingConnection(qintptr socketDescriptor);
+	void incomingConnection(qintptr socketDescriptor) override;
 #endif
 };
 

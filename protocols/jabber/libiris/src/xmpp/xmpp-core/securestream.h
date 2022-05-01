@@ -57,7 +57,7 @@ public:
 	// reimplemented
 	bool isOpen() const;
 	void write(const QByteArray &);
-	qint64 bytesToWrite() const;
+	qint64 bytesToWrite() const override;
 
 signals:
 	void tlsHandshaken();

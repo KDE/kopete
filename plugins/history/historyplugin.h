@@ -43,7 +43,7 @@ public:
     {
     }
 
-    void handleMessage(Kopete::MessageEvent *event);
+    void handleMessage(Kopete::MessageEvent *event) override;
 };
 
 class HistoryMessageLoggerFactory : public Kopete::MessageHandlerFactory
@@ -54,7 +54,7 @@ public:
     {
     }
 
-    Kopete::MessageHandler *create(Kopete::ChatSession * /*manager*/, Kopete::Message::MessageDirection direction)
+    Kopete::MessageHandler *create(Kopete::ChatSession * /*manager*/, Kopete::Message::MessageDirection direction) override
     {
         if (direction != Kopete::Message::Inbound) {
             return 0;
@@ -62,7 +62,7 @@ public:
         return new HistoryMessageLogger(history);
     }
 
-    int filterPosition(Kopete::ChatSession *, Kopete::Message::MessageDirection)
+    int filterPosition(Kopete::ChatSession *, Kopete::Message::MessageDirection) override
     {
         return Kopete::MessageHandlerFactory::InStageToSent+5;
     }

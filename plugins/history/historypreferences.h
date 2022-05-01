@@ -35,8 +35,8 @@ public:
     explicit HistoryPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
     ~HistoryPreferences();
 
-    virtual void save();
-    virtual void load();
+    virtual void save() override;
+    virtual void load() override;
 
 private slots:
     void slotModified();

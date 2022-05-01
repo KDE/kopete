@@ -53,17 +53,17 @@ public:
 	void connectToHost(const QString &host, quint16 port, QAbstractSocket::NetworkLayerProtocol protocol = QAbstractSocket::UnknownNetworkLayerProtocol);
 	/*! Connect to the hosts for the specified service */
 	void connectToHost(const QString &service, const QString &transport, const QString &domain, quint16 port = std::numeric_limits<quint16>::max());
-	virtual QAbstractSocket* abstractSocket() const;
+	virtual QAbstractSocket* abstractSocket() const override;
 	int socket() const;
 	void setSocket(qintptr);
 	int state() const;
 
 	// from ByteStream
 	bool isOpen() const;
-	void close();
+	void close() override;
 
-	qint64 bytesAvailable() const;
-	qint64 bytesToWrite() const;
+	qint64 bytesAvailable() const override;
+	qint64 bytesToWrite() const override;
 
 	// local
 	QHostAddress address() const;
@@ -74,8 +74,8 @@ public:
 	quint16 peerPort() const;
 
 protected:
-	qint64 writeData(const char *data, qint64 maxSize);
-	qint64 readData(char *data, qint64 maxSize);
+	qint64 writeData(const char *data, qint64 maxSize) override;
+	qint64 readData(char *data, qint64 maxSize) override;
 
 signals:
 	void hostFound();

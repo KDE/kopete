@@ -63,19 +63,19 @@ namespace XMPP
 		IBBConnection(IBBManager *);
 		~IBBConnection();
 
-		void connectToJid(const Jid &peer, const QString &sid);
-		void accept();
-		void close();
+		void connectToJid(const Jid &peer, const QString &sid) override;
+		void accept() override;
+		void close() override;
 
 		int state() const;
-		Jid peer() const;
-		QString sid() const;
-		BytestreamManager* manager() const;
+		Jid peer() const override;
+		QString sid() const override;
+		BytestreamManager* manager() const override;
 
 		bool isOpen() const;
 
 	protected:
-		qint64 writeData(const char *data, qint64 maxSize);
+		qint64 writeData(const char *data, qint64 maxSize) override;
 
 	signals:
 		void connected();
@@ -109,8 +109,8 @@ namespace XMPP
 		static const char* ns();
 		Client *client() const;
 
-		bool isAcceptableSID(const Jid &peer, const QString &sid) const;
-		BSConnection *createConnection();
+		bool isAcceptableSID(const Jid &peer, const QString &sid) const override;
+		BSConnection *createConnection() override;
 		IBBConnection *takeIncoming();
 
 	public slots:
@@ -118,7 +118,7 @@ namespace XMPP
 							  const IBBData &data, Stanza::Kind);
 
 	protected:
-		const char* sidPrefix() const;
+		const char* sidPrefix() const override;
 
 	private slots:
 		void ibb_incomingRequest(const Jid &from, const QString &id,
@@ -155,8 +155,8 @@ namespace XMPP
 						  Stanza::Error::ErrorCond cond, const QString &text = "");
 		void respondAck(const Jid &to, const QString &id);
 
-		void onGo();
-		bool take(const QDomElement &);
+		void onGo() override;
+		bool take(const QDomElement &) override;
 
 		Jid jid() const;
 		int mode() const;

@@ -66,7 +66,7 @@ public:
         return mMetaContact;
     }
 
-    virtual bool operator<(const QTreeWidgetItem &other) const;
+    virtual bool operator<(const QTreeWidgetItem &other) const override;
 private:
     QDate mDate;
     Kopete::MetaContact *mMetaContact;

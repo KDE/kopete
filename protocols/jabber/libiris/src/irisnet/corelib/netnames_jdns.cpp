@@ -546,12 +546,12 @@ public:
 		emit resolve_error(id, error);
 	}
 
-	virtual bool supportsSingle() const
+	virtual bool supportsSingle() const override
 	{
 		return true;
 	}
 
-	virtual bool supportsLongLived() const
+	virtual bool supportsLongLived() const override
 	{
 		if(mode == Local)
 			return true;  // we support long-lived local queries
@@ -559,14 +559,14 @@ public:
 			return false; // we do NOT support long-lived internet queries
 	}
 
-	virtual bool supportsRecordType(int type) const
+	virtual bool supportsRecordType(int type) const override
 	{
 		// all record types supported
 		Q_UNUSED(type);
 		return true;
 	}
 
-	virtual int resolve_start(const QByteArray &name, int qType, bool longLived)
+	virtual int resolve_start(const QByteArray &name, int qType, bool longLived) override
 	{
 		if(mode == Internet)
 		{
@@ -654,7 +654,7 @@ public:
 		}
 	}
 
-	virtual void resolve_stop(int id)
+	virtual void resolve_stop(int id) override
 	{
 		Item *i = getItemById(id);
 		Q_ASSERT(i);
@@ -664,7 +664,7 @@ public:
 		releaseItem(i);
 	}
 
-	virtual void resolve_localResultsReady(int id, const QList<XMPP::NameRecord> &results)
+	virtual void resolve_localResultsReady(int id, const QList<XMPP::NameRecord> &results) override
 	{
 		Item *i = getItemById(id);
 		Q_ASSERT(i);
@@ -675,7 +675,7 @@ public:
 			Q_ARG(QList<XMPP::NameRecord>, results));
 	}
 
-	virtual void resolve_localError(int id, XMPP::NameResolver::Error e)
+	virtual void resolve_localError(int id, XMPP::NameResolver::Error e) override
 	{
 		Item *i = getItemById(id);
 		Q_ASSERT(i);
@@ -2212,7 +2212,7 @@ public:
 		publishExtraItemList.clear();
 	}
 
-	virtual int browse_start(const QString &_type, const QString &_domain)
+	virtual int browse_start(const QString &_type, const QString &_domain) override
 	{
 		QString domain;
 		if(_domain.isEmpty() || _domain == ".")
@@ -2267,7 +2267,7 @@ public:
 		return i->id;
 	}
 
-	virtual void browse_stop(int id)
+	virtual void browse_stop(int id) override
 	{
 		BrowseItem *i = browseItemList.itemById(id);
 		Q_ASSERT(i);
@@ -2275,7 +2275,7 @@ public:
 		browseItemList.remove(i);
 	}
 
-	virtual int resolve_start(const QByteArray &name)
+	virtual int resolve_start(const QByteArray &name) override
 	{
 		int id = resolveItemList.reserveId();
 
@@ -2297,7 +2297,7 @@ public:
 		return i->id;
 	}
 
-	virtual void resolve_stop(int id)
+	virtual void resolve_stop(int id) override
 	{
 		ResolveItem *i = resolveItemList.itemById(id);
 		Q_ASSERT(i);
@@ -2305,7 +2305,7 @@ public:
 		resolveItemList.remove(i);
 	}
 
-	virtual int publish_start(const QString &instance, const QString &_type, int port, const QMap<QString,QByteArray> &attributes)
+	virtual int publish_start(const QString &instance, const QString &_type, int port, const QMap<QString,QByteArray> &attributes) override
 	{
 		int id = publishItemList.reserveId();
 
@@ -2351,7 +2351,7 @@ public:
 		return i->id;
 	}
 
-	virtual void publish_update(int id, const QMap<QString,QByteArray> &attributes)
+	virtual void publish_update(int id, const QMap<QString,QByteArray> &attributes) override
 	{
 		PublishItem *i = publishItemList.itemById(id);
 		Q_ASSERT(i);
@@ -2363,7 +2363,7 @@ public:
 		i->publish->update(attributes);
 	}
 
-	virtual void publish_stop(int id)
+	virtual void publish_stop(int id) override
 	{
 		PublishItem *i = publishItemList.itemById(id);
 		Q_ASSERT(i);
@@ -2372,7 +2372,7 @@ public:
 		publishItemList.remove(i);
 	}
 
-	virtual int publish_extra_start(int pub_id, const NameRecord &name)
+	virtual int publish_extra_start(int pub_id, const NameRecord &name) override
 	{
 		PublishItem *pi = publishItemList.itemById(pub_id);
 		Q_ASSERT(pi);
@@ -2406,7 +2406,7 @@ public:
 		return i->id;
 	}
 
-	virtual void publish_extra_update(int id, const NameRecord &name)
+	virtual void publish_extra_update(int id, const NameRecord &name) override
 	{
 		PublishExtraItem *i = publishExtraItemList.itemById(id);
 		Q_ASSERT(i);
@@ -2435,7 +2435,7 @@ public:
 		i->publish->update(rec);
 	}
 
-	virtual void publish_extra_stop(int id)
+	virtual void publish_extra_stop(int id) override
 	{
 		PublishExtraItem *i = publishExtraItemList.itemById(id);
 		Q_ASSERT(i);
@@ -2694,19 +2694,19 @@ public:
 			global = new JDnsGlobal;
 	}
 
-	virtual NameProvider *createNameProviderInternet()
+	virtual NameProvider *createNameProviderInternet() override
 	{
 		ensure_global();
 		return JDnsNameProvider::create(global, JDnsNameProvider::Internet);
 	}
 
-	virtual NameProvider *createNameProviderLocal()
+	virtual NameProvider *createNameProviderLocal() override
 	{
 		ensure_global();
 		return JDnsNameProvider::create(global, JDnsNameProvider::Local);
 	}
 
-	virtual ServiceProvider *createServiceProvider()
+	virtual ServiceProvider *createServiceProvider() override
 	{
 		ensure_global();
 		return JDnsServiceProvider::create(global);

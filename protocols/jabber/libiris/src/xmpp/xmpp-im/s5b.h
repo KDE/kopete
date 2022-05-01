@@ -72,30 +72,30 @@ namespace XMPP
 		void setProxy(const Jid &proxy);
 
 		void connectToJid(const Jid &peer, const QString &sid, Mode m = Stream);
-		void connectToJid(const Jid &peer, const QString &sid) {
+		void connectToJid(const Jid &peer, const QString &sid) override {
 			connectToJid(peer, sid, Stream);
 		}
 
-		void accept();
-		void close();
+		void accept() override;
+		void close() override;
 
-		Jid peer() const;
-		QString sid() const;
-		BytestreamManager* manager() const;
+		Jid peer() const override;
+		QString sid() const override;
+		BytestreamManager* manager() const override;
 		bool isRemote() const;
 		Mode mode() const;
 		int state() const;
 
-		qint64 bytesAvailable() const;
-		qint64 bytesToWrite() const;
+		qint64 bytesAvailable() const override;
+		qint64 bytesToWrite() const override;
 
 		void writeDatagram(const S5BDatagram &);
 		S5BDatagram readDatagram();
 		int datagramsAvailable() const;
 
 	protected:
-		qint64 writeData(const char *data, qint64 maxSize);
-		qint64 readData(char * data, qint64 maxSize);
+		qint64 writeData(const char *data, qint64 maxSize) override;
+		qint64 readData(char * data, qint64 maxSize) override;
 
 	signals:
 		void proxyQuery();                             // querying proxy for streamhost information
@@ -147,16 +147,16 @@ namespace XMPP
 		S5BServer *server() const;
 		void setServer(S5BServer *s);
 
-		bool isAcceptableSID(const Jid &peer, const QString &sid) const;
+		bool isAcceptableSID(const Jid &peer, const QString &sid) const override;
 
-		BSConnection *createConnection();
+		BSConnection *createConnection() override;
 		S5BConnection *takeIncoming();
 
 		class Item;
 		class Entry;
 
 	protected:
-		const char* sidPrefix() const;
+		const char* sidPrefix() const override;
 
 	private slots:
 		void ps_incoming(const S5BRequest &req);
@@ -280,9 +280,9 @@ namespace XMPP
 		void requestProxyInfo(const Jid &to);
 		void requestActivation(const Jid &to, const QString &sid, const Jid &target);
 
-		void onGo();
-		void onDisconnect();
-		bool take(const QDomElement &);
+		void onGo() override;
+		void onDisconnect() override;
+		bool take(const QDomElement &) override;
 
 		Jid streamHostUsed() const;
 		StreamHost proxyInfo() const;
@@ -318,7 +318,7 @@ namespace XMPP
 		void sendUDPSuccess(const Jid &to, const QString &dstaddr);
 		void sendActivate(const Jid &to, const QString &sid, const Jid &streamHost);
 
-		bool take(const QDomElement &);
+		bool take(const QDomElement &) override;
 
 	signals:
 		void incoming(const S5BRequest &req);

@@ -53,13 +53,13 @@ public:
     WPAccount(WPProtocol *parent, const QString &accountID);
     ~WPAccount();
 
-    virtual void fillActionMenu(KActionMenu *actionMenu);           // Per-protocol actions for the systray and the status bar
-    virtual bool hasCustomStatusMenu() const;       //Has custom status menu
+    virtual void fillActionMenu(KActionMenu *actionMenu) override;           // Per-protocol actions for the systray and the status bar
+    virtual bool hasCustomStatusMenu() const override;       //Has custom status menu
     virtual void setAway(bool status, const QString &); // Set user away
 
 public Q_SLOTS:
-    virtual void connect(const Kopete::OnlineStatus &);                     // Connect to server
-    virtual void disconnect();                  // Disconnect from server
+    virtual void connect(const Kopete::OnlineStatus &) override;                     // Connect to server
+    virtual void disconnect() override;                  // Disconnect from server
 
     void goAvailable()
     {
@@ -95,11 +95,11 @@ public Q_SLOTS:
     void slotGotNewMessage(const QString &Body, const QDateTime &Arrival, const QString &From);
 
     /* Reimplemented from Kopete::Account */
-    void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(), const OnlineStatusOptions &options = None);
-    void setStatusMessage(const Kopete::StatusMessage &statusMessage);
+    void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(), const OnlineStatusOptions &options = None) override;
+    void setStatusMessage(const Kopete::StatusMessage &statusMessage) override;
 
 protected:
-    virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentContact);
+    virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentContact) override;
 
 private Q_SLOTS:
 //	void updateAccountId();
