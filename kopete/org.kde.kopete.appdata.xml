@@ -184,7 +184,7 @@
       <li xml:lang="zh-TW">Kopete 包含一些特殊功能，能增強您的即時通訊體驗，大致有訊息加密、訊息封存、以及許多其他有趣且實用的特效效果。</li>
       <li>Kopete supports all commonly used instant messaging protocols, and the Kopete team provides templates for developers to base new plugins on.</li>
       <li xml:lang="ca">El Kopete admet tots els protocols de missatgeria instantània que s'utilitzen habitualment, i l'equip del Kopete proporciona plantilles per als desenvolupadors com a base per als connectors nous.</li>
-      <li xml:lang="ca-valencia">Kopete admet tots els protocols de missatgeria instantània que s'utilitzen habitualment, i l'equip de Kopete proporciona plantilles per als desenvolupadors com a base per als connectors nous.</li>
+      <li xml:lang="ca-valencia">Kopete admet tots els protocols de missatgeria instantània que s'utilisen habitualment, i l'equip de Kopete proporciona plantilles per als desenvolupadors com a base per als connectors nous.</li>
       <li xml:lang="da">Kopete understøtter alle de protokoller som normalt bruges, og Kopete-teamet leverer skabeloner til udviklere som de kan bruge til at skabe nye plugins.</li>
       <li xml:lang="de">Kopete unterstützt alle gängigen Instant-Messaging-Protokolle, und das Kopete-Team stellt Vorlagen für Entwickler bereit, auf denen neue Module basieren können.</li>
       <li xml:lang="el">Το Kopete υποστηρίζει όλα τα γνωστά πρωτόκολλα στιγμιαίων μηνυμάτων και η ομάδα του Kopete παρέχει πρότυπα για προγραμματιστές ως υποδομή για νέα πρόσθετα.</li>
@@ -240,7 +240,7 @@
       <li xml:lang="zh-TW">API 帶給開發者許多功能，以讓支援新的通訊協定簡單化。</li>
       <li>All protocols are plugins and allow for modular installation, configuration, and usage.</li>
       <li xml:lang="ca">Tots els protocols són connectors i permeten la instal·lació, configuració i un ús modular.</li>
-      <li xml:lang="ca-valencia">Tots els protocols són connectors i permeten la instal·lació, configuració i un ús modular.</li>
+      <li xml:lang="ca-valencia">Tots els protocols són connectors i permeten la instalació, configuració i un ús modular.</li>
       <li xml:lang="da">Alle protokoller er plugins og giver mulighed for modulær installation, konfiguration og anvendelse.</li>
       <li xml:lang="de">Alle Protokolle sind als Module ausgeführt und ermöglichen eine modulare Installation, Einrichtung und Nutzung.</li>
       <li xml:lang="el">Όλα τα πρωτόκολλα είναι πρόσθετα και επιτρέπουν αρθρωτή εγκατάσταση, διαμόρφωση και χρήση.</li>
@@ -276,7 +276,7 @@
     <screenshot type="default">
       <caption>Kopete chat</caption>
       <caption xml:lang="ca">Xat del Kopete</caption>
-      <caption xml:lang="ca-valencia">Xat de Kopete</caption>
+      <caption xml:lang="ca-valencia">Chat de Kopete</caption>
       <caption xml:lang="cs">Rozhovor Kopete</caption>
       <caption xml:lang="da">Kopete-chat</caption>
       <caption xml:lang="de">Chat-Fenster von Kopete</caption>
