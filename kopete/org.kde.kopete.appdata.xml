@@ -97,7 +97,7 @@
       The goal of Kopete is to provide users with a single easy-to-use way to access all of their instant messaging systems. The interface puts people first, and is integrated with the system address book to let you access your contacts from other KDE applications.
     </p>
     <p xml:lang="ca">L'objectiu del Kopete és proporcionar als usuaris una única manera fàcil d'accedir a tots els seus sistemes de missatgeria instantània. La interfície posa les persones primer, i s'integra amb la llibreta d'adreces del sistema per a permetre-us accedir als vostres contactes des de les altres aplicacions del KDE.</p>
-    <p xml:lang="ca-valencia">L'objectiu de Kopete és proporcionar als usuaris una única manera fàcil d'accedir a tots els seus sistemes de missatgeria instantània. La interfície posa les persones primer, i s'integra amb la llibreta d'adreces del sistema per a permetre-vos accedir als vostres contactes des de les atres aplicacions de KDE.</p>
+    <p xml:lang="ca-valencia">L'objectiu de Kopete és proporcionar als usuaris una única manera fàcil d'accedir a tots els seus sistemes de missatgeria instantània. La interfície posa les persones primer, i s'integra amb la llibreta d'adreces del sistema per a permetre-vos accedir als vostres contactes des de les altres aplicacions de KDE.</p>
     <p xml:lang="da">Målet med Kopete er at give brugerne én måde til let at få adgang til alle deres straksbesked-systemer. Brugerfladen sætter personerne først, og integreres med systemets adressebog så du kan få adgang til dine kontakter fra andre KDE-programmer.</p>
     <p xml:lang="de">Das Ziel von Kopete ist es, den Benutzern eine einzige, einfach zu bedienende Möglichkeit zum Zugriffauf alle ihre Instant-Messaging-Systeme. In der  Bedienungsoberfläche ist das Adressbuch des Systems integriert, damit Sie auf Ihre Kontakte aus anderen KDE-Anwendungen zugreifen können.</p>
     <p xml:lang="el">Ο στόχος του Kopete είναι να παρέχει στους χρήστες έναν μοναδικό τρόπο διευκόλυνσης πρόσβασης για όλα τα συστήματα διαχείρισης στιγμιαίων μηνυμάτων. Το περιβάλλλον χρήσης δίνει προτεραιότητα στον άνθρωπο και ενσωματώνεται στο βιβλίο διευθύνσεων του συστήματος για να μπορείτε να έχετε πρόσβαση σε επαφές από άλλες KDE εφαρμογές.</p>
@@ -156,7 +156,7 @@
     <ul>
       <li>Kopete features tools to enhance your instant messaging experience, such as message encryption, archiving, and many other fun and useful effects.</li>
       <li xml:lang="ca">El Kopete disposa d'eines per a millorar la vostra experiència de missatgeria instantània, com ara l'encriptatge dels missatges, arxiu i molts altres efectes divertits i útils.</li>
-      <li xml:lang="ca-valencia">Kopete disposa d'eines per a millorar la vostra experiència de missatgeria instantània, com ara l'encriptació dels missatges, arxiu i molts atres efectes divertits i útils.</li>
+      <li xml:lang="ca-valencia">Kopete disposa d'eines per a millorar la vostra experiència de missatgeria instantània, com ara l'encriptació dels missatges, arxiu i molts altres efectes divertits i útils.</li>
       <li xml:lang="da">Kopete har værktøjer til at forbedre din oplevelse med strakbeskeder, såsom beskedkryptering, arkivering og mange andre sjove og nyttige effekter.</li>
       <li xml:lang="de">Kopete bietet Funktionen zur Verbesserung Ihrer Instant-Messaging-Erfahrung, wie z. B. Nachrichtenverschlüsselung, Archivierung und viele andere lustige und nützliche Effekte.</li>
       <li xml:lang="el">Το Kopete περιλαμβάνει εργαλεία βελτίωσης της εμπειρίας με τα στιγμιαία μηνύματα, όπως κρυπτογράφηση μηνυμάτων, αρχειθέτηση και πολλά άλλα διασκεδαστικά και χρήσιμα εφέ.</li>
@@ -184,7 +184,7 @@
       <li xml:lang="zh-TW">Kopete 包含一些特殊功能，能增強您的即時通訊體驗，大致有訊息加密、訊息封存、以及許多其他有趣且實用的特效效果。</li>
       <li>Kopete supports all commonly used instant messaging protocols, and the Kopete team provides templates for developers to base new plugins on.</li>
       <li xml:lang="ca">El Kopete admet tots els protocols de missatgeria instantània que s'utilitzen habitualment, i l'equip del Kopete proporciona plantilles per als desenvolupadors com a base per als connectors nous.</li>
-      <li xml:lang="ca-valencia">Kopete admet tots els protocols de missatgeria instantània que s'utilisen habitualment, i l'equip de Kopete proporciona plantilles per als desenvolupadors com a base per als conectors nous.</li>
+      <li xml:lang="ca-valencia">Kopete admet tots els protocols de missatgeria instantània que s'utilitzen habitualment, i l'equip de Kopete proporciona plantilles per als desenvolupadors com a base per als connectors nous.</li>
       <li xml:lang="da">Kopete understøtter alle de protokoller som normalt bruges, og Kopete-teamet leverer skabeloner til udviklere som de kan bruge til at skabe nye plugins.</li>
       <li xml:lang="de">Kopete unterstützt alle gängigen Instant-Messaging-Protokolle, und das Kopete-Team stellt Vorlagen für Entwickler bereit, auf denen neue Module basieren können.</li>
       <li xml:lang="el">Το Kopete υποστηρίζει όλα τα γνωστά πρωτόκολλα στιγμιαίων μηνυμάτων και η ομάδα του Kopete παρέχει πρότυπα για προγραμματιστές ως υποδομή για νέα πρόσθετα.</li>
@@ -212,7 +212,7 @@
       <li xml:lang="zh-TW">Kopete 支援所有常用的即時通訊協定，且 Kopete 團隊提供開發者範本，以讓開發者能基於這個範本製作新的外掛程式。</li>
       <li>The API provides developers with many features to make it easy to support a new protocol.</li>
       <li xml:lang="ca">L'API proporciona als desenvolupadors moltes funcions per a facilitar el suport d'un protocol nou.</li>
-      <li xml:lang="ca-valencia">La API proporciona als desenvolupadors moltes funcions per a facilitar el soport d'un protocol nou.</li>
+      <li xml:lang="ca-valencia">La API proporciona als desenvolupadors moltes funcions per a facilitar el suport d'un protocol nou.</li>
       <li xml:lang="da">API'et giver udviklerne mange funktioner for at gøre det let at understøtte en ny protokol.</li>
       <li xml:lang="de">Die API bietet Entwicklern viele Funktionen, die Unterstützung eines neues Protokolls erleichtert.</li>
       <li xml:lang="el">Το API παρέχει στους προγραμματιστές πολλές λειτουργίες για τη διευκόλυνση υποστήριξης ενός νέου πρωτοκόλλου.</li>
@@ -240,7 +240,7 @@
       <li xml:lang="zh-TW">API 帶給開發者許多功能，以讓支援新的通訊協定簡單化。</li>
       <li>All protocols are plugins and allow for modular installation, configuration, and usage.</li>
       <li xml:lang="ca">Tots els protocols són connectors i permeten la instal·lació, configuració i un ús modular.</li>
-      <li xml:lang="ca-valencia">Tots els protocols són conectors i permeten la instalació, configuració i un ús modular.</li>
+      <li xml:lang="ca-valencia">Tots els protocols són connectors i permeten la instal·lació, configuració i un ús modular.</li>
       <li xml:lang="da">Alle protokoller er plugins og giver mulighed for modulær installation, konfiguration og anvendelse.</li>
       <li xml:lang="de">Alle Protokolle sind als Module ausgeführt und ermöglichen eine modulare Installation, Einrichtung und Nutzung.</li>
       <li xml:lang="el">Όλα τα πρωτόκολλα είναι πρόσθετα και επιτρέπουν αρθρωτή εγκατάσταση, διαμόρφωση και χρήση.</li>
