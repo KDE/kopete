@@ -29,6 +29,7 @@
   <name xml:lang="sk">Kopete</name>
   <name xml:lang="sl">Kopete</name>
   <name xml:lang="sv">Kopete</name>
+  <name xml:lang="tr">Kopete</name>
   <name xml:lang="uk">Kopete</name>
   <name xml:lang="x-test">xxKopetexx</name>
   <name xml:lang="zh-CN">Kopete</name>
@@ -58,6 +59,7 @@
   <summary xml:lang="sk">Instant Messenger</summary>
   <summary xml:lang="sl">Trenutni sporočilnik</summary>
   <summary xml:lang="sv">Direktmeddelandeklient</summary>
+  <summary xml:lang="tr">Anlık İletileşme</summary>
   <summary xml:lang="uk">Програма для миттєвого зв'язку</summary>
   <summary xml:lang="x-test">xxInstant Messengerxx</summary>
   <summary xml:lang="zh-CN">即时通讯</summary>
@@ -89,6 +91,7 @@
     <p xml:lang="sk">Kopete je instant messenger podporujúci AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger a ďalšie. Je navrhnutý tak, aby bol flexibilným a rozšíriteľným multi-protokolovým systémom vhodným na osobné a podnikové použitie.</p>
     <p xml:lang="sl">Kopete je trenutni sporočilnik, ki podpira protokole AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger in druge. Zasnovan je tako, da je prilagodljiv in razširljiv sistem z več protokoli, primeren za tako za osebno kot za poslovno uporabo.</p>
     <p xml:lang="sv">Kopete är en direktmeddelandeklient som stöder AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger, med flera. Den är konstruerad att vara ett flexibelt och utökningsbart flerprotokollsystem lämpligt för både personlig och företagsanvändning.</p>
+    <p xml:lang="tr">Kopete; AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger ve çok daha fazla protokolü destekleyen bir anlık iletileşme uygulamasıdır. Kişisel ve kurumsal kullanıma uygun olarak esnek ve başka protokollerle genişletilebilir olarak tasarlanmıştır.</p>
     <p xml:lang="uk">Kopete — програма для миттєвого обміну повідомленнями, у якій передбачено підтримку AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger та інших систем зв'язку. Програму створено гнучкою, із можливістю розширення списку протоколів для особистого та службового користування.</p>
     <p xml:lang="x-test">xxKopete is an instant messenger supporting AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger, and more. It is designed to be a flexible and extensible multi-protocol system suitable for personal and enterprise use.xx</p>
     <p xml:lang="zh-CN">Kopete 是一个即时消息软件，它支持 AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger 等协议。它被设计成一个灵活可扩展的多协议系统，适合个人及企业使用。</p>
@@ -119,6 +122,7 @@
     <p xml:lang="sk">Cieľom Kopete je poskytnúť používateľom jednoduchý a ľahko použiteľný spôsob prístupu k všetkým ich systémom okamžitých správ. Rozhranie stavia ľudí na prvé miesto a je integrované so systémovým adresárom, ktorý vám umožní prístup k vašim kontaktom z iných aplikácií KDE.</p>
     <p xml:lang="sl">Cilj Kopeteja je uporabnikom zagotoviti enostaven enostaven način za dostop do vseh njihovih sistemov za takojšnje sporočanje. Vmesnik postavi ljudi na prvo mesto in je integriran s sistemskim imenikom, s katerim lahko dostopate do svojih stikov iz drugih aplikacij KDE.</p>
     <p xml:lang="sv">Kopetes mål är att ge användare ett enda lättanvänt sätt att komma åt alla sina direktmeddelandesystem. Gränssnittet låter människan komma först, och är integrerat med systemets adressbok för att ge tillgång till kontakter från andra KDE-program.</p>
+    <p xml:lang="tr">Kopete'nin ereği, kullanıcılara tüm anlık iletileşme gereksinimleri için tek ve kolay bir çözüm sunmaktır. Arayüzü kullanıcı odaklıdır ve kişilerinize diğer KDE uygulamalarından erişmenize izin vermek için sistem adres defteriyle tümleşiktir.</p>
     <p xml:lang="uk">Метою розробників Kopete є надання користувачам єдиного простого у користуванні способу доступу до їхньої системи обміну повідомленнями. На першому місці у інтерфейсі є користувач. Програму інтегровано із адресною книгою, яка надає вам доступ до записів контактів у інших програмах KDE.</p>
     <p xml:lang="x-test">xxThe goal of Kopete is to provide users with a single easy-to-use way to access all of their instant messaging systems. The interface puts people first, and is integrated with the system address book to let you access your contacts from other KDE applications.xx</p>
     <p xml:lang="zh-CN">Kopete 的目标是给用户提供一个一体化易于使用的访问各种即时消息系统的方法。界面以人为本，与系统地址簿紧密结合，让您可以访问其他 KDE 应用程序中的联系人。</p>
@@ -149,6 +153,7 @@
     <p xml:lang="sk">Funkcie:</p>
     <p xml:lang="sl">Možnosti:</p>
     <p xml:lang="sv">Funktioner:</p>
+    <p xml:lang="tr">Özellikler:</p>
     <p xml:lang="uk">Можливості:</p>
     <p xml:lang="x-test">xxFeatures:xx</p>
     <p xml:lang="zh-CN">功能：</p>
@@ -178,6 +183,7 @@
       <li xml:lang="sk">Kopete obsahuje nástroje na vylepšenie vášho zážitku z posielania okamžitých správ, ako je šifrovanie správ, archivácia a mnoho ďalších zábavných a užitočných efektov.</li>
       <li xml:lang="sl">Kopete vsebuje orodja za izboljšanje izkušnje s trenutnimi sporočili, kot so šifriranje sporočil, arhiviranje in omogoča številne druge zabavne in uporabne učinke.</li>
       <li xml:lang="sv">Kopete har verktyg för att förbättra direktmeddelandeupplevelsen, såsom meddelandekryptering, arkivering, och många andra roliga och användbara effekter.</li>
+      <li xml:lang="tr">Kopete anlık iletileşme deneyiminizi geliştirmek için birçok araç sunar. Bunların arasında ileti şifreleme, arşivleme ve birçok eğlenceli ve kullanışlı efektler bulunur.</li>
       <li xml:lang="uk">У Kopete передбачено засоби, які зроблять зручним обмін повідомленнями, зокрема шифрування повідомлень, архівування, а також багато цікавих і корисних ефектів.</li>
       <li xml:lang="x-test">xxKopete features tools to enhance your instant messaging experience, such as message encryption, archiving, and many other fun and useful effects.xx</li>
       <li xml:lang="zh-CN">Kopete 提供了增强您即时消息体验的工具，例如消息加密，存档，及其他有趣和实用的功能。</li>
@@ -206,6 +212,7 @@
       <li xml:lang="sk">Kopete podporuje všetky bežne používané protokoly okamžitých správ a tím Kopete poskytuje vývojárom šablóny, na ktorých môžu zakladať nové doplnky.</li>
       <li xml:lang="sl">Kopete podpira vse najpogosteje uporabljene protokole za takojšnje sporočanje, ekipa Kopete pa razvijalcem ponuja predloge za razvoj novih vtičnikov.</li>
       <li xml:lang="sv">Kopete stöder alla vanligen förekommande direktmeddelandeprotokoll, och Kopete-gruppen tillhandahåller mallar för utvecklare som nya insticksprogram kan baseras på.</li>
+      <li xml:lang="tr">Kopete tüm yaygın kullanılan anlık iletileşme protokollerini destekler ve Kopete geliştiricileri, başkalarının yeni eklentileri kolaylıkla oluşturabilmeleri içini şablonlar sağlar.</li>
       <li xml:lang="uk">У Kopete передбачено підтримку усіх поширених протоколів миттєвого обміну повідомленнями. Крім того, команда розробників надає зручні шаблони для створення нових додатків.</li>
       <li xml:lang="x-test">xxKopete supports all commonly used instant messaging protocols, and the Kopete team provides templates for developers to base new plugins on.xx</li>
       <li xml:lang="zh-CN">Kopete 支持所有常用即时消息协议。Kopete 团队也为开发者提供了用于开发新插件的模板。</li>
@@ -234,6 +241,7 @@
       <li xml:lang="sk">Rozhranie API poskytuje vývojárom mnoho funkcií, ktoré uľahčujú podporu nového protokolu.</li>
       <li xml:lang="sl">API ponuja razvijalcem številne funkcije, ki olajšajo podporo novemu protokolu.</li>
       <li xml:lang="sv">Programmeringsgränssnittet tillhandahåller många funktioner för utvecklare som gör det enkelt att stödja ett nytt protokoll.</li>
+      <li xml:lang="tr">API, geliştiricilerin yeni protokolleri kolaylıkla destekleyebilmeleri için birçok özellik sunar.</li>
       <li xml:lang="uk">Програмний інтерфейс надає розробникам доступ до багатьох можливостей, які спрощують підтримку нових протоколів.</li>
       <li xml:lang="x-test">xxThe API provides developers with many features to make it easy to support a new protocol.xx</li>
       <li xml:lang="zh-CN">API 为开发者提供了许多功能，让他们可以很容易地支持一个新协议。</li>
@@ -262,6 +270,7 @@
       <li xml:lang="sk">Všetky protokoly sú pluginy a umožňujú modulárnu inštaláciu, konfiguráciu a použitie.</li>
       <li xml:lang="sl">Za vse protokole so vtičniki in omogočajo modularno namestitev, nastavitev in uporabo.</li>
       <li xml:lang="sv">Alla protokoll är insticksprogram som tillåter modulär installation, anpassning och användning.</li>
+      <li xml:lang="tr">Tüm protokoller eklentilerden ibarettir ve modüler kurulum, yapılandırma ve kullanıma izin verir.</li>
       <li xml:lang="uk">Усі протоколи реалізовано як додатки, що уможливлює модульне встановлення, налаштовування та користування програмою.</li>
       <li xml:lang="x-test">xxAll protocols are plugins and allow for modular installation, configuration, and usage.xx</li>
       <li xml:lang="zh-CN">所有协议都由插件支持，可以模块化地安装，配置及使用。</li>
@@ -299,6 +308,7 @@
       <caption xml:lang="sk">Kopete chat</caption>
       <caption xml:lang="sl">Trenutno sporočanje Kopete</caption>
       <caption xml:lang="sv">Kopete chatt</caption>
+      <caption xml:lang="tr">Kopete sohbet</caption>
       <caption xml:lang="uk">Спілкування у Kopete</caption>
       <caption xml:lang="x-test">xxKopete chatxx</caption>
       <caption xml:lang="zh-CN">Kopete 聊天</caption>
