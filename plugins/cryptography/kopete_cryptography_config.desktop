@@ -9,6 +9,7 @@ X-KDE-ParentApp=kopete_cryptography
 X-KDE-ParentComponents=kopete_cryptography
 
 Name=Cryptography
+Name[ar]=التّعمية
 Name[bg]=Шифроване
 Name[bn]=ক্রিপ্টোগ্রাফি
 Name[bs]=Kriptografija
