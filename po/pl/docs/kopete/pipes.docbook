@@ -1,0 +1,189 @@
+<!-- Copyright (c) 2008 by Charles Connell <charles@connells.org
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="pipes">
+<title
+>Podręcznik implementacji potoków w &kopete;</title>
+<para
+>Począwszy od wersji 1.0 &kopete;, &kopete; dostarczane jest z wtyczką nazywaną Potoki. Potoki pozwalają przetworzyć przychodzące lub wychodzące wiadomości przez zewnętrzny skrypt lub program. Przychodząca wiadomość będzie przetworzona przez program zanim zostanie wyświetlona w oknie rozmowy, wychodzące wiadomości będą przetworzone zanim zostaną wysłane do internetu. Potoki mogą otrzymywać tekst w jednej z trzech postaci: <variablelist
+> <varlistentry
+> <term
+>Zwykły tekst</term
+> <listitem
+><para
+>Treść wiadomości w czystym &ascii;</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>&html;</term
+> <listitem
+><para
+>Treść wiadomości w formacie &html;, taka jak wysłana przez kontakt, z którym rozmawiasz, i jaka jest wyświetlona w oknie rozmowy</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Pełna wiadomość &xml;</term
+> <listitem
+><para
+>Dokument &xml; opisujący wszystkie charakterystyki wiadomości, wraz z jej zawartością w formacie &html;.</para
+></listitem
+> </varlistentry
+> </variablelist
+> Ten dokument opisuje specyfikę formatu &xml; oraz przedstawia sposoby pisania programów, które będą mogły go obsługiwać. </para>
+
+<sect1 id="xml-output">
+<title
+>Wyjście &xml;</title>
+<para
+>Poniżej znajduje się przykład tekstu, który program otrzyma na swoim standardowym wejściu:<literallayout>
+&lt;?xml version="1.0" encoding="ISO-8859-1"?>
+&lt;message subject=""
+        route="outbound"
+        importance="1"
+        formattedTimestamp="11:06:46 am"
+        timestamp="Sat Dec 1 11:06:46 2007"
+        type="normal"
+        mainContactId="spacemonkey1234"
+        time="11:06 am" >
+        &lt;from>
+                &lt;contact contactId="tdurden"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/oscarpictures/tdurden.jpg" >
+                        &lt;contactDisplayName dir="ltr" text="tdurden" />
+                        &lt;metaContactDisplayName dir="ltr"
+                                text="Tyler" />
+                &lt;/contact>
+        &lt;/from>
+        &lt;to>
+                &lt;contact contactId="spacemonkey1234"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/avatars/User/7e542903e0ac7519a7496e85f5a5b99d.png" >
+                        &lt;contactDisplayName dir="ltr" text="spacemonkey1234" />
+                        &lt;metaContactDisplayName dir="ltr" text="Robert Paulson" />
+                &lt;/contact>
+                &lt;/to>
+        &lt;body dir="ltr"
+                bgcolor="#000000"
+                color="#000000" >
+                &amp;lt;span style=" color:#000000;"
+>hey&amp;lt;/span
+>&lt;/body>
+&lt;/message>
+</literallayout
+> Ten tekst &xml; bazuje luźno na definicji XSD używanej dla stylów rozmowy, którą można znaleźć na <ulink url="http://kopete.kde.org/files/kopetemessage.xsd"
+>stronie domowej Kopete</ulink
+>. Ten kod dotyczy jednej wiadomości. Należy w nim zwrócić uwagę na kilka kwestii: <itemizedlist>
+<listitem
+><para
+>Atrybut "timestamp" w elemencie "message" zapisywany jest w standardzie ISO 8601.</para
+></listitem>
+<listitem
+><para
+>Atrybut "protocolIcon" w elemencie "contact" zawiera następującą treść: <orderedlist>
+<listitem
+><para
+>Jeżeli kontakt posiada ustawioną fotografię, to wpisywana jest tu ścieżka do pliku.</para
+></listitem>
+<listitem
+><para
+>Jeżeli nie, to procedura MetaContact dla kontaktu jest poproszona o ścieżkę do pliku, która tu zostanie wpisana (niezależnie czy będzie miała wartość "null" czy też nie).</para
+></listitem>
+</orderedlist>
+</para
+></listitem>
+<listitem
+><para
+>Atrybuty "color" oraz "bgcolor" elementu "body" są pustymi napisami jeżeli nie są ustawione w Kopete. Ich wartość zapisana jest w formacie kolorów używanych w sieci WWW.</para
+></listitem>
+<listitem
+><para
+>Zawartość elementu "body" zapisuje znak "&lt;" w postaci sekwencji specjalnej, tak aby nie został uznany za element strukturalny pliku &xml;. Żeby więc poprawnie zinterpretować zawartość jako format HTML, niezbędna będzie konwersja wszystkich "&amp;lt;" na "&lt;".</para
+></listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1 id="xml-input">
+<title
+>Wejście &xml;</title>
+<para
+>Twój program otrzyma treść &xml; na standardowe wejście, można dokonać modyfikacji tej treści, i wysłać z powrotem do &kopete; zapisując ją na standardowym wyjściu. Jeżeli twój program, dokona modyfikacji wymienionych elementów, dane zapisane w &kopete; zostaną zmodyfikowane tak aby odpowiadały twoim oczekiwaniom. <itemizedlist
+> <listitem
+><para
+>element "message" atrybut "timestamp" ale żadne inne atrybuty związane z czasem</para
+></listitem
+> <listitem
+><para
+>"message" atrybut "subject"</para
+></listitem
+> <listitem
+><para
+>"message" atrybut "type"</para
+></listitem
+> <listitem
+><para
+>"message" atrybut "importance"</para
+></listitem
+> <listitem
+><para
+>"body" atrybut "color". Jest on zwykle numerem koloru używanym w sieci, ale może zostać podany jako nazwa. Nazwy określone w dokumentacji formatu<ulink url="http://www.w3.org/TR/SVG/types.html#ColorKeywords"
+>SVG</ulink
+> są akceptowane przez funkcję QColor biblioteki Qt 4, są więc to jedyne nazwy, których można używać.</para
+></listitem
+> <listitem
+><para
+>"body" atrybut "bgcolor" &mdash; takie samo zachowanie jak "color"</para
+></listitem
+> <listitem
+><para
+>zawartość elementu "body"</para
+></listitem
+> </itemizedlist
+> Jeżeli zmodyfikujesz elementy lub atrybuty nie opisane tutaj, twoje zmiany nie wywołają żadnego efektu. </para>
+</sect1>
+
+<sect1 id="acceptable-values">
+<title
+>Dopuszczalne wartości</title>
+<para
+>Niektóre atrybuty posiadają pewne dopuszczalne wartości. Wyjście wtyczki Potoki zawsze będzie zgodne z wartościami dopuszczalnymi. Jednak jeżeli twój program zmieni któreś z nich, to także muszą być zgodna z wartościami dopuszczalnymi.Jeżeli tak nie będzie, to &kopete; może zachować się w sposób nieokreślony. <variablelist>
+<varlistentry
+><term
+>Atrybut "route" w elemencie "message"</term
+><listitem
+><para
+>Dopuszczalne wartości to "inbound", "outbound", lub "internal"</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Atrybut "type" w elemencie "message"</term
+><listitem
+><para
+>Dopuszczalne wartości to "action" lub "normal"</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Atrybut "importance" w elemencie "message"</term
+><listitem
+><para
+>Ważność wiadomości: "0" niska, "1" normalna, oraz "2" wysoka</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Atrybut "dir" w wielu różnych elementach</term
+><listitem
+><para
+>Przyjmuje wartości "ltr" dla tekstu od lewej do prawej, lub "rtl" dla tekstu od prawej do lewej</para
+></listitem
+></varlistentry>
+</variablelist>
+</para>
+</sect1>
+
+</appendix>

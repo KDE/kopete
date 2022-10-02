@@ -1,0 +1,737 @@
+<!-- Copyright (c) 2005 by Michaël Larouche <michael.larouche@kdemail.net
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="chatwindowstyleguide">
+<title
+>Водич за стил прозора за ћаскање у <application
+>Копетеу</application
+></title>
+<sect1 id="chatstyle-reference">
+<title
+>Референца за стил прозора за ћаскање у <application
+>Копетеу</application
+>.</title>
+<para
+>Почев од издања 0.12, <application
+>Копете</application
+> користи <ulink url="http://www.adiumx.com/"
+>Адијумов</ulink
+> формат за стил прозора за ћаскање. Овај формат је заснован на ХТМЛ шаблонима и ЦСС‑у, па је с њиме лако радити и развијати теме — потребно је само познавање ХТМЛ‑а и ЦСС‑а. Стилови такође могу имати варијанте (дефинисане ЦСС фајлом) што додаје на погодност прилагођавања. </para>
+
+<sect2 id="chatstyle-reference-guide">
+	<title
+>Референтни водич</title>
+<para
+>Адијумов формат чини структура фасцикле, ХТМЛ шаблони, ЦСС фајлови и кључне речи које се смењују при сваком обрађивању шаблона. Крајњи разговор је ИксХТМЛ страница, где се поруке додају операцијама над ДОМ‑ом. Централни елемент је <literal
+>div</literal
+> по имену <literal
+>Chat</literal
+>. Пре и после њега иду шаблони <literal
+>Header</literal
+> и <literal
+>Footer</literal
+>. Поруке су деца елемента <literal
+>Chat</literal
+>. </para>
+
+<sect3 id="chatstyle-reference-directory">
+	<title
+>Структура фасцикле</title>
+<para
+>Стил мора да поштује следећу структуру фасцикле. Кад архивирате стил, архивирајте фасциклу названу тачно као име стила. Оваква структура фасцикле следи структуру свежња на МекОС‑у X, ако сте упознати с тим оперативним системом. Морате пазити на величину слова у имену, јер уникс системи разликују величину слова.</para>
+<programlisting
+>styleName\ (може да има суфикс .adiumMessageStyle, јер је свежањ под МекОС‑ом X)
+        Contents\
+                Info.plist
+                Resources\
+                        main.css
+                        Header.html
+                        Footer.html
+                        Status.html
+                        Incoming\ (и Outgoing\)
+                                Content.html
+                                NextContent.html (за узастопне поруке)
+                                Context.html (за историјат порука)
+                                NextContext.html
+                                Action.html
+                        Variants\
+                                *.css
+</programlisting>
+</sect3>
+
+<sect3 id="chatstyle-reference-divinsert">
+	<title
+>О &lt;div id="insert"&gt;&lt;/div&gt;</title>
+	<para
+>Ово је специјални интерни елемент <literal
+>div</literal
+>. Служи као местодржач који показује где уметнути следећу поруку. Ако је то нова порука, овај елемент се смењује целом поруком; ако је то надовезујућа порука, елемент се смењује садржајем поруке. Овај елемент је <emphasis
+>неопходан</emphasis
+> у шаблонима <literal
+>Content</literal
+>, <literal
+>Context</literal
+>, <literal
+>NextContent</literal
+> и <literal
+>NextContext</literal
+>, а може да се стави и у шаблоне <literal
+>Action</literal
+> и <literal
+>Status</literal
+>. </para>
+</sect3>
+
+<sect3 id="chatstyle-reference-templates">
+	<title
+>ХТМЛ шаблони</title>
+
+<variablelist
+><title
+>Опис шаблона</title>
+
+<varlistentry
+><term
+><filename
+>Header.html</filename
+> (неопходно)</term>
+<listitem>
+<para
+>Користите шаблон <literal
+>Header</literal
+> за давање пријатног заглавља разговору. Овај шаблон се умеће испред елемента <literal
+>div</literal
+> у <filename
+>Chat</filename
+>. Ако не желите заглавље, просто ставите празан фајл. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Footer.html</filename
+> (неопходно)</term>
+<listitem>
+<para
+>Углавном исто као и заглавље, али за подножје разговора. Овај шаблон се умеће иза елемента <literal
+>div</literal
+> у <filename
+>Chat</filename
+>. Ако не желите подножје, просто ставите празан фајл. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Status.html</filename
+> (неопходно)</term>
+<listitem>
+<para
+>Овај шаблон се користи за приказивање интерних порука. Интерне поруке су оне попут промена стања и других порука од <application
+>Копетеа</application
+> (нпр. о долазном преносу фајла). Ако стил не садржи шаблон <literal
+>Action</literal
+>, овај шаблон се користи и за поруке радњи. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/Content.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Content.html</filename
+> (неопходно)</term>
+<listitem>
+<para
+>Шаблон <literal
+>Content</literal
+> је језгро поруке. Замислите га као блок који ће држати поруке. Побрините се да може да прима надовезујуће поруке, немојте га дизајнирати за приказивање само једне поруке. Надовезујуће поруке уметаће се на елементу <literal
+>div</literal
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/NextContent.html</filename
+></term>
+              <term
+><filename
+>Outgoing/NextContent.html</filename
+> (неопходно)</term>
+<listitem>
+<para
+>Шаблон <literal
+>NextContent</literal
+> служи за надовезујуће поруке. Умеће се у главни блок порука. ХТМЛ шаблон треба да садржи основни минимум за приказ поруке. </para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry
+><term
+><filename
+>Incoming/Action.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Action.html</filename
+> (опционо) (<application
+>Копетеово</application
+> проширење)</term>
+<listitem>
+<para
+>Овај шаблон је <application
+>Копетеово</application
+> проширење Адијумовог формата. Доступан је за долазни и одлазни смер. Поруке радњи су специјалне поруке којим обавештавамо друге шта радимо. Пример: ако вам је надимак <literal
+>pperic</literal
+> и унесете <userinput
+>/me инсталира <application
+>Копете</application
+></userinput
+>, то ће бити приказано као <computeroutput
+>pperic инсталира <application
+>Копете</application
+></computeroutput
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/Context.html</filename
+></term>
+              <term
+><filename
+>Incoming/NextContext.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Context.html</filename
+></term>
+              <term
+><filename
+>Outgoing/NextContext.html</filename
+> (опционо)</term>
+<listitem>
+<para
+><application
+>Копете</application
+> не користи ове шаблоне. У Адијуму се користе за приказивање историјата. Углавном су исти као <literal
+>Content</literal
+> и <literal
+>NextContent</literal
+>, с малим разликама да би се разликовали од обичних порука. </para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect3>
+
+<sect3 id="chatstyle-reference-css">
+	<title
+>О ЦСС стиловима и варијантама</title>
+	<para
+>ХТМЛ шаблони служе да опишу како се гради структура. Стилови, пак, описани су у ЦСС фајловима. Главни стил је <filename
+>main.css</filename
+>, где су варијанте само прекрајања главног стила. Варијанте могу бити, на пример, различите боје или без приказа фотографија корисника. И <filename
+>main.css</filename
+> и варијанте увози крајња ИксХТМЛ страница.</para>
+	<sect4 id="chatstyle-reference-css-main">
+		<title
+><filename
+>main.css</filename
+></title>
+		<para
+>Ово је главни ЦСС фајл, заједнички за све варијанте. Треба да садржи целокупан опис основног стила.</para>
+	</sect4>
+	<sect4 id="chatstyle-reference-css-variants">
+		<title
+>Варијанте</title>
+		<para
+>Варијанте су ЦСС фајлови у фасцикли <filename
+>Variants/</filename
+>. Свака варијанта је један ЦСС фајл, који укључује <filename
+>main.css</filename
+> и врши измене на главном стилу.</para>
+	</sect4>
+</sect3>
+
+<sect3 id="chatstyle-reference-debug">
+	<title
+>Исправљање стилова</title>
+	<para
+>Ево два савета за испробавање стила током рада на њему.</para>
+	<sect4 id="chatstyle-reference-debug-save">
+		<title
+>Сачувајте узорак разговора.</title>
+		<para
+>У прозору за ћаскање можете <action
+>сачувати</action
+> разговор, као копију интерне ИксХТМЛ странице. Потом је отворите <application
+>К‑освајачем</application
+> ради испробавања својих ЦСС фајлова.</para>
+	</sect4>
+	<sect4 id="chatstyle-reference-debug-disable-cache">
+		<title
+>Искључите кеширање стилова.</title>
+		<para
+>У постави <application
+>Копетеа</application
+> постоји прекидач којим се искључује кеширање стилова. Када је активиран, ХТМЛ шаблони се поново учитавају сваки пут када се стил затражи. Ово је врло корисно за испробавање стила унутар <application
+>Копетеа</application
+>. Додајте следеће редове у фајл <filename
+>~/.kde/share/config/kopeterc</filename
+>:</para>
+		<programlisting
+>[KopeteStyleDebug]
+disableStyleCache=true
+</programlisting>
+	</sect4>
+</sect3>
+
+</sect2>
+
+<sect2 id="chatstyle-reference-keywords">
+	<title
+>Кључне речи</title>
+	<para
+>Кључне речи су налик жлебовима за уметање детаља. При свакој новој поруци, смењују се конкретном вредношћу која одговара том контексту. Ради пуне подршке свим могућностима <application
+>Копетеа</application
+>, проширили смо основни скуп кључних речи Адијума. Неке кључне речи доступне су само у извесним контекстима.</para>
+
+<variablelist
+><title
+>Списак кључних речи за шаблоне заглавља и подножја </title>
+<para
+>Ове кључне речи обрађују се на почетку ћаскања.</para>
+<varlistentry
+><term
+><filename
+>%chatName%</filename
+></term>
+<listitem>
+<para
+>Име текуће сесије ћаскања. За уобичајену сесију, чини га име и стање контакта. На <acronym
+>ИРЦ‑у</acronym
+>, једнако је теми канала. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%sourceName%</filename
+></term>
+              <term
+><filename
+>%destinationName%</filename
+></term>
+<listitem>
+<para
+>Ово су имена контаката за сесију ћаскања. <filename
+>%destinationName%</filename
+> је ваше име. <filename
+>%destinationName%</filename
+> је име контакта с којим ћаскате. Дајте предност <filename
+>%chatName%</filename
+> уместо ових, јер могу бити збуњујућа у групном ћаскању и на <acronym
+>ИРЦ‑у</acronym
+>.  </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%incomingIconPath%</filename
+></term>
+              <term
+><filename
+>%outgoingIconPath%</filename
+></term>
+<listitem>
+<para
+>Аватари, слике, фотографије контаката за сесију ћаскања. Долазне су фотографије контакта, а одлазна је ваша лична. Ако фотографија није расположива, користи се <filename
+>buddy_icon.png</filename
+>, смештена у фасцикли <filename
+>Incoming</filename
+> или <filename
+>Outgoing</filename
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%timeOpened%</filename
+></term>
+              <term
+><filename
+>%timeOpened{X}%</filename
+></term>
+<listitem>
+<para
+>Време почетка сесије ћаскања. <filename
+>%timeOpened%</filename
+> користи подразумевани формат времена за текући локалитет. Ако желите посебан формат, користите <filename
+>%timeOpened{X}%</filename
+>, где је <literal
+>X</literal
+> ниска формата времена. Параметри формата исти су као за функцију <function
+>strftime</function
+> из Ц библиотеке — извршите <command
+>man strftime</command
+> за списак свих параметара. </para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist
+><title
+>Списак кључних речи за шаблоне <literal
+>Content</literal
+>, <literal
+>NextContent</literal
+>, <literal
+>Context</literal
+>, <literal
+>NextContext</literal
+>, <literal
+>Action</literal
+></title>
+<para
+>За сваку поруку обрађују се три кључне речи.</para>
+
+<varlistentry
+><term
+><filename
+>%userIconPath%</filename
+></term>
+<listitem>
+<para
+>Слика, фотографија, аватар контакта придруженог поруци. Ако фотографија није доступна, користи се <filename
+>buddy_icon.png</filename
+> из <filename
+>Incoming</filename
+> или <filename
+>Outgoing</filename
+>, у зависности од смера поруке. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderScreenName%</filename
+></term>
+<listitem>
+<para
+>ИД контакта придруженог поруци. Примери: <literal
+>ja@nedodjija.com</literal
+>
+>, <literal
+>45566576</literal
+>, <literal
+>PeraPeric</literal
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%sender%</filename
+></term>
+<listitem>
+<para
+>Име контакта придруженог поруци. За извор се користи приказно име метаконтакта. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%service%</filename
+></term>
+<listitem>
+<para
+>Име сервиса придруженог поруци. Примери: <literal
+>Jabber</literal
+>, <literal
+>Yahoo</literal
+>, <literal
+>MSN</literal
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%textbackgroundcolor{X}%</filename
+></term>
+<listitem>
+<para
+>У <application
+>Копетеу</application
+> се ова кључна реч користи за задавање боје истицања позадине. Игноришите параметар у заградама, користите само као <filename
+>%textbackgroundcolor{}</filename
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderStatusIcon%</filename
+> (<application
+>Копетеово</application
+> проширење)</term>
+<listitem>
+<para
+>Иконица стања контакта придруженог поруци. Ово је путања фајла. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderColor%</filename
+></term
+>  <term
+><filename
+>%senderColor{N}%</filename
+> (<application
+>Копетеово</application
+> проширење)</term>
+<listitem>
+<para
+>Ствара боју на основу ИД‑а контакта пошиљаоца. Може се употребити за приказивање надимка контакта у другој боји. </para>
+<para
+><filename
+>%senderColor{N}%</filename
+>, где је <literal
+>N</literal
+> позитиван број. Ако је већи од 100, представља светлију боју од контактове. Ако је једнак 150, то је боја светлија за 50%. Ако је мањи од 100, онда је то тамнија боја. Корисно када се жели другачија позадина за сваки контакт. </para>
+<para
+>Ако желите да користите ове боје у варијанти, али не у главном стилу, мораћете заобилазним путем. <programlisting>
+<![CDATA[
+<div style="color:%senderColor%;border:none;border-color:%senderColor{40}%;"
+><p class="message"
+>...</p
+></div>
+]]>
+</programlisting
+> Можете применити боју на елемент <literal
+>p.message</literal
+> у фајлу <filename
+>main.css</filename
+>, а у варијанту ставити нешто овако: <programlisting
+>p.message { color:inherit; border-color:inherit; }
+</programlisting>
+
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist
+><title
+>Списак кључних речи заједничких за поруке и <filename
+>Status.html</filename
+></title>
+
+<varlistentry
+><term
+><filename
+>%message%</filename
+></term>
+<listitem>
+<para
+>Сама порука. Ово је ХТМЛ фрагмент. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%time%</filename
+></term>
+              <term
+><filename
+>%time{X}%</filename
+></term>
+<listitem>
+<para
+>Време кад је порука примљена. <filename
+>%time%</filename
+> користи подразумевани формат времена за текући локалитет. Ако желите посебан формат, користите <filename
+>%time{X}%</filename
+>, где је <literal
+>X</literal
+> ниска формата времена. Параметри формата исти су као за функцију <function
+>strftime</function
+> из Ц библиотеке — извршите <command
+>man strftime</command
+> за списак свих параметара. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%messageDirection%</filename
+> (<application
+>Копетеово</application
+> проширење)</term>
+<listitem>
+<para
+>Представља смер текста поруке, да ли треба да се испише здесна налево или слева надесно. Вредност је или <literal
+>rtl</literal
+> или <literal
+>ltr</literal
+>. Ради правилне употребе ове кључне речи, прочитајте <link linkend="chatstyle-guideline-direction"
+>водиље за смер порука</link
+>. </para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+</sect1>
+
+<sect1 id="chatstyle-guideline">
+	<title
+>Водиље за стил прозора за ћаскање у <application
+>Копетеу</application
+></title>
+<para
+>Водиље за стил прозора за ћаскање чини скуп ствари које стил мора подржавати да би био сагласан са <application
+>Копетеом</application
+>.</para>
+<sect2 id="chatstyle-guideline-highlight">
+	<title
+>Подршка истицања</title>
+	<para
+>Стил мора приказивати истицање. И у <application
+>Копетеу</application
+> и у Адијуму, <filename
+>%textbackgroundcolor{}%</filename
+> мења се бојом истицања. Додајте стилски атрибут <literal
+>background-color: %textbackgroundcolor{}%</literal
+> ХТМЛ елементу који приказује поруку.</para>
+</sect2>
+<sect2 id="chatstyle-guideline-consecutive">
+	<title
+>Неопходни су шаблони за надовезујуће поруке.</title>
+	<para
+>Ова водиља је ту да подсети оне који преписују старе ИксСЛТ стилове на нови формат. Сви стилови морају садржати шаблоне за надовезујуће поруке, јер је то сада подразумевана могућност.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-encoding">
+	<title
+>Користите кодирање УТФ‑8.</title>
+	<para
+>Наслов говори све — фајлови морају бити сачувани као УТФ‑8.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-info">
+	<title
+>Приложите <filename
+>Contents/Info.plist</filename
+> за међуоперативност с Адијумом.</title>
+	<para
+>Фајл <filename
+>Contents/Info.plist</filename
+> још се не користи у <application
+>Копетеу</application
+>. Али, ако желите да стил буде сагласан Адијуму, морате додати овај фајл. Ево основног примера (ниске за замену омотане су знацима <literal
+>$</literal
+>).</para>
+<programlisting
+><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd
+<plist version="1.0">
+<dict>
+        <key
+>CFBundleDevelopmentRegion</key>
+        <string
+>English</string>
+        <key
+>CFBundleGetInfoString</key>
+        <string
+>$Пуно име вашег стила$</string>
+        <key
+>CFBundleIdentifier</key>
+        <string
+>$ИД вашег стила у облику: com.adiumx.smooth.operator.style$</string>
+        <key
+>CFBundleInfoDictionaryVersion</key>
+        <string
+>1.0</string>
+        <key
+>CFBundleName</key>
+        <string
+>$Овде иде име вашег стила$</string>
+        <key
+>CFBundlePackageType</key>
+        <string
+>AdIM</string>
+        <key
+>MessageViewVersion</key>
+        <integer
+>3</integer>
+</dict>
+</plist>
+]]>
+</programlisting>
+
+</sect2>
+
+<sect2 id="chatstyle-guideline-buddyicon">
+	<title
+>Приложите <filename
+>buddy_icon.png</filename
+></title>
+	<para
+>Морате додати фајл слике по имену <filename
+>buddy_icon.png</filename
+> у фасцикле <filename
+>Incoming</filename
+> и <filename
+>Outgoing</filename
+>. Користиће се за контакте који немају сопствену фотографију.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-direction">
+	<title
+>Подржите језике здесна налево, помоћу кључне речи <filename
+>%messageDirection%</filename
+>.</title>
+	<para
+>Кључна реч <filename
+>%messageDirection%</filename
+> дата је ради језика који се пишу здесна налево. Њоме се дефинише смер поруке, као <literal
+>rtl</literal
+> (здесна налево) или <literal
+>ltr</literal
+> (слева надесно). Додајте стилски атрибут <userinput
+>direction: %messageDirection%</userinput
+> ХТМЛ елементу који приказује поруку. Преглед стила у дијалогу за подешавање садржи текст здесна налево, како бисте проверили да ли га стил добро приказује (текст треба да почиње с десне стране).</para>
+</sect2>
+</sect1>
+</appendix>

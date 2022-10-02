@@ -1,0 +1,189 @@
+<!-- Copyright (c) 2008 by Charles Connell <charles@connells.org
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="pipes">
+<title
+>Implementatiegids voor de Pipes-plugin van &kopete;</title>
+<para
+>Beginnend met &kopete; 1.0, wordt &kopete; geleverd met een plugin genaamd Pipes. Pipes stelt u in staat om via een pipe in- of uitgaande berichten te transporteren door een extern script of programma. Een inkomend bericht zal via de pipe door het programma gaan alvorens het uw chat-venster bereikt, terwijl uitgaande berichten via de pipe door het programma gaan alvorens ze verzonden worden over het internet. Pipes kunnen tekst ontvangen in drie vormen: <variablelist
+> <varlistentry
+> <term
+>Platte tekst gedeelte</term
+> <listitem
+><para
+>Het hoofdgedeelte van het bericht in platte &ascii; tekst</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>&HTML; tekst gedeelte</term
+> <listitem
+><para
+>Het hoofdgedeelte van het bericht in &HTML;, alsof uw chat-peer HTML naar u gezonden heeft, die zal worden weergegeven in het chat-venster</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>volledig &XML; bericht</term
+> <listitem
+><para
+>Een &XML;-document dat alle karakteristieken van het bericht beschrijft, inclusief het &HTML; hoofdgedeelte.</para
+></listitem
+> </varlistentry
+> </variablelist
+> Dit document beschrijft de specifieke zaken van het &XML;-formaat en hoe een programma te schrijven dat dit kan behandelen. </para>
+
+<sect1 id="xml-output">
+<title
+>&XML;-uitvoer</title>
+<para
+>Hier is een voorbeeld van wat een programma zal ontvangen in zijn standaard invoer stream: <literallayout>
+&lt;?xml version="1.0" encoding="ISO-8859-1"?>
+&lt;message subject=""
+        route="outbound"
+        importance="1"
+        formattedTimestamp="11:06:46 am"
+        timestamp="Sat Dec 1 11:06:46 2007"
+        type="normal"
+        mainContactId="spacemonkey1234"
+        time="11:06 am" >
+        &lt;from>
+                &lt;contact contactId="tdurden"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/oscarpictures/tdurden.jpg" >
+                        &lt;contactDisplayName dir="ltr" text="tdurden" />
+                        &lt;metaContactDisplayName dir="ltr"
+                                text="Tyler" />
+                &lt;/contact>
+        &lt;/from>
+        &lt;to>
+                &lt;contact contactId="spacemonkey1234"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/avatars/User/7e542903e0ac7519a7496e85f5a5b99d.png" >
+                        &lt;contactDisplayName dir="ltr" text="spacemonkey1234" />
+                        &lt;metaContactDisplayName dir="ltr" text="Robert Paulson" />
+                &lt;/contact>
+                &lt;/to>
+        &lt;body dir="ltr"
+                bgcolor="#000000"
+                color="#000000" >
+                &amp;lt;span style=" color:#000000;"
+>hey&amp;lt;/span
+>&lt;/body>
+&lt;/message>
+</literallayout
+> Deze &XML; is losjes gebaseerd op de XSD die gebruikt wordt voor chat-stijlen gevonden op <ulink url="http://kopete.kde.org/files/kopetemessage.xsd"
+>de Kopete website</ulink
+>. Deze code stelt één bericht voor. Er zijn een paar dingen op te merken: <itemizedlist>
+<listitem
+><para
+>Het attribuut "timestamp" in het "message"-element is in ISO 8601 standaard formaat.</para
+></listitem>
+<listitem
+><para
+>Het attribuut "protocolIcon" in het "contact"-element is als volgt gekozen: <orderedlist>
+<listitem
+><para
+>Als in het Contact-object de foto-eigenschap is ingesteld, dan wordt dat pad gebruikt.</para
+></listitem>
+<listitem
+><para
+>Zo niet, dan wordt het MetaContact van Contact gevraagd naar een afbeeldingspad en dat wordt gebruikt onafhankelijk van of het nul is of niet.</para
+></listitem>
+</orderedlist>
+</para
+></listitem>
+<listitem
+><para
+>De attributen "color" en "bgcolor" in het "body"-element zijn lege tekenreeksen als zij niet in Kopete zijn ingesteld. Zij zijn in "web color format".</para
+></listitem>
+<listitem
+><para
+>De inhoud in het "body"-element heeft "&lt;" escaped, zodat het niet verwart wordt met de actuele &XML;-structuur. Het is duidelijk dat het juist interpreteren van de body als HTML, dat de "&amp;lt;"'s geconverteerd moeten worden naar "&lt;"'s.</para
+></listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1 id="xml-input">
+<title
+>&XML;-invoer</title>
+<para
+>Uw programma ontvangt &XML; in zijn standaard invoerstroom, waarbij het de mogelijkheid heeft het te wijzigen en het dan teruggeven aan &kopete; door middel van zijn standaard uitvoerstroom. Als uw programma de volgende elementen wijzigt, dan zal de interne kennis die &kopete; heeft van het bericht gewijzigd zijn om uw wijzigingen weer te geven. <itemizedlist
+> <listitem
+><para
+>"message"-attribuut "timestamp" maar geen andere tijdattributen</para
+></listitem
+> <listitem
+><para
+>"message" attribuut "subject"</para
+></listitem
+> <listitem
+><para
+>"message" attribuut "type"</para
+></listitem
+> <listitem
+><para
+>"message" attribuut "importance"</para
+></listitem
+> <listitem
+><para
+>"body" attribuut "color". Dit wordt gewoonlijk ingesteld op een webkleurnummer, maar kan op een naam worden ingesteld. De namen gedefinieerd door <ulink url="http://www.w3.org/TR/SVG/types.html#ColorKeywords"
+>SVG</ulink
+> worden geaccepteerd door QColor in Qt 4, zodat zij de enige namen zijn die kunnen worden gebruikt.</para
+></listitem
+> <listitem
+><para
+>"body" attribuut "bgcolor" &mdash; zelfde gedrag als "color"</para
+></listitem
+> <listitem
+><para
+>inhoud van element "body"</para
+></listitem
+> </itemizedlist
+> Als u elementen wijzigt of hun niet hierboven genoemde attributen, dan zullen de wijzigingen van die elementen geen effect hebben. </para>
+</sect1>
+
+<sect1 id="acceptable-values">
+<title
+>Acceptabele waarden</title>
+<para
+>Sommige attributen hebben bepaalde acceptabele waarden. De uitvoer van de Pipes-plugin zal altijd juiste waarden hebben. Als uw programma er voor kiest deze attributen te wijzigen, dan moeten ze juist zijn. Zo niet, dan is het gedrag van &kopete; ongedefinieerd. <variablelist>
+<varlistentry
+><term
+>Attribuut "route" in element "message"</term
+><listitem
+><para
+>Moet zijn "inbound", "outbound" of "internal"</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Attribuut "type" in element "message"</term
+><listitem
+><para
+>Moet "action" zijn of "normal"</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Attribuut "importance" in element "message"</term
+><listitem
+><para
+>Moet "0" zijn voor laag, "1" voor normaal en "2" for hoog</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Attribuut "dir" in veel elementen</term
+><listitem
+><para
+>Moet "ltr" zijn voor links-naar-rechts of "rtl" voor rechts-naar-links</para
+></listitem
+></varlistentry>
+</variablelist>
+</para>
+</sect1>
+
+</appendix>

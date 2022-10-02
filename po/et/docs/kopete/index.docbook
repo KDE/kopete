@@ -1,0 +1,2665 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY kopete "<application
+>Kopete</application
+>">
+  <!ENTITY Will.Stephenson "<personname
+><firstname
+>Will</firstname
+><surname
+>Stephenson</surname
+></personname
+>">
+  <!ENTITY Will.Stephenson.mail "<email
+>lists@stevello.free-online.co.uk</email
+>">
+  <!ENTITY Matt.Rogers "<personname
+><firstname
+>Matt</firstname
+><surname
+>Rogers</surname
+></personname
+>">
+  <!ENTITY Matt.Rogers.mail "<email
+>mattr@kde.org</email
+>">
+  <!ENTITY Michael.Larouche "<personname
+><firstname
+>Michaël</firstname
+><surname
+>Larouche</surname
+></personname
+>">
+  <!ENTITY Michael.Larouche.mail "<email
+>michael.larouche@kdemail.net</email
+>">
+  <!ENTITY Olivier.Goffart "<personname
+><firstname
+>Olivier</firstname
+><surname
+>Goffart</surname
+></personname
+>">
+  <!ENTITY Olivier.Goffart.mail "<email
+>ogoffart@kde.org</email
+>">
+  <!ENTITY Charles.Connell "<personname
+><firstname
+>Charles</firstname
+><surname
+>Connell</surname
+></personname
+>">
+  <!ENTITY Charles.Connell.mail "<email
+>charles@connells.org</email
+>">
+  <!ENTITY package "kopete">
+  <!ENTITY kappname "&kopete;">
+  <!ENTITY im "<acronym
+>IM</acronym
+>">
+  <!ENTITY ascii "<acronym
+>ASCII</acronym
+>">
+  <!ENTITY html "<acronym
+>HTML</acronym
+>">
+  <!ENTITY xml "<acronym
+>XML</acronym
+>">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % Estonian  "INCLUDE">
+  <!ENTITY kopetewww "<ulink url='http://kopete.kde.org'
+>http://kopete.kde.org</ulink
+>">
+  <!ENTITY kopete-menus SYSTEM "menus.docbook">
+  <!ENTITY kopete-chatstyle SYSTEM "chatstyle.docbook">
+  <!ENTITY kopete-pipes SYSTEM "pipes.docbook">
+  <!ENTITY kopete-jabber SYSTEM "jabber.docbook">
+  <!ENTITY kopete-icq SYSTEM "icq.docbook">
+  <!ENTITY kopete-emoticonspec SYSTEM "emoticonspec.docbook">
+]>
+<!--
+Intro (1st draft, Will)
+Getting Started (1st draft, Will)
+        Add an account
+        Go online
+        Start chatting
+Using &kopete; (1st draft, Will)
+        Contact List window
+		Layout
+			Menu
+			Toolbar
+			Contact List view
+			Status bar
+		Set your presence
+		Start a chat
+            	Organising contacts
+                	Adding contacts
+				Metacontacts
+			Grouping Contacts
+				Within Metacontacts
+			Renaming Contacts
+		Configure &kopete;
+		Quit.
+		Shortcuts
+        Chat window
+		Layout
+			Chat members list
+			Status bar (typing notifications, etc )
+			Tabbing
+		Starting group chats
+		Shortcuts
+	        File transfers
+Configuring &kopete; (1st draft, Will)
+	Global Shortcuts
+	Configure Dialog
+		Adding/Editing Accounts (
+		Behaviour
+		Appearance
+	Loading Plugins
+Plugins (Outlined, Will)
+        (Section on each plugin, use, and configuration)
+Menus (Done, Will)
+        (Short description of each menu item)
+FAQ (1st draft, Will)
+Specialized Tasks
+    (Any tricks involving _use_ of Kopete)
+	Command line flags
+Credits (1st draft, Will)
+Appendix: Obtaining and installation (1st draft, Will)
+Appendix: Chat Window Style Guide (1st draft, Michaël)
+-->
+
+<book id="kopete" lang="&language;">
+<bookinfo>
+<title
+>&kopete; käsiraamat</title>
+
+<authorgroup>
+
+<author
+>&Will.Stephenson; &Will.Stephenson.mail;</author>
+<author
+>&Matt.Rogers; &Matt.Rogers.mail;</author>
+<author
+>&Michael.Larouche; &Michael.Larouche.mail;</author>
+
+<othercredit role="translator"
+><firstname
+>Marek</firstname
+><surname
+>Laane</surname
+><affiliation
+><address
+><email
+>bald@starman.ee</email
+></address
+></affiliation
+><contrib
+>Tõlge eesti keelde</contrib
+></othercredit
+> 
+</authorgroup>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>2006-12-15</date>
+<releaseinfo
+>0.12</releaseinfo>
+
+<copyright>
+<year
+>2003, 2004, 2005, 2006, 2007</year>
+</copyright>
+
+<!-- Abstract about this handbook -->
+
+<abstract>
+<para
+>&kopete; on &kde; paljude protokollide kasutamist võimaldav kiirsuhtlemisklient. </para>
+</abstract>
+
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>IM</keyword>
+<keyword
+>Kiirsuhtlus</keyword>
+<keyword
+>Messenger</keyword>
+<keyword
+>Jabber</keyword>
+<keyword
+>IRC</keyword>
+<keyword
+>WLM</keyword>
+<keyword
+>ICQ</keyword>
+<keyword
+>AIM</keyword>
+<keyword
+>Yahoo</keyword>
+<keyword
+>Gadu-Gadu</keyword>
+<keyword
+>GroupWise</keyword>
+<keyword
+>Novell</keyword>
+<keyword
+>WinPopup</keyword>
+<keyword
+>SMS</keyword>
+</keywordset>
+
+</bookinfo>
+
+<chapter id="introduction">
+<title
+>Sissejuhatus</title>
+<!--
+<chapterinfo>
+<authorgroup>
+<author>
+<firstname
+>Will</firstname>
+<surname
+>Stephenson</surname>
+<affiliation
+><address>
+<email
+>lists@stevello.free-online.co.uk</email>
+</address
+></affiliation>
+</author>
+</authorgroup>
+<date
+>2003-10-05</date>
+<releaseinfo
+>0.8</releaseinfo>
+</chapterinfo>
+-->
+<sect1 id="intro-to-kopete">
+<title
+>&kopete; on &kde; kiirsuhtlemisklient.</title>
+<sect2 id="intro-to-kopete-next">
+<title
+>Enne käivitamist...</title>
+<para
+>Kui oled kiirsuhtlemisrakendusi varemgi kasutanud, võid jätta vahele osa <link linkend="getting-started"
+>Alustamine</link
+>, vastasel juhul aga oleks mõtet ka sellest silmad üle lasta.</para>
+</sect2>
+<sect2 id="intro-to-kopete-about">
+<title
+>Mis on &kopete;?</title>
+<para
+>&kopete; on &kde; kiirsuhtlemise (&im;) klientrakendus. See võimaldab sul suhelda väga mitmesuguste kiirsuhtlusteenuste vahendusel. Ühteainsasse rakendusse on koondatud mitmed protokollid, mis muudab elu märgatavalt lihtsamaks, kui su sõbrad või kolleegid kasutavad erinevaid &im; teenuseid. </para>
+<para
+>&kopete; on kujundatud nii, et see sulanduks sujuvalt &kde; töökeskkonda. Kasutajaliides on lihtne ja selge, miski ei tohiks kasutaja tähelepanu häirida. Samal ajal püüab &kopete; &im; keskmesse tuua suhtlemise, kõrvaldades erinevused &im; süsteemide vahel. Üks &kopete; uusi omadusi on niinimetatud <link linkend="organise-contacts-metacontacts"
+>metakontakt</link
+>, mis pakub võimalust koondada erinevad võimalused kellegagi suhelda kontaktide loendis ühe <quote
+>isiku</quote
+> alla. Muud mitme protokolli toetusega kiirsuhtlemisrakendused näitavad ühe ja sama isiku erinevaid &im; kontosid eraldi, mis eriti väheste kogemustega kasutajaid võib kergesti segadusse ajada. &kopete; muudab selles mõttes elu lihtsamaks: metakontakt on omaette isik ja kontaktid meetod selle isikuga suhelda. Kontaktid tunneb metakontakti all hõlpsasti ära väikeste ikoonide järgi, mis tähistavad erinevaid &im; süsteeme, mida saad kasutada antud isikuga suhtlemiseks.</para>
+<para
+>&kopete; on mõeldud igasuguse kogemusega kasutajatele. See toetab ilma täiendava seadistamiseta kohe minimaalset funktsioonihulka, mis muudab kiirsuhtlemise nii lihtsaks kui vähegi võimalik. Kogenumad kasutajad võivad kasutada lisavõimalusi, näiteks statistikat, mida võimaldab &kopete; <link linkend="plugins"
+>pluginate süsteem</link
+>.</para>
+</sect2>
+<sect2 id="intro-to-kopete-web">
+<title
+>&kopete; info veebis</title>
+<para
+>Lisainfo pakkumiseks &kopete; kohta on arendajate meeskond üles seadnud veebilehekülje &kopetewww;. Sealt leiab ka viimased uudised ja uuendused.</para>
+<para
+>Kui soovid meeskonnaga ühendust võtta, siis &kopete; arendajate meililisti leiab aadressil <ulink url="https://mail.kde.org/mailman/listinfo/kopete-devel"
+>https://mail.kde.org/mailman/listinfo/kopete-devel</ulink
+>.</para>
+<para
+>Kui soovid abi veel kiiremini, on võimalik &kopete; arendajatega suhelda IRC kanalil, kus enamasti arutatakse tehnilisi asju (hmm, no mitte päris alati küll). Kanaliga liitumiseks võib kasutada mis tahes IRC rakendust (sealhulgas muidugi ka &kopete;t!): lisa lihtsalt IRC kontakt ning määra serveriks <userinput
+>irc.freenode.org</userinput
+> ja kanaliks <userinput
+>#kopete</userinput
+>. Me ootame sind!</para>
+</sect2>
+</sect1>
+<sect1 id="intro-to-instant-messaging">
+<title
+>Sissejuhatus kiirsuhtlemisse</title>
+<para
+>Mis on üldse kiirsuhtlemine (&im;)? &im; on viis suhelda oma sõpradega interneti vahendusel reaalajas. Esmapilgul võib see kõlada otsekui e-posti kirjeldus. Aga kindlasti oled märganud, kui tüütu on kirja teel suhelda, kui sõnumid on lühikesed. Iga kirja puhul tuleb klõpsata vastamisnupule, leida kirjas koht, kuhu lisada oma sõnad ja siis uuesti klõpsata kõige selle ärasaatmiseks. Ja siis tuleb veel oodata, kuni vastus saabub! &im; võimaldab samasugust suhtlemist peaaegu võrreldavalt telefonivestluse või näost näkku kohtumisega: kirjuta ainult sõnum aknasse, mida näeb ühel ja samal ajal nii sina kui su sõber.</para>
+<para
+>Veel üks oluline erinevus &im; ja e-posti vahel on see, et &im; võimaldab sul näha sõbra kohalolekut, see tähendab, seda, kas ta on parajasti võrgus või mitte. Nii on võimalik saata sõnumeid sõna otseses mõttes reaalajas, mitte aga saata teele kiri ja siis oodata, kuni sõber leiab aega oma postkasti kontrollida. &im; korral ilmub sõnum partneri ekraanile samal hetkel, kui see on teele saadetud. Nojah, samas on muidugi võimalik oma staatust võrgus muuta, et näiteks teised sind alati segama ei pääseks.</para>
+<para
+>&im; ja ühes sellega &kopete; pakub veel palju ahvatlevaid ja tulusaid võimalusi, näiteks grupivestlus, failiedastused, meeleolu peegeldavad emotikonid. Loe edasi ja saad teada!</para>
+</sect1>
+</chapter>
+
+<chapter id="getting-started">
+<title
+>Alustamine</title>
+<para
+>&kopete; kasutamiseks läheb vaja vähemalt üht kontot kiirsuhtlusteenuse jaoks, mida soovid tarvitada.</para>
+<para
+>On tõenäoline, et sul on teenus juba valitud kas seepärast, et oled varemgi &im; kasutaja või siis sellepärast, et sõber on sulle öelnud, millist teenust tema kasutab. Kui mitte, siis võiksid kaaluda mõne avatud standarditele tugineva teenuse kasutamist, sest need sobivad kõige paremini kokku vaba tarkvara vaimuga. Muud kiirsuhtlusteenused kipuvad sageli muutma isegi oma põhilisi omadusi, ilma et nad sellest avalikult teada annaks, mis muudab vaba tarkvara arendajatel päris keeruliseks neid toetada.</para>
+<para
+>Kiirsuhtlusteenused, mida &kopete; toetab ja mis tuginevad avatud standaditele, on Jabber ja IRC.</para>
+<para
+>Järgnevas osas eeldame, et oled &im; teenuse juba registreerinud. Kui mitte, saad Gadu-Gadu, Jabberi ja <trademark
+>WLM</trademark
+> registreerimise ette võtta otse &kopete;st, teiste teenuste korral tuleb ennast esmalt registreerida nende veebilehekülgedel ja alles siis luua vastav konto &kopete;s.</para>
+<sect1 id="creating-accounts">
+<title
+>Konto loomine</title>
+<para
+>Konto loomiseks vali menüükäsk <menuchoice
+><guimenu
+>Seadistused</guimenu
+> <guimenuitem
+>Seadistamine...</guimenuitem
+></menuchoice
+>, mis avab seadistustedialoogi.</para>
+<para
+>Seadistustedialoog on enesestmõistetavalt peamine &kopete; seadistamise ja kohandamise paik. Vasakul servas asuvad ikoonid, mille abil saab valida, millist &kopete; aspekti seadistada. Klõpsa ikoonil <guiicon
+>Kontod</guiicon
+>. Põhipaneel näitab nüüd kontode haldamise kaarti. See on praegu veel tühi, kuid peagi peaks see täituma sinu arvukate &im; kontodega. Klõpsa nupule <guibutton
+>Lisa konto</guibutton
+>, mis avab <interface
+>kontonõustaja</interface
+>.</para>
+<para
+><interface
+>Kontonõustaja</interface
+> aitab sul luua &im; konto. Esimesele leheküljel palutakse valida kiirsuhtlemisteenus. Klõpsa meelepärasel teenusel ja seejärel nupule <guibutton
+>Järgmine</guibutton
+>. Nüüd ilmuval leheküljel tuleb anda teenuse registreerimisandmed.</para>
+<para
+>Enamik teenuseid nõuab vaid kasutajanime või unikaalse identifitseerimisnumbri (<acronym
+>UIN</acronym
+>) ja parooli andmist. Mõned eriteenused, näiteks WinPopup ja <acronym
+>SMS</acronym
+>, nõuavad siiski erikohtlemist, millest tuleb juttu allpool. Leheküljel on veel mõned võimalused, mida saab kasutada enamiku teenuste korral:</para>
+<variablelist>
+<varlistentry
+><term
+>Parool jäetakse meelde</term
+><listitem
+><para
+>Märkimisel salvestab &kopete; parooli, nii et sul ei ole vaja seda iga kord uuesti anda, kui võtad ühendust &im; teenusega. Siiski, kui sulle on oluline turvalisus või soovid piirata ligipääsu &im; kontole, võid jätta selle märkimata.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Ühendumine käivitumisel</term
+><listitem
+><para
+>Märkimisel püüab &kopete; võtta ühendust &im; teenusega kohe rakenduse käivitumisel. Kui kasutada <acronym
+>LAN</acronym
+>, <acronym
+>DSL</acronym
+> või muud <quote
+>alati sees</quote
+> ühendust, on see mõistlik valik. Sissehelistamise kasutajatel oleks aga targem see välja lülitada ja luua ühendus alati käsitsi.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Kui oled kõik &im; üksikasjad sisestanud, jõuad lõpuks leheküljele, kus paikneb nupp <guilabel
+>Lõpeta</guilabel
+> ning seejärel võid sulgeda nii nõustaja kui seadistustedialoogi.</para>
+</sect1
+><!-- creating-accounts -->
+<sect1 id="go-online">
+<title
+>Mine võrku ja hakka aga vestlema!</title>
+<para
+>Nüüd näed, et kontot esindav ikoon on ilmunud &kopete; <interface
+>kontaktide nimekirja</interface
+> akna allosas paiknevale olekuribale. See näitab ühtlasi sinu staatust antud konto puhul. Hiire <mousebutton
+>parema</mousebutton
+> nupu klõpsuga ikoonil avanevast menüüst saad võrku minna. Ajal, mil &kopete; võtab &im; teenusega ühendust, võid näha ikoonil animatsiooni.</para>
+<para
+>Kui oled võrgus, tõmmatakse juhul, kui oled seda &im; teenust varemgi kasutanud, serverilt sinu kontaktid ja neid näidatakse <interface
+>kontaktide nimekirjas</interface
+>. Vestluse alustamiseks klõpsa lihtsalt nimel, mispeale avaneb vestlusaken. Akna ülemises osas leiab aset vestlus ise. Kui soovid midagi öelda, kirjuta see akna alumises osas ja klõpsa nupule <guibutton
+>Saada</guibutton
+>.</para>
+<para
+>Kui oled loonud uue konto, siis kontakte mõistagi ei ole. Vaata osast <link linkend="organise-contacts-adding"
+>Kontaktide lisamine</link
+>, kuidas kontole kontakte lisada.</para>
+<tip
+><para
+>Nupule <guibutton
+>Saada</guibutton
+> klõpsamise asemel võib kasutada vaikimisi kiirklahvi <keycombo action="simul"
+>&Ctrl;&Enter;</keycombo
+>. Seda võib mõistagi ka muuta, kui valida vestlusaknas menüükäsk <menuchoice
+><guimenu
+>Seadistused</guimenu
+><guimenuitem
+>Kiirklahvide seadistamine...</guimenuitem
+></menuchoice
+>.</para
+></tip>
+</sect1
+><!-- go-online -->
+</chapter>
+
+<chapter id="using-kopete">
+<title
+>&kopete; kasutamine</title>
+<para
+>Selles peatükis anname ülevaate &kopete; põhiomadustest. Esmalt vaatame kontaktide nimekirja, kus on näha kõik sinu kontaktid, ning seejärel vestlusakent, kus vestlemine tegelikult aset leiab.</para>
+<sect1 id="contact-list">
+<title
+>Kontaktide nimekiri</title>
+<para
+><interface
+>Kontaktide nimekiri</interface
+> ilmub kohe &kopete; käivitudes. See on põhiline aken, kus saad määrata oma staatuse, alustada vestlust, organiseerida oma kontakte, tegelda &kopete; seadistamisega ja kui miski sind väga sunnib, siis ka rakendusest väljuda.</para>
+<sect2 id="contact-list-layout">
+<title
+>Kontaktide nimekirja akna välimus</title>
+<sect3 id="contact-list-layout-menu"
+><title
+>Menüü</title
+><para
+>Tavaliselt asub menüüriba kontaktide nimekirja kohal. Kui seda seal ei ole, oled selle vahest peitnud, millisel juhul saad riba tagasi kiirklahviga <keycombo action="simul"
+>&Ctrl;<keycap
+>M</keycap
+></keycombo
+>. Menüüd ja selles leiduvat seletab lähemalt <link linkend="menus"
+>menüü struktuurile</link
+> pühendatud peatükk.</para>
+</sect3>
+<sect3 id="contact-list-layout-toolbar"
+><title
+>Tööriistariba</title
+><para
+>Tööriistaribal on &kopete; kõige sagedamini kasutatavad toimingud. Selle väljanägemist saab kohandada menüükäsuga <menuchoice
+><guimenu
+>Seadistused</guimenu
+> <guimenuitem
+>Tööriistaribade seadistamine...</guimenuitem
+></menuchoice
+>. Pane tähele nuppe <guibutton
+>Näidatakse võrgus mitteolevaid kasutajaid</guibutton
+> ja <guibutton
+>Näidatakse tühje gruppe</guibutton
+>. Nende abil saab näidata või peita kontaktid ja grupid, mis ei ole võrgus.</para>
+	<para
+>&kopete; võimaldab äärmiselt lihtsalt määrata oma olekuteadet, mis annab sinu kontaktidele teada su hetketujust või põhjusest, miks sa oled parajasti hõivatud. Klõpsa nupule <guibutton
+>Määra olekuteade</guibutton
+> ja hakka aga teadet kirjutama või vali mõni varem kasutatud teadetest.</para>
+	<para
+><guilabel
+>Kiirotsingu tööriistariba</guilabel
+> võimaldab kiiresti filtreerida kontaktide nimekirja - piisab vaid mõne tähe kirjutamisest.</para>
+</sect3>
+<sect3 id="contact-list-layout-contactlist"
+><title
+>Kontaktide nimekiri</title
+><para
+>Akna põhiosa võtab enda alla <interface
+>kontaktide nimekiri</interface
+>. Siin on kirjas kõik kontaktid korraldatuna gruppidesse, mis sa oled nende jaoks määranud. Gruppe saab avada või sulgeda nende ees seisvale plussmärgile klõpsates. Gruppide järjekorra saab muuta vastupidiseks klõpsuga nimekirja kohal asuvale pealdisele <guilabel
+>Kontaktid</guilabel
+>.</para>
+<para
+><interface
+>Kontaktide nimekirja</interface
+> kontekstimenüü muutub vastavalt sellele, millisel elemendil hiire parema nupuga klõpsati. Gruppidel, <link linkend="organise-contacts-metacontacts"
+>metakontaktidel</link
+> ja &im; süsteemi spetsiifilistel kontaktidel on erinevad võimalused. Kontekstimenüü <interface
+>kontaktide nimekirja</interface
+> tühjal alal võimaldab lisada kontakte või gruppe või muuta nimekirja esitamise võimalusi.</para>
+</sect3>
+<sect3 id="contact-list-layout-statusbar"
+><title
+>Olekuriba</title
+><para
+>Olekuriba näitab ikooni iga loodud &im; konto kohta. Ikoonid esindavad iga konto parajasti valitsevat staatust, mida saab muuta, kui klõpsata ikoonile hiire <mousebutton
+>parema</mousebutton
+> nupuga. </para>
+	<para
+>&kopete; näitab sinu parajasti kehtivat olekuteadet <guilabel
+>olekuribal
+></guilabel
+>. Nurgas asuvale märkuseikoonile klõpsates saad seda muuta või kõrvaldada.</para>
+</sect3>
+</sect2>
+<sect2 id="contact-list-setting-presence">
+<title
+>Oma oleku määramine</title>
+<para
+>Olekust oli paari sõnaga juttu <link linkend="go-online"
+>eelmises peatükis</link
+>. 'Olek' tähendab antud juhul seda, kui nähtav sa oled &im; võrgus. Selleks, et võrku üldse kasutada, tuleb esmalt ühendus luua, et saaksid sõnumeid saata ja saada ning näha teiste olekut. Kui oled juba võrgus, võimaldab enamik &im; süsteeme lasta näidata, mida parajasti teed ja kas soovid üldse vestelda. Selleks on mõeldud spetsiaalsed staatusetüübid, näiteks <emphasis
+>Eemal</emphasis
+> või <emphasis
+>Vestluseks vaba</emphasis
+>. Oleku esitamise viis on igas süsteemis veidi erinev, kuid &kopete; võimaldab mõningat kontrolli kõigi &im; süsteemide üle, määrates sinu olekuks <emphasis
+>Eemal</emphasis
+> või <emphasis
+>Kättesaadav</emphasis
+> kõigis süsteemides korraga.</para>
+<para
+>Konkreetse &im; konto puhul saab staatuse määrata hiire <mousebutton
+>parema</mousebutton
+> nupu klõpsuga konto ikoonile <interface
+>kontaktide nimekirja</interface
+> akna allosas asuval <interface
+>olekuriba</interface
+>l. Konto kontekstimenüü võimaldab valida just sellise staatuse, mis on võimalik antud &im; süsteemis.</para>
+<para
+>Staatuse muutmiseks kõigil kontodel klõpsa nupule <guibutton
+>Staatus</guibutton
+> või kasuta menüükäsku <menuchoice
+><guimenu
+>Fail</guimenu
+> <guimenuitem
+>Staatus</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="contact-list-start-chat">
+<title
+>Vestluse alustamine kontaktide nimekirjast</title>
+<para
+>Vestluse alustamiseks <interface
+>kontaktide nimekirjas</interface
+> nähtava isikuga klõpsa lihtsalt tema nimel. Ilmub <link linkend="chat-window"
+>vestlusaken</link
+>.</para>
+<para
+>Teise võimalusena võib teha kontaktil klõpsu hiire <mousebutton
+>parema</mousebutton
+> nupuga ja valida kas <menuchoice
+><guimenuitem
+>Saada sõnum</guimenuitem
+></menuchoice
+> või <menuchoice
+><guimenuitem
+>Alusta vestlust</guimenuitem
+></menuchoice
+>. <menuchoice
+><guimenuitem
+>Saada sõnum</guimenuitem
+></menuchoice
+> toimib harjumuspärasest veidi erinevalt, saates nimelt ainult ühe sõnumi ilma <interface
+>vestlusakent</interface
+> avamata. Seda saab kasutada sõna otseses mõttes <quote
+>kiirsõnumite</quote
+> saatmiseks.</para>
+</sect2>
+<sect2 id="contact-list-send-file">
+	<title
+>Faili saatmine</title>
+	<para
+>Faile võib saata otse <interface
+>kontaktide nimekirjast</interface
+>, kasutades selle isiku kontekstimenüüd, kellele soovid faili saata. Kui Kopete toetab antud &im; süsteemi korral failiedastust, on kontekstimenüüs kirje <menuchoice
+><guimenuitem
+>Saada fail...</guimenuitem
+></menuchoice
+> Teine võimalus on lohistada fail kuskilt mujalt &kde;-st kontakti nimele, mis samuti käivitab failiedastuse.</para>
+</sect2>
+<sect2 id="organise-contacts">
+<title
+>Kontaktide korraldamine</title>
+<sect3 id="organise-contacts-metacontacts">
+<title
+>Metakontaktid</title>
+<para
+>Üks &kopete; põhimõtteid on pakkuda &im; süsteemide kasutamiseks standardset viisi. Erinevate &im; süsteemide kasutamise hõlbustamiseks on püütud siluda nendevahelisi erinevusi. Me järgime seda põhimõtet ka kontaktide korraldamisel. &kopete; kasutamisel näed kontakte nimepidi, see, millist &im; süsteemi kasutatakse, on vähemtähtsam. Mõnelgi on enam kui üks &im; konto ning &kopete; seab esikohale kontot kasutava isiku.</para>
+<para
+>Selle eesmärgiga on &kopete; loonud <quote
+>metakontaktid</quote
+>, mis esindavad isikut, kellega soovid vestelda. Üks metakontakt sisaldab antud isiku kõiki erinevaid &im; ID-sid, mis võimaldab metakontaktile pilku heites kohe näha, kas isik on kättesaadav, seda sõltumata sellest, millist &im; süsteemi ta parajasti kasutab.</para>
+</sect3>
+<sect3 id="organise-contacts-grouping">
+<title
+>Kontaktide grupeerimine</title>
+<para
+>&kopete; võimaldab kontaktide sorteerimiseks luua gruppe. Üks kontakt võib kuuluda enam kui ühte gruppi. Kui võimalik, salvestatakse grupid ka serveri kontaktide nimekirja, nii et kui kasutad mõnda muud &im; rakendust, on grupid samasugused. Kui aga muudad gruppe mõnda muud &im; rakendust kasutades, ei ole &kopete;l võimalik automaatselt metakontakti liigutada ja sa pead seda tegema ise käsitsi.</para>
+<para
+>Metakontakti grupi muutmiseks saab tarvitada kontekstimenüüd ja selle abil metakontakti liigutada või kopeerida uude gruppi või lihtsalt grupist eemaldada. Ka siin saab kasutada lohistamist - lohista metakontakt lihtsalt mõne muu grupinime peale.</para>
+</sect3
+><sect3 id="organise-contacts-adding">
+<title
+>Kontaktide lisamine</title>
+<para
+>Kontakti lisamiseks vali menüükäsk <menuchoice
+><guimenu
+>Fail</guimenu
+><guimenuitem
+>Lisa kontakt</guimenuitem
+></menuchoice
+> või klõpsa tööriistaribal nupule <guibutton
+>Lisa</guibutton
+>. Mõlemad võimalused avavad kontakti lisamise nõustaja.</para>
+<para
+>Kontakti lisamise nõustaja loob uue metakontakti, kasutades üht või enamat &im; süsteemi. Sinu ette ilmuvad järgmised leheküljed:</para>
+
+<orderedlist>
+<listitem
+><para
+>Tervituslehekülg. Siin saad valida, kas kasutada antud kontakti jaoks &kde; aadressiraamatut. &im; info salvestamine &kde; aadressiraamatusse lubab teistel &kde; &im; rakendustel jagada kontakti kohta käivat infot &kopete;ga ning edaspidi võivad &kde; rakendused pruukida &kopete; abi info saatmiseks &im; vahendusel. Kui eelistad hoida oma &im; kontaktid eraldi, ära kasti märgi.</para
+></listitem>
+<listitem
+><para
+>&kde; aadressiraamatu kirje valimine. Valides kirje oma &kde; aadressiraamatust, võid lasta sealolevat nime näidata &kopete;s ekraaninimena. Siin saab luua ka uue kirje. Seda lehekülge ei näidata, kui sa ei ole valinud &kde; aadressiraamatu kasutamist.</para
+></listitem>
+<listitem
+><para
+>Näidatava nime ja grupi valimine. Siin saab määrata näidatava nime (nime, mille all antud isik esineb &kopete;s) ning valida <link linkend="organise-contacts-grouping"
+>grupi(d)</link
+>, kuhu see isik kuulub.</para
+></listitem>
+<listitem
+><para
+>&im; konto valimine. Siin saab valida, millist kontot kasutada uue kontakti vestlemisel. Kui sul on endale loodud ainult üks &im; konto, seda lehekülge ei näidata.</para
+></listitem>
+<listitem
+><para
+>Konkreetse kontoga seotud kontakti lisamise leheküljed. Iga konto kohta ilmub lehekülg, kus saab sisestada <acronym
+>UIN</acronym
+>, semu nime või e-posti aadressi vastavalt sellele, mida antud &im; süsteem nõuab.</para
+></listitem>
+<listitem
+><para
+>Lõpetamise lehekülg. Nojah, see ongi lõpetamiseks, nagu nimi ütleb. Kui just valitud &im; süsteem ei nõua enne kontakti lisamist nimekirja autentimist (nagu näiteks <trademark
+>ICQ</trademark
+>), millisel juhul ilmub pärast nõustaja kadumist parooli ja/või kasutajanime küsimise dialoog.</para
+></listitem>
+</orderedlist>
+
+<para
+>Olemasolevale metakontaktile saab kontakte lisada kontekstimenüü abil.</para>
+</sect3>
+
+<sect3 id="organise-contacts-renaming">
+<title
+>Kontaktide ümbernimetamine</title>
+<para
+>Kontakti ümbernimetamiseks vali menüükäsk <menuchoice
+><guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>Nimeta kontakt ümber</guimenuitem
+></menuchoice
+> või sama käsk metakontakti kontekstimenüüst.</para>
+<para
+>Mõned &im; süsteemid lubavad määrata <quote
+>näidatava nime</quote
+>, mis erineb sinu kasutajanimest, näiteks <quote
+>Älis armastab porgandit!</quote
+>. Kui muudad kontakti nime käsitsi, tühistab see nende valitud näidatava nime. Selle taasnägemiseks ava antud kontakti omaduste dialoog ja märgi ära kast <guilabel
+>Serveri antud nime kasutamine</guilabel
+>.</para>
+</sect3>
+<sect3 id="organise-contacts-removing">
+<title
+>Kontaktide eemaldamine</title>
+<para
+>Kui sa ei soovi mingit kontakti enda kontaktide nimekirjas näha, võid eemaldada metakontakti ja kõik sellesse rühmitatud kontaktid käsuga <menuchoice
+><guimenu
+>Metakontakti kontekstimenüü</guimenu
+><guimenuitem
+>Eemalda kontakt</guimenuitem
+></menuchoice
+>.</para>
+</sect3>
+<sect3 id="organise-contacts-moving-contact">
+<title
+>Kontaktide liigutamine metakontaktide vahel</title>
+<para
+>Metakontakti, kuhu kontakt kuulub, on võimalik muuta. Tegelikult on seda vaja teha ainult siis, kui oled lisanud &kopete;le arvukalt kontakte ja tead, et HotDog76 ning mikejones@hotmail.com on tegelikult üks ja sama isik.</para>
+<para
+>Seda saab teha kahel moel:</para>
+<variablelist>
+<varlistentry
+><term
+>Lohistamine</term
+><listitem
+><para
+>Kontakti ikooni paremal pool metakontakti nime võib lohistada ühest metakontaktist teise.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Kontakti kontekstimenüü</term
+><listitem
+><para
+>Kontaktide kontekstimenüü (klõps hiire <mousebutton
+>parema</mousebutton
+> nupuga kontakti ikoonile) võimaldab valida uue metakontakti.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Kui liigutamisel jääb metakontakt tühjaks (selle all ei ole enam ühtegi kontakti), päritakse sinu käest, kas soovid kontakti kustutada.</para>
+</sect3>
+<sect3 id="organise-contacts-removing-contacts-">
+<title
+>Kontaktide eemaldamine metakontaktidest</title>
+<para
+>Kontakti eemaldamiseks metakontaktist vali <menuchoice
+><guimenu
+>Kontakti kontekstimenüü</guimenu
+><guimenuitem
+>Kustuta kontakt...</guimenuitem
+></menuchoice
+>.</para>
+</sect3>
+</sect2>
+<sect2 id="contact-list-configure">
+<title
+>&kopete; seadistamine</title>
+<para
+>&kopete; seadistamiseks vali menüükäsk <menuchoice
+><guimenu
+>Seadistused</guimenu
+><guimenuitem
+>Seadistamine...</guimenuitem
+></menuchoice
+>. Täpsemalt räägib sellest <link linkend="configuring"
+>järgmine peatükk</link
+>.</para>
+</sect2>
+<sect2 id="contact-list-quit">
+<title
+>&kopete; töö lõpetamine</title>
+<para
+>&kopete;st väljumiseks võib kasutada menüükäsku <menuchoice
+><guimenu
+>Fail</guimenu
+><guimenuitem
+>Välju</guimenuitem
+></menuchoice
+>, kiirlahvi <keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> või &kopete; süsteemse salve ikooni kontekstimenüüd. Kui sulged ainult <interface
+>kontaktide nimekirja</interface
+> akna, jätkab &kopete; tööd &kde; süsteemses salves.</para>
+</sect2>
+<sect2 id="contact-list-shortcuts">
+<title
+>Kiirklahvid</title>
+<para
+><interface
+>Kontaktide nimekirja</interface
+> aknas saab kasutada järgmisi kiirklahve:</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Kiirklahv</entry>
+<entry
+>Toiming</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+><keycap
+>Nool üles</keycap
+></entry>
+<entry
+>Valib kontaktide nimekirjas eelmise elemendi.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Nool alla</keycap
+></entry>
+<entry
+>Valib kontaktide nimekirjas järgmise elemendi.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Nool vasakule</keycap
+></entry>
+<entry
+>Sulgeb grupi.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Nool paremale</keycap
+></entry>
+<entry
+>Avab grupi.</entry>
+</row>
+<row>
+<entry
+>&Enter;</entry>
+<entry
+>Alustab vestlust valitud kontaktiga.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>M</keycap
+></keycombo
+></entry>
+<entry
+>Näitab/peidab menüüriba.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>U</keycap
+></keycombo
+></entry>
+<entry
+>Näitab/peidab võrgus mitteolevad kasutajad.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>G</keycap
+></keycombo
+></entry>
+<entry
+>Näitab/peidab tühjad grupid.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect2>
+</sect1
+><!-- contact-list -->
+
+<sect1 id="chat-window">
+<title
+>Vestlusaken</title>
+<sect2 id="chat-window-layout"
+><title
+>Vestlusakna välimus</title>
+<sect3 id="chat-window-layout-chatview"
+><title
+>Vestlusvaade</title
+><para
+>Vestlusvaade võtab tavaliselt enda alla enamiku vestlusaknast ning just seal käibki tegelikult vestlus sinu ja su kontakti(de) vahel. Sõnumid ilmuvad järjekorras, nagu need on saadetud - kõige hilisem kõige viimasena.</para>
+<para
+><interface
+>Vestlusvaate</interface
+> välimust saab mõistagi ka <link linkend="configuring-appearance"
+>muuta</link
+>, et see näeks välja nagu mõnes muus &im; kliendis või siis oleks täiesti isikupärane.</para>
+</sect3>
+<sect3 id="chat-window-layout-memberslist"
+><title
+>Vestluse liikmete nimekiri</title>
+<para
+>Kuna mõned &im; süsteemid võimaldab grupivestlust, võib olla üsna kasulik näha, kes parajasti vestluses osalevad. Vestluse liikmete nimekiri on näha vasakul või paremal pool vestlusvaadet. Seda saab muuta menüükäsuga <menuchoice
+><guimenu
+>Seadistused</guimenu
+><guisubmenu
+>Vestluse liikmete nimekiri</guisubmenu
+></menuchoice
+>. Nimekirjas saab kasutada kontakti kontekstimenüüd.</para
+></sect3>
+<sect3 id="chat-window-layout-input-area"
+><title
+>Sisestamisala</title
+><para
+>Sisestamisala asub vestlusvaate all. See on koht, kuhu saad enne saatmist kirjutada oma sõnumi. Tööriistariba vahendeid kasutades saab muuta sõnumi fonti ja värvi. Kui &im; süsteem seda toetab, saavad sinu vestluspartnerid sõnumeid värvilisena näha.</para
+><para
+>Vaikimisi on kiirklahv sõnumite saatmiseks &Enter;.</para
+></sect3>
+<sect3 id="chat-window-layout-statusbar"
+><title
+>Olekuriba</title
+><para
+>Olekuriba vahendab ajutisi sõnumeid, näiteks märguandeid, kui keegi teine parajasti sõnumit kirjutab. Samuti paikneb seal nupp <guibutton
+>Saada</guibutton
+></para
+></sect3>
+<sect3 id="chat-window-layout-tabbing"
+><title
+>Kaardid</title
+><para
+>&kopete; võimaldab ka mitu vestlust ühte aknasse koondada, kasutades nende mahutamiseks igale vestlusele omaette kaardi eraldamist. Kaartide pealdised muudavad värvi, kui saabuma peaks uus sõnum:</para>
+<variablelist>
+<varlistentry
+><term
+>Punane</term
+><listitem
+><para
+>Keegi kirjutas sõnumi.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Roheline</term
+><listitem
+><para
+>Keegi kirjutab sõnumit.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Sinine</term
+><listitem
+><para
+>Keegi kirjutas sõnumi, kus esines sinu hüüdnimi.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Grupeerimist saab mitmeti kontrollida. Selle üldisi seadistusi saab määrata &kopete; seadistustedialoogi käitumise kaardi vestluse alamkaardil. Vestlusi saab ka akende vahel liigutada menüü <menuchoice
+><guimenu
+>Kaardid</guimenu
+></menuchoice
+> abil, samuti saab määrata, kus ja kuidas peavad kaardid aknas paiknema.</para
+></sect3>
+</sect2>
+<sect2 id="chat-window-group">
+<title
+>Grupivestlused &kopete;s</title>
+<para
+>&kopete; abil saab vestelda nii ühe isikuga kui ka grupiviisiliselt, kui &im; süsteem viimast võimalust toetab.</para>
+<para
+>Teiste vestlusse kutsumiseks lohista kutsutav kontaktide nimekirjast vestlusaknasse või kasuta menüükäsku <menuchoice
+><guimenu
+>Vestlus</guimenu
+><guisubmenu
+>Kutsu</guisubmenu
+><guimenuitem
+>&lt;kontakti nimi&gt;</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="chat-window-file-xfer">
+<title
+>Failiedastused</title>
+<para
+>Mõned &im; süsteemid lubavad ka faile saata ja saada. Seda võimalust saab tarvitada kontakti kontekstimenüü vahendusel. Kui oled juba vestluses ja soovid saata faili, lohista see lihtsalt kuskilt mujalt &kde;-st vestlusaknasse või vali menüükäsk <menuchoice
+><guimenu
+>Vestlus</guimenu
+><guisubmenu
+>Saada fail</guisubmenu
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="chat-window-shortcuts">
+<title
+>Kiirklahvid</title>
+<para
+>Vestlusaknas saab kasutada järgmisi kiirklahve:</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Kiirklahv</entry>
+<entry
+>Toiming</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+>&Enter;</entry>
+<entry
+>Saadab <interface
+>sisestamisalas</interface
+> kirjutatud sõnumi.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>P</keycap
+></keycombo
+></entry>
+<entry
+>Trükib vestlusvaate sisu.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>S</keycap
+></keycombo
+></entry>
+<entry
+>Salvestab vestlusvaate sisu.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>W</keycap
+></keycombo
+></entry>
+<entry
+>Sulgeb aktiivse vestlusvaate. Kui aknas rohkem kaarte ei ole, suletakse ka vestlusaken tervikuna.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>,</keycap
+></keycombo
+></entry>
+<entry
+>Liigub eelmisele kaardile.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>.</keycap
+></keycombo
+></entry>
+<entry
+>Liigub järgmisele kaardile.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>B</keycap
+></keycombo
+></entry>
+<entry
+>Haagib vestlusekaardi lahti ja paigutab eraldi aknasse.</entry>
+</row>
+<row>
+<entry
+>&Tab;</entry>
+<entry
+>Lõpetab osaliselt kirjutatud hüüdnime.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect2>
+
+</sect1
+><!-- chat-window -->
+</chapter
+><!-- Using-kopete -->
+
+<chapter id="configuring">
+<title
+>&kopete; seadistamine</title>
+<para
+>&kopete; seadistamist saab ette võtta menüü <menuchoice
+><guimenu
+>Seadistused</guimenu
+></menuchoice
+> abil. </para>
+<sect1 id="configuring-global-shortcuts">
+<title
+>Üldised kiirklahvid</title>
+<para
+>&kopete; kasutab mõningaid kiirklahve, mis kehtivad kõigis KDE rakendustes.</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Üldised kiirklahvid</entry>
+<entry
+>Toiming</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>I</keycap
+></keycombo
+></entry>
+<entry
+>Sõnumi lugemine. Kasulik, kui oled <interface
+>kontaktide nimekirja</interface
+> akna peitnud ja süsteemses salves asuv ikoon annab märku, et on saabunud uus sõnum.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>C</keycap
+></keycombo
+></entry>
+<entry
+>Näitab/peidab (dokib) <interface
+>kontaktide nimekirja</interface
+> akna. <emphasis
+>Hoiatus:</emphasis
+> kui oled keelanud &kopete; ikooni süsteemses salves või sul sellist paneeliosa polegi, võib selle käsuga <interface
+>kontaktide nimekiri</interface
+> sootuks kaduma panna ja siis on ainus võimalus seda tagasi saada käsku korrata.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect1>
+
+<sect1 id="configure-dialog">
+<title
+>&kopete; seadistustedialoog</title>
+<sect2 id="configuring-accounts">
+<title
+>Kontode lisamine ja muutmine</title>
+<para
+>Me juba rääkisime osas <link linkend="getting-started"
+>Alustamine</link
+> lühidalt, kuidas kontot lisada. Konto seadistuste muutmiseks ava <guilabel
+>&kopete; seadistuste</guilabel
+> dialoog (menüükäsuga <menuchoice
+><guimenu
+>Seadistused</guimenu
+><guimenuitem
+>Seadistamine...</guimenuitem
+></menuchoice
+>) Sarnaselt &kde; Süsteemi seadistustele on seadistused jagatud mitme kaardi vahel. Ikoonid vasakus servas võimaldavad ühelt seadistustegrupilt teisele lülituda.</para>
+<para
+>Kontokaardil saab kontosid <link linkend="creating-accounts"
+><guibutton
+>lisa</guibutton
+>da</link
+>, <guibutton
+>eemalda</guibutton
+>da või <guibutton
+>muuta</guibutton
+>. Konto muutmine on sarnane lisamisega, kuid pane tähele, et UIN, semu nime või muude selliste elementide, mida sinu &im; süsteem kasutab konto tuvastamiseks, muutmine ei ole võimalik. Kui soovid selliseid asju muuta, on mõttekam lisada uus konto uute põhitunnustega (ja pärast seda vahest ka vana konto eemaldada).</para>
+<para
+>Üht ja sama &im; süsteemi kasutavaid erinevaid kontosid saab hõlpsasti eristada, kui anda iga konto olekuriba kirjele ja kontakti ikoonidele meelepärane värv. Selleks vali konto ja klõpsa paremal pool asuvale värvivalijale. </para>
+<para
+>Kontode prioriteeti saab muuta nuppudega <guiicon
+>Üles</guiicon
+> ja <guiicon
+>Alla</guiicon
+>. Kui sul on kontakti suhtlemiseks mitu viisi, määrab see ära &im; süsteemi, mida &kopete; kasutab nendega suhtlemiseks.</para>
+</sect2>
+<sect2 id="global-identity">
+<title
+>Globaalne identiteet</title>
+<para
+>&kopete; globaalne identiteet võmaldab määrata enda hüüdnime ja foto korraga kõigile &im; kontodele. Üksikasjad võib hankida &kde; aadressiraamatu enda kohta käivast kirjest või mõnest sinu kontaktist, aga muidugi võid ka valida täiesti uue hüüdnime või foto. Kui sulle meeldib salapärasus, siis võid luua mitu identiteeti ja nende vahel lülituda sektsioonis <guilabel
+>Identiteet</guilabel
+>.</para>
+</sect2>
+<sect2 id="configuring-behavior">
+<title
+>Käitumine</title>
+<para
+>Käitumine võimaldab määrata, kuidas &kopete; sulandub töökeskkonda, millised on <emphasis
+>eemaloleku</emphasis
+> seadistused ja milline näeb välja rakendus ise.</para>
+<sect3 id="configuring-behavior-general">
+<title
+>Kaart Üldine</title>
+<para
+>Siin saab kohandada &kopete; töökeskkonda sulandumise valikuid ning määrata, kuidas esitatakse kontaktide nimekiri.</para>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Näidatakse ikooni süsteemses salves</guilabel
+></term>
+<listitem>
+<para
+>Vaikimisi lisab &kopete; ikooni &kde; süsteemsesse salve. Kui see sulle aga ei meeldi, võid selle siin keelata.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Käivitamine peidetud peaaknaga</guilabel
+></term>
+<listitem>
+<para
+>Selle valimisel käivitatakse &kopete; nii, et <interface
+>kontaktide nimekirja</interface
+> aken on peidetud (dokitud). Selle saab muuta nähtavaks klõpsuga süsteemse salve ikoonil või <link linkend="configuring-global-shortcuts"
+>kontaktide nimekirja näitava/peitva globaalse kiirklahviga</link
+>.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Sõnumid avatakse otsekohe</guilabel
+></term>
+<listitem>
+<para
+>Uued sõnumid avatakse vestlusaknas kohe, kui nad saabuvad.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Sõnumid seatakse järjekorda</guilabel
+></term>
+<listitem>
+<para
+>Sõnumite järjekord on koht, kuhu &kopete; seab sõnumid, kui vestlusaken ei ole avatud. See lubab sul teada saada uutest sõnumitest esilehüppavate <quote
+>õhupallide</quote
+> või süsteemse salve vilkumisega. Kui otsustad seda mitte valida, avatakse uue sõnumi saabudes vestlusaken.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Sõnumid seatakse pinusse</guilabel
+></term>
+<listitem>
+<para
+>Kui kasutad sõnumipinu, näitab &kopete; viimati saadud sõnumeid alates viimasest saadud sõnumist.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-general-notifications">
+<title
+>Märguanded</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Õhupall uue sõnumi saabudes</guilabel
+></term>
+<listitem>
+<para
+>Selle võimalusega saab lasta näidata <quote
+>õhupalli</quote
+>, mis kerkib uue sõnumi saabudes esile süsteemse salve ikoonist. Seejärel võid alustada vestlust või sõnumit ignoreerida. Sõnumist eraldatakse &URL;-id ja kui sa viidale klõpsad, avab eelistatud brauser viida ning sõnum kaob.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Paneeliikooni vilgutamine uue sõnumi saabudes</guilabel
+></term>
+<listitem>
+<para
+>Selle valimisel hakkab süsteemse salve ikoon uue sõnumi saabudes vilkuma. Ikoonile klõpsates näidatakse sõnumit vestlusaknas.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Sündmuste lubamine eemalolekul</guilabel
+></term>
+<listitem>
+<para
+>Kui sa ei soovi, et märguanded sind häiriksid, kui oled valinud oma staatuseks <emphasis
+>eemal</emphasis
+>, siis eemalda kastist märge.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Helide ja sündmuste seadistamine</guilabel
+></term>
+<listitem>
+<para
+>&kopete; toetab helisid, tegumirea kirjete vilgutamist, passiivseid hüpikaknaid ja eksootilisemaidki märguandeid &kde; märguannete süsteemi vahendusel. Kirjuta &konqueror;is asukohareale <userinput
+>help:/kcontrol/kcmnotify</userinput
+> või vali Süsteemi seadistuste abikaardil <guilabel
+>Süsteemsed märguanded</guilabel
+>, kui soovid selle kohta rohkem teada saada.</para>
+<para
+>Omaloodud märguande lisamiseks kontaktile klõpsa kontaktide nimekirjas kontakti nimel hiire parema nupuga ja vali Omadused. Seal on võimalik lasta vestlust alustada, mängida mis tahes heli või näidata mõnda teadet, Kohandatud märguande jaoks saab kasutada ka võimalust <quote
+>Käivitatakse programm</quote
+>. Kui sul on näiteks paigaldatud <application
+>XOSD</application
+> (X On-Screen Display ehk teadete ekraanil näitamise süsteem), võid saada OSD märguande, kui lased pärast sündmust <quote
+>Kasutaja tuli võrku</quote
+> käivitada järgmise käsu:</para>
+<para
+><userinput
+>echo %s | osd_cat -o 100 -p bottom -A center -f -*-helvetica-*-r-*-*-24-*-*-*-*-*-*-* -O 2 -c gold</userinput
+></para>
+<para
+>&kde; foorumil pakkus OhReally välja võimaluse lasta teadaandeid ette lugeda kõnesüntesaatoril, kasutades selleks järgnevalt ära programmi <ulink url="http://mambo.ucsc.edu/psl/mbrola"
+>MBROLA</ulink
+>:</para>
+<para
+><userinput
+>echo %s | sed -e 's/online/onlaain/i' | /usr/local/bin/mbrdico.dutch.female</userinput
+></para>
+<para
+>Keskel asetsev 'sed' fonetiseerib &kopete; väljundi, et see hollandi keeles õigemini ja paremini kõlaks.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-away">
+<title
+>Eemaloleku seadistus</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Eemaololekust teatatakse kõigis avatud vestlustes</guilabel
+></term>
+<listitem
+><para
+>Selle võimalusega tasuks ettevaatlik olla: nii saadetakse sinu eemaloleku teade kõigisse avatud vestlustesse, mida mõned inimesed võivad aga pidada pealetükkivaks käitumiseks.</para
+></listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-away-auto">
+<title
+>Automaatne eemalolek</title>
+<para
+>Siin saab määrata &kopete; automaatselt seadma sinu staatuseks eemaloleku pärast teatud tegevusetuse perioodi.</para>
+</sect4>
+<sect4 id="configuring-behavior-away-messages">
+<title
+>Eelnevalt määratud eemalolekusõnumid</title>
+<para
+>Siin saab määrata nii palju meelepärases vormis eemalolekusõnumeid, kui süda vähegi lustib, ning hiljem nende seast valida, kui kavatsed olla <emphasis
+>eemal</emphasis
+>, kasutades nuppu <guibutton
+>Staatus</guibutton
+>, mille leiab <link linkend="contact-list-layout-toolbar"
+>peamiselt tööriistaribalt</link
+>.</para>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-chat">
+<title
+>Vestluse seadistused</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Uue sõnumi saabudes tõstetakse aken/kaart esile</guilabel
+></term>
+<listitem
+><para
+>Selle valimisel ilmub vestlusaken uue sõnumi saabudes nähtavale.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Sündmusi näidatakse vestlusaknas</guilabel
+></term>
+<listitem
+><para
+>Mõned &im; süsteemid annavad lisainfot, näiteks vestlusega liituvate või sellest lahkuvate isikute kohta. Selle võimalusega saab lasta selliseid teateid vestlusaknas näidata.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Tõstetakse esile oma hüüdnime sisaldavad sõnumid</guilabel
+></term>
+<listitem
+><para
+>See tõstab lihtsalt vestluses esile sõnumid, milles esineb sinu hüüdnimi. Esiletõstmist ja muid sündmusi saab täpsemalt seadistada <link linkend="plugins-highlight"
+>esiletõstmise plugina</link
+> abil.</para
+></listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-chat-interface">
+<title
+>Liidese valikud</title>
+<para
+>&kopete; võib saata sõnumeid <quote
+>saada ja unusta</quote
+> liidesega, mille puhul vastust ära ei oodata, või vestlusaknas, kus on näha kogu vestluse käik. Siin saabki valida, kumba viisi vaikimisi kasutada.</para>
+</sect4>
+<sect4 id="configuring-behavior-chat-grouping">
+<title
+>Vestlusakna grupeerimispoliitika</title>
+<para
+>Kui soovid grupeerida vestlused ühe akna erinevatele kaartidele, võimaldab &kopete; sul valida mitme viisi vahel, kuidas grupeerimist teostada.</para>
+<itemizedlist>
+<listitem
+><para
+>Kõik sõnumid avatakse uues vestlusaknas</para
+></listitem>
+<listitem
+><para
+>Ühelt kontolt saabuvad sõnumid grupeeritakse ühte vestlusaknasse</para
+></listitem>
+<listitem
+><para
+>Kõik sõnumid grupeeritakse ühte vestlusaknasse</para
+></listitem>
+<listitem
+><para
+>Ühe grupi kontaktide sõnumid grupeeritakse ühte vestlusaknasse</para
+></listitem>
+<listitem
+><para
+>Ühe metakontakti sõnumid grupeeritakse ühte vestlusaknasse</para
+></listitem>
+</itemizedlist>
+</sect4>
+<sect4 id="configuring-behavior-chat-lines">
+<title
+>Vestlusakna ridade arvu piiramine</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Maks. ridu vestlusaknas</guilabel
+></term>
+<listitem
+><para
+>See piirab tekstiridade arvu, mida vestlusaknas näidatakse.</para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect4>
+</sect3>
+</sect2
+> <!-- configuring-behavior -->
+<sect2 id="configuring-appearance">
+<title
+>Välimus</title>
+<para
+>Välimusseadistused puudutavad vestlusakna stiili, värve ja fonte, samuti saab siin valida meelepärased emotikonid.</para>
+<sect3 id="configuring-appearance-emoticons">
+<title
+>Emotikonid</title>
+<para
+>Emotikonid (ehk smiley'd) kujutavad endast teatud sümbolite kombinatsioone, näiteks <userinput
+>;-)</userinput
+>, mis sarnaneb naeratava näoga, ning võimaldavad edastada tundeid. &kopete; võib sümbolitele lisaks kasutada ka graafilisi emotikone.</para>
+<para
+>Sellel kaardil saad valida meelepärase emotikonikogu või lülitada graafiliste emotikonide kasutamise üldse välja.</para>
+<!--FIXME uncomment when chapter id="specialised" has content
+<para
+>See <link linkend="specialised"
+>Specialized Actions</link
+> for details of how to install extra emoticon sets.</para>
+-->
+</sect3>
+<sect3 id="configuring-appearance-chat">
+<title
+>Vestlusaken</title>
+<sect4 id="configuring-appearance-chat-styles">
+<title
+>Stiilid</title>
+<para
+>Vestlusakna stiile saab muuta, et see sarnaneks mõne muu rakendusega, samuti on võimalik siin luua täiesti omanäoline stiil. Paigaldatud stiilid on näha vasakul asuvas loendis, paremal näeb, millised nad välja näevad. Omaenda stiili loomist tutvustab osa <link linkend="chatwindowstyleguide"
+>Vestlusakna stiili juhised</link
+>.</para>
+<para
+>Kolmanda poole loodud stiile leiab aadressilt <ulink url="http://kde-look.org"
+>http://kde-look.org</ulink
+>. Alates &kopete; versioonist 0.12 on toetatud Adiumi (&Mac; OS X kiirsuhtlusrakendus) stiilid. Adiumi stiile saab tõmmata siit: <ulink url="http://www.adiumxtras.com/"
+>Adium Xtras</ulink
+> (vali Message View Styles).</para>
+<para
+>Stiili paigaldamiseks klõpsa <guibutton
+>Paigalda...</guibutton
+> Vali stiili sisaldav arhiivifail. Stiili kustutamiseks vali nimekirjas stiil ja klõpsa <guibutton
+>Kustuta</guibutton
+>.</para>
+<para
+>Väga tore võimalus on <guilabel
+>Liitsõnumite rühmitamine</guilabel
+>. Selle sisselülitamisel koondatakse ühe kasutaja järjestikused sõnumid ühte, ilma et korrataks saatja nime.</para>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-general-contactlist">
+<title
+>Kontaktide nimekiri</title>
+<variablelist>
+<varlistentry>
+	<term
+><guilabel
+>Metakontaktid seatakse gruppidesse</guilabel
+></term>
+<listitem>
+<para
+>Seda välja lülitades peidetakse &kopete; grupid ning kontaktid jaotatakse <guilabel
+>võrgusolevateks kontaktideks</guilabel
+> ja <guilabel
+>võrgus mitteolevateks kontaktideks</guilabel
+>.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Näidatakse puustruktuuri</guilabel
+></term>
+<listitem>
+<para
+>Tavaliselt esitab &kopete; kontaktid ja grupid puuna, kus grupi liikmed on trepitud. Kui soovid lihtsamat esitust, võid selle keelata, mis eemaldab kontaktide nimekirjast igasugused taanded. Samuti saab määrata, millised puuharud treppida.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Kontakti näitamise režiim</guilabel
+></term>
+<listitem>
+	<para
+>Kontaktide nimekirja saab lasta väga mitmel moel näidata. Vahest suuremat huvi peaks pakkuma võimalus <guilabel
+>Kontakti foto kasutamine võimaluse korral</guilabel
+>, mille korral kontaktide nimekirjas näidatakse nende fotosid, mida nad ise on valinud või mis leiduvad &kde; aadressiraamatus.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Kontaktide nimekirja animatsiooni</guilabel
+></term>
+<listitem>
+	<para
+>Siin saab määrata, mil määral kasutatakse kontaktide nimekirjas animatsioone. Selle võimaluse keelamine muudab &kopete; aeglasematel masinatel märksa kiiremaks.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Kontaktide nimekirja automaatne peitmine</guilabel
+></term>
+<listitem>
+	<para
+>Seda lubades peidetakse kontaktide nimekiri automaatselt mõni sekund pärast seda, kui hiirekursor aknast lahkub.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Muuda kohtspikrite sisu...</guilabel
+></term>
+<listitem>
+	<para
+>Ilmuvas dialoogis saab igati kontrollida, kui palju või kui vähe üksikasju näidatakse kontaktide nimekirja kohtspikrites.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+<sect3 id="configuring-appearance-colors-fonts">
+<title
+>Värvid ja fondid</title>
+<sect4 id="configuring-appearance-colors-fonts-chat">
+<title
+>Vestlusakna värvid</title>
+<para
+>Siin saab muuta vestluseks kasutatavat põhifonti ja teksti värve.</para>
+</sect4>
+<sect4 id="configuring-appearance-colors-fonts-overrides">
+<title
+>Vormindus tühistab</title>
+<para
+>Kui sinu kontaktid kipuvad valima fonte ja värve, mis sulle ei meeldi, võid lasta &kopete;l neid eirata ja kasutada endale meeldivat fonti.</para>
+</sect4>
+<sect4 id="configuring-appearance-colors-fonts-contactlist">
+<title
+>Kontaktide nimekiri</title>
+<para
+>Mõned &im; süsteemid võimaldavad näha, kas kontaktid on arvuti taga jõude. See võimalus lubab muuta jõude kontaktide jaoks kasutatavat värvi.</para>
+</sect4>
+</sect3>
+</sect2
+> <!-- configuring-appearance -->
+<sect2 id="configuring-devices">
+<title
+>Seadmed</title>
+<para
+>Seadmete kaardil saab valida, milliseid multimeediaseadmeid kasutad audio-videovestluseks, ja neid seadistada. Kas need seadmed ka töötavad, sõltub ennekõike sinu riistvarast ja sellest, kui hästi operatsioonisüsteem neid seadmeid toetab.</para>
+<sect3 id="configuring-devices-video">
+<title
+>Video</title>
+<para
+>&kopete; kasutab pildi edastamiseks Video4Linuxi süsteemi. See näitab sinist ruutu, kui videoseadet ei leitud, või eelvaatlust, kui kaamera töötab. Uusimat teavet &kopete; veebikaamerate toetuse kohta leiab <ulink url="http://userbase.kde.org/Kopete/Webcam_Support"
+>Kopete veebikaamerate toetuse wiki-leheküljelt</ulink
+>.</para>
+</sect3>
+<sect3 id="configuring-devices-audio">
+<title
+>Audio</title>
+	<para
+>&kopete; helitoetus on veel katsetamise järgus. Kui sa näed audiokaarti, kasutad nähtavasti &kopete; arendusversiooni.</para>
+</sect3>
+</sect2>
+</sect1>
+
+<sect1 id="configuring-load-plugins-dialog">
+<title
+>Pluginate laadimine</title>
+<para
+>&kopete;le on võimalik lisada spetsiaalseid funktsioone, millest võib olla omajagu kasu või mis pakuvad vähemalt lõbu. Ava selleks <guilabel
+>pluginate valimise ja seadistamise</guilabel
+> paneel (menüükäsuga <menuchoice
+><guimenu
+>Seadistused</guimenu
+><guimenuitem
+>Seadistamine...</guimenuitem
+></menuchoice
+> ja siis kirje <guilabel
+>Pluginad</guilabel
+>).</para>
+<para
+>Pluginad võib sisse või välja lülitada vasakul asuvas loendis. Neid seadistada saab dialoogi parempoolses osas. Vaata pluginate täpsemat kirjeldust <link linkend="plugins"
+>vastavas peatükis</link
+>.</para>
+</sect1>
+</chapter
+> <!-- configuring -->
+
+<chapter id="protocols">
+	<title
+>&kopete; protokollid</title>
+	<para
+>&kopete; nimetab erinevaid &im; süsteeme 'protokollideks'. Kui lisad konto, lisad selle konkreetsele protokollile. Ehkki &kopete; üritab muuta kiirsuhtlemise väliselt ühelaadseks sõltumata sellest, millist protokolli parajasti kasutad, on siiski nende vahel teatud erinevused mõningates detailides, näiteks failide edastamises või multimeedia kasutamises.</para>
+	<sect1 id="protocols-list">
+		<title
+>Protokollid</title>
+		<sect2 id="protocols-aim">
+			<title
+>AIM</title>
+			<para
+>AIM toetab jututubasid. Kasuta jututoaga liitumiseks AIM-i konto menüüs käsku <guilabel
+>Ühine vestlusega...</guilabel
+> Toetatud on ka kontaktide pildid ja omaloodud emotikonid.</para>
+		</sect2>
+		<sect2 id="protocols-icq">
+			<title
+>ICQ</title>
+			<para
+>ICQ pakub nähtamatuse võimalust, mis lubab ennast varjata valitud kontaktide eest. Kontakti lisades saab ka otsida ICQ kasutajate kataloogist. Terve rea kontaktide üksikasju saab kindlaks määrata valikuga <guilabel
+>Omadused</guilabel
+>.</para>
+		</sect2>
+		<sect2 id="protocols-msn">
+			<title
+>WLM</title
+> 
+			<para
+>Toetatud on failide edastamine ja mitme kasutajaga vestlused. Faili saatmiseks lohista see &dolphin;ist või töölaualt vestlusaknasse. Kellegi vestlusse kutsumiseks lohista ta kontaktide nimekirjast vestlusaknasse. Samu käske sisaldab menüü <menuchoice
+><guimenu
+>Fail</guimenu
+></menuchoice
+>. WLM toetab ka omaloodud emotikone.</para>
+			<para
+>Failide edastamiseks kontrolli, et port 6891 on suunatud sinu arvutisse.</para>
+		</sect2>
+		<sect2 id="protocols-yahoo">
+			<title
+>Yahoo</title>
+			<para
+>Yahoo võib saata ja vastu võtta veebikaamera videot. Konto menüüst on toetatud ka Yahoo postkast ja aadressiraamat. Samuti saab pidada konverentskõnesid.</para>
+		</sect2>
+		<sect2 id="protocols-jabber">
+			<title
+>Jabber</title>
+			<para
+>Jabber ehk XMPP toetab failide edastamist, konverentskõnesid ja kõiki muid teenuseid, mida toetab Jabberi server. Nii on paljudel Jabberi serveritel kasutajate kataloog, mõned aga pakuvad ühendusvõimalusi teiste kiirsuhtlemissüsteemidega. Teenuste kasutamiseks vali konto menüüst käsk <menuchoice
+><guimenu
+>Teenused...</guimenu
+></menuchoice
+> Jabberi failide edastamine võib toimuda pordi suunamiseta, aga see kulgeb palju paremini, kui kasutatakse otseühendust. Vaikimisi kasutatakse pordi suunamiseks porti 8010, aga seda saab iga konto all eraldi seadistada.</para>
+		</sect2>
+		<sect2 id="protocols-gtalk">
+			<title
+>Google Talk</title>
+			<para
+>Et Google Talki aluseks on Jabber, on see &kopete;s väga hästi toetatud, välja arvatud häälvestlus, mille kallal alles töötatakse.</para>
+			<para
+>&kopete; seadistamiseks Google Talki kasutama anna enda kasutajanimena oma täielik Google Maili aadress. Märgi ära valikud <guilabel
+>Protokolli krüptimise kasutamine(SSL)</guilabel
+>, <guilabel
+>Lihttekstiga parooli autentimise lubamine</guilabel
+> ja <guilabel
+>Serveri vaikeinfo jäetakse arvestamata</guilabel
+>. Server on <quote
+>talk.google.com</quote
+> või <quote
+>gmail.com</quote
+> ja kasutada tuleb porti 443 või 5223.</para>
+		</sect2>
+		<sect2 id="protocols-groupwise">
+			<title
+>Novell GroupWise</title>
+			<para
+>GroupWise Messenger on firma Novell, Inc. põhiliselt ettevõtetele mõeldud kiirsuhtlemissüsteem. See toetab väga paljusid võimalusi, sealhulgas privaatsus, grupivestlused, vormindatud tekst ja kasutajate otsing.</para>
+		</sect2>
+		<sect2 id="protocols-gadu-gadu">
+			<title
+>Gadu-Gadu</title>
+			<para
+>Gadu-Gadu on Poolast pärit vestlussüsteem. Praegu toetab &kopete; põhilisi vestlusfunktsioone.</para>
+		</sect2>
+		<sect2 id="protocols-winpopup">
+			<title
+>WinPopup</title>
+			<para
+>WinPopup on &kopete; viis saata ja saada sõnumeid kohtvõrgus olevatelt &Windows; masinatelt. Winpopupi protokoll toetab ainult lihttekstisõnumeid.</para>
+		</sect2>
+		<sect2 id="protocols-others">
+			<title
+>Teised protokollid</title>
+			<para
+>Lisaks mainitud protokollidele toetab &kopete; veel mõnda protokolli. Enamasti ei ole need vaikimisi sisse lülitatud või tuleb nende kasutamiseks paigaldada lisaplugin. Sellisteks protokollideks on Meanwhile, SMS, Skype ja SILC. Täpsemalt räägib neist &kopetewww;, kuid arvesta, et &kopete; meeskond ei võta endale vastutust nende protokollide toimimise eest.</para>
+		</sect2>
+	</sect1>
+</chapter>
+	
+<chapter id="plugins">
+<title
+>&kopete; pluginad</title>
+<para
+>&kopete; pakub mitmeid pluginaid funktsioonidega, mis ei ole küll sõnumite saatmisel eluliselt vajalikud, kuid võivad mitmetele isikutele pakkuda täiendavaid ja meelepäraseid võimalusi.</para>
+<sect1 id="plugins-list">
+<title
+>Pluginad</title>
+<!-- disabled from build in 4.11/master sect2 id="plugins-alias">
+<title
+>Alias</title>
+<para
+><guilabel
+>Alias</guilabel
+> lets you define your own commands, &eg; /hello, in &kopete; that run scripts and output the result in the chat window.  If you know how the alias Unix command works, this is just the same</para>
+</sect2-->
+<sect2 id="plugins-auto-replace">
+<title
+>Automaatne asendamine</title>
+<para
+><guilabel
+>Automaatne asendamine</guilabel
+> võimaldab parandada sagedamini valesti kirjutatavaid sõnu või hoida kokku aega, kirjutades lühendi, mis plugina abil automaatselt asendatakse pikemaga.</para>
+</sect2>
+<sect2 id="plugins-bookmarks">
+<title
+>Järjehoidjad</title>
+<para
+><guilabel
+>Järjehoidjate</guilabel
+> plugin loob sinu &kde; järjehoidjatesse uued järjehoidjad nende URL-ide põhjal, mida saad &im; sõnumites.</para>
+</sect2>
+<!-- was removed with Revision 732681
+sect2 id="plugins-connection-status">
+<title
+>Connection Status</title>
+<para
+><guilabel
+>Connection Status</guilabel
+> is useful for modem users or others who don't have a permanent Internet connection.  It watches for an active Internet connection and sets your accounts online when it detects you have dialed up.</para>
+</sect2-->
+<sect2 id="plugins-contact-notes">
+<title
+>Kontakti märkmed</title>
+<para
+><guilabel
+>Kontakti märkmed</guilabel
+> võimaldavad kirja panna mis tahes tulusat infot metakontakti kohta.</para>
+</sect2>
+<sect2 id="plugins-cryptography">
+<sect2info>
+<authorgroup>
+<author
+>&Olivier.Goffart; &Olivier.Goffart.mail;</author>
+<author
+>&Charles.Connell; &Charles.Connell.mail;</author>
+</authorgroup>
+<date
+>2007-10-14</date>
+<releaseinfo
+>1.3.0</releaseinfo>
+</sect2info>
+
+<title
+>Krüpto</title>
+<para
+>Krüptoplugin võimaldab saata ja saada krüptitud ja/või allkirjastatud sõnumeid.</para>
+<para
+>Krüptoplugin võimaldab kasutada OpenPGP programmi vestluses saadetavate sõnumite krüptimiseks ja allkirjastamiseks. Pane tähele, et see ei ole sama, mis SSL-iga turvatud vestlusseanss. Krüptoplugin võib krüptida sinu sõnumid konkreetsele isikule, nii et ainult sobiva võtme omanik saab neid lugeda. Kui soovid, et sõnumite saaja saaks kontrollida, et just sina sõnumid saatsid, võid need allkirjastada. Allkirjastamist ja krüptimist võib kasutada koos või eraldi. Kui saad krüptitud sõnumi, näed lukuikooni. Kui see on allkirjastatud verifitseeritava allkirjaga (sul on saatja avalik võti), näed pliiatsiikooni. Mitteverifitseeritava allkirja korral näeb punast pliiatsiikooni.</para>
+<para
+>Krüptoplugina seadistamiseks vali oma privaatvõti plugina seadistustedialoogis. Seejärel vali, kasutades iga metakontakti kontekstimenüüs käsku <menuchoice
+><guimenuitem
+>Vali avalik võti...</guimenuitem
+></menuchoice
+>, nende avalik võti. Pluginat kasutades küsitakse sinu käest paroolifraasi.</para>
+<para
+>Piirangute tõttu mõningates kiirsuhtlusprotokollides, mida &kopete; kasutab, ei saa nende protokollide puhul krüptitud sõnumeid saata. Kui sa seda siiski teha püüad, näed hoiatust.</para>
+<para
+>Krüptoplugin võib kasutada kõigi kontaktide puhul sinu &kde; aadressiraamatusse salvestatud avalikke võtmeid. Siiski peab ta sel juhul teadma, milline aadressiraamatu kirje on seostatud millise metakontaktiga. Selle teabe andmiseks vali metakontakti kontekstimenüüst Omadused ja määra seejärel kindlaks Aadressiraamatu link. Krüptoplugin võib ka eksportida avalikud võtmed, mida sa oled määanud oma aadressiraamatus. Kui metakontaktil on aadressiraamatu link, läheb võti õigesse aadressiraamatu kirjesse, asendades olemasoleva. Kui linki pole (näiteks seepärast, et kõne all oleva isiku jaoks puudub aadressiraamatu kirje), luuakse uus kirje. Selle juures on täidetud kaks välja: &kopete;st pärit avalik võti ja metakontakti näidatav nimi.</para>
+<para
+>Dokumentatsiooni autoriõigus &copy;: &Olivier.Goffart; &Olivier.Goffart.mail; ja &copy; 2007 &Charles.Connell; &Charles.Connell.mail;</para>
+</sect2>
+<sect2 id="plugins-highlight">
+<title
+>Esiletõstmine</title>
+<para
+><guilabel
+>Esiletõstmine</guilabel
+> sarnaneb mõnevõrra e-posti filtriga selles mõttes, et vastavalt sõnumi teatud parameetrile võetakse midagi ette. Lisaks teksti esiletõstmisele võib selle abil lasta kõlada helil.</para>
+</sect2>
+<!--FIXME History2 missing
+Another history plugin based on sqlite.
+Most important changes:
+- based on sqlite3 instead of xml-files
+- import history button in config dialog
+- import option added for the other xml-based history-plugin
+- pidgin import improved
+- test and skip duplicates on import (so it is possible to synchronize
+  regularly from a windows-pidgin installation for example)
+- more speed in most cases
+The main reason I began to rewrite the complete plugin was, that I had
+dataloss by importing from pidgin with the old history plugin.
+The months, which where imported from pidgin, did overwrite the kopete
+history. This was unacceptable.
+-->
+<sect2 id="plugins-history">
+<title
+>Ajalugu</title>
+<para
+><guilabel
+>Ajaloo</guilabel
+> plugin salvestab aktiveerimise korral vestlused mis tahes &im; süsteemis ning lubab vanu vestlusi hiljem üle vaadata. Sisselülitamisel ilmub iga metakontakti kontekstimenüüsse käsk <menuchoice
+><guimenuitem
+>Ajalugu</guimenuitem
+></menuchoice
+>, mis võimaldabki vaadata antud metakontakti vestluste ajalugu.</para>
+<para
+>Kontaktide nimekirja menüüsse lisatakse järgmine kirje:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>Vaata ajalugu</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Võimalik ainult kontakti valimisel) See näitab ajaloobrauserit valitud kontakti kohta käiva ajalooga.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para
+>Vestlusakna menüüsse lisatakse järgmised kirjed:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Alt;&Shift;<keycap
+>Nool vasakule</keycap
+></keycombo
+> </shortcut
+> <guimenu
+> Tööriistad</guimenu
+> <guimenuitem
+>Eelmine ajalugu</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Võimaldab vaadata vestlusaknas ajaloo vanuselt järgmist sõnumivalikut.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Alt;&Shift;<keycap
+>Nool paremale</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Tööriistad</guimenu
+> <guimenuitem
+>Järgmine ajalugu</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Näitab vestlusaknas ajaloo vanuselt eelmist sõnumivalikut.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Tööriistad</guimenu
+> <guimenuitem
+>Viimane ajalugu</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Näitab vestlusaknas ajaloo uusimat sõnumivalikut.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="plugins-kopetex">
+<title
+>KopeteTeX</title>
+<para
+>KopeteTeX lubab teadlastel ja matemaatikutel kasutada oma vestlustes märkekeelt LaTeX. $$ vahel sisetatud avaldisi renderdatakse vestlusaknas graafikana ning neid võib lõigata ja asetada nagu LaTeX'it ikka. Selle plugina kasutamiseks peab mõistagi LaTeX olema paigaldatud.</para>
+</sect2>
+<!-- Revision 732090 don't compile motionautoaway. it's moving back to playground
+sect2 id="plugins-motion-auto-away">
+<title
+>Motion Auto-Away</title>
+<para
+>In conjunction with a webcam and the <application
+>Video4Linux</application
+> package, this lets you detect when you're no longer at your computer and have &kopete; automatically become <emphasis
+>Away</emphasis
+>.</para>
+</sect2-->
+<sect2 id="plugins-now-listening">
+<title
+>Praegu kuulan</title>
+<para
+>Plugina <guilabel
+>Praegu kuulan</guilabel
+> abil saab anda isikutele, kellega vestled, teada, mida parajasti kuulad, kirjutades vestlusse <userinput
+>/media</userinput
+> või valides menüükäsu <menuchoice
+><guimenu
+>Tööriistad</guimenu
+><guimenu
+>Saada multimedia info</guimenu
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="plugins-otr">
+<title
+>OTR</title>
+<para
+><guilabel
+>OTR</guilabel
+> plugin võimaldab vestlused krüptida Off-The-Record krüptimismeetodi abil. See käitub põhimõtteliselt samamoodi nagu PGP krüptimine, kuid on optimeeritud kiirsuhtluse tarbeks ja tegeleb võtmete vahetamisega iseseisvalt. Selle juures tuleb ainult kontrollida, et kirjutad tõepoolest isikule, kellele soovid, kasutades mõnda OTR autentimisviisidest.</para>
+<sect3 id="plugins-otr-menus">
+<title
+>Menüükirjed</title>
+<para
+>Kontaktide nimekirja menüüsse lisatakse järgmine kirje:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>OTR reegel</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Sisse lülitatud kontakti valimise korral) Siin saab määrata iga kontakti jaoks krüptimisreegli. Kui valida "Vaikimisi", kasutab &kopete; seadistustedialoogis määratud seadistust.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para
+>Vestlusakna menüüsse lisatakse järgmised kirjed:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Tööriistad</guimenu
+> <guimenuitem
+>OTR seadistused</guimenuitem
+> <guimenuitem
+>Alusta OTR seanssi</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>See võimaldab alustada OTR krüptitud seanssi.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Tööriistad</guimenu
+> <guimenuitem
+>OTR seadistused</guimenuitem
+> <guimenuitem
+>Lõpeta OTR seanss</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>See võimaldab lõpetada loodud OTR seansi.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Tööriistad</guimenu
+> <guimenuitem
+>OTR seadistused</guimenuitem
+> <guimenuitem
+>Autendi kontakt</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Selle menüükirje abil saab kontakti autentida.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+<sect3 id="plugins-otr-setup">
+<title
+>Seadistustedialoog</title>
+<para
+>Seadistustedialoogis saab mitme valiku abil määrata mooduli käitumise vestlusseansi ajal. Kõige olulisem on vaikimisi reegli seadistamine. Määra reegliks "Oportunistlik", kui soovid, et &kopete; kontrolliks, kas kontaktid toetavad OTR-i, ning looks ise krüptitud seansi, või "Käsitsi", kui soovid ise kontrollida kõiki krüptimisolekuid. Valikud "Alati" ja "Mitte kunagi" on soovitatavad ainult kogenud kasutajale, kes soovib määrata reegli igale kontaktile eraldi. Paneelil "Privaatvõtmed" saab luua igale kontole isikliku võtmepaari. Seda ei pea tegema käsitsi. Kui kontol pole võtmepaari, luuakse see automaatselt kohe, kui seda vaja läheb. Kaardil "Teadaolevad sõrmejäljed" võib näha, verifitseerida ja kustutada oma kontaktide avalikult teada sõrmejälgi.</para>
+</sect3>
+<sect3 id="plugins-otr-auth">
+<title
+>Autentimine</title>
+<para
+>Tõenäoliselt oled saanud e-kirju isikutelt, kes väidavad, et nad on esindavad panku, krediidiasutusi või on lausa rikkad Nigeeria põgenikud. Inimesed valetavad internetis pidevalt enda kohta. Autentimine on viis kindlustada, et keegi ei saa sulle enda kohta valetada, kui ta kasutab OTR.</para>
+<sect4 id="plugins-otr-auth-when">
+<title
+>Millal autentida?</title>
+<para
+>Vestluskaaslase peaks autentima OTR abil kohe esimesel korral, kui temaga vestled. Kui sa seda ei tee, ei saa olla kindel, et keegi ei teeskle, nagu oleks ta sinu vestluskaaslane või üritaks sinu vestlust pealt kuulata. Aga kui oled kaaslase juba kord autentinud, ei pea seda rohkem tegema. OTR autendib sel juhul automaatselt kaaslase kõigil järgnevatel kordadel, mil sa temaga vestled. </para>
+<para
+>Erandjuht on muidugi see, kui sinu kaaslane tegutseb mitmes arvutis või mitme &im; kontoga. Sel juhul tuleb ta autentida üks kord iga arvuti ja konto puhul. Kui oled seda teinud, võib sinu kaaslane vabalt kasutada kõiki arvuteid, kus oled ta autentinud, ning OTR tunneb ta automaatselt ära. Kui kaaslane kasutab uut arvutit või kontot, mida OTR ära ei tunne, ilmub sinu vestlusaknasse teade, mis annab sellest teada.</para>
+<screenshot>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="otr-auth-1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Millal autentida?</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</sect4>
+<sect4 id="plugins-otr-auth-how">
+<title
+>Kuidas autentida?</title>
+<para
+>Kellegi autentimiseks ava temaga vestlus ja klõpsa OTR nupul valikule "Autendi kontakt". Ilmub nõustaja, mis pärib, millist autentimisviisi kasutada. Järgi nõustaja juhiseid.</para>
+<para
+>Kui autentimine oli edukas, siis on teada, et kõneled tõepoolest oma sõbraga. Petisel oleks üsna raske ära arvata, mida te kirjutate, ja tema pettus tuleks kohe välja. </para>
+</sect4>
+</sect3>
+</sect2>
+<sect2 id="plugins-pipes">
+<title
+>Torud</title>
+<para
+>Torud võimaldavad suunata saabuvaid või väljuvaid sõnumeid välise skripti või käivitatava faili kaudu. Saabuv sõnum suunatakse käivitatavale failile, enne kui ta saabub vestlusaknasse, väljuv sõnum aga enne, kui ta saadetakse interneti kaudu teele. Torud võivad teksti saada kolmel kujul: <variablelist
+> <varlistentry
+> <term
+>lihttekst</term
+> <listitem
+><para
+>sõnumi põhiosa puhta &ascii; tekstina</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>&html; tekst</term
+> <listitem
+><para
+>sõnumi põhiosa &html;-ina, nagu oleks sinu vestluskaaslane saatnud sulle HTML-i, mida renderdatakse vestlusaknas</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>&xml;-is täielik sõnum</term
+> <listitem
+><para
+>&xml;-dokument, mis kirjeldab kogu sõnumit, kaasa arvatud &html;-is põhiosa.</para
+></listitem
+> </varlistentry
+> </variablelist
+> Enamasti on mõttekas kasutada lihtteksti või &html;-i. Neid saab näiteks kasutada tõlkimis- või kokkuvõtteprogrammides. &xml;-vorming on mõttekas ainult juhul, kui tegemist on spetsiaalselt sellele pluginale kirjutatud programmi või skriptiga. Kui soovid sellist programmi või skripti kirjutada, uuri lähemalt <link linkend="pipes"
+>üksikasjalikumat dokumentatsiooni</link
+>. </para>
+</sect2>
+<!--FIXME missing
+preview
+privacy
+Import Privacy Plugin into svn.
+This plugin allows flexible filtering of messages by sender and/or by content.
+FEATURE: 63839
+scripting
+  -->
+<sect2 id="plugins-statistics">
+<title
+>Statistika</title>
+<para
+>See plugin kasutab andmebaasi info kogumiseks sinu kontaktide aktiivsuse kohta. Selle abil võid näha näiteks, millal mõni kontakt tavaliselt on võrgus viibinud või muud sellist.</para>
+</sect2>
+<sect2 id="plugins-text-effect">
+<title
+>Tekstiefektid</title>
+<para
+>Tekstiefektid rakendavad sinu sõnumitel enne nende saatmist mitmesuguseid naljakaid võtteid, näiteks värvides neid või muutes tõstu. Aga ära unusta, et oled tekstiefektid sisse lülitanud - me oleme saanud teateid vigadest, mille ainus põhjus oligi see, et kasutaja oli unustanud, et ta on mingi omapärase <guilabel
+>tekstiefekti</guilabel
+> sisse lülitanud!</para>
+</sect2>
+<sect2 id="plugins-translator">
+<title
+>Tõlketeenus</title>
+<para
+>Tõlkeplugin võimaldab määrata igale metakontaktile eelistatud keele ning siis tõlkida sõnumid temalt või temale veebis pakutavate tõlketeenuste abil (näiteks <trademark
+>Google</trademark
+>). Dialoogis <guilabel
+>Pluginate valimine ja seadistamine</guilabel
+> saab määrata eelistatava keele. Igale kontaktile saab eelistatava keele määrata kontakti kontekstimenüüst.</para>
+<para
+>Vestlusakna menüüsse lisatakse järgmine kirje:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>T</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Tööriistad</guimenu
+> <guimenuitem
+>Tõlgi</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Kui sa ei ole sisse lülitanud automaatset tõlkimist, võimaldab see käsk tõlkida parajasti aktiivse vestluse.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="plugins-web-presence">
+<title
+>Veebinimekiri</title>
+<para
+>Veebinimekiri võimaldab sul avaldada oma &im; staatuse veebis. Määra faili asukoht näiteks &FTP; -serveril ning sellele failile lisatakse jupike &HTML;-teksti, milleks võib olla näiteks sinu kodulehekülg või midagi muud. &kde; võrguläbipaistvus muudab selle kasutamise imelihtsaks. See on abiks mitmetel juhtudel, näiteks võib seda kasutada &im; tarvitamise korral firmades.</para>
+<para
+>Näide: <userinput
+>sftp://kasutajanimi@mingiserver.org/kodukatalogi/asukoht/kasutaja/im.html</userinput
+> kasutab protokolli <acronym
+>SFTP</acronym
+> sinu praeguse staatuse laadimiseks otse veebiserverile.</para>
+<para
+>Vaata võrguprotokollide kohta lähemat infot <ulink url="help:/kioslave/index.html"
+>KIO käsiraamatutest</ulink
+>.</para>
+<!--FIXME wrong url to ioslaves
+in konsole "khelpcenter khelpcenter:kioslaves" works-->
+</sect2>
+<sect2 id="plugins-contributing">
+<title
+>Plugina annetamine</title>
+<para
+>&kopete; sihiks on muuta võimalikult lihtsaks mingit lisavõimalust pakkuva plugina loomine. Nii et kui sul on suurepärane idee, kuidas muuta &kopete; veelgi paremaks, <link linkend="intro-to-kopete-web"
+>võta meiega ühendust</link
+>!</para>
+</sect2>
+</sect1>
+</chapter
+><!-- plugins -->
+
+&kopete-menus;
+
+<chapter id="faq">
+<title
+>Korduma Kippuvad Küsimused</title>
+<qandaset>
+<qandaentry>
+<question
+><para
+>Mida &kopete; tähendab? Kuidas seda hääldada?</para
+></question>
+<answer
+><para
+>&kopete; nimi on pärit Tšiilis levinud sõnast 'copete', mis tähendab <quote
+>koos sõpradega jooma</quote
+>. Algupärandi autor Duncan salvestas ka vastava <ulink type="audio/x-vorbis+ogg" url="http://kopete.kde.org/files/kopete_en.ogg"
+>helifaili</ulink
+>.</para
+></answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Kui mul on kontaktide nimekirjas ühe kasutajanime all enam kui üks sõnumiteenust ja ma sellele nimele klõpsan, saadetakse sõnum vale sõnumiteenusega.</para>
+</question>
+<answer
+><para
+>Kontode järjekorda, millega &kopete; püüab sõnumeid saata, saab muuta konto seadistamise dialoogis all paremal asuvate nuppudega Üles ja Alla. &kopete; üritab kontoga ühendust võtta alates nimekirjas esimesena määratust. Kui aga mingi teenuse staatus on kõrgem kui teistel, võetakse esmalt ühendust just selle teenusega. Kui näiteks isikule on määratud kolm teenust ja kaks neist on märgitud eemalolevaks ning üks on võrgus, siis üritab &kopete; alati ühendust luua teenusega, mille staatus on märgitud võrgusolevaks.</para
+><tip
+><para
+>Kui aga klõpsata isiku nime asemel hoopis paremal pool asuvale väiksele protokolliikoonile, on võimalik alati üritada selle isikuga ühendust võtta just klõpsatud protokolli kasutades!</para
+></tip>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Mul tuleb ühendus luua SOCKS puhverserveri kaudu, kuid ma ei suuda &kopete;s kusagil leida puhverserveri seadistamise võimalust. Kuidas panna &kopete; SOCKS-i kasutama?</para>
+</question>
+<answer
+><itemizedlist>
+<listitem
+><para
+><trademark
+>WLM</trademark
+>, <trademark
+>ICQ</trademark
+>, <trademark
+>AIM</trademark
+>, Jabber ja <trademark
+>Yahoo</trademark
+> kasutavad &kde; võrgutaristut. Nende SOCKS puhverserveri üksikasjad seadistatakse koos &kde; üldiste valikutega (Süsteemi seadistustes <menuchoice
+><guimenu
+>Võrk ja ühendused</guimenu
+><guisubmenu
+>Võrguseadistused</guisubmenu
+><guimenuitem
+>Puhverserver</guimenuitem
+></menuchoice
+>).</para
+></listitem>
+</itemizedlist>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Kas on võimalik kohandada &kopete;s näidatavaid ikoone?</para
+></question>
+<answer
+><para
+>Emotikone on võimalik vahetada emotikonide kaardil, mille leiab &kopete; seadistustedialoogi kaardilt Välimus.</para>
+<para
+>Uute emotikonide paigaldamise soovi korral vaata esmalt saidile <ulink url="http://www.kde-look.org/content/search.php"
+>KDE-Look.org</ulink
+>, kus leiab arvukalt allalaadimist ootavaid emotikonikogusid:</para>
+
+<para
+>Emotikone on väga hõlpus paigaldada - aseta lihtsalt ikoonifaile sisaldav kataloog ja teksti ning pildi sidumist kirjeldav &XML;-fail kataloogi $KDEDIR/share/apps/kopete/pics/emoticons (või $KDEHOME, näiteks /home/joeuser/.kde/).</para>
+
+<orderedlist>
+<listitem
+><para
+>Kopeeri lahtipakitud kataloog kataloogi $KDEDIR/share/apps/kopete/pics/emoticons või $HOME/.kde/share/apps/kopete/pics/emoticons (või kus iganes sinu $KDEHOME asub)</para
+></listitem>
+<listitem
+><para
+>Vali menüüst Seadistused käsk &kopete; seadistamine ja klõpsa vasakul asuvale kaardinimetusele Välimus ning seejärel kaardile Emotikonid</para
+></listitem>
+<listitem
+><para
+>Vali nimekirjast äsja paigaldatud emotikonikogu</para
+></listitem>
+<listitem
+><para
+>Nüüd võidki kasutada &kopete;s oma uusi emotikone</para
+></listitem>
+</orderedlist>
+<para
+>Protokolliikoonide asendamiseks tuleb asendada ikoonid kataloogis $KDEDIR/share/apps/kopete/icons või asendada need samasuguses kataloogis $KDEHOME-s. Praegu ei ole olemas täielikku asenduskogu, mida oleks võimalik sinna lihtsalt lahti pakkida.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+  <question
+><para
+>Ma ei näe dialoogis <quote
+>Pluginate seadistamine</quote
+> ühtegi pluginat. Miks nii?</para>
+</question>
+<answer
+><para
+>Sellele probleemile on kaks lahendust. Kui kasutada binaarpakette, siis kontrolli, et kasutad just oma distributsioonile ja selle konkreetsele versioonile mõeldud binaarpakette. Distributsioonide ja versioonide segamine &kopete; puhul hästi, õieti üldse ei tööta. Kui sinu süsteemile ei ole binaarpakette, pead &kopete; kompileerima lähtekoodipakettidest. Kui oled kompileerinud oma &kde;, peab &kopete; kompileerima sama prefiksiga nagu &kde;. Kui aga kompileerid lähtekoodist, kontrolli, et &kopete; oleks paigaldatud samasse kohta nagu &kde;. Kui see nii ei ole, saad selle peale sundida, määrates <application
+>cmake</application
+>'is prefiksikäsu. Näide: <userinput
+><command
+>cmake</command
+> <parameter
+>-DCMAKE_PREFIX=/opt/kde4</parameter
+></userinput
+> (kus <userinput
+>/opt/kde4</userinput
+> on sinu prefiks). Määramaks, milline on sinu &kde; prefiks, anna käsk <userinput
+><command
+>which</command
+> <parameter
+>dolphin</parameter
+></userinput
+> &konsole;i aknas. See peaks vastuseks anda midagi sellist: <computeroutput
+>/opt/kde4/bin/dolphin</computeroutput
+>, kus <filename class="directory"
+>/opt/kde4</filename
+> ongi sinu prefiks, või näiteks <computeroutput
+>/usr/bin/dolphin</computeroutput
+>, millisel juhul prefiks on <filename class="directory"
+>/usr</filename
+>. Samuti kontrolli, et oleksid andnud käsu <command
+>make install</command
+>, ja et kuskil mujal ei vedeleks mõnda varasemast paigaldusest üle jäänud &kopete; versiooni. Samuti võib olla vajalik anda käsitsi käsk <application
+>kbuildsycoca4</application
+> pärast &kopete; paigaldamist. <application
+>kbuildsycoca4</application
+> uuendab pluginate andmebaasi. See pannakse käima, kui pluginaid kasutav uus tarkvara paigaldatakse, aga võib ju juhtuda, et käsk <command
+>kopete</command
+> käivitab &kopete; juba enne, kui uuendamine on lõpule jõudnud.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Mul on palju &lt;töölaudu/monitore/arvuteid&gt; ja/või ma kõnelen paljude inimestega ühel ajal ning seepärast soovin, et &kopete; võiks &lt;esitada heli/näidata hüpikdialoogi/muuta mu taustapilti/taaskäivitada arvuti&gt;, niipea kui ma &lt;saab uue sõnumi/keegi tuleb võrku/keegi lahkub võrgust&gt; Millal selline võimalus lisatakse?</para>
+</question>
+<answer
+><para
+>See on juba olemas - üllatus-üllatus! &kopete; on &kde; rakendus ja seepärast kasutab kõigi märguannete jaoks KNotifyd. Kes ei tea, siis KNotify on väga võimas arhitektuur, mis võimaldab lasta teha õigupoolest mida iga, kui mõnes &kde; rakenduses midagi juhtub. Võib lasta mängida heli, tuua nähtavale passiivse hüpikdialoogi, logida sõnumi või isegi käivitada omaenda määratud käsu, näiteks shelliskripti, mis teeb just seda, mida vaja. Selle üüratu varaallika kasutamiseks ava dialoog <menuchoice
+><guimenu
+>Seadistused</guimenu
+><guimenuitem
+>Märguannete seadistamine</guimenuitem
+></menuchoice
+>. Seal näeb kõiki erinevaid toiminguid, mida saab ette võtta just loetletud sündmuste korral. Vihjeks nii palju, et võiksid kontrollida mõnest muust &kde; rakendusest, milliseid sündmusi nad ära tunnevad. Minu meelest on näiteks &kmail;i passiivne hüpikaken uue kirja saabumise puhul väga mõnus ja mugav.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Miks failiedastus ei tööta?</para>
+</question>
+<answer
+><para
+>Sellel võib olla palju põhjusi. WLM oli esimene protokoll, millele me kindlustamise failiedastuse võimaluse. Jabberis ja IRC-s tuli see koos &kopete; versiooniga 0.9.0 (&kde; 3.3 koosseisus) ning ICQ ja AIM puhul &kopete; versiooniga 0.50.0 (&kde; 4.0.0 koosseisus). Ühtlasi tuleb mainida, et failiedastus ei pruugi toimida, kui oled tulemüüri taga - vaata selle kohta protokollipeatükis WLM-ist kõnelevat osa.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Miks igal pool toimib kõik ainult ühe klõpsuga? See on nii tüütu!</para>
+</question>
+<answer
+><para
+>Kopete on &kde; rakendus. Me ei ole mingi labane kolmanda osapoole rakendus, mis on otsustanud &quot;välja näha&quot; nagu ülejäänud KDE. Me kasutame täielikult ära KDE &quot;välimuse ja tunnetuse&quot; ning &quot;lõimimise&quot; aspekte, mis tähendab, et &kopete; järgib KDE standardset &quot;ühe-klõpsu-poliitikat&quot;. Kui soovid, võid selle asendada kahe klõpsuga, käivitades Süsteemi seadistused, valides seal <menuchoice
+><guimenu
+>Sisendseadmed</guimenu
+><guimenuitem
+>Hiir</guimenuitem
+></menuchoice
+> ning siis valiku <guilabel
+>Failide ja kataloogide avamine topeltklõpsuga</guilabel
+> (sel juhul ühe klõpsuga ikoonile see ainult valitakse).</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Kas on kavas muuta kasutajaliides nahkadega tuunitavaks?</para>
+</question>
+<answer
+><para
+>Selge vastus on "ei". &kopete; loodi &kde; kiirsuhtlusrakenduseks ja see tähendab ka &kde; välimuse ja tunnetusega arvestamist. Nahku lisades rikuksime seda reeglit ning korraga nende toetamine ja mittetoetamine ei oleks üldse praktiline. Vali lihtsalt &kde; Süsteemi seadistustes mõni muu stiil ning kasuta õnnelikult läbipaistvaid menüüsid ja kõike muud silmailu, mida &kde; pakub. Siiski on võimalik panna Kopete tööle teise stiiliga. Käivita see näiteks käsuga <userinput
+>kopete --style=marble</userinput
+>. Toimivad kõik korrektsed &kde; või &Qt; stiilid.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Ma tahaksin näha Kopete järgmises versioonis seda või teist omadust.</para>
+</question>
+<answer
+><para
+>Palun mine <ulink url="http://bugs.kde.org"
+>&kde; Bugzilla</ulink
+> leheküljele ja anna oma soovist teada rakenduse 'kopete' all. Palun ole sealjuures väga üksikasjalik ja kontrolli hoolikalt üle, mida kirjutad. See EI ANNA garantiid, et me soovitu üldse kunagi lisame, aga vähemalt saame me siis seda kaaluda.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Minu &kopete;d tabas krahh või käitub see ootamatult (kusjuures ootamatu käitumine ei tähenda, et &quot;Kopete ei käitu nagu Pidgin&quot; &etc;).</para>
+</question>
+<answer
+><para
+>Palun anna esinenud veast teada <ulink url="http://bugs.kde.org"
+>&kde; Bugzilla</ulink
+> veebilehel, kus esita see rakenduse 'kopete' all. Veateateid arvestatakse ainult siis, kui need on esitatud inglise keeles, on üksikasjalikud ja krahhi korral on lisatud ka tagasijälitus (tekst kaardil kirjaga <guilabel
+>Tagasijälitus</guilabel
+> selles aknas, mis ilmub pärast &kopete; krahhi). Kui kasutad aga &kopete; giti- ehk arendusversiooni, saada palun veateate esitamise asemel kiri <ulink url="mailto:kopete-devel@kde.org"
+>&kopete; arendajate postiloendisse</ulink
+>.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Jabberi SSL-i toetus enam ei toimi. Ma saan teate, et arvatavasti on puudu QCA TLS-i plugin. Mida ma tegema peaksin?</para>
+</question>
+<answer
+><para
+>Nagu veateadegi viitab, on puudu QCA TLS-i plugin, mis käitleb Jabberi plugina TSL/SSL-i krüptimist. Paigalda tarkvarapakett <application
+>qca-tls</application
+> (ja sellega koos ka <application
+>qca-ossl</application
+>) või hangi plugin <ulink url="http://delta.affinix.com/qca"
+>selle kodulehelt</ulink
+>. Palun pane tähele, et pead paigaldama ainult <application
+>qca-tls</application
+> plugina, <emphasis
+>mitte</emphasis
+> QCA teeki ennast. &kopete; ümberkompileerimine ei ole vajalik, õieti ei ole vajalik isegi mitte taaskäivitamine. Kui oled plugina paigaldanud ja toetust ikka ei ole, siis nähtavasti Qt ei leia seda oles. Kuna qca-tls paigaldatakse &Qt; pluginana, tuleb kontrollida, et  see tõepoolest paigaldatakse selle &Qt; versiooni pluginate kataloogi, mida kasutada &kopete; töös.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Ma olen tulemüüri taga. Millised pordid tuleb avada WLM failiedastuse jaoks?</para>
+</question>
+<answer
+><para
+>Kui oled tulemüüri taga, tuleb sisenevaks TCP liikuseks avada port 6891.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Ma kasutan koos Jabberit ja ICQ-d. Kui ma Jabberiga võrku lähen, lahutatakse mind ICQ-s veateatega, et olen ühendatud teise kliendi alt. Mis lahti on?</para>
+</question>
+<answer
+><para
+>Kas tuleb meelde, kui proovisid ICQ transporti tolles teises Jabberi kliendis? Määrasid seal <quote
+>ICQ transpordi</quote
+>, mis võimaldas sul kõnelda Jabberist ICQ inimestega. ICQ ei luba mitut ühendust ühe kontoga ja lahutab su. Otsi oma Jabberi kontaktide seas kontakti, mis on umbes kujul <guilabel
+>123456@icq.jabber.org</guilabel
+>, ja kustuta see.</para>
+</answer>
+</qandaentry>
+</qandaset>
+</chapter
+> <!-- faq -->
+
+<!--FIXME chapter id="specialised">
+<title
+>Specialized Actions</title>
+<para
+>Command line parameters</para>
+<para
+>Installing emoticon sets</para>
+</chapter--> <!-- specialised -->
+
+<chapter id="credits-and-license">
+<title
+>Autorid ja litsents</title>
+<para
+>&kopete; autoriõigus 2001-2007: &kopete; arendajad </para>
+<para
+>Tõlge eesti keelde: Marek Laane <email
+>bald@starman.ee</email
+></para
+> 
+&underFDL; &underGPL; <sect1 id="team">
+<title
+>Meeskond</title>
+<sect2 id="current-team">
+<title
+>Praegune arendusmeeskond</title>
+<!-- please keep in sync with the authors list on the webpage -->
+<itemizedlist>
+<listitem
+><para
+>Pali Rohár (pali.rohar at gmail com): arendaja ja hooldaja</para
+></listitem>
+<listitem
+><para
+>Duncan Mac-Vicar Prett (duncan at kde org): originaali autor, arendaja ja projektijuht</para
+></listitem>
+<listitem
+><para
+>Till Gerken (till at tantalo net): arendaja, Jabberi hooldaja</para
+></listitem>
+<listitem
+><para
+>Olivier Goffart (ogoffart at tiscalinet be): juhtiv arendaja, WLM plugina hooldaja</para
+></listitem>
+<listitem
+><para
+>Andy Goossens (andygoossens at telenet be): arendaja</para
+></listitem>
+<listitem
+><para
+>Grzegorz Jaskiewicz (gregj at pointblue com pl): arendaja, Gadu-gadu plugina hooldaja</para
+></listitem>
+<listitem
+><para
+>Jason Keirstead (jason at keirstead org): arendaja</para
+></listitem>
+<listitem
+><para
+>&Matt.Rogers; (mattr at kde org): juhtiv arendaja, AIM ja ICQ plugina hooldaja</para
+></listitem>
+<listitem
+><para
+>Richard Smith (lilachaze at hotmail com): arendaja, UI hooldaja</para
+></listitem>
+<listitem
+><para
+>&Will.Stephenson; (lists at stevello free-online co uk): arendaja, ikoonid, pluginad, käsiraamatu autor</para
+></listitem>
+<listitem
+><para
+>Michel Hermier (michel.hermier at wanadoo fr): IRC plugina hooldaja</para
+></listitem>
+<listitem
+><para
+>Andre Duffeck (andre at duffeck de): arendaja, Yahoo plugina hooldaja</para
+></listitem>
+<listitem
+><para
+>&Michael.Larouche; (michael.larouche at kdemail net): arendaja, WLM, vestlusaken</para
+></listitem>
+</itemizedlist>
+</sect2>
+<sect2 id="ex-team">
+<title
+>Endised arendajad (&kopete; kuulsuste hall)</title>
+<para
+>Need inimesed on loobunud &kopete;ga tegelemast, nii et nende poole ei ole mõtet pöörduda &kopete; asjus abi otsima. Kuid me oleme neile nende panuse eest aegade lõpuni tänulikud. </para>
+<itemizedlist>
+<listitem
+><para
+>Christopher TenHarmsel (tenharmsel at users sourceforge net): arendaja, Oscari häkker</para
+></listitem>
+<listitem
+><para
+>Ryan Cumming (ryan at kde org): põhiarendaja</para
+></listitem>
+<listitem
+><para
+>Richard Stellingwerff (remenic at linuxfromscratch org): arendaja</para
+></listitem>
+<listitem
+><para
+>Hendrik vom Lehn (hennevl at hennevl de): arendaja</para
+></listitem>
+<listitem
+><para
+>Stefan Gehn (sgehn at gmx net): arendaja</para
+></listitem>
+<listitem
+><para
+>&Robert.Gogolok; (robertgogolock at gmx de): arendaja</para
+></listitem>
+<listitem
+><para
+>&Nick.Betcher; (nbetcher at kde org): ICQ, AIM ja IRC plugina algne autor</para
+></listitem>
+<listitem
+><para
+>Daniel Stone (dstone at kde org): Jabberi plugina algupärane autor</para
+></listitem>
+<listitem
+><para
+>James Grant (topace at lightbox org): arendaja, importimisplugina autor</para
+></listitem>
+<listitem
+><para
+>Zack Rusin (zack at kde org): arendaja, vana Gadu-gadu plugina autor</para
+></listitem>
+<listitem
+><para
+>Gav Wood (gav at kde org): WinPopup plugina autor</para
+></listitem>
+<listitem
+><para
+>Martijn Klingens (klingens at kde org): arendaja, WLM häkker</para
+></listitem>
+</itemizedlist>
+</sect2>
+<sect2 id="documentation">
+<title
+>Dokumentatsioon</title>
+<para
+>Dokumentatsiooni autoriõigus 2003,2004,2005: &Will.Stephenson; (lists at stevello free-online co uk), autoriõigus 2005: &Matt.Rogers; (mattr at kde org), autoriõigus 2005,2006: &Michael.Larouche; (michael.larouche at kdemail net). </para>
+</sect2>
+</sect1>
+</chapter
+><!-- credits-and-license -->
+
+<appendix id="installation">
+<title
+>Paigaldamine</title>
+<sect1 id="getting-kopete">
+<title
+>&kopete; hankimine</title>
+&install.intro.documentation; <para
+>Arendusversioone saab tõmmata aadressilt &kopetewww;.</para>
+</sect1>
+<sect1 id="requirements">
+<title
+>Nõutavad teegid</title>
+<para
+>Kui paigaldasid &kopete; koos oma distributsiooniga, on need tõenäoliselt juba paigaldatud.</para>
+<para
+>Gadu-gadu plugin nõuab paketti libgadu, vaata lähemalt <ulink url="http://gj.pointblue.com.pl/projects/kopete/"
+>seda veebilehekülge</ulink
+>.</para>
+<para
+>'Praegu kuulan' plugin vajab teeki libxmms, kui soovid teada anda, mida mängib parajasti <application
+>xmms</application
+>. See peaks käima kaasas juba distributsiooniga, kuid selle leiab ka xmms tarkvarapaketi osana <ulink url="http://www.xmms.org"
+>xmms koduleheküljelt</ulink
+>.</para>
+</sect1>
+<sect1 id="compilation">
+<title
+>Kompileerimine ja paigaldamine</title>
+&install.compile.documentation; </sect1>
+</appendix>
+
+&kopete-chatstyle;
+&kopete-pipes;
+&kopete-jabber;
+&kopete-icq;
+&kopete-emoticonspec;
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet
+-->

@@ -1,0 +1,954 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-jabber">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Det här dokumentet är konverterat från KDE:s användarbas <ulink url=" http://userbase.kde.org/Kopete/Jabber"
+>Kopete/Jabber</ulink
+>-sida.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+<othercredit role="translator"
+> <firstname
+>Stefan</firstname
+> <surname
+>Asserhäll</surname
+> <affiliation
+><address
+><email
+>stefan.asserhall@bredband.net</email
+></address
+></affiliation
+> <contrib
+>Översättare</contrib
+></othercredit
+> 
+    </authorgroup>
+<date
+>2010-12-05</date>
+    <releaseinfo
+>&kde; SC 4.5</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2010-12-05T08:12:25Z</timestamp
+>-->
+<title
+>Handbok Jabber</title>
+<!--userbase-content-->
+<sect1 id="about-jabber-xmpp"
+><title
+>Om Jabber XMPP</title>
+<para
+><ulink url="http://sv.wikipedia.org/wiki/XMPP"
+>XMPP</ulink
+> eller Jabber (de betyder samma sak) är namnet på ett öppet, decentraliserat nätverksprotokoll som används för direktmeddelanden. Det är utformat som en server-klient-infrastruktur med många servrar över hela Internet, där alla kan registrera sig. <ulink url="http://sv.wikipedia.org/wiki/Server"
+>Servrarna</ulink
+> är normalt uppkopplade mot många <ulink url="http://sv.wikipedia.org/wiki/Klient_%28datalogi%29"
+>klienter</ulink
+> på den ena sidan och till andra XMPP-servrar på den andra. Här hittar vi på ett litet exempel för att förklara hur det fungerar: </para>
+<para
+>Romeo älskar Julia och vill kommunicera med henne via Jabber-nätverket. Han kan skriva meddelanden från sitt program (som är anslutet till <userinput
+>montague.net</userinput
+>) till sin flickvän, vars program är anslutet till en server som heter <userinput
+>capulet.com</userinput
+>. </para>
+<para
+>När han registrerade sig på en server, valde han en så kallad JID (Jabber-identifierare). En JID fungerar i stort sett som en e-postadress och är kopplad till serverns namn med ett <quote
+>@</quote
+>. Ett exempel på giltig JID för Romeo är <userinput
+>romeo@montague.net</userinput
+>. </para>
+<para
+>För att kunna prata med andra måste Romeo lägga till deras JID i sin kontaktlista. De kan vara anslutna till samma server (t.ex. <userinput
+>balthasar@montague.net</userinput
+>) eller lika gärna mot en annan sever (t.ex. <userinput
+>peter@wasinet.org</userinput
+> eller, så klart, <userinput
+>julia@capulet.com</userinput
+>). </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_jabbernetwork.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Visualisering av Jabber-nätverket</phrase>
+    </textobject>
+    <caption>
+      <para
+>Visualisering av Jabber-nätverket</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Jabber/XMPP kan förstås erbjuda många fler tjänster (t.ex. kryptering av meddelanden från avsändare till mottagare, <ulink url="http://en.wikipedia.org/wiki/Voicechat"
+>röstchatt</ulink
+>, <ulink url="http://sv.wikipedia.org/wiki/Videokonferens"
+>videokonferens</ulink
+> och gruppchatt), vilka delvis presenteras senare i handledningen. </para>
+<para
+>Två väldigt stora direktmeddelandetjänster använder Jabber/XMPP på sina servrar i bakgrunden: Google Talk och Facebooks chatt. Användarkonton i dessa system kan användas precis som vanliga Jabber-konton i &kopete;. En detaljerad förklaring ges <link linkend="fill-in-your-account-data-in-kopete"
+>senare</link
+>, eller kan läsas på respektive hemsida. </para>
+<para
+>Med denna information kan vi börja med den huvudsakliga handledningen: Hur man ställer in en fungerade Jabber-klient, och vilka tilltalande funktioner &kopete; har. </para>
+</sect1>
+<sect1 id="first-steps"
+><title
+>Första stegen</title>
+<sect2 id="get-kopete"
+><title
+>Skaffa Kopete</title
+> 
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopeteicon.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kopetes ikon</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kopetes ikon</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Naturligtvis måste man skaffa &kopete; först innan man kan använda det. Om man använder ett <ulink url="http://sv.wikipedia.org/wiki/Linux"
+>GNU/Linux-system</ulink
+> är det mycket möjligt att &kopete; redan är installerat (om <ulink url="http://sv.wikipedia.org/wiki/KDE"
+>KDE:s programvarusamling</ulink
+> är installerad), eller att det finns i ett av distributionens arkiv. </para>
+<para
+>Installera nu &kopete; och starta det för första gången. </para>
+</sect2>
+</sect1>
+<sect1 id="create-your-jabber-account"
+><title
+>Skapa ett Jabber-konto</title>
+<para
+>När &kopete; nu startas visas ett tomt fönster. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap001_emptykopete.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Tomt fönster i Kopete</phrase>
+    </textobject>
+    <caption>
+      <para
+>Tomt fönster i Kopete</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Längst ner står det <guilabel
+>Klicka för att lägga till ett konto</guilabel
+>. Klicka där eller öppna <menuchoice
+><guimenu
+>Inställningar</guimenu
+> <guimenuitem
+>Anpassa...</guimenuitem
+></menuchoice
+> för att skapa ett nytt konto. Vi vill ju skapa ett Jabber-konto, så vi väljer menyalternativet <guilabel
+>Jabber</guilabel
+> och klickar på <guilabel
+>Nästa</guilabel
+>. Efter att ha klickat på <guilabel
+>Registrera nytt konto</guilabel
+> visas ett nytt fönster, där vi kan skriva in en Jabber-server, där kontot ska skapas. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap002_configacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Anpassa &kopete;</phrase>
+    </textobject>
+    <caption>
+      <para
+>Anpassa &kopete;</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Man kan antingen skriva in den för hand i textrutan <guilabel
+>Jabber-server</guilabel
+> eller välja den i listan som tillhandahålls efter att ha klickat på knappen <guilabel
+>Välj...</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutoial_snap003_selectserver.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Dialogruta för val av server</phrase>
+    </textobject>
+    <caption>
+      <para
+>Dialogruta för val av server</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Efter att ha valt en server kan man fylla i önskad Jabber-id, dvs. användarnamn. Lägg till namnet du föredrar framför <quote
+>@</quote
+> i fältet <guilabel
+>Önskat Jabber-id</guilabel
+>. Efter att ha fyllt i lösenord och upprepat det, ska du markera kryssrutan <guilabel
+>Använd protokollkryptering (SSL)</guilabel
+> för att få en <ulink url="http://sv.wikipedia.org/wiki/SSL"
+>krypterad</ulink
+> klient-server anslutning. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap004_createacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Skapa ett konto</phrase>
+    </textobject>
+    <caption>
+      <para
+>Skapa ett konto</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Vissa servar kanske inte klarar av alternativet, men de flesta gör det. Klicka nu på <guilabel
+>Register</guilabel
+> för att slutföra registreringen. </para>
+<para
+>Gratulerar, du har nu registrerat ett nytt konto på en Jabber-server. </para>
+</sect1>
+<sect1 id="fill-in-your-account-data-in-kopete"
+><title
+>Fyll i kontoinformation i Kopete</title>
+<para
+>Nu har du ett konto på en Jabber-server och &kopete; ber dig om <emphasis
+>Steg två: Kontoinformation</emphasis
+>. &kopete; lägger automatiskt till ditt Jabber-id och lösenord i nödvändiga fält. Om du vill att &kopete; ska komma ihåg ditt lösenord för att inte behöva skriva in det varje gång du ansluter till servern, markera <guilabel
+>Kom ihåg lösenord</guilabel
+>. </para>
+<para
+>Om du vill använda ett befintligt konto i <ulink url="http://www.google.com/support/chat/bin/answer.py?hl=en&amp;answer=57557"
+>Google Talk</ulink
+> eller Facebook chatt i &kopete; (de är i själva verket också Jabber-servrar), använd GMail-adressen eller Facebook-kontots data (<ulink url="http://www.facebook.com/sitetour/chat.php"
+>förklarat här</ulink
+>) för att ansluta till servrarna. </para>
+<para
+>Man kan välja att markera <guilabel
+>Undanta från anslut alla</guilabel
+>. Det råder &kopete; att inte koppla upp när alla andra konton i &kopete; kopplas upp (eftersom &kopete; är ett multimeddelandeprogram med stöd för många andra protokoll som <ulink url="http://en.wikipedia.org/wiki/ICQ"
+>ICQ</ulink
+> eller <ulink url="http://en.wikipedia.org/wiki/.NET_Messenger_Service"
+>MSN</ulink
+>). När man markerar det, måste man senare explicit koppla upp detta konto varje gång man vill ansluta till servern. </para>
+<para
+>&kopete; ska nu se ut så här: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap005_enterjid.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Fönstret med kontoinformation</phrase>
+    </textobject>
+    <caption>
+      <para
+>Fönstret med kontoinformation</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Klicka på fliken <guilabel
+>Anslutning</guilabel
+> för att ändra ytterligare alternativ. I synnerhet bör <guilabel
+>Använd protokollkryptering</guilabel
+> markeras och <guilabel
+>Tillåt behörighetskontroll med lösenord i klartext</guilabel
+> avmarkeras av grundläggande säkerhetsorsaker. </para>
+<para
+>Alternativet <guilabel
+>förvald serverinformation</guilabel
+> bör vara ok, om man har ett normalt hemnätverk utan särskild inställning av en <ulink url="http://en.wikipedia.org/wiki/Firewall_%28computing%29"
+>brandvägg</ulink
+>. </para>
+<para
+>Avdelningen <emphasis
+>Platsinställningar</emphasis
+> är en annan av Jabbers specialiteter: Man kan ange så-kallade <quote
+>resurser</quote
+> för att identifiera varifrån man chattar. Om man till exempel loggar in från en mobiltelefon och bärbar dator samtidigt (ja, det går), förklarar resursen för kontakter var man är. Den kan kallas <quote
+>Dator</quote
+> eller <quote
+>Android</quote
+>, beroende på vilken enhet som Kopete installeras. Kom ihåg att resurser är synliga för chattpartnern (de läggs till i JID på följande sätt: <userinput
+>romeo@montague.net/Dator</userinput
+>), alltså bör man ta integritetshänsyn när resursnamn väljes. </para>
+<para
+>I vårt exempel ställs <guilabel
+>resursen</guilabel
+> in till <replaceable
+>Laptop</replaceable
+>. Prioriteten är huvudsakligen användbar när flera enheter hanteras, och talar om för partnerns klient vilken enhet som för närvarande är uppkopplad (t.ex. mobiltelefon eller bärbar dator), och ska kontaktas i detta fall. Den resurs med högst prioritet som är uppkopplad tar emot meddelandet. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap006_connection.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Anpassa kontoinställningen</phrase>
+    </textobject>
+    <caption>
+      <para
+>Anpassa kontoinställningen</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nästa flik, <guilabel
+>Filöverföring</guilabel
+>, påverkas normalt inte när ett Jabber-konto i ett normalt nätverk ställs in. </para>
+<para
+>Till sist finns några integritetsinställningar under fliken <guilabel
+>Integritet</guilabel
+>. De är i stort sätt självförklarande. Alternativet <guilabel
+>Använd gammalt PGP-format på plats för signerade och krypterade meddelanden</guilabel
+> (läs här vad <ulink url="http://sv.wikipedia.org/wiki/Pretty_Good_Privacy"
+>PGP</ulink
+> betyder) rekommenderas inte, eftersom det finns ett sätt att göra det med inbyggd OTR, som förklaras <link linkend="useful-configuration-hints"
+>senare i den här handledningen</link
+>. </para>
+<para
+>Vid detta tillfälle kan man klicka på <guilabel
+>Nästa</guilabel
+> igen så är kontot inställt. Man kan välja en valfri färg för kontot, och om man är känner sig redo att ansluta till Jabber-servern för första gången, måste kryssrutan <guilabel
+>Anslut nu</guilabel
+> vara markerad. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap007_conf-ready.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Sista steget i inställningen</phrase>
+    </textobject>
+    <caption>
+      <para
+>Sista steget i inställningen</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nu kan inställningen slutföras. </para>
+<para
+>Annars kan man ansluta manuellt till servern genom att klicka på <menuchoice
+><guimenu
+>Status</guimenu
+> <guimenuitem
+>Ansluten</guimenuitem
+></menuchoice
+> i Kopetes huvudfönster, eller genom att högerklicka på Kopetes symbol i systembrickan och välja <menuchoice
+><guimenu
+>Ange status</guimenu
+><guimenuitem
+>Ansluten</guimenuitem
+></menuchoice
+>. Om alternativet <guilabel
+>Undanta från anslut alla</guilabel
+> tidigare har valts, måste man logga in genom att högerklicka på Kopetes ikon i systembrickan och välja <menuchoice
+><guimenu
+>JID@exempel.se</guimenu
+><guimenuitem
+>Ansluten</guimenuitem
+></menuchoice
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap008_goonline.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Koppla upp</phrase>
+    </textobject>
+    <caption>
+      <para
+>Koppla upp</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="adding-friends"
+><title
+>Lägga till vänner</title>
+<para
+>Efter första inloggningen är &kopete;s fönster helt tomt. Det kan finnas en standardkontakt tillagd av servern som kanske skickar ett välkomstmeddelande, men det finns inga riktiga kontakter i din lista (som kallas <quote
+>roster</quote
+> på engelska i Jabber-världen). Det första steget för att lägga till vänner i Jabber är förstås att fråga dem om deras Jabber-id. När du får ett, kan du direkt lägga till det i &kopete;. Du kan antingen klicka på <menuchoice
+><guimenu
+>Lägg till</guimenu
+> <guimenuitem
+>JID@exempel.se</guimenuitem
+></menuchoice
+> eller <menuchoice
+><guimenu
+>Arkiv</guimenu
+><guisubmenu
+>Lägg till kontakt</guisubmenu
+> <guimenuitem
+>JID@exempel.se</guimenuitem
+></menuchoice
+>. Ett nytt fönster visas som frågar efter <guilabel
+>Jabber-id</guilabel
+> som ska läggas till i listan. Skriv bara in det och klicka på <guilabel
+>Ok</guilabel
+>. Alternativet <guilabel
+>Grupp</guilabel
+> används när kontaktgrupper anges (t.ex. <quote
+>familj</quote
+> och <quote
+>arbete</quote
+>). En koppling till <ulink url="http://userbase.kde.org/Special:myLanguage/KAddressBook"
+>adressboken</ulink
+> kan upprättas med <guilabel
+>Post i adressboken</guilabel
+>, så att det går att utbyta information såsom bilder mellan de två programmen. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap009_addfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Lägga till en vän</phrase>
+    </textobject>
+    <caption>
+      <para
+>Lägga till en vän</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nu har du lagt till din första vän i listan, men innan du kan börja skriva meddelanden till honom eller henne, måste kontakten godkänna din begäran. Innan det sker, visas kontakten med ett litet gult utropstecken på höger sida om kontaktfältet. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap010_exlamationmarkfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Din kontakt</phrase>
+    </textobject>
+    <caption>
+      <para
+>Din kontakt</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>När vännen har godkänt din begäran eller lagt till dig i sin lista, visas en färglagd ikon om han eller hon är uppkopplad. Den exakta betydelsen av de olika ikonerna (ansluten, borta, etc.) visas med <guilabel
+>Status</guilabel
+>, där du också kan ställa in den själv. Du får en underrättelse när du har blivit godkänd. </para>
+<para
+>Normalt lägger vännen också till dig i sin kontaktlista, så att du måste dessutom själv godkänna en begäran. &kopete; ger en underrättelse om det längst ner med en grön flagga och en beskrivning av begäran. Klicka på <guilabel
+>Ge behörighet</guilabel
+> för att acceptera den. Området med underrättelser kan stängas genom att klicka på krysset längst upp till höger i området. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap011_addedbyfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Nu har du lagts till av din kontakt</phrase>
+    </textobject>
+    <caption>
+      <para
+>Nu har du lagts till av din kontakt</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Efter den proceduren bör du se en kontaktlista som liknar den på nästa bild. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap012_fullauthorized.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Din kontakt är helt behörig</phrase>
+    </textobject>
+    <caption>
+      <para
+>Din kontakt är helt behörig</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Ny har du lyckats lägga till den första kontakten i din lista. </para>
+</sect1>
+<sect1 id="messaging-and-sending-files"
+><title
+>Skicka meddelanden och filer</title>
+<para
+>Du kan börja chatta med en kontakt genom att klicka på namnet. Ett nytt fönster visas, och du kan skriva in meddelanden i det lilla fältet längst ner, där markören redan finns. När du vill skicka texten, tryck på returtangenten eller klicka på knappen <guilabel
+>Skicka</guilabel
+>. Nu kan du och partnern kommunicera via Jabber. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap013_firstchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Första chatten</phrase>
+    </textobject>
+    <caption>
+      <para
+>Första chatten</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<sect2 id="transfer-files"
+><title
+>Överföra filer</title
+> 
+<para
+>För att överföra filer via Jabber, klicka på <guilabel
+>Skicka fil</guilabel
+> och välj filen att skicka i fönstret som dyker upp. Du får en underrättelse när transaktionen är färdig, eller misslyckades av någon orsak. </para>
+<para
+><warning
+><para
+>Det kanske inte fungerar i vissa fall, på grund av att inställningarna för vissa servrar inte är kompatibla</para
+></warning>
+</para>
+</sect2>
+<sect2 id="group-chat"
+><title
+>Gruppchatt</title
+> 
+<para
+>Jabber klarar inte bara av att kommunicera med en person. Man kan använda gruppchatt för att genomföra en <ulink url="http://en.wikipedia.org/wiki/IRC"
+>IRC</ulink
+>-liknande debatt, där många personer kan prata med varandra. För att använda gruppchatt måste man högerklicka på &kopete;s ikon i systembrickan och välja <menuchoice
+><guimenu
+><replaceable
+>JID</replaceable
+></guimenu
+><guimenuitem
+>Gå med i gruppchatt...</guimenuitem
+></menuchoice
+>, där <replaceable
+>JID</replaceable
+> står för ditt eget Jabber-id. Ett nytt fönster visas där du kan gå med i ett chattrum. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_snap021_groupchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Gruppchatt</phrase>
+    </textobject>
+    <caption>
+      <para
+>Gruppchatt</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Klicka på <guilabel
+>Förfrågan</guilabel
+> för att visa listan med befintliga chattrum på Jabber-servern. Välj ett och tryck på returtangenten för att gå in i rummet. </para>
+<para
+>Alternativt kan du skriva in och skapa ett eget chattrum genom att ange dess namn på raden <guilabel
+>Rum</guilabel
+>. Tryck därefter på returtangenten eller klicka på <guilabel
+>Gå med</guilabel
+> för att gå med. </para>
+<para
+>Efter att du har skapat chattrummet, visas ett nytt fält i &kopete;s fönster med JID:en <replaceable
+>chattrumnamn@jabber.exempel.se</replaceable
+>. Behandla det som en normal kontakt, dvs. klicka på JID:en för att chatta, etc. </para>
+<para
+>Vid detta tillfälle har du ställt in en fungerade Jabber-klient, och kan i princip chatta med kontakter. Men för att få en bättre upplevelse av &kopete; kan du anpassa programmet efter dina behov. En uppsättning <link linkend="useful-configuration-hints"
+>Användbara inställningstips</link
+> visas på handledningens nästa sida. </para>
+</sect2>
+</sect1>
+<sect1 id="useful-configuration-hints"
+><title
+>Användbara inställningstips</title>
+<para
+>Alla dessa tips hänvisar till &kopete;s huvudinställningsfönster som befinner sig under <menuchoice
+><guimenu
+>Inställningar</guimenu
+> <guimenuitem
+>Anpassa...</guimenuitem
+></menuchoice
+>. Försäkra dig om att du klickar på <guilabel
+>Verkställ</guilabel
+> eller <guilabel
+>Ok</guilabel
+> om du vill spara ändringarna. </para>
+<para
+>Alla ändringar som påverkar inställningen av ditt konto, och inställning av flera konton i &kopete; (Jabber/XPP samt <ulink url="http://sv.wikipedia.org/wiki/ICQ"
+>ICQ</ulink
+>, <ulink url="http://en.wikipedia.org/wiki/.NET_Messenger_Service"
+>MSN</ulink
+> och många andra meddelandeprotokoll) finns under fliken <guilabel
+>Konton</guilabel
+>. Om du vill ställa in personlig information eller är villig att använda ett kontaktfoto, klicka på <guilabel
+>Ändra identitet...</guilabel
+> och gör inställningarna. Ett foto kan laddas upp genom att klicka på den lilla ikonen på vänstra sidan längst ner i bildområdet. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap014_setidentity.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Ställa in identitet</phrase>
+    </textobject>
+    <caption>
+      <para
+>Ställa in identitet</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nästa flik i den vertikala listan på vänster sida är <guilabel
+>Kontaktlista</guilabel
+>. Inställningarna är i stort sett självförklarliga och det verkar användbart att aktivera <guilabel
+>Använd kontaktfoton om tillgängliga</guilabel
+>. De övriga tre horisontella flikarna (<guilabel
+>Färger och teckensnitt</guilabel
+>, <guilabel
+>Avancerat</guilabel
+> och <guilabel
+>Layout</guilabel
+>) innehåller rätt speciella inställningar som går att finjustera efter att &kopete; har använts några veckor. </para>
+<para
+><guilabel
+>Status</guilabel
+>-inställningarna låter dig ange vanliga <ulink url="http://en.wikipedia.org/wiki/Status_message"
+>statusmeddelanden</ulink
+> när du är ansluten, borta, ej synlig, etc. </para>
+<para
+>Att klicka på <guilabel
+>Beteende</guilabel
+> visar en rätt detaljerad uppsättning inställningar. De mest intressanta, som finns under fliken <guilabel
+>Allmänt</guilabel
+> är <guilabel
+>Meddelandehantering</guilabel
+>och <guilabel
+>Initial status</guilabel
+>. Den första bestämmer om inkommande meddelanden från kontakter omedelbart öppnar ett nytt fönster, eller om de köas till du själv öppnar &kopete;. Den andra talar om för &kopete; om du ska vara ansluten när programmet startas. Om det väljes blir du alltid tillgänglig för kontakter så fort &kopete; kör. Fliken <guilabel
+>Händelser</guilabel
+> låter dig ställa in i vilka fall &kopete; ger underrättelser via datorns underrättelsesystem (i de flesta fall <guilabel
+>Knotify</guilabel
+>). Om du vill att &kopete; automatiskt ska ställa in status till <quote
+>frånvarande</quote
+>, gå till fliken <guilabel
+>Frånvaroinställningar</guilabel
+> och aktivera den första kryssrutan. Du kan ställa in tiden som måste förflyta efter den sista åtgärden (inmatning via tangentbordet eller musförflyttning) innan &kopete; markerar dig som <quote
+>frånvarande</quote
+>. Normalvärdet är 10 minuter. Alternativ under <guilabel
+>Chatt</guilabel
+> är återigen självförklarliga och redan inställda till användbara värden. </para>
+<para
+>Nästa objekt i den vertikala raden till vänster är <guilabel
+>Chattfönster</guilabel
+>. Den första fliken där, <guilabel
+>Stil</guilabel
+>, kan användas för att ställa in ett annat utseende än det normala. Man kan också installera en egen stil, eller ladda ner nya från Internet genom att klicka på <guilabel
+>Hämta ny...</guilabel
+>. När man skriver in en <ulink url="http://sv.wikipedia.org/wiki/Smiley"
+>Smilis</ulink
+> under en konversation, konverterar &kopete; den normalt till en grafisk smilis. För att inaktivera funktionen, eller använda en annan uppsättning smilisar, gå till <guilabel
+>Smilisar</guilabel
+>. Den sista fliken <guilabel
+>Färger och teckensnitt</guilabel
+> är återigen självförklarande och ställer in dessa alternativ för chattfönstret. </para>
+<para
+><ulink url="http://sv.wikipedia.org/wiki/Webbkamera"
+>Webbkameror</ulink
+> stöds i &kopete;, men för närvarande (november 2010) finns det fortfarande vissa svårigheter rörande videochatt, så inställningar under <guilabel
+>Video</guilabel
+> görs på eget bevåg, eftersom det är mycket möjligt att det inte fungerar riktigt. <ulink url="http://forum.kde.org/viewforum.php?f=18"
+>KDE:s forum</ulink
+> kan vara till hjälp för att hantera problem med webbkameror. </para>
+</sect1>
+<sect1 id="jabber-plugins"
+><title
+>Insticksprogram</title
+> 
+<para
+>En mycket kraftfull funktion i &kopete; är möjligheten att använda insticksprogram. Det finns en förinstallerad uppsättning insticksprogram (nya kan exempelvis installeras med &Linux;-distributionens pakethanterare), och de kan aktiveras och anpassas under <guilabel
+>Insticksprogram</guilabel
+>. De kan aktiveras genom att markera respektive kryssruta med en bock. Återigen är de flesta självförklarande, men de mest användbara förklaras här ändå. Ett mycket praktiskt insticksprogram är <guilabel
+>Historik</guilabel
+>. När alternativet är aktiverat, loggar Kopete alla chattar och skriver dem på hårddisken. Du kan läsa den i chattfönstret när ikonen <guilabel
+>Visa historik</guilabel
+> väljes, eller öppna den med <menuchoice
+><guimenu
+>Verktyg</guimenu
+> <guimenuitem
+>Visa historik</guimenuitem
+></menuchoice
+>. </para>
+<sect2 id="otr"
+><title
+>OTR</title
+> 
+<para
+>Ett av de viktigaste insticksprogrammen angående integritetshantering är <ulink url="http://en.wikipedia.org/wiki/Off-the-Record_Messaging"
+>OTR</ulink
+>. Programvaran krypterar hela konversationen från ena ändan till den andra, och gör det omöjligt för andra personer att läsa konversationen. Efter insticksprogrammet har aktiverats, måste dess inställningar visas (klicka på ikonen med skiftnyckeln) för att skapa en nyckel. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap015_otrgenerate.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Skapa en OTR-nyckel</phrase>
+    </textobject>
+    <caption>
+      <para
+>Skapa en OTR-nyckel</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Det kan ta en stund och du måste vänta till &kopete; är klart. Stäng därefter OTR-fönstret med <guilabel
+>Ok</guilabel
+> och <guilabel
+>Verkställ</guilabel
+> ändringarna. Till sist måste &kopete; startas om efter detta. Öppna därefter ett chattfönster för kontakten du vill kommunicera med på ett säkert sätt. Gå till <menuchoice
+><guimenu
+>Verktyg</guimenu
+> <guisubmenu
+>OTR-inställningar</guisubmenu
+> <guimenuitem
+>Starta OTR-session</guimenuitem
+></menuchoice
+> eller använd ikonen <menuchoice
+><guimenu
+>OTR-kryptering</guimenu
+> <guimenuitem
+>Starta OTR-session</guimenuitem
+></menuchoice
+>. &kopete; startar sessionen om kontakten klarar av OTR, annars får du ett felmeddelande. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap016_otrfirstuse.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Första gången OTR används</phrase>
+    </textobject>
+    <caption>
+      <para
+>Första gången OTR används</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>För att försäkra dig om att den tillagda kontakten verkligen är den han eller hon utger sig för att vara, är det nödvändigt att kontrollera hans eller hennes behörighet första gången. Man kan göra det genom att använda <menuchoice
+><guimenu
+>Verktyg</guimenu
+> <guisubmenu
+>OTR- inställningar</guisubmenu
+><guimenuitem
+>Kontrollera kontaktens behörighet</guimenuitem
+></menuchoice
+>. Det finns tre alternativ att välja bland: </para>
+<itemizedlist>
+<listitem
+><para
+>Det första är att ställa en fråga till chattpartnern, där svaret bara är känt av dig och honom eller henne. </para
+></listitem>
+<listitem
+><para
+>Nästa möjlighet är en hemlig lösenordsfras som partnern måste känna till (du bör se till att ge frasen till honom eller henne via en annan säker kommunikationskanal, t.ex. telefon). </para
+></listitem>
+<listitem
+><para
+>För det tredje finns alternativet att manuellt kontrollera OTR-fingeravtrycket. Det är säkraste alternativet, men det ät inte särskilt praktiskt, och om du kan välja något av de andra kan det vara bekvämare och snabbare. När fingeravtrycket kontrolleras måste du fråga partnern om hans eller hennes OTR-fingeravtryck via en säker anslutning (t.ex. telefon eller krypterad e-post) så att fingeravtrycket kan kontrolleras. </para
+></listitem>
+</itemizedlist>
+<para
+>Låt oss anta att vi väljer alternativ ett, och ställer en fråga till partnern. Skriv in den i fältet, och definiera det exakta svaret som partnern måste ge, så att han eller hon kan få behörighet. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap017_seqretquestion.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Ställa en hemlig fråga</phrase>
+    </textobject>
+    <caption>
+      <para
+>Ställa en hemlig fråga</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>När vi går vidare ser partnern frågan, och om svaret är riktigt är OTR nu inställt och klart. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap018_otrsuccess.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Färdig inställning av OTR</phrase>
+    </textobject>
+    <caption>
+      <para
+>Färdig inställning av OTR</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Partnern kan göra samma sak i retur, så när ett fönster visas som frågar efter behörighet, svara bara på frågan så blir du också en behörig användare i din väns kontaktlista. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap019_otrauth.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Behörighetskontroll med OTR</phrase>
+    </textobject>
+    <caption>
+      <para
+>Behörighetskontroll med OTR</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Varje gång säker kommunikation används visas en grön hänglåsikon längst upp i chattfönstret. För att avsluta en säker anslutning kan man antingen stänga chattfönstret eller klicka på <menuchoice
+><guimenu
+>OTR-kryptering</guimenu
+> <guimenuitem
+>Avsluta OTR-session</guimenuitem
+></menuchoice
+>. </para>
+</sect2>
+</sect1>
+</appendix>

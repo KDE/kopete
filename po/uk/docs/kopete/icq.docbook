@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-icq">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Цю документацію було створено на основі сторінки UserBase KDE <ulink url=" http://userbase.kde.org/Kopete/ICQ"
+>Kopete/ICQ</ulink
+>.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+<othercredit role="translator"
+><firstname
+>Юрій</firstname
+><surname
+>Чорноіван</surname
+><affiliation
+><address
+><email
+>yurchor@ukr.net</email
+></address
+></affiliation
+><contrib
+>Переклад українською</contrib
+></othercredit
+> 
+    </authorgroup>
+<date
+>6 січня 2011 року</date>
+    <releaseinfo
+>&kde; SC 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2011-01-06T06:11:26Z</timestamp
+>-->
+<title
+>Підручник з ICQ</title>
+<!--userbase-content-->
+<sect1 id="about-icq"
+><title
+>Про ICQ</title>
+<para
+>Ці настанови допоможуть вам у користуванні ICQ, системою миттєвого обміну повідомленнями, у &kopete;. </para>
+<para
+><ulink url="http://www.icq.com/en.html"
+>ICQ</ulink
+> — програма з закритим кодом для обміну миттєвими повідомленнями, першу версію якої було розроблено ізраїльською компанією Mirabilis. Для надсилання текстових повідомлень у цій програмі було використано протокол обміну даними мережею OSCAR AOL. Для розпізнавання користувачів у мережі використовується число, яке називається UIN (Unified Identification Number або універсальний ідентифікаційний номер). Під час реєстрації облікового запису ICQ вам потрібно буде вказати адресу електронної пошти. У деяких клієнтських програмах ICQ передбачено підтримку входу до системи за допомогою адреси електронної пошти замість UIN (але у &kopete; цього робити не можна). </para>
+<sect2 id="features"
+><title
+>Можливості</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Надсилання повідомлень співрозмовникам, які перебувають поза мережею. </para
+></listitem>
+<listitem
+><para
+>Можливість обміну повідомленнями у групі. </para
+></listitem>
+<listitem
+><para
+>Можливість передавання файлів. </para
+></listitem>
+</itemizedlist>
+<sect3 id="features-not-yet-supported-by-kopete"
+><title
+>Можливості, які ще не підтримуються Kopete</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Ігри. </para
+></listitem>
+<listitem
+><para
+>Надсилання SMS. </para
+></listitem>
+</itemizedlist>
+</sect3>
+</sect2>
+<sect2 id="criticism"
+><title
+>Критичні зауваження</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Конфіденційність: аналітик з безпеки Джефрі Карр (Jeffrey Carr) вважає, щодо до протоколів спілкування може отримувати доступ російська розвідка. Докладніше про це ви можете дізнатися <ulink url="http://greylogic.us/2010/07/13/your-icq-identity-now-belongs-to-the-fsb/"
+>тут</ulink
+>. </para
+></listitem>
+<listitem
+><para
+>Небажані повідомлення: у мережі дуже багато спаму (небажаної реклами або вірусів). </para
+></listitem>
+<listitem
+><para
+>Авторські права: відповідно до <ulink url="http://www.icq.com/legal/policy.html"
+>правил прийнятного користування ICQ</ulink
+>, ви надаєте власникам ICQ право використовувати ваші повідомлення у будь-який бажаний для них спосіб. </para
+></listitem>
+</itemizedlist>
+ 
+</sect2>
+</sect1>
+<sect1 id="create-your-icq-account"
+><title
+>Створення облікового запису ICQ</title
+> 
+<para
+>Перш ніж ви зможете почати спілкування у ICQ, вам слід створити обліковий запис ICQ. Якщо у вас вже є такий запис, ви можете перейти до наступної сторінки настанов. </para>
+<para
+>Відкрийте <ulink url="https://www.icq.com/register/"
+>сторінку реєстрації</ulink
+> у вашій улюбленій програмі для перегляду інтернету (наприклад, <guilabel
+>Opera</guilabel
+>, <guilabel
+>Firefox</guilabel
+>, <guilabel
+>Konqueror</guilabel
+> чи <guilabel
+>Chromium</guilabel
+>). </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_create_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Вкажіть ваші дані</phrase>
+    </textobject>
+    <caption>
+      <para
+>Вкажіть ваші дані</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Тепер вам слід зачекати на електронний лист від ICQ, у якому міститиметься посилання на сторінку підтвердження запиту. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_activate_new_account1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Натисніть посилання на сторінку підтвердження запиту у повідомленні електронної пошти, щоб підтвердити реєстрацію.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Натисніть посилання на сторінку підтвердження запиту у повідомленні електронної пошти, щоб підтвердити реєстрацію.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Тепер у вас є обліковий запис ICQ! Але у поточній версії &kopete; увійти до системи ви можете лише за вашим UIN (Unified Identification Number). Типово, ICQ не покаже вам ваш UIN. Вам доведеться відкрити <ulink url="https://www.icq.com/people"
+>цю сторінку</ulink
+> і увійти до системи за її допомогою. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_log_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Вхід до системи за допомогою www.icq.com</phrase>
+    </textobject>
+    <caption>
+      <para
+>Вхід до системи за допомогою www.icq.com</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Після того, як ви увійдете до системи, перейдіть на сторінку вашого профілю: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_go_to_profile.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Натисніть посилання «My Profile»</phrase>
+    </textobject>
+    <caption>
+      <para
+>Натисніть посилання «My Profile»</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>У відповідь вам буде показано сторінку даних вашого облікового запису. Якщо ви натиснете посилання «More about me», буде показано запис з назвою ICQ#. Це і є ваш UIN: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_uin.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="connect-through-kopete"
+><title
+>Встановлення з’єднання за допомогою Kopete</title>
+<para
+>Після першого запуску &kopete; ви побачите вікно, подібне до наведеного нижче. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_first_start.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Вікно Kopete після першого запуску.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Вікно Kopete після першого запуску.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Щоб додати ваш обліковий запис ICQ, натисніть на полі <guilabel
+>Натисніть, щоб додати обліковий запис</guilabel
+>. Якщо ж ви вже налаштували якийсь інший обліковий запис (наприклад, MSN або Jabber), вам слід скористатися пунктом меню <menuchoice
+><guimenu
+>Параметри</guimenu
+><guimenuitem
+>Налаштувати</guimenuitem
+></menuchoice
+> і натиснути кнопку <guilabel
+>Додати запис</guilabel
+>. </para>
+<para
+>Програма відкриє вікно зі списком всіх протоколів спілкування, з якими може працювати &kopete;. У нашому випадку нам потрібен протокол ICQ, отже слід позначити пункт ICQ: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Вибір протоколу.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Вибір протоколу.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Програма відкриє діалогове вікно налаштування вашого облікового запису. Натисніть пункт вкладки <guilabel
+>Просте налаштування</guilabel
+> у верхній частині вікна. На відповідній вкладці введіть ваш UIN. Якщо ви не бажаєте вводити пароль під час кожного запуску програми, ви можете вказати також ваш пароль. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_setup.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Основні параметри налаштування облікового запису.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Основні параметри налаштування облікового запису.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Точніше налаштування можна виконати за допомогою вкладки <guilabel
+>Параметри облікового запису</guilabel
+>: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_preferences.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Додаткові параметри.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Додаткові параметри.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>&kopete; зможе працювати з обліковим записом без внесення будь-яких змін на цій вкладці. Отже, якщо вам точно не відомо, чи слід змінювати хоч щось, просто пропустіть цей розділ. </para>
+</sect1>
+<sect1 id="options-explained"
+><title
+>Роз’яснення призначення параметрів</title
+> 
+<itemizedlist>
+<listitem
+><para
+><guilabel
+>Вимагати уповноваження перед тим, якщо хтось зможе додати вас до свого списку контактів</guilabel
+> — позначте цей пункт, якщо ви бажаєте, щоб програма запитувала вас перед тим, як дозволити комусь додати вас до списку контактів. За типових налаштувань виконувати пошук вашого запису та додавання вас до списку може будь-хто. Це означає, що будь-який незнайомець може бачити, чи увійшли ви до мережі і надсилати вам повідомлення. Якщо ви цього не бажаєте, ви можете позначити цей пункт, щоб програма завжди просила у вас підтвердження до того, як хтось зможе почати з вами спілкуватися. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Ховати адресу IP</guilabel
+> — якщо ви не бажаєте, щоб сторонні особи бачили вашу <ulink url="http://en.wikipedia.org/wiki/IP_address"
+>IP-адресу</ulink
+>, ви можете позначити цей пункт. IP-адреса є вашим ідентифікатором у інтернеті. Число, яке їй відповідає є унікальним. Звичайний користувач інтернету не зможе визначити ваше ім’я за IP-адресою, це може зробити лише ваш надавач послуг інтернету! ICQ все одно зберігає вашу IP-адресу певний час. Отже, якщо ви не позначите цей пункт, ваша безпека не постраждає. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Показувати мій стан через об’єднаний центр повідомлень ICQ</guilabel
+> — якщо ви позначите цей пункт, ваше повідомлення про стан буде оприлюднено у центрі обміну повідомленнями (його зможе бачити будь-хто на www.icq.com/people). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Перезаписувати стандартну інформацію про сервер</guilabel
+> — якщо ви бажаєте змінити адресу, за допомогою якої &kopete; входитиме у мережу ICQ, ви зможете досягти цього за допомогою цього пункту (зазвичай, потреби у його використанні немає). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Використовувати проксі-сервер</guilabel
+> — пункт для встановлення з’єднання за допомогою <ulink url="http://en.wikipedia.org/wiki/Proxy_server"
+>проксі-сервера</ulink
+>. Проксі-сервери — це сервери, призначенням яких є переспрямування запитів. У деяких компаніях, школах та університетах такі сервери використовують для обмеження доступу до деяких вебсайтів. Користувачі домашніх комп’ютерів, ймовірно, не потребують налаштування такого сервера. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Діапазон портів</guilabel
+> — за допомогою цього пункту можна повідомити &kopete; про те, які порти слід використовувати для встановлення безпосереднього зв’язку між комп’ютерами у мережі. Докладніший опис цієї можливості не належить до предмету цього підручника. Якщо вам потрібні додаткові відомості, зверніться до <ulink url="http://en.wikipedia.org/wiki/Port_numbers"
+>сторінки Вікіпедії</ulink
+>. За типових обставин у вас не повинно виникнути потреби у зміні типових значень. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Час очікування</guilabel
+> — визначає кількість секунд, протягом яких &kopete; має очікувати, перш ніж програмою буде ініційовано розрив з’єднання. Приклад: ви надсилаєте файл одному з ваших контактів, але через проблеми зі з’єднанням він чи вона не може отримати цей файл. За допомогою цього пункту ви можете повідомити &kopete; скільки секунд слід продовжувати спроби надсилання файла. За типових обставин немає потреби змінювати стан позначення цього пункту. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Типове кодування для повідомлень</guilabel
+> — встановлює кодування повідомлень. Користувачі Windows користуються кодуваннями "windows-125*" (від windows-1250 до windows-1258), отже, якщо ви маєте намір спілкуватися з користувачами windows, скористайтеся цим пунктом. Крім того, якщо ви спілкуватиметеся з кимось, хто не користується windows, ймовірно, що у нього чи у неї також встановлено кодування windows-125* (оскільки йому чи їй потрібно спілкуватися з тими, хто користується windows). У різних країнах використовують різні кодування windows. Виберіть відповідне вашій країні (наприклад, "Windows-1251" для України чи Білорусі). Якщо виникають проблеми з показом повідомлень, спробуйте встановити інше кодування. </para
+></listitem>
+</itemizedlist>
+<para
+>Отже ми успішно налаштували ваш обліковий запис ICQ. Тепер можна натиснути кнопку <guilabel
+>Далі</guilabel
+>, а потім <guilabel
+>Завершити</guilabel
+>. Якщо у вас є декілька облікових записів, ви можете вибрати для них різні кольори, щоб простіше було розібратися з тим, які записи контактів відповідають яким обліковим записам. </para>
+</sect1>
+<sect1 id="add-a-contact"
+><title
+>Додавання запису контакту</title
+> 
+<para
+>Після налаштування облікового запису ви можете встановити з’єднання з ним за допомогою &kopete;. Вікно програми виглядатиме десь так: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_logged_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>З’єднання встановлено.</phrase>
+    </textobject>
+    <caption>
+      <para
+>З’єднання встановлено.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Щоб додати новий запис контакту, натисніть кнопку <guilabel
+>Додати</guilabel
+> на панелі інструментів і виберіть ваш обліковий запис (у нашому випадку це буде ваш UIN) або скористайтеся пунктом меню <menuchoice
+><guimenu
+>Файл</guimenu
+> <guisubmenu
+>Додати контакт</guisubmenu
+><guimenuitem
+><replaceable
+>ваш обліковий запис</replaceable
+></guimenuitem
+></menuchoice
+>. У вікні, яке буде відкрито, ви можете вказати UIN особи, яку ви бажаєте додати. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_add_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Якщо ви не знаєте UIN, але знаєте псевдонім або адресу електронної пошти цієї особи, ви можете спробувати знайти ваш контакт. Натисніть кнопку <guilabel
+>Пошук</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_search_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Пошук можна виконувати і за UIN.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Пошук можна виконувати і за UIN.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="being-added"
+><title
+>Додавання вашого запису іншими користувачами</title
+> 
+<para
+>Якщо ви користуєтеся ICQ, дуже ймовірно, що вас додасть до списку контактів хтось інший. Якщо таке трапиться, &kopete; покаже повідомлення з UIN того, хто бажає додати вас до списку. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_added.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Запит щодо уповноваження.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Запит щодо уповноваження.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Щоб дізнатися більше про того, хто бажає вас додати, натисніть кнопку <guilabel
+>Інформація...</guilabel
+>. У відповідь буде відкрито вікно з відомостями про цю особу. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_information.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Інформація</phrase>
+    </textobject>
+    <caption>
+      <para
+>Інформація</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>За допомогою цього вікна ви можете уповноважити або заблокувати користувача. Якщо користувача буде уповноважено, ви зможете спілкуватися з ним або з нею, якщо ви заблокуєте користувача, він чи вона не зможе з вами спілкуватися. </para>
+</sect1>
+<sect1 id="chatting"
+><title
+>Спілкування</title
+> 
+<para
+>Щоб розпочати спілкування, наведіть вказівник миші на пункт одного з ваших контактів і клацніть лівою кнопкою миші. Буде відкрито вікно, за допомогою якого ви зможете вводити текстові повідомлення і надсилати їх. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_chat_window.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Спілкування з вашими контактами.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Спілкування з вашими контактами.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Крім того, ви можете надсилати повідомлення тим, хто перебуває поза мережею. Вони отримають ваше повідомлення, щойно увійдуть до мережі. </para>
+</sect1>
+<sect1 id="spam"
+><title
+>Спам</title
+> 
+<para
+>На жаль, у мережі багато спаму (спам — це небажані повідомлення, зазвичай рекламні або зловмисні) у мережі ICQ. Щоб уникнути спаму, вам слід уповноважувати на надсилання повідомлень лише тих, з ким ви знайомі. Інших способів уникнути неприємностей немає. Просто ігноруйте спамерів! </para>
+</sect1>
+</appendix>

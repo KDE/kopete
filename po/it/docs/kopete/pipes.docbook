@@ -1,0 +1,189 @@
+<!-- Copyright (c) 2008 by Charles Connell <charles@connells.org
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="pipes">
+<title
+>Guida all'implementazione per l'estensione Canali (Pipes) di &kopete;</title>
+<para
+>A partire dalla versione 1.0, &kopete; include un'estensione chiamata Pipes (canali). I canali ti consentono di instradare i messaggi in arrivo o in uscita tramite uno script od un programma esterno. Un messaggio in arrivo sarà instradato verso un programma esterno prima di raggiungere la finestra di chat, mentre un messaggio in uscita sarà instradato verso un programma esterno prima di essere inviato attraverso la rete. I canali possono ricevere testo in tre forme: <variablelist
+> <varlistentry
+> <term
+>Corpo del messaggio in testo semplice</term
+> <listitem
+><para
+>Il corpo del messaggio, in testo semplice &ascii;</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Corpo del messaggio in &HTML;</term
+> <listitem
+><para
+>Il corpo del messaggio in &HTML;, come se l'altro partecipante alla chat avesse spedito testo in HTML, e che sarà visualizzato dalla finesta di chat</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Messaggio completo in &XML;</term
+> <listitem
+><para
+> Un documento &XML; che descrive tutte le caratteristiche del messaggio, incluso il relativo corpo in &HTML;.</para
+></listitem
+> </varlistentry
+> </variablelist
+> Questo documento descrive le specifiche del formato &XML; e come scrivere un programma in grado di gestirlo. </para>
+
+<sect1 id="xml-output">
+<title
+>Output &XML;</title>
+<para
+>Questo è un esempio di quello che un programma riceverà nel suo standard input:<literallayout>
+&lt;?xml version="1.0" encoding="ISO-8859-1"?>
+&lt;message subject=""
+        route="outbound"
+        importance="1"
+        formattedTimestamp="11:06:46 am"
+        timestamp="Sat Dec 1 11:06:46 2007"
+        type="normal"
+        mainContactId="spacemonkey1234"
+        time="11:06 am" >
+        &lt;from>
+                &lt;contact contactId="tdurden"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/oscarpictures/tdurden.jpg" >
+                        &lt;contactDisplayName dir="ltr" text="tdurden" />
+                        &lt;metaContactDisplayName dir="ltr"
+                                text="Tyler" />
+                &lt;/contact>
+        &lt;/from>
+        &lt;to>
+                &lt;contact contactId="spacemonkey1234"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/avatars/User/7e542903e0ac7519a7496e85f5a5b99d.png" >
+                        &lt;contactDisplayName dir="ltr" text="spacemonkey1234" />
+                        &lt;metaContactDisplayName dir="ltr" text="Robert Paulson" />
+                &lt;/contact>
+                &lt;/to>
+        &lt;body dir="ltr"
+                bgcolor="#000000"
+                color="#000000" >
+                &amp;lt;span style=" color:#000000;"
+>ciao&amp;lt;/span
+>&lt;/body>
+&lt;/message>
+</literallayout
+> Questo formato &XML; è vagamente basato sullo schema XSD utilizzati per lo stile delle chat, consultabile presso <ulink url="http://kopete.kde.org/files/kopetemessage.xsd"
+>il sito di Kopete</ulink
+>. Questo codice rappresenta un messaggio. Ci sono alcuni dettagli da tenere in considerazione: <itemizedlist>
+<listitem
+><para
+>L'attributo «timestamp» dell'elemento «message» è in formato ISO 8601.</para
+></listitem>
+<listitem
+><para
+>L'attributo «protocolIcon» dell'elemento «contact» viene scelto come segue: <orderedlist>
+<listitem
+><para
+>Se l'oggetto contatto ha la proprietà foto impostata, viene usato quel percorso.</para
+></listitem>
+<listitem
+><para
+>Altrimenti, viene considerato il percorso dell'immagine per il metacontatto del contatto in questione, e viene utilizzato comunque, anche se vuoto.</para
+></listitem>
+</orderedlist>
+</para
+></listitem>
+<listitem
+><para
+>Gli attributi «color» e «bgcolor» dell'elemento «body» sono stringhe vuote se non impostati in Kopete. Sono rappresentati nel formato dei colori del web.</para
+></listitem>
+<listitem
+><para
+>Nel contenuto dell'elemento «body», l'entità «&lt;» è stata trasformatatramite caratteri di escape in modo da non essere confusa con la struttura &XML;. Ovviamente, per interpretare correttamente il corpo del messaggio come HTML, bisogna convertire le occorrenze di «&amp;lt;» in «&lt;».</para
+></listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1 id="xml-input">
+<title
+>Input &XML;</title>
+<para
+>Il tuo programma riceverà i dati &XML; nel suo standard input, potrà quindi elaborarli e infine dovrà ripassarli indietro a &kopete; utilizzando il proprio standard output. Se il programma modifica uno degli elementi indicati di seguito, la conoscenza che &kopete; ha internamente del messaggio sarà modificata per riflettere i cambiamenti. <itemizedlist
+><listitem
+><para
+>attributo «timestamp» di «message», ma non gli altri attributi temporali</para
+></listitem
+> <listitem
+><para
+>attributo «subject» di «message»</para
+></listitem
+> <listitem
+><para
+>attributo «type» di «message»</para
+></listitem
+> <listitem
+><para
+>attributo «importance» di «message»</para
+></listitem
+> <listitem
+><para
+>attributo «color» di «body». Il valore di questo attributo normalmente rappresenta un codice di colore web, ma può essere un nome. I nomi definiti da <ulink url="http://www.w3.org/TR/SVG/types.html#ColorKeywords"
+>SVG</ulink
+> sono accettati da QColor in Qt 4 e sono quindi gli unici nomi utilizzabili.</para
+></listitem
+> <listitem
+><para
+>attributo «bgcolor» di «body» &mdash; stesso comportamento di «color»</para
+></listitem
+> <listitem
+><para
+>il contenuto dell'elemento «body»</para
+></listitem
+> </itemizedlist
+> Se modifichi elementi o attributi non citati qui sopra, i cambiamenti effettuati non avranno alcun effetto. </para>
+</sect1>
+
+<sect1 id="acceptable-values">
+<title
+>Valori accettabili</title>
+<para
+>Alcuni attributi hanno dei requisiti riguardo i valori accettabili. L'output dell'estensione Pipes avrà sempre valori validi. Se il tuo programma modifica questi attributi, il relativo valore deve rimanere valido. In caso contrario il comportamento di &kopete; è indefinito. <variablelist>
+<varlistentry
+><term
+>Attributo «route» dell'elemento «message»</term
+><listitem
+><para
+>Deve essere «inbound», «outbound» o «internal»</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Attributo «type» dell'elemento «message»</term
+><listitem
+><para
+>Deve essere «action» o «normal»</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Attributo «importance» dell'elemento «message»</term
+><listitem
+><para
+>Deve essere «0» per bassa, «1» per normale e «2» per alta</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Attributo «dir» di vari elementi</term
+><listitem
+><para
+>Deve essere «ltr» per la indicare da sinistra a destra, o «rtl» per la direzione da destra a sinistra</para
+></listitem
+></varlistentry>
+</variablelist>
+</para>
+</sect1>
+
+</appendix>

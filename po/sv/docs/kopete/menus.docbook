@@ -1,0 +1,931 @@
+<!-- Kopete Handbook, Menus Chapter copyright 2003 Will Stephenson.  Licensed under the GNU Free Documentation License -->
+<chapter id="menus">
+<title
+>Menyalternativ</title>
+
+<para
+>Varje menyalternativ beskrivs nedan. Om det finns en snabbtangent som utför en menyfunktion, så listas den tillsammans med menyalternativet.</para>
+<sect1 id="menus-contactlist">
+<title
+>Menyerna i kontaktlistans fönster</title>
+<sect2 id="menus-contactlist-file">
+<title
+>Menyn Arkiv</title>
+
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Arkiv</guimenu
+> <guisubmenu
+>Ange status</guisubmenu
+> <guimenuitem
+>Ansluten</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Koppla upp alla konton</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Arkiv</guimenu
+> <guisubmenu
+>Ange status</guisubmenu
+> <guimenuitem
+>Borta</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Ange att du är borta i alla uppkopplade konton</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Arkiv</guimenu
+> <guisubmenu
+>Ange status</guisubmenu
+> <guimenuitem
+>Nerkopplad</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Koppla ner alla konton</para>
+</listitem>
+</varlistentry>
+<!--FIXME missing Set Status Invisible, Busy, Edit Messages, Edit Statuses-->
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Arkiv</guimenu
+> <guimenuitem
+>Lägg till kontakt...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Det här visar guiden för att lägga till en kontakt, som låter dig lägga till en ny kontakt i din lista</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Arkiv</guimenu
+> <guimenuitem
+>Skapa ny grupp...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Frågar dig efter den nya gruppens namn och lägger till den i kontaktlistan.</para>
+</listitem>
+</varlistentry>
+<!--FIXME missing Export Contacts-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Arkiv</guimenu
+> <guimenuitem
+>Avsluta</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Kopplar ner dig från alla direktmeddelandesystem, stänger alla fönster och avslutar programmet.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-contactlist-edit">
+<title
+>Menyn Redigera</title>
+<variablelist>
+<!--FIXME not in Edit menu
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Z</keycap
+></keycombo>
+</shortcut>
+<guimenu
+>Edit</guimenu>
+<guimenuitem
+>Undo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Reverts the last change that was made to the contact list.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>Z</keycap
+></keycombo>
+</shortcut>
+<guimenu
+>Edit</guimenu>
+<guimenuitem
+>Redo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Reverts the last change that was made to the contact list by <guimenu
+>Edit</guimenu
+><guimenuitem
+>Undo</guimenuitem
+></para>
+</listitem>
+</varlistentry>
+-->
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Skicka enstaka meddelande...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Visar ett e-postliknande meddelandefönster för markerad kontakt, för att skicka ett enstaka meddelande.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Börja chatta...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Öppnar ett chattfönster för markerad kontakt, för att påbörja ett samtal.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Skicka fil...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Om det stöds av direktmeddelandesystemet, öppnas en filvalsdialogruta för att välja en fil att skicka till markerad kontakt.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigera</guimenu
+> <guisubmenu
+>Flytta till</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Aktiverad när en kontakt är markerad) Välj en annan grupp i undermenyn, så flyttas kontakten till den gruppen.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigera</guimenu
+> <guisubmenu
+>Kopiera till</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Aktiverad när en kontakt är markerad) Välj en grupp i undermenyn, så kopieras kontakten till den gruppen. Direktmeddelandesystem som tillåter att kontakter finns i mer än en grupp i serverns kontaktlista uppdateras på motsvarande sätt.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigera</guimenu
+> <guisubmenu
+>Lägg till kontakt...</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Aktiverad när en kontakt är markerad) Välj ett annat konto i undermenyn, så kan du lägga till ett annat sätt att skicka meddelanden till personen med det kontot.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Lägg till i kontaktlistan...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Aktiverad när en kontakt är markerad) Ibland skickar personer som inte redan finns i din kontaktlista ett meddelande till dig. I detta fall skapar &kopete; en tillfällig post för dem. Använd då den här funktionen för att behålla dem i din kontaktlista.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo
+><keycap
+>Delete</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Ta bort kontakt</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Aktiverad när en kontakt är markerad) Tar helt och hållet bort en kontakt från kontaktlistan.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo
+><keycap
+>F2</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Byt namn</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Aktiverad när en kontakt är markerad) Byter namn på kontakten i kontaktlistan. Om du gör det, ändras inte längre posten i kontaktlistan om kontakten ändrar sitt namn att visa från en annan dator. Du kan aktivera det här igen i kontaktens egenskapsdialogruta.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Egenskaper</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Egenskapsdialogrutan låter dig välja egna ikoner för markerad post, och ändra dess namn.</para>
+<para
+>För kontakter kan du ändra &kde;:s adressbokspost som de hör ihop med.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Ta bort grupp</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Aktiverad när en grupp är markerad) Tar helt och hållet bort en grupp från kontaktlistan. Alla kontakter som bara finns i den här gruppen flyttas till toppnivån.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Byt namn på grupp</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Aktiverad när en grupp är markerad) Byter namn på gruppen.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect2>
+<sect2 id="menus-settings">
+<title
+>Menyn Inställningar</title>
+<para
+>&kopete; har &kde;:s vanliga inställningsmeny som beskrivs i <ulink url="help:/fundamentals/menus.html#menus-settings"
+>&kde;:s grunder</ulink
+>, med ytterligare alternativ:</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Inställningar</guimenu
+> <guimenuitem
+>Visa nerkopplade användare</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Visar eller döljer kontakter som för närvarande är nerkopplade. De blir synliga när de kopplar upp igen.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>G</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Inställningar</guimenu
+> <guimenuitem
+>Visa tomma grupper</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Det här visar eller döljer grupper som inte har några medlemmar, eller där alla medlemmar är nerkopplade och dolda (se ovan).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><!--FIXME no global Shortcuts dialog, it is the app shortcuts dialog-->
+<term>
+<menuchoice
+><guimenu
+>Inställningar</guimenu
+> <guimenuitem
+>Anpassa globala genvägar...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Visar &kde;:s vanliga dialogruta för att anpassa globala snabbtangenter, där du kan ändra snabbtangenter som alltid fungerar i &kde;.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-help">
+<title
+>Menyn Hjälp</title>
+<para
+>Kontaktlistefönstret har &kde;:s vanliga hjälpmenyalternativ. För mer information läs avsnittet om <ulink url="help:/fundamentals/menus.html#menus-help"
+>hjälpmenyn</ulink
+> i &kde;:s grunder. </para>
+</sect2>
+</sect1
+>  <!-- menus-contactlist -->
+
+<sect1 id="menus-chatwindow">
+<title
+>Menyerna i chattfönstret</title>
+<sect2 id="menus-chatwindow-chat">
+<title
+>Menyn Chatt</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycap
+>Retur</keycap
+></shortcut
+> <guimenu
+>Chatt</guimenu
+> <guimenuitem
+>Skicka meddelande</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Skickar ett meddelande.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Send File missing-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>S</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Chatt</guimenu
+> <guimenuitem
+>Spara</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Sparar innehållet i chatten till en fil.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>P</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Chatt</guimenu
+> <guimenuitem
+>Skriv ut...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Skriver ut en papperskopia av chatten.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Chatt</guimenu
+> <guisubmenu
+>Kontakter</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Den här menyn listar alla personer i chatten. Du har tillgång till samma kontaktmeny som du får genom att <mousebutton
+>höger</mousebutton
+>klicka på en kontakts namn i kontaktlistan, vilket gör det möjligt att utföra kontaktspecifika åtgärder, som att skicka filer till dem, visa användarinformation eller blockera dem.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Commands missing-->
+<!--FIXME Close All But This Tab missing-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>W</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Chatt</guimenu
+> <guimenuitem
+>Stäng</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Stänger aktuell chatt. Om det finns någon chatt som äger rum under en annan flik, förblir fönstret öppet.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Chatt</guimenu
+> <guimenuitem
+>Avsluta</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Stänger alla chattar som äger rum i det här fönstret.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-edit">
+<title
+>Menyn Redigera</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>X</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Klipp ut</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Klippa ut text fungerar som för de flesta editorer: den markerade texten tas bort och läggs på klippbordet. Observera att du också kan markera text och dra den till en ny plats.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+> <keycombo action="simul"
+>&Ctrl;<keycap
+>C</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Kopiera </guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Kopiera text fungerar som för de flesta editorer: Den markerade texten kopieras till klippbordet. Observera att du också kan välja text medan du håller nere &Ctrl;-tangenten, och dra den till en ny plats, för att kopiera den.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>V</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Klistra in</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Att klippa in fungerar på samma sätt som för de flesta editorer: Texten från klippbordet klipps in på markörens nuvarande position.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-format">
+<title
+>Menyn Format</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Format</guimenu
+> <guisubmenu
+>Lägg till smilis</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Den här menyn innehåller alla smilisar som aktuellt smilis-tema innehåller. Du kan ändra schemat i <link linkend="configuring-appearance-emoticons"
+>i Kopetes inställningsdialogruta</link
+>.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Alignment missing-->
+<!--FIXME not in 4.11
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guimenuitem
+>Text Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Opens a color selector that modifies the text color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guimenuitem
+>Background Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Opens a color selector that modifies the background color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guisubmenu
+>Font</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para
+>This menu allows you to change the font used in the chat.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guisubmenu
+>Font Size</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para
+>This menu allows you to change the font size used in the chat.</para>
+</listitem>
+</varlistentry>
+-->
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tabs">
+<title
+>Menyn Flikar</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Flikar</guimenu
+> <guisubmenu
+>Flikplacering</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Den här menyn låter dig ändra om flikarna syns längst upp eller längst ner i chattfönstret.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>B</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Flikar</guimenu
+> <guimenuitem
+>Koppla från chatt</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Skiljer ut aktuell chatt till ett eget fönster.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Flikar</guimenu
+> <guisubmenu
+>Flytta flik till fönster</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Du kan flytta chattar mellan fönster med den här menyn. Välj chattfönster som fliken ska flyttas till i menyn.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Activate Previous Tab, Activate Next Tab,  Activate Next Active Tab missing-->
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tools">
+<title
+>Menyn Verktyg</title>
+<para
+>Den här menyn innehåller alternativ som lagts till av insticksprogrammen du har laddad. Se <link linkend="plugins"
+>kapitlet om insticksprogram</link
+> för detaljinformation.</para>
+</sect2>
+<sect2 id="menus-chatwindow-settings">
+<title
+>Menyn Inställningar</title>
+<para
+>&kopete; har &kde;:s vanliga inställningsmeny som beskrivs i <ulink url="help:/fundamentals/menus.html#menus-settings"
+>&kde;:s grunder</ulink
+>, med ytterligare alternativ:</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Inställningar</guimenu
+> <guisubmenu
+>Visa deltagare</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Den här menyn styr om listan över deltagare visas till höger om chattfönstret.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-help">
+<title
+>Menyn Hjälp</title>
+<para
+>Chattfönstret har &kde;:s vanliga hjälpmenyalternativ. För mer information läs avsnittet om <ulink url="help:/fundamentals/menus.html#menus-help"
+>hjälpmenyn</ulink
+> i &kde;:s grunder. </para>
+
+</sect2>
+<!--
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Chat</guimenu>
+<guimenuitem
+></guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+></para>
+</listitem>
+</varlistentry>
+
+-->
+</sect1
+> <!-- menus-chatwindow -->
+</chapter
+> <!-- menus -->
+<!--
+CHAT
+Send Message
+Save
+Print...
+Contacts>
+Close
+Quit
+EDIT
+Cut
+Copy
+Paste
+FORMAT
+Add Smiley>
+Text Color...
+Background Color...
+Font>
+Font Size>
+TABS
+Tab Placement>
+Detach Chat
+Move Chat to Window>
+(TOOLS
+Send Media Info)
+SETTINGS
+Show Menubar
+Toolbars>
+	Show Main Toolbar (Kopete)
+	Show Status (Kopete)
+	Show Format Toolbar (Kopete)
+Show Statusbar
+Chat Members List>
+	Place to Left of Chat Area
+	Place to Right of Chat Area
+	Show
+Configure Shortcuts...
+Configure Toolbars...
+HELP
+-->
+<!--FILE
+Connection>
+	Connect All
+	Disconnect All
+Status>
+	Set Available Globally
+	Set Away Globally
+Add Contact...
+Create New Group...
+Save ContactList
+Quit
+EDIT 
+Send Message..
+Start Chat...
+Send File...
+Move To>
+	(Group List)
+Copy To>
+	(Group List)
+Remove From Group
+(on Group)
+Remove Group
+Rename Group
+(on Contact)
+Remove Contact
+Rename Contact
+Add Contact
+Add To Contact List
+View History
+Properties
+SETTINGS
+View Menubar
+View Toolbar
+View Statusbar
+Show Offline Users
+Show Empty Groups
+Configure Shortcuts...
+Configure Global Shortcuts...
+Configure Toolbars...
+Configure...
+HELP
+Kopete Handbook...
+What's This?
+Report Bug
+About Kopete
+About KDE
+-->

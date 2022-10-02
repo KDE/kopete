@@ -1,0 +1,737 @@
+<!-- Copyright (c) 2005 by Michaël Larouche <michael.larouche@kdemail.net
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="chatwindowstyleguide">
+<title
+>Vodič za stil prozora za ćaskanje u <application
+>Kopeteu</application
+></title>
+<sect1 id="chatstyle-reference">
+<title
+>Referenca za stil prozora za ćaskanje u <application
+>Kopeteu</application
+>.</title>
+<para
+>Počev od izdanja 0.12, <application
+>Kopete</application
+> koristi <ulink url="http://www.adiumx.com/"
+>Adiumov</ulink
+> format za stil prozora za ćaskanje. Ovaj format je zasnovan na HTML šablonima i CSS‑u, pa je s njime lako raditi i razvijati teme — potrebno je samo poznavanje HTML‑a i CSS‑a. Stilovi takođe mogu imati varijante (definisane CSS fajlom) što dodaje na pogodnost prilagođavanja. </para>
+
+<sect2 id="chatstyle-reference-guide">
+	<title
+>Referentni vodič</title>
+<para
+>Adiumov format čini struktura fascikle, HTML šabloni, CSS fajlovi i ključne reči koje se smenjuju pri svakom obrađivanju šablona. Krajnji razgovor je XHTML stranica, gde se poruke dodaju operacijama nad DOM‑om. Centralni element je <literal
+>div</literal
+> po imenu <literal
+>Chat</literal
+>. Pre i posle njega idu šabloni <literal
+>Header</literal
+> i <literal
+>Footer</literal
+>. Poruke su deca elementa <literal
+>Chat</literal
+>. </para>
+
+<sect3 id="chatstyle-reference-directory">
+	<title
+>Struktura fascikle</title>
+<para
+>Stil mora da poštuje sledeću strukturu fascikle. Kad arhivirate stil, arhivirajte fasciklu nazvanu tačno kao ime stila. Ovakva struktura fascikle sledi strukturu svežnja na MacOS‑u X, ako ste upoznati s tim operativnim sistemom. Morate paziti na veličinu slova u imenu, jer Unix sistemi razlikuju veličinu slova.</para>
+<programlisting
+>styleName\ (može da ima sufiks .adiumMessageStyle, jer je svežanj pod MacOS‑om X)
+        Contents\
+                Info.plist
+                Resources\
+                        main.css
+                        Header.html
+                        Footer.html
+                        Status.html
+                        Incoming\ (i Outgoing\)
+                                Content.html
+                                NextContent.html (za uzastopne poruke)
+                                Context.html (za istorijat poruka)
+                                NextContext.html
+                                Action.html
+                        Variants\
+                                *.css
+</programlisting>
+</sect3>
+
+<sect3 id="chatstyle-reference-divinsert">
+	<title
+>O &lt;div id="insert"&gt;&lt;/div&gt;</title>
+	<para
+>Ovo je specijalni interni element <literal
+>div</literal
+>. Služi kao mestodržač koji pokazuje gde umetnuti sledeću poruku. Ako je to nova poruka, ovaj element se smenjuje celom porukom; ako je to nadovezujuća poruka, element se smenjuje sadržajem poruke. Ovaj element je <emphasis
+>neophodan</emphasis
+> u šablonima <literal
+>Content</literal
+>, <literal
+>Context</literal
+>, <literal
+>NextContent</literal
+> i <literal
+>NextContext</literal
+>, a može da se stavi i u šablone <literal
+>Action</literal
+> i <literal
+>Status</literal
+>. </para>
+</sect3>
+
+<sect3 id="chatstyle-reference-templates">
+	<title
+>HTML šabloni</title>
+
+<variablelist
+><title
+>Opis šablona</title>
+
+<varlistentry
+><term
+><filename
+>Header.html</filename
+> (neophodno)</term>
+<listitem>
+<para
+>Koristite šablon <literal
+>Header</literal
+> za davanje prijatnog zaglavlja razgovoru. Ovaj šablon se umeće ispred elementa <literal
+>div</literal
+> u <filename
+>Chat</filename
+>. Ako ne želite zaglavlje, prosto stavite prazan fajl. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Footer.html</filename
+> (neophodno)</term>
+<listitem>
+<para
+>Uglavnom isto kao i zaglavlje, ali za podnožje razgovora. Ovaj šablon se umeće iza elementa <literal
+>div</literal
+> u <filename
+>Chat</filename
+>. Ako ne želite podnožje, prosto stavite prazan fajl. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Status.html</filename
+> (neophodno)</term>
+<listitem>
+<para
+>Ovaj šablon se koristi za prikazivanje internih poruka. Interne poruke su one poput promena stanja i drugih poruka od <application
+>Kopetea</application
+> (npr. o dolaznom prenosu fajla). Ako stil ne sadrži šablon <literal
+>Action</literal
+>, ovaj šablon se koristi i za poruke radnji. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/Content.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Content.html</filename
+> (neophodno)</term>
+<listitem>
+<para
+>Šablon <literal
+>Content</literal
+> je jezgro poruke. Zamislite ga kao blok koji će držati poruke. Pobrinite se da može da prima nadovezujuće poruke, nemojte ga dizajnirati za prikazivanje samo jedne poruke. Nadovezujuće poruke umetaće se na elementu <literal
+>div</literal
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/NextContent.html</filename
+></term>
+              <term
+><filename
+>Outgoing/NextContent.html</filename
+> (neophodno)</term>
+<listitem>
+<para
+>Šablon <literal
+>NextContent</literal
+> služi za nadovezujuće poruke. Umeće se u glavni blok poruka. HTML šablon treba da sadrži osnovni minimum za prikaz poruke. </para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry
+><term
+><filename
+>Incoming/Action.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Action.html</filename
+> (opciono) (<application
+>Kopeteovo</application
+> proširenje)</term>
+<listitem>
+<para
+>Ovaj šablon je <application
+>Kopeteovo</application
+> proširenje Adiumovog formata. Dostupan je za dolazni i odlazni smer. Poruke radnji su specijalne poruke kojim obaveštavamo druge šta radimo. Primer: ako vam je nadimak <literal
+>pperic</literal
+> i unesete <userinput
+>/me instalira <application
+>Kopete</application
+></userinput
+>, to će biti prikazano kao <computeroutput
+>pperic instalira <application
+>Kopete</application
+></computeroutput
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/Context.html</filename
+></term>
+              <term
+><filename
+>Incoming/NextContext.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Context.html</filename
+></term>
+              <term
+><filename
+>Outgoing/NextContext.html</filename
+> (opciono)</term>
+<listitem>
+<para
+><application
+>Kopete</application
+> ne koristi ove šablone. U Adiumu se koriste za prikazivanje istorijata. Uglavnom su isti kao <literal
+>Content</literal
+> i <literal
+>NextContent</literal
+>, s malim razlikama da bi se razlikovali od običnih poruka. </para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect3>
+
+<sect3 id="chatstyle-reference-css">
+	<title
+>O CSS stilovima i varijantama</title>
+	<para
+>HTML šabloni služe da opišu kako se gradi struktura. Stilovi, pak, opisani su u CSS fajlovima. Glavni stil je <filename
+>main.css</filename
+>, gde su varijante samo prekrajanja glavnog stila. Varijante mogu biti, na primer, različite boje ili bez prikaza fotografija korisnika. I <filename
+>main.css</filename
+> i varijante uvozi krajnja XHTML stranica.</para>
+	<sect4 id="chatstyle-reference-css-main">
+		<title
+><filename
+>main.css</filename
+></title>
+		<para
+>Ovo je glavni CSS fajl, zajednički za sve varijante. Treba da sadrži celokupan opis osnovnog stila.</para>
+	</sect4>
+	<sect4 id="chatstyle-reference-css-variants">
+		<title
+>Varijante</title>
+		<para
+>Varijante su CSS fajlovi u fascikli <filename
+>Variants/</filename
+>. Svaka varijanta je jedan CSS fajl, koji uključuje <filename
+>main.css</filename
+> i vrši izmene na glavnom stilu.</para>
+	</sect4>
+</sect3>
+
+<sect3 id="chatstyle-reference-debug">
+	<title
+>Ispravljanje stilova</title>
+	<para
+>Evo dva saveta za isprobavanje stila tokom rada na njemu.</para>
+	<sect4 id="chatstyle-reference-debug-save">
+		<title
+>Sačuvajte uzorak razgovora.</title>
+		<para
+>U prozoru za ćaskanje možete <action
+>sačuvati</action
+> razgovor, kao kopiju interne XHTML stranice. Potom je otvorite <application
+>K‑osvajačem</application
+> radi isprobavanja svojih CSS fajlova.</para>
+	</sect4>
+	<sect4 id="chatstyle-reference-debug-disable-cache">
+		<title
+>Isključite keširanje stilova.</title>
+		<para
+>U postavi <application
+>Kopetea</application
+> postoji prekidač kojim se isključuje keširanje stilova. Kada je aktiviran, HTML šabloni se ponovo učitavaju svaki put kada se stil zatraži. Ovo je vrlo korisno za isprobavanje stila unutar <application
+>Kopetea</application
+>. Dodajte sledeće redove u fajl <filename
+>~/.kde/share/config/kopeterc</filename
+>:</para>
+		<programlisting
+>[KopeteStyleDebug]
+disableStyleCache=true
+</programlisting>
+	</sect4>
+</sect3>
+
+</sect2>
+
+<sect2 id="chatstyle-reference-keywords">
+	<title
+>Ključne reči</title>
+	<para
+>Ključne reči su nalik žlebovima za umetanje detalja. Pri svakoj novoj poruci, smenjuju se konkretnom vrednošću koja odgovara tom kontekstu. Radi pune podrške svim mogućnostima <application
+>Kopetea</application
+>, proširili smo osnovni skup ključnih reči Adiuma. Neke ključne reči dostupne su samo u izvesnim kontekstima.</para>
+
+<variablelist
+><title
+>Spisak ključnih reči za šablone zaglavlja i podnožja </title>
+<para
+>Ove ključne reči obrađuju se na početku ćaskanja.</para>
+<varlistentry
+><term
+><filename
+>%chatName%</filename
+></term>
+<listitem>
+<para
+>Ime tekuće sesije ćaskanja. Za uobičajenu sesiju, čini ga ime i stanje kontakta. Na <acronym
+>IRC‑u</acronym
+>, jednako je temi kanala. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%sourceName%</filename
+></term>
+              <term
+><filename
+>%destinationName%</filename
+></term>
+<listitem>
+<para
+>Ovo su imena kontakata za sesiju ćaskanja. <filename
+>%destinationName%</filename
+> je vaše ime. <filename
+>%destinationName%</filename
+> je ime kontakta s kojim ćaskate. Dajte prednost <filename
+>%chatName%</filename
+> umesto ovih, jer mogu biti zbunjujuća u grupnom ćaskanju i na <acronym
+>IRC‑u</acronym
+>.  </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%incomingIconPath%</filename
+></term>
+              <term
+><filename
+>%outgoingIconPath%</filename
+></term>
+<listitem>
+<para
+>Avatari, slike, fotografije kontakata za sesiju ćaskanja. Dolazne su fotografije kontakta, a odlazna je vaša lična. Ako fotografija nije raspoloživa, koristi se <filename
+>buddy_icon.png</filename
+>, smeštena u fascikli <filename
+>Incoming</filename
+> ili <filename
+>Outgoing</filename
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%timeOpened%</filename
+></term>
+              <term
+><filename
+>%timeOpened{X}%</filename
+></term>
+<listitem>
+<para
+>Vreme početka sesije ćaskanja. <filename
+>%timeOpened%</filename
+> koristi podrazumevani format vremena za tekući lokalitet. Ako želite poseban format, koristite <filename
+>%timeOpened{X}%</filename
+>, gde je <literal
+>X</literal
+> niska formata vremena. Parametri formata isti su kao za funkciju <function
+>strftime</function
+> iz C biblioteke — izvršite <command
+>man strftime</command
+> za spisak svih parametara. </para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist
+><title
+>Spisak ključnih reči za šablone <literal
+>Content</literal
+>, <literal
+>NextContent</literal
+>, <literal
+>Context</literal
+>, <literal
+>NextContext</literal
+>, <literal
+>Action</literal
+></title>
+<para
+>Za svaku poruku obrađuju se tri ključne reči.</para>
+
+<varlistentry
+><term
+><filename
+>%userIconPath%</filename
+></term>
+<listitem>
+<para
+>Slika, fotografija, avatar kontakta pridruženog poruci. Ako fotografija nije dostupna, koristi se <filename
+>buddy_icon.png</filename
+> iz <filename
+>Incoming</filename
+> ili <filename
+>Outgoing</filename
+>, u zavisnosti od smera poruke. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderScreenName%</filename
+></term>
+<listitem>
+<para
+>ID kontakta pridruženog poruci. Primeri: <literal
+>ja@nedodjija.com</literal
+>
+>, <literal
+>45566576</literal
+>, <literal
+>PeraPeric</literal
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%sender%</filename
+></term>
+<listitem>
+<para
+>Ime kontakta pridruženog poruci. Za izvor se koristi prikazno ime metakontakta. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%service%</filename
+></term>
+<listitem>
+<para
+>Ime servisa pridruženog poruci. Primeri: <literal
+>Jabber</literal
+>, <literal
+>Yahoo</literal
+>, <literal
+>MSN</literal
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%textbackgroundcolor{X}%</filename
+></term>
+<listitem>
+<para
+>U <application
+>Kopeteu</application
+> se ova ključna reč koristi za zadavanje boje isticanja pozadine. Ignorišite parametar u zagradama, koristite samo kao <filename
+>%textbackgroundcolor{}</filename
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderStatusIcon%</filename
+> (<application
+>Kopeteovo</application
+> proširenje)</term>
+<listitem>
+<para
+>Ikonica stanja kontakta pridruženog poruci. Ovo je putanja fajla. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderColor%</filename
+></term
+>  <term
+><filename
+>%senderColor{N}%</filename
+> (<application
+>Kopeteovo</application
+> proširenje)</term>
+<listitem>
+<para
+>Stvara boju na osnovu ID‑a kontakta pošiljaoca. Može se upotrebiti za prikazivanje nadimka kontakta u drugoj boji. </para>
+<para
+><filename
+>%senderColor{N}%</filename
+>, gde je <literal
+>N</literal
+> pozitivan broj. Ako je veći od 100, predstavlja svetliju boju od kontaktove. Ako je jednak 150, to je boja svetlija za 50%. Ako je manji od 100, onda je to tamnija boja. Korisno kada se želi drugačija pozadina za svaki kontakt. </para>
+<para
+>Ako želite da koristite ove boje u varijanti, ali ne u glavnom stilu, moraćete zaobilaznim putem. <programlisting>
+<![CDATA[
+<div style="color:%senderColor%;border:none;border-color:%senderColor{40}%;"
+><p class="message"
+>...</p
+></div>
+]]>
+</programlisting
+> Možete primeniti boju na element <literal
+>p.message</literal
+> u fajlu <filename
+>main.css</filename
+>, a u varijantu staviti nešto ovako: <programlisting
+>p.message { color:inherit; border-color:inherit; }
+</programlisting>
+
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist
+><title
+>Spisak ključnih reči zajedničkih za poruke i <filename
+>Status.html</filename
+></title>
+
+<varlistentry
+><term
+><filename
+>%message%</filename
+></term>
+<listitem>
+<para
+>Sama poruka. Ovo je HTML fragment. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%time%</filename
+></term>
+              <term
+><filename
+>%time{X}%</filename
+></term>
+<listitem>
+<para
+>Vreme kad je poruka primljena. <filename
+>%time%</filename
+> koristi podrazumevani format vremena za tekući lokalitet. Ako želite poseban format, koristite <filename
+>%time{X}%</filename
+>, gde je <literal
+>X</literal
+> niska formata vremena. Parametri formata isti su kao za funkciju <function
+>strftime</function
+> iz C biblioteke — izvršite <command
+>man strftime</command
+> za spisak svih parametara. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%messageDirection%</filename
+> (<application
+>Kopeteovo</application
+> proširenje)</term>
+<listitem>
+<para
+>Predstavlja smer teksta poruke, da li treba da se ispiše zdesna nalevo ili sleva nadesno. Vrednost je ili <literal
+>rtl</literal
+> ili <literal
+>ltr</literal
+>. Radi pravilne upotrebe ove ključne reči, pročitajte <link linkend="chatstyle-guideline-direction"
+>vodilje za smer poruka</link
+>. </para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+</sect1>
+
+<sect1 id="chatstyle-guideline">
+	<title
+>Vodilje za stil prozora za ćaskanje u <application
+>Kopeteu</application
+></title>
+<para
+>Vodilje za stil prozora za ćaskanje čini skup stvari koje stil mora podržavati da bi bio saglasan sa <application
+>Kopeteom</application
+>.</para>
+<sect2 id="chatstyle-guideline-highlight">
+	<title
+>Podrška isticanja</title>
+	<para
+>Stil mora prikazivati isticanje. I u <application
+>Kopeteu</application
+> i u Adiumu, <filename
+>%textbackgroundcolor{}%</filename
+> menja se bojom isticanja. Dodajte stilski atribut <literal
+>background-color: %textbackgroundcolor{}%</literal
+> HTML elementu koji prikazuje poruku.</para>
+</sect2>
+<sect2 id="chatstyle-guideline-consecutive">
+	<title
+>Neophodni su šabloni za nadovezujuće poruke.</title>
+	<para
+>Ova vodilja je tu da podseti one koji prepisuju stare XSLT stilove na novi format. Svi stilovi moraju sadržati šablone za nadovezujuće poruke, jer je to sada podrazumevana mogućnost.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-encoding">
+	<title
+>Koristite kodiranje UTF‑8.</title>
+	<para
+>Naslov govori sve — fajlovi moraju biti sačuvani kao UTF‑8.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-info">
+	<title
+>Priložite <filename
+>Contents/Info.plist</filename
+> za međuoperativnost s Adiumom.</title>
+	<para
+>Fajl <filename
+>Contents/Info.plist</filename
+> još se ne koristi u <application
+>Kopeteu</application
+>. Ali, ako želite da stil bude saglasan Adiumu, morate dodati ovaj fajl. Evo osnovnog primera (niske za zamenu omotane su znacima <literal
+>$</literal
+>).</para>
+<programlisting
+><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd
+<plist version="1.0">
+<dict>
+        <key
+>CFBundleDevelopmentRegion</key>
+        <string
+>English</string>
+        <key
+>CFBundleGetInfoString</key>
+        <string
+>$Puno ime vašeg stila$</string>
+        <key
+>CFBundleIdentifier</key>
+        <string
+>$ID vašeg stila u obliku: com.adiumx.smooth.operator.style$</string>
+        <key
+>CFBundleInfoDictionaryVersion</key>
+        <string
+>1.0</string>
+        <key
+>CFBundleName</key>
+        <string
+>$Ovde ide ime vašeg stila$</string>
+        <key
+>CFBundlePackageType</key>
+        <string
+>AdIM</string>
+        <key
+>MessageViewVersion</key>
+        <integer
+>3</integer>
+</dict>
+</plist>
+]]>
+</programlisting>
+
+</sect2>
+
+<sect2 id="chatstyle-guideline-buddyicon">
+	<title
+>Priložite <filename
+>buddy_icon.png</filename
+></title>
+	<para
+>Morate dodati fajl slike po imenu <filename
+>buddy_icon.png</filename
+> u fascikle <filename
+>Incoming</filename
+> i <filename
+>Outgoing</filename
+>. Koristiće se za kontakte koji nemaju sopstvenu fotografiju.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-direction">
+	<title
+>Podržite jezike zdesna nalevo, pomoću ključne reči <filename
+>%messageDirection%</filename
+>.</title>
+	<para
+>Ključna reč <filename
+>%messageDirection%</filename
+> data je radi jezika koji se pišu zdesna nalevo. Njome se definiše smer poruke, kao <literal
+>rtl</literal
+> (zdesna nalevo) ili <literal
+>ltr</literal
+> (sleva nadesno). Dodajte stilski atribut <userinput
+>direction: %messageDirection%</userinput
+> HTML elementu koji prikazuje poruku. Pregled stila u dijalogu za podešavanje sadrži tekst zdesna nalevo, kako biste proverili da li ga stil dobro prikazuje (tekst treba da počinje s desne strane).</para>
+</sect2>
+</sect1>
+</appendix>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-emoticons">
+<appendixinfo>
+    <title
+>Emoticons-Spezifikation</title>
+    <releaseinfo
+>Version 0.1</releaseinfo>
+    <date
+>2005-01-07</date>
+    <authorgroup>
+      <author
+><firstname
+>Olivier</firstname
+> <surname
+>Goffart</surname
+> <affiliation
+> <address
+> <email
+>ogoffart@tiscalinet.be</email>
+	  </address>
+	</affiliation>
+      </author>
+    </authorgroup>
+  </appendixinfo>
+
+<title
+>Emoticons</title>
+
+  <sect1 id="introduction-emoticons">
+    <title
+>Einführung</title>
+    <para
+>In diesem vorläufigen Dokument wird definiert, wie ein typisches Design mit Emoticons für Instant-Messaging-Programme erstellt wird. </para>
+    <para
+>Das grundlegende Schema ist sehr einfach. Ein Design besteht aus einem Unterordner, der alle Bilder und eine &XML;-Datei mit ASCII-Symbolen für jedes Bild. Eine Datei mit der Erweiterung „.directory“ kann verwendet werden. </para>
+  <sect2 id="location">
+    <title
+>Speicherorte der Dateien</title>
+    <para
+>Die Dateien dieser Spezifikation werden entsprechend dem Standard von <ulink url="http://www.freedesktop.org/standards/"
+>www.freedesktop.org</ulink
+> gespeichert. </para>
+    <para
+>Alle Dateien eines Designs müssen in einem Unterordner von <filename
+>$XDG_DATA_DIRS/emoticons/</filename
+> gespeichert werden. Dieser Ordner muss den gleichen Namen wie das Design haben. Dieser Ordner <emphasis
+>muss</emphasis
+> einen Datei mit dem Namen <filename
+>emoticons.xml</filename
+> enthalten. Das Format dieser Datei wird im folgenden beschrieben. </para>
+	<para
+>Der Designordner kann auch eine Datei „.desktop“ mit Übersetzungen des Designnamens oder einem Symbol für das Design enthalten. </para>
+  </sect2>
+  <sect2 id="emoticons-map-format">
+    <title
+>Format der Datei emoticons.xml</title>
+    <para
+>Emoticon-Dateien dürfen nur wohlgeformtes XML enthalten. Implementierungen sollten unbekannte Tags und Attribute ignorieren. </para>
+    <sect3 id="emoticons-map-elements">
+      <title
+>Elemente</title>
+      <para>
+        <variablelist>
+          <varlistentry>
+					<term
+>&lt;messaging-emoticon-map&gt; [version="0.1"]</term>
+            <listitem>
+              <para
+>Das Basiselement ist &lt;messaging-emoticon-map&gt;, alle anderen Elemente sind darin enthalten. </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;emoticon file="..."&gt;</term>
+            <listitem>
+              <para
+>Diese Element repräsentiert ein Emoticon, Die Attributdatei ist der Name der Bilddatei, die sich im selben Ordner befinden muss. Die Erweiterung kann ausgelassen werden. In disem Fall wird in diesem Ordner nach einer Datei mit dem gleichen Namen in einem unterstützten Format gesucht. </para>
+				  <para
+>Es gibt keine Reihenfolge für die Emoticons in der Datei. Aber das erste Symbol wird benutzt, um das Design grafisch zu identifizieren. </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;string&gt;</term>
+            <listitem>
+              <para
+>Dieses Element darf nur nach dem Element &lt;emoticon&gt; eingefügt werden. Es repräsentiert die ASCII-Zeichenfolge, mit dem der Text übereinstimmt. Es wird durch das Bild ersetzt, das durch das Dateiattribut des Emoticons ersetzt. </para>
+				  <para
+>Es dürfen mehrere Zeichenfolgen je Emoticon vorhanden sein. </para>
+				  <para
+>Es gibt keine Reihenfolge für Zeichenfolgen in einem Emoticon. Der erste Eintag sollte als Standard verwendet, wenn eine Auswahl in einer grafischen Bedienungsoberfläche möglich ist. </para>
+            </listitem>
+          </varlistentry>
+	    </variablelist>
+  </para>
+    </sect3>
+  </sect2>
+
+  <sect2 id="img-format">
+    <title
+>Format der Bilder.</title>
+    <para
+>Alle Bilder sollten in einem der unterstützten Formate PNG, GIF oder MNG vorliegen. </para>
+  </sect2>
+
+  <sect2 id="implementation">
+    <title
+>Hinweise zur Implementierung</title>
+	 <sect3 id="impl-parser">
+	  <title
+>Einlesen einer Emoticon-Datei</title>
+    <para
+>Es gibt keine Empfehlung, wie Emoticons eingelesen werden sollen. Jedoch sollte ein Emoticon mit einer längeren Zeichenfolge Priorität vor einem Emoticon mit einer kürzeren Zeichenfolge haben. Wenn es zum Beispiel „:-()“ und „:-(“ in einem Design gibt, sollte das Bild für das erste Element verwendet werden, wenn „:-()“ eingelesen wird. </para>
+</sect3>
+</sect2>
+
+<sect2 id="example">
+	  <title
+>Beispiel</title>
+	  <para>
+			 <programlisting
+>&lt;messaging-emoticon-map&gt;
+        &lt;emoticon file="smile.png"&gt;
+                        &lt;string&gt;:-)&lt;/string&gt;
+                        &lt;string&gt;:)&lt;/string&gt;
+                        &lt;string&gt;:o)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="wink.png"&gt;
+                        &lt;string&gt;;-)&lt;/string&gt;
+                        &lt;string&gt;;)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="unhappy.png"&gt;
+                        &lt;string&gt;:-(&lt;/string&gt;
+                        &lt;string&gt;:(&lt;/string&gt;
+        &lt;/emoticon&gt;
+&lt;/messaging-emoticon-map&gt;
+
+ </programlisting>
+</para>
+</sect2>
+
+<!--sect2 id="todo">
+	  <title
+>TODO</title>
+	  <para>
+			 A DTD of the XML file
+	  </para>
+</sect2-->
+</sect1>
+</appendix>
+

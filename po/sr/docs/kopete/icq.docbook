@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-icq">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Документација преузета са странице о <ulink url=" http://userbase.kde.org/Kopete/ICQ"
+><application
+>Копетеу</application
+>/ајсикјуу</ulink
+> на Корисничкој бази КДЕ‑а.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+<othercredit role="translator"
+><firstname
+>Часлав</firstname
+><surname
+>Илић</surname
+><affiliation
+><address
+><email
+>caslav.ilic@gmx.net</email
+></address
+></affiliation
+><contrib
+>превод</contrib
+></othercredit
+> 
+    </authorgroup>
+<date
+>6. 11. 2011.</date>
+    <releaseinfo
+>СК КДЕ‑а 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2011-01-06T06:11:26Z</timestamp
+>-->
+<title
+>Приручник за ајсикју</title>
+<!--userbase-content-->
+<sect1 id="about-icq"
+><title
+>О ајсикјуу</title>
+<para
+>Овај туторијал ће вам помоћи у коришћењу ајсикјуа, честог протокола за ћаскање у <application
+>Копетеу</application
+>. </para>
+<para
+><ulink url="http://www.icq.com/en.html"
+>Ајсикју</ulink
+> је власнички брзогласнички програм, који је испрва развила израелска компанија Мирабилис. Користи АОЛ‑ов мрежни протокол оскар за слање текстуалних порука. Корисници се идентификују бројем по имену УИН (јединствени идентификациони број). При регистровању налога на ајсикјуу морате приложити и адресу е‑поште, па неки ајсикју клијенти омогућавају пријављивање преко ње уместо преко УИН‑а. </para>
+<sect2 id="features"
+><title
+>Могућности</title
+> 
+<itemizedlist>
+<listitem
+><para
+>поруке ван везе </para
+></listitem>
+<listitem
+><para
+>вишекорисничко ћаскање </para
+></listitem>
+<listitem
+><para
+>пренос фајлова </para
+></listitem>
+</itemizedlist>
+<sect3 id="features-not-yet-supported-by-kopete"
+><title
+>Могућности које <application
+>Копете</application
+> још не подржава</title
+> 
+<itemizedlist>
+<listitem
+><para
+>игре </para
+></listitem>
+<listitem
+><para
+>слање СМС‑ова </para
+></listitem>
+</itemizedlist>
+</sect3>
+</sect2>
+<sect2 id="criticism"
+><title
+>Критике</title
+> 
+<itemizedlist>
+<listitem
+><para
+>приватност — безбедносни аналитичар <personname
+><firstname
+>Џефри</firstname
+> <surname
+>Кар</surname
+></personname
+> тврди да би руске тајне службе могле добити приступ протоколима за ћаскање. Више детаља потражите <ulink url="http://greylogic.us/2010/07/13/your-icq-identity-now-belongs-to-the-fsb/"
+>овде</ulink
+>. </para
+></listitem>
+<listitem
+><para
+>спам — има га много (наметљиво рекламирање и вируси) у ајсикју мрежи. </para
+></listitem>
+<listitem
+><para
+>ауторска права — према <ulink url="http://www.icq.com/legal/policy.html"
+>смерницама о прихватљивој употреби ајсикјуа</ulink
+>, дозвољавате ајсикјуу да употреби пренесени материјал на који год начин жели. </para
+></listitem>
+</itemizedlist>
+ 
+</sect2>
+</sect1>
+<sect1 id="create-your-icq-account"
+><title
+>Стварање налога на ајсикјуу</title
+> 
+<para
+>Да бисте се упустили у ћаскање преко ајсикјуа, прво морате отворити налог. Ако га већ имате, прескочите овај део. </para>
+<para
+>Посетите регистрациону страницу у веб прегледачу по жељи (нпр. <application
+>Фајерфоксу</application
+>, <application
+>К‑освајачу</application
+>, Кромијуму) на адреси <ulink url="https://www.icq.com/register/"
+>www.icq.com/register</ulink
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_create_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Унесите своје податке.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Унесите своје податке.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Сада сачекајте да добије поруку е‑поштом од ајсикјуа, која ће садржати везу за оверу. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_activate_new_account1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Кликните на везу за оверу у поруци да потврдите регистрацију.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Кликните на везу за оверу у поруци да потврдите регистрацију.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Отворили сте свој налог на ајсикјуу! Али, <application
+>Копете</application
+> тренутно омогућава пријављивање само УИН‑ом, док ајсикју подразумевано не показује ваш УИН. Зато у веб прегледачу идите на <ulink url="https://www.icq.com/people"
+>www.icq.com/people</ulink
+> и тамо се пријавите. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_log_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Пријављивање на www.icq.com.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Пријављивање на www.icq.com.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Затим идите до свог профила: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_go_to_profile.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Кликните на „My Profile“.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Кликните на „My Profile“.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Овим добијате страницу са подацима о свом налогу. Ако кликнете на „More about me“, видећете унос означен као ICQ# — то је ваш УИН: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_uin.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="connect-through-kopete"
+><title
+>Повезивање у <application
+>Копетеу</application
+></title>
+<para
+>Ако покрећете <application
+>Копете</application
+> по први пут, видећете овакав прозор: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_first_start.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+><application
+>Копете</application
+> по првом покретању.</phrase>
+    </textobject>
+    <caption>
+      <para
+><application
+>Копете</application
+> по првом покретању.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Свој налог на ајсикјуу додајете кликом на <guilabel
+>Кликните да додате нови налог</guilabel
+>. Или, ако већ имате неки други налог (нпр. на МСН‑у или џаберу), идите у мени <menuchoice
+><guimenu
+>Подешавање</guimenu
+><guimenuitem
+>Подеси Копете...</guimenuitem
+></menuchoice
+> па кликните на <guilabel
+>Додај налог...</guilabel
+>. </para>
+<para
+>Сада ћете видети списак свих протокола за ћаскање које <application
+>Копете</application
+> познаје. Пошто желите да користите ајсикју, изаберите унос за ајсикју: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Изаберите жељени протокол.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Изаберите жељени протокол.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Добићете дијалог за подешавање налога. Кликните на <guilabel
+>Основне поставке</guilabel
+> изнад у траци језичака. Ту треба да унесете свој УИН. Ако не желите да уносите лозинку по сваком покретању, можете и њу овде унети. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_setup.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Основно подешавање налога.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Основно подешавање налога.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Језичак <guilabel
+>Поставке налога</guilabel
+> садржи неке детаљније поставке: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_preferences.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Још поставки.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Још поставки.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+><application
+>Копете</application
+> би требало да ради без дирања ових поставки. Зато, ако не будете разумели текст који следи, не брините и само прескочите ову секцију. </para>
+</sect1>
+<sect1 id="options-explained"
+><title
+>Објашњења опција</title
+> 
+<itemizedlist>
+<listitem
+><para
+><guilabel
+>Захтевај овлашћење пре него што ме неко дода у своју листу контаката</guilabel
+>: активирајте ову опцију ако желите да, када неко покуша да вас дода на своју листу пријатеља, будете питани дозвољавате ли то. Уобичајено је да вас било ко може потражити и додати на своју листу, што значи да сваки незнанац може да види да ли сте на вези или не и да вам шаље поруке. Ако не желите ово, активирањем ове опције биће вам тражено да потврдите кад неко покуша да ћаска са вама. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Сакриј ИП адресу</guilabel
+>: ако не желите да други виде вашу <ulink url="http://en.wikipedia.org/wiki/IP_address"
+>ИП адресу</ulink
+>, укључите ову опцију. ИП адреса се може употребити да вас лично идентификују на Интернету, пошто је чини јединствени број. Додуше, просечни корисник Интернета не може сазнати ваше име по ИП адреси, али може ваш провајдер! Ајсикју у сваком случају задржава вашу ИП адресу неко време, тако да неактивирање ове опције и није неки губитак за приватност. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Моје стање преко ајсикјуовог сједињеног гласничког центра</guilabel
+>: ако активирате ову опцију, ваше стање ће бити објављивано у гласничком центру (тј. биће свима видљиво на www.icq.com/people). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Потисни подразумеване серверске податке</guilabel
+>: ако желите да измените адресу преко које вас <application
+>Копете</application
+> пријављује на мрежу ајсикјуа, то можете овом опцијом (обично нема разлога да дирате ову поставку). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Прокси</guilabel
+>: повезујте се преко <ulink url="http://en.wikipedia.org/wiki/Proxy_server"
+>прокси сервера</ulink
+>. Проксији су сервери који преносе захтеве. Неке компаније, школе или факултети, користе ове сервере за ограничавање приступа појединим веб сајтовима. Корисницима који приступају од куће ова поставка вероватно не треба. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Опсег портова:</guilabel
+> ова опција задаје <application
+>Копетеу</application
+> портове које треба да користи за везу парњак—парњак. Било би превише овде детаљније описивати функцију портова, ако вас занима можете погледати <ulink url="http://en.wikipedia.org/wiki/Port_numbers"
+>чланак на Википедији.</ulink
+> Обично су подразумеване поставке сасвим довољне. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Прековреме (секунде):</guilabel
+> одређује колико секунди <application
+>Копете</application
+> треба да чека пре него што прекине везу. На пример, пошаљете фајл једном од контаката, али је његова веза са Интернетом превише слаба и зато не добије тај фајл. Ова опција каже <application
+>Копетеу</application
+> колико дуго да покушава да пошаље фајл. Обично нема разлога да је мењате. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Подразумевано за следећа кодирања за поруке:</guilabel
+> поставља кодирање порука. Корисницима Виндоуза одговараће кодирања windows-125* (од windows-1250 до windows-1258), тако да изаберите неко од њих ако причате са таквим корисницима. Заправо, чак и корисници који не користе Виндоуз често ће поставити једно од ових кодирања, јер ће исто ћаскати са некима под Виндоузом. Различита кодирања одговарају различитим земљама, изаберите оно које највише одговара вашим условима (на пример, windows-1250 за латиницу са српским словима, а windows-1252 за ћирилицу); ако изаберете погрешно, неки знакови у порукама биће избрљани, па покушајте са неким другим. </para
+></listitem>
+</itemizedlist>
+<para
+>Овим сте успешно подесили свој налог на ајсикјуу. Можете кликнути на <guilabel
+>Наредно</guilabel
+> или <guilabel
+>Заврши</guilabel
+>. Ако имате више од једног налога, можете им доделити различите боје, тако да лако видите који контакти одговарају којем налогу. </para>
+</sect1>
+<sect1 id="add-a-contact"
+><title
+>Додавање контакта</title
+> 
+<para
+>Пошто <application
+>Копете</application
+> повеже ваш налог, прозор треба да изгледа овако: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_logged_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Налог повезан.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Налог повезан.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>За додавање контакта кликните на <guilabel
+>Додај</guilabel
+> у траци алатки и изаберите свој налог (у овом случају то је ваш УИН), или идите у мени <menuchoice
+><guimenu
+>Фајл</guimenu
+><guisubmenu
+>Додај контакт</guisubmenu
+><guimenuitem
+><replaceable
+>ваш налог</replaceable
+></guimenuitem
+></menuchoice
+>. Затим можете унети УИН особе коју желите да додате. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_add_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Ако не знате УИН, али знате рецимо надимак или адресу е‑поште жељене особе, такође можете потражити њен контакт. Кликните на дугме <guilabel
+>Тражи</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_search_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>УИН‑ови се такође могу тражити.</phrase>
+    </textobject>
+    <caption>
+      <para
+>УИН‑ови се такође могу тражити.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="being-added"
+><title
+>Неко додаје вас</title
+> 
+<para
+>Док сте на ајсикјуу, врло је вероватно да ће вас неко други додати код себе. Када се то догоди, <application
+>Копете</application
+> ће приказати поруку са УИН‑ом особе која желите да вас дода у своју листу. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_added.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Захтев за овлашћење.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Захтев за овлашћење.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>За више података о тој особи кликните на <guilabel
+>Инфо...</guilabel
+>. Појавиће се прозор са свим доступним подацима о њој. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_information.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Подаци.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Подаци.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Сада можете овластити или блокирати особу. Ако је овластите, можете ћаскати са њом, и обрнуто, ако је блокирате, она не може ћаскати са вама. </para>
+</sect1>
+<sect1 id="chatting"
+><title
+>Ћаскање</title
+> 
+<para
+>За ћаскање, кликните на један од контаката. Појавиће се прозор за ћаскање. Ту можете уносити и слати текст. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_chat_window.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Ћаскање са контактом.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Ћаскање са контактом.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Такође је могуће слати поруке особама које су ван везе. Примиће вашу поруку чим ступе на везу. </para>
+</sect1>
+<sect1 id="spam"
+><title
+>Спам</title
+> 
+<para
+>Нажалост, у мрежи ајсикјуа има пуно спама (порука које не желите, обично реклама или вируса). Да бисте их што више избегли, треба да овлашћујете само особе које познајете. Ништа друго заиста не можете да урадити по овом питању. Најбоље их игноришите! </para>
+</sect1>
+</appendix>

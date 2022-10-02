@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-icq">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Käesolev käsiraamat on teisendatud KDE Userbase'i <ulink url=" http://userbase.kde.org/Kopete/ICQ"
+>Kopete/ICQ</ulink
+> leheküljelt.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+<othercredit role="translator"
+><firstname
+>Marek</firstname
+><surname
+>Laane</surname
+><affiliation
+><address
+><email
+>bald@smail.ee</email
+></address
+></affiliation
+><contrib
+>Tõlge eesti keelde</contrib
+></othercredit
+> 
+    </authorgroup>
+<date
+>2011-01-06</date>
+    <releaseinfo
+>&kde; SC 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2011-01-06T06:11:26Z</timestamp
+>-->
+<title
+>ICQ käsiraamat</title>
+<!--userbase-content-->
+<sect1 id="about-icq"
+><title
+>ICQ-st</title>
+<para
+>Käesolev käsiraamat õpetab kasutama &kopete; levinud vestlusprotokolli ICQ. </para>
+<para
+><ulink url="http://www.icq.com/en.html"
+>ICQ</ulink
+> on omanduslik kiirsuhtlusprogramm, mille töötas välja Iisraeli ettevõte Mirabilis. See kasutab tekstisõnumite edastamiseks AOL-i võrguprotokolli OSCAR. Inimeste tuvastamiseks on kasutusel arv nimetusega UIN (unifitseeritud identifitseerimisnumber). Kui registreerid ICQ konto, pead andma ka e-posti aadressi. Mõned ICQ kliendid (aga mitte &kopete;) toetavad UIN-i asemel sisselogimist e-posti aadressiga. </para>
+<sect2 id="features"
+><title
+>Omadused</title
+> 
+<itemizedlist>
+<listitem
+><para
+>sõnumid võrguühenduseta </para
+></listitem>
+<listitem
+><para
+>mitmekasutajavestlused </para
+></listitem>
+<listitem
+><para
+>failiedastus </para
+></listitem>
+</itemizedlist>
+<sect3 id="features-not-yet-supported-by-kopete"
+><title
+>Omadused, mida Kopete veel ei toeta</title
+> 
+<itemizedlist>
+<listitem
+><para
+>mängud </para
+></listitem>
+<listitem
+><para
+>SMS-i saatmine </para
+></listitem>
+</itemizedlist>
+</sect3>
+</sect2>
+<sect2 id="criticism"
+><title
+>Kriitika</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Privaatsus: turbeanalüütiku Jeffrey Carri sõnul võib Venemaa salateenistus pääseda ligi vestlusprotokollidele. Loe lähemalt (inglise keeles) <ulink url="http://greylogic.us/2010/07/13/your-icq-identity-now-belongs-to-the-fsb/"
+>siit</ulink
+> </para
+></listitem>
+<listitem
+><para
+>Rämpspost: ICQ võrgus on ohtralt rämpsposti (soovimatuid reklaame või viiruseid) </para
+></listitem>
+<listitem
+><para
+>Autoriõigus: vastavalt <ulink url="http://www.icq.com/legal/policy.html"
+>ICQ tunnustatud kasutamisreeglitele</ulink
+> annad ICQ-le õiguse kasutada postitatud materjali sel viisil, nagu nad seda paremaks peavad </para
+></listitem>
+</itemizedlist>
+ 
+</sect2>
+</sect1>
+<sect1 id="create-your-icq-account"
+><title
+>ICQ konto loomine</title
+> 
+<para
+>Enne kui vestelda ICQ kaudu, tuleb luua ICQ konto. Kui sul on see juba olemas, võid selle osa vahele jätta. </para>
+<para
+>Mine eelistatud veebilehitsejaga (&eg; <guilabel
+>Firefox</guilabel
+>, <guilabel
+>Konqueror</guilabel
+>, <guilabel
+>Chromium</guilabel
+>) registreerimisleheküljele <ulink url="https://www.icq.com/register/"
+>www.icq.com/register</ulink
+> </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_create_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Oma andmete sisestamine</phrase>
+    </textobject>
+    <caption>
+      <para
+>Oma andmete sisestamine</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nüüd tuleb oodata, kuni saad ICQ-lt e-kirja, mis sisaldab verifitseerimislinki. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_activate_new_account1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Registreerimise verifitseerimiseks tuleb klõpsata kirjas olevale lingile</phrase>
+    </textobject>
+    <caption>
+      <para
+>Registreerimise verifitseerimiseks tuleb klõpsata kirjas olevale lingile</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nüüd ongi sul ICQ konto olemas! Praegu võimaldab Kopete siiski sisse logida ainult UIN-iga (unifitseeritud identifitseerimisnumbriga). Vaikimisi ICQ UIN-i ei näita. Sul tuleb minna veebilehitsejaga aadressile <ulink url="https://www.icq.com/people"
+>www.icq.com/people</ulink
+> ja seal ennast sisse logida. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_log_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Sisselogimine www.icq.com-is</phrase>
+    </textobject>
+    <caption>
+      <para
+>Sisselogimine www.icq.com-is</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Seejärel tuleb minna oma profiili juurde: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_go_to_profile.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Minu profiil</phrase>
+    </textobject>
+    <caption>
+      <para
+>Minu profiil</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nüüd näeb oma konto teabelehekülge. Kui klõpsata <quote
+>More about me</quote
+>, näeb kirjet ICQ#. See ongi sinu UIN: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_uin.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="connect-through-kopete"
+><title
+>Ühendumine Kopetes</title>
+<para
+>&kopete; esmakäivitusel näed sellist akent: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_first_start.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kopete esmakäivitusel</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kopete esmakäivitusel</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Oma ICQ konto lisamiseks klõpsa kirjale <guilabel
+>Klõpsa konto lisamiseks</guilabel
+>. Kui oled aga varem juba määranud mõne konto (näiteks MSN- või Jabberi), siis vali menüükäsk <menuchoice
+><guimenu
+>Seadustused</guimenu
+><guimenuitem
+>Seadista...</guimenuitem
+></menuchoice
+> ja klõpsa nupule <guilabel
+>Lisa konto</guilabel
+>. </para>
+<para
+>Nüüd näed kõiki &kopete;s saadaolevaid vestlusprotokolle. Et soovid praegu kasutada ICQ-d, valigi see. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Protokolli valimine</phrase>
+    </textobject>
+    <caption>
+      <para
+>Protokolli valimine</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nüüd ilmub konto seadistamise dialoog. Klõüsa üleval sakile <guilabel
+>Põhiseadistus</guilabel
+>. Sul tuleb sisestada oma UIN. Kui sa ei soovi, et igal käivitamisel küsitaks parooli, võid ka selle lisada. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_setup.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Konto põhiseadistus</phrase>
+    </textobject>
+    <caption>
+      <para
+>Konto põhiseadistus</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Üksikasjalikumaid seadistusi sisaldab kaart <guilabel
+>Konto seadistused</guilabel
+>: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_preferences.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Muud seadistused</phrase>
+    </textobject>
+    <caption>
+      <para
+>Muud seadistused</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>&kopete; peaks töötama, ilma et siin oleks vaja midagi muuta. Nii et kui sa ei saa järgnevalt kõneldust päris hästi aru, ära heida meelt, vaid jäta see osa lihtsalt vahele. </para>
+</sect1>
+<sect1 id="options-explained"
+><title
+>Valikute selgitus</title
+> 
+<itemizedlist>
+<listitem
+><para
+><guilabel
+>Autoriseerimise nõudmine, enne kui keegi sind oma kontaktide nimekirja lisab</guilabel
+>: see tasub valida siis, kui soovid, et sinu käest küsitaks, enne kui keegi teine lisab sind oma sõprade nimekirja. Tavaliselt võivad kõik sind otsida ja oma nimekirja lisada. See tähendab, et ka iga võõras, keda sa üldse ei tunne, võib näha, kas oled võrgus või mitte, ning saata sulle sõnumeid. Kui sa seda ei soovi, võib antud valiku ära märkida ning edaspidi küsitakse sinu käest alati kinnitust, enne kui teised saavad sind oma nimekirja lisada ja sinuga vestlust alustada. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>IP-aadressi peitmine</guilabel
+>: kui sa ei soovi, et teised näeksid sinu <ulink url="http://en.wikipedia.org/wiki/IP_address"
+>IP-d</ulink
+>, siis tasub see märkida. IP-aadress on omamoodi ID, mis aitab sind internetis tuvastada. See number on unikaalne. Tavaline internetikasutaja ei saa IP-aadressi põhjal sinu nime kätte, seda saab ainult sinu teenusepakkuja! ICQ salvestab sinu IP-aadressi niikuinii teatavaks ajaks. Nii et kui ka selle valiku märkimata jätad, ei ohusta see kuigivõrd sinu privaatsust. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Olek avalikustatakse ICQ unifitseeritud sõnumikeskuses</guilabel
+>: selle märkimisel avaldatakse sinu olek sõnumikeskuses ning kõik võivad näha seda aadressil www.icq.com/people. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Serveri vaikeinfo jäetakse arvestamata</guilabel
+>: kui soovid muuta aadressi, mille alt &kopete; logib ICQ võrku, siis see valik muudab selle võimalikuks (normaalselt ei ole seda vaja). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Puhverserveri lubamine</guilabel
+>: võimaldab ühenduda <ulink url="http://en.wikipedia.org/wiki/Proxy_server"
+>puhverserveri</ulink
+> vahendusel. Need on serverid, mis edastavad päringuid. Mõned ettevõtted, koolid ja ülikoolid kasutavad niisuguseid servereid ligipääsu tõkestamiseks teatavatele veebilehekülgedele. Ühendust kodunt loovatel kasutajatel seda vaja ei lähe. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Pordivahemik</guilabel
+>: see annab &kopete;le teada, milliseid porte tuleb kasutada masinate omavaheliseks ühenduseks. Portide funktsiooni täpsem selgitus väljub käesoleva käsiraamatu piirest. Kui soovid selle kohta rohkem teada saada, uuri vastavat <ulink url="http://en.wikipedia.org/wiki/Port_numbers"
+>Wikipedia artiklit</ulink
+>. Tavaliselt ei teki vaikeseadistusega mingeid probleeme. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Aegumine</guilabel
+> määrab, mitu sekundit peab &kopete; ootama, enne kui ühenduse hoidmisest loobub. Oletame näiteks, et saadad faili mõnele oma kontaktile, kuid tema internetiühendusega on probleeme, nii et ta ei saa faili kätte. See valik annab &kopete;le teada, kui kaua ta peab sellisel juhul püüdma faili saata. Tavaliselt ei ole siin vaja midagi muuta. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Vaikimisi kodeering</guilabel
+> määrab kindlaks sõnumite kodeeringu. Windowsi kasutajad kasutavad <quote
+>windows-125*</quote
+> (windows-1250 kuni windows-1258) kodeeringut, nii et kui kavatsed vestelda Windowsi kasutajatega, vali see. Isegi kui sa ei vestle ühegi Windowsi kasutajaga, on ometi tõenäoline, et nad kasutavad windows-125* kodeeringut (kas või sellepärast, et nemad vestlevad Windowsi kasutajatega). Windowsi eri kodeeringud on mõeldud eri maadele. Vali endale sobivaim (näiteks <quote
+>Windows-1252 Lääne</quote
+> sobib selliste riikide nagu Prantsusmaa ja Saksamaa puhul). Kodeeringute erinevus peitub vaid mõnes erimärgis, nii et kui neid ei näidata õigesti, proovi mõnda muud kodeeringut. </para
+></listitem>
+</itemizedlist>
+<para
+>Nüüd oled oma ICQ konto edukalt seadistanud. Klõpsa nupule <guilabel
+>Edasi</guilabel
+> ja <guilabel
+>Lõpeta</guilabel
+>. Kui sul on rohkem kui üks konto, saad valida neile eri värvid, et näeksid kohe, millised kontaktid kuuluvad millise konto alla. </para>
+</sect1>
+<sect1 id="add-a-contact"
+><title
+>Kontakti lisamine</title
+> 
+<para
+>Nüüd oled ühendanud &kopete; ja oma konto. Aken peaks välja nägema selline: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_logged_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Ühendatud</phrase>
+    </textobject>
+    <caption>
+      <para
+>Ühendatud</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Kontakti lisamiseks klõpsa tööriistaribal ikoonile <guilabel
+>Lisa</guilabel
+> ja vali oma konto (antud juhul on selleks sinu UIN) või kasuta menüükäsku <menuchoice
+><guimenu
+>Fail</guimenu
+><guisubmenu
+>Lisa kontakt</guisubmenu
+><guimenuitem
+><replaceable
+>konto nimi</replaceable
+></guimenuitem
+></menuchoice
+>. Nüüd saad sisestada isiku UIN-i, keda soovid lisada. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_add_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Kui sa ei tea UIN-i, aga tead näiteks hüüdnime või e-posti aadressi, saab kontakti ka otsida. Selleks klõpsa nupule <guilabel
+>Otsi</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_search_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>UIN-i otsimine</phrase>
+    </textobject>
+    <caption>
+      <para
+>UIN-i otsimine</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="being-added"
+><title
+>Sinu lisamine teiste poolt</title
+> 
+<para
+>ICQ kasutajana on väga usutav, et keegi lisab sind enda sõprade nimekirja. Kui see juhtub, näitab &kopete; teadet, mis sisaldab selle isiku UIN-i, kes soovid lisada sind enda nimekirja. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_added.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Autentimissoov</phrase>
+    </textobject>
+    <caption>
+      <para
+>Autentimissoov</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Täpsema teabe nägemiseks isiku kohta klõpsa kirjale <guilabel
+>Info...</guilabel
+> Avaneb aken, kus on näha kogu antud isiku kohta saadaolev teave. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_information.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Teave</phrase>
+    </textobject>
+    <caption>
+      <para
+>Teave</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nüüd võid isiku autentida või blokeerida. Esimesel juhul võid temaga vestelda, teisel juhul ei saa tema sinuga vestelda. </para>
+</sect1>
+<sect1 id="chatting"
+><title
+>Vestlemine</title
+> 
+<para
+>Vestlemiseks klõpsa mõnele kontaktile. Ilmub vestlusaken. Seal saad kirjutada oma teksti ja selle teele läkitada. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_chat_window.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Vestlemine oma kontaktiga</phrase>
+    </textobject>
+    <caption>
+      <para
+>Vestlemine oma kontaktiga</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Sõnumeid võib saata ka isikule, kes ei ole võrgus. Nad saavad sinu sõnumi kätte niipea, kui tulevad võrku. </para>
+</sect1>
+<sect1 id="spam"
+><title
+>Rämpspost</title
+> 
+<para
+>Paraku on ICQ võrgus päris palju rämpsposti, see tähendab sõnumeid, mida sa ei soovi saada, näiteks reklaame või viiruseid. Rämpsposti vältimiseks tuleks autentida ainult isikuid, keda tunned. Midagi muud targemat sa selle probleemiga ette võtta ei saa - lihtsalt eira kogu seda rämpsu! </para>
+</sect1>
+</appendix>

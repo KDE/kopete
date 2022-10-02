@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-emoticons">
+<appendixinfo>
+    <title
+>Especificação dos Emoticons</title>
+    <releaseinfo
+>Versão 0.1</releaseinfo>
+    <date
+>07/01/2005</date>
+    <authorgroup>
+      <author
+><firstname
+>Olivier</firstname
+> <surname
+>Goffart</surname
+> <affiliation
+> <address
+> <email
+>ogoffart@tiscalinet.be</email>
+	  </address>
+	</affiliation>
+      </author>
+    </authorgroup>
+  </appendixinfo>
+
+<title
+>Emoticons</title>
+
+  <sect1 id="introduction-emoticons">
+    <title
+>Introdução</title>
+    <para
+>Este documento RASCUNHO define como criar um tema de emoticons, usados normalmente nos aplicativos de mensagens instantâneas </para>
+    <para
+>O esquema básico é muito simples. O tema consiste em uma subpasta que contém todas as imagens e um arquivo &XML; que dá a cada imagem símbolos em ASCII. Pode ser usado um arquivo '.directory'. </para>
+  <sect2 id="location">
+    <title
+>Localização dos arquivos</title>
+    <para
+>Os arquivos envolvidos nesta especificação localizam-se de acordo com a "especificação das pastas base dos ambientes de trabalho", que pode ser encontrada no <ulink url="http://www.freedesktop.org/standards/"
+>www.freedesktop.org</ulink
+>. </para>
+    <para
+>Todos os arquivos do tema deverão estar em uma subpasta de <varname
+>$XDG_DATA_DIRS</varname
+>/emoticons/. O nome da pasta deverá ser igual ao nome do tema. Essa pasta <emphasis
+>deverá</emphasis
+> conter um arquivo chamado <varname
+>emoticons.xml</varname
+>, cujo formato será descrito abaixo. </para>
+	<para
+>A pasta do tema também poderá conter um arquivo '.directory', que contém as traduções para o nome do tema e um ícone para o mesmo. </para>
+  </sect2>
+  <sect2 id="emoticons-map-format">
+    <title
+>Formato do arquivo emoticons.xml</title>
+    <para
+>Os arquivos de mapas de emoticon deverão ser arquivos XML bem-formados. As implementações deverão ignorar as marcas ou atributos desconhecidos. </para>
+    <sect3 id="emoticons-map-elements">
+      <title
+>Elementos</title>
+      <para>
+        <variablelist>
+          <varlistentry>
+					<term
+>&lt;messaging-emoticon-map&gt; [version="0.1"]</term>
+            <listitem>
+              <para
+>O elemento base é o &lt;messaging-emoticon-map&gt; e todos os outros elementos estão contidos abaixo dele. </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;emoticon file="..."&gt;</term>
+            <listitem>
+              <para
+>Este elemento representa um emoticon. O atributo 'arquivo' é o nome do arquivo de imagem, que deverá estar na mesma pasta. A extensão poderá ser omitida. Nesse caso, a implementação procura nessa pasta por um arquivo com o mesmo nome, usando um dos formatos suportados. </para>
+				  <para
+>Não existe uma ordem definida para o emoticon no mapa, mas o primeiro ícone é geralmente usado para identificar o tema graficamente. Por convenção, isso DEVE ser assim :-) </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;string&gt;</term>
+            <listitem>
+              <para
+>Este elemento só poderá aparecer debaixo do &lt;emoticon&gt;. Ele representa a string em ASCII que terá correspondência no texto, sendo substituída pela imagem definida pelo atributo 'file' do emoticon. </para>
+				  <para
+>Poderão existir várias strings para cada emoticon. </para>
+				  <para
+>Não existe uma ordem para as strings de um emoticon, mas o primeiro DEVERÁ ser o padrão e será o escolhido inicialmente em um seletor gráfico. </para>
+            </listitem>
+          </varlistentry>
+	    </variablelist>
+  </para>
+    </sect3>
+  </sect2>
+
+  <sect2 id="img-format">
+    <title
+>Formato da imagem.</title>
+    <para
+>Todas as imagens DEVERÃO estar em um formato suportado: PNG, GIF ou MNG. </para>
+  </sect2>
+
+  <sect2 id="implementation">
+    <title
+>Notas das implementações</title>
+	 <sect3 id="impl-parser">
+	  <title
+>Processador de emoticons</title>
+    <para
+>Não existem recomendações reais para a forma como são processados os emoticons. Contudo, um emoticon com uma string maior deverá ter prioridade sobre um com uma string menor. Exemplo: se tanto o :-() como o :-( estiverem em um tema, a imagem do primeiro deverá ser usada quando encontrar um :-() . </para>
+</sect3>
+</sect2>
+
+<sect2 id="example">
+	  <title
+>Exemplo</title>
+	  <para>
+			 <programlisting
+>&lt;messaging-emoticon-map&gt;
+        &lt;emoticon file="sorriso.png"&gt;
+                        &lt;string&gt;:-)&lt;/string&gt;
+                        &lt;string&gt;:)&lt;/string&gt;
+                        &lt;string&gt;:o)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="piscar.png"&gt;
+                        &lt;string&gt;;-)&lt;/string&gt;
+                        &lt;string&gt;;)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="triste.png"&gt;
+                        &lt;string&gt;:-(&lt;/string&gt;
+                        &lt;string&gt;:(&lt;/string&gt;
+        &lt;/emoticon&gt;
+&lt;/messaging-emoticon-map&gt;
+
+ </programlisting>
+</para>
+</sect2>
+
+<!--sect2 id="todo">
+	  <title
+>TODO</title>
+	  <para>
+			 A DTD of the XML file
+	  </para>
+</sect2-->
+</sect1>
+</appendix>
+

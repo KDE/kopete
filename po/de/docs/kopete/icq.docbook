@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-icq">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Diese Dokumentation wurde aus der <ulink url=" http://userbase.kde.org/Kopete/ICQ"
+>Kopete/ICQ</ulink
+>-Webseite der &kde;-Userbase erstellt.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+<othercredit role="translator"
+><firstname
+>Torbjörn</firstname
+><surname
+>Klatt</surname
+><affiliation
+><address
+><email
+>torbjoern.k@googlemail.com</email
+></address
+></affiliation
+><contrib
+>Deutsche Übersetzung</contrib
+></othercredit
+> 
+    </authorgroup>
+<date
+>2011-01-06</date>
+    <releaseinfo
+>&kde; SC 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2011-01-06T06:11:26Z</timestamp
+>-->
+<title
+>Handbuch zu ICQ</title>
+<!--userbase-content-->
+<sect1 id="about-icq"
+><title
+>Über ICQ</title>
+<para
+>Diese Anleitung wird Ihnen bei der Verwendung von ICQ, einem verbreiteten Chatprotokoll, in &kopete; helfen. </para>
+<para
+><ulink url="http://www.icq.com/en.html"
+>ICQ</ulink
+> ist ein proprietäres Instant-Messaging-Programm, das zuerst von der israelischen Firma Mirabilis entwickelt wurde. Zum Versenden von Textnachrichten verwendet es das OSCAR-Netzwerk-Protokol von AOL. Für die Identifizierung von Personen wird eine UIN (engl.: „unified identification number“) verwendet. Bei der Registrierung eines ICQ-Zugangs müssen Sie eine E-Mail-Adresse angeben. Einige ICQ-Klienten (nicht &kopete;) unterstützen die Verwendung dieser E-Mail-Adresse bei der Anmeldung. </para>
+<sect2 id="features"
+><title
+>Funktionen</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Offline-Nachrichten </para
+></listitem>
+<listitem
+><para
+>Gruppenchats </para
+></listitem>
+<listitem
+><para
+>Dateiübertragung </para
+></listitem>
+</itemizedlist>
+<sect3 id="features-not-yet-supported-by-kopete"
+><title
+>Funktionen, die noch nicht von Kopete unterstützt werden</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Spiele </para
+></listitem>
+<listitem
+><para
+>SMS senden </para
+></listitem>
+</itemizedlist>
+</sect3>
+</sect2>
+<sect2 id="criticism"
+><title
+>Kritik</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Privatsphäre: Der Sicherheitsanalytiker Jeffrey Carr gab bekannt, dass der russische Geheimdienst Zugriff auf die Chatprotokolle erhalten könne. Für weitere Informationen sehen Sie <ulink url="http://greylogic.us/2010/07/13/your-icq-identity-now-belongs-to-the-fsb/"
+>hier.</ulink
+> </para
+></listitem>
+<listitem
+><para
+>Spam: Es existiert sehr viel Spam (unerwünschte Werbung oder Viren) im ICQ-Netzwerk </para
+></listitem>
+<listitem
+><para
+>Copyright: Gemäß der „<ulink url="http://www.icq.com/legal/policy.html"
+>ICQ Acceptable User Policy</ulink
+>“ erlauben Sie ICQ, sämtliches gesendete Material zu verwenden. </para
+></listitem>
+</itemizedlist>
+ 
+</sect2>
+</sect1>
+<sect1 id="create-your-icq-account"
+><title
+>Ihren ICQ-Zugang erstellen</title
+> 
+<para
+>Vor dem Chatten über ICQ müssen Sie sich anmelden. Haben Sie bereits einen ICQ-Zugang, überspringen Sie die folgenden Informationen. </para>
+<para
+>Gehen Sie mit Ihrem Browser  (&eg; <guilabel
+>Firefox</guilabel
+>, <guilabel
+>Konqueror</guilabel
+>, <guilabel
+>Chromium</guilabel
+>) auf die Registrierungsseite <ulink url="https://www.icq.com/register/"
+>www.icq.com/register</ulink
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_create_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Geben Sie Ihre Daten ein</phrase>
+    </textobject>
+    <caption>
+      <para
+>Geben Sie Ihre Daten ein</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nun müssen Sie die E-Mail von ICQ abwarten, die Ihre Bestätigungsverknüpfung enthält. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_activate_new_account1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Klicken Sie auf die Bestätigungsverknüpfung in Ihrer E-Mail, um die Registrierung abzuschließen.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Klicken Sie auf die Bestätigungsverknüpfung in Ihrer E-Mail, um die Registrierung abzuschließen.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nun besitzen Sie einen ICQ-Zugang. Allerdings können Sie sich zunächst nur mit &kopete; über die UIN („Unified Identification Number“) anmelden. ICQ zeigt Ihre UIN standardmäßig nicht an. Sie müssen in Ihrem Browser <ulink url="https://www.icq.com/people"
+>www.icq.com/people</ulink
+> aufrufen und sich dort anmelden. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_log_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Anmeldung bei www.icq.com</phrase>
+    </textobject>
+    <caption>
+      <para
+>Anmeldung bei www.icq.com</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nun navigieren Sie zu Ihrem Profil: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_go_to_profile.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Klicken Sie auf My Profile</phrase>
+    </textobject>
+    <caption>
+      <para
+>Klicken Sie auf My Profile</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nun erhalten Sie eine Seite mit Informationen über Ihren Zugang. Mit einem Klick auf <quote
+>More about me</quote
+> wird Ihnen ein Eintrag mit der Bezeichnung „ICQ#“ angezeigt. Dies ist Ihre UIN: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_uin.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="connect-through-kopete"
+><title
+>Mittels &kopete; verbinden</title>
+<para
+>Beim erstmaligen Start von &kopete; werden Sie ein ähnliches Fenster wie das folgende sehen: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_first_start.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>&kopete; beim ersten Start</phrase>
+    </textobject>
+    <caption>
+      <para
+>&kopete; beim ersten Start</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Um Ihren ICQ-Zugang hinzuzufügen, klicken Sie auf <guilabel
+>Klicken, um einen neuen Zugang hinzuzufügen</guilabel
+>. Sollten Sie bereits einen anderen Zugang eingegeben haben (wie MSN oder Jabber), gehen Sie im Menü auf <menuchoice
+><guimenu
+>Einstellungen</guimenu
+><guimenuitem
+>Einrichten ...</guimenuitem
+></menuchoice
+> und wählen Sie <guilabel
+>Zugang hinzufügen ...</guilabel
+>. </para>
+<para
+>Hier sehen Sie eine Liste in &kopete; verfügbarer Chatprotokolle. In diesem Fall, da Sie ICQ verwenden möchten, müssen Sie den Eintrag „ICQ“ auswählen: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Wählen Sie ein Protokoll</phrase>
+    </textobject>
+    <caption>
+      <para
+>Wählen Sie ein Protokoll</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nun sehen Sie den Einrichtungsdialog für Ihren Zugang. Klicken Sie auf <guilabel
+>Grundeinstellungen</guilabel
+> in der oberen Registerkartenleiste. Hier müssen Sie Ihre UIN eingeben. Wenn Sie nicht bei jedem Start Ihr Passwort eingeben wollen, können Sie es hier angeben. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_setup.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Grundeinstellungen für den Zugang</phrase>
+    </textobject>
+    <caption>
+      <para
+>Grundeinstellungen für den Zugang</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Die Registerkarte <guilabel
+>Zugangseinstellungen</guilabel
+> enthält weitere Einstellungen: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_preferences.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Weitere Einstellungen</phrase>
+    </textobject>
+    <caption>
+      <para
+>Weitere Einstellungen</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>&kopete; sollte funktionieren ohne hier Änderungen vornehmen zu müssen. Sollten Sie also einige der im Folgenden genannten Punkte nicht verstehen, können Sie diesen Abschnitt getrost überspringen. </para>
+</sect1>
+<sect1 id="options-explained"
+><title
+>Hinweise zu den Einstellungen</title
+> 
+<itemizedlist>
+<listitem
+><para
+><guilabel
+>Autorisierung erforderlich, bevor jemand Sie zu seiner Kontaktliste hinzufügen kann</guilabel
+>: Wählen Sie diese Einstellung, wenn Sie wünschen, dass Sie gefragt werden bevor jemand Sie zu seiner Kontaktliste hinzufügen kann. Normalerweise kann jeder Sie suchen und zu seiner Kontaktliste hinzufügen. Das bedeutet, dass jeder Fremde, den Sie nicht kennen, Ihren Onlinestatus sehen und Ihnen Nachrichten senden kann. Wenn Sie dies nicht wünschen, wählen Sie diese Einstellung aus und Sie werden jedes Mal nach Ihrer Zustimmung gefragt, bevor jemand Sie zu seiner Kontaktliste hinzufügen kann. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>IP-Adresse ausblenden</guilabel
+>: Wenn Sie möchten, dass andere Ihre <ulink url="http://de.wikipedia.org/wiki/IP-Adresse"
+>IP</ulink
+> sehen können, wählen Sie diese Einstellung. Die IP-Adresse ist eine Nummer, mit der Sie im Internet identifiziert werden können. Diese Nummer ist eindeutig. Normale Internetnutzer können Ihren Namen nicht aus der IP-Adresse ablesen. Nur Provider können dies. Ohnehin speichert ICQ Ihre IP-Adresse für eine Weile. Daher ist es nicht unbedingt ein Schutz der Privatsphäre, diese Einstellung nicht zu wählen. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Den eigenen Status über das ICQ-Unified-Messaging-Center zugänglich machen</guilabel
+>: Wenn Sie diese Einstellung gewählt haben, wird Ihr Status öffentlich im Messaging-Center sichtbar (für jeden auf www.icq.com/people). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Standardserverinformationen übergehen</guilabel
+>: Möchten Sie die Adresse ändern, die &kopete; standardmäßig nutzt, um sich in das ICQ-Netzwerk einzuwählen, können Sie dies hier tun (in der Regel benötigen Sie diese Einstellung nicht). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Proxy aktivieren</guilabel
+>: Über einen <ulink url="http://de.wikipedia.org/wiki/Proxy_(Rechnernetz)"
+>Proxyserver</ulink
+>. Proxyserver sind Server, die Anfragen weiterleiten. Einige Firmen, Schulen und Universitäten nutzen solche Server, um den Zugriff auf einige Webseiten zu unterbinden. Benutzer daheim benötigen diese Einstellung normalerweise nicht. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Port-Bereich</guilabel
+>: Diese Einstellung legt fest, welche Ports &kopete; für Peer-to-Peer-Verbindunen verwenden soll. Weitere Erläuterungen über die Funktionsweise von Ports führt hier zu weit. Wollen Sie mehr erfahren, sei auf den <ulink url="http://de.wikipedia.org/wiki/Port_(Protokoll)"
+>Wikipedia-Artikel</ulink
+> verwiesen. In der Regel sollten Sie mit den Standardeinstellungen keine Probleme haben. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Zeitüberschreitung</guilabel
+> legt fest, wie viele Sekunden lang &kopete; bis zum Abbrechen einer Verbindung warten soll. Vergrößern Sie den hier eingestellten Wert, wenn Sie wegen instabiler Verbindung zum Internet (entweder Ihre eigene Verbindung oder die Ihres Kontaktpartners) Probleme beim Versenden von Dateien haben. Diese Einstellung legt fest, wie lange &kopete; versuchen soll, die Datei zu senden. In der Regel brauchen Sie diese Einstellung nicht zu ändern. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Standardkodierung für Nachrichten</guilabel
+> legt die Zeichenkodierung der Nachrichten fest. Windows-Benutzer sollten die <quote
+>Windows-125*</quote
+>-Kodierung (Windows-1250 bis Windows-1258) verwenden. Sollten Sie also mit Windows-Benutzern chatten, wählen Sie diese Einstellung. Selbst wenn Sie nur mit Personen chatten, die kein Windows verwenden, ist es sehr wahrscheinlich, dass diese dennoch die windows-125*-Kodierung eingestellt haben (weil sie eventuell mit Windows-Benutzern chatten). Die verschiedenen Windows-Kodierungen sind für verschiedene Länder. Wählen Sie die, die für sie am besten zutrifft (zum Beispiel <quote
+>Windows-1252 Westeuropäisch</quote
+> für Länder wie Frankreich oder Deutschland). Die Unterschiede zwischen den einzelnen Kodierungen beziehen sich auf einige Sonderzeichen. Sollten also einige Zeichen nicht richtig dargestellt werden, probieren Sie eine andere Kodierung aus. </para
+></listitem>
+</itemizedlist>
+<para
+>Sie haben Ihren ICQ-Zugang nun erfolgreich eingerichtet. Zum Abschließen klicken Sie auf <guilabel
+>Weiter</guilabel
+> und <guilabel
+>Fertigstellen</guilabel
+>. Haben Sie mehr als einen Zugang, können Sie für jeden eine andere Farbe festlegen, so dass Sie schnell erkennen können, welcher Kontakt zu welchem Zugang gehört. </para>
+</sect1>
+<sect1 id="add-a-contact"
+><title
+>Einen Kontakt hinzufügen</title
+> 
+<para
+>Nun, da Sie &kopete; mit Ihrem Zugang verbunden haben, sollte das Fenster wie folgt aussehen: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_logged_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Verbunden</phrase>
+    </textobject>
+    <caption>
+      <para
+>Verbunden</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Um einen Kontakt hinzuzufügen, klicken Sie in der Werkzeugleiste auf <guilabel
+>Hinzufügen</guilabel
+> und wählen Sie Ihren Zugang (in diesem Fall Ihre UIN). Alternativ können Sie im Menü <menuchoice
+><guimenu
+>Datei</guimenu
+><guisubmenu
+>Kontakt hinzufügen</guisubmenu
+><guimenuitem
+><replaceable
+>Ihr Zugang</replaceable
+></guimenuitem
+></menuchoice
+> verwenden. Dort können Sie die UIN der Person, die Sie hinzufügen möchten, eingeben. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_add_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Kennen Sie die UIN der Person, die Sie hinzufügen möchten, nicht, ist es auch möglich nach dem Benutzernamen oder E-Mail-Adresse der Person zu suchen. Klicken Sie hierfür auf den Knopf <guilabel
+>Suchen</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_search_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Suche nach UINs</phrase>
+    </textobject>
+    <caption>
+      <para
+>Suche nach UINs</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="being-added"
+><title
+>Hinzugefügt werden</title
+> 
+<para
+>Wenn Sie ICQ verwenden, ist es sehr wahrscheinlich, dass Sie von anderen hinzugefügt werden. Passiert dies, wird &kopete; eine Nachricht anzeigen, die die UIN der Person enthält, die Sie zu ihrer eigenen Kontaktliste hinzufügen möchte. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_added.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Autorisierungsanfrage</phrase>
+    </textobject>
+    <caption>
+      <para
+>Autorisierungsanfrage</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Um mehr Informationen über die Person zu bekommen, klicken Sie auf <guilabel
+>Informationen ...</guilabel
+>. Ein Fenster mit den verfügbaren Informationen über die Person wird sich öffnen. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_information.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Information</phrase>
+    </textobject>
+    <caption>
+      <para
+>Information</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nun können Sie die Person autorisieren oder blockieren. Autorisieren Sie, können Sie mit der Person chatten und diese mit Ihnen. Blockieren Sie, kann diese Person nicht mit Ihnen chatten. </para>
+</sect1>
+<sect1 id="chatting"
+><title
+>Chatten</title
+> 
+<para
+>Um zu chatten klicken Sie auf einen Ihrer Kontakte und ein Chatfenster wird sich öffnen. Hier können Sie Ihren Text eingeben und absenden. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_chat_window.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Chatten Sie mit Ihren Kontakten</phrase>
+    </textobject>
+    <caption>
+      <para
+>Chatten Sie mit Ihren Kontakten</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Es ist auch möglich, Nachrichten an Personen zu schicken, die gerade nicht online sind. Diese werden die Nachricht erhalten, sobald sie wieder online sind. </para>
+</sect1>
+<sect1 id="spam"
+><title
+>Spam</title
+> 
+<para
+>Leider gibt es viel Spam im ICQ-Netzwerk (Spam sind ungewünschte Nachrichten und in der Regel Werbung oder Viren). Um Spam zu vermeiden, sollten Sie nur Personen autorisieren, die Sie kennen. Außer ignorieren können Sie nicht viel bei diesem Problem machen. </para>
+</sect1>
+</appendix>

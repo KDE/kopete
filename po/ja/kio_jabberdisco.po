@@ -1,0 +1,40 @@
+# translation of kio_jabberdisco.pot to Japanese.
+# Copyright (C) 2005-2007 This_file_is_part_of_KDE
+# This file is distributed under the same license as the kdenetwork package.
+# Masato KIMURA <kimura.masato@gmail.com>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: kio_jabberdisco\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:10+0200\n"
+"PO-Revision-Date: 2005-11-04 00:37+0900\n"
+"Last-Translator: Masato KIMURA <kimura.masato@gmail.com>\n"
+"Language-Team: Japanese <kde-jp@kde.org>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Accelerator-Marker: &\n"
+"X-Text-Markup: kde4\n"
+
+#: jabberdisco.cpp:96 jabberdisco.cpp:183
+#, kde-format
+msgid "TLS"
+msgstr "TLS"
+
+#: jabberdisco.cpp:166
+#, kde-format
+msgid "The server certificate is invalid. Do you want to continue? "
+msgstr "サーバ証明書が無効です。続けますか？"
+
+#: jabberdisco.cpp:167
+#, kde-format
+msgid "Certificate Warning"
+msgstr "認証の警告"
+
+#: jabberdisco.cpp:284
+#, kde-format
+msgid "The login details are incorrect. Do you want to try again?"
+msgstr "ログインの詳細が不正です。やり直しますか？"

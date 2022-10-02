@@ -1,0 +1,36 @@
+# Tamas Szanto <tszanto@interware.hu>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: KDE 4.0\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:10+0200\n"
+"PO-Revision-Date: 2008-05-07 11:11+0100\n"
+"Last-Translator: Tamas Szanto <tszanto@interware.hu>\n"
+"Language-Team: Hungarian <kde-i18n-doc@kde.org>\n"
+"Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: jabberdisco.cpp:96 jabberdisco.cpp:183
+#, kde-format
+msgid "TLS"
+msgstr "TLS"
+
+#: jabberdisco.cpp:166
+#, kde-format
+msgid "The server certificate is invalid. Do you want to continue? "
+msgstr ""
+"A kiszolgáló tanúsítványa érvénytelen. Folytatni szeretné a műveletet? "
+
+#: jabberdisco.cpp:167
+#, kde-format
+msgid "Certificate Warning"
+msgstr "Tanúsítványellenőrzés - figyelmeztetés"
+
+#: jabberdisco.cpp:284
+#, kde-format
+msgid "The login details are incorrect. Do you want to try again?"
+msgstr "A bejelentkezési adatok hibásak. Megpróbál újból bejelentkezni?"

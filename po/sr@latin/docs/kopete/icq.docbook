@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-icq">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Dokumentacija preuzeta sa stranice o <ulink url=" http://userbase.kde.org/Kopete/ICQ"
+><application
+>Kopeteu</application
+>/ICQ‑u</ulink
+> na Korisničkoj bazi KDE‑a.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+<othercredit role="translator"
+><firstname
+>Časlav</firstname
+><surname
+>Ilić</surname
+><affiliation
+><address
+><email
+>caslav.ilic@gmx.net</email
+></address
+></affiliation
+><contrib
+>prevod</contrib
+></othercredit
+> 
+    </authorgroup>
+<date
+>6. 11. 2011.</date>
+    <releaseinfo
+>SK KDE‑a 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2011-01-06T06:11:26Z</timestamp
+>-->
+<title
+>Priručnik za ICQ</title>
+<!--userbase-content-->
+<sect1 id="about-icq"
+><title
+>O ICQ‑u</title>
+<para
+>Ovaj tutorijal će vam pomoći u korišćenju ICQ‑a, čestog protokola za ćaskanje u <application
+>Kopeteu</application
+>. </para>
+<para
+><ulink url="http://www.icq.com/en.html"
+>ICQ</ulink
+> je vlasnički brzoglasnički program, koji je isprva razvila izraelska kompanija Mirabilis. Koristi AOL‑ov mrežni protokol Oscar za slanje tekstualnih poruka. Korisnici se identifikuju brojem po imenu UIN (jedinstveni identifikacioni broj). Pri registrovanju naloga na ICQ‑u morate priložiti i adresu e‑pošte, pa neki ICQ klijenti omogućavaju prijavljivanje preko nje umesto preko UIN‑a. </para>
+<sect2 id="features"
+><title
+>Mogućnosti</title
+> 
+<itemizedlist>
+<listitem
+><para
+>poruke van veze </para
+></listitem>
+<listitem
+><para
+>višekorisničko ćaskanje </para
+></listitem>
+<listitem
+><para
+>prenos fajlova </para
+></listitem>
+</itemizedlist>
+<sect3 id="features-not-yet-supported-by-kopete"
+><title
+>Mogućnosti koje <application
+>Kopete</application
+> još ne podržava</title
+> 
+<itemizedlist>
+<listitem
+><para
+>igre </para
+></listitem>
+<listitem
+><para
+>slanje SMS‑ova </para
+></listitem>
+</itemizedlist>
+</sect3>
+</sect2>
+<sect2 id="criticism"
+><title
+>Kritike</title
+> 
+<itemizedlist>
+<listitem
+><para
+>privatnost — bezbednosni analitičar <personname
+><firstname
+>Džefri</firstname
+> <surname
+>Kar</surname
+></personname
+> tvrdi da bi ruske tajne službe mogle dobiti pristup protokolima za ćaskanje. Više detalja potražite <ulink url="http://greylogic.us/2010/07/13/your-icq-identity-now-belongs-to-the-fsb/"
+>ovde</ulink
+>. </para
+></listitem>
+<listitem
+><para
+>spam — ima ga mnogo (nametljivo reklamiranje i virusi) u ICQ mreži. </para
+></listitem>
+<listitem
+><para
+>autorska prava — prema <ulink url="http://www.icq.com/legal/policy.html"
+>smernicama o prihvatljivoj upotrebi ICQ‑a</ulink
+>, dozvoljavate ICQ‑u da upotrebi preneseni materijal na koji god način želi. </para
+></listitem>
+</itemizedlist>
+ 
+</sect2>
+</sect1>
+<sect1 id="create-your-icq-account"
+><title
+>Stvaranje naloga na ICQ‑u</title
+> 
+<para
+>Da biste se upustili u ćaskanje preko ICQ‑a, prvo morate otvoriti nalog. Ako ga već imate, preskočite ovaj deo. </para>
+<para
+>Posetite registracionu stranicu u veb pregledaču po želji (npr. <application
+>Firefoxu</application
+>, <application
+>K‑osvajaču</application
+>, Chromiumu) na adresi <ulink url="https://www.icq.com/register/"
+>www.icq.com/register</ulink
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_create_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Unesite svoje podatke.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Unesite svoje podatke.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Sada sačekajte da dobije poruku e‑poštom od ICQ‑a, koja će sadržati vezu za overu. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_activate_new_account1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kliknite na vezu za overu u poruci da potvrdite registraciju.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kliknite na vezu za overu u poruci da potvrdite registraciju.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Otvorili ste svoj nalog na ICQ‑u! Ali, <application
+>Kopete</application
+> trenutno omogućava prijavljivanje samo UIN‑om, dok ICQ podrazumevano ne pokazuje vaš UIN. Zato u veb pregledaču idite na <ulink url="https://www.icq.com/people"
+>www.icq.com/people</ulink
+> i tamo se prijavite. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_log_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Prijavljivanje na www.icq.com.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Prijavljivanje na www.icq.com.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Zatim idite do svog profila: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_go_to_profile.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kliknite na „My Profile“.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kliknite na „My Profile“.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Ovim dobijate stranicu sa podacima o svom nalogu. Ako kliknete na „More about me“, videćete unos označen kao ICQ# — to je vaš UIN: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_uin.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="connect-through-kopete"
+><title
+>Povezivanje u <application
+>Kopeteu</application
+></title>
+<para
+>Ako pokrećete <application
+>Kopete</application
+> po prvi put, videćete ovakav prozor: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_first_start.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+><application
+>Kopete</application
+> po prvom pokretanju.</phrase>
+    </textobject>
+    <caption>
+      <para
+><application
+>Kopete</application
+> po prvom pokretanju.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Svoj nalog na ICQ‑u dodajete klikom na <guilabel
+>Kliknite da dodate novi nalog</guilabel
+>. Ili, ako već imate neki drugi nalog (npr. na MSN‑u ili Jabberu), idite u meni <menuchoice
+><guimenu
+>Podešavanje</guimenu
+><guimenuitem
+>Podesi Kopete...</guimenuitem
+></menuchoice
+> pa kliknite na <guilabel
+>Dodaj nalog...</guilabel
+>. </para>
+<para
+>Sada ćete videti spisak svih protokola za ćaskanje koje <application
+>Kopete</application
+> poznaje. Pošto želite da koristite ICQ, izaberite unos za ICQ: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Izaberite željeni protokol.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Izaberite željeni protokol.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Dobićete dijalog za podešavanje naloga. Kliknite na <guilabel
+>Osnovne postavke</guilabel
+> iznad u traci jezičaka. Tu treba da unesete svoj UIN. Ako ne želite da unosite lozinku po svakom pokretanju, možete i nju ovde uneti. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_setup.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Osnovno podešavanje naloga.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Osnovno podešavanje naloga.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Jezičak <guilabel
+>Postavke naloga</guilabel
+> sadrži neke detaljnije postavke: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_preferences.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Još postavki.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Još postavki.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+><application
+>Kopete</application
+> bi trebalo da radi bez diranja ovih postavki. Zato, ako ne budete razumeli tekst koji sledi, ne brinite i samo preskočite ovu sekciju. </para>
+</sect1>
+<sect1 id="options-explained"
+><title
+>Objašnjenja opcija</title
+> 
+<itemizedlist>
+<listitem
+><para
+><guilabel
+>Zahtevaj ovlašćenje pre nego što me neko doda u svoju listu kontakata</guilabel
+>: aktivirajte ovu opciju ako želite da, kada neko pokuša da vas doda na svoju listu prijatelja, budete pitani dozvoljavate li to. Uobičajeno je da vas bilo ko može potražiti i dodati na svoju listu, što znači da svaki neznanac može da vidi da li ste na vezi ili ne i da vam šalje poruke. Ako ne želite ovo, aktiviranjem ove opcije biće vam traženo da potvrdite kad neko pokuša da ćaska sa vama. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Sakrij IP adresu</guilabel
+>: ako ne želite da drugi vide vašu <ulink url="http://en.wikipedia.org/wiki/IP_address"
+>IP adresu</ulink
+>, uključite ovu opciju. IP adresa se može upotrebiti da vas lično identifikuju na Internetu, pošto je čini jedinstveni broj. Doduše, prosečni korisnik Interneta ne može saznati vaše ime po IP adresi, ali može vaš provajder! ICQ u svakom slučaju zadržava vašu IP adresu neko vreme, tako da neaktiviranje ove opcije i nije neki gubitak za privatnost. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Moje stanje preko ICQ‑ovog sjedinjenog glasničkog centra</guilabel
+>: ako aktivirate ovu opciju, vaše stanje će biti objavljivano u glasničkom centru (tj. biće svima vidljivo na www.icq.com/people). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Potisni podrazumevane serverske podatke</guilabel
+>: ako želite da izmenite adresu preko koje vas <application
+>Kopete</application
+> prijavljuje na mrežu ICQ‑a, to možete ovom opcijom (obično nema razloga da dirate ovu postavku). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Proksi</guilabel
+>: povezujte se preko <ulink url="http://en.wikipedia.org/wiki/Proxy_server"
+>proksi servera</ulink
+>. Proksiji su serveri koji prenose zahteve. Neke kompanije, škole ili fakulteti, koriste ove servere za ograničavanje pristupa pojedinim veb sajtovima. Korisnicima koji pristupaju od kuće ova postavka verovatno ne treba. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Opseg portova:</guilabel
+> ova opcija zadaje <application
+>Kopeteu</application
+> portove koje treba da koristi za vezu parnjak—parnjak. Bilo bi previše ovde detaljnije opisivati funkciju portova, ako vas zanima možete pogledati <ulink url="http://en.wikipedia.org/wiki/Port_numbers"
+>članak na Wikipediji.</ulink
+> Obično su podrazumevane postavke sasvim dovoljne. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Prekovreme (sekunde):</guilabel
+> određuje koliko sekundi <application
+>Kopete</application
+> treba da čeka pre nego što prekine vezu. Na primer, pošaljete fajl jednom od kontakata, ali je njegova veza sa Internetom previše slaba i zato ne dobije taj fajl. Ova opcija kaže <application
+>Kopeteu</application
+> koliko dugo da pokušava da pošalje fajl. Obično nema razloga da je menjate. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Podrazumevano za sledeća kodiranja za poruke:</guilabel
+> postavlja kodiranje poruka. Korisnicima Windowsa odgovaraće kodiranja windows-125* (od windows-1250 do windows-1258), tako da izaberite neko od njih ako pričate sa takvim korisnicima. Zapravo, čak i korisnici koji ne koriste Windows često će postaviti jedno od ovih kodiranja, jer će isto ćaskati sa nekima pod Windowsom. Različita kodiranja odgovaraju različitim zemljama, izaberite ono koje najviše odgovara vašim uslovima (na primer, windows-1250 za latinicu sa srpskim slovima, a windows-1252 za ćirilicu); ako izaberete pogrešno, neki znakovi u porukama biće izbrljani, pa pokušajte sa nekim drugim. </para
+></listitem>
+</itemizedlist>
+<para
+>Ovim ste uspešno podesili svoj nalog na ICQ‑u. Možete kliknuti na <guilabel
+>Naredno</guilabel
+> ili <guilabel
+>Završi</guilabel
+>. Ako imate više od jednog naloga, možete im dodeliti različite boje, tako da lako vidite koji kontakti odgovaraju kojem nalogu. </para>
+</sect1>
+<sect1 id="add-a-contact"
+><title
+>Dodavanje kontakta</title
+> 
+<para
+>Pošto <application
+>Kopete</application
+> poveže vaš nalog, prozor treba da izgleda ovako: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_logged_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Nalog povezan.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Nalog povezan.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Za dodavanje kontakta kliknite na <guilabel
+>Dodaj</guilabel
+> u traci alatki i izaberite svoj nalog (u ovom slučaju to je vaš UIN), ili idite u meni <menuchoice
+><guimenu
+>Fajl</guimenu
+><guisubmenu
+>Dodaj kontakt</guisubmenu
+><guimenuitem
+><replaceable
+>vaš nalog</replaceable
+></guimenuitem
+></menuchoice
+>. Zatim možete uneti UIN osobe koju želite da dodate. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_add_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Ako ne znate UIN, ali znate recimo nadimak ili adresu e‑pošte željene osobe, takođe možete potražiti njen kontakt. Kliknite na dugme <guilabel
+>Traži</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_search_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>UIN‑ovi se takođe mogu tražiti.</phrase>
+    </textobject>
+    <caption>
+      <para
+>UIN‑ovi se takođe mogu tražiti.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="being-added"
+><title
+>Neko dodaje vas</title
+> 
+<para
+>Dok ste na ICQ‑u, vrlo je verovatno da će vas neko drugi dodati kod sebe. Kada se to dogodi, <application
+>Kopete</application
+> će prikazati poruku sa UIN‑om osobe koja želite da vas doda u svoju listu. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_added.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Zahtev za ovlašćenje.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Zahtev za ovlašćenje.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Za više podataka o toj osobi kliknite na <guilabel
+>Info...</guilabel
+>. Pojaviće se prozor sa svim dostupnim podacima o njoj. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_information.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Podaci.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Podaci.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Sada možete ovlastiti ili blokirati osobu. Ako je ovlastite, možete ćaskati sa njom, i obrnuto, ako je blokirate, ona ne može ćaskati sa vama. </para>
+</sect1>
+<sect1 id="chatting"
+><title
+>Ćaskanje</title
+> 
+<para
+>Za ćaskanje, kliknite na jedan od kontakata. Pojaviće se prozor za ćaskanje. Tu možete unositi i slati tekst. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_chat_window.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Ćaskanje sa kontaktom.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Ćaskanje sa kontaktom.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Takođe je moguće slati poruke osobama koje su van veze. Primiće vašu poruku čim stupe na vezu. </para>
+</sect1>
+<sect1 id="spam"
+><title
+>Spam</title
+> 
+<para
+>Nažalost, u mreži ICQ‑a ima puno spama (poruka koje ne želite, obično reklama ili virusa). Da biste ih što više izbegli, treba da ovlašćujete samo osobe koje poznajete. Ništa drugo zaista ne možete da uraditi po ovom pitanju. Najbolje ih ignorišite! </para>
+</sect1>
+</appendix>

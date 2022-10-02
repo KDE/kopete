@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-emoticons">
+<appendixinfo>
+    <title
+>Specifikacija emotikona</title>
+    <releaseinfo
+>0.1</releaseinfo>
+    <date
+>7. 1. 2005.</date>
+    <authorgroup>
+      <author
+><firstname
+>Olivje</firstname
+> <surname
+>Gofar</surname
+> <affiliation
+> <address
+> <email
+>ogoffart@tiscalinet.be</email>
+	  </address>
+	</affiliation>
+      </author>
+    </authorgroup>
+  </appendixinfo>
+
+<title
+>Emotikoni</title>
+
+  <sect1 id="introduction-emoticons">
+    <title
+>Uvod</title>
+    <para
+>Ovaj nacrt definiše kako napraviti temu emotikona kakva se tipično koristi u brzoglasničkim programima. </para>
+    <para
+>Osnovna šema je vrlo jednostavna. Sastoji se od jedne potfascikle koja sadrži sve slike i XML fajl koji navodi ASCII simbol za svaku sliku. Može se upotrebiti .directory fajl. </para>
+  <sect2 id="location">
+    <title
+>Lokacije fajlova</title>
+    <para
+>Fajlovi uključeni u ovu specifikaciju nalaze se prema „specifikaciji osnovnih fascikli površi“, koja se može naći na <ulink url="http://www.freedesktop.org/standards/"
+>www.freedesktop.org</ulink
+>. </para>
+    <para
+>Svi fajlovi teme moraju da se smeste u potfasciklu fascikle <filename
+><varname
+>$XDG_DATA_DIRS</varname
+>/emoticons/</filename
+>. Ime fascikle mora biti jednako imenu teme. Fascikla <emphasis
+>mora</emphasis
+> da sadrži fajl po imenu <filename
+>emoticons.xml</filename
+>. Format ovog fajla opisan je u narednom. </para>
+	<para
+>Fascikla teme takođe može da se sadrži .directory fajl, u kome se nalaze prevodi imena teme i ikonica za temu. </para>
+  </sect2>
+  <sect2 id="emoticons-map-format">
+    <title
+>Format fajla <filename
+>emoticons.xml</filename
+></title>
+    <para
+>Fajl mape emotikona mora biti dobro formiran XML fajl. Izvedbe treba da ignorišu nepoznate oznake i atribute. </para>
+    <sect3 id="emoticons-map-elements">
+      <title
+>Elementi</title>
+      <para>
+        <variablelist>
+          <varlistentry>
+					<term
+><literal
+>&lt;messaging-emoticon-map&gt;</literal
+> [<literal
+>version="0.1"</literal
+>]</term>
+            <listitem>
+              <para
+>Koreni element je <literal
+>&lt;messaging-emoticon-map&gt;</literal
+> i sadrži sve ostale elemente. </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+><literal
+>&lt;emoticon file="..."&gt;</literal
+></term>
+            <listitem>
+              <para
+>Ovaj element predstavlja jedan emotikon. Vrednost atributa je ime fajla slike, koji mora stajati u istoj fascikli. Nastavak fajla može da se izostavi, u kom slučaju izvedba traži u fascikli neki fajl sa datim imenom i podržanim formatom. </para>
+				  <para
+>Redosled emotikona u mapi nije bitan. Ali se obično prva ikonica u mapi koristi za grafičko identifikovanje teme. Zato po konvenciji <emphasis
+>treba</emphasis
+> da bude ona uz simbol <literal
+>:-)</literal
+>. </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+><literal
+>&lt;string&gt;</literal
+></term>
+            <listitem>
+              <para
+>Ovaj element može da se javi samo pod <literal
+>&lt;emoticon&gt;</literal
+>. Predstavlja ASCII nisku koja se poklapa u tekstu, i smenjuje slikom zadatom u atributu <literal
+>file</literal
+> emotikona. </para>
+				  <para
+>Može biti više niski po emotikonu. </para>
+				  <para
+>Redosled niski unutar emotikona nije bitan. Ali bi prva niska <emphasis
+>trebalo</emphasis
+> da bude podrazumevana, i biće preuzeta u slučaju GUI birača. </para>
+            </listitem>
+          </varlistentry>
+	    </variablelist>
+  </para>
+    </sect3>
+  </sect2>
+
+  <sect2 id="img-format">
+    <title
+>Format slike</title>
+    <para
+>Sve slike <emphasis
+>treba</emphasis
+> da budu podržanog formata: PNG, GIF, ili MNG. </para>
+  </sect2>
+
+  <sect2 id="implementation">
+    <title
+>Beleške za izvedbu</title>
+	 <sect3 id="impl-parser">
+	  <title
+>Raščlanjivač emotikona</title>
+    <para
+>Nema nikakvih pravih preporuka kako raščlanjivati emotikone. Ali bi emotikon sa dužom niskom trebalo da ima prioritet nad onim sa kraćom niskom. Na primer: ako u temi ima i <literal
+>:-()</literal
+> i <literal
+>:-(</literal
+>, treba uzeti sliku uz prvi kada se naiđe na <literal
+>:-()</literal
+>. </para>
+</sect3>
+</sect2>
+
+<sect2 id="example">
+	  <title
+>Primer</title>
+	  <para>
+			 <programlisting
+>&lt;messaging-emoticon-map&gt;
+        &lt;emoticon file="smile.png"&gt;
+                        &lt;string&gt;:-)&lt;/string&gt;
+                        &lt;string&gt;:)&lt;/string&gt;
+                        &lt;string&gt;:o)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="wink.png"&gt;
+                        &lt;string&gt;;-)&lt;/string&gt;
+                        &lt;string&gt;;)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="unhappy.png"&gt;
+                        &lt;string&gt;:-(&lt;/string&gt;
+                        &lt;string&gt;:(&lt;/string&gt;
+        &lt;/emoticon&gt;
+&lt;/messaging-emoticon-map&gt;
+
+ </programlisting>
+</para>
+</sect2>
+
+<!--sect2 id="todo">
+	  <title
+>TODO</title>
+	  <para>
+			 A DTD of the XML file
+	  </para>
+</sect2-->
+</sect1>
+</appendix>
+

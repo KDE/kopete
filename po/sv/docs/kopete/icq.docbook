@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-icq">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Det här dokumentet är konverterat från KDE:s användarbas <ulink url=" http://userbase.kde.org/Kopete/ICQ"
+>Kopete/ICQ</ulink
+>-sida.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+<othercredit role="translator"
+> <firstname
+>Stefan</firstname
+> <surname
+>Asserhäll</surname
+> <affiliation
+><address
+><email
+>stefan.asserhall@bredband.net</email
+></address
+></affiliation
+> <contrib
+>Översättare</contrib
+></othercredit
+> 
+    </authorgroup>
+<date
+>2011-01-06</date>
+    <releaseinfo
+>&kde; SC 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2011-01-06T06:11:26Z</timestamp
+>-->
+<title
+>Handbok ICQ</title>
+<!--userbase-content-->
+<sect1 id="about-icq"
+><title
+>Om ICQ</title>
+<para
+>Den här handledningen hjälper dig att använda ICQ, ett vanligt chattprotokoll i &kopete;. </para>
+<para
+><ulink url="http://www.icq.com/en.html"
+>ICQ</ulink
+> är ett tillverkarspecifikt program för direktmeddelanden, först utvecklat av det israeliska företaget Mirabilis. Det använder AOL:s nätverksprotokoll OSCAR för att skicka textmeddelanden. För att identifiera personer använder det ett tal, som kallas UIN (Unified Identification Number). Om man registrerar ett ICQ-konto, måste man också ange en e-postadress. Vissa ICQ-program stöder inloggning med den e-postadressen istället för UIN (men inte &kopete;). </para>
+<sect2 id="features"
+><title
+>Funktioner</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Meddelanden till nerkopplade </para
+></listitem>
+<listitem
+><para
+>chatt med flera användare </para
+></listitem>
+<listitem
+><para
+>filöverföring </para
+></listitem>
+</itemizedlist>
+<sect3 id="features-not-yet-supported-by-kopete"
+><title
+>Funktioner som ännu inte stöds av Kopete</title
+> 
+<itemizedlist>
+<listitem
+><para
+>spel </para
+></listitem>
+<listitem
+><para
+>skicka SMS </para
+></listitem>
+</itemizedlist>
+</sect3>
+</sect2>
+<sect2 id="criticism"
+><title
+>Kritik</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Integritet: Enligt säkerhetsanalytikern Jeffrey Carr, kan den ryska säkerhetstjänsten komma åt chattprotokoll. För ytterligare information, titta <ulink url="http://greylogic.us/2010/07/13/your-icq-identity-now-belongs-to-the-fsb/"
+>här</ulink
+>. </para
+></listitem>
+<listitem
+><para
+>Skräp: Det finns mycket skräp (oönskad reklam eller virus) på ICQ-nätverket </para
+></listitem>
+<listitem
+><para
+>Upphovsrätt: Enligt <ulink url="http://www.icq.com/legal/policy.html"
+>ICQ Acceptable Use Policy</ulink
+>, tillåter man ICQ att använd inskickat material på vilket sätt de vill </para
+></listitem>
+</itemizedlist>
+ 
+</sect2>
+</sect1>
+<sect1 id="create-your-icq-account"
+><title
+>Skapa ett ICQ-konto</title
+> 
+<para
+>Innan man kan chatta via ICQ måste man skapa ett ICQ-konto. Om du redan har ett kan du hoppa över den här sidan. </para>
+<para
+>Gå till registreringssidan <ulink url="https://www.icq.com/register/"
+>www.icq.com/register</ulink
+> med webbläsaren du föredrar (<guilabel
+>Firefox</guilabel
+>, <guilabel
+>Konqueror</guilabel
+>, <guilabel
+>Chromium</guilabel
+>) </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_create_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Ange information</phrase>
+    </textobject>
+    <caption>
+      <para
+>Ange information</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nu måste man vänta till e-post från ICQ anländer, som innehåller en verifikationslänk. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_activate_new_account1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>klicka på verifikationslänken i brevet för att verifiera registreringen</phrase>
+    </textobject>
+    <caption>
+      <para
+>klicka på verifikationslänken i brevet för att verifiera registreringen</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nu har du ett ICQ-konto. Men för närvarande kan du bara logga in med Kopete genom att använda UIN (Unified Identification Number). ICQ visar inte normalt ditt UIN. Du måste gå till <ulink url="https://www.icq.com/people"
+>www.icq.com/people</ulink
+> med en webbläsare och logga in där. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_log_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>logga in på www.icq.com</phrase>
+    </textobject>
+    <caption>
+      <para
+>logga in på www.icq.com</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Därefter måste man gå till sin profil: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_go_to_profile.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>klicka på Min profil</phrase>
+    </textobject>
+    <caption>
+      <para
+>klicka på Min profil</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nu får du en informationssida om ditt konto. Om du klickar på <quote
+>More about me</quote
+> ser du en post som kallas ICQ#. Det är ditt UIN: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_uin.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="connect-through-kopete"
+><title
+>Anslut via Kopete</title>
+<para
+>Första gången &kopete; startas visas ett fönster som ser ut så här: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_first_start.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kopete efter första start</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kopete efter första start</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Klicka på <guilabel
+>Klicka för att lägga till ett konto</guilabel
+> för att lägga till ditt ICQ-konto. Eller om du redan har angivit ett annat konto (som MSN eller Jabber) använder du <menuchoice
+><guimenu
+>Inställningar</guimenu
+> <guimenuitem
+>Anpassa...</guimenuitem
+></menuchoice
+> och klickar på <guilabel
+>Lägg till konto</guilabel
+>. </para>
+<para
+>Nu visas en lista med alla chattprotokoll tillgängliga i &kopete;. I detta fall, eftersom du vill använda ICQ, ska du välja posten ICQ: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Välj protokoll</phrase>
+    </textobject>
+    <caption>
+      <para
+>Välj protokoll</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nu visas inställningsdialogrutan för kontot. Klicka på <guilabel
+>Grundläggande inställningar</guilabel
+> ovanför i flikraden. Där måste du ange ditt UIN. Om du inte vill skriva in lösenord varje gång du startar programmet, kan du också lägga till ditt lösenord. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_setup.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Grundläggande kontoinställning</phrase>
+    </textobject>
+    <caption>
+      <para
+>Grundläggande kontoinställning</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Fliken <guilabel
+>Kontoinställningar</guilabel
+> innehåller mer detaljerade inställningar: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_preferences.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Fler inställningar</phrase>
+    </textobject>
+    <caption>
+      <para
+>Fler inställningar</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>&kopete; bör fungera utan att ändra några inställningar här. Så om du inte förstår något som nämns nedan, grips inte av panik, utan hoppa bara över avsnittet. </para>
+</sect1>
+<sect1 id="options-explained"
+><title
+>Förklaring av alternativ</title
+> 
+<itemizedlist>
+<listitem
+><para
+><guilabel
+>Kräv behörighetskontroll innan någon kan lägga till dig i sin kontaktlista</guilabel
+>: Markera alternativet om du vill bli tillfrågad innan någon annan kan lägga till dig i sin kompislista. Normalt kan vem som helst söka efter dig och lägga till dig i sin lista. Det betyder att vilken främling som helst som du inte ens känner kan se om du är uppkopplad eller inte, eller kan skicka meddelanden till dig. Om du inte vill det, kan du markera alternativet, och därefter blir du tillfrågad om du vill ge någon behörighet innan han kan chatta med dig. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Dölj IP-adress</guilabel
+>: Om du inte vill att andra ske se din <ulink url="http://sv.wikipedia.org/wiki/IP-adress"
+>IP-adress</ulink
+> kan du markera alternativet. IP-adressen är en identifikation som identifierar dig på Internet. Talet är unikt. En vanlig användare av Internet kan inte få fram ditt namn från din IP-adress, bara Internetleverantören kan göra det. ICQ sparar ändå bara IP-adressen en begränsad tid, så det är inte något verkligt integritetsproblem att inte markera alternativet. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Gör min status tillgänglig via ICQ:s förenade meddelandecentral</guilabel
+>: Om alternativet markeras, visas din status via meddelandecentralen (synlig för alla på www.icq.com/people). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Överskrid förvald serverinformation</guilabel
+>: Om du vill ändra adressen där &kopete; loggar in på ICQ-nätverket, är det möjligt via det här alternativet (normalt behövs inte inställningen). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Aktivera proxy</guilabel
+>: Anslut via en <ulink url="http://sv.wikipedia.org/wiki/Proxy"
+>proxy</ulink
+>. En proxytjänst är en server som agerar som mellanhand. En del företag, skolor och universitet använder sådana servrar för att förhindra åtkomst av vissa webbplatser. Användare som ansluter hemifrån behöver inte inställningen. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Portintervall:</guilabel
+>: Alternativet talar om för &kopete; vilka portar som ska användas för direkt anslutning till motparten. Ytterligare förklaring av portar skulle leda för långt här. Om du vill ha mer information, ta en titt på <ulink url="http://en.wikipedia.org/wiki/Port_numbers"
+>artikeln på Wikipedia</ulink
+>. Normalt får du inga problem med standardinställningen. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Tidsgräns</guilabel
+>: Definierar hur många sekunder &kopete; ska vänta innan anslutningen släpps. Om du till exempel skickar en fil till en av dina kontakter, men kontaktens Internetanslutning har problem så att han inte tar emot filen, talar alternativet om hur länge &kopete; ska försöka skicka filen. Normalt behöver du inte ändra det. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Förvald kodning</guilabel
+>: Ställer in kodningen av meddelanden. Windows-användare använder kodningen <quote
+>windows-125*</quote
+> (windows-1250 till windows-1258), så om du kommer att chatta med Windows-användare, välj det alternativet. Även om du bara pratar med personer som inte använder Windows är det troligt att de också använder inställningen windows-125* (eftersom de kanske chattar med personer som använder Windows). De olika Windows-kodningarna gäller olika länder (exempelvis <quote
+>Windows-1252 Västlig</quote
+> för länder som Frankrike och Tyskland). </para
+></listitem>
+</itemizedlist>
+<para
+>Nu har du lyckats ställa in ICQ-kontot. Du kan klicka på <guilabel
+>Nästa</guilabel
+> och <guilabel
+>Slutför</guilabel
+>. Om du har fler än ett konto kan du välja andra färger för dem, så att du enkelt kan se vilka kontakter som kommer från vilket konto. </para>
+</sect1>
+<sect1 id="add-a-contact"
+><title
+>Lägg till kontakt</title
+> 
+<para
+>Nu har du anslutit &kopete; till ditt konto. Fönstret ska se ut så här: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_logged_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Ansluten</phrase>
+    </textobject>
+    <caption>
+      <para
+>Ansluten</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>För att lägga till en kontakt, klicka på <guilabel
+>Lägg till</guilabel
+> i verktygsraden och välj konto (i detta fall ditt UIN), eller använd menyn <menuchoice
+><guimenu
+>Arkiv</guimenu
+> <guisubmenu
+>Lägg till kontakt</guisubmenu
+> <guimenuitem
+><replaceable
+>ditt konto</replaceable
+></guimenuitem
+></menuchoice
+>. Där kan du skriva in UIN för personen du vill lägga till. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_add_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Om du inte känner till UIN för en person, utan kanske personens smeknamn eller e-postadress, är det också möjligt att söka efter kontakten. Klicka på knappen <guilabel
+>Sök</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_search_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Det är också möjligt att söka efter ett UIN</phrase>
+    </textobject>
+    <caption>
+      <para
+>Det är också möjligt att söka efter ett UIN</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="being-added"
+><title
+>Håller på att läggas till</title
+> 
+<para
+>Om du använder ICQ är det mycket troligt att du blir tillagt av någon annan. Om det sker visar &kopete; ett meddelande som innehåller UIN för personen som vill lägga till dig i sin lista. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_added.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>behörighetsbegäran</phrase>
+    </textobject>
+    <caption>
+      <para
+>behörighetsbegäran</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Klicka på <guilabel
+>Information...</guilabel
+> för att få mer information om personen. Ett fönster visas som innehåller all information tillgänglig om personen. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_information.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Information</phrase>
+    </textobject>
+    <caption>
+      <para
+>Information</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nu kan du ge personen behörighet eller blockera honom. Om du ger honom behörighet kan du chatta med honom, och tvärtom. Om du blockerar honom kan han inte prata med dig. </para>
+</sect1>
+<sect1 id="chatting"
+><title
+>Chatta</title
+> 
+<para
+>Klicka på någon av dina kontakter för att chatta. Ett chattfönster visas. Där kan du skriva in text och skicka den. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_chat_window.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Chatta med kontakter</phrase>
+    </textobject>
+    <caption>
+      <para
+>Chatta med kontakter</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Det går också att skicka meddelanden till personer som är nerkopplade. De tar emot ditt meddelande så fort de kopplar upp. </para>
+</sect1>
+<sect1 id="spam"
+><title
+>Skräp</title
+> 
+<para
+>Tyvärr finns det mycket skräp (meddelanden du inte vill ha, oftast reklam och virus) på ICQ-nätverket. För att undvika skräp bör du bara ge personer du känner behörighet. Det finns egentligen inte något du kan göra åt problemet. Bara ignorera det. </para>
+</sect1>
+</appendix>

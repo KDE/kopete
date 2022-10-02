@@ -1,0 +1,38 @@
+# translation of kio_jabberdisco.po to Persian
+# Nasim Daniarzadeh <daniarzadeh@itland.ir>, 2006.
+# Nazanin Kazemi <kazemi@itland.ir>, 2006.
+# Tahereh Dadkhahfar <dadkhahfar@itland.ir>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: kio_jabberdisco\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:10+0200\n"
+"PO-Revision-Date: 2006-12-23 11:54+0330\n"
+"Last-Translator: Nasim Daniarzadeh <daniarzadeh@itland.ir>\n"
+"Language-Team: Persian <kde-i18n-fa@kde.org>\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: jabberdisco.cpp:96 jabberdisco.cpp:183
+#, kde-format
+msgid "TLS"
+msgstr ""
+
+#: jabberdisco.cpp:166
+#, kde-format
+msgid "The server certificate is invalid. Do you want to continue? "
+msgstr "گواهی‌نامه کارساز نامعتبراست. می‌‌‌خواهید ادامه دهید؟"
+
+#: jabberdisco.cpp:167
+#, kde-format
+msgid "Certificate Warning"
+msgstr "اخطار گواهی‌نامه"
+
+#: jabberdisco.cpp:284
+#, kde-format
+msgid "The login details are incorrect. Do you want to try again?"
+msgstr "جزئیات ورود نادرست است. می‌خواهید دوباره امتحان کنید؟"

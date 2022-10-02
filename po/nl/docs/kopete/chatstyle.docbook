@@ -1,0 +1,650 @@
+<!-- Copyright (c) 2005 by Michaël Larouche <michael.larouche@kdemail.net
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="chatwindowstyleguide">
+<title
+>Stijlgids voor het chat-venster van &kopete;</title>
+<sect1 id="chatstyle-reference">
+<title
+>Stijlreferentiegids voor het chat-venster van &kopete;.</title>
+<para
+>Beginnend met &kopete; 0.12, gebruiken we nu het format <ulink url="http://www.adiumx.com/"
+>Adium</ulink
+> voor de stijl van ons chat-venster. Het themaformat is gebaseerd op <acronym
+>HTML</acronym
+> sjablonen en<acronym
+>CSS</acronym
+>. Ze zijn gemakkelijker te maken en te ontwikkelen; er is alleen kennis van <acronym
+>HTML</acronym
+> en <acronym
+>CSS</acronym
+> nodig. Ook stijlen kunnen varianten hebben (gedefinieerd als <acronym
+>CSS</acronym
+>-bestand) die meer waarde toevoegen aan aanpassen :). </para>
+
+<sect2 id="chatstyle-reference-guide">
+	<title
+>Referentiegids.</title>
+<para
+>Het Adium-format bestaat uit een mapstructuur, <acronym
+>HTML</acronym
+>-sjablonen, <acronym
+>CSS</acronym
+>-bestanden en sleutelwoorden die worden vervangen elke keer dat het sjabloon wordt verwerkt. De uiteindelijke conversatie is een <acronym
+>XHTML</acronym
+>-pagina waaraan berichten worden toegevoegd met <acronym
+>DOM</acronym
+>-bewerkingen. Het centrale element is een div-element genaamd <filename
+>Chat</filename
+>. Voor en na dit div-element bevindt zich het Header- en Footer-sjabloon. Berichten zijn Nakomelingen van het div-element <filename
+>Chat</filename
+>. </para>
+
+<sect3 id="chatstyle-reference-directory">
+	<title
+>Mapstructuur</title>
+<para
+>Een stijl moet deze mapstructuur respecteren. De code in &kopete; is gebouwd rond deze mapstructuur. Bij het archiveren van de stijl, archiveer dan de map <filename
+>styleName</filename
+>. De mapstructuur is een structuur van een <application
+>Mac OS X</application
+>-bundel voor hen die bekend zijn met dat besturingsysteem. U moet de hoofd-/kleine letters, die hier getoond worden respecteren, omdat een <acronym
+>UNIX</acronym
+>-systeem hiervoor gevoelig is.</para>
+<programlisting
+>styleName\ (kan .adiumMessageStyle als achtervoegsel hebben, omdat het in Mac OS X een bundel is)
+        Contents\
+                Info.plist
+                Resources\
+                        main.css
+                        Header.html
+                        Footer.html
+                        Status.html
+                        Incoming\ (and Outgoing\)
+                                Content.html
+                                NextContent.html (for consecutive messages)
+                                Context.html (for message history)
+                                NextContext.html
+                                Action.html
+                        Variants\
+                                *.css
+</programlisting>
+</sect3>
+
+<sect3 id="chatstyle-reference-divinsert">
+	<title
+>Over &lt;div id="insert"&gt;&lt;/div&gt;</title>
+	<para
+>Dit is een speciaal div-element dat intern wordt gebruikt. Het is een plaatshouder om aan te geven waar het volgende bericht in te voegen. Als het een nieuw bericht is, dan wordt het verwijderd en het nieuw bericht gebeurt. Maar als het een opvolgend bericht is, dan wordt het div-element vervangen door de inhoud van het nieuwe bericht. Dit speciale div-element is <emphasis
+>vereist</emphasis
+> in Content-,Context-,NextContent- en NextContext-sjablonen. Het is geen probleem om het ook in Action- en Status-sjablonen te zetten. </para>
+</sect3>
+
+<sect3 id="chatstyle-reference-templates">
+	<title
+>HTML-sjablonen.</title>
+
+<variablelist
+><title
+>Beschrijving van het sjabloon.</title>
+
+<varlistentry
+><term
+><filename
+>Header.html</filename
+> (Vereist)</term>
+<listitem>
+<para
+>Gebruik het Header-sjabloon om een mooie kop van de conversatie weer te geven. Dit sjabloon wordt ingevoegd voor het div-element <filename
+>Chat</filename
+>. Als u het niet gebruikt, zet er dan een leeg bestand neer. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Footer.html</filename
+> (Vereist)</term>
+<listitem>
+<para
+>Dit is meestal hetzelfde als het Header-sjabloon, het is er echter voor de voet van de conversatie. Dit sjabloon wordt ingevoegd achter het div-element <filename
+>Chat</filename
+>. Als u het niet gebruikt, zet er dan een leeg bestand neer. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Status.html</filename
+> (Vereist)</term>
+<listitem>
+<para
+>Dit sjabloon wordt gebruikt om een intern bericht weer te geven. Interne berichten zoals een statuswijziging, bericht vanuit Kopete (&eg; inkomende bestandsoverdracht). Wanneer de stijl geen Action-sjabloon levert, wordt het gebruikt om het Action-bericht weer te geven. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/Content.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Content.html</filename
+> (Vereist)</term>
+<listitem>
+<para
+>Het sjabloon voor inhoud is het hart van het bericht. Denk er aan als een blok dat het bericht bevat. Zorg er voor dat het opvolgende berichten kan ontvangen; ontwerp het niet om maar één bericht te ontvangen. Opvolgende berichten zullen ingevoegd worden op de plaats van het div-insert-element. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/NextContent.html</filename
+></term>
+              <term
+><filename
+>Outgoing/NextContent.html</filename
+> (Vereist)</term>
+<listitem>
+<para
+>Het NextContent-sjabloon is een berichtfragment voor opvolgende berichten. Het zal worden ingevoegd in het hoofd berichtenblok. Het HTML-sjabloon zou het absolute minimum bevatten om een bericht weer te geven. </para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry
+><term
+><filename
+>Incoming/Action.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Action.html</filename
+> (Optioneel) (&kopete;-extensie)</term>
+<listitem>
+<para
+>Dit sjabloon is een extensie van &kopete; naar het Adium-format. Het is beschikbaar voor de richting inkomend en uitgaand. Actieberichten zijn speciale berichten om te vertellen dat er een actie gedaan wordt. Voorbeeld: "/me is &kopete; aan het installeren" zou worden weergegeven als "DarkShock is &kopete; aan het installeren". </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/Context.html</filename
+></term>
+              <term
+><filename
+>Incoming/NextContext.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Context.html</filename
+></term>
+              <term
+><filename
+>Outgoing/NextContext.html</filename
+> (Optioneel)</term>
+<listitem>
+<para
+>Deze sjablonen worden in Kopete niet gebruikt. In Adium worden ze gebruikt om de geschiedenis weer te geven. Het is meestal hetzelfde ding als Content en NextContent maar met enige verschillen om ze van normale berichten te onderscheiden. </para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect3>
+
+<sect3 id="chatstyle-reference-css">
+	<title
+>Over CSS-stijlen en varianten</title>
+	<para
+>Het sjabloon voor HTML wordt gebruikt om te beschrijven hoe de structuur is opgebouwd. Echter alle stijl is beschreven in <acronym
+>CSS</acronym
+>-bestanden. <filename
+>main.css</filename
+> is de hoofdstijl, waar varianten eenvoudig wijzigingen zijn van de hoofd stijl. Voorbeelden van varianten zijn verschillende kleuren, geen weergave van een foto van de gebruiker. Beide <filename
+>main.css</filename
+> en varianten worden geïmporteerd in uiteindelijke <acronym
+>XHTML</acronym
+>-pagina.</para>
+	<sect4 id="chatstyle-reference-css-main">
+		<title
+>-<filename
+>main.css</filename
+></title>
+		<para
+>Dit is het hoofd <acronym
+>CSS</acronym
+>-bestand dat gemeenschappelijk is voor alle varianten. Dit bestand moet alle hoofd beschrijvingen van de stijl bevatten.</para>
+	</sect4>
+	<sect4 id="chatstyle-reference-css-variants">
+		<title
+>-Varianten</title>
+		<para
+>Varianten zijn <acronym
+>CSS</acronym
+>-bestanden gelocaliseerd in de map <filename
+>Variants/</filename
+>. Elke variant is een enkel <acronym
+>CSS</acronym
+>-bestand die ingevoegd wordt in <filename
+>main.css</filename
+> en de hoofdstijl wijzigen.</para>
+	</sect4>
+</sect3>
+
+<sect3 id="chatstyle-reference-debug">
+	<title
+>Stijlen debuggen</title>
+	<para
+>Hier zijn twee tips voor het testen van een stijl tijdens het aanmaken.</para>
+	<sect4 id="chatstyle-reference-debug-save">
+		<title
+>-Een voorbeeld conversatie opslaan.</title>
+		<para
+>In het chat-venster kunt u een conversatie <action
+>opslaan</action
+>. Dit is een kopie van de interne weergegeven XHTML-pagina. Gebruik het in <application
+>Konqueror</application
+> om uw <acronym
+>CSS</acronym
+>-bestanden te testen.</para>
+	</sect4>
+	<sect4 id="chatstyle-reference-debug-disable-cache">
+		<title
+>-Stijlbuffer uitschakelen.</title>
+		<para
+>Er bestaat een kleine configuratioeschakelaar om de stijlbuffer uit te schakelen. Indien ingeschakeld, herlaadt het telkens de HTML-sjablonen wanneer er om de stijl wordt gevraagd. Voeg de volgende regels toe aan uw <filename
+>kopeterc</filename
+>. Zeer bruikbaar bij het testen van een stijl in &kopete;</para>
+		<programlisting
+>[KopeteStyleDebug]
+disableStyleCache=true
+</programlisting>
+	</sect4>
+</sect3>
+
+</sect2>
+
+<sect2 id="chatstyle-reference-keywords">
+	<title
+>Naslag van sleutelwoorden</title>
+	<para
+>Sleutelwoorden lijken op gaten die met details gevuld moeten worden. In elk nieuw bericht worden ze vervangen door de juiste waarde die overeenkomt met hun context. Om alle functies van Kopete te ondersteunen, hebben we enkele extensies van sleutelwoorden toegevoegd aan Adium. Enkele sleutelwoorden zijn alleen in een bepaalde context beschikbaar.</para>
+
+<variablelist
+><title
+>Lijst met sleutelwoorden voor Header- en Footer-sjablonen. </title>
+<para
+>Deze sleutelwoorden worden aan het begin van de chat verwerkt.</para>
+<varlistentry
+><term
+><filename
+>%chatName%</filename
+></term>
+<listitem>
+<para
+>Dit is de naam van de huidige chat-sessie. Voor een typische sessie, toont het de naam van de contactpersoon en zijn status. Voor <acronym
+>IRC</acronym
+>, toont het het onderwerp van een kanaal. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%sourceName%</filename
+></term>
+              <term
+><filename
+>%destinationName%</filename
+></term>
+<listitem>
+<para
+>Dit zijn de namen van de contactpersonen voor een chat-sessie. <filename
+>%sourceName%</filename
+> is uw naam. <filename
+>%destinationName%</filename
+> is de naam van de contactpersoon waarmee u aan het converseren bent. Geef de voorkeur aan <filename
+>%chatName%</filename
+> boven de eerdere, omdat ze verwarrend kunnen zijn bij groepchat en IRC. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%incomingIconPath%</filename
+></term>
+              <term
+><filename
+>%outgoingIconPath%</filename
+></term>
+<listitem>
+<para
+>Dit zijn de afbeeldingen/foto's/avatars van de contactpersonen voor een chat-sessie. Inkomend representeert de foto van de contactpersoon en uitgaand representeert uw eigen foto. Als er geen foto beschikbaar is, gebruikt het afbeelding <filename
+>buddy_icon.png</filename
+> die zich in de map <filename
+>Incoming</filename
+> of <filename
+>Outgoing</filename
+> bevindt. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%timeOpened%</filename
+></term>
+              <term
+><filename
+>%timeOpened{X}%</filename
+></term>
+<listitem>
+<para
+>Het is de begintijd van de chat-sessie. <filename
+>%timeOpened%</filename
+> gebruikt het standaard tijdformat voor de huidige taalregio. Als u een specifiek tijdformat wilt gebruiken, gebruik dan <filename
+>%timeOpened{X}%</filename
+> waar X een tekenreeks is die het tijdformat bevat. De tijdparameters zijn hetzelfde als in de glibc-functie <function
+>strftime</function
+>. Geef het commando <command
+>man strftime</command
+> om de lijst met beschikbare parameters te krijgen. </para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist
+><title
+>Lijst met sleutelwoorden voor Content-, NextContent-, Context-, NextContext- en Action-sjabloon</title>
+<para
+>Hun sleutelwoorden worden verwerkt voor elk bericht.</para>
+
+<varlistentry
+><term
+><filename
+>%userIconPath%</filename
+></term>
+<listitem>
+<para
+>Dit is de afbeelding/foto/avatar van de contactpersoon behorende bij het bericht. Als er geen foto beschikbaar is, dan gebruikt het de afbeelding <filename
+>buddy_icon.png</filename
+> die zich bevindt in de map <filename
+>Incoming</filename
+> en <filename
+>Outgoing</filename
+> afhankelijk van de richting van het bericht. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderScreenName%</filename
+></term>
+<listitem>
+<para
+>Dit is de contact-ID van het contact geassocieerd met het bericht. Voorbeelden: me@hotmail.com, 45566576, JanJansen. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%sender%</filename
+></term>
+<listitem>
+<para
+>Dit is de naam van de contactpersoon behorende bij het bericht. Het gebruikt MetaContact weergave van de naam als een bron. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%service%</filename
+></term>
+<listitem>
+<para
+>toon de naam van de service verbonden met het bericht. Voorbeelden: Jabber, Yahoo, MSN. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%textbackgroundcolor{X}%</filename
+></term>
+<listitem>
+<para
+>Dit sleutelwoord wordt in &kopete;, gebruikt om de achtergrondkleur voor accentueren aan te geven. Negeer de parameter in de haakjes en gebruik het alleen als <filename
+>%textbackgroundcolor{}</filename
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderStatusIcon%</filename
+> (&kopete; extensie)</term>
+<listitem>
+<para
+>Toon het statuspictogram van de contactpersoon behorende bij het bericht. Het is een bestandspad. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderColor%</filename
+></term
+>  <term
+><filename
+>%senderColor{N}%</filename
+> (&kopete; extensie)</term>
+<listitem>
+<para
+>Genereer een kleur uit de id van de zender. Kan worden gebruikt om een andere kleur te tonen voor de schermnaam van de contactpersoon. </para>
+<para
+><filename
+>%senderColor{N}%</filename
+> waar N een positief getal is. Als N groter dan 100 is, dan vertegenwoordigt het een lichtere kleur dan de kleur van de contactpersoon. Als N gelijk is aan 150 is een kleur 50% meer helder. Als N kleiner is dan 100 dan is een kleur donkerder. Bruikbaar voor het hebben van een achtergrondkleur die anders is dan voor elke contactpersoon. </para>
+<para
+>Als u deze kleuren in een variant wilt gebruiken, maar niet in de hoofdstijl, dan moet u er omheen werken. <programlisting>
+<![CDATA[
+<div style="color:%senderColor%;border:none;border-color:%senderColor{40}%;"
+><p class="message"
+>...</p
+></div>
+]]>
+</programlisting
+> u kunt kleur toekennen aan het p.message-element in uw bestand <filename
+>main.css</filename
+> en in uw variant iets stoppen zoals <programlisting
+>p.message { color:inherit; border-color:inherit; }
+</programlisting>
+
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist
+><title
+>Gezamelijke lijst met sleutelwoorden voor berichten en Status.html</title>
+
+<varlistentry
+><term
+><filename
+>%message%</filename
+></term>
+<listitem>
+<para
+>Het bericht zelf. Dit is een HTML-fragment. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%time%</filename
+></term>
+              <term
+><filename
+>%time{X}%</filename
+></term>
+<listitem>
+<para
+>Het tijdstip dat het bericht is ontvangen. <filename
+>%time%</filename
+> gebruikt het standaard tijdformat voor de huidige taalregio. Als u een specifiek tijdformat wilt gebruiken, gebruik dan <filename
+>%time{X}%</filename
+> waar X een tekenreeks is die het tijdformat bevat. De tijdparameters zijn hetzelfde als de glibc-functie <function
+>strftime</function
+>. Geef <command
+>man strftime</command
+> om de lijst met beschikbare parameters te verkrijgen. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%messageDirection%</filename
+> (&kopete;-extensie)</term>
+<listitem>
+<para
+>Geeft de richting van het bericht aan, als het bericht van rechts naar links of links naar rechts moet worden getoond. De waarden zijn "rtl" of "ltr". Lees <link linkend="chatstyle-guideline-direction"
+>Richtlijn voor richting van bericht</link
+> om te zien hoe dit sleutelwoord juist te gebruiken. </para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+</sect1>
+
+<sect1 id="chatstyle-guideline">
+	<title
+>Richtlijn voor de stijl voor het chat-venster van &kopete;</title>
+<para
+>De richtlijn voor de stijl voor het chat-venster van &kopete; is een aantal dingen die de stijl van het chat-venster moet ondersteunen om met Kopete compliant te zijn.</para>
+<sect2 id="chatstyle-guideline-highlight">
+	<title
+>Accentueren ondersteunen</title>
+	<para
+>Uw stijl moet accentuering tonen. In Kopete en Adium wordt <filename
+>%textbackgroundcolor{}%</filename
+> vervangen door de achtergrondkleur voor accentueren. Voeg dit stijlattribuut toe: <userinput
+>background-color: %textbackgroundcolor{}%</userinput
+> aan het HTML-element dat het bericht toont.</para>
+</sect2>
+<sect2 id="chatstyle-guideline-consecutive">
+	<title
+>Sjablonen voor opeenvolgende berichten zijn vereist.</title>
+	<para
+>Deze richtlijn is voor hen die oude XSL stijlen herschrijven tot het nieuwe format. Alle stijlen moeten een sjabloon leveren voor opvolgende berichten. Het is nu een standaard feature.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-encoding">
+	<title
+><acronym
+>UTF-8</acronym
+> codering gebruiken.</title>
+	<para
+>De titel zegt het al. U moet uw bestanden opslaan in <acronym
+>UTF-8</acronym
+>.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-info">
+	<title
+>Lever <filename
+>Contents/Info.plist</filename
+> voor interoperabiliteit met Adium</title>
+	<para
+>Het bestand <filename
+>Contents/Info.plist</filename
+> wordt nog niet in Kopete gebruikt. Maar als u uw stijl compatibel with laten zijn met <application
+>Adium</application
+>, dan moet u dat bestand leveren. Hier is een basis voorbeeldbestand. Te vervangen tekenreeksen zijn omsloten met "$".</para>
+<programlisting
+><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key
+>CFBundleDevelopmentRegion</key>
+        <string
+>English</string>
+        <key
+>CFBundleGetInfoString</key>
+        <string
+>$De volledige naam van uw stijl$</string>
+        <key
+>CFBundleIdentifier</key>
+        <string
+>$De ID van uw stijl in de vorm: com.adiumx.smooth.operator.style$</string>
+        <key
+>CFBundleInfoDictionaryVersion</key>
+        <string
+>1.0</string>
+        <key
+>CFBundleName</key>
+        <string
+>$Hier de naam van uw stijl$</string>
+        <key
+>CFBundlePackageType</key>
+        <string
+>AdIM</string>
+        <key
+>MessageViewVersion</key>
+        <integer
+>3</integer>
+</dict>
+</plist>
+]]>
+</programlisting>
+
+</sect2>
+
+<sect2 id="chatstyle-guideline-buddyicon">
+	<title
+>Lever bestand <filename
+>buddy_icon.png</filename
+></title>
+	<para
+>U moet een bestand met de naam <filename
+>buddy_icon.png</filename
+> plaatsen in de map <filename
+>Incoming</filename
+> en <filename
+>Outgoing</filename
+>. Deze afbeeldingen zullen worden gebruikt als de contactpersoon geen foto heeft.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-direction">
+	<title
+>Talen met tekens van rechts-naar-links worden ondersteund met het sleutelwoord <filename
+>%messageDirection%</filename
+> keyword.</title>
+	<para
+>Sleutelwoord <filename
+>%messageDirection%</filename
+> is aanwezig voor talen met tekens die je schrijft van rechts-naar-links. Het definieert de richting van het bericht, als het "rtl" is (rechts-naar-links) of "ltr" (links-naar-rechts). Voeg dit stijlattribuut toe aan het HTML-element dat het bericht toont: <userinput
+>direction: %messageDirection%</userinput
+>. Het Stijlvorbeeld in de instelling van het uiterlijk bevat een rechts-naar-links om te controleren of uw stijl het op de juiste manier laat zien. Het zou de tekenreeks rechts moeten laten beginnen.</para>
+</sect2>
+</sect1>
+</appendix>

@@ -1,0 +1,191 @@
+<!-- Copyright (c) 2008 by Charles Connell <charles@connells.org
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="pipes">
+<title
+>Guide d'implémentation du module « Transmissions » de &kopete;</title>
+<para
+>À partir de la version 1.0, &kopete; fournit un module appelé « Transmissions ». Les tubes (pipes) vous permettent de rediriger des messages entrant et sortant vers un script ou un exécutable. Un message entrant sera redirigé à travers un exécutable avant qu'il atteigne votre fenêtre de discussion, tandis que les messages sortant seront redirigés vers l'exécutable avant qu'ils ne soient envoyés sur internet. Les tubes peuvent recevoir du texte dans l'une des trois formes : <variablelist
+><varlistentry
+><term
+>Corps de texte brut</term
+><listitem
+><para
+>Le corps du message, en texte &ascii; brut</para
+></listitem
+></varlistentry
+><varlistentry
+><term
+>Corps de texte en &html;</term
+><listitem
+><para
+>Le corps du message, en &html;, comme il apparaîtrait si votre correspondant vous avait envoyé du &html;, qui sera rendu dans la fenêtre de conversation</para
+></listitem
+></varlistentry
+><varlistentry
+><term
+>Message complet en &xml;</term
+><listitem
+><para
+>Un document &xml; qui décrit toutes les caractéristiques du message, y compris le corps du message en &html;</para
+></listitem
+></varlistentry
+></variablelist
+> La plupart du temps, vous utiliserez probablement les options corps en texte brut ou en &html; Ils peuvent être utilisés par des programmes comme des traducteurs ou des « summarizers ». Le format &xml; n'est approprié que pour une utilisation avec un programme ou un script écrit spécifiquement pour fonctionner avec ce module. Si vous souhaitez écrire un programme ou un script qui fonctionne avec ce module, consultez la <link linkend="pipes"
+>documentation plus détaillée</link
+>. </para>
+
+<sect1 id="xml-output">
+<title
+>Sortie &xml;</title>
+<para
+>Voici un exemple de ce que recevra un programme sur son entrée standard : <literallayout>
+&lt;?xml version="1.0" encoding="ISO-8859-1"?>
+&lt;message subject=""
+        route="outbound"
+        importance="1"
+        formattedTimestamp="11:06:46 am"
+        timestamp="Sat Dec 1 11:06:46 2007"
+        type="normal"
+        mainContactId="spacemonkey1234"
+        time="11:06 am" >
+        &lt;from>
+                &lt;contact contactId="tdurden"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/oscarpictures/tdurden.jpg" >
+                        &lt;contactDisplayName dir="ltr" text="tdurden" />
+                        &lt;metaContactDisplayName dir="ltr"
+                                text="Tyler" />
+                &lt;/contact>
+        &lt;/from>
+        &lt;to>
+                &lt;contact contactId="spacemonkey1234"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/avatars/User/7e542903e0ac7519a7496e85f5a5b99d.png" >
+                        &lt;contactDisplayName dir="ltr" text="spacemonkey1234" />
+                        &lt;metaContactDisplayName dir="ltr" text="Robert Paulson" />
+                &lt;/contact>
+                &lt;/to>
+        &lt;body dir="ltr"
+                bgcolor="#000000"
+                color="#000000" >
+                &amp;lt;span style=" color:#000000;"
+>hey&amp;lt;/span
+>&lt;/body>
+&lt;/message>
+</literallayout
+> Cet &xml; est fondé sur XSD, utilisé pour les styles de discussion que l'on trouve sur <ulink url="http://kopete.kde.org/files/kopetemessage.xsd"
+>le site web de Kopete</ulink
+>. Ce code représente un message. Il y a quelques points à noter : <itemizedlist>
+<listitem
+><para
+>l'attribut « timestamp » dans l'élément « message » est au format standard ISO 8601 ;</para
+></listitem>
+<listitem
+><para
+>l'attribut « protocolIcon » dans l'élément « contact » est choisi comme suit : <orderedlist>
+<listitem
+><para
+>si l'objet contact possède une propriété photo, cet emplacement sera utilisé.</para
+></listitem>
+<listitem
+><para
+>sinon, le MetaContact du contact est demandé en tant qu'emplacement vers l'image, et sera utilisé, qu'il soit vide ou non.</para
+></listitem>
+</orderedlist>
+</para
+></listitem>
+<listitem
+><para
+>les attributs « color » et « bgcolor » dans l'élément « body » sont des chaînes vides s'ils ne sont pas configurés dans Kopete. Ils sont au format des couleurs web ;</para
+></listitem>
+<listitem
+><para
+>les « &lt; » sont échappé dans le contenu qui se trouve à l'intérieur de l'élément « body ». Il n'y aura donc pas confusion avec la véritable structure &xml;. Évidemment, pour interpréter correctement le corps en HTML, on devra convertir les « &amp;lt; » en « &lt; ».</para
+></listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1 id="xml-input">
+<title
+>Entrée &xml;</title>
+<para
+>Votre programme recevra du &xml; sur son entrée standard. Il aura l'opportunité de le modifier, et ensuite le renvoyer à &kopete; par le biais de sa sortie standard. Si votre programme modifie les éléments suivants, la connaissance interne qu'à &kopete; du message sera modifiée pour refléter vos modifications. <itemizedlist
+><listitem
+><para
+>attribut de message « timestamp » mais pas d'autres attributs temporels ; </para
+></listitem
+><listitem
+><para
+>attribut de message « sujet » ; </para
+></listitem
+><listitem
+><para
+>attribut de message « type » ; </para
+></listitem
+><listitem
+><para
+>attribut de message « importance » ; </para
+></listitem
+><listitem
+><para
+>attribut de body « color ». Ceci est habituellement égal à un numéro de couleur web, mais peut aussi être un nom. Les noms définis par <ulink url="http://www.w3.org/TR/SVG/types.html#ColorKeywords"
+>SVG</ulink
+> sont acceptés par QColor dans Qt4, donc ce sont les seuls noms qui peuvent être utilisés ; </para
+></listitem
+><listitem
+><para
+>attribut de body « bgcolor » &mdash; même comportement que « color » ; </para
+></listitem
+><listitem
+><para
+>contenu de l'élément body.</para
+></listitem
+></itemizedlist
+> Si vous modifiez des éléments ou leurs attributs non mentionnés ci-dessus, vos modifications sur ces éléments n'auront aucun effet. </para>
+</sect1>
+
+<sect1 id="acceptable-values">
+<title
+>Valeurs acceptées</title>
+<para
+>Des attributs on certaines valeurs acceptées. La sortie du module « Transmission » aura toujours des valeurs autorisées. Si votre programme choisit de modifier ces attributs, ils doivent rester autorisés. Si ce n'est pas le cas, le comportement de &kopete; est indéfini. <variablelist>
+<varlistentry
+><term
+>Attribut « route » dans l'élément « message »</term
+><listitem
+><para
+>doit être « inbound », « outbound » ou « internal »</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Attribut « type » dans l'élément « message »</term
+><listitem
+><para
+>Doit être « action » ou « normal »</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Attribut « importance » dans l'élément « message »</term
+><listitem
+><para
+>Doit être « 0 » pour basse, « 1 » pour normale et « 2 » pour élevée.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Attribut « dir » dans de nombreux éléments</term
+><listitem
+><para
+>Doit être « ltr » pour gauche à droite, ou « rtl » pour droite à gauche.</para
+></listitem
+></varlistentry>
+</variablelist>
+</para>
+</sect1>
+
+</appendix>

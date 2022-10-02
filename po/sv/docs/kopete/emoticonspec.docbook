@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-emoticons">
+<appendixinfo>
+    <title
+>Specifikation av smilisar</title>
+    <releaseinfo
+>Version 0.1</releaseinfo>
+    <date
+>2005-01-07</date>
+    <authorgroup>
+      <author
+><firstname
+>Olivier</firstname
+> <surname
+>Goffart</surname
+> <affiliation
+> <address
+> <email
+>ogoffart@tiscalinet.be</email>
+	  </address>
+	</affiliation>
+      </author>
+    </authorgroup>
+  </appendixinfo>
+
+<title
+>Smilisar</title>
+
+  <sect1 id="introduction-emoticons">
+    <title
+>Inledning</title>
+    <para
+>Detta DOKUMENTUTKAST definierar hur ett tema med smilisar som typiskt används i program för direktmeddelanden kan skapas. </para>
+    <para
+>Grundmetoden är mycket enkel. Temat består av en underkatalog, som innehåller alla bilderna, och en &XML;-fil som ger ASCII-symbolen för varje bild. En .directory-fil kan användas. </para>
+  <sect2 id="location">
+    <title
+>Filplatser</title>
+    <para
+>Filer som ingår i specifikationen är placerade enligt "desktop base directory specification" som finns på <ulink url="http://www.freedesktop.org/standards/"
+>www.freedesktop.org</ulink
+>. </para>
+    <para
+>Alla filer i temat måste placeras i en underkatalog till <varname
+>$XDG_DATA_DIRS</varname
+>/emoticons/. Katalogens namn måste vara lika med temats namn. Katalogen <emphasis
+>måste</emphasis
+> innehålla en fil som heter <varname
+>emoticons.xml</varname
+>. Filens format beskrivs nedan. </para>
+	<para
+>Temakatalogen kan också innehålla filen .directory, som innehåller översättningar av temanamnet och/eller en ikon för temat. </para>
+  </sect2>
+  <sect2 id="emoticons-map-format">
+    <title
+>Format på filen emoticons.xml</title>
+    <para
+>Avbildningsfiler för smilisar måste vara välformade XML-filer. Implementeringar ska ignorera okända taggar eller okända attribut. </para>
+    <sect3 id="emoticons-map-elements">
+      <title
+>Element</title>
+      <para>
+        <variablelist>
+          <varlistentry>
+					<term
+>&lt;messaging-emoticon-map&gt; [version="0.1"]</term>
+            <listitem>
+              <para
+>Rotelementet är &lt;messaging-emoticon-map&gt;, alla andra element ingår i det. </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;emoticon file="..."&gt;</term>
+            <listitem>
+              <para
+>Detta element representerar en smilis. Egenskapen file är namnet på bildfilen som måste finnas i samma katalog. Filändelsen kan utelämnas. I detta fall letar implementeringen i katalogen efter en fil med samma namn och med ett format som stöds. </para>
+				  <para
+>Det finns ingen ordning på smilisarna i avbildningen, men den första ikonen i avbildningen används i allmänhet för att identifiera temat grafiskt. Enligt konvention MÅSTE den vara :-). </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;string&gt;</term>
+            <listitem>
+              <para
+>Elementet kan bara finnas under &lt;emoticon&gt;. Det representerar ASCII-strängen som matchas i texten, och ersätts av bilden som anges av egenskapen file för smilisen. </para>
+				  <para
+>Det kan finnas flera strängar per smilis. </para>
+				  <para
+>Det finns igen ordning av strängarna inne i en smilis, men den första MÅSTE vara det förvalda värdet, och används om det finns en väljare i det grafiska användargränssnittet. </para>
+            </listitem>
+          </varlistentry>
+	    </variablelist>
+  </para>
+    </sect3>
+  </sect2>
+
+  <sect2 id="img-format">
+    <title
+>Bildens format.</title>
+    <para
+>Alla bilder MÅSTE ha ett format som stöds: PNG, GIF eller MNG. </para>
+  </sect2>
+
+  <sect2 id="implementation">
+    <title
+>Implementeringsanmärkningar</title>
+	 <sect3 id="impl-parser">
+	  <title
+>Smilistolk</title>
+    <para
+>Det finns inte någon verklig rekommendation om hur smilisar tolkas, men en smilis med en längre sträng ska ges prioritet över en med en kortare sträng (exempelvis om både :-() och :-( finns i ett tema, ska bilden för den första användas när :-() hittas). </para>
+</sect3>
+</sect2>
+
+<sect2 id="example">
+	  <title
+>Exempel</title>
+	  <para>
+			 <programlisting
+>&lt;messaging-emoticon-map&gt;
+        &lt;emoticon file="smile.png"&gt;
+                        &lt;string&gt;:-)&lt;/string&gt;
+                        &lt;string&gt;:)&lt;/string&gt;
+                        &lt;string&gt;:o)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="wink.png"&gt;
+                        &lt;string&gt;;-)&lt;/string&gt;
+                        &lt;string&gt;;)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="unhappy.png"&gt;
+                        &lt;string&gt;:-(&lt;/string&gt;
+                        &lt;string&gt;:(&lt;/string&gt;
+        &lt;/emoticon&gt;
+&lt;/messaging-emoticon-map&gt;
+
+ </programlisting>
+</para>
+</sect2>
+
+<!--sect2 id="todo">
+	  <title
+>TODO</title>
+	  <para>
+			 A DTD of the XML file
+	  </para>
+</sect2-->
+</sect1>
+</appendix>
+

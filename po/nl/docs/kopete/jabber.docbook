@@ -1,0 +1,942 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-jabber">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Deze documentatie is geconverteerd uit de pagina in de KDE UserBase <ulink url=" http://userbase.kde.org/Kopete/Jabber"
+>Kopete/Jabber</ulink
+>.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+&Freek.de.Kruijf; 
+    </authorgroup>
+<date
+>2010-12-05</date>
+    <releaseinfo
+>&kde; SC 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2010-12-05T08:12:25Z</timestamp
+>-->
+<title
+>Handbook van Jabber</title>
+<!--userbase-content-->
+<sect1 id="about-jabber-xmpp"
+><title
+>Over Jabber XMPP</title>
+<para
+><ulink url="http://en.wikipedia.org/wiki/XMPP"
+>XMPP</ulink
+> of Jabber (deze woorden betekenen in werkelijkheid hetzelfde) is de naam van een open, decentraal netwerkprotocol dat wordt gebruikt voor instant-messaging. Het is ontworpen als een server-client-infrastructuur met vele servers overal in het internet, waar iedereen een account kan krijgen. De <ulink url="http://en.wikipedia.org/wiki/Server_%28computing%29"
+>servers</ulink
+> zijn normaal met vele <ulink url="http://en.wikipedia.org/wiki/Client_%28computing%29"
+>clients</ulink
+> aan een kant en aan de andere kant verbonden met andere XMPP-servers in het internet. Laten we een eenvoudig voorbeeld nemen om uit te leggen hoe het werkt: </para>
+<para
+>Romeo houdt van Julia en wil met haar communiceren via het Jabber-netwerk. Hij kan berichten vanuit zijn client (die verbonden is met <userinput
+>montague.net</userinput
+>) schrijven naar zijn vriendin, waarvan de client verbonden is met een server genaamd <userinput
+>capulet.com</userinput
+>. </para>
+<para
+>Wanneer hij een account registreerd op een server, dan kiest hij een zogenaamde JID (Jabber-Identifier). Deze JID werkt in principe zoals een e-mailadres en is verbonden met de naam van de server met een <quote
+>@</quote
+>. Een voorbeeld voor Romeo's geldige JID is <userinput
+>romeo@montague.net</userinput
+>. </para>
+<para
+>Om met andere mensen te praten moet Romeo hun JID's aan zijn contactenlijst toevoegen. Zij kunnen worden verbonden met dezelfde server (&eg; <userinput
+>bob@montague.net</userinput
+>) evenals dat zij aan een andere server (&eg; <userinput
+>peter@wasinet.org</userinput
+> of, natuurlijk, <userinput
+>juliet@capulet.com</userinput
+>). </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_jabbernetwork.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Visualiseren van het Jabber-netwerk</phrase>
+    </textobject>
+    <caption>
+      <para
+>Visualiseren van het Jabber-netwerk</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Jabber/XMPP is natuurlijk in staat heel wat meer services te bieden (&eg; end-to-end encryptie van de berichten, <ulink url="http://en.wikipedia.org/wiki/Voicechat"
+>voice-</ulink
+> en <ulink url="http://en.wikipedia.org/wiki/Video_conferencing"
+>videochat</ulink
+>, groepschat), die het handboek gedeeltelijk later zal introduceren. </para>
+<para
+>Twee erg grote instant-messaging providers gebruiken Jabber/XMPP op hun servers in de achtergrond: Google Talk en facebook-chat. Accounts in deze systemen kunnen net als normale Jabber-accounts in &kopete; worden gebruikt. Details zullen <link linkend="fill-in-your-account-data-in-kopete"
+>later</link
+> worden verklaard of kunnen op de websites van de providers worden gevonden. </para>
+<para
+>Met deze informatie kunnen we met het hoofdgedeelte van de handleiding beginnen: Hoe stel je een werkende jabber-client in en welke leuke functies heeft &kopete;. </para>
+</sect1>
+<sect1 id="first-steps"
+><title
+>Eerste stappen</title>
+<sect2 id="get-kopete"
+><title
+>Kopete verkrijgen</title
+> 
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopeteicon.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Pictogram van Kopete</phrase>
+    </textobject>
+    <caption>
+      <para
+>Pictogram van Kopete</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Natuurlijk moet u eerst &kopete; zien te krijgen alvorens u in staat bent er mee te werken. Als u een <ulink url="http://en.wikipedia.org/wiki/Linux"
+>GNU/Linux-systeem</ulink
+> gebruikt dan is er een erg grote kans dat &kopete; al is geïnstalleerd (als u de <ulink url="http://en.wikipedia.org/wiki/KDE_Software_Compilation"
+>KDE Software Compilation</ulink
+>) al hebt geïnstalleerd of het zal al in een van de installatiebronnen van uw distributie zitten. </para>
+<para
+>Installeer &kopete; nu en start het voor de eerste keer. </para>
+</sect2>
+</sect1>
+<sect1 id="create-your-jabber-account"
+><title
+>Maak uw Jabber-account aan</title>
+<para
+>Als u voor het eerst &kopete; start, dan ziet u een leeg venster. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap001_emptykopete.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Leeg venster van Kopete</phrase>
+    </textobject>
+    <caption>
+      <para
+>Leeg venster van Kopete</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>In de sectie onderaan staat <guilabel
+>Klik hier om een account toe te voegen</guilabel
+>. Klik daar of open <menuchoice
+><guimenu
+>Instellingen</guimenu
+><guimenuitem
+>Instellen...</guimenuitem
+></menuchoice
+> om een nieuw account aan te maken. In werkelijkheid willen we een Jabber-account aanmaken, dus selecteren we het menu-item <guilabel
+>Jabber</guilabel
+> en klikken op <guilabel
+>Volgende</guilabel
+>. Na klikken op <guilabel
+>Nieuw account registreren</guilabel
+>, opent zich een nieuw venster waarin een Jabber-server kan worden ingevoerd, waar het account zal worden aangemaakt. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap002_configacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>&kopete; instellen</phrase>
+    </textobject>
+    <caption>
+      <para
+>&kopete; instellen</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>U kunt het handmatig in het tekstvak <guilabel
+>Jabber-server</guilabel
+> schrijven of het  selecteren uit de geleverde lijst, die verschijnt na klikken op de knop <guilabel
+>Kiezen...</guilabel
+> </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutoial_snap003_selectserver.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>De dialoog selectie van server</phrase>
+    </textobject>
+    <caption>
+      <para
+>De dialoog selectie van server</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Na het selecteren van een server kunt u uw gewenste Jabber-ID completeren, &ie; uw gebruikersnaam. Voeg de naam van uw voorkeur in vóór <quote
+>@</quote
+> in het veld <guilabel
+>Gewenste Jabber-ID</guilabel
+>. Na het invullen van uw wachtwoord en het herhalen moet u het keuzevakje <guilabel
+>Versleuteling van protocol (SSL) gebruiken</guilabel
+> om te werken met een <ulink url="http://nl.wikipedia.org/wiki/Secure_Sockets_Layer"
+>versleutelde</ulink
+> verbinding tussen client en server. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap004_createacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Uw account aanmaken</phrase>
+    </textobject>
+    <caption>
+      <para
+>Uw account aanmaken</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Sommige servers ondersteunen deze optie misschien niet, maar de meeste wel. Klik nu op <guilabel
+>Registeren</guilabel
+> om de registratie te beëindigen. </para>
+<para
+>Gefeliciteerd, u hebt nu een nieuw account op de Jabber-server geregistreerd! </para>
+</sect1>
+<sect1 id="fill-in-your-account-data-in-kopete"
+><title
+>Voer accountgegevens in in Kopete</title>
+<para
+>U bent nu eigenaar van een account op een Jabber-server en &kopete; vraagt u om <emphasis
+>Stap twee: Account-informatie</emphasis
+>. &kopete; voegt uw Jabber-ID en uw wachtwoord automatisch in in de vereiste velden. Als u wilt dat &kopete; uw wachtwoord herinnert om het niet elke keer in te voeren wanner u een verbinding maakt met uw server, activeer dan <guilabel
+>Wachtwoord herinneren</guilabel
+>. </para>
+<para
+>Als u uw bestaande accounts van <ulink url="http://www.google.com/support/chat/bin/answer.py?hl=en&amp;answer=57557"
+>Google Talk</ulink
+> of Facebook chat in &kopete; wilt gebruiken (dit zijn in werkelijkheid ook Jabber-servers), gebruik dan de gegevens van uw GMail-adres of uw facebook-account (<ulink url="http://www.facebook.com/sitetour/chat.php"
+>hier uitgelegd</ulink
+>) om verbinding te maken met deze servers. </para>
+<para
+>U kunt optioneel <guilabel
+>Alles uitsluiten van verbinden</guilabel
+> activeren. Dit geeft &kopete; het advies niet online te gaan wanneer u online gaat met al uw &kopete;-accounts (omdat &kopete; een multi-messenger is met ondersteuning voor vele andere protocolen zoals <ulink url="http://nl.wikipedia.org/wiki/ICQ"
+>ICQ</ulink
+> of <ulink url="http://nl.wikipedia.org/wiki/Windows_Live_Messenger"
+>MSN</ulink
+>). Wanneer u dit activeert dan moet u later expliciet online gaan voor dit ene account elke keer dat u wilt  verbinden met uw server. </para>
+<para
+>Uw &kopete; zou er nu als volgt uit moeten zien: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap005_enterjid.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Venster met accountinformatie</phrase>
+    </textobject>
+    <caption>
+      <para
+>Venster met accountinformatie</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Klik op het tabblad <guilabel
+>Verbinding</guilabel
+> om extra opties te activeren. Speciaal het selecteren van <guilabel
+>Protocolversleuteling gebruiken</guilabel
+> en het niet selecteren van <guilabel
+>Platte tekst wachtwoordauthenticatie toestaan</guilabel
+> zou gekozen moeten worden voor redenen van basis beveiliging. </para>
+<para
+>De <guilabel
+>standaard serverinformatie</guilabel
+> zou okay moeten zijn, als u zich in een normaal thuisnetwerk bevindt zonder speciale <ulink url="http://en.wikipedia.org/wiki/Firewall_%28computing%29"
+>firewall</ulink
+>-configuratie. </para>
+<para
+>De sectie <emphasis
+>Instellingen voor locaties</emphasis
+> is een andere specialiteit van Jabber: u kunt zogenaamde <quote
+>Hulpbronnen</quote
+> instellen om aan te geven vanwaar u chat. Als u bijvoorbeeld zich op hetzelfde moment aanmeldt bij Jabber vanaf uw mobiele telefoon en uw notebook (ja, u kunt dat doen) dan legt de hulpbron aan uw contactpersonen uit waar u bent. U kunt het dus <quote
+>Notebook</quote
+> of <quote
+>Android</quote
+> noemen om aan te geven op welk apparaat u Kopete hebt geïnstalleerd. Denk er aan dat uw hulpbronnen gezien worden door uw chat-partners (ze zullen toegevoegd worden aan de JID zoals deze: <userinput
+>romeo@montague.net/Notebook</userinput
+>), u kunt dus nog eens nadenken over uw privacy bij het kiezen van de naam van uw hulpbron. </para>
+<para
+>In ons voorbeeld zal de <guilabel
+>Hulpbron</guilabel
+> worden ingesteld op <replaceable
+>Laptop</replaceable
+>. De prioriteit is hoofdzakelijk bruikbaar wanneer u meerdere apparaten hanteert en aan de client van uw partner vertelt welk van uw apparaten online is op dat moment (&eg; uw mobiele telefoon of uw laptop) om contact mee op te nemen in dat geval. Uw hulpbrom met het hoogste prioriteitsgetal van uw hulpbronnen die online zijn ontvangen het bericht. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap006_connection.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Stel de account-configuratie in</phrase>
+    </textobject>
+    <caption>
+      <para
+>Stel de account-configuratie in</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Het volgende tabblad, <guilabel
+>Bestandsoverdracht</guilabel
+>, blijft normaal zoals het is, bij het instellen van een Jabber-account in een normaal netwerk. </para>
+<para
+>Tenslotte zijn er enige instellingen voor privacy in het tabblad <guilabel
+>Privacy</guilabel
+>, ze zijn gemakkelijk te begrijpen. De optie <guilabel
+>Oude inline PGP-formaat gebruiken voor ondertekende en versleutelde berichten</guilabel
+> (lees hier wat <ulink url="http://nl.wikipedia.org/wiki/Pretty_Good_Privacy"
+>PGP</ulink
+> betekent) wordt niet aanbevolen, omdat er een methode bestaat om dit met de ingebouwde OTR te doen, die later verklaard zal worden <link linkend="useful-configuration-hints"
+>in dit handboek</link
+>. </para>
+<para
+>Op dit punt kunt u opnieuw op <guilabel
+>Volgende</guilabel
+> klikken en uw account is nu ingesteld. U kunt een optionele kleur voor uw account kiezen en wanneer u zich klaar voelt om voor de eerste keer te verbinden met uw Jabber-server, moet het keuzevakje <guilabel
+>Nu verbinden</guilabel
+> worden geactiveerd. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap007_conf-ready.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Laatste stap van de instellingen</phrase>
+    </textobject>
+    <caption>
+      <para
+>Laatste stap van de instellingen</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>De instellingen kunnen nu worden afgerond. </para>
+<para
+>Anders kunt u handmatig met de server verbinden door te klikken op <menuchoice
+><guimenu
+>Status</guimenu
+><guimenuitem
+>Online</guimenuitem
+></menuchoice
+> in het hoofdvenster van Kopete of door rechts te klikken op het Kopete-symbool in uw systeemvak en <menuchoice
+><guimenu
+>Status instellen</guimenu
+><guimenuitem
+>Online</guimenuitem
+></menuchoice
+>. Als u eerder de optie <guilabel
+>Alles uitsluiten van verbinden</guilabel
+> hebt geactiveerd zult u zich aan moeten melden door rechts te klikken op het Kopete pictogram in het systeemvak en <menuchoice
+><guimenu
+>uwJID@example.org</guimenu
+><guimenuitem
+>Online</guimenuitem
+></menuchoice
+> te selecteren. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap008_goonline.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Naar online gaan</phrase>
+    </textobject>
+    <caption>
+      <para
+>Naar online gaan</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="adding-friends"
+><title
+>Vrienden toevoegen</title>
+<para
+>Na de eerste keer aanmelden is uw venster van &kopete; behoorlijk leeg. Er kan een standaard contactpersoon zijn toegevoegd door uw server die u misschien een welkomstboodschap zendt, maar er zijn geen echt contactpersonen in uw rooster (dit is tussen haakjes het woord voor <quote
+>lijst met contactpersonen</quote
+> in de Jabber-wereld). De eerste stap om vrienden in Jabber toe te voegen is natuurlijk ze te vragen om hun Jabber-ID. Wanneer u er een heeft kunt u het onmiddellijk aan &kopete; toevoegen. U kunt klikken ofwel op <menuchoice
+><guimenu
+>Toevoegen</guimenu
+><guimenuitem
+>uwJID@example.org</guimenuitem
+></menuchoice
+> of <menuchoice
+><guimenu
+>Bestand</guimenu
+><guisubmenu
+>Contactpersoon toevoegen</guisubmenu
+><guimenuitem
+>uwJID@example.org</guimenuitem
+></menuchoice
+>. Er verschijnt een nieuw venster die vraagt om het <guilabel
+>Jabber-ID</guilabel
+> dat we willen toevoegen aan uw roster. Typ het gewoon in en klik op <guilabel
+>OK</guilabel
+>. De optie <guilabel
+>Groep</guilabel
+> wordt gebruikt, wanneer u groepen contactpersonen specificeert (&eg; <quote
+>familie</quote
+> en <quote
+>werk</quote
+>). Een verbinding naar uw <ulink url="http://userbase.kde.org/Special:myLanguage/KAddressBook"
+>KAddressBook</ulink
+> kan gemaakt worden met <guilabel
+>Adresboekitem</guilabel
+>, zodat u informatie uit kunt wisselen zoals profielplaatjes tussen de twee toepassingen. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap009_addfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Een vriend toevoegen</phrase>
+    </textobject>
+    <caption>
+      <para
+>Een vriend toevoegen</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>U hebt nu uw eerste vriend aan uw rooster toegevoegd. Maar voordat u kunt beginnen met berichten naar hem of haar te schrijven, moet uw contactpersoon uw verzoek goedkeuren. Totdat dat is gebeurd zal de contactpersoon met een klein gele uitroepteken aan de rechterkant van zijn veld met contactpersoon. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap010_exlamationmarkfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Uw contact</phrase>
+    </textobject>
+    <caption>
+      <para
+>Uw contact</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Wanneer uw vriend uw verzoek heeft goedgekeurd of u hebt toegevoegd aan zijn of haar rooster, zal zijn pictogram gekleurd verschijnen wanneer deze online is. De exacte betekenis van de verschillende pictogrammen (Online, Afwezig &etc;) kan bekeken worden met <guilabel
+>Status</guilabel
+> waar u deze zelf ook kan zetten. U ontvangt een melding wanneer u geautoriseerd bent. </para>
+<para
+>Normaal is dat uw vriend(i) u ook in zijn of haar lijst met contactpersonen zet, u zult dus zelf dit verzoek ook moeten goedkeuren. &kopete; laat dat onderaan zien met een groene vlag en de beschrijving van het verzoek. Klik op <guilabel
+>Autoriseren</guilabel
+> om het te accepteren. Het meldingsvenster kan gesloten worden door te klikken op het kruis in de rechtsbovenhoek van het venster. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap011_addedbyfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>U bent nu door uw contact toegevoegd</phrase>
+    </textobject>
+    <caption>
+      <para
+>U bent nu door uw contact toegevoegd</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Na die procedure zou u een lijst met contacten moeten zien zoals in de volgende afbeelding. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap012_fullauthorized.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Uw contactpersoon is volledig geautoriseerd</phrase>
+    </textobject>
+    <caption>
+      <para
+>Uw contactpersoon is volledig geautoriseerd</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>U hebt nu met succes uw eerste contactpersoon aan uw rooster toegevoegd. </para>
+</sect1>
+<sect1 id="messaging-and-sending-files"
+><title
+>Berichten en bestanden verzenden</title>
+<para
+>U kunt beginnen met een chat met een contactpersoon door op de naam te klikken. Er zal een nieuw venster worden geopend en u kunt berichten intypen in het kleinere veld onderaan, waar de cursor al verblijft. Wanneer u uw tekst wilt verzenden, drukt u op &Enter; of op de knop <guilabel
+>Verzenden</guilabel
+>. U en uw partner kunnen nu via Jabber communiceren. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap013_firstchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Uw eerste chat</phrase>
+    </textobject>
+    <caption>
+      <para
+>Uw eerste chat</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<sect2 id="transfer-files"
+><title
+>Bestanden overdragen</title
+> 
+<para
+>Om bestanden via Jabber over te zenden, klik op <guilabel
+>Bestand verzenden</guilabel
+> en selecteer het bestand dat u wilt verzenden in het pop-up-venster. U krijgt een melding wanneer de transactie is voltooid of om de een of andere reden is mislukt. </para>
+<para
+><warning
+><para
+>Dit kan in sommige gevallen niet werken vanwege niet compatibele configuraties van sommige servers</para
+></warning>
+</para>
+</sect2>
+<sect2 id="group-chat"
+><title
+>Groeps-chat</title
+> 
+<para
+>Jabber kan niet alleen met één persoon communiceren. U kunt Groepschat gebruiken om een <ulink url="http://nl.wikipedia.org/wiki/IRC"
+>IRC</ulink
+>-stijl discussie te voeren, waar veel mensen met elkaar kunnen "praten". Om Groepschat te gebruiken moet u rechts klikken op het pictogram van &kopete; in het systeemvak en <menuchoice
+><guimenu
+><replaceable
+>uwJID</replaceable
+></guimenu
+><guimenuitem
+>Meedoen met groepschat...</guimenuitem
+></menuchoice
+>, waar <replaceable
+>uwJID</replaceable
+> uw eigen Jabber-ID is. Er zal een nieuw venster verschijnen waarin u in een chatroom mee kunt doen. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_snap021_groupchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Groepschat</phrase>
+    </textobject>
+    <caption>
+      <para
+>Groepschat</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Klik op <guilabel
+>Opvragen</guilabel
+> om de lijst met bestaande chatrooms op uw Jabber-server te tonen. Selecteer  er een en druk op &Enter; om deze room in te gaan. </para>
+<para
+>U kunt ook iets intypen en uw eigen chatroom aanmaken door zijn naam in de regel <guilabel
+>Room</guilabel
+> te schrijven. Druk daarna op &Enter; of klik op <guilabel
+>Meedoen</guilabel
+> om mee te doen. </para>
+<para
+>Nadat u de chatroom heebt aangemaakt, ziet u een nieuw veld in uw &kopete;-venster verschijnen met de JID <replaceable
+>chatroomnaam@jabber.example.org</replaceable
+>. Behandel dit als een normale contactpersoon, &ie; u moet op deze JID klikken om te chatten &etc; </para>
+<para
+>Op dit punt hebt u een werkende Jabber-client opgezet en bent u in principe in staat om te chatten met uw contactpersonen. Maar voor een betere ervaring met &kopete; kunt u de toepassing naar uw eigen behoeften aanpassen. De inhoud van de volgende pagina van deze handleiding is een set <link linkend="useful-configuration-hints"
+>Bruikbare aanwijzingen voor instellingen</link
+>. </para>
+</sect2>
+</sect1>
+<sect1 id="useful-configuration-hints"
+><title
+>Bruikbare tips voor de configuratie</title>
+<para
+>Deze tips verwijzen naar het hoofdvenster voor de configuratie van &kopete; onder <menuchoice
+><guimenu
+>Instellingen</guimenu
+><guimenuitem
+>Instellen...</guimenuitem
+></menuchoice
+>. Let er op om op <guilabel
+>Toepassen</guilabel
+> te klikken of op <guilabel
+>OK</guilabel
+> als u uw wijzigingen wilt opslaan. </para>
+<para
+>Alle aanpassingen die van invloed zijn op de instellingen van uw account en de configuratie van meerdere accounts in &kopete; (Jabber/XMPP evenals <ulink url="http://nl.wikipedia.org/wiki/Icq"
+>ICQ</ulink
+>, <ulink url="http://nl.wikipedia.org/wiki/Windows_Live_Messenger"
+>MSN</ulink
+> en vele andere messaging-protocollen) kunnen gevonden worden op het tabblad <guilabel
+>Accounts</guilabel
+>. Als u uw persoonlijke informatie wilt instellen of een foto wilt gebruiken, klik op <guilabel
+>Identiteit wijzigen...</guilabel
+> en stel het een en ander in. Een foto kan geüpload worden door te klikken op het smalle pictogram linksonder op het afbeeldingengebied. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap014_setidentity.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Identiteit instellen</phrase>
+    </textobject>
+    <caption>
+      <para
+>Identiteit instellen</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Het volgende tabblad in de verticale lijst links is <guilabel
+>Lijst met contactpersonen</guilabel
+>. Deze instellingen verklaren zich hoofdzakelijk zelf en het lijkt nuttig om <guilabel
+>Foto van contactpersonen gebruiken indien beschikbaar</guilabel
+>. De andere drie horizontale tabbladen (<guilabel
+>Kleuren &amp; Lettertypen</guilabel
+>, <guilabel
+>Geavanceerd</guilabel
+> en <guilabel
+>Indeling</guilabel
+>) bevatten behoorlijk speciale instellingen die mogelijk fijn wilt afstellen wanneer u &kopete; voor enkele weken wilt gebruiken. </para>
+<para
+>De instellingen voor <guilabel
+>Status</guilabel
+> stellen u in staat om uw eigen standaard <ulink url="http://en.wikipedia.org/wiki/Status_message"
+>statusberichten</ulink
+> in te stellen wanneer u Online, Afwezig, Onzichtbaar &etc; bent </para>
+<para
+>Klikken op <guilabel
+>Gedrag</guilabel
+> opent een behoorlijk gedetailleerde set van instellingen. De paar meest interessante, te vinden op het tabblad <guilabel
+>Algemeen</guilabel
+>, zijn <guilabel
+>Berichtafhandeling</guilabel
+> en <guilabel
+>Initiële status</guilabel
+>. De eerste bepaalt of inkomende berichten van uw contactpersonen direct een nieuw venster openen of dat ze in de wachtrij worden gezet totdat uzelf &kopete; opent. De tweede vertelt &kopete; of het online zal gaan wanneer u het programma start. Wanneer u dit instelt. bent u altijd beschikbaar voor uw contactpersonen als &kopete; eenmaal actief is. Het tabblad <guilabel
+>Gebeurtenissen</guilabel
+> laat u instellen in welke gevallen &kopete; u meldt via het meldingensysteem van uw computer (in de meest gevallen <guilabel
+>KNotify</guilabel
+>). Wanneer u wilt dat &kopete; uw status automatisch op <quote
+>Afwezig</quote
+> zet, open het tabblad <guilabel
+>Afwezigheidsinstellingen</guilabel
+> en activeer het eerste keuzevakje. U kunt de tijd instellen die moet verlopen na uw laatste actie (toetsenbordinvoer of muisverplaatsing) om &kopete; u als <quote
+>afwezig</quote
+> aan te merken. De standaard waarde is 10 minuten. Opties in <guilabel
+>Chat</guilabel
+> zijn opnieuw zelfverklarend en al ingesteld op bruikbare waarden. </para>
+<para
+>Het volgende item in de verticale rij links is het <guilabel
+>Chatvenster</guilabel
+>. Het eerste tabblad daarin is, <guilabel
+>Stijl</guilabel
+> en gebruikt kan worden om een ander uiterlijk in te stellen dan de standaard. U kunt ook uw eigen stijlen installeren of nieuwe downloaden vanuit het internet door  te klikken op <guilabel
+>Nieuwe ophalen...</guilabel
+>. Wanneer u een <ulink url="http://nl.wikipedia.org/wiki/Emoticon"
+>Emoticon</ulink
+> gedurende een conversatie intypt, zal &kopete; het standaard converteren in een grafische emoticon. Om deze functie in te schakelen of om een andere set emoticons te gebruiken ga naar <guilabel
+>Emoticons</guilabel
+>. Het laatste tabblad, <guilabel
+>Kleuren &amp; Lettertypen</guilabel
+> is opnieuw zelfverklarend en configureert deze voorkeuren van uw chatvenster. </para>
+<para
+><ulink url="http://nl.wikipedia.org/wiki/Webcam"
+>Webcams</ulink
+> worden in &kopete; ondersteund, maar op dit moment (november 2010) zijn er nog steeds enige problemen met de videochat, dus instellingen in <guilabel
+>Video</guilabel
+> worden voor eigen verantwoordelijkheid gemaakt, omdat het mogelijk is dat het niet op de juiste manier werkt. De <ulink url="http://forum.kde.org/viewforum.php?f=18"
+>KDE-forums</ulink
+> kunnen behulpzaam zijn bij het behandelen van problemen met webcams. </para>
+</sect1>
+<sect1 id="jabber-plugins"
+><title
+>Plug-ins</title
+> 
+<para
+>Een erg krachtige functie van &kopete; is de mogelijkheid om plug-ins te gebruiken. Er is een set voorgeinstalleerde plug-ins (nieuwe kunnen bijvoorbeeld geïnstalleerd worden met de pakketbeheerders van &Linux; distributies) en ze kunnen ingeschakeld en geconfigureerd worden onder <guilabel
+>Plug-ins</guilabel
+>. U kunt ze inschakelen door de instelling te activeren in het respectievelijke keuzevakje. De meesten zijn weer zelfverklarend, maar de meest bruikbare zullen hier toch uitgelegd worden. Een erg behulpzame plug-in is de <guilabel
+>Geschiedenis</guilabel
+>. Met deze optie ingeschakeld, Kopete zal al uw chats loggen en ze op uw harde schijf schrijven. U kunt het lezen in uw chatvenster, wanneer u het pictogram <guilabel
+>Geschiedenis weergeven</guilabel
+> selecteert of u opent het met <menuchoice
+><guimenu
+>Hulpmiddelen</guimenu
+><guimenuitem
+>Geschiedenis weergeven</guimenuitem
+></menuchoice
+>. </para>
+<sect2 id="otr"
+><title
+>OTR</title
+> 
+<para
+>Een van de meest belangrijke plug-ins over zaken betreffende privacy is <ulink url="http://en.wikipedia.org/wiki/Off-the-Record_Messaging"
+>OTR</ulink
+>. Dit stukje software versleutelt uw gehele conversatie van een kant naar de andere kant en maakt het onmogelijke voor een derde persoon om uw conversatie te lezen. Nadat u de plug-in hebt ingeschakeld, moet u zijn instellingen openen (klik op het pictogram van een steeksleutel en op <guilabel
+>Genereren</guilabel
+> van een sleutel. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap015_otrgenerate.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Een OTR-sleutel genereren</phrase>
+    </textobject>
+    <caption>
+      <para
+>Een OTR-sleutel genereren</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Dit kan even duren en u moet wachten totdat &kopete; gereed is. Sluit daarna het OTR-venster met <guilabel
+>OK</guilabel
+> en <guilabel
+>Toepassen</guilabel
+> van de wijzigingen. U zult eventueel hierna &kopete; moeten herstarten. Open daarna een chatvenster van de contactpersoon waarmee u veilig wilt communiceren. Ga naar <menuchoice
+><guimenu
+>Hulpmiddelen</guimenu
+><guisubmenu
+>OTR-instellingen</guisubmenu
+><guimenuitem
+>OTR-sessie starten</guimenuitem
+></menuchoice
+> of gebruik het pictogram <menuchoice
+><guimenu
+>OTR-versleuteling</guimenu
+><guimenuitem
+>Start OTR-sessie</guimenuitem
+></menuchoice
+>. &kopete; zal de sessie starten als uw contactpersoon met OTR kan werken, anders zult u een foutmelding ontvangen. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap016_otrfirstuse.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Eerste gebruik van OTR</phrase>
+    </textobject>
+    <caption>
+      <para
+>Eerste gebruik van OTR</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Om er zeker van te zijn dat uw toegevoegde contactpersoon is echt diegene is die hij of zij voorgeeft te zijn, is het nodig om hem of haar één keer te autoriseren. U kunt dat doen door <menuchoice
+><guimenu
+>Hulpmiddelen</guimenu
+><guisubmenu
+>OTR-instellingen</guisubmenu
+><guimenuitem
+>Contactpersoon authentiseren</guimenuitem
+></menuchoice
+>. U kunt kiezen uit drie opties: </para>
+<itemizedlist>
+<listitem
+><para
+>De eerste is om uw chat-partner een vraag te stellen waarvan het antwoord alleen bekend is bij hem of haar en u. </para
+></listitem>
+<listitem
+><para
+>De volgende mogelijkheid is een geheime wachtwoordzin die uw partner moet weten (u zou kunnen overwegen het geheim met hem of haar te delen via een ander beveiligd communicatiekanaal, &eg; telefoon). </para
+></listitem>
+<listitem
+><para
+>Ten derde is er de optie van handmatig controleren van de OTR-vingerafdruk. Dit is de meest veilige optie, maar het is niet erg handig en als u een van de anderen kunt kiezen dan kan dat comfortabeler en sneller zijn. Bij het controleren van de vingerafdruk, moet u uw partner vragen zijn of haar OTR-vingerafdruk over een beveiligde verbinding (&eg; telefoon of versleuteld e-mailbericht) zodat de vingerafdruk kan worden gecontroleerd. </para
+></listitem>
+</itemizedlist>
+<para
+>Laten we aannemen dat u optie één hebt gekozen en onze partner stelt een vraag. Type het in het veld en definieer het door uw partner te geven antwoord dat u verwacht, zodat hij of zij geauthenticeerd kan worden. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap017_seqretquestion.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Een geheime vraag stellen</phrase>
+    </textobject>
+    <caption>
+      <para
+>Een geheime vraag stellen</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Wanneer we doorgaan zal uw partner de vraag zien en als het antwoord juist is, is het instellen van OTR nu gereed. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap018_otrsuccess.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>OTR opzetten is gereed</phrase>
+    </textobject>
+    <caption>
+      <para
+>OTR opzetten is gereed</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Uw partner kan hetzelfde doen, zodat wanneer u een venster ziet die vraagt om authenticatie, beantwoordt dan de vraag en u bent ook een geauthenticeerde gebruiker in de lijst met contacten van uw vriend. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap019_otrauth.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>OTR-authenticatie</phrase>
+    </textobject>
+    <caption>
+      <para
+>OTR-authenticatie</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Elke keer dat u beveiligd communiceert, ziet u het groen gekleurde pictogram van een een slot bovenaan uw chat-venster. Om de beveiligde verbinding te beëindigen, kunt u ofwel uw chat-venster sluiten of klikken op <menuchoice
+><guimenu
+>OTR-versleuteling</guimenu
+><guimenuitem
+>OTR-sessie beëindigen</guimenuitem
+></menuchoice
+>. </para>
+</sect2>
+</sect1>
+</appendix>

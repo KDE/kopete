@@ -1,0 +1,2536 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY Will.Stephenson "<personname
+><firstname
+>Will</firstname
+><surname
+>Stephenson</surname
+></personname
+>">
+  <!ENTITY Will.Stephenson.mail "<email
+>lists@stevello.free-online.co.uk</email
+>">
+  <!ENTITY Matt.Rogers "<personname
+><firstname
+>Matt</firstname
+><surname
+>Rogers</surname
+></personname
+>">
+  <!ENTITY Matt.Rogers.mail "<email
+>mattr@kde.org</email
+>">
+  <!ENTITY Michael.Larouche "<personname
+><firstname
+>Michaël</firstname
+><surname
+>Larouche</surname
+></personname
+>">
+  <!ENTITY Michael.Larouche.mail "<email
+>michael.larouche@kdemail.net</email
+>">
+  <!ENTITY Olivier.Goffart "<personname
+><firstname
+>Olivier</firstname
+><surname
+>Goffart</surname
+></personname
+>">
+  <!ENTITY Olivier.Goffart.mail "<email
+>ogoffart@kde.org</email
+>">
+  <!ENTITY Charles.Connell "<personname
+><firstname
+>Charles</firstname
+><surname
+>Connell</surname
+></personname
+>">
+  <!ENTITY Charles.Connell.mail "<email
+>charles@connells.org</email
+>">
+  <!ENTITY im "<acronym
+>IM</acronym
+>">
+  <!ENTITY ascii "<acronym
+>ASCII</acronym
+>">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % Dutch "INCLUDE">
+  <!ENTITY kopete-menus SYSTEM "menus.docbook">
+  <!ENTITY kopete-chatstyle SYSTEM "chatstyle.docbook">
+  <!ENTITY kopete-pipes SYSTEM "pipes.docbook">
+  <!ENTITY kopete-jabber SYSTEM "jabber.docbook">
+  <!ENTITY kopete-icq SYSTEM "icq.docbook">
+  <!ENTITY kopete-emoticonspec SYSTEM "emoticonspec.docbook">
+]>
+<!--
+Intro (1st draft, Will)
+Getting Started (1st draft, Will)
+        Add an account
+        Go online
+        Start chatting
+Using &kopete; (1st draft, Will)
+        Contact List window
+		Layout
+			Menu
+			Toolbar
+			Contact List view
+			Status bar
+		Set your presence
+		Start a chat
+            	Organising contacts
+                	Adding contacts
+				Metacontacts
+			Grouping Contacts
+				Within Metacontacts
+			Renaming Contacts
+		Configure &kopete;
+		Quit.
+		Shortcuts
+        Chat window
+		Layout
+			Chat members list
+			Status bar (typing notifications, etc )
+			Tabbing
+		Starting group chats
+		Shortcuts
+	        File transfers
+Configuring &kopete; (1st draft, Will)
+	Global Shortcuts
+	Configure Dialog
+		Adding/Editing Accounts (
+		Behaviour
+		Appearance
+	Loading Plugins
+Plugins (Outlined, Will)
+        (Section on each plugin, use, and configuration)
+Menus (Done, Will)
+        (Short description of each menu item)
+FAQ (1st draft, Will)
+Specialized Tasks
+    (Any tricks involving _use_ of Kopete)
+	Command line flags
+Credits (1st draft, Will)
+Appendix: Obtaining and installation (1st draft, Will)
+Appendix: Chat Window Style Guide (1st draft, Michaël)
+-->
+
+<book id="kopete" lang="&language;">
+<bookinfo>
+<title
+>Het handboek van &kopete;</title>
+
+<authorgroup>
+
+<author
+>&Will.Stephenson; &Will.Stephenson.mail;</author>
+<author
+>&Matt.Rogers; &Matt.Rogers.mail;</author>
+<author
+>&Michael.Larouche; &Michael.Larouche.mail;</author>
+
+&Rinse.Devries;&Sander.Koning;&Freek.de.Kruijf;&Ronald.Stroethoff; 
+</authorgroup>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>2006-12-15</date>
+<releaseinfo
+>0.12</releaseinfo>
+
+<copyright>
+<year
+>2003, 2004, 2005, 2006, 2007</year>
+</copyright>
+
+<!-- Abstract about this handbook -->
+
+<abstract>
+<para
+>&kopete; is de instant messenger-programma met ondersteuning voor meerdere protocollen door de &kde; gemeenschap. </para>
+</abstract>
+
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>IM</keyword>
+<keyword
+>Instant</keyword>
+<keyword
+>Messaging</keyword>
+<keyword
+>Jabber</keyword>
+<keyword
+>IRC</keyword>
+<keyword
+>ICQ</keyword>
+<keyword
+>AIM</keyword>
+<keyword
+>Gadu-Gadu</keyword>
+<keyword
+>GroupWise</keyword>
+<keyword
+>Novell</keyword>
+<keyword
+>WinPopup</keyword>
+<keyword
+>SMS</keyword>
+</keywordset>
+
+</bookinfo>
+
+<chapter id="introduction">
+<title
+>Inleiding</title>
+
+<sect1 id="intro-to-kopete">
+<title
+>&kopete;, de Instant Messenger van &kde;</title>
+<sect2 id="intro-to-kopete-next">
+<title
+>Voordat u begint...</title>
+<para
+>Als u niet bekend bent met Instant Messaging, lees eerst de sectie <link linkend="getting-started"
+>Grondbeginselen</link
+> om meer te weten te komen over deze wonderlijke wereld voordat u verder gaat.</para>
+</sect2>
+<sect2 id="intro-to-kopete-about">
+<title
+>Wat is &kopete;?</title>
+<para
+>&kopete; is &kde;'s instant messenger (&im;) programma. U kunt hiermee communiceren met uw vrienden en collega's via de verschillende instant-messaging-diensten die beschikbaar zijn. Één programma voor verschillende diensten is eenvoudig aan te leren en gemakkelijk in gebruik als uw vrienden en collega's meer dan een &im;-dienst gebruiken. </para>
+<para
+>&kopete; is zo ontworpen dat het goed integreert met uw &kde;-desktop. Hierdoor zal het programma meteen vertrouwd aanvoelen. De gebruikersinterface is schoon en eenvoudig, zonder opsmuk die de gebruiker alleen maar afleidt. Tegelijkertijd wil &kopete; communicatie de focus van &im; maken, door de verschillen tussen de diverse &im;-diensten te verwijderen. Een functie in &kopete; die hiervoor gemaakt is is de <link linkend="organise-contacts-metacontacts"
+>Metacontact</link
+>. Deze combineert alle manieren waarop u met iemand in contact kunt komen in één <quote
+>persoon</quote
+> in uw contactenlijst. Andere instant messengers die meerdere diensten ondersteunen tonen de verschillende &im;-accounts van dezelfde persoon apart van elkaar, wat voor onervaren gebruikers verwarrend kan zijn. &kopete; maakt het leven eenvoudiger: een metacontact is een persoon, en contacten zijn de manieren waarop u kunt communiceren met die persoon. U kunt de contacten in een metacontact op eenvoudige wijze herkennen door de kleine pictogrammen die de &im;-diensten voorstellen.</para>
+<para
+>&kopete; is bedoeld voor gebruikers van elk niveau. Standaard biedt het een beperkt aantal functies om het converseren zo eenvoudig mogelijk te maken. Meer ervaren gebruikers kunnen extra functies, zoals Statistiek, met &kopete;'s <link linkend="plugins"
+>plug-in-systeem</link
+> toevoegen.</para>
+</sect2>
+<sect2 id="intro-to-kopete-web">
+<title
+>Meer informatie over &kopete; op internet</title>
+<para
+>Als u in contact wilt komen met het team, de mailinglist van de &kopete;-programmeurs is beschikbaar op <ulink url="https://mail.kde.org/mailman/listinfo/kopete-devel"
+>https://mail.kde.org/mailman/listinfo/kopete-devel</ulink
+>.</para>
+<para
+>Als u live-ondersteuning wilt, er is een IRC-kanaal voor &kopete;, waar het team onder andere technische kwesties bespreken of voor de gezelligheid rondhangen. U kunt &kopete; gebruiken om deel te nemen aan het kanaal, voeg een IRC-kanaal toe en gebruik <userinput
+>irc.freenode.org</userinput
+> toe als de server en <userinput
+>#kopete</userinput
+> als de kanaalnaam. Wie zien u graag terug op IRC!</para>
+</sect2>
+</sect1>
+<sect1 id="intro-to-instant-messaging">
+<title
+>Inleiding in Instant Messaging</title>
+<para
+>Wat is Instant Messaging (&im;)? &im; is een manier waarmee u onmiddellijk met uw vrienden kunt communiceren via internet. Dit klinkt niet veel anders dan e-mail. Maar is het u wel eens opgevallen hoe moeizaam een kort gesprek via e-mail verloopt? Voor elk bericht dient u op Antwoorden te klikken, dan de juiste plek in het bericht te zoeken om iets nieuws in te typen, en dan het bericht versturen. En dan moet u wachten totdat het volgende bericht arriveert! Met &im; kunt u een gesprek voeren op ongeveer dezelfde natuurlijke manier als wanneer u telefoneert of rechtstreeks met de persoon spreekt. U typt berichten in een venster dat u deelt met degene waarmee u een gesprek hebt.</para>
+<para
+>Een ander verschil tussen &im; en e-mail is dat u bij &im; kunt zien of iemand aanwezig is of niet. Met andere woorden, u kunt zien of iemand op hetzelfde moment online is als u. Dit geeft u de mogelijkheid om meteen met iemand te communiceren, in plaats van dat u een e-mail verstuurt en vervolgens moet wachten totdat de geadresseerde zijn of haar e-mail controleert. Een &im;-bericht verschijnt op het scherm van de andere persoon zodra u uw bericht verstuurt. Uiteraard kunt u, als u niet gestoord wilt worden tijdens uw werk, uw aanwezigheid veranderen.</para>
+<para
+>Er zijn veel leuke en handige &im;-functies die u met &kopete; kunt verkennen, zoals groepsgesprekken, bestandsuitwisseling en emoticons (smileys) die uw gemoedstoestand aangeven. Lees verder om hier meer over te weten te komen!</para>
+</sect1>
+</chapter>
+
+<chapter id="getting-started">
+<title
+>Grondbeginselen</title>
+<para
+>Om &kopete; te kunnen gebruiken dient u een of meer accounts aan te maken voor de instant-messaging-dienst die u wilt gebruiken.</para>
+<para
+>U hebt waarschijnlijk al een messaging-dienst gekozen, bijvoorbeeld omdat u al &im; gebruikt, of omdat u dezelfde dienst wilt gebruiken als uw vrienden. Als u in geen van beide categorieën valt, overweeg dan een messaging-dienst die is gebaseerd op open standaarden. Deze zijn namelijk ontworpen voor het gebruik met vrije software. Andere diensten veranderen soms de onderliggende technologie zonder dat de details vrij beschikbaar worden gemaakt. Hierdoor is het lastig voor vrije-software-programmeurs, zoals die van Kopete, om de ondersteuning actueel te houden.</para>
+<para
+>De messaging-diensten die &kopete; ondersteunt en zijn gebaseerd op open standaarden zijn Jabber en IRC.</para>
+<para
+>De volgende sectie gaat er vanuit dat u al bent geregistreerd bij een &im;-dienst. Indien dat niet het geval is kunt u met Gadu-Gadu en Jabber vanuit &kopete; registreren. Voor de andere diensten dient u uzelf te registreren op de bijhorende website voordat u een account in &kopete; aanmaakt.</para>
+<sect1 id="creating-accounts">
+<title
+>Accounts aanmaken</title>
+<para
+>Om een account aan te maken, gebruik menuoptie <menuchoice
+><guimenu
+>Instellingen</guimenu
+><guimenuitem
+>Instellen...</guimenuitem
+></menuchoice
+> om de configuratiedialoog te openen.</para>
+<para
+>In de configuratiedialoog kunt u &kopete; instellen en aan uw wensen aanpassen. Aan de linkerkant ziet u een kolom met een pictogram voor elk onderdeel van &kopete; die u kunt instellen. Klik op het pictogram <guiicon
+>Accounts</guiicon
+>. Het rechter gedeelte van de configuratiedialoog verandert om de accountbeheer te tonen. Deze is momenteel leeg, maar zal binnenkort al uw &im;-accounts weergeven. Klik op de knop <guibutton
+>Account toevoegen</guibutton
+> om de <interface
+>Accountassistent</interface
+> te openen.</para>
+<para
+>De <interface
+>Accountassistent</interface
+> helpt u bij het aanmaken van een &im;-account. Op de eerste pagina wordt u gevraagd om de messaging-dienst die u wilt gebruiken te kiezen. Klik op een van de diensten en daarna op <guibutton
+>Volgende</guibutton
+>. Op de volgende pagina vult u de details in van die messaging-dienst.</para>
+<para
+>Bij de meeste diensten dient u een gebruikersnaam of uniek identificatienummer (<acronym
+>UIN</acronym
+>) op te geven en een wachtwoord. De speciale diensten Winpopup en <acronym
+>SMS</acronym
+> werken anders, kijk daarom bij hun eigen hoofdstukken hoe u ze kunt instellen. Verder zijn er nog enkele andere opties die van toepassing zijn op de meeste diensten:</para>
+<variablelist>
+<varlistentry
+><term
+>Wachtwoord onthouden</term
+><listitem
+><para
+>Als dit keuzevakje aangezet is zal &kopete; het wachtwoord voor u bewaren. U hoeft het dan niet telkens in te voeren als u verbinding wilt maken met de &im;-dienst. Als u wilt voorkomen dat anderen toegang kunnen krijgen tot uw &im;-account laat u dit keuzevakje uit.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Automatisch verbinden bij opstarten</term
+><listitem
+><para
+>Als deze optie is aangezet zal &kopete; tijdens het opstarten proberen een verbinding op te bouwen met de &im;-dienst. Als u een permanente internetverbinding hebt, zoals kabelinternet, <acronym
+>ASDL</acronym
+> of vergelijkbaar, dan is deze optie op u van toepassing. Als u een inbelverbinding hebt laat u deze optie uit en maakt u handmatig verbinden nadat u hebt ingebeld bij uw provider.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Als u uw &im;-details hebt ingevuld gaat u verder naar de <guilabel
+>Voltooid</guilabel
+>-pagina en en sluit u de assistent en configuratiedialoog af.</para>
+</sect1
+><!-- creating-accounts -->
+<sect1 id="go-online">
+<title
+>Ga online en begin met chatten!</title>
+<para
+>Nu u online bent ziet u dat er voor het account een pictogram in de statusbalk van het &kopete; <interface
+>contactvenster</interface
+> is geplaatst. Dit pictogram toont uw huidige aanwezigheidsstatus voor dit account. Klik erop met uw <mousebutton
+>rechter</mousebutton
+> muisknop en ga online via het contextmenu dat wordt geopend. Het statusbalkpictogram beweegt terwijl &kopete; verbinding maakt met de &im;-dienst.</para>
+<para
+>Als u eenmaal online bent, en u hebt de &im;-dienst eerder gebruikt, dan worden uw contacten opgehaald van de server en getoond in de <interface
+>Contactenlijst</interface
+>. Om een chat te starten met een contact klikt u op diens naam om een gespreksvenster te openen. Het bovenste gedeelte van het venster is waar de conversatie plaatsvindt. Om iets te zeggen typt u tekst in het onderste gedeelte van het venster en klikt u op <guibutton
+>Verzenden</guibutton
+>.</para>
+<para
+>Als u zojuist een nieuw account hebt aangemaakt zult u geen contacten hebben. Zij bij hoofdstuk <link linkend="organise-contacts-adding"
+>Contacten toevoegen</link
+> voor meer informatie over het toevoegen van contacten.</para>
+<tip
+><para
+>De sneltoets <guibutton
+>Verzenden</guibutton
+> is standaard ingesteld op <keycombo action="simul"
+>&Ctrl;&Enter;</keycombo
+>. U kunt dit veranderen in het gespreksvenster via menuoptie <menuchoice
+><guimenu
+>Instellingen</guimenu
+><guimenuitem
+>Sneltoetsen instellen...</guimenuitem
+></menuchoice
+>.</para
+></tip>
+</sect1
+><!-- go-online -->
+</chapter>
+
+<chapter id="using-kopete">
+<title
+>&kopete; gebruiken</title>
+<para
+>Dit hoofdstuk geeft u een overzicht van de basisfuncties van &kopete;. We zullen eerst een blik werpen op de contactenlijst, waar uw contacten worden getoond. Daarna gaan we naar het gespreksvenster, waar u een conversatie in kunt houden.</para>
+<sect1 id="contact-list">
+<title
+>De contactenlijst</title>
+<para
+>De <interface
+>Contactenlijst</interface
+> verschijnt als u &kopete; start. Het is het hoofdvenster van het programma, waarin u uw aanwezigheid kunt instellen, een gesprek kunt beginnen, uw contacten kunt organiseren , &kopete; kunt instellen en het programma kunt beëindigen.</para>
+<sect2 id="contact-list-layout">
+<title
+>De opmaak van het Contactenlijstvenster</title>
+<sect3 id="contact-list-layout-menu"
+><title
+>Menu</title
+><para
+>Bovenaan de contactenlijst ziet u een menubalk. Mocht deze afwezig zijn, dan kan het zijn dat u hem hebt uitgeschakeld. U kunt de menubalk weer oproepen door middel van toetsencombinatie <keycombo action="simul"
+>&Ctrl;<keycap
+>M</keycap
+></keycombo
+>. Details over elke menuoptie kunt u vinden in het <link linkend="menus"
+>hoofdstuk over de menustructuur</link
+>.</para>
+</sect3>
+<sect3 id="contact-list-layout-toolbar"
+><title
+>Werkbalk</title
+><para
+>De werkbalk bevat de meestgebruikte &kopete;-acties. U kunt de werkbalk instellen via menuoptie <menuchoice
+><guimenu
+>Instellingen</guimenu
+><guimenuitem
+>Werkbalken instellen...</guimenuitem
+></menuchoice
+>. Merk de knoppen <guibutton
+>Offline gebruikers tonen</guibutton
+> en <guibutton
+>Lege groepen</guibutton
+> op. Met deze knoppen kunt u contacten die offline zijn en lege groepen verbergen.</para>
+	<para
+>&kopete; maakt het nog gemakkelijker on een statusbericht in te stellen om contactpersonen te laten weten wat uw stemming is of waarom u op het moment bezig bent. klik op de knop <guibutton
+>Statusbericht instellen</guibutton
+> en start met typen om een nieuw bericht in te voeren of te kiezen uit een van de vorige berichten die u hebt gebruikt.</para>
+	<para
+>De <guilabel
+>Snelle zoekwerkbalk</guilabel
+> filtert snel de lijst met contactpersonen, door een paar letters van een naam van een contactpersoon in te typen.</para>
+</sect3>
+<sect3 id="contact-list-layout-contactlist"
+><title
+>Contactenlijst</title
+><para
+>De <interface
+>Contactenlijst</interface
+> vult het grootste gedeelte van het venster. Al uw contacten staan hier vermeld, onderverdeeld in de groepen die u voor ze hebt aangemaakt. U kunt groepen openen of sluiten door op het plusje voor de groep te klikken. U kunt de sorteervolgorde van de groepen omdraaien door op het label <guilabel
+>Contacten</guilabel
+> bovenaan de lijst te klikken.</para>
+<para
+>De inhoud van het contextmenu in de <interface
+>Contactenlijst</interface
+> is afhankelijk van waar u met de muis op klikt. <link linkend="organise-contacts-grouping"
+>Groepen</link
+>,<link linkend="organise-contacts-metacontacts"
+>Metacontacten</link
+> en &im;-specifieke hebben hun eigen menuopties. In de lege ruimtes van de <interface
+>Contactenlijst</interface
+> bevat het contextmenu opties voor het toevoegen van contacten en groepen, en het veranderen van de weergaveopties voor de lijst.</para>
+</sect3>
+<sect3 id="contact-list-layout-statusbar"
+><title
+>Statusbalk</title
+><para
+>De statusbalk toont een pictogram voor elk &im;-account dat u hebt aangemaakt. Het pictogram geeft de huidige aanwezigheidsstatus weer voor elk account. U kunt deze status wijzigen door er met de <mousebutton
+>rechter</mousebutton
+> muisknop op te klikken. </para>
+	<para
+>&kopete; toont ook uw huidige statusmelding in de <guilabel
+>Statusbalk</guilabel
+>. Door op het notitiepictogram in de hoek te klikken kunt u de statusmelding ook wissen of wijzigen.</para>
+</sect3>
+</sect2>
+<sect2 id="contact-list-setting-presence">
+<title
+>Uw aanwezigheidsstatus instellen</title>
+<para
+>In het <link linkend="go-online"
+>vorige hoofdstuk</link
+> hebt u kennis kunnen maken met de aanwezigheidsinstellingen. 'Aanwezigheid' bepaalt uw status op het &im;-netwerk. Om gebruik te kunnen maken van het netwerk dient u een verbinding te hebben, zodat u berichten kunt verzenden en ontvangen, en de aanwezigheid van de andere kunt bekijken. Zodra u verbonden bent bieden de meeste &im;-diensten opties waarmee u uw aanwezigheidsstatus kunt bepalen. U kunt uw status veranderen in <emphasis
+>Afwezig</emphasis
+>, of <emphasis
+>Vrij voor een gesprek</emphasis
+>. U kunt voor elke &im;-dienst uw status apart instellen, of uw status op alle diensten tegelijk op <emphasis
+>Afwezig</emphasis
+> of <emphasis
+>Beschikbaar</emphasis
+> zetten.</para>
+<para
+>U kunt uw aanwezigheidsstatus voor individuele &im;-accounts instellen door met de <mousebutton
+>rechter</mousebutton
+> muisknop te klikken op het pictogram ervan in de <interface
+>status</interface
+>balk onderlangs de <interface
+>Contactenlijst</interface
+>. Het contextmenu biedt alle mogelijke statusinstellingen die voor elke &im;-dienst beschikbaar zijn.</para>
+<para
+>Om uw status voor alle accounts tegelijk te veranderen, klik op de knop <guibutton
+>Status</guibutton
+> in de werkbalk, of gebruik menuoptie <menuchoice
+> <guimenu
+>Bestand</guimenu
+><guimenuitem
+>Status</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="contact-list-start-chat">
+<title
+>Start een chat vanuit de contactenlijst</title>
+<para
+>Om een chat te beginnen vanuit de <interface
+>Contactenlijst</interface
+>, klik op een contact. Er wordt vervolgens een <link linkend="chat-window"
+>gespreksvenster</link
+> geopend.</para>
+<para
+>U kunt ook met de <mousebutton
+>rechter</mousebutton
+> muisknop op een contact klikken en <menuchoice
+><guimenuitem
+>Bericht verzenden</guimenuitem
+></menuchoice
+> of <menuchoice
+><guimenuitem
+>Gesprek starten</guimenuitem
+></menuchoice
+> selecteren. Het verschil tussen  <menuchoice
+><guimenuitem
+>Bericht verzenden</guimenuitem
+></menuchoice
+> en <menuchoice
+><guimenuitem
+>Gesprek starten</guimenuitem
+></menuchoice
+> <interface
+></interface
+> is dat eerstgenoemde een los bericht verstuurt, zonder dat het <interface
+>gespreksvenster</interface
+> wordt geopend. Er wordt een eenvoudiger dialoog geopend. Gebruik dit om snel een berichtje of opmerking aan iemand te sturen zonder dat u een reactie terug verwacht.</para>
+</sect2>
+<sect2 id="contact-list-send-file">
+	<title
+>Een bestand verzenden</title>
+	<para
+>U kunt vanuit de <interface
+>contactenlijst</interface
+> bestanden versturen vanuit het contextmenu van de persoon waarnaar u het bestand wilt sturen. Als Kopete het versturen van bestanden via zijn of haar &im;-dienst ondersteunt, dan bevat het contextmenu de optie <menuchoice
+><guimenuitem
+>Bestand verzenden...</guimenuitem
+></menuchoice
+>. U kunt ook vanuit een andere plek in &kde; een bestand slepen naar een contact om een bestandsoverdracht te starten.</para>
+</sect2>
+<sect2 id="organise-contacts">
+<title
+>Contacten organiseren</title>
+<sect3 id="organise-contacts-metacontacts">
+<title
+>Voorwoord over metacontacten</title>
+<para
+>Een van de doelstellingen van &kopete; is dat het een gestandariseerde manier biedt om &kopete;-diensten te gebruiken. De verschillen tussen de &im;-diensten zijn weggenomen, waardoor het communiceren eenvoudiger is geworden. We volgen deze doelstelling in de manier waarop contacten zijn georganiseerd. Als u &im; gebruikt kunt u uw contacten vinden op hun naam, waarbij de gebruikte &im;-dienst minder van belang is. Sommige personen hebben meer dan een &im;-account - &kopete; plaatst de persoon die de account gebruikt vooraan.</para>
+<para
+>Om hiervoor ondersteuning te kunnen bieden introduceert &kopete; <quote
+>Metacontacten</quote
+>. Deze representeren de persoon waarmee u wilt converseren. Een metacontact bevat alle verschillende &im;-identiteiten die een persoon bezit, waardoor u via het 'smiley'-pictogram van zo'n metacontact een een oogwenk kunt zien of iemand aanwezig is, ongeacht welke &im;-dienst hij of zij op dat moment gebruikt.</para>
+</sect3>
+<sect3 id="organise-contacts-grouping">
+<title
+>Voorwoord over het groeperen van contacten</title>
+<para
+>In &kopete; kunt u groepen aanmaken om uw contacten te sorteren. Een contact kan in meer dan een groep voorkomen. Wanneer mogelijk kunnen groepen worden opgeslagen in de contactenlijst van de server, zodat u groepen intact blijven als u andere &im;-programma's gebruikt. Maar als u groepen verandert in een ander &im;-programma, dan heeft &kopete; niet de mogelijkheid om een metacontact automatisch te verplaatsen. U dient dat dus met de hand op te lossen.</para>
+<para
+>Om de groep waarin een metacontact voorkomt te veranderen, gebruik het bijhorende contextmenu om het naar een andere groep te verplaatsen of kopiëren, of het metacontact te verwijderen uit die groep. U kunt ook de metacontact verslepen naar een andere groep.</para>
+</sect3
+><sect3 id="organise-contacts-adding">
+<title
+>Contacten toevoegen</title>
+<para
+>Om een contact toe te voegen, selecteer menuoptie <menuchoice
+><guimenu
+>Bestand</guimenu
+><guimenuitem
+>Contact toevoegen</guimenuitem
+></menuchoice
+> of klik op de knop <guibutton
+>Toevoegen</guibutton
+> in de werkbalk. Dit opent de Contact-toevoegen-assistent.</para>
+<para
+>De assistent 'Contact toevoegen' maakt een nieuwe metacontact aan die een of meer &im;-diensten gebruikt. U wordt door de volgende pagina's geleid:</para>
+
+<orderedlist>
+<listitem
+><para
+>Welkomstpagina. Hier kunt u kiezen of u het adresboek van &kde; wilt gebruiken voor dit contact. Door &im;-informatie op te slaan in het &kde;-adresboek kunnen andere &im;-programma's van &kde; contactinformatie met &kopete; delen. Verder kunnen andere &kde;-programma's, zoals KMail, &kopete; gebruiken om informatie via &im; te verzenden. Als u uw &im;-contacten liever apart houdt, zet dan het keuzevakje uit.</para
+></listitem>
+<listitem
+><para
+>Adresboek-item selecteren. Door een persoon uit het &kde;-adresboek te selecteren kunt u diens naam gebruiken als schermnaam in &kopete;. U kunt ook een nieuw item aanmaken. Deze pagina wordt niet getoond als u het &kde;-adresboek niet gebruikt.</para
+></listitem>
+<listitem
+><para
+>Schermnaam en groep selecteren. Hier kunt u een schermnaam (de naam die wordt gebruikt voor deze persoon in &kopete;) invoeren en de <link linkend="organise-contacts-grouping"
+>groepen</link
+> kiezen waar de contact lid van is.</para
+></listitem>
+<listitem
+><para
+>&im;-accounts selecteren. Hier kunt u kiezen welke accounts u wilt gebruiken voor de nieuwe contact. Als u niet meer dan 1 &im;-dienst gebruikt zult u dit scherm niet zien.</para
+></listitem>
+<listitem
+><para
+>Account-specifieke pagina's. Voor elk account krijgt u een pagina te zien waarin u de <acronym
+>UIN</acronym
+>, buddy-naam of e-mailadres van de contact kunt invoeren, afhankelijk van de gebruikte &im;-dienst.</para
+></listitem>
+<listitem
+><para
+>Voltooid-scherm. Nu bent u klaar. Tenzij de &im;-dienst autorisatie vereist (zoals <trademark
+>ICQ</trademark
+>) om een contact aan uw lijst toe te voegen. In dat geval zult u om een wachtwoord worden gevraagd nadat de assistent is afgesloten.</para
+></listitem>
+</orderedlist>
+
+<para
+>U kunt met bijhorend contextmenu contacten toevoegen aan bestaande metacontacten.</para>
+</sect3>
+
+<sect3 id="organise-contacts-renaming">
+<title
+>Contacten hernoemen</title>
+<para
+>U kunt een contact een nieuwe naam geven via menuoptie <menuchoice
+><guimenu
+>Bewerken</guimenu
+><guimenuitem
+>Contact hernoemen</guimenuitem
+></menuchoice
+> of via het contextmenu van de metacontact.</para>
+<para
+>Bij sommige &im;-diensten kunt u een <quote
+>schermnaam</quote
+> instellen die anders is dan uw gebruikersnaam. Als u de naam van een contact handmatig verandert zal deze diens schermnaam vervangen. Om de oorspronkelijke schermnaam terug te krijgen, open de eigenschappendialoog van die contact en zet het keuzevakje <quote
+>Naam die de server opgeeft gebruiken</quote
+> aan.</para>
+</sect3>
+<sect3 id="organise-contacts-removing">
+<title
+>Contacten verwijderen</title>
+<para
+>Als u een iemand uit uw contactenlijst wilt verwijderen, dan kunt u een metacontact en alle bijhorende contacten verwijderen via <menuchoice
+><guimenu
+>contextmenu van metacontact</guimenu
+><guimenuitem
+>Contact verwijderen</guimenuitem
+></menuchoice
+>.</para>
+</sect3>
+<sect3 id="organise-contacts-moving-contact">
+<title
+>Contacten tussen metacontacten verplaatsen</title>
+<para
+>U kunt de metacontact waartoe een contact behoort wijzigen. In de praktijk hoeft u dit alleen te doen wanneer u net meerdere accounts aan &kopete; hebt toegevoegd, en u weet dat HotDog76 en mikejones@hotmail.com dezelfde persoon zijn.</para>
+<para
+>U kunt dit op twee manieren doen:</para>
+<variablelist>
+<varlistentry
+><term
+>Slepen en loslaten</term
+><listitem
+><para
+>U kunt de contactpictogram rechts van de metacontactnaam verslepen van de ene metacontact naar een andere.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Contact' contextmenu</term
+><listitem
+><para
+>U kunt via het contextmenu voor contacten (<mousebutton
+>rechts</mousebutton
+>klik op het contactpictogram) de nieuwe metacontact in een dialoogvenster kiezen.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Als de verplaatsing er voor zorgt dat het metacontact leeg is (dus geen contacten meer bevat), dan zult u gevraagd worden of u het contact wilt verwijderen.</para>
+</sect3>
+<sect3 id="organise-contacts-removing-contacts-">
+<title
+>Contacten uit metacontacten verwijderen</title>
+<para
+>Om een contact uit een metacontact te verwijderen, kies <menuchoice
+><guimenu
+>Contact' contextmenu</guimenu
+><guimenuitem
+>Contact verwijderen...</guimenuitem
+></menuchoice
+>.</para>
+</sect3>
+</sect2>
+<sect2 id="contact-list-configure">
+<title
+>&kopete; instellen</title>
+<para
+>U kunt &kopete; instellen via <menuchoice
+><guimenu
+>Instellingen</guimenu
+><guimenuitem
+>Instellen...</guimenuitem
+></menuchoice
+>. Zie het <link linkend="configuring"
+>volgende hoofdstuk</link
+> voor meer informatie.</para>
+</sect2>
+<sect2 id="contact-list-quit">
+<title
+>&kopete; afsluiten</title>
+<para
+>Om &kopete; te beëindigen gebruikt u menuoptie <menuchoice
+><guimenu
+>Bestand</guimenu
+><guimenuitem
+>Afsluiten</guimenuitem
+></menuchoice
+>, <keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+>, of het contextmenu van &kopete;'s systeemvakpictogram. Als u het <interface
+>contactenlijst</interface
+>venster sluit, dan zal &kopete; verder draaien in het systeemvak van &kde;.</para>
+</sect2>
+<sect2 id="contact-list-shortcuts">
+<title
+>Sneltoetsen</title>
+<para
+>De volgende sneltoetsen worden ondersteund in het <interface
+>contactenlijst</interface
+>venster:</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Sneltoets</entry>
+<entry
+>Actie</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+><keycap
+>Pijl omhoog</keycap
+></entry>
+<entry
+>Selecteert het vorige item in de contactenlijst.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Pijl omlaag</keycap
+></entry>
+<entry
+>Selecteert het volgende item in de contactenlijst.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Pijl links</keycap
+></entry>
+<entry
+>Sluit de huidige groep.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Pijl rechts</keycap
+></entry>
+<entry
+>Opent de huidige groep.</entry>
+</row>
+<row>
+<entry
+>&Enter;</entry>
+<entry
+>Start een gesprek met de geselecteerde contact.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>M</keycap
+></keycombo
+></entry>
+<entry
+>Toont/verbergt de menubalk.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>U</keycap
+></keycombo
+></entry>
+<entry
+>Toont/verbergt de offline-gebruikers.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>G</keycap
+></keycombo
+></entry>
+<entry
+>Toont/verbergt lege groepen.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect2>
+</sect1
+><!-- contact-list -->
+
+<sect1 id="chat-window">
+<title
+>Het gespreksvenster</title>
+<sect2 id="chat-window-layout"
+><title
+>Opmaak van het gespreksvenster</title>
+<sect3 id="chat-window-layout-chatview"
+><title
+>De gespreksweergave</title
+><para
+>De gespreksweergave neemt gebruikelijk de meeste ruimte van het venster in beslag en is de plek waar het gesprek plaatsvindt. De berichten verschijnen in volgorde van ontvangst, met de oudste berichten bovenaan de weergave.</para>
+<para
+>U kunt het uiterlijk van het <interface
+>gespreksvenster</interface
+><link linkend="configuring-appearance"
+>aanpassen</link
+>, door het te laten lijken op die van andere &im;-programma's, of een compleet nieuw uiterlijk te maken.</para>
+</sect3>
+<sect3 id="chat-window-layout-memberslist"
+><title
+>Lijst met gespreksdeelnemers</title>
+<para
+>Omdat u met sommige &im;-systemen met meerdere personen in een groep kunt converseren is het handig om te kunnen zien met wie u op het moment een gesprek voert. De lijst met gespreksdeelnemers verschijnt links of rechts van de gespreksweergave. U kunt dit wijzigen via menuoptie <menuchoice
+><guimenu
+>Instellingen</guimenu
+><guisubmenu
+>Lijst met gespreksdeelnemers</guisubmenu
+></menuchoice
+>. Het contact' contextmenu is beschikbaar in de lijst met gespreksdeelnemers.</para
+></sect3>
+<sect3 id="chat-window-layout-input-area"
+><title
+>Invoergebied</title
+><para
+>Het invoergebied bevindt zich onder de gespreksweergave. Hier typt u de berichten in voordat u ze verzendt. U kunt het lettertype en de kleur van het bericht wijzigen met behulp van de gebruikelijke knoppen in de werkbalk. Als het &im;-systeem dit ondersteunt zullen uw berichten verschijnen in de door u ingestelde kleur bij de ontvanger.</para
+><para
+>Standaard is de sneltoets voor het verzenden van berichten &Enter;.</para
+></sect3>
+<sect3 id="chat-window-layout-statusbar"
+><title
+>Statusbalk</title
+><para
+>De statusbalk bevat tijdelijke meldingen, zoals dat iemand een bericht aan het typen is, en de knop <guibutton
+>Verzenden</guibutton
+>.</para
+></sect3>
+<sect3 id="chat-window-layout-tabbing"
+><title
+>Tabbladen</title
+><para
+>Met &kopete; kunt u meerdere gesprekken in één venster houden, door elk gesprek achter zijn eigen tabblad in het venster te plaatsen. De tabbladtitels veranderen van kleur om aan te geven of er een nieuw bericht is ontvangen:</para>
+<variablelist>
+<varlistentry
+><term
+>Rood</term
+><listitem
+><para
+>Iemand heeft een bericht ingetypt.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Groen</term
+><listitem
+><para
+>Iemand typt een bericht in.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Blauw</term
+><listitem
+><para
+>Iemand heeft een bericht getypt dat uw bijnaam bevat.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Er zijn verschillende manieren om het groeperen te beheren. Om dit gedrag in te stellen gaat u naar tabblad Gesprek van de sectie Gedrag in de configuratiedialoog van &kopete;. U kunt ook verschillende gespreksvensters samenvoegen via menu <menuchoice
+><guimenu
+>Tabbladen</guimenu
+></menuchoice
+>.</para
+></sect3>
+</sect2>
+<sect2 id="chat-window-group">
+<title
+>Groeps-chats in &kopete;</title>
+<para
+>U kunt &kopete; gebruiken voor een één-op-één-gesprek of voor een groepsgesprek, afhankelijk van of uw &im;-systeem dit ondersteunt.</para>
+<para
+>Om anderen uitnodigen om deel te nemen aan het gesprek, sleep ze uit de contactenlijst naar het gespreksvenster of gebruik <menuchoice
+><guimenu
+>Gesprek</guimenu
+><guisubmenu
+>Uitnodigen</guisubmenu
+><guimenuitem
+>&lt;Contactnaam&gt;</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="chat-window-file-xfer">
+<title
+>Bestandsoverdrachten</title>
+<para
+>Met sommige &im;-systemen kunt u ook bestanden verzenden en ontvangen. U kunt deze functie bereiken via het contextmenu van de contact. Als u al een gesprek voert en u wilt een bestand verzenden, sleep dan eenvoudig het bestand uit een ander gedeelte van &kde; naar het gespreksvenster of selecteer in het menu <menuchoice
+><guimenu
+>Gesprek</guimenu
+><guimenuitem
+>Bestand verzenden</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="chat-window-shortcuts">
+<title
+>Sneltoetsen</title>
+<para
+>De volgende sneltoetsen worden in het gespreksvenster ondersteund:</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Sneltoets</entry>
+<entry
+>Actie</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+>&Enter;</entry>
+<entry
+>Verzendt het bericht in het <interface
+>invoerveld</interface
+>.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>P</keycap
+></keycombo
+></entry>
+<entry
+>Drukt de inhoud van de gespreksweergave af.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>S</keycap
+></keycombo
+></entry>
+<entry
+>Slaat de inhoud van de gespreksweergave op.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>W</keycap
+></keycombo
+></entry>
+<entry
+>Sluit de huidige gespreksweergave. Als er geen tabbladen met andere gesprekken in het venster aanwezig zijn wordt ook het venster afgesloten.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>,</keycap
+></keycombo
+></entry>
+<entry
+>Ga naar het vorige tabblad.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>.</keycap
+></keycombo
+></entry>
+<entry
+>Ga naar het volgende tabblad.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>B</keycap
+></keycombo
+></entry>
+<entry
+>Plaats een tabblad met gesprek in een eigen venster.</entry>
+</row>
+<row>
+<entry
+>&Tab;</entry>
+<entry
+>Vul een gedeeltelijk ingetypte bijnaam aan die toebehoort aan een persoon waarmee u een gesprek voert.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect2>
+
+</sect1
+><!-- chat-window -->
+</chapter
+><!-- Using-kopete -->
+
+<chapter id="configuring">
+<title
+>&kopete; instellen</title>
+<para
+>Om &kopete; in te kunnen stellen, kijk in het menu <menuchoice
+><guimenu
+>Instellingen</guimenu
+></menuchoice
+>. </para>
+<sect1 id="configuring-global-shortcuts">
+<title
+>Globale sneltoetsen</title>
+<para
+>&kopete; definieert enkele sneltoetsen die geldig zijn in elke &kde;-toepassing.</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Globale sneltoetsen</entry>
+<entry
+>Actie</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>I</keycap
+></keycombo
+></entry>
+<entry
+>Bericht lezen. Dit is handig als u de <interface
+>contactenlijst</interface
+> hebt verborgen en het systeemvakpictogram vertelt u dat u een nieuw bericht hebt ontvangen.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>C</keycap
+></keycombo
+></entry>
+<entry
+>Toon/verberg het <interface
+>contactenlijst</interface
+>venster. <emphasis
+>Waarschuwing:</emphasis
+> Als u &kopete;'s systeemvakpictogram hebt uitgeschakeld, of u hebt geen systeemvakpictogram, dan zorgt deze sneltoets ervoor dat de <interface
+>contactenlijst</interface
+> geheel verdwijnt. U kunt het dan alleen te voorschijn halen door opnieuw op deze sneltoets te drukken.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect1>
+
+<sect1 id="configure-dialog">
+<title
+>Het &kopete;-dialoogvenster 'Instellen'</title>
+<sect2 id="configuring-accounts">
+<title
+>Accounts toevoegen en bewerken</title>
+<para
+>In de <link linkend="getting-started"
+>Grondbeginselen</link
+> hebben we u uitgelegd hoe u een account kunt toevoegen. Om later een account te wijzigen, open de dialoog <guilabel
+>&kopete; instellen</guilabel
+> via menuoptie <menuchoice
+><guimenu
+>Instellingen</guimenu
+><guimenuitem
+>&kopete; instellen</guimenuitem
+></menuchoice
+>. Net als bij &systemsettings; van &kde; is de configuratie opgedeeld in secties. Met de pictogrammen links van de dialoog kunt u de verschillende secties benaderen.</para>
+<para
+>Op de Accounts-pagina kunt u accounts <link linkend="creating-accounts"
+><guibutton
+>Toevoegen</guibutton
+></link
+>, <guibutton
+>Verwijderen</guibutton
+> of <guibutton
+>Wijzigen</guibutton
+>. Het wijzigen van accounts gaat ongeveer op dezelfde manier als het toevoegen. U kunt alleen niet de UIN, buddynaam of andere accountidentificatie die uw &im;-systeem gebruikt wijzigen. Als u de identificatie wilt wijzigen, dan dient u een nieuw account toe te voegen met de nieuwe identificatie, en (eventueel) het oude account te verwijderen.</para>
+<para
+>U kunt op eenvoudige wijze onderscheid maken tussen meerdere accounts die hetzelfde &im;-systeem gebruiken door de statusbalk en pictogrammen ervan een eigen kleur te geven. Selecteer hiervoor de account en klik op de kleurenselector rechts. </para>
+<para
+>U kunt de prioriteit van de accounts bepalen via de knoppen <guiicon
+>omhoog</guiicon
+> en <guiicon
+>omlaag</guiicon
+> rechts onderin het venster. Als u een contact op verschillende manieren kunt bereiken, dan bepaalt deze volgorde welk &im;-systeem er zal worden gebruikt voor een gesprek.</para>
+</sect2>
+<sect2 id="global-identity">
+<title
+>Globale identiteit</title>
+<para
+>De globale identiteit van &kopete; laat u in één keer uw eigen schermnaam en foto instellen voor al uw &im;-accounts. U kunt deze details lezen uit het &kde;-adresboekitem voor uzelf, uit één van uw contactpersonen of een volledig nieuwe schermnaam of foto. Als u een opwindend duaal leven hebt, dan kunt u meerdere identiteiten aanmaken en er tussen schakelen in de sectie <guilabel
+>Identiteit</guilabel
+>.</para>
+</sect2>
+<sect2 id="configuring-behavior">
+<title
+>Gedrag</title>
+<para
+>Sectie Gedrag behandelt de manier waarop &kopete; zal integreren met uw desktop, de <emphasis
+>afwezig</emphasis
+>-instellingen en de opties voor het gespreksvenster.</para>
+<sect3 id="configuring-behavior-general">
+<title
+>Tabblad Algemeen</title>
+<para
+>Hier kunt u de desktopintegratie van &kopete; instellen, en de wijze waarop de contactenlijst is ingedeeld.</para>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Pictogram in systeemvak tonen</guilabel
+></term>
+<listitem>
+<para
+>Standaard plaatst &kopete; een pictogram in het systeemvak van &kde;. Als u wilt kunt u dat hier uitschakelen.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Met verborgen hoofdvenster starten</guilabel
+></term>
+<listitem>
+<para
+>Dit zorgt er voor dat &kopete; wordt opgestart met de <interface
+>contactenlijst</interface
+> verborgen. U kunt de contactenlijst openen door te klikken op het systeemvakpictogram, of via de bijhorende <link linkend="configuring-global-shortcuts"
+>sneltoets</link
+>.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Berichten meteen openen</guilabel
+></term>
+<listitem>
+<para
+>Nieuwe berichten openen het gespreksvenster zodra ze binnenkomen.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Berichten in wachtrij gebruiken</guilabel
+></term>
+<listitem>
+<para
+>De berichtenwachtrij is de plaats waar &kopete; berichten bewaart als er geen gespreksvenster is geopend. U kunt dan op de hoogte worden gebracht over nieuwe berichten met behulp van <quote
+>tekstballonnen</quote
+>, of door het systeemvakpictogram te laten bewegen. Als u de berichtenwachtrij uitschakelt zal er een gespreksvenster worden geopend zodra u een nieuw bericht ontvangt.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Berichtenstapel gebruiken</guilabel
+></term>
+<listitem>
+<para
+>Als u een berichtenstapel gebruikt, dan laat &kopete; de recent ontvangen berichten zien te beginnen met het laatst ontvangen bericht.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-general-notifications">
+<title
+>Meldingen</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Nieuwe berichten in een tekstballon tonen</guilabel
+></term>
+<listitem>
+<para
+>Deze optie toont bij het systeemvakpictogram een <quote
+>tekstballon</quote
+> wanneer u een nieuw bericht hebt ontvangen. U kunt dan een gesprek beginnen of het bericht negeren. Eventuele &URL;'s uit het gesprek worden ook getoond. Als u op zo'n koppeling klikt zal uw browser deze openen en wordt het bericht verder genegeerd.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Systeemvakpictogram laten knipperen bij een nieuw bericht</guilabel
+></term>
+<listitem>
+<para
+>Dit zorgt er voor dat het systeemvakpictogram beweegt als u een nieuw bericht ontvangt. Klik op het pictogram om een gespreksvenster met het bericht te openen.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Gebeurtenissen inschakelen terwijl afwezig</guilabel
+></term>
+<listitem>
+<para
+>Als u niet wilt worden gestoord door deze notificaties als u uzelf op <emphasis
+>afwezig</emphasis
+> hebt gezet, zet dan dit keuzevakje uit.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Geluiden en effecten instellen</guilabel
+></term>
+<listitem>
+<para
+>Voor geluiden, knipperende taakbalkitems, passieve popups en meer exotische meldingen maakt &kopete; gebruik van het &kde;-notificatiesysteem. Type <userinput
+>help:/kcontrol/kcmnotify</userinput
+> in &konqueror; of selecteer tabblad Hulp in de sectie <guilabel
+>Systeemnotificaties</guilabel
+> van het &systemsettings; voor meer informatie.</para>
+<para
+>Om aangepaste notificaties voor een contactpersoon toe te voegen, klikt u met de rechtermuisknop op de contactpersoon in de lijst en kiest u Eigenschappen. Hiermee kunt u gesprekken starten, een aangepast geluidseffect afspelen, af een bericht weergeven voor die contactpersoon of groep. Anders kunt u de notificatie <quote
+>Een programma uitvoeren</quote
+> gebruiken voor bijzondere notificaties. Bijvoorbeeld: als u het programma <application
+>XOSD</application
+> (X On Screen Display) hebt geïnstalleerd, dan kunt u OSD online-notificaties krijgen door het volgende commando te verbinden met de gebeurtenis <quote
+>Gebruiker gaat online</quote
+>:</para>
+<para
+><userinput
+>echo %s | osd_cat -o 100 -p bottom -A center -f -*-helvetica-*-r-*-*-24-*-*-*-*-*-*-* -O 2 -c gold</userinput
+></para>
+<para
+>Volgens OhReally op het &kde;-forum kunt u de online-notificaties ook laten voorlezen door ene spraaksynthesizer. Gebruik hiervoor het programma <ulink url="http://mambo.ucsc.edu/psl/mbrola"
+>MBROLA</ulink
+> op de volgende manier:</para>
+<para
+><userinput
+>echo %s | sed -e 's/online/onlaain/i' | /usr/local/bin/mbrdico.dutch.female</userinput
+></para>
+<para
+>Het commando 'sed' in het midden zorgt er voor dat de uitvoer van &kopete; fonetisch beter wordt geformuleerd, zodat de synthesizer deze beter in het Nederlands uitspreekt.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-away">
+<title
+>Afweziginstellingen</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Alle geopende gesprekken waarschuwen wanneer ik weg ga</guilabel
+></term>
+<listitem
+><para
+>Wees voorzichtig als u dit item activeert, er zal een bericht worden verzonden naar alle geopende gesprekken wanneer uw status op afwezig wordt gezet. Sommige personen ervaren dit als storend.</para
+></listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-away-auto">
+<title
+>Automatisch afwezig</title>
+<para
+>Hier kunt u bepalen of &kopete; u op afwezig zal zetten na een periode van inactiviteit.</para>
+</sect4>
+<sect4 id="configuring-behavior-away-messages">
+<title
+>Voorgedefinieerde afwezigberichten</title>
+<para
+>U kunt hier zoveel afwezig-berichten instellen als u wilt. Via de knop <guibutton
+>Status</guibutton
+> op de <link linkend="contact-list-layout-toolbar"
+>hoofdwerkbalk</link
+> kunt u dan de juiste afwezigheidsreden selecteren wanneer u even <emphasis
+>afwezig</emphasis
+> bent.</para>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-chat">
+<title
+>Gespreksinstellingen</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Venster/tabblad naar voorgrond bij nieuw berichten</guilabel
+></term>
+<listitem
+><para
+>Dit zorgt ervoor dat een gespreksvenster op de voorgrond verschijnt als er een nieuw bericht is gearriveerd.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Gebeurtenissen in gespreksvenster tonen</guilabel
+></term>
+<listitem
+><para
+>Sommige &im;-systemen geven extra informatie, zoals of personen het gesprek  binnengaan/verlaten. Deze optie zorgt ervoor dat deze berichten in uw gespreksvenster worden getoond.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Berichten die uw bijnaam bevatten accentueren</guilabel
+></term>
+<listitem
+><para
+>Dit benadrukt de berichten in een gesprek waarin uw bijnaam voorkomt. Voor een meer uitgebreide controle over accentuering en andere gebeurtenissen, lees de sectie over de <link linkend="plugins-highlight"
+>Accentueringsplug-in</link
+>.</para
+></listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-chat-interface">
+<title
+>Interfacevoorkeuren</title>
+<para
+>&kopete; kan een los bericht versturen of een gespreksvenster openen waarin de conversatie zichtbaar is terwijl u een gesprek voert. U kunt zelf bepalen welke standaard wordt gebruikt.</para>
+</sect4>
+<sect4 id="configuring-behavior-chat-grouping">
+<title
+>Beleid voor het groeperen van gespreksvensters</title>
+<para
+>Als u gesprekken wilt groepperen met tabbladen in een venster, dan biedt &kopete; u verschillende manieren om het groeperen te definiëren.</para>
+<itemizedlist>
+<listitem
+><para
+>Elk gesprek in een nieuw venster</para
+></listitem>
+<listitem
+><para
+>Gesprekken per account in één gespreksvenster</para
+></listitem>
+<listitem
+><para
+>Alle gesprekken in één gespreksvenster</para
+></listitem>
+<listitem
+><para
+>Gesprekken van contacten in dezelfde groep in één gespreksvenster plaatsen</para
+></listitem>
+<listitem
+><para
+>Gesprekken van hetzelfde metacontact in één gespreksvenster plaatsen</para
+></listitem>
+</itemizedlist>
+</sect4>
+<sect4 id="configuring-behavior-chat-lines">
+<title
+>Limiet van gespreksvensterregels</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Maximum aantal regels in een gespreksvenster</guilabel
+></term>
+<listitem
+><para
+>Dit beperkt het aantal regels tekst dat het gespreksvenster zal tonen.</para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect4>
+</sect3>
+</sect2
+> <!-- configuring-behavior -->
+<sect2 id="configuring-appearance">
+<title
+>Uiterlijk</title>
+<para
+>De sectie Uiterlijk regelt de stijl van het gespreksvenster. Denk hierbij aan welke lettertypen, kleuren en emoticons gebruikt zullen worden.</para>
+<sect3 id="configuring-appearance-emoticons">
+<title
+>Emoticons</title>
+<para
+>Emoticons (ook wel bekend als smileys) zijn combinaties van lettertekens zoals <userinput
+>:-)</userinput
+> die er uitzien als een gezichtje. Emoticons kunnen gebruikt worden om uw stemming of expressie aan de ander uit te dragen. &kopete; kan optioneel grafische emoticons gebruiken in plaats van de lettertekens zelf.</para>
+<para
+>Op dit tabblad kunt u bepalen welke set emoticons u wilt gebruiken, of het gebruiken van grafische emoticons volledig uitschakelen.</para>
+<!--FIXME uncomment when chapter id="specialised" has content
+<para
+>See <link linkend="specialised"
+>Specialized Actions</link
+> for details of how to install extra emoticon sets.</para>
+-->
+</sect3>
+<sect3 id="configuring-appearance-chat">
+<title
+>Gespreksvenster</title>
+<sect4 id="configuring-appearance-chat-styles">
+<title
+>Stijlen</title>
+<para
+>U kunt de stijl van het gespreksvenster wijzigen zodat het het uiterlijk van andere IM-programma's aanneemt. Geïnstalleerde stijlen worden in de lijst links getoond, en in het hoofdgedeelte ziet u een voorbeeld van de stijl. Zie <link linkend="chatwindowstyleguide"
+>Handleiding voor gespreksvensterstijl</link
+> voor een document om uw eigen stijl aan te maken. </para>
+<para
+>Stijlen van derden zijn beschikbaar op <ulink url="https://store.kde.org/"
+>KDE Store</ulink
+>. &kopete; 0.12 ondersteunt nu stijlen uit Adium(een &im; programma op &Mac; OS X). U kunt stijlen uit Adium hier downloaden: <ulink url="http://www.adiumxtras.com/"
+>Adium Xtras</ulink
+> en Berichtweergavestijlen selecteren.</para>
+<para
+>Om en stijl te installeren klikt u op <guibutton
+>Installeren...</guibutton
+>. Selecteer een archiefbestand met de stijl. Om een stijl te verwijderen, selecteert u een stijl in de lijst en klikt op <guibutton
+>Verwijderen</guibutton
+>.</para>
+<para
+><guilabel
+>Opvolgende berichten groeperen</guilabel
+> is een bruikbare optie om uw chats beter leesbaar te maken. Als u verschillende berichten achter elkaar van dezelfde contactpersoon krijgt, dan worden ze gegroepeerd zonder de naam van de zender.</para>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-general-contactlist">
+<title
+>Contactenlijst</title>
+<variablelist>
+<varlistentry>
+	<term
+><guilabel
+>Meta-contacten per groep sorteren</guilabel
+></term>
+<listitem>
+<para
+>Als u dit uitschakelt worden &kopete;'s groepen verborgen, en de contacten opgedeeld in <guilabel
+>Online contacten</guilabel
+> en <guilabel
+> Offline contacten</guilabel
+>.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Boomstructuur met lijnen gebruiken</guilabel
+></term>
+<listitem>
+<para
+>&kopete; toont contacten en groepen in een boomstructuur, waarbij contactpersonen inspringen. Voor een eenvoudiger uiterlijk kunt u het inspringen of het ordenen in een boomstructuur uitschakelen door bijhorende keuzevakjes te deselecteren.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Schermmodus van contact</guilabel
+></term>
+<listitem>
+	<para
+>Er zijn diverse manieren waarop u de contactenlijst kunt laten weergeven. <guilabel
+>Contactpersoonfoto's gebruiken wanneer beschikbaar</guilabel
+> is wellicht een vermelding waard, hiermee kunt u de contactenlijst met foto's uit het &im;-systeem of het Adresboek van &kde; laten weergeven.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Contactpersonenlijstanimaties</guilabel
+></term>
+<listitem>
+	<para
+>Hiermee wordt de mate van animatie van de contactenlijst ingesteld. Dit uitschakelen zorgt ervoor dat &kopete; beter reageert op langzame machines.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Contactenlijst auto-verbergen</guilabel
+></term>
+<listitem>
+	<para
+>Door dit in te schakelen, verdwijnt de contactenlijst automatisch na een paar seconden als de muispijl het venster verlaat.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Inhoud van tekstballonnen wijzigen...</guilabel
+></term>
+<listitem>
+	<para
+>U kunt met dit dialoogvenster veel instellen met betrekking tot hoeveel details er in de tekstballonnen getoond worden.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+<sect3 id="configuring-appearance-colors-fonts">
+<title
+>Kleuren en lettertypen</title>
+<sect4 id="configuring-appearance-colors-fonts-chat">
+<title
+>Kleuren van gespreksvensters</title>
+<para
+>Hier kunt u het basislettertype en de -tekstkleuren voor de gesprekken wijzigen.</para>
+</sect4>
+<sect4 id="configuring-appearance-colors-fonts-overrides">
+<title
+>Opmaakuitzonderingen</title>
+<para
+>Als uw contacten de nijging hebben om lettertypen te gebruiken waar u niet van houdt, dan kunt u &kopete; vertellen om deze te negeren en uw eigen reguliere lettertype te gebruiken.</para>
+</sect4>
+<sect4 id="configuring-appearance-colors-fonts-contactlist">
+<title
+>Contactenlijst</title>
+<para
+>Bij enkele &im;-systemen kunt u zien of contacten wel of niet op hun computer actief zijn. Met deze optie kunt u de kleur van de inactieve contacten wijzigen.</para>
+</sect4>
+</sect3>
+</sect2
+> <!-- configuring-appearance -->
+<sect2 id="configuring-devices">
+<title
+>Apparaten</title>
+<para
+>De sectie apparaten stelt u in staat om te kiezen en in te stellen welke multimedia-apparaten gebruikt worden voor A/V chatten. Of dit voor u werkt is zeer afhankelijk van de hardware die u hebt en hoe goed het wordt ondersteund door uw besturingsysteem.</para>
+<sect3 id="configuring-devices-video">
+<title
+>Video</title>
+<para
+>&kopete; gebruikt het Video4Linux 2 systeem voor video. Dit toont een blauw vierkant als geen video-apparaat wordt gevonden of een voorbeeld als de camera werkt. Voor up-to-date informatie over &kopete; ondersteuning voor webcams, zie de <ulink url="http://userbase.kde.org/Kopete/Webcam_Support"
+>wiki-pagina Kopete Webcam ondersteuning</ulink
+>.</para>
+</sect3>
+<sect3 id="configuring-devices-audio">
+<title
+>Geluid</title>
+	<para
+>Geluidsondersteuning in &kopete; is in een experimenteel stadium. Als u een Audio tabblad hebt, dan gebruikt u waarschijnlijk een als voorbeeld gebouwde versie van &kopete;.</para>
+</sect3>
+</sect2>
+</sect1>
+
+<sect1 id="configuring-load-plugins-dialog">
+<title
+>Plug-ins laden</title>
+<para
+>U kunt &kopete; uitbreiden met enkele speciale functies die vermakelijk of nuttig voor u kunnen zijn. Open het paneel <guilabel
+>Plug-ins selecteren en instellen</guilabel
+> via menuoptie <menuchoice
+><guimenu
+>Instellingen</guimenu
+><guimenuitem
+>Instellen...</guimenuitem
+></menuchoice
+> en daarna het item <guilabel
+>Plug-ins</guilabel
+>.</para>
+<para
+>U kunt de plug-ins aan- of uitzetten in het linker gedeelte van de pagina. In het rechter gedeelte kunt u de geselecteerde plug-in instellen. Voor meer informatie over elke plug-in kunt u terecht bij het <link linkend="plugins"
+>hoofdstuk over plug-ins</link
+>.</para>
+</sect1>
+</chapter
+> <!-- configuring -->
+
+<chapter id="protocols">
+	<title
+>&kopete;'s protocollen</title>
+	<para
+>&kopete; roept verschillende &im;-systeem-protocolen aan. Als u een account aanmaakt, dan is het specifiek voor een enkel protocol. Hoewel &kopete; probeert om instant-messaging hetzelfde er uit te laten zien, onafhankelijk van het gebruikte protocol, er zijn enige verschillen in het ondersteuningsniveau voor geavanceerde functies zoals bestandsoverdracht en multimedia.</para>
+	<sect1 id="protocols-list">
+		<title
+>Protocollen</title>
+		<sect2 id="protocols-aim">
+			<title
+>AIM</title>
+			<para
+>AIM ondersteunt chatrooms. Gebruik het <guilabel
+>Join Chat...</guilabel
+> commando op het AIM-accountmenu om mee te doen in een chatroom. Contactpersoonafbeeldingen en aangepaste emoticons worden ook ondersteund.</para>
+		</sect2>
+		<sect2 id="protocols-icq">
+			<title
+>ICQ</title>
+			<para
+>ICQ heeft een onzichtbaarheidsfeature die het mogelijk maakt om zich te verbergen voor geselecteerde contacten. U kunt ook de ICQ-gebruikersmap doorzoekem bij het toevoegen van een contactpersoon. Een brede reeks van contactdetails kan worden ingesteld met de optie <guilabel
+>Eigenschappen</guilabel
+>.</para>
+		</sect2>
+		<sect2 id="protocols-jabber">
+			<title
+>Jabber</title>
+			<para
+>Jabber, ook bekend als XMPP, ondersteunt bestandsoverdracht, conferenties en elke andere service ondersteunt door de Jabber-server. Bijvoorbeeld, veel Jabber-servers hebben een gebruikersmap en sommige leveren overdracht naar andere messagingsystemen. Om toegang te krijgen tot services, gebruikt u <menuchoice
+><guimenu
+>Services...</guimenu
+></menuchoice
+> in het accountmenu. Jabber-bestandsoverdracht kan werken zonder poort-doorzetten, maar geniet een betere prestatie waar een directe verbinding mogelijk is. Standaard wordt poort 8010 gebruikt voor poort-doorzetten, maar dit is in te stellen in de instellingen van elk account.</para>
+		</sect2>
+		<sect2 id="protocols-gtalk">
+			<title
+>Google Talk</title>
+			<para
+>Omdat Google Talk is gebaseerd op Jabber, is het goed ondersteund in &kopete; met uitzondering van voice-chat, waaraan wordt gewerkt.</para>
+			<para
+>Om &kopete; in te stellen voor Google Talk: Gebruik uw complete Google e-mailadres als de gebruikersnaam. Activeer <guilabel
+>Protocol-encryptie (SSL) gebruiken</guilabel
+>, <guilabel
+>Authenticatie met wachtwoorden in gewone tekst toestaan</guilabel
+> en <guilabel
+>Standaard serverinformatie overschrijven</guilabel
+>. De server is <quote
+>talk.google.com</quote
+> of <quote
+>gmail.com</quote
+> en de poorten 443 of 5223 moeten worden gebruikt.</para>
+		</sect2>
+		<sect2 id="protocols-groupwise">
+			<title
+>Novell GroupWise</title>
+			<para
+>GroupWise Messenger is een messenging-systeem van Novell Inc. De volledige reeks van mogelijkheden wordt ondersteund, inclusief privacy, chatten in een groep, opgemaakte tekst en naar gebruikers zoeken.</para>
+		</sect2>
+		<sect2 id="protocols-gadu-gadu">
+			<title
+>Gadu-Gadu</title>
+			<para
+>Gadu-Gadu is een chat-systeem uit Polen. Op dit moment ondersteunt &kopete; basis chat-functions.</para>
+		</sect2>
+		<sect2 id="protocols-winpopup">
+			<title
+>WinPopup</title>
+			<para
+>WinPopup is een manier om &kopete; te gebruiken om berichten te verzenden naar en te ontvangen van &Windows; computers op het lokale netwerk. Het WinPopup protocol ondersteunt alleen enkele, platte-tekst berichten.</para>
+		</sect2>
+		<sect2 id="protocols-others">
+			<title
+>Andere protocollen</title>
+			<para
+>Evenals de bovenstaande genoemde protocollen heeft &kopete; ondersteuning voor verschillende andere protocollen. In de meeste gevallen is dit niet standaard ingeschakeld of er moet een extra plug-in worden geïnstalleerd. Ondertussen worden SMS, Skype en SILC op deze manier geleverd. Zie Echter het team van &kopete; is voor deze protocollen niet verantwoordelijk.</para>
+		</sect2>
+	</sect1>
+</chapter>
+	
+<chapter id="plugins">
+<title
+>&kopete;'s plug-ins</title>
+<para
+>&kopete; biedt enkele plug-ins aan die op zich geen functionaliteit aanbieden die noodzakelijk is voor instant messaging, maar voor sommige gebruikers erg handig zijn.</para>
+<sect1 id="plugins-list">
+<title
+>Plug-ins</title>
+<!-- disabled from build in 4.11/master sect2 id="plugins-alias">
+<title
+>Alias</title>
+<para
+><guilabel
+>Alias</guilabel
+> lets you define your own commands, &eg; /hello, in &kopete; that run scripts and output the result in the chat window.  If you know how the alias Unix command works, this is just the same</para>
+</sect2-->
+<sect2 id="plugins-auto-replace">
+<title
+>Automatisch vervangen</title>
+<para
+><guilabel
+>Automatisch vervangen</guilabel
+> is een plug-in waarmee u vaak foutgespelde fouten automatisch kunt corrigeren, of tijd besparen door afkortingen te gebruiken die veelgebruikte lange woorden automatisch aanvullen.</para>
+</sect2>
+<sect2 id="plugins-bookmarks">
+<title
+>Bladwijzers</title>
+<para
+>De plug-in <guilabel
+>Bladwijzers</guilabel
+> maakt bladwijzers aan in uw &kde; bladwijzerlijst uit URL's die ontvangen worden in &im;-berichten.</para>
+</sect2>
+<!-- was removed with Revision 732681
+sect2 id="plugins-connection-status">
+<title
+>Connection Status</title>
+<para
+><guilabel
+>Connection Status</guilabel
+> is useful for modem users or others who don't have a permanent Internet connection.  It watches for an active Internet connection and sets your accounts online when it detects you have dialed up.</para>
+</sect2-->
+<sect2 id="plugins-contact-notes">
+<title
+>Notities bij contacten</title>
+<para
+>Met <guilabel
+>Notities bij contacten</guilabel
+> kunt u informatie over een metacontact als notitie bewaren.</para>
+</sect2>
+<sect2 id="plugins-cryptography">
+<sect2info>
+<authorgroup>
+<author
+>&Olivier.Goffart; &Olivier.Goffart.mail;</author>
+<author
+>&Charles.Connell; &Charles.Connell.mail;</author>
+</authorgroup>
+<date
+>2007-10-14</date>
+<releaseinfo
+>1.3.0</releaseinfo>
+</sect2info>
+
+<title
+>Cryptografie</title>
+<para
+>De plugin Cryptography stelt u in staat om versleutelde en/of ondertekende berichten te verzenden en te ontvangen.</para>
+<para
+>Cryptography laat u een OpenPGP implementatie gebruiken om berichten in conversaties te versleutelen en te ondertekenen. Merk op dat dit niet hetzelfde is als een SSL-beveiligde chat-sessie. Cryptography kan uw berichten naar een enkel individu versleutelen zodat alleen de houder van de overeenkomstige sleutel deze kan lezen. Als u wilt dat de ontvanger van uw berichten kan verifiëren dat u uw berichten hebt verzonden, dan kunt u uw berichten ondertekenen. Ondertekenen en versleutelen kunnen afzonderlijk van elkaar worden gebruikt of samen. Als u een bericht ontvangt, als het versleuteld is, dan ziet u een pictogram van een slot. Als het is ondertekend met een te verifiëren handtekening (u hebt de publieke sleutel van de afzender), dan ziet u een pictogram van een pen. Voor een niet te verifiëren ondertekening wordt een rood pictogram van een pen getoond.</para>
+<para
+>Om Cryptography in te stellen, selecteert u uw privésleutel in de instellingspagina van de plug-in. Daarna gebruikt u <menuchoice
+><guimenuitem
+>Publieke sleutel selecteren...</guimenuitem
+></menuchoice
+> uit elk contextmenu van meta-contacten en kiest u hun publieke sleutel. U zal worden gevraagd om uw wachtwoordzin bij het gebruik van deze plug-in.</para>
+<para
+>Vanwege beperkingen in sommige van de protocollen voor instant messaging die &kopete; gebruikt, kunnen versleutelde berichten niet verzonden worden met die protocollen. Als u probeert een niet ondersteund protocol te gebruiken, dan krijgt u een waarschuwing.</para>
+<para
+>Cryptography kan de publieke sleutels gebruiken die in uw &kde; adresboek bij elke contactpersoon zijn opgeslagen. Het moet echter in staat zijn om te weten welk adresboekitem gekoppeld is aan welk meta-contact. Om deze informatie te leveren, kiest u Eigenschappen uit het contextmenu van meta-contact en daarna stelt u koppeling in naar het adresboek. Cryptography kan ook publieke sleutels exporteren die u hebt ingesteld in uw adresboek. Als een meta-contact een koppeling heeft naar het adresboek, dan zal de sleutel naar het juiste adresboekitem gaan en een bestaande vervangen. Als geen koppeling bestaat (mogelijk omdat er geen adresboekitem bestaat voor de persoon in kwestie), dan zal een nieuw item worden aangemaakt. Dit item zal twee gevulde velden hebben: de publieke sleutel uit &kopete; en de schermnaam van het meta-contact.</para>
+<para
+>Documentatie copyright &copy; &Olivier.Goffart; &Olivier.Goffart.mail; en &copy; 2007 &Charles.Connell; &Charles.Connell.mail;</para>
+</sect2>
+<sect2 id="plugins-highlight">
+<title
+>Accentueren</title>
+<para
+><guilabel
+>Accentueren</guilabel
+> werkt ongeveer zoals e-mailfilters. U kunt dus bepalen wat er gebeurt als reactie op bepaalde berichten. Naast het accentueren van tekst kunt u ook geluiden laten afspelen.</para>
+</sect2>
+<!--FIXME History2 missing
+Another history plugin based on sqlite.
+Most important changes:
+- based on sqlite3 instead of xml-files
+- import history button in config dialog
+- import option added for the other xml-based history-plugin
+- pidgin import improved
+- test and skip duplicates on import (so it is possible to synchronize
+  regularly from a windows-pidgin installation for example)
+- more speed in most cases
+The main reason I began to rewrite the complete plugin was, that I had
+dataloss by importing from pidgin with the old history plugin.
+The months, which where imported from pidgin, did overwrite the kopete
+history. This was unacceptable.
+-->
+<sect2 id="plugins-history">
+<title
+>Geschiedenis</title>
+<para
+>De plug-in <guilabel
+>Geschiedenis</guilabel
+>, indien geactiveerd, registreert alle conversaties van elk &im;-systeem, waardoor u op een later tijdstip oude conversaties kunt teruglezen. Als de plug-in actief is verschijnt de optie <menuchoice
+><guimenuitem
+>Geschiedenis</guimenuitem
+></menuchoice
+> in het contextmenu van de metacontacten. Klik erop om de geschiedenis van die metacontact te bekijken.</para>
+<para
+>Het volgende item wordt toegevoegd aan de menu's van de contactenlijst:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bewerken</guimenu
+> <guimenuitem
+>Geschiedenis tonen</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Actief als een contact is gekozen.) Dit toont de geschiedenis van de geselecteerde contact.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para
+>De volgende items zijn toegevoegd aan de menu's van de gespreksvensters:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Alt;&Shift;<keycap
+>Pijl links</keycap
+></keycombo
+></shortcut
+><guimenu
+>Hulpmiddelen</guimenu
+> <guimenuitem
+>Geschiedenis vorige</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Met deze optie kunt u de volgende serie oudere berichten uit de geschiedenis in het gespreksvenster bekijken.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Alt;&Shift;<keycap
+>Pijl rechts</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Hulpmiddelen</guimenu
+> <guimenuitem
+>Geschiedenis volgende</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Dit toont de volgende serie nieuwere berichten uit de geschiedenis in het gespreksvenster.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Hulpmiddelen</guimenu
+> <guimenuitem
+>Geschiedenis laatste</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Dit toont de meest recente serie berichten uit de geschiedenis in het gespreksvenster.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="plugins-kopetex">
+<title
+>KopeteTeX</title>
+<para
+>Met KopeteTeX kunnen wetenschappers en wiskundigen gesprekken houden met gebruikmaking van de opmaaktaal LaTeX. Uitdrukkingen tussen $$ worden als een afbeelding in het chatvenster weergegeven, en geknipt en geplakt als de originele LaTeX. Hiervoor dient u LaTeX geïnstalleerd te hebben.</para>
+</sect2>
+<!-- Revision 732090 don't compile motionautoaway. it's moving back to playground
+sect2 id="plugins-motion-auto-away">
+<title
+>Motion Auto-Away</title>
+<para
+>In conjunction with a webcam and the <application
+>Video4Linux</application
+> package, this lets you detect when you're no longer at your computer and have &kopete; automatically become <emphasis
+>Away</emphasis
+>.</para>
+</sect2-->
+<sect2 id="plugins-now-listening">
+<title
+>Luistert naar</title>
+<para
+>Met de plug-in <guilabel
+>Luistert naar</guilabel
+> kunt u de personen waarmee u converseert laten weten naar welke muziek u op dat moment luistert. Typ <userinput
+>/media</userinput
+> in een gesprek, of kies menuoptie <menuchoice
+><guimenu
+>Hulpmiddelen</guimenu
+><guimenuitem
+>Media-info verzenden</guimenuitem
+></menuchoice
+> in het gespreksvenster.</para>
+</sect2>
+<sect2 id="plugins-otr">
+<title
+>OTR</title>
+<para
+>De plug-in <guilabel
+>OTR</guilabel
+> stelt u in staat om conversaties te versleutelen met de versleutelingsmethode Off-The-Record. Deze versleutelingsmethode werkt in principe als de PGP-versleuteling, is echter geoptimaliseerd voor instant-messaging en behandelt de uitwisseling van sleutels op zijn eigen manier. Het enige dat u moet doen, is dat u echt naar de persoon aan het schrijven bent die u verwacht door een van de authenticatiemechanismen van OTR te gebruiken.</para>
+<sect3 id="plugins-otr-menus">
+<title
+>Menu-items</title>
+<para
+>Het volgende item wordt toegevoegd aan de menu's van de contactenlijst:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bewerken</guimenu
+> <guimenuitem
+>OTR-beleid</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Ingeschakeld wanneer een contactpersoon is geselecteerd) U kunt het versleutelingsbeleid voor elke contactpersoon hier instellen. Dit item op "Standaard" zetten maakt dat &kopete; de standaard instelling uit de instellingendialoog</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para
+>De volgende items zijn toegevoegd aan de menu's van de gespreksvensters:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Hulpmiddelen</guimenu
+> <guimenuitem
+>OTR-instellingen</guimenuitem
+> <guimenuitem
+>OTR-sessie starten</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Dit laat u een OTR-versleutelde sessie initiëren.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Hulpmiddelen</guimenu
+> <guimenuitem
+>OTR-instellingen</guimenuitem
+> <guimenuitem
+>OTR-sessie beëindigen</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Dit laat u een een eerder opgezette OTR-sessie beëindigen.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Hulpmiddelen</guimenu
+> <guimenuitem
+>OTR-instellingen</guimenuitem
+> <guimenuitem
+>Contact authenticeren</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Gebruik deze menu-ingang als u het contact wilt authenticeren.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+<sect3 id="plugins-otr-setup">
+<title
+>De instellingendialoog</title>
+<para
+>In de instellingendialoog hebt u verschilende opties om het gedrag van modulen tijdens uw chat-sessies in te stellen. De meest belangrijke is de standaard instelling voor beleid. Stel het beleid in op "Opportunistisch" als u wilt dat &kopete; controleert of uw contacten OTR ondersteunen en een vanzelf een versleutelde sessie opzetten of op "Handmatig" als u zelf controle wilt hebben over het gebruik van versleuteling. De opties "Altijd" en "Nooit" worden alleen aangeraden voor ervaren gebruikers het beleid willen instellen per contactpersoon. In het paneel "Privé sleutels" hebt u de mogelijkheid om uw persoonlijke sleutelpaar voor elk account in te stellen. Het is niet nodig dit handmatig te doen. Als een account geen sleutelpaar heeft dan wordt dat automatisch de eerste keer dat het nodig is gegenereerd. In het tabblad "Bekende vingerafdrukken" hebt u de mogelijkheid om de bekende vingerafdrukken van uw contacten te zien, te verifiëren en te  verwijderen.</para>
+</sect3>
+<sect3 id="plugins-otr-auth">
+<title
+>Authenticatie</title>
+<para
+>U hebt waarschijnlijk e-mail van personen die zich als een bank voordoen, kredietmaatschappijen, zelfs rijke Nigeriaanse emigranten. Mensen in het internet liegen over wie zij zijn. Authenticatie is een manier om er zeker van te zijn dat niemand tegen u kan liegen over wie zij zijn bij het gebruik van OTR.</para>
+<sect4 id="plugins-otr-auth-when">
+<title
+>Wanneer authenticeren</title>
+<para
+>U moet een buddy de allereerste keer dat u met hem communiceert met OTR authenticeren. Als u dat niet doet, dan kunt u er niet echt zeker van zijn dat niet iemand anders zich als hem voordoet of probeert te luisteren naar uw conversatie. Wanneer u echter uw buddy één keer hebt geauthenticeerd, dan is het niet nodig dat opnieuw te doen. OTR zal automatisch de authenticatie voor al uw toekomstige conversaties met die buddy doen. </para>
+<para
+>De enige uitzonderingen zijn wanneer uw buddy schakelt tussen meerdere computers of meerdere &im;-accounts. In dat geval is het nodig dat u één keer voor elke computer en account authenticeert. Nadat u dat hebt gedaan kan uw buddy vrij elk van de computers, waarop u hem hebt geauthenticeerd, gebruiken en OTR zal hem automatisch herkennen. Als uw buddy een nieuwe computer of account gebruikt die door OTR niet wordt herkend, dan zal er een bericht in uw chat-venster verschijnen, die dit aan u vertelt.</para>
+<screenshot>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="otr-auth-1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Wanneer authenticeren</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</sect4>
+<sect4 id="plugins-otr-auth-how">
+<title
+>Hoe te gebruiken</title>
+<para
+>Om iemand te authenticeren, opent u een conversatie met hem en klikt u op "Contact authenticeren" op de OTR-knop. Er verschijnt een assistent, die vraagt welke authenticatiemethode u wilt gebruiken. Volg de stappen in deze assistent.</para>
+<para
+>Als de authenticatie met succes is gedaan, dan weet u echt dat u met uw vriend aan het praten bent. Iedereen die zich voordoet als een ander zou het moeite moeten hebben om te raden wat u aan het typen bent, dus kunt u hem op heterdaad betrappen. </para>
+</sect4>
+</sect3>
+</sect2>
+<sect2 id="plugins-pipes">
+<title
+>Pipes</title>
+<para
+>Pipes geven u de mogelijkheid om inkomende of uitgaande berichten door een extern script of applicatie te sturen. Een inkomend bericht zal door de applicatie worden gestuurd voordat het uw chat-venster bereikt, terwijl uitgaande berichten door de applicatie gaan voordat ze over het internet worden verzonden. Pipes kunnen tekst ontvangen in drie vormen: <variablelist
+> <varlistentry
+> <term
+>Platte tekst inhoud</term
+> <listitem
+><para
+>De inhoud van het bericht in platte &ascii;-tekst</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>&HTML; tekst inhoud</term
+> <listitem
+><para
+>De inhoud van het bericht in &HTML;, alsof uw chat-maatje &HTML; naar u hebt verzonden, die in het chat-venster moet worden weergegeven</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>volledig &XML;-bericht</term
+> <listitem
+><para
+>Een &XML;-document dat alle karakteristieken van het bericht beschrijft, inclusief de &HTML;-inhoud.</para
+></listitem
+> </varlistentry
+> </variablelist
+> Voor de meeste doeleinden, wilt u waarschijnlijk de optie platte tekst inhoud of de &HTML;-tekstinhoud. Deze kunnen worden gebruikt met programma's zoals vertalers of samenvatters. Het format &XML; is alleen van toepassing voor gebruik met een toepassing of script dat speciaal is geschreven om met deze plug-in te werken. Als u een toepassing of script wilt schrijven dat met deze plug-in werkt, kijk dan op <link linkend="pipes"
+> voor meer gedetailleerde documentatie</link
+>. </para>
+</sect2>
+<!--FIXME missing
+preview
+privacy
+Import Privacy Plugin into svn.
+This plugin allows flexible filtering of messages by sender and/or by content.
+FEATURE: 63839
+scripting
+  -->
+<sect2 id="plugins-statistics">
+<title
+>Statistieken</title>
+<para
+>Deze plug-in gebruikt een database om gegevens over de activiteitspatronen van uw contacten te verzamelen. Hiermee kunt u bijvoorbeeld zien wanneer een contact normaal gesproken online is.</para>
+</sect2>
+<sect2 id="plugins-text-effect">
+<title
+>Teksteffect</title>
+<para
+>Met Teksteffect kunt u grappige effecten toevoegen aan uw berichten voordat u ze verzendt. U kunt bijvoorbeeld de kleur ervan wijzigen of tekst omzetten van kleine letters naar hoofdletters en andersom. Vergeet echter niet dat u deze plug-in hebt geactiveerd. We hebben diverse bugrapporten ontvangen van <guilabel
+>Teksteffect</guilabel
+>-gebruikers met een slecht geheugen!</para>
+</sect2>
+<sect2 id="plugins-translator">
+<title
+>Vertaler</title>
+<para
+>Met de plug-in Vertaler kunt u een voorkeurtaal voor elk meta-contactpersoon opgeven. Vervolgens worden de berichten die u naar deze persoon stuurt of ontvangt van die persoon laten vertaald door web-gebaseerde vertaaldiensten zoals <trademark
+>Google</trademark
+>. Stel uw eigen taal in in de dialoog <guilabel
+>Selecteren en instellen van plug-ins</guilabel
+>. Voor elk contact kunt u een eigen taal opgeven in het bijhorende contextmenu.</para>
+<para
+>Het volgende item wordt toegevoegd aan de menu's van het gespreksvenster:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>T</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Hulpmiddelen</guimenu
+> <guimenuitem
+>Vertalen</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Als de automatische vertaling uit staat, dan vertaalt dit de huidige conversatie.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="plugins-web-presence">
+<title
+>Webaanwezigheid</title>
+<para
+>Met "Webaanwezigheid" kunt u uw &im;-aanwezigheid op het web publiceren. Voer het pad in naar een &FTP;-server (bijvoorbeeld) om een klein stukje &HTML; aan dat bestand toe te voegen. Op die manier kunt u uw aanwezigheid op uw webpagina publiceren. Dankzij &kde;'s netwerktransparantie is dit eenvoudig te realiseren. Handig voor bloggers om vrienden te maken of u kunt het gebruiken voor uw &im; in een zakelijke omgeving.</para>
+<para
+>Voorbeeld: <userinput
+>sftp://gebruikersnaam@eenhost.nl/pad/naar/homes/gebruiker/im.html</userinput
+> gebruikt het protocol <acronym
+>SFTP</acronym
+> om uw aanwezigheid direct naar een webserver te uploaden.</para>
+<para
+>Lees de <ulink url="help:/kioslave/index.html"
+>handboeken van de KIO-slaves</ulink
+> voor meer tips over netwerkprotocollen.</para>
+<!--FIXME wrong url to ioslaves
+in konsole "khelpcenter khelpcenter:kioslaves" works-->
+</sect2>
+<sect2 id="plugins-contributing">
+<title
+>Een plug-in bijdragen</title>
+<para
+>&kopete; is zo ontworpen dat het vrij eenvoudig is om zelf plug-ins aan te maken die extra functies aan het programma toevoegen. Dus als u een leuk idee hebt om &kopete; nog beter te maken, <link linkend="intro-to-kopete-web"
+>lees dan deze informatie</link
+>!</para>
+</sect2>
+</sect1>
+</chapter
+><!-- plugins -->
+
+&kopete-menus;
+
+<chapter id="faq">
+<title
+>Vraag en antwoord</title>
+<qandaset>
+<qandaentry>
+<question
+><para
+>Wat betekent &kopete;? Hoe spreek ik het uit?</para
+></question>
+<answer
+><para
+>De naam &kopete; is afgeleid van het Chileense woord Copete, wat <quote
+>een drankje met je vrienden</quote
+> betekent. Duncan, de oorspronkelijke auteur, heeft een <ulink type="audio/x-vorbis+ogg" url="http://kopete.kde.org/files/kopete_en.ogg"
+>geluidsopname</ulink
+> gemaakt van de uitspraak van Kopete.</para
+></answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Als ik onder de naam van een gebruiker meer dan één messaging-dienst in mijn contactenlijst heb staan, en ik klik op de naam van die persoon, dan opent &kopete; een berichtvenster van de verkeerde &im;-dienst.</para>
+</question>
+<answer
+><para
+>U kunt de volgorde waarin &kopete; probeert om berichten te versturen wijzigen met behulp van de pijlen op/neer in de hoek rechtsonder in het configuratiescherm van het account. &kopete; begint met de accounts die bovenaan staan. Verder kijkt &kopete; naar de status van de persoon in elk &im;-systeem. Het &im;-systeem met de hoogste statuswaarde zal als eerste worden gekozen. Bijvoorbeeld, als een persoon lid is van drie &im;-systemen, waarbij hij bij twee is gemarkeerd als afwezig, en bij de derde als online, dan zal &kopete; het derde &im;-systeem als eerste gebruiken.</para
+><tip
+><para
+>Als u op het kleine procotolpictogram rechts van het menuoptie klikt, in plaats van op de naam van de persoon, dan zal &kopete; die &im;-dienst gebruiken.</para
+></tip>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Ik heb een verbinding nodig via een SOCKS-proxy, maar kan geen enkele proxy-configuratie vinden in &kopete;. Hoe kan ik &kopete; instellen zodat het programma gebruik kan maken van SOCKS?</para>
+</question>
+<answer
+><itemizedlist>
+<listitem
+><para
+><trademark
+>ICQ</trademark
+>, <trademark
+>AIM</trademark
+> en Jabber gebruiken de netwerkinfrastructure van &kde;. De details van de SOCKS proxy zijn ingesteld met de rest van &kde; in &systemsettings;, <menuchoice
+><guimenu
+>Netwerk en connectiviteit</guimenu
+><guisubmenu
+>Netwerkinstellingen</guisubmenu
+><guimenuitem
+>Proxy</guimenuitem
+></menuchoice
+>.</para
+></listitem>
+</itemizedlist>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Is het mogelijk om de pictogrammen die ik zie in &kopete; aanpassen?</para
+></question>
+<answer
+><para
+>In de configuratiedialoog van &kopete;, sectie 'Uiterlijk', kunt u kiezen uit verschillende sets met emoticons.</para>
+<para
+>Op nieuw emoticons te installeren, kijk eerst op <ulink url="https://store.kde.org/"
+>KDE Store</ulink
+>, waar veel extra sets emoticons zijn die u kunt downloaden.</para>
+
+<para
+>De emoticons zijn vrij eenvoudig te installeren. Plaats een map met de pictogrambestanden samen met een &XML;-bestand dat het omzetten van tekst naar afbeelding beschrijft in de map $KDEDIR/share/apps/kopete/pics/emoticons (of $KDEHOME, zoals /home/jangebruiker/.kde/).</para>
+
+<orderedlist>
+<listitem
+><para
+>Kopieer de uitgepakte map naar $KDEDIR/share/apps/kopete/pics/emoticons of ~/.kde/share/apps/kopete/pics/emoticons (of waar op uw systeem $KDEHOME zich bevindt)</para
+></listitem>
+<listitem
+><para
+>Selecteer menuoptie "&kopete; instellen" in menu "Instellingen" en klik op de sectie "Uiterlijk" in het linkerpaneel van de configuratiedialoog. Klik vervolgens op tabblad "Emoticons". </para
+></listitem>
+<listitem
+><para
+>Selecteer in de lijst de set emoticons die u zojuist hebt geïnstalleerd</para
+></listitem>
+<listitem
+><para
+>Nu kunt u uw nieuw-geïnstalleerde emoticons in &kopete; gebruiken</para
+></listitem>
+</orderedlist>
+<para
+>Om de protocolpictogrammen te vervangen dient u de pictogrambestanden in $KDEDIR/share/apps/kopete/icons te vervangen, of als u liever niet in systeemmappen iets wijzigt, de nieuwe pictogrammen in dezelfde map plaatsen onder $KDEHOME (dus bijv. ~/.kde/share/apps/kopete/icons). Momenteel zijn er geen vervangingen voor al deze pictogrammen beschikbaar.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+  <question
+><para
+>Ik zie geen enkele plug-in in de lijst bij de dialoog <quote
+>Plug-ins instellen</quote
+>. Wat is er aan de hand?</para>
+</question>
+<answer
+><para
+>Er zijn twee oplossingen voor dit probleem. Als u binary pakketten gebruikt, let er dan op dat u binary pakketten voor uw distributie gebruikt, en de juiste versie van uw distributie. Het mengen van distributies en versies werkt niet bij &kopete;. Als er geen binary pakketten voor uw systeem zijn, dan moet u &kopete; met behulp van broncode pakketten compileren. Als u uw &kde; heeft gecompileerd, dan moet dat bij &kopete; met dezelfde prefix als bij &kde;. Als u de broncode pakketten heeft gecompileerd, let er dan op dat u uw &kopete; in dezelfde locatie als uw &kde; is geïnstalleerd, als dat niet het geval is, dan kunt u het forceren door een prefix command voor <application
+>cmake</application
+> op te geven. Voorbeeld: <userinput
+><command
+>cmake</command
+> <parameter
+>-DCMAKE_PREFIX=/opt/kde4</parameter
+></userinput
+> (waar <userinput
+>/opt/kde4</userinput
+> uw prefix is). Om te bepalen wat de prefix van uw &kde; is, type <userinput
+><command
+>which</command
+> <parameter
+>dolphin</parameter
+></userinput
+> in een &konsole; venster. Er moet zo iets als <computeroutput
+>/opt/kde4/bin/dolphin</computeroutput
+> worden getoond, dan zal <filename class="directory"
+>/opt/kde4</filename
+> uw prefix zijn, of het zegt <computeroutput
+>/usr/bin/dolphin</computeroutput
+>, dan is uw prefix <filename class="directory"
+>/usr</filename
+>. Zorg ook ervoor dat u het commando <command
+>make install</command
+> uitvoert, en controleer dat er geen oude &kopete; installatie van eerdere versies op verschillende locaties aanwezig zijn. U moet wellicht ook handmatig <application
+>kbuildsycoca4</application
+> starten na het installeren van &kopete;. <application
+>kbuildsycoca4</application
+> werkt de plugin database bij. Het wordt opgestart als er nieuwe software met gebruik van plugins zijn geïnstalleerd, maar het is mogelijk dat <command
+>kopete</command
+> &kopete; kan opstarten voordat de update voltooid is.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Ik heb veel &lt;desktops / beeldschermen / computers&gt; en / of ik praat op hetzelfde moment met veel mensen, met als resultaat dat ik wens dat &kopete; een &lt;geluid afspeelt / pop up een bericht / mijn achtergrond wijzigt / mijn computer opnieuw opstart &gt; wanneer ik &lt; een nieuw bericht ontvang / iemand online gaat / iemand offline gaat &gt; Wanneer wordt dit toegevoegd?</para>
+</question>
+<answer
+><para
+>Het is er al (verrassing!). &kopete; is een &kde; programma en het kan daarom gebruik maken van KNotify voor al zijn notificaties. Voor diegene die er niet mee bekend zijn, KNotify is een zeer krachtig architectuur waarmee u bijna alle gewenste dingen kan laten uitvoeren wanneer een gebeurtenis plaatsvindt in een &kde; programma. U kunt een geluid laten afspelen, een passief dialoog tonen, een bericht loggen, of zelfs uw eigen aangepaste commando´s uitvoeren, zoals een shell script, zodat u alles wat uw hart wil kunt laten gebeuren. Om toegang tot deze schatkamer te krijgen, gaat u naar <menuchoice
+><guimenu
+>Instellingen</guimenu
+><guimenuitem
+>Notificaties instellen</guimenuitem
+></menuchoice
+> dialoog. Hier heeft u een overzicht van alle verschillende acties die mogelijk zijn bij bovengenoemde gebeurtenissen. Een tip, kijk bij enkele van uw andere &kde; programma´s om te zien welke gebeurtenissen zij laten opvolgen. Ik zelf vindt een passief popup bij nieuwe emails in &kmail; erg handig.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Waarom werken bestandsoverdrachten niet?</para>
+</question>
+<answer
+><para
+>Er kunnen hiervoor veel redenen zijn. WLM was het eerste protocol waarin we ondersteuning voor bestandsoverdracht hebben aangebracht. Ondersteuning voor bestandsoverdracht in Jabber en IRC was in &kopete; 0.9.0 (toegevoegd in &kde; 3.3) toegevoegd, en ICQ en AIM in &kopete; 0.50.0 (toegevoegd in &kde; 4.0.0). Maar, bestandsoverdracht zouden weleens niet kunnen werken als u achter een firewall zit - zie de sectie WLM in het hoofdstuk protocol.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Waarom dit vervelende enkel-klik gedrag? Het is erg irriterend!</para>
+</question>
+<answer
+><para
+>Kopete is een &kde; programma. We zijn geen lamme 3rd party programma dat alleen maar op KDE &quot;lijkt&quot;. We hebben ook het &quot;gedrag&quot; en &quot;integratie&quot; aspect van KDE, wat inhoud dat &kopete; de KDE's standaard &quot;Enkel-klik&quot; gedrag volgt. Als u dit wilt wijzigen dan is het vereist dat u dit in alles van KDE wijzigt. U kunt het veranderen naar een dubbelklik-stijl door het openen van &systemsettings; en te gaan naar <menuchoice
+><guimenu
+>Invoerapparaten</guimenu
+> <guimenuitem
+>Muis</guimenuitem
+></menuchoice
+> en <guilabel
+>Dubbelklik opent bestanden en mappen (eerste klik selecteert ze)</guilabel
+> te selecteren.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Maakt u het gebruikersinterface met een aanpasbaar uiterlijk?</para>
+</question>
+<answer
+><para
+>Het enige antwoord hiervoor is nee. &kopete; is bedacht om een &kde; Instant-Messenger te zijn en dit is dus ook inclusief een &kde; Look-n-Feel. Door het toevoegen van skins breken we deze regel en het hebben van zowel skin-support en skinless-support tegelijk is ook niet praktisch. Selecteer gewoon een andere style in &kde;'s &systemsettings; en wees gelukkig met de transparante menus en andere mooie eye-candy dat heden ten dage &kde; bied. U kunt echter wel kopete met een andere style laten starten. Start bijvoorbeeld <userinput
+>kopete --style=marble</userinput
+>. Elke geldige &kde; of &Qt; style zal werken.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Ik zou graag een functie in de volgende versie van Kopete.</para>
+</question>
+<answer
+><para
+>Ga dan alstublieft naar <ulink url="https://bugs.kde.org"
+>&kde; Bugzilla</ulink
+> en vul een wishlist item in voor het programma 'kopete'. Wees zo gedetailleerd mogelijk en proeflees wat u heeft naar ons heeft geschreven. Dit is GEEN garantie dat we deze functie in enige versie gaan toevoegen, maar het laat het ons overwegen.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Mijn &kopete; crashed of heeft/had onverwacht gedrag (onverwacht gedrag valt niet in de categorie van &quot;Kopete gedraagt zich niet zoals Pidgin&quot;, &etc;).</para>
+</question>
+<answer
+><para
+>Meld deze bug aan ons door naar <ulink url="https://bugs.kde.org"
+>&kde; Bugzilla</ulink
+> te gaan en een bug report voor het programma 'kopete' in te vullen. Bugs worden alleen geaccepteerd als ze in Engels zijn, als ze gedetailleerd zijn, en als het over een crash gaat dan moet een backtrace (de tekst in de tab gemarkeerd <guilabel
+>Backtrace</guilabel
+> nadat &kopete; is gecrasht) meegeleverd zijn. Als u een gebruiker bent van &kopete; git, stuur dan in plaats van een bug report in te vullen, een email naar ons op <ulink url="mailto:kopete-devel@kde.org"
+>&kopete; developers mailing list</ulink
+>.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Jabber SSL support stopte met werken, I kreeg de melding dat de QCA TLS plugin waarschijnlijk ontbreekt. Wat moet ik doen?</para>
+</question>
+<answer
+><para
+>Als de foutmelding aangeeft dat u de QCA TLS plugin mist, wat de Jabber plugin's TLS/SSL encryptie verzorgt. Installeer dan het pakket <application
+>qca-tls</application
+> (en misschien ook <application
+>qca-ossl</application
+>) of haal de plugin op bij <ulink url="http://delta.affinix.com/qca"
+>zijn homepage</ulink
+>. Merk op dat u alleen de <application
+>qca-tls</application
+> plugin hoeft te installeren, <emphasis
+>niet</emphasis
+> de QCA bibliotheek zelf. Een hercompilatie van &kopete; is niet nodig, zelfs geen herstart. In het geval dat u de plugin heeft geïnstalleerd en het werkt nog steeds niet, dan kan Qt het waarschijnlijk niet vinden. Omdat qca-tls zichzelf installeert als een &Qt; plugin, moet u zich ervan overtuigen dat het geïnstalleerd is in de plugin map van de &Qt; versie die u gebruikt om &kopete; uit te voeren.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Ik gebruik Jabber en ICQ tegelijk. Iedere keer als ik online ga met Jabber, dan is mijn verbinding met ICQ verbroken met een foutmelding over dat ik verbonden ben met een andere client. Wat is er aan de hand?</para>
+</question>
+<answer
+><para
+>Herinnert u zich noch dat experimenteerde met ICQ transporten in die andere Jabber client? U opende een <quote
+>ICQ Transport</quote
+> waarmee u kon praten met ICQ mensen via Jabber. ICQ staat het niet toe dat er meerdere verbindingen zijn met hetzelfde account, en verbreekt de verbinding met u. Zoek in uw Jabber contacten voor een contact in de vorm van <guilabel
+>123456@icq.jabber.org</guilabel
+> en verwijder deze.</para>
+</answer>
+</qandaentry>
+</qandaset>
+</chapter
+> <!-- faq -->
+
+<!--FIXME chapter id="specialised">
+<title
+>Specialized Actions</title>
+<para
+>Command line parameters</para>
+<para
+>Installing emoticon sets</para>
+</chapter--> <!-- specialised -->
+
+<chapter id="credits-and-license">
+<title
+>Dankbetuigingen en licentie</title>
+<para
+>&kopete;: copyright 2001-2007, &kopete;-ontwikkelaars </para>
+&meld.fouten;&vertaling.rinse;&vertaling.sander;&vertaling.freek;&vertaling.ronald; &underFDL; &underGPL; <sect1 id="team">
+<title
+>Het team</title>
+<sect2 id="current-team">
+<title
+>Huidige ontwikkelaarsteam</title>
+<!-- please keep in sync with the authors list on the webpage -->
+<itemizedlist>
+<listitem
+><para
+>Pali Rohár (pali.rohar at gmail com): ontwikkelaar en onderhouder</para
+></listitem>
+<listitem
+><para
+>Duncan Mac-Vicar Prett (duncan at kde org): oorspronkelijke auteur, ontwikkelaar en projectleider</para
+></listitem>
+<listitem
+><para
+>Till Gerken (till at tantalo net): ontwikkelaar, onderhoud van Jabber</para
+></listitem>
+<listitem
+><para
+>Olivier Goffart (ogoffart at tiscalinet be): hoofdontwikkelaar, onderhoud van de WLM-plug-in</para
+></listitem>
+<listitem
+><para
+>Andy Goossens (andygoossens at telenet be): ontwikkelaar</para
+></listitem>
+<listitem
+><para
+>Grzegorz Jaskiewicz (gregj at pointblue com pl): ontwikkelaar, onderhoud van Gadu-gadu-plug-in</para
+></listitem>
+<listitem
+><para
+>Jason Keirstead (jason at keirstead org): ontwikkelaar</para
+></listitem>
+<listitem
+><para
+>&Matt.Rogers; (mattr at kde org): hoofdontwikkelaar, onderhouder van AIM en ICQ plug-in</para
+></listitem>
+<listitem
+><para
+>Richard Smith (lilachaze at hotmail com): ontwikkelaar, UI-onderhouder</para
+></listitem>
+<listitem
+><para
+>&Will.Stephenson; (lists at stevello free-online co uk): ontwikkelaar, pictogrammen, plug-ins, auteur van de handleiding</para
+></listitem>
+<listitem
+><para
+>Michel Hermier (michel.hermier at wanadoo fr): IRC-plug-in-onderhouder</para
+></listitem>
+<listitem
+><para
+>Andre Duffeck (andre at duffeck de): Ontwikkelaar: ontwerper, Yahoo plug-in-onderhouder</para
+></listitem>
+<listitem
+><para
+>&Michael.Larouche; (michael.larouche at kdemail net): Ontwikkelaar, WLM, Chat Window.</para
+></listitem>
+</itemizedlist>
+</sect2>
+<sect2 id="ex-team">
+<title
+>Voorgaande ontwikkelaars (Galerij de Groten van &kopete;)</title>
+<para
+>Deze personen hebben in het verleden meegewerkt aan &kopete;. Neem geen contact met ze op voor vragen over &kopete;, aangezien ze niet langer aan dit project verbonden zijn. We zijn hun eeuwig dankbaar voor hun bijdragen. </para>
+<itemizedlist>
+<listitem
+><para
+>Christopher TenHarmsel (tenharmsel at users sourceforge net) Ontwikkelaar, Oscar-hacker</para
+></listitem>
+<listitem
+><para
+>Ryan Cumming (ryan at kde org): kernontwikkelaar</para
+></listitem>
+<listitem
+><para
+>Richard Stellingwerff (remenic at linuxfromscratch org): ontwikkelaar</para
+></listitem>
+<listitem
+><para
+>Hendrik vom Lehn (hennevl at hennevl de): ontwikkelaar</para
+></listitem>
+<listitem
+><para
+>Stefan Gehn (sgehn at gmx net): ontwikkelaar</para
+></listitem>
+<listitem
+><para
+>&Robert.Gogolok; (robertgogolock at gmx de): ontwikkelaar</para
+></listitem>
+<listitem
+><para
+>&Nick.Betcher; (nbetcher at kde org): oorspronkelijke auteur van de plug-ins voor ICQ, AIM en IRC</para
+></listitem>
+<listitem
+><para
+>Daniel Stone (dstone at kde org): oorspronkelijke auteur van de Jabber-plug-in</para
+></listitem>
+<listitem
+><para
+>James Grant (topace at lightbox org): ontwikkelaar, auteur van importplug-in</para
+></listitem>
+<listitem
+><para
+>Zack Rusin (zack at kde org): ontwikkelaar, voormalige auteur van de Gadu-gadu-plug-in</para
+></listitem>
+<listitem
+><para
+>Gav Wood (gav at kde org): auteur van de WinPopup-plug-in</para
+></listitem>
+<listitem
+><para
+>Martijn Klingens (klingens at kde org): ontwikkelaar, WLM-hacker</para
+></listitem>
+</itemizedlist>
+</sect2>
+<sect2 id="documentation">
+<title
+>Documentatie</title>
+<para
+>Documentatie copyright 2003,2004,2005 &Will.Stephenson; (lists at stevello free-online co uk), copyright 2005 &Matt.Rogers; (mattr at kde org), copyright 2005,2006 &Michael.Larouche; (michael.larouche at kdemail net). </para>
+</sect2>
+</sect1>
+</chapter
+><!-- credits-and-license -->
+
+&kopete-chatstyle;
+&kopete-pipes;
+&kopete-jabber;
+&kopete-icq;
+&kopete-emoticonspec;
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet
+-->

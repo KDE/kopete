@@ -1,0 +1,937 @@
+<!-- Kopete Handbook, Menus Chapter copyright 2003 Will Stephenson.  Licensed under the GNU Free Documentation License -->
+<chapter id="menus">
+<title
+>Entrades del menú</title>
+
+<para
+>Cada element del menú es presenta més avall. Quan hi ha una drecera de teclat que realitza una funció d'element de menú, la drecera per defecte es llista amb l'element del menú.</para>
+<sect1 id="menus-contactlist">
+<title
+>Els menús de finestra de la llista de contactes</title>
+<sect2 id="menus-contactlist-file">
+<title
+>El menú Fitxer</title>
+
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Fitxer</guimenu
+> <guisubmenu
+>Arranja l'estat</guisubmenu
+> <guimenuitem
+>En línia</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Posa en línia tots els comptes</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Fitxer</guimenu
+> <guisubmenu
+>Arranja l'estat</guisubmenu
+> <guimenuitem
+>Absent</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Arranja tots els comptes connectats a Absent</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Fitxer</guimenu
+> <guisubmenu
+>Arranja l'estat</guisubmenu
+> <guimenuitem
+>Fora de línia</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Arranja tots els comptes a fora de línia</para>
+</listitem>
+</varlistentry>
+<!--FIXME missing Set Status Invisible, Busy, Edit Messages, Edit Statuses-->
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Fitxer</guimenu
+> <guimenuitem
+>Afegeix un contacte...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Això mostra l'assistent d'afegir contacte, que us permet d'afegir un nou contacte a la vostra llista.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Fitxer</guimenu
+> <guimenuitem
+>Crea un nou grup...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Us demana el nom del nou grup i l'afegeix a la llista de contactes.</para>
+</listitem>
+</varlistentry>
+<!--FIXME missing Export Contacts-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Fitxer</guimenu
+> <guimenuitem
+>Surt</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Us desconnecta de tots els sistemes de &im;, tanca totes les finestres i surt de l'aplicació.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-contactlist-edit">
+<title
+>El menú Edita</title>
+<variablelist>
+<!--FIXME not in Edit menu
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Z</keycap
+></keycombo>
+</shortcut>
+<guimenu
+>Edit</guimenu>
+<guimenuitem
+>Undo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Reverts the last change that was made to the contact list.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>Z</keycap
+></keycombo>
+</shortcut>
+<guimenu
+>Edit</guimenu>
+<guimenuitem
+>Redo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Reverts the last change that was made to the contact list by <guimenu
+>Edit</guimenu
+><guimenuitem
+>Undo</guimenuitem
+></para>
+</listitem>
+</varlistentry>
+-->
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edita</guimenu
+> <guimenuitem
+>Envia un sol missatge...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Obre una finestra de missatge estil correu electrònic amb el contacte seleccionat, per a enviar-li un sol missatge.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edita</guimenu
+> <guimenuitem
+>Inicia un xat...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Obre una finestra de xat amb el contacte seleccionat, per a tenir-hi una conversa.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edita</guimenu
+> <guimenuitem
+>Envia un fitxer...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Si el sistema de &im; és compatible, això obre un selector de fitxers per a escollir-hi un fitxer per a enviar-lo al contacte seleccionat.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edita</guimenu
+> <guisubmenu
+>Mou a</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Activat quan està seleccionat un contacte) Escolliu un altre grup des del submenú, i el contacte es mourà a aquell grup.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edita</guimenu
+> <guisubmenu
+>Copia a</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Activat quan està seleccionat un contacte) Escolliu un altre grup des del submenú, i el contacte es copiarà a aquell grup. Els sistemes de &im; que permeten que els contactes estiguin en més d'un grup a la llista de contactes del servidor s'actualitzaran d'acord amb això.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edita</guimenu
+> <guisubmenu
+>Afegeix un contacte...</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Activat quan està seleccionat un contacte) Escolliu un altre compte des del submenú, i podreu afegir una altra manera d'enviar missatges a la persona que usa aquest compte.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edita</guimenu
+> <guimenuitem
+>Afegeix a la vostra llista de contactes...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Activat quan està seleccionat un contacte) De vegades, gent que encara no hi és a la vostra llista de contactes us enviarà missatges. En aquest cas, el &kopete; crea una entrada temporal per a ells, però per a mantenir-los a la vostra llista de contactes, useu aquesta funció.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo
+><keycap
+>Supr</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Edita</guimenu
+> <guimenuitem
+>Elimina contacte</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Activat quan està seleccionat un contacte) Elimina per complet un contacte de la llista de contactes.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo
+><keycap
+>F2</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Edita</guimenu
+> <guimenuitem
+>Reanomena</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Activat quan està seleccionat un contacte) Reanomena el contacte a la llista de contactes. Si feu això, l'entrada a la llista de contactes no canviarà si el contacte canvia el seu nom a mostrar remotament. Podeu reactivar això usant el diàleg de propietats dels contactes.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edita</guimenu
+> <guimenuitem
+>Propietats</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>El diàleg Propietats us permet escollir icones personalitzades per a l'element seleccionat, i canviar el seu nom.</para>
+<para
+>Per als contactes, podeu canviar l'entrada a la Llibreta d'Adreces del &kde; a la qual estan associats.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edita</guimenu
+> <guimenuitem
+>Elimina el grup</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Activat quan està seleccionat un grup) Elimina un grup complet de la llista de contactes. Qualsevol contacte que només fos en aquest grup es mou al nivell superior.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edita</guimenu
+> <guimenuitem
+>Reanomena el grup</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Activat quan està seleccionat un grup) Reanomena el grup.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect2>
+<sect2 id="menus-settings">
+<title
+>El menú Arranjament</title>
+<para
+>El &kopete; té un menú <guilabel
+>Arranjament</guilabel
+> predeterminat del &kde;n com es descriu en els <ulink url="help:/fundamentals/menus.html#menus-settings"
+>Fonaments del &kde;</ulink
+> amb entrades addicionals:</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Arranjaments</guimenu
+> <guimenuitem
+>Mostra els usuaris fora de línia</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Això mostra o amaga els contactes que actualment són fora de línia. Esdevindran visibles quan tornin a estar en línia.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>G</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Arranjaments</guimenu
+> <guimenuitem
+>Mostra els grups buits</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Això mostra o amaga els grups que no tenen cap membre, o on tots els membres són fora de línia i amagats (vegeu a dalt).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><!--FIXME no global Shortcuts dialog, it is the app shortcuts dialog-->
+<term>
+<menuchoice
+><guimenu
+>Arranjaments</guimenu
+> <guimenuitem
+>Configura les dreceres globals...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Mostra el diàleg estàndard de la configuració de dreceres globals del &kde;, on podeu canviar les dreceres de teclat que funcionen contínuament al &kde;.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-help">
+<title
+>El menú Ajuda</title>
+<para
+>La finestra de la llista de contactes té els elements comuns del menú <guimenu
+>Ajuda</guimenu
+> del &kde;. Per a obtenir més informació, llegiu la secció sobre <ulink url="help:/fundamentals/menus.html#menus-help"
+>El menú Ajuda</ulink
+> en els Fonaments del &kde;. </para>
+</sect2>
+</sect1
+>  <!-- menus-contactlist -->
+
+<sect1 id="menus-chatwindow">
+<title
+>Els menús de la finestra de xat</title>
+<sect2 id="menus-chatwindow-chat">
+<title
+>El menú Xat</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+>&Intro; </shortcut
+> <guimenu
+>Xat</guimenu
+> <guimenuitem
+>Envia un missatge</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Envia un missatge.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Send File missing-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>S</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Chat</guimenu
+> <guimenuitem
+>Desa</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Desa el contingut del xat a un fitxer.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>P</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Chat</guimenu
+> <guimenuitem
+>Imprimeix...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Imprimeix el xat en paper.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Xat</guimenu
+> <guisubmenu
+>Contactes</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Aquest menú llista tothom del xat. Teniu accés al mateix menú de contacte que obteniu clicant amb el botó <mousebutton
+>dret</mousebutton
+> un nom de contacte, permetent-vos de realitzar accions específiques de contacte com ara enviar-los un fitxer, veure la seva informació d'usuari o bloquejar-los.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Commands missing-->
+<!--FIXME Close All But This Tab missing-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>W</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Xat</guimenu
+> <guimenuitem
+>Tanca</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Tanca el xat actual. Si hi ha xats en altres pestanyes d'aquesta finestra, la finestra romandrà oberta.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Xat</guimenu
+> <guimenuitem
+>Surt</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Tanca tots els xats que tenen lloc en aquesta finestra.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-edit">
+<title
+>El menú Edita</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>X</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Edita</guimenu
+> <guimenuitem
+>Retalla</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>El retall de text funciona com amb la majoria d'editors: el text seleccionat s'elimina i es posa al porta-retalls. Noteu que també podeu seleccionar text i arrossegar-lo a una nova posició.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>C</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Edita</guimenu
+> <guimenuitem
+>Copia</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>La còpia de text funciona com amb la majoria d'editors: el text seleccionat es copia al porta-retalls. Noteu que també podeu seleccionar text mentre pressioneu la tecla &Ctrl; i arrossegar-lo a una nova posició per a copiar-lo.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>V</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Edita</guimenu
+> <guimenuitem
+>Enganxa</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Enganxar funciona com amb la majoria d'editors: el text seleccionat del porta-retalls s'enganxa a la posició actual del cursor.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-format">
+<title
+>El menú Format</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Format</guimenu
+> <guisubmenu
+>Afegeix emoticona</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Aquest menú conté totes les emoticones que inclou l'esquema actual d'emoticones. Podeu canviar l'esquema <link linkend="configuring-appearance-emoticons"
+>al diàleg de configuració del Kopete</link
+>.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Alignment missing-->
+<!--FIXME not in 4.11
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guimenuitem
+>Text Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Opens a color selector that modifies the text color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guimenuitem
+>Background Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Opens a color selector that modifies the background color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guisubmenu
+>Font</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para
+>This menu allows you to change the font used in the chat.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guisubmenu
+>Font Size</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para
+>This menu allows you to change the font size used in the chat.</para>
+</listitem>
+</varlistentry>
+-->
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tabs">
+<title
+>El menú Pestanyes</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Pestanyes</guimenu
+> <guisubmenu
+>Emplaçament de les pestanyes</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Aquest menú us permet canviar les pestanyes a la part superior o inferior de la vista de xat.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;&Maj;<keycap
+>B</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Pestanyes</guimenu
+> <guimenuitem
+>Separa el xat</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Separa el xat actual a la seva pròpia finestra.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Pestanyes</guimenu
+> <guisubmenu
+>Mou la pestanya a la finestra</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Podeu moure xats entre finestres usant aquest menú. Escolliu la finestra de xat a la qual s'ha de moure la pestanya des del menú.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Activate Previous Tab, Activate Next Tab,  Activate Next Active Tab missing-->
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tools">
+<title
+>El menú Eines</title>
+<para
+>Aquest menú conté els elements afegits pels connectors que hàgiu carregat. Vegeu el <link linkend="plugins"
+>capítol de connectors</link
+> per als detalls.</para>
+</sect2>
+<sect2 id="menus-chatwindow-settings">
+<title
+>El menú Arranjament</title>
+<para
+>El &kopete; té un menú <guilabel
+>Arranjament</guilabel
+> predeterminat del &kde;n com es descriu en els <ulink url="help:/fundamentals/menus.html#menus-settings"
+>Fonaments del &kde;</ulink
+> amb entrades addicionals:</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Arranjaments</guimenu
+> <guisubmenu
+>Mostra els participants</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Aquest menú controla si la llista de participants del xat apareix a l'esquerra o a la dreta de la vista de xat.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-help">
+<title
+>El menú Ajuda</title>
+<para
+>La finestra de xat té els elements comuns del menú <guimenu
+>Ajuda</guimenu
+> del &kde;. Per a obtenir més informació, llegiu la secció sobre <ulink url="help:/fundamentals/menus.html#menus-help"
+>El menú Ajuda</ulink
+> en els Fonaments del &kde;. </para>
+
+</sect2>
+<!--
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Chat</guimenu>
+<guimenuitem
+></guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+></para>
+</listitem>
+</varlistentry>
+
+-->
+</sect1
+> <!-- menus-chatwindow -->
+</chapter
+> <!-- menus -->
+<!--
+CHAT
+Send Message
+Save
+Print...
+Contacts>
+Close
+Quit
+EDIT
+Cut
+Copy
+Paste
+FORMAT
+Add Smiley>
+Text Color...
+Background Color...
+Font>
+Font Size>
+TABS
+Tab Placement>
+Detach Chat
+Move Chat to Window>
+(TOOLS
+Send Media Info)
+SETTINGS
+Show Menubar
+Toolbars>
+	Show Main Toolbar (Kopete)
+	Show Status (Kopete)
+	Show Format Toolbar (Kopete)
+Show Statusbar
+Chat Members List>
+	Place to Left of Chat Area
+	Place to Right of Chat Area
+	Show
+Configure Shortcuts...
+Configure Toolbars...
+HELP
+-->
+<!--FILE
+Connection>
+	Connect All
+	Disconnect All
+Status>
+	Set Available Globally
+	Set Away Globally
+Add Contact...
+Create New Group...
+Save ContactList
+Quit
+EDIT 
+Send Message..
+Start Chat...
+Send File...
+Move To>
+	(Group List)
+Copy To>
+	(Group List)
+Remove From Group
+(on Group)
+Remove Group
+Rename Group
+(on Contact)
+Remove Contact
+Rename Contact
+Add Contact
+Add To Contact List
+View History
+Properties
+SETTINGS
+View Menubar
+View Toolbar
+View Statusbar
+Show Offline Users
+Show Empty Groups
+Configure Shortcuts...
+Configure Global Shortcuts...
+Configure Toolbars...
+Configure...
+HELP
+Kopete Handbook...
+What's This?
+Report Bug
+About Kopete
+About KDE
+-->

@@ -1,0 +1,2515 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY Will.Stephenson "<personname
+><firstname
+>Will</firstname
+><surname
+>Stephenson</surname
+></personname
+>">
+  <!ENTITY Will.Stephenson.mail "<email
+>lists@stevello.free-online.co.uk</email
+>">
+  <!ENTITY Matt.Rogers "<personname
+><firstname
+>Matt</firstname
+><surname
+>Rogers</surname
+></personname
+>">
+  <!ENTITY Matt.Rogers.mail "<email
+>mattr@kde.org</email
+>">
+  <!ENTITY Michael.Larouche "<personname
+><firstname
+>Michaël</firstname
+><surname
+>Larouche</surname
+></personname
+>">
+  <!ENTITY Michael.Larouche.mail "<email
+>michael.larouche@kdemail.net</email
+>">
+  <!ENTITY Olivier.Goffart "<personname
+><firstname
+>Olivier</firstname
+><surname
+>Goffart</surname
+></personname
+>">
+  <!ENTITY Olivier.Goffart.mail "<email
+>ogoffart@kde.org</email
+>">
+  <!ENTITY Charles.Connell "<personname
+><firstname
+>Charles</firstname
+><surname
+>Connell</surname
+></personname
+>">
+  <!ENTITY Charles.Connell.mail "<email
+>charles@connells.org</email
+>">
+  <!ENTITY im "<acronym
+>IM</acronym
+>">
+  <!ENTITY ascii "<acronym
+>ASCII</acronym
+>">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % Catalan  "INCLUDE">
+  <!ENTITY kopete-menus SYSTEM "menus.docbook">
+  <!ENTITY kopete-chatstyle SYSTEM "chatstyle.docbook">
+  <!ENTITY kopete-pipes SYSTEM "pipes.docbook">
+  <!ENTITY kopete-jabber SYSTEM "jabber.docbook">
+  <!ENTITY kopete-icq SYSTEM "icq.docbook">
+  <!ENTITY kopete-emoticonspec SYSTEM "emoticonspec.docbook">
+]>
+<!--
+Intro (1st draft, Will)
+Getting Started (1st draft, Will)
+        Add an account
+        Go online
+        Start chatting
+Using &kopete; (1st draft, Will)
+        Contact List window
+		Layout
+			Menu
+			Toolbar
+			Contact List view
+			Status bar
+		Set your presence
+		Start a chat
+            	Organising contacts
+                	Adding contacts
+				Metacontacts
+			Grouping Contacts
+				Within Metacontacts
+			Renaming Contacts
+		Configure &kopete;
+		Quit.
+		Shortcuts
+        Chat window
+		Layout
+			Chat members list
+			Status bar (typing notifications, etc )
+			Tabbing
+		Starting group chats
+		Shortcuts
+	        File transfers
+Configuring &kopete; (1st draft, Will)
+	Global Shortcuts
+	Configure Dialog
+		Adding/Editing Accounts (
+		Behaviour
+		Appearance
+	Loading Plugins
+Plugins (Outlined, Will)
+        (Section on each plugin, use, and configuration)
+Menus (Done, Will)
+        (Short description of each menu item)
+FAQ (1st draft, Will)
+Specialized Tasks
+    (Any tricks involving _use_ of Kopete)
+	Command line flags
+Credits (1st draft, Will)
+Appendix: Obtaining and installation (1st draft, Will)
+Appendix: Chat Window Style Guide (1st draft, Michaël)
+-->
+
+<book id="kopete" lang="&language;">
+<bookinfo>
+<title
+>El manual del &kopete;</title>
+
+<authorgroup>
+
+<author
+>&Will.Stephenson; &Will.Stephenson.mail;</author>
+<author
+>&Matt.Rogers; &Matt.Rogers.mail;</author>
+<author
+>&Michael.Larouche; &Michael.Larouche.mail;</author>
+
+&traductor.Rafael.Carreras; 
+</authorgroup>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>15 de desembre de 2006</date>
+<releaseinfo
+>0.12</releaseinfo>
+
+<copyright>
+<year
+>2003, 2004, 2005, 2006, 2007</year>
+</copyright>
+
+<!-- Abstract about this handbook -->
+
+<abstract>
+<para
+>El &kopete; és el client de missatgeria instantània multiprotocol creat per la comunitat &kde;. </para>
+</abstract>
+
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>MI</keyword>
+<keyword
+>Instantània</keyword>
+<keyword
+>Missatgeria</keyword>
+<keyword
+>Jabber</keyword>
+<keyword
+>IRC</keyword>
+<keyword
+>ICQ</keyword>
+<keyword
+>AIM</keyword>
+<keyword
+>Gadu-Gadu</keyword>
+<keyword
+>GroupWise</keyword>
+<keyword
+>Novell</keyword>
+<keyword
+>WinPopup</keyword>
+<keyword
+>SMS</keyword>
+</keywordset>
+
+</bookinfo>
+
+<chapter id="introduction">
+<title
+>Introducció</title>
+
+<sect1 id="intro-to-kopete">
+<title
+>&kopete;, el client de missatgeria instantània del &kde;</title>
+<sect2 id="intro-to-kopete-next">
+<title
+>Abans de començar...</title>
+<para
+>Si no esteu familiaritzat amb la Missatgeria Instantània, si us plau, llegiu la secció <link linkend="getting-started"
+>Començant</link
+> per aprendre el que cal d'aquest meravellós món abans de continuar.</para>
+</sect2>
+<sect2 id="intro-to-kopete-about">
+<title
+>Què és el &kopete;?</title>
+<para
+>El &kopete; és el client de missatgeria instantània (&im;) del &kde;. Us permet comunicar-vos amb els vostres amics i col·legues usant diversos serveis de missatgeria instantània. Un sol programa és fàcil d'aprendre i còmode si els vostres amics o col·legues usen més d'un servei de &im;. </para>
+<para
+>El &kopete; està dissenyat per a integrar-se amb el vostre escriptori &kde;; per a fer-lo immediatament familiar. La interfície de l'usuari és neta i simple, sense galindaines que distreguin l'usuari. Al mateix temps, el &kopete; vol fer de la comunicació el focus de la &im;, eliminant les diferències entre els diferents sistemes de &im;. Una característica que incorpora el &kopete; per a això són els <link linkend="organise-contacts-metacontacts"
+>Metacontactes</link
+>, combinant les diverses maneres que hi ha de contactar algú en una sola «persona» a la vostra llista de contactes. Altres missatgers instantanis multiprotocol llisten els diferents comptes de &im; de la mateixa persona separadament, fent-ho confús per al no experimentat. El &kopete; fa la vida fàcil: un metacontacte és una persona, i els contactes són maneres de comunicar-se amb aquesta persona. Reconeixereu contactes en un metacontacte fàcilment com a petites icones representant els serveis de &im; que podeu usar per a comunicar-vos amb aquesta persona.</para>
+<para
+>El &kopete; està pensat per a tots els nivells d'usuaris. Sense arranjar-hi res, suporta un mínim conjunt de funcions per a xatejar tan fàcil com es pot. Els usuaris més avançats poden afegir funcions extres com ara estadístiques amb el <link linkend="plugins"
+>sistema de connectors</link
+> del &kopete;.</para>
+</sect2>
+<sect2 id="intro-to-kopete-web">
+<title
+>Més informació sobre el &kopete; al web</title>
+<para
+>Si us cal contactar l'equip, la llista de correu de desenvolupadors del &kopete; està allotjada a <ulink url="https://mail.kde.org/mailman/listinfo/kopete-devel"
+>https://mail.kde.org/mailman/listinfo/kopete-devel</ulink
+>.</para>
+<para
+>Si voleu ajuda en línia, hi ha un canal d'Internet Relay Chat per al &kopete; on podeu trobar l'equip discutint qüestions tècniques (bé, no sempre) o només passant-hi. Podeu usar qualsevol client d'IRC per a unir-vos al canal (incloent-hi el &kopete;), només afegiu un contacte IRC i useu <userinput
+>irc.freenode.org</userinput
+> com a servidor i <userinput
+>#kopete</userinput
+> com a nom del canal. Ens hi veiem!</para>
+</sect2>
+</sect1>
+<sect1 id="intro-to-instant-messaging">
+<title
+>Introducció a la Missatgeria Instantània</title>
+<para
+>Què és la Missatgeria Instantània (&im;)? La &im; és una manera de comunicar-se instantàniament amb els vostres amics per Internet. Això no sona massa diferent del correu electrònic. Heu notat mai com d'incòmode és mantenir una breu conversa via correu electrònic? Heu de respondre cada missatge, llavors trobar el lloc adequat del missatge per a escriure-hi alguna cosa nova i llavors enviar-lo. Aleshores, heu d'esperar que arribi el següent missatge! La &im; us deixa tenir una conversa de manera gairebé tan natural com per telèfon o cara a cara, escrivint missatges en una finestra compartida entre vós i les pantalles dels vostres amics.</para>
+<para
+>Una altra diferència entre la &im; i el correu electrònic és que amb la &im; podeu veure la presència dels vostres amics, és a dir, si són en línia al mateix temps que vosaltres. Això us permet enviar missatges instantàniament de debò, en comptes d'enviar un correu electrònic i haver d'esperar que el vostre amic comprovi la seva bústia de correu. Un missatge de &im; salta a la pantalla de l'altra persona tan bon punt l'envieu. Naturalment, si no voleu que us interrompin, podeu canviar la vostra presència de manera que els altres no us molestin.</para>
+<para
+>Hi ha un munt d'altres característiques divertides i útils de &im; que podeu explorar amb el &kopete;, com els grups de xats, transferències de fitxers i emoticones que reflecteixen el vostre estat d'ànim. Seguiu llegint per a aprendre'n més!</para>
+</sect1>
+</chapter>
+
+<chapter id="getting-started">
+<title
+>Començant</title>
+<para
+>Per a usar el &kopete;, heu d'arranjar un o més comptes per als serveis de missatgeria instantània que voleu usar.</para>
+<para
+>Probablement ja heu escollit un servei de missatgeria, sigui perquè ja useu &im; o perquè heu de fer servir el mateix servei que els vostres amics. Si no encaixeu en cap d'aquestes dues categories, si us plau, considereu usar un servei de missatgeria basat en estàndards oberts, perquè aquests estan dissenyats per a usar-se amb Programari Lliure. Altres serveis de missatgeria són propensos a canviar la tecnologia subjacent sense que els detalls estiguin disponibles lliurement, fent que sigui més dur per als desenvolupadors de Programari Lliure.</para>
+<para
+>Els serveis de missatgeria a què el &kopete; dona suport i que estan basats en estàndards oberts són el Jabber i l'IRC.</para>
+<para
+>La següent secció assumeix que ja esteu registrat en algun servei de &im;. Si no ho esteu, us podeu registrar amb Gadu-Gadu i Jabber des del &kopete;; per a altres serveis, us haureu de registrar usant els respectius llocs web abans de crear un compte al &kopete;.</para>
+<sect1 id="creating-accounts">
+<title
+>Creant comptes</title>
+<para
+>Per a crear un compte, useu <menuchoice
+><guimenu
+>Arranjaments</guimenu
+> <guimenuitem
+>Configura...</guimenuitem
+> </menuchoice
+> per a mostrar la finestra Configura.</para>
+<para
+>La finestra Configura és la manera principal d'arranjar i personalitzar el &kopete;. A l'esquerra, una columna d'icones controlen quin aspecte del &kopete; s'està configurant. Cliqueu la icona <guiicon
+>Comptes</guiicon
+>. La subfinestra principal canviarà per a mostrar la subfinestra de gestió de comptes. Aquesta està ara mateix buida, però aviat llistarà els vostres comptes de &im;. Cliqueu <guibutton
+>Afegeix un compte</guibutton
+> per a mostrar l'<interface
+>assistent de Comptes</interface
+>.</para>
+<para
+>L'<interface
+>Assistent de Comptes</interface
+> us ajuda a crear un compte &im;. A la primera pàgina, se us demana que seleccioneu el servei de missatgeria que voldríeu usar. Cliqueu un dels serveis mostrats i llavors cliqueu <guibutton
+>Següent</guibutton
+>. A la següent pàgina, heu d'introduir els detalls de registre per a aquest servei de missatgeria instantània.</para>
+<para
+>La majoria de serveis només us demanen que introduïu un nom d'usuari o número d'identificació únic (<acronym
+>UIN</acronym
+>) i una contrasenya. Els serveis de finalitat especial Winpopup i <acronym
+>SMS</acronym
+> treballen lleugerament diferent, així que si us plau, mireu les seves seccions específiques. Hi ha un parell d'altres opcions que apliquen a la majoria de serveis que hauríeu de mirar a:</para>
+<variablelist>
+<varlistentry
+><term
+>Recorda la contrasenya</term
+><listitem
+><para
+>Quan està marcat, el &kopete; us desarà la contrasenya, de manera que no l'haureu d'introduir cada cop que us connecteu al servei de &im;. Si sou conscient amb la seguretat o voleu limitar l'accés al compte de &im;, podeu deixar-lo sense marcar.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Connecta a l'inici</term
+><listitem
+><para
+>Quan està marcat, el &kopete; intentarà connectar-se al servei de &im; tal com s'inicia. Si useu una <acronym
+>LAN</acronym
+>, <acronym
+>DSL</acronym
+> o altra connexió «sempre engegada», això és apropiat; els usuaris de mòdems de trucada no l'haurien de marcar i connectar-hi manualment quan hàgiu trucat.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Un cop hàgiu introduït els vostres detalls de &im;, podeu procedir a la pàgina <guilabel
+>Finalitzat!</guilabel
+> i llavors descartar l'assistent i la finestra Configura.</para>
+</sect1
+><!-- creating-accounts -->
+<sect1 id="go-online">
+<title
+>Poseu-vos en línia i comenceu a xatejar!</title>
+<para
+>Ara notareu que ha aparegut una icona que representa el compte a la barra d'estat a la part baixa de la finestra <interface
+>Llista de contactes</interface
+> del &kopete;. Aquest representa la vostra presència actual per a aquest compte. Si hi cliqueu amb el botó <mousebutton
+>Dret</mousebutton
+>, podreu posar-vos en línia des del menú que hi apareix. La icona de la barra d'estat s'animarà mentre el &kopete; es connecta al servei &im;.</para>
+<para
+>Un cop sou en línia, si heu fet servir aquest servei &im; abans, s'agafaran els vostres contactes des del servidor i es mostraran a la <interface
+>Llista de Contacte</interface
+>. Per a començar un xat amb un contacte, cliqueu el seu nom i apareixerà una finestra de xat. A la part superior de la finestra és on apareix la conversa. Per a dir alguna cosa, teclegeu a la part inferior de la finestra i cliqueu a <guibutton
+>Envia</guibutton
+>.</para>
+<para
+>Si acabeu de crear un nou compte, no tindreu cap contacte. Mireu a <link linkend="organise-contacts-adding"
+>Afegint Contactes</link
+> per als detalls de com afegir contactes.</para>
+<tip
+><para
+>La drecera per a <guibutton
+>Envia</guibutton
+> s'arranja com a <keycombo action="simul"
+>&Ctrl;&Intro;</keycombo
+> per defecte; podeu canviar-lo a la finestra de xat usant <menuchoice
+><guimenu
+>Arranjaments</guimenu
+><guimenuitem
+>Configura les dreceres...</guimenuitem
+></menuchoice
+>.</para
+></tip>
+</sect1
+><!-- go-online -->
+</chapter>
+
+<chapter id="using-kopete">
+<title
+>Usant el &kopete;</title>
+<para
+>Aquest capítol dona una vista general de les característiques bàsiques del &kopete;. Mirarem primer la llista de contactes, on es mostren els vostres contactes, i llavors a la finestra de xat, on porteu a termes les converses.</para>
+<sect1 id="contact-list">
+<title
+>La Llista de Contactes</title>
+<para
+>La <interface
+>Llista de Contactes</interface
+> apareix quan inicieu el &kopete;. És la finestra principal on podeu arranjar la vostra presència, iniciar un xat, organitzar els vostres contactes, configurar el &kopete; i sortir.</para>
+<sect2 id="contact-list-layout">
+<title
+>Disposició de la finestra de la Llista de Contactes</title>
+<sect3 id="contact-list-layout-menu"
+><title
+>Menú</title
+><para
+>Normalment trobareu la barra de menús a la part superior de la llista de contactes. Si no hi és, la deveu haver tret; la podeu reactivar amb <keycombo action="simul"
+>&Ctrl;<keycap
+>M</keycap
+></keycombo
+>. Els detalls de cada element del menú es pot trobar al capítol <link linkend="menus"
+> de l'estructura del menú</link
+>.</para>
+</sect3>
+<sect3 id="contact-list-layout-toolbar"
+><title
+>Barra d'eines</title
+><para
+>La barra d'eines conté les accions més usades del &kopete;. Podeu personalitzar-la amb <menuchoice
+><guimenu
+>Arranjaments</guimenu
+> <guimenuitem
+>Configura la barra d'eines...</guimenuitem
+></menuchoice
+>. Noteu els botons <guibutton
+>Mostra els usuaris fora de línia</guibutton
+> i <guibutton
+>Mostra els grups buits</guibutton
+>. Amb aquests, podeu amagar contactes i grups que són fora de línia.</para>
+	<para
+>El &kopete; fa encara més fàcil arranjar un missatge d'estat per a fer saber als vostres contactes de quin humor esteu o perquè esteu ocupat en el moment actual. Cliqueu a <guibutton
+>Arranja el missatge d'estat</guibutton
+> i comenceu a teclejar un missatge nou o escolliu-ne un que hàgiu emprat en els missatges anteriors.</para>
+	<para
+>La <guilabel
+>Barra d'eines de cerca ràpida</guilabel
+> filtra ràpidament la llista de contactes, teclejant unes poques lletres d'un nom de contacte.</para>
+</sect3>
+<sect3 id="contact-list-layout-contactlist"
+><title
+>Llista de contactes</title
+><para
+>La <interface
+>Llista de contactes</interface
+> agafa la part principal de la finestra. Tots els vostres contactes hi estan llistats als grups que hàgiu escollit per a ells. Podeu obrir o tancar grups clicant el símbol de suma adjacent al grup. Podeu revertir l'ordre en què estan ordenats els grups clicant l'etiqueta <guilabel
+>Contactes</guilabel
+> a la part superior de la llista.</para>
+<para
+>El menú contextual a la <interface
+>Llista de contactes</interface
+> canvia depenent de l'element sota el ratolí. Els <link linkend="organise-contacts-grouping"
+>Grups</link
+>, els <link linkend="organise-contacts-metacontacts"
+>Metacontactes</link
+> i els contactes específics de &im; tenen les seves pròpies opcions. A les àrees buides de la <interface
+>Llista de contactes</interface
+>, el menú contextual us permet d'afegir-hi contactes o grups, o canviar les opcions de visualització per a la llista.</para>
+</sect3>
+<sect3 id="contact-list-layout-statusbar"
+><title
+>Barra d'estat</title
+><para
+>La barra d'estat mostra una icona per a cada compte de &im; que hàgiu creat. Les icones representen la presència actual de cada compte, que es pot canviar clicant amb el botó <mousebutton
+>dret</mousebutton
+> a la icona del compte. </para>
+	<para
+>El &kopete; també mostra el missatge d'estat actual a la <guilabel
+>Barra d'estat
+></guilabel
+>. Clicant a la icona de nota de la cantonada, també podeu canviar o netejar el missatge d'estat.</para>
+</sect3>
+</sect2>
+<sect2 id="contact-list-setting-presence">
+<title
+>Arranjant la vostra presència</title>
+<para
+>Us hem presentat l'arranjament de presència <link linkend="go-online"
+>al capítol anterior</link
+>. La «Presència» determina com sou de visible a la xarxa de &im;. Per a usar la xarxa, us hi heu de connectar, de manera que podeu enviar i rebre missatges i veure la presència d'altri. Un cop hi esteu connectat, la majoria de sistemes de &im; us permeten indicar què feu i si voleu xatejar arranjant diversos tipus de presència com ara <emphasis
+>Absent</emphasis
+> o <emphasis
+>Lliure per a xatejar</emphasis
+>. Els diferents arranjaments de presència són particulars de cada sistema d'absència; però el &kopete; us permet algun control sobre tots els vostres sistemes de &im; alhora arranjant-los a <emphasis
+>Absent</emphasis
+> o <emphasis
+>Disponible</emphasis
+> al mateix temps.</para>
+<para
+>Arrangeu la vostra presència per a comptes individuals de &im; clicant amb el botó <mousebutton
+>dret</mousebutton
+> a la icona del compte a la barra d'<interface
+>estat</interface
+> a la part inferior de la <interface
+>Llista de contactes</interface
+>. El menú contextual per a cada compte us permet escollir els arranjaments possibles per a cada sistema de &im;.</para>
+<para
+>Per a canviar la presència de tots els vostres comptes alhora, cliqueu a <guibutton
+>Estat</guibutton
+>, o useu el menú <menuchoice
+><guimenu
+>Fitxer</guimenu
+> <guimenuitem
+>Estat</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="contact-list-start-chat">
+<title
+>Iniciar un xat des de la Llista de contactes</title>
+<para
+>Per a iniciar un xat des de la <interface
+>Llista de contactes</interface
+>, simplement cliqueu a un contacte. Apareixerà una <link linkend="chat-window"
+>Finestra de xat</link
+>.</para>
+<para
+>També podeu clicar amb el botó <mousebutton
+>dret</mousebutton
+> a un contacte i seleccionar <menuchoice
+><guimenuitem
+>Enviant un missatge</guimenuitem
+></menuchoice
+> o <menuchoice
+><guimenuitem
+>Inicia un xat</guimenuitem
+></menuchoice
+>. <menuchoice
+><guimenuitem
+>Envia el missatge</guimenuitem
+></menuchoice
+> funciona de manera que envia un únic missatge sense obrir la <interface
+>Finestra de xat</interface
+>, usant un diàleg simple. Useu-lo per a missatges de «disparar-i-oblidar».</para>
+</sect2>
+<sect2 id="contact-list-send-file">
+	<title
+>Enviar un fitxer</title>
+	<para
+>Podeu enviar fitxers des de la <interface
+>Llista de contactes</interface
+>, usant el menú contextual a la persona a qui voleu enviar-li. Si el &kopete; té suport per a la transferència de fitxers del sistema de &im;, hi haurà un element <menuchoice
+><guimenuitem
+>Envia el fitxer...</guimenuitem
+></menuchoice
+>. Alternativament, podeu arrossegar un fitxer des d'on sigui del &kde; al seu nom per tal d'iniciar la transferència de fitxers.</para>
+</sect2>
+<sect2 id="organise-contacts">
+<title
+>Organitzant els contactes</title>
+<sect3 id="organise-contacts-metacontacts">
+<title
+>Unes poques paraules sobre els metacontactes</title>
+<para
+>Un dels principis darrere del &kopete; és que ofereix una manera estandarditzada d'usar sistemes de &im;. S'aparten les diferències entre sistemes de &im; fent més fàcil la comunicació. Seguim aquest principi en la manera en què s'organitzen els contactes. Quan useu el &kopete;, hi trobeu els contactes per nom; el sistema de &im; utilitzat a la pràctica és menys important. Quan hi ha qui té més d'un compte de &im;, el &kopete; usa el primer compte de la persona.</para>
+<para
+>Per a donar suport a això, el &kopete; introdueix els «Metacontactes», que representa la persona amb qui voleu xatejar. Un metacontacte conté totes les diferents identificacions de &im; que tingui, fent més fàcil de veure d'un cop d'ull l'emoticona si està disponible, sense tenir en compte quin sistema de &im; està usant en aquest moment.</para>
+</sect3>
+<sect3 id="organise-contacts-grouping">
+<title
+>Unes poques paraules sobre l'agrupament de contactes</title>
+<para
+>El &kopete; us permet crear grups per a ordenar els vostres contactes. Un contacte pot ser en més d'un grup. Quan és possible, els agrupaments es desen a les llistes de contactes del costat del servidor, de manera que si useu altres programes de &im; els agrupaments es mantenen sincronitzats. En canvi, si canvieu grups amb un altre programa de &im;, el &kopete; no pot moure un metacontacte automàticament, és cosa vostra si ho voleu resoldre a mà.</para>
+<para
+>Per a canviar el grup on apareix un metacontacte, podeu usar el seu menú contextual per a moure'l, o copiar-lo a un nou grup, o eliminar-lo d'un grup. També podeu usar arrossegar i deixar anar aquí, simplement arrossegueu el metacontacte a un altre grup.</para>
+</sect3
+><sect3 id="organise-contacts-adding">
+<title
+>Afegint contactes</title>
+<para
+>Per a afegir un contacte, seleccioneu <menuchoice
+><guimenu
+>Fitxer</guimenu
+><guimenuitem
+>Afegeix un contacte</guimenuitem
+></menuchoice
+> o cliqueu el botó <guibutton
+>Afegeix</guibutton
+> a la barra d'eines. Això us obrirà l'assistent d'afegiment de contactes.</para>
+<para
+>L'Assistent d'afegiment de contactes crea un nou metacontacte usant un o més sistemes de &im;, portant-vos per les següents pàgines.</para>
+
+<orderedlist>
+<listitem
+><para
+>Pàgina de benvinguda. Aquí podeu escollir si voleu usar la Llibreta d'adreces del &kde; per a aquest contacte. Desar la informació de &im; a la Llibreta d'adreces del &kde; permetrà a altres programes de &im; del &kde; compartir informació del contacte amb el &kopete; i futures aplicacions del &kde; poden usar el &kopete; per a enviar informació via &im;. Si preferiu mantenir els vostres contactes de &im; separadament, buideu la casella de selecció.</para
+></listitem>
+<listitem
+><para
+>Escull l'entrada de la Llibreta d'adreces del &kde;. Escollint una entrada de la Llibreta d'adreces del vostre &kde;, podeu usar el seu nom al &kopete;. També podeu crear aquí una entrada nova. Aquesta pàgina no mostra si escolliu no usar la Llibreta d'adreces del &kde;.</para
+></listitem>
+<listitem
+><para
+>Selecciona Mostra nom i grup. Aquí podeu introduir un Nom a mostrar (el nom usat per a aquesta persona dins del &kopete;), i escolliu els <link linkend="organise-contacts-grouping"
+>grups</link
+> dels quals són membres.</para
+></listitem>
+<listitem
+><para
+>Selecciona els Comptes de &im;. Aquí podeu escollir quins comptes voleu usar per a xatejar amb el nou contacte. Si només teniu un compte de &im;, no veureu aquesta pantalla.</para
+></listitem>
+<listitem
+><para
+>Pàgines d'afegiment de contactes amb compte específic. Per a cada contacte, obtindreu una pàgina on podeu introduir l'<acronym
+>UIN</acronym
+>, nom d'amic o adreça de correu electrònic, depenent del sistema de &im; en ús.</para
+></listitem>
+<listitem
+><para
+>Pantalla de finalització. Tot fet. Excepte si el sistema de &im; requereix autorització (com l'<trademark
+>ICQ</trademark
+>) per a afegir un contacte a la vostra llista. En aquest cas, se us demanarà quan es tanqui l'assistent.</para
+></listitem>
+</orderedlist>
+
+<para
+>Podeu afegir contactes a un metacontacte ja existent usant el seu menú contextual.</para>
+</sect3>
+
+<sect3 id="organise-contacts-renaming">
+<title
+>Reanomenant els contactes</title>
+<para
+>Podeu reanomenar un contacte usant <menuchoice
+><guimenu
+>Edita</guimenu
+><guimenuitem
+>Reanomena el contacte</guimenuitem
+></menuchoice
+> o amb el mateix element al menú contextual del metacontacte.</para>
+<para
+>Alguns sistemes de &im; us permeten arranjar un «Nom a mostrar» que sigui diferent del vostre nom d'usuari, com ara «L'Alícia adora la criptografia!». Si canvieu un nom de contacte manualment, sobreescriurà el seu nom a mostrar. Per a tornar enrere, obriu el diàleg Propietats per a aquell contacte i marqueu la casella de selecció <guilabel
+>Useu el nom donat pel servidor</guilabel
+>.</para>
+</sect3>
+<sect3 id="organise-contacts-removing">
+<title
+>Eliminant contactes</title>
+<para
+>Si ja no voleu un contacte de la llista de contactes, podeu eliminar un Metacontacte i tots els contactes que hi pengen amb <menuchoice
+><guimenu
+>Menú contextual del metacontacte</guimenu
+><guimenuitem
+>Elimina el contacte</guimenuitem
+></menuchoice
+>.</para>
+</sect3>
+<sect3 id="organise-contacts-moving-contact">
+<title
+>Movent contactes entre metacontactes</title>
+<para
+>Podeu canviar el metacontacte a qui pertany el contacte. A la pràctica, només ho heu de fer servir quan acabeu d'afegir molts comptes al &kopete;, i sabeu que HotDog76 i mikejones@hotmail.com són la mateixa persona.</para>
+<para
+>Hi ha dues maneres de fer-ho:</para>
+<variablelist>
+<varlistentry
+><term
+>Arrossegar i deixar anar</term
+><listitem
+><para
+>La icona de contacte de la dreta del nom del metacontacte es pot arrossegar d'un metacontacte a un altre.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Menú contextual del contacte</term
+><listitem
+><para
+>El menú contextual per als contactes (cliqueu amb el botó <mousebutton
+>dret</mousebutton
+> a la icona del contacte) us permet escollir el metacontacte nou des d'un diàleg.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Si un moviment deixa buit un metacontacte (sense contactes), se us demanarà si voleu suprimir aquest contacte.</para>
+</sect3>
+<sect3 id="organise-contacts-removing-contacts-">
+<title
+>Eliminant contactes dels metacontactes</title>
+<para
+>Per a eliminar un contacte des d'un Metacontacte, escolliu <menuchoice
+><guimenu
+>Menú contextual de contactes</guimenu
+><guimenuitem
+>Suprimeix el contacte...</guimenuitem
+></menuchoice
+>.</para>
+</sect3>
+</sect2>
+<sect2 id="contact-list-configure">
+<title
+>Configura el &kopete;</title>
+<para
+>Podeu configurar el &kopete; usant <menuchoice
+><guimenu
+>Arranjaments</guimenu
+><guimenuitem
+>Configura...</guimenuitem
+></menuchoice
+>. Mireu el <link linkend="configuring"
+>següent capítol</link
+> per als detalls.</para>
+</sect2>
+<sect2 id="contact-list-quit">
+<title
+>Sortint del &kopete;</title>
+<para
+>Per a sortir del &kopete;, heu d'usar <menuchoice
+><guimenu
+>Fitxer</guimenu
+><guimenuitem
+>Surt</guimenuitem
+></menuchoice
+>, <keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+>, o el menú contextual de la icona del &kopete; de la safata del sistema. Si només voleu tancar la finestra de la <interface
+>Llista de contactes</interface
+>, el &kopete; seguirà funcionant a la safata del sistema del &kde;.</para>
+</sect2>
+<sect2 id="contact-list-shortcuts">
+<title
+>Dreceres de teclat</title>
+<para
+>Les següents dreceres de teclat estan implementades a la finestra de la <interface
+>Llista de contactes</interface
+>:</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Drecera de teclat</entry>
+<entry
+>Acció</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+><keycap
+>Fletxa amunt</keycap
+></entry>
+<entry
+>Seleccioneu l'element anterior de la llista de contactes.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Fletxa avall</keycap
+></entry>
+<entry
+>Selecciona el següent element de la llista de contactes.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Fletxa esquerra</keycap
+></entry>
+<entry
+>Tanca el grup actual.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Fletxa dreta</keycap
+></entry>
+<entry
+>Obre el grup actual.</entry>
+</row>
+<row>
+<entry
+>&Intro;</entry>
+<entry
+>Inicia un xat amb el contacte seleccionat.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>M</keycap
+></keycombo
+></entry>
+<entry
+>Mostra/Amaga la barra de menús.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>U</keycap
+></keycombo
+></entry>
+<entry
+>Mostra/Amaga els usuaris fora de línia.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>G</keycap
+></keycombo
+></entry>
+<entry
+>Mostra/Amaga els grups buits.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect2>
+</sect1
+><!-- contact-list -->
+
+<sect1 id="chat-window">
+<title
+>La finestra de xat</title>
+<sect2 id="chat-window-layout"
+><title
+>Disposició de la finestra de xat</title>
+<sect3 id="chat-window-layout-chatview"
+><title
+>La vista de xat</title
+><para
+>La vista de xat agafa normalment la major part de la finestra del xat i és on té lloc la conversa amb els vostres contactes. Els missatges apareixen en l'ordre en què han arribat, amb els primers missatges a la part superior de la vista.</para>
+<para
+>Podeu <link linkend="configuring-appearance"
+>controlar</link
+> l'aparença de la <interface
+>Vista de xat</interface
+>, fent-la aparèixer com altres clients de &im; o crear una imatge completament individualitzada.</para>
+</sect3>
+<sect3 id="chat-window-layout-memberslist"
+><title
+>Llista de membres de xat</title>
+<para
+>Com que alguns sistemes de &im; us permet de xatejar en un grup, és útil per a veure qui està xatejant en el moment. La llista de membres del xat que apareix a l'esquerra o a la dreta de la vista del xat. Podeu canviar això usant <menuchoice
+><guimenu
+>Arranjaments</guimenu
+><guisubmenu
+>Llista de membres de xat</guisubmenu
+></menuchoice
+>. El menú contextual del contacte està disponible a la llista de membres del xat.</para
+></sect3>
+<sect3 id="chat-window-layout-input-area"
+><title
+>Àrea d'entrada</title
+><para
+>L'àrea d'entrada és a sota de la vista de xat. Aquí és on teclegeu els missatges abans d'enviar-los. Podeu canviar el tipus de lletra i el colo del missatge usant les eines habituals de la barra d'eines. Si el sistema de &im; ho admet, els vostres missatges apareixeran en color quan els vostres contactes els llegeixin.</para
+><para
+>Per defecte, la drecera del teclat per a enviar missatges és &Intro;.</para
+></sect3>
+<sect3 id="chat-window-layout-statusbar"
+><title
+>Barra d'estat</title
+><para
+>La barra d'estat conté missatges temporals, com ara la notificació que algú altre està escrivint, així com el botó <guibutton
+>Envia</guibutton
+>.</para
+></sect3>
+<sect3 id="chat-window-layout-tabbing"
+><title
+>Usant les pestanyes</title
+><para
+>El &kopete; us permet portar a terme diverses converses en una finestra, posant cada una d'elles a la seva pestanya dins de la finestra. Els títols de les pestanyes canvien de color per a mostrar quan s'ha rebut un missatge nou:</para>
+<variablelist>
+<varlistentry
+><term
+>Vermell</term
+><listitem
+><para
+>Algú ha enviat un missatge.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Verd</term
+><listitem
+><para
+>Algú està escrivint un missatge.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Blau</term
+><listitem
+><para
+>Algú ha escrit un missatge amb el vostre sobrenom.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Hi ha moltes maneres diferents de controlar els grups. Per a configurar aquest comportament, aneu a la pestanya de xat de la pàgina de comportament del diàleg Configura del &kopete;. També podeu moure xats entre les finestres usant el menú <menuchoice
+><guimenu
+>Pestanyes</guimenu
+></menuchoice
+>, i controlar l'emplaçament de les pestanyes a la finestra.</para
+></sect3>
+</sect2>
+<sect2 id="chat-window-group">
+<title
+>Xats de grup al &kopete;</title>
+<para
+>Podeu usar el &kopete; per a xatejar amb algú, o en un grup, quan el sistema de &im; ho permeti.</para>
+<para
+>Per a convidar altres a un xat, arrossegueu-los de la llista de contactes a la finestra de xat, o useu <menuchoice
+><guimenu
+>Xat</guimenu
+><guisubmenu
+>Convida</guisubmenu
+><guimenuitem
+>&lt;nom de contacte&gt;</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="chat-window-file-xfer">
+<title
+>Transferència de fitxers</title>
+<para
+>Alguns sistemes de &im; us permet enviar i rebre fitxers. Podeu accedir a aquesta funció des del menú contextual dels contactes. Si ja esteu xatejant, i voleu enviar un fitxer, simplement arrossegueu-lo des de qualsevol part del &kde; a la finestra de xat, o seleccioneu el menú <menuchoice
+><guimenu
+>Xat</guimenu
+><guimenuitem
+>Envia un fitxer</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="chat-window-shortcuts">
+<title
+>Dreceres de teclat</title>
+<para
+>Les següents dreceres de teclat estan implementades a la finestra de xat:</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Drecera de teclat</entry>
+<entry
+>Acció</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+>&Intro;</entry>
+<entry
+>Envia el missatge de l'<interface
+>Àrea d'introducció</interface
+>.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>P</keycap
+></keycombo
+></entry>
+<entry
+>Imprimeix els continguts de la vista de xat.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>S</keycap
+></keycombo
+></entry>
+<entry
+>Desa els continguts de la finestra de xat.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>W</keycap
+></keycombo
+></entry>
+<entry
+>Tanca la vista de xat actual. La finestra de xat es tancarà tret que hi hagi més d'una pestanya a la finestra.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>,</keycap
+></keycombo
+></entry>
+<entry
+>Canvia a la pestanya anterior.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>.</keycap
+></keycombo
+></entry>
+<entry
+>Canvia a la següent pestanya.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Maj;<keycap
+>B</keycap
+></keycombo
+></entry>
+<entry
+>Separa un xat d'una pestanya a una finestra separada.</entry>
+</row>
+<row>
+<entry
+>&Tab;</entry>
+<entry
+>Completa un sobrenom parcialment teclejat que pertanyi a algú amb qui xategeu.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect2>
+
+</sect1
+><!-- chat-window -->
+</chapter
+><!-- Using-kopete -->
+
+<chapter id="configuring">
+<title
+>Configurant el &kopete;</title>
+<para
+>Per a configurar el &kopete;, mireu el menú <menuchoice
+><guimenu
+>Arranjaments</guimenu
+></menuchoice
+>. </para>
+<sect1 id="configuring-global-shortcuts">
+<title
+>Dreceres de teclat globals</title>
+<para
+>El &kopete; defineix algunes dreceres de teclat que són vàlides en qualsevol aplicació del &kde;.</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Dreceres de teclat globals</entry>
+<entry
+>Acció</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Maj;<keycap
+>I</keycap
+></keycombo
+></entry>
+<entry
+>Llegeix el missatge. Això és útil si teniu amagada la finestra de la <interface
+>Llista de contactes</interface
+> i la icona de la safata del sistema està animada per a avisar-vos que teniu un missatge nou.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Maj;<keycap
+>C</keycap
+></keycombo
+></entry>
+<entry
+>Mostra/Amaga (acobla) la finestra de la <interface
+>Llista de contactes</interface
+>. <emphasis
+>Avís:</emphasis
+> Si teniu inhabilitada la icona del &kopete; de la safata del sistema o no teniu safata del sistema, això pot fer que s'esvaeixi la <interface
+>Llista de contactes</interface
+>. L'única manera de restaurar-la és repetir aquesta drecera.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect1>
+
+<sect1 id="configure-dialog">
+<title
+>El diàleg Configura el &kopete;</title>
+<sect2 id="configuring-accounts">
+<title
+>Afegint i editant els comptes</title>
+<para
+>Us hem mostrat breument com afegir un compte a <link linkend="getting-started"
+>Començant</link
+>. Per a canviar després els arranjaments d'un compte, obriu el diàleg <guilabel
+>Configura el &kopete;</guilabel
+>, amb <menuchoice
+><guimenu
+>Arranjaments</guimenu
+><guimenuitem
+>Configura...</guimenuitem
+></menuchoice
+>. Com a l'&systemsettings; del &kde;, la configuració està separada en seccions. Les icones de l'esquerra del diàleg canvien les seccions a arranjar.</para>
+<para
+>A la pàgina de comptes, podeu fer el següent amb els comptes: <link linkend="creating-accounts"
+><guibutton
+>Afegeix</guibutton
+></link
+>, <guibutton
+>Elimina</guibutton
+> o <guibutton
+>Modifica</guibutton
+>. Editar els comptes és similar a afegir-ne, però noteu que no podeu canviar la UIN, el nom d'amic o qualsevol identificador de compte que usi el vostre sistema de &im;. Això és intrínsec al compte. Si voleu canviar això, haureu d'afegir un altre compte amb el nou identificador del compte i (opcionalment) eliminar el compte antic.</para>
+<para
+>Podeu distingir entre múltiples comptes que usen el mateix sistema de &im; donant un color personalitzat a cada entrada de la barra d'estat del compte i icona de contacte. Per a fer-ho, seleccioneu el compte i cliqueu el selector de color de la part esquerra de la pàgina. </para>
+<para
+>Podeu controlar la prioritat dels comptes usant les icones <guiicon
+>Amunt</guiicon
+> i <guiicon
+>Avall</guiicon
+> d'aquesta pàgina. Si teniu més d'una manera d'enviar un missatge a un contacte, això determina el sistema de &im; que usarà el &kopete; per a comunicar-se amb ells.</para>
+</sect2>
+<sect2 id="global-identity">
+<title
+>Identitat global</title>
+<para
+>La identitat global del &kopete; us permet d'arranjar el vostre sobrenom i la vostra foto un sol cop per a tots els vostres comptes de &im;. Podeu llegir aquests detalls a l'entrada de la llibreta d'adreces del &kde;, des d'un sol dels vostres contactes, o afegir un nou sobrenom o foto. Si teniu una excitant doble vida, podeu crear múltiples identitats i canviar entre elles a la secció <guilabel
+>Identitat</guilabel
+>.</para>
+</sect2>
+<sect2 id="configuring-behavior">
+<title
+>Comportament</title>
+<para
+>El comportament cobreix la manera en què el &kopete; s'integra amb el vostre escriptori, arranjaments <emphasis
+>Absent</emphasis
+> i opcions d'interfície d'usuari de xat.</para>
+<sect3 id="configuring-behavior-general">
+<title
+>La pestanya general</title>
+<para
+>Aquí podeu personalitzar la integració del &kopete; a l'escriptori i controla la manera com es mostra la llista de contactes.</para>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Mostra la icona de la safata del sistema</guilabel
+></term>
+<listitem>
+<para
+>Per defecte, el &kopete; emplaça una icona a la safata del sistema del &kde;. Si ho preferiu, podeu treure-la.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Inicia amb la finestra principal amagada</guilabel
+></term>
+<listitem>
+<para
+>Això fa que el &kopete; a l'inici amb la <interface
+>Llista de contactes</interface
+> finestra amagada (acoblada). Podeu fer-la visible clicant la icona de la safata del sistema o amb <link linkend="configuring-global-shortcuts"
+>Mostra la drecera global de la Llista de Contactes</link
+>.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Obre els missatges instantàniament</guilabel
+></term>
+<listitem>
+<para
+>Els missatges obren finestres de xat tan bon punt hi arriben.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Usa la cua de missatges</guilabel
+></term>
+<listitem>
+<para
+>La cua de missatges és on el &kopete; posa els missatges on no hi ha una finestra de xat oberta. Això permet que se us notifiqui dels nous missatges amb una finestra emergent en forma de «bombolla de parla»; o animant la icona de la safata del sistema. Si preferiu desactivar la cua de missatges, les finestres de xat s'obriran tan aviat com rebeu un nou missatge.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Usa la pila de missatges</guilabel
+></term>
+<listitem>
+<para
+>Si useu la pila de missatges, el &kopete; mostra els missatges rebuts recentment començant per l'últim rebut.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-general-notifications">
+<title
+>Notificacions</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Mostra una bombolla a un nou missatge</guilabel
+></term>
+<listitem>
+<para
+>Aquesta opció mostra una «bombolla de parla». Des de la icona de la safata del sistema quan rebeu un nou missatge. Podeu iniciar un xat o ignorar el missatge. Els &URL; s'extreuen des del missatge. Si cliqueu a un enllaç, el vostre navegador preferit obrirà l'enllaç i es descartarà el missatge.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Flaix a la safata del sistema quan hi ha missatges nous</guilabel
+></term>
+<listitem>
+<para
+>Aquesta opció fa que la icona de la safata del sistema s'animi quan rebeu un missatge nou. Clicant la icona, es mostrarà el missatge a la finestra de xat.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Habilita els esdeveniments quan sou absent</guilabel
+></term>
+<listitem>
+<para
+>Si no voleu que us distreguin amb aquestes notificacions quan sou <emphasis
+>Absent</emphasis
+>, desmarqueu aquesta casella.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Configura els sons i els esdeveniments</guilabel
+></term>
+<listitem>
+<para
+>El &kopete; té suport per als sons, les entrades amb flaix a la barra de tasques, emergents passius i notificacions més exòtiques, usant el sistema de notificacions del &kde;. Teclegeu <userinput
+>help:/kcontrol/kcmnotify</userinput
+> al &konqueror; o seleccioneu la pestanya Ajuda a la secció <guilabel
+>Notificacions del sistema</guilabel
+> del &systemsettings; per a més informació.</para>
+<para
+>Per a afegir notificacions personalitzades per a un contacte, cliqueu amb el botó dret al contacte a la llista de contactes i seleccioneu Propietats. Això us permet iniciar xats, fer sonar un efecte de so personalitzat, o mostrar un missatge per a aquest contacte o grup. Altrament, podeu usar la notificació «Executa un programa» per a realitzar notificacions personalitzades. Com a exemple, si teniu instal·lat el <application
+>XOSD</application
+> (X On-Screen Display), podeu obtenir notificacions OSD en línia executant la següent ordre quan l'esdeveniment «usuari es posa en línia» té lloc:</para>
+<para
+><userinput
+>echo %s | osd_cat -o 100 -p bottom -A center -f -*-helvetica-*-r-*-*-24-*-*-*-*-*-*-* -O 2 -c gold</userinput
+></para>
+<para
+>OhReally, al fòrum del &kde; suggereix que les vostres notificacions en línia les llegeixi un sintetitzador de veu, usant el <ulink url="http://mambo.ucsc.edu/psl/mbrola"
+>MBROLA</ulink
+> així:</para>
+<para
+><userinput
+>echo %s | sed -e 's/online/onlaain/i' | /usr/local/bin/mbrdico.dutch.female</userinput
+></para>
+<para
+>El «sed» del mig converteix la fonètica de la sortida del &kopete; per tal que el sintetitzador tingui una més bona pronúncia neerlandesa.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-away">
+<title
+>Arranjaments d'absència</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Notifica tots els xats oberts quan soc absent</guilabel
+></term>
+<listitem
+><para
+>Aneu amb compte si habiliteu aquest element; farà que s'enviï un missatge als xats oberts quan sigueu absent, cosa que alguns ponen trobar intrusiu.</para
+></listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-away-auto">
+<title
+>Absència automàtica</title>
+<para
+>Aquí podeu escollir que el &kopete; us posi absent després d'un període d'inactivitat.</para>
+</sect4>
+<sect4 id="configuring-behavior-away-messages">
+<title
+>Missatges d'absència predeterminats</title>
+<para
+>Aquí podeu definir tants missatges personalitzats d'absència com vulgueu, i escollir entre ells quan esteu <emphasis
+>Absent</emphasis
+> usant el botó <guibutton
+>Estat</guibutton
+> a la <link linkend="contact-list-layout-toolbar"
+>barra d'eines principal</link
+>.</para>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-chat">
+<title
+>Arranjament de xat</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Aixeca la finestra o pestanya amb els missatges nous</guilabel
+></term>
+<listitem
+><para
+>Això fa que una finestra de xat emergeixi quan es rep un missatge nou.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Mostra els esdeveniments a la finestra de xat</guilabel
+></term>
+<listitem
+><para
+>Alguns sistemes de &im; poden donar informació addicional, com la gent que entra o surt dels xats. Aquesta opció us permet de rebre aquests missatges a la vostra finestra de xat.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Ressalta els missatges que continguin el vostre sobrenom</guilabel
+></term>
+<listitem
+><para
+>Això simplement emfatitza els missatges en un xat que conté el vostre sobrenom. Per a un control més fort sobre el ressaltat i altres esdeveniments, mireu el <link linkend="plugins-highlight"
+>connector Ressaltat</link
+>.</para
+></listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-chat-interface">
+<title
+>Preferència d'interfície</title>
+<para
+>El &kopete; pot enviar missatges usant la interfície «dispara i oblida» que no espera una resposta, o una finestra de xat on la conversa és visible quan es desplega. Aquí podeu escollir quin estil usar per defecte.</para>
+</sect4>
+<sect4 id="configuring-behavior-chat-grouping">
+<title
+>Política d'agrupament de finestres de xat</title>
+<para
+>Si voleu agrupar els xats entre les pestanyes d'una única finestra, el &kopete; us permet escollir entre moltes maneres de determinar l'agrupament.</para>
+<itemizedlist>
+<listitem
+><para
+>Obre tots els missatges en una nova finestra de xat</para
+></listitem>
+<listitem
+><para
+>Agrupa tots els missatges des del mateix compte a la mateixa finestra de xat</para
+></listitem>
+<listitem
+><para
+>Agrupa tots els missatges a la mateixa finestra de xat</para
+></listitem>
+<listitem
+><para
+>Agrupa tots els missatges en el mateix grup a la mateixa finestra de xat</para
+></listitem>
+<listitem
+><para
+>Agrupa tots els missatges des del mateix metacontacte a la mateixa finestra de xat</para
+></listitem>
+</itemizedlist>
+</sect4>
+<sect4 id="configuring-behavior-chat-lines">
+<title
+>Límit de línia de finestra de xat</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Nombre màxim de línies de finestra de xat</guilabel
+></term>
+<listitem
+><para
+>Això limita el nombre de línies de text que pot mostrar la finestra de xat.</para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect4>
+</sect3>
+</sect2
+> <!-- configuring-behavior -->
+<sect2 id="configuring-appearance">
+<title
+>Aparença</title>
+<para
+>L'aparença governa l'estil de la finestra de xat, els seus colors i tipus de lletra i us permet escollir les vostres emoticones preferides.</para>
+<sect3 id="configuring-appearance-emoticons">
+<title
+>Emoticones</title>
+<para
+>Les emoticones (també conegudes com a smileys) són combinacions de caràcters com ara <userinput
+>;-)</userinput
+>que semblen una cara, i comuniquen estats d'ànim o expressions. El &kopete; pot usar opcionalment emoticones gràfiques en lloc dels mateixos caràcters.</para>
+<para
+>En aquesta pestanya, podeu seleccionar quin conjunt d'emoticones preferiu, o desactivar les emoticones gràfiques.</para>
+<!--FIXME uncomment when chapter id="specialised" has content
+<para
+>See <link linkend="specialised"
+>Specialized Actions</link
+> for details of how to install extra emoticon sets.</para>
+-->
+</sect3>
+<sect3 id="configuring-appearance-chat">
+<title
+>Finestra de xat</title>
+<sect4 id="configuring-appearance-chat-styles">
+<title
+>Estils</title>
+<para
+>L'estil de la visualització de xat es pot canviar per a assemblar-se a altres clients. Els estils instal·lats es mostren a la llista de l'esquerra i es previsualitzen al plafó principal. Mireu la <link linkend="chatwindowstyleguide"
+>Guia d'estil de finestra de xat</link
+> per a aprendre com fer el vostre propi estil.</para>
+<para
+>Hi ha estils de tercers disponibles a la <ulink url="https://store.kde.org/"
+>KDE Store</ulink
+>. El &kopete; 0.12 ara permet estils de l'Adium (un programa de &im; del &Mac; OS X). Així que podeu descarregar estils d'Adium aquí: <ulink url="http://www.adiumxtras.com/"
+>Adium Xtras</ulink
+> i seleccioneu Estils de Visualització de Missatges (Message View Styles).</para>
+<para
+>Per a instal·lar un estil, cliqueu <guibutton
+>Instal·la...</guibutton
+>. Seleccioneu un fitxer que contingui l'estil. Per a suprimir un estil, seleccioneu-lo a la llista i cliqueu <guibutton
+>Suprimeix</guibutton
+>.</para>
+<para
+><guilabel
+>Agrupament de missatges consecutius</guilabel
+> és una manera útil de fer més llegibles els vostres xats. Si rebeu molts missatges de cop des del mateix contacte, aquests s'agrupen sense repetir el nom del remitent.</para>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-general-contactlist">
+<title
+>Llista de contactes</title>
+<variablelist>
+<varlistentry>
+	<term
+><guilabel
+>Arranja els metacontactes per grup</guilabel
+></term>
+<listitem>
+<para
+>Inhabilitant això, els grups del &kopete; s'amaguen, i els contactes es divideixen entre <guilabel
+>Contactes en línia</guilabel
+> i <guilabel
+>Contactes fora de línia</guilabel
+>.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Mostra les línies de les branques dels arbres</guilabel
+></term>
+<listitem>
+<para
+>Normalment, el &kopete; mostra els contactes i els grups com un arbre, on els membres del grup estan sagnats. Per a una aparença més simple, podeu inhabilitar això, de manera que la llista de contactes esdevé una llista plana. També podeu controlar si se sagnen les branques aquí.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Mode de mostra de contactes</guilabel
+></term>
+<listitem>
+	<para
+>Hi ha moltes maneres en què podeu presentar la llista de contactes. D'interès particular pot ser l'opció <guilabel
+>Usa la foto del contacte quan estigui disponible</guilabel
+>, que mostra la llista de contactes usant fotos escollides pels vostres contactes o la llibreta d'adreces del &kde;.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Animacions de la llista de contactes</guilabel
+></term>
+<listitem>
+	<para
+>Això controla el grau d'animació de la llista de contactes. Apagant-lo, fareu que el &kopete; sigui més ràpid en màquines lentes.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Ocultació automàtica de la llista de contactes</guilabel
+></term>
+<listitem>
+	<para
+>Activant això, la llista de contactes desapareixerà automàticament uns pocs segons després que el punter deixi la finestra.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Canvis dels continguts de les pistes...</guilabel
+></term>
+<listitem>
+	<para
+>Teniu molt control sobre quants detalls apareixen a les pistes que es mostren a la llista de contactes usant aquest diàleg.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+<sect3 id="configuring-appearance-colors-fonts">
+<title
+>Colors i tipus de lletra</title>
+<sect4 id="configuring-appearance-colors-fonts-chat">
+<title
+>Colors de la finestra de xat</title>
+<para
+>Aquí podeu alterar el tipus de lletra base i els colors de text usats per a xatejar.</para>
+</sect4>
+<sect4 id="configuring-appearance-colors-fonts-overrides">
+<title
+>Modifica el format</title>
+<para
+>Si els vostres contactes tendeixen a escollir tipus de lletra i colors que no us agraden, podeu dir al &kopete; que els ignori i usi el vostre tipus de lletra habitual.</para>
+</sect4>
+<sect4 id="configuring-appearance-colors-fonts-contactlist">
+<title
+>Llista de contactes</title>
+<para
+>Alguns sistemes de &im; us permeten quan els contactes estan inactius als seus ordinadors. Aquesta opció us permet canviar el color usat per als contactes inactius.</para>
+</sect4>
+</sect3>
+</sect2
+> <!-- configuring-appearance -->
+<sect2 id="configuring-devices">
+<title
+>Dispositius</title>
+<para
+>La secció Dispositius us permet escollir i configurar quins dispositius multimèdia s'usen per al xat A/V. Que això us funcioni depèn molt del maquinari que tingueu i de com sigui de compatible amb el vostre sistema operatiu.</para>
+<sect3 id="configuring-devices-video">
+<title
+>Vídeo</title>
+<para
+>El &kopete; usa el sistema Video4Linux 2 per al vídeo. Mostra un quadre blau si no es troba cap dispositiu de vídeo, o una previsualització si la càmera funciona. Per a informació actualitzada de la compatibilitat de webcam amb el &kopete;, mireu la <ulink url="http://userbase.kde.org/Kopete/Webcam_Support"
+>pàgina wiki de compatibilitat de webcam del Kopete</ulink
+>.</para>
+</sect3>
+<sect3 id="configuring-devices-audio">
+<title
+>Àudio</title>
+	<para
+>La compatibilitat d'àudio al &kopete; està en un estadi experimental. Si teniu una pestanya Àudio, probablement useu una versió prèvia del &kopete;.</para>
+</sect3>
+</sect2>
+</sect1>
+
+<sect1 id="configuring-load-plugins-dialog">
+<title
+>Carregant els connectors</title>
+<para
+>Podeu personalitzar el &kopete; amb funcions especials que poden ser útils o només divertides. Proveu-les al diàleg <guilabel
+>Selecciona i configura els connectors</guilabel
+> amb <menuchoice
+><guimenu
+>Arranjaments</guimenu
+><guimenuitem
+>Configura...</guimenuitem
+></menuchoice
+> i després l'estrada <guilabel
+>Connectors</guilabel
+>.</para>
+<para
+>Els connectors es poden activar i desactivar a la llista de l'esquerra de la pàgina. Cada connector es pot configurar a la banda dreta. Mireu el <link linkend="plugins"
+>capítol de connectors</link
+> per a detalls de cada connector.</para>
+</sect1>
+</chapter
+> <!-- configuring -->
+
+<chapter id="protocols">
+	<title
+>Protocols del &kopete;</title>
+	<para
+>El &kopete; crida «Protocols» de sistemes diferents de &im;. Quan afegiu un compte, aquest és específic d'un únic protocol. Malgrat que el &kopete; mira que tota la missatgeria instantània aparegui de la mateixa manera, sense importar el protocol que useu, hi ha algunes diferències en el nivell de compatibilitat per a característiques avançades com la transferència de fitxers i multimèdia.</para>
+	<sect1 id="protocols-list">
+		<title
+>Protocols</title>
+		<sect2 id="protocols-aim">
+			<title
+>AIM</title>
+			<para
+>AIM és compatible amb les sales de xat. Useu l'ordre <guilabel
+>Uneix-te al xat...</guilabel
+> del menú del compte AIM per a unir-vos a una sala de xat. També és compatible amb imatges per als contactes i emoticones personalitzades.</para>
+		</sect2>
+		<sect2 id="protocols-icq">
+			<title
+>ICQ</title>
+			<para
+>ICQ té una característica Invisibilitat us permet d'amagar-vos de contactes seleccionats. També podeu cercar la carpeta d'usuari d'ICQ quan hi afegiu un contacte. Es poden arranjar una gran varietat de detalls de contacte usant l'opció <guilabel
+>Propietats</guilabel
+>.</para>
+		</sect2>
+		<sect2 id="protocols-jabber">
+			<title
+>Jabber</title>
+			<para
+>El Jabber, també conegut com a XMPP, és compatible amb la transferència de fitxers, conferències i qualsevol altre servei proporcionat pel Jabber. Per exemple, molts servidors Jabber tenen un directori d'usuaris, i alguns proporcionen transports a altres sistemes de missatgeria. Per a accedir als serveis, useu <menuchoice
+><guimenu
+>Serveis...</guimenu
+></menuchoice
+> al menú del compte. La transferència de fitxers del Jabber pot funciona sense reenviament de ports, però funciona millor quan hi ha una connexió directa. Per defecte, s'usa el port 8010 per al reenviament de port, però això és configurable als arranjaments de cada compte.</para>
+		</sect2>
+		<sect2 id="protocols-gtalk">
+			<title
+>Google Talk</title>
+			<para
+>Com que el Google Talk està basat en Jabber, és compatible amb el &kopete;, amb l'excepció del xat de veu, on s'està treballant.</para>
+			<para
+>Per a configurar el &kopete; per al Google Talk, useu la vostra adreça completa de Google Mail com a nom d'usuari. Check <guilabel
+>Useu encriptatge de protocol (SSL)</guilabel
+>, <guilabel
+>Permeteu l'autenticació de contrasenya en text net</guilabel
+> i <guilabel
+>sobreescriviu la informació per defecte del servidor</guilabel
+>. El servidor és «talk.google.com» o «gmail.com» i s'han d'usar els ports 443 o 5223.</para>
+		</sect2>
+		<sect2 id="protocols-groupwise">
+			<title
+>Novell GroupWise</title>
+			<para
+>GroupWise Messenger és un sistema de missatgeria d'empresa de Novell Inc. Tot l'interval de característiques és compatible, incloent-hi la privadesa, el xat de grup, el text ric i la cerca d'usuaris.</para>
+		</sect2>
+		<sect2 id="protocols-gadu-gadu">
+			<title
+>Gadu-Gadu</title>
+			<para
+>Gadu-Gadu és un sistema de xat originari de Polònia. De moment, el &kopete; és compatible amb les funcions bàsiques de xat.</para>
+		</sect2>
+		<sect2 id="protocols-winpopup">
+			<title
+>WinPopup</title>
+			<para
+>WinPopup és una manera d'usar el &kopete; per a enviar i rebre missatges amb ordinadors &Windows; de la xarxa local. El protocol WinPopup només permet missatges individuals en text net.</para>
+		</sect2>
+		<sect2 id="protocols-others">
+			<title
+>Altres protocols</title>
+			<para
+>Com amb els altres protocols anomenats més amunt, el &kopete; és compatible amb molts altres protocols. En la majoria de casos, aquest no està habilitat per defecte o s'hi ha d'instal·lar un connector addicional. Mentrestant, SMS, Skype i SILC es proporcionen d'aquesta manera. No obstant això, l'equip del &kopete; no és responsable d'aquests protocols.</para>
+		</sect2>
+	</sect1>
+</chapter>
+	
+<chapter id="plugins">
+<title
+>Connectors del &kopete;</title>
+<para
+>El &kopete; ofereix connectors que ofereixen funcions que no són essencials per a la missatgeria, però que són útils per a alguna gent.</para>
+<sect1 id="plugins-list">
+<title
+>Connectors</title>
+<!-- disabled from build in 4.11/master sect2 id="plugins-alias">
+<title
+>Alias</title>
+<para
+><guilabel
+>Alias</guilabel
+> lets you define your own commands, &eg; /hello, in &kopete; that run scripts and output the result in the chat window.  If you know how the alias Unix command works, this is just the same</para>
+</sect2-->
+<sect2 id="plugins-auto-replace">
+<title
+>Autoreemplaçament</title>
+<para
+><guilabel
+>Autoreemplaçament</guilabel
+> us permet de corregir paraules que freqüentment es teclegen malament o desa el teclejat de paraules usant abreviacions.</para>
+</sect2>
+<sect2 id="plugins-bookmarks">
+<title
+>Punts de llibre</title>
+<para
+>El connector <guilabel
+>Punts de llibre</guilabel
+> crea punts de llibre a la vostra llista de punts de llibres del &kde; des d'URL rebuts de missatges de &im;.</para>
+</sect2>
+<!-- was removed with Revision 732681
+sect2 id="plugins-connection-status">
+<title
+>Connection Status</title>
+<para
+><guilabel
+>Connection Status</guilabel
+> is useful for modem users or others who don't have a permanent Internet connection.  It watches for an active Internet connection and sets your accounts online when it detects you have dialed up.</para>
+</sect2-->
+<sect2 id="plugins-contact-notes">
+<title
+>Notes del contacte</title>
+<para
+><guilabel
+>Notes del Contacte</guilabel
+> us permet d'anotar qualsevol informació útil en un metacontacte.</para>
+</sect2>
+<sect2 id="plugins-cryptography">
+<sect2info>
+<authorgroup>
+<author
+>&Olivier.Goffart; &Olivier.Goffart.mail;</author>
+<author
+>&Charles.Connell; &Charles.Connell.mail;</author>
+</authorgroup>
+<date
+>14 d'octubre de 2007</date>
+<releaseinfo
+>1.3.0</releaseinfo>
+</sect2info>
+
+<title
+>Criptografia</title>
+<para
+>El connector Criptografia permet enviar i rebre missatges encriptats i/o signats.</para>
+<para
+>La criptografia us permet utilitzar una implementació de l'OpenPGP per encriptar i signar missatges en les converses. Tingueu en compte que això no és el mateix que una sessió de xat segura SSL. La criptografia pot encriptar els vostres missatges a una sola persona de manera que sols el titular de la clau coincident pugui llegir-los. Si voleu que el destinatari dels missatges pugui verificar que els heu enviat, podeu signar-los. La signatura i l'encriptació es poden utilitzar per separat o junts. Quan rebeu un missatge, si ja s'ha encriptat, veureu una icona de bloqueig. Si s'ha signat amb una signatura verificable (disposeu de la clau pública del remitent), veureu una icona de ploma. Per a una signatura no verificable, es mostrarà una icona de ploma vermella.</para>
+<para
+>Per a configurar la criptografia, seleccioneu la vostra clau privada a la pàgina de configuració del connector. Després, utilitzant <menuchoice
+><guimenuitem
+>Selecciona clau pública...</guimenuitem
+></menuchoice
+> des del menú contextual de cada metacontacte, escolliu la seva clau pública. Quan utilitzeu aquest connector se us demanarà una frase de pas.</para>
+<para
+>A causa de les limitacions en alguns dels protocols de missatgeria instantània que utilitza el &kopete;, els missatges encriptats no es poden enviar amb aquests protocols. Si intenteu utilitzar un protocol sense suport, se us indicarà.</para>
+<para
+>La criptografia pot utilitzar les claus públiques emmagatzemades a la llibreta d'adreces del &kde; per a cada contacte. Tanmateix, haureu de conèixer quina entrada de la llibreta d'adreces està associada amb quin metacontacte. Per proporcionar aquesta informació, escolliu «Propietats» al menú contextual del metacontacte i, a continuació, establiu l'«Enllaç a la llibreta d'adreces». La criptografia també pot exportar claus públiques que heu establert a la vostra llibreta d'adreces. Si un metacontacte té un enllaç a la llibreta d'adreces, llavors la clau anirà a l'entrada correcta de la llibreta d'adreces, en substitució de l'existent. Si no hi ha un enllaç (possiblement perquè no existeix una entrada a la llibreta d'adreces per aquest individu en qüestió), es crearà una nova entrada. Aquesta entrada tindrà dos camps omplerts: la clau pública des del &kopete; i el nom visible del metacontacte.</para>
+<para
+>Copyright de la documentació &copy; &Olivier.Goffart; &Olivier.Goffart.mail; i &copy; 2007 &Charles.Connell; &Charles.Connell.mail;</para>
+</sect2>
+<sect2 id="plugins-highlight">
+<title
+>Ressaltat</title>
+<para
+>El <guilabel
+>Ressaltat</guilabel
+> funciona una mica com els filtres del correu electrònic, en què us permet de fer que passin coses en resposta a missatges particulars. A més de ressaltar el text, podeu fer engegar sons.</para>
+</sect2>
+<!--FIXME History2 missing
+Another history plugin based on sqlite.
+Most important changes:
+- based on sqlite3 instead of xml-files
+- import history button in config dialog
+- import option added for the other xml-based history-plugin
+- pidgin import improved
+- test and skip duplicates on import (so it is possible to synchronize
+  regularly from a windows-pidgin installation for example)
+- more speed in most cases
+The main reason I began to rewrite the complete plugin was, that I had
+dataloss by importing from pidgin with the old history plugin.
+The months, which where imported from pidgin, did overwrite the kopete
+history. This was unacceptable.
+-->
+<sect2 id="plugins-history">
+<title
+>Historial</title>
+<para
+>El connector <guilabel
+>Historial</guilabel
+>, quan està activat, desa les converses usant qualsevol sistema de &im; i us permet de visualitzar després antigues converses. Apareix un element <menuchoice
+><guimenuitem
+>Historial</guimenuitem
+></menuchoice
+> a cada menú contextual dels metacontactes de manera que podeu visualitzar l'historial de missatges d'aquell metacontacte.</para>
+<para
+>El següent element està afegit als menús de la llista de contactes:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edita</guimenu
+> <guimenuitem
+>Visualitza l'historial</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Disponible quan està seleccionat un contacte) Això mostra el navegador de l'Historial per al contacte seleccionat.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para
+>Els següents elements estan afegits als menús de la finestra de xat:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Alt;&Maj;<keysym
+>Fletxa esquerra</keysym
+></keycombo
+> </shortcut
+> <guimenu
+>Eines</guimenu
+> <guimenuitem
+>Historial previ</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Això us permet visualitzar el següent conjunt més antic de missatges des de l'Historial a la finestra de xat.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Alt;&Maj;<keysym
+>Fletxa dreta</keysym
+></keycombo
+> </shortcut
+> <guimenu
+>Eines</guimenu
+> <guimenuitem
+>Següent a l'Historial</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Això mostra el conjunt de missatges més recent des de l'Historial a la finestra de xat.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Eines</guimenu
+> <guimenuitem
+>Últim de l'Historial</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Això mostra el conjunt de missatges més recent des de l'Historial a la finestra de xat.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="plugins-kopetex">
+<title
+>KopeteTeX</title>
+<para
+>El KopeteTeX permet els científics i matemàtics mantenir converses usant el llenguatge de marcat LaTeX. Les expressions introduïdes entre $$ es renderitzen com a gràfic a la finestra de xat, i es poden retallar i enganxar com el LaTeX original. Per a usar aquest connector, heu de tenir el LaTeX instal·lat.</para>
+</sect2>
+<!-- Revision 732090 don't compile motionautoaway. it's moving back to playground
+sect2 id="plugins-motion-auto-away">
+<title
+>Motion Auto-Away</title>
+<para
+>In conjunction with a webcam and the <application
+>Video4Linux</application
+> package, this lets you detect when you're no longer at your computer and have &kopete; automatically become <emphasis
+>Away</emphasis
+>.</para>
+</sect2-->
+<sect2 id="plugins-now-listening">
+<title
+>Ara escoltant</title>
+<para
+>Amb el <guilabel
+>connector Ara escoltant</guilabel
+>, deixeu que la gent amb qui xategeu sàpiga què esteu escoltant, si teclegeu <userinput
+>/media</userinput
+> en un xat, o amb <menuchoice
+><guimenu
+>Eines</guimenu
+><guimenuitem
+>Envia informació de suports</guimenuitem
+></menuchoice
+> a la finestra de xat.</para>
+</sect2>
+<sect2 id="plugins-otr">
+<title
+>OTR</title>
+<para
+>El connector <guilabel
+>OTR</guilabel
+> us permet d'encriptar converses usant el mètode d'encriptació «Off-The-Record». Aquest mètode funciona bàsicament com l'encriptació PGP, però està optimitzat per a la missatgeria instantània i gestiona l'intercanvi de claus pel seu compte. L'únic que hi heu de fer és assegurar-vos que de debò esteu parlant amb qui espereu parlar usant un dels mecanismes d'autenticació de l'OTR.</para>
+<sect3 id="plugins-otr-menus">
+<title
+>Elements del menú</title>
+<para
+>El següent element està afegit als menús de la llista de contactes:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edita</guimenu
+> <guimenuitem
+>Política de l'OTR</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Activat quan se selecciona un contacte) Aquí podeu arranjar una política de l'encriptatge per a cada contacte. Arranjar aquesta entrada a «Per defecte» fa que el &kopete; usi els arranjaments per defecte al diàleg de configuració.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para
+>Els següents elements estan afegits als menús de la finestra de xat:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Eines</guimenu
+> <guimenuitem
+>Arranjaments OTR</guimenuitem
+> <guimenuitem
+>Inicia una sessió OTR</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Això us permet iniciar una sessió encriptada OTR.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Eines</guimenu
+> <guimenuitem
+>Arranjaments OTR</guimenuitem
+> <guimenuitem
+>Finalitza la sessió OTR</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Això finalitza una sessió OTR prèviament establerta.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Eines</guimenu
+> <guimenuitem
+>Arranjaments OTR</guimenuitem
+> <guimenuitem
+>Autentica el contacte</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Useu aquesta entrada del menú si voleu autenticar el contacte.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+<sect3 id="plugins-otr-setup">
+<title
+>El diàleg arranjaments</title>
+<para
+>En el diàleg d'arranjaments, teniu diverses opcions per a arranjar el comportament dels mòduls durant les sessions de xat. La més important és la configuració de política per defecte. Arrangeu la política a «Oportunista» si voleu que el &kopete; comprovi si els vostres contactes són compatibles amb l'OTR i estableixi una sessió encriptada pel seu compte o a «Manual» si voleu controlar cada estat de l'encriptatge. Les opcions «Sempre» i «Mai» només estan recomanades per a usuaris experimentats que vulguin arranjar la política d'encriptació segons cada contacte. A la subfinestra «Claus privades», teniu la possibilitat de crear el vostre parell de claus personal per a cada compte. No cal que feu això de manera manual. Si un compte no té un parell de claus, aquest es generarà automàticament el primer cop que es requereixi. A la pestanya «Empremtes conegudes» teniu la possibilitat de veure, verificar i suprimir les empremtes públiques conegudes dels vostres contactes.</para>
+</sect3>
+<sect3 id="plugins-otr-auth">
+<title
+>Autenticació</title>
+<para
+>Segurament heu rebut correus electrònics de gent fent-se passar per bancs, agències de crèdit, fins i tot expatriats nigerians rics. Hi ha gent que menteix sobre qui són a Internet contínuament. L'autenticació és una manera d'assegurar-se que ningú no pot mentir-vos sobre qui són quan useu l'OTR.</para>
+<sect4 id="plugins-otr-auth-when">
+<title
+>Quan autenticar</title>
+<para
+>Hauríeu d'autenticar una persona el primer cop que parleu amb ella usant l'OTR. Si no ho feu, no podeu estar realment segur que algú altre no l'estigui suplantant o intentant escoltar la vostra conversa. En canvi, un cop hàgiu autenticat el vostre amic un cop, ja no ho haureu de tornar a fer. L'OTR farà automàticament l'autenticació per a totes les futures converses amb aquest amic. </para>
+<para
+>Les úniques excepcions passen quan el vostre amic canvia entre diversos ordinadors o diversos comptes de &im;. En aquest cas, haureu d'autenticar un cop per a cada ordinador o compte. Un cop fet això, el vostre amic podrà usar lliurement qualsevol dels ordinadors on l'haureu autenticat i l'OTR el reconeixerà automàticament. Si el vostre amic usa un nou ordinador o compte que l'OTR no reconegui, emergirà un missatge a la vostra finestra de conversa explicant-vos-ho.</para>
+<screenshot>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="otr-auth-1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Quan autenticar</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</sect4>
+<sect4 id="plugins-otr-auth-how">
+<title
+>Com autenticar</title>
+<para
+>Per a autenticar algú, obriu una conversa amb ell i cliqueu a «Autentica el contacte» al botó OTR. Es mostrarà un assistent que us preguntarà quin mètode d'autenticació voldreu usar. Si us plau, segueixi els passos d'aquest assistent.</para>
+<para
+>Si l'autenticació ha estat correcta, llavors sabreu que realment esteu parlant amb el vostre amic. Qualsevol impostor tindria moltes dificultats per a saber què hi escriviu, de manera que l'enganxaríeu a l'acte. </para>
+</sect4>
+</sect3>
+</sect2>
+<sect2 id="plugins-pipes">
+<title
+>Canonades</title>
+<para
+>Canonades us permet encaminar els missatges d'entrada i sortida mitjançant un script o executable extern. S'encaminarà un missatge entrant mitjançant l'executable abans que arribi a la vostra finestra de xat, mentre que els missatges sortints s'encaminaran mitjançant l'executable abans que s'enviïn per Internet. Canonades pot rebre text en una de les següents tres maneres: <variablelist
+> <varlistentry
+> <term
+>Cos de text net</term
+> <listitem
+><para
+>El cos del missatge, en text net &ascii;</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Cos de text en &HTML;</term
+> <listitem
+><para
+>El text del missatge, en &HTML;, com l'hauria enviat el vostre comunicant en &HTML;, que es renderitzarà a la finestra de xat</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Missatge complet en &XML;</term
+> <listitem
+><para
+>Un document &XML; que descriu totes les característiques del missatge, incloent-hi el cos &HTML;.</para
+></listitem
+> </varlistentry
+> </variablelist
+> Per a la majoria d'intencions, probablement voldreu usar les opcions de cos de text net o cos de text en &HTML;. Aquestes es poden usar amb programes com traductors o resums. El format &XML; només és apropiat per a usar-lo amb un programa o script escrit específicament per a treballar amb aquest connector. Si voleu escriure un programa o script que funcioni amb aquest connector, mireu <link linkend="pipes"
+>la documentació més detallada</link
+>. </para>
+</sect2>
+<!--FIXME missing
+preview
+privacy
+Import Privacy Plugin into svn.
+This plugin allows flexible filtering of messages by sender and/or by content.
+FEATURE: 63839
+scripting
+  -->
+<sect2 id="plugins-statistics">
+<title
+>Estadístiques</title>
+<para
+>Aquest connector usa una base de dades per a recollir informació sobre els patrons d'activitat dels vostres contactes. Podeu usar això per a veure quan un contacte és en línia, per exemple.</para>
+</sect2>
+<sect2 id="plugins-text-effect">
+<title
+>Efecte de text</title>
+<para
+>L'Efecte de text aplica efectes divertits als vostres missatges abans d'enviar-los, com donar-los color o canviar la caixa de les paraules. No us oblideu que els teniu activats, tenim informes d'error d'usuaris despistats que han oblidat que els tenen activats!</para>
+</sect2>
+<sect2 id="plugins-translator">
+<title
+>Traductor</title>
+<para
+>El connector Traductor us permet definir un idioma preferit per a cada metacontacte i llavors tradueix els missatges a o des d'ell usant serveis de traducció de web com el <trademark
+>Google</trademark
+>. Arrangeu el vostre idioma preferit al diàleg <guilabel
+>Selecciona i configura els connectors</guilabel
+>. Cada idioma preferit del contacte es pot arranjar al seu menú contextual.</para>
+<para
+>El següent element s'afegeix als menús de la finestra de xat:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>T</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Eines</guimenu
+> <guimenuitem
+>Tradueix</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Si no heu engegat la traducció automàtica, això tradueix el xat actual.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="plugins-web-presence">
+<title
+>Presència web</title>
+<para
+>La Presència web us permet publicar la vostra presència a la &im; mitjançant el web. Doneu-hi un camí a un fitxer o un servidor d'&FTP; (per exemple) i enviarà una petita peça d'&HTML; a aquell fitxer, que podeu incloure a la vostra pàgina principal. La transparència de xarxa del &kde; fa que això sigui simple. És útil per a contactar els bloguers, o podeu usar-lo per a usar la &im; al vostre negoci.</para>
+<para
+>Exemple: <userinput
+>sftp://nomusuari@algunhost.org/path/to/homes/user/im.html</userinput
+> usa el protocol <acronym
+>SFTP</acronym
+> per a pujar la vostra presència directament al servidor web.</para>
+<para
+>Mireu <ulink url="help:/kioslave/index.html"
+>els manuals del KIO</ulink
+> per a pistes sobre protocols específics de xarxa.</para>
+<!--FIXME wrong url to ioslaves
+in konsole "khelpcenter khelpcenter:kioslaves" works-->
+</sect2>
+<sect2 id="plugins-contributing">
+<title
+>Contribuir amb un connector</title>
+<para
+>El &kopete; està dissenyat per a fer fàcil la creació de connectors que donin funcions extres. Així que si teniu una gran idea per a fer el &kopete; encara més bo, <link linkend="intro-to-kopete-web"
+>poseu-vos-hi en contacte</link
+>!</para>
+</sect2>
+</sect1>
+</chapter
+><!-- plugins -->
+
+&kopete-menus;
+
+<chapter id="faq">
+<title
+>Preguntes Més Freqüents</title>
+<qandaset>
+<qandaentry>
+<question
+><para
+>Què vol dir &kopete;? Com ho pronuncio?</para
+></question>
+<answer
+><para
+>El nom &kopete; ve de la paraula xilena Copete, que vol dir «una copa amb els vostres amics». En Duncan, l'autor original, va gravar-ne una <ulink type="audio/x-vorbis+ogg" url="http://kopete.kde.org/files/kopete_en.ogg"
+>mostra d'àudio</ulink
+>.</para
+></answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Quan tinc més d'un servei de missatgeria amb un mateix nom d'usuari a la meva llista de contactes i clico en aquell nom d'usuari, li envio el missatge amb el servei de missatgeria equivocat.</para>
+</question>
+<answer
+><para
+>Podeu canviar l'ordre dels comptes amb què el &kopete; intenta enviar els missatges usant les fletxes Amunt i Avall a la part baixa de la cantonada dreta de la pantalla de configuració del compte. El &kopete; intentarà connectar amb els comptes començant per dalt. En canvi, si un servei té un valor d'estat més alt que els altres per a aquell usuari, el &kopete; usarà aquest. Per exemple, si una persona té tres serveis i en dos està marcat com a absent i el tercer en línia, el &kopete; sempre provarà d'enviar el missatge usant el servei en línia.</para
+><tip
+><para
+>Si cliqueu a la petita icona de protocol a la dreta de l'element del menú, en lloc del nom de la persona, sempre provareu de contactar la persona usant aquest servei!</para
+></tip>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Necessito connectar via un servidor intermediari SOCKS, però no puc trobar cap opció de configuració de servidors intermediaris al &kopete;. Com puc arranjar el &kopete; per a usar SOCKS?</para>
+</question>
+<answer
+><itemizedlist>
+<listitem
+><para
+><trademark
+>ICQ</trademark
+>, <trademark
+>AIM</trademark
+> i Jabber utilitzen la infraestructura de xarxa del &kde;. Els seus detalls de servidor intermediari SOCKS estan configurats amb la resta del &kde;, a l'&systemsettings;, <menuchoice
+><guimenu
+>Xarxa i connectivitat</guimenu
+><guisubmenu
+>Paràmetres de xarxa</guisubmenu
+><guimenuitem
+>Intermediari</guimenuitem
+></menuchoice
+>.</para
+></listitem>
+</itemizedlist>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Es poden personalitzar les icones que veig al &kopete;?</para
+></question>
+<answer
+><para
+>Podeu canviar entre diferents emoticones usant la pestanya Emoticones a la pàgina Aparença del diàleg Configura del &kopete;.</para>
+<para
+>Per a instal·lar noves emoticones, primer mireu a la <ulink url="https://store.kde.org/"
+>KDE Store</ulink
+>, on hi ha un munt de conjunts d'emoticones addicionals per a descarregar.</para>
+
+<para
+>Les emoticones són fàcils d'instal·lar. Només poseu una carpeta que contingui els fitxers de les icones juntament amb un fitxer &XML; que descrigui el mapatge de text a imatge a $KDEDIR/share/apps/kopete/pics/emoticons (o $KDEHOME, per exemple, a /home/joeuser/.kde/).</para>
+
+<orderedlist>
+<listitem
+><para
+>Copieu la carpeta extreta a $KDEDIR/share/apps/kopete/pics/emoticons o $HOME/.kde/share/apps/kopete/pics/emoticons (o on sigui $KDEHOME)</para
+></listitem>
+<listitem
+><para
+>Seleccioneu Configura el &kopete; des del menú Arranjaments i cliqueu a Aparença al plafó esquerre de la finestra Preferències i cliqueu la pestanya Emoticones.</para
+></listitem>
+<listitem
+><para
+>Seleccioneu el conjunt d'emoticones que heu instal·lat de la llista.</para
+></listitem>
+<listitem
+><para
+>Ara ja podeu usar les noves emoticones instal·lades al &kopete;.</para
+></listitem>
+</orderedlist>
+<para
+>Per a reemplaçar les icones de protocol, haureu de reemplaçar les icones a $KDEDIR/share/apps/kopete/icons, o indiqueu els reemplaçaments a sobreescriure'ls a la mateixa carpeta sota $KDEHOME. A hores d'ara, no hi ha cap conjunt per a reemplaçament complet que pugueu extreure simplement aquí.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+  <question
+><para
+>No veig cap connector llistat al diàleg <quote
+>Configura els connectors</quote
+>. Què està succeint?</para>
+</question>
+<answer
+><para
+>Hi ha dues solucions a aquest problema. Si heu utilitzat els paquets binaris, llavors assegureu-vos que heu utilitzat els paquets binaris dissenyats per a la vostra distribució, i la versió específica de la vostra distribució. L'encreuament de distribucions i versions no funciona amb el &kopete;. Si no hi ha paquets binaris pel vostre sistema, haureu de compilar el &kopete; utilitzant els paquets font. Si heu compilat el vostre &kde;, llavors el &kopete; haurà d'anar en el mateix prefix com el &kde;. Però si l'heu compilat des dels paquets font, llavors assegureu-vos que el &kopete; s'instal·la a la mateixa ubicació que el &kde;, si no és així, ho podeu forçar especificant una ordre pel prefix a <application
+>cmake</application
+>. Exemple: <userinput
+><command
+>cmake</command
+> <parameter
+>-DCMAKE_PREFIX=/opt/kde4</parameter
+></userinput
+> (on <userinput
+>/opt/kde4</userinput
+> serà el vostre prefix). Per determinar on es troba el prefix del &kde;, escriviu <userinput
+><command
+>which</command
+> <parameter
+>dolphin</parameter
+></userinput
+> en una finestra del &konsole;. S'haurà de mostrar quelcom a <computeroutput
+>/opt/kde4/bin/dolphin</computeroutput
+>, llavors el vostre prefix serà <filename class="directory"
+>/opt/kde4</filename
+>, o si diu <computeroutput
+>/usr/bin/dolphin</computeroutput
+> llavors el vostre prefix serà <filename class="directory"
+>/usr</filename
+>. Tanmateix assegureu-vos que heu realitzat un <command
+>make install</command
+>, i comproveu que no hi ha cap instal·lació del &kopete; des de versions anteriors a diferents llocs. També podria ser necessari executar manualment <application
+>kbuildsycoca4</application
+> després d'instal·lar el &kopete;. El <application
+>kbuildsycoca4</application
+> actualitzarà la base de dades dels connectors. S'executa quan s'instal·la programari nou que utilitza connectors, però és possible que <command
+>kopete</command
+> executi el &kopete; abans que s'hagi completat l'actualització.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Tinc molts &lt;escriptoris / monitors / ordinadors&gt; i / o parlo amb molta gent alhora, i com a resultat desitjo que el &kopete; pugui reproduir un &lt;so / missatge emergent / canviar el meu fons de pantalla / reiniciar el meu ordinador&gt; sempre que &lt;rebi un nou missatge / algú es connecti / algú es desconnecti&gt;. Quan s'afegirà això?</para>
+</question>
+<answer
+><para
+>Ja està aquí (sorpresa!). El &kopete; és una aplicació &kde;, i per tant fa ús del KNotify per a totes les notificacions. Per aquells que no el coneixen, el KNotify és una molt poderosa arquitectura que permet fer gairebé qualsevol cosa que vulgueu quan es produeix un esdeveniment en una aplicació del &kde;. Podeu reproduir un so, apareixerà un diàleg passiu, enregistrar un missatge, o fins i tot executar les vostres pròpies ordres personalitzades, com un script de l'intèrpret d'ordres, per a fer qualsevol cosa que vulgueu. Per accedir a aquest tresor, aneu al diàleg <menuchoice
+><guimenu
+>Arranjament</guimenu
+><guimenuitem
+>Configura les notificacions</guimenuitem
+></menuchoice
+>. Aquest us presentarà les diferents accions que podeu realitzar en els esdeveniments enumerats a sobre. Com a consell, doneu una ullada a algunes de les altres aplicacions &kde; per veure quins esdeveniments permeten la captura. Per la meva part, trobo molt útil un missatge emergent passiu sobre missatges de correu electrònic nous al &kmail;.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Com és que no funcionen les transferències de fitxers?</para>
+</question>
+<answer
+><para
+>Hi ha moltes raons per a això. WLM va ser el primer protocol en el qual vàrem implementar la possibilitat per a transferències de fitxers. Es va afegir al Jabber i IRC al &kopete; 0.9.0 (inclòs al &kde; 3.3), i ICQ i AIM al &kopete; 0.50.0 (inclòs al &kde; 4.0.0). A més, les transferències de fitxers no poden funcionar si esteu al darrere d'un tallafoc -vegeu la secció WLM al capítol del protocol-.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Per què tota aquesta ximpleria amb el comportament d'un sol clic? És molt molesta!</para>
+</question>
+<answer
+><para
+>El Kopete és una aplicació &kde;. No permetem que alguna aplicació de tercers decideixi l'&quot;aspecte&quot;, com amb la resta del KDE. També comptem amb la &quot;sensació&quot; i &quot;integració&quot; del KDE, el qual significa que el &kopete; segueix el comportament estàndard d'&quot;un sol clic&quot; del KDE. Si us agradaria canviar-ho, es requereix canviar-lo a tot el KDE. Podeu canviar a un estil de doble clic iniciant l'&systemsettings; i anant a <menuchoice
+><guimenu
+>Dispositius d'entrada</guimenu
+><guimenuitem
+>Ratolí</guimenuitem
+></menuchoice
+> i canviar a l'opció <guilabel
+>Doble clic per a obrir fitxers i carpetes (selecciona les icones al primer clic)</guilabel
+>.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Fareu que la interfície d'usuari vagi amb pells?</para>
+</question>
+<answer
+><para
+>L'única resposta per a això és, no. El &kopete; es va inventar per a ser un exemple de missatgeria instantània pel &kde; i això també inclou tenir un aspecte i comportament com el &kde;. Afegint pells es trencaria aquesta regla i la implementació de tots dos comportaments no seria pràctic. Simplement seleccioneu un estil diferent de l'&systemsettings; del &kde; i sereu feliç de tenir menús transparents i altres boniques coses que avui dia ofereix el &kde;. Tanmateix, podeu executar el &kopete; usant un estil diferent. Només heu d'executar <userinput
+>kopete --style=marble</userinput
+>. Funcionarà amb qualsevol estil vàlid pel &kde; o &Qt;.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>M'agradaria una característica en la pròxima versió del Kopete.</para>
+</question>
+<answer
+><para
+>Si us plau, aneu al <ulink url="https://bugs.kde.org"
+>Bugzilla del &kde;</ulink
+> i presenteu un element a la llista de desitjos (wishlist) sota l'aplicació «kopete». Si us plau, sigueu molt detallat i intenteu llegir el que ens heu escrit. Això NO és una garantia que afegirem aquesta característica en cap versió, però ens permet considerar-ho.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>El meu &kopete; ha petat o té/tenia un comportament inesperat (un comportament inesperat NO es classifica en la categoria de &quot;Kopete no actua com a Pidgin&quot;, &etc;)</para>
+</question>
+<answer
+><para
+>Si us plau, informeu-nos d'aquest error anant al <ulink url="https://bugs.kde.org"
+>Bugzilla del &kde;</ulink
+> i presentant un informe d'error per a l'aplicació «kopete». Només s'acceptaran els errors si es troben redactats en anglès, si estan detallats, i si hi ha involucrada una fallada, caldrà incloure una traça inversa (el text a la pestanya marcada amb <guilabel
+>Traça inversa</guilabel
+> una vegada ha petat el &kopete;). Si empreu el &kopete; des del repositori git, si us plau, envieu un correu electrònic a la <ulink url="mailto:kopete-devel@kde.org"
+>llista de correu dels desenvolupadors del &kopete;</ulink
+>, en lloc de presentar un informe d'error.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>La implementació SSL del Jabber ha deixat de funcionar, obtinc el missatge que possiblement manca el connector TLS del QCA. Què se suposa que haig de fer?</para>
+</question>
+<answer
+><para
+>Com indica el missatge d'error, manca el connector TLS del QCA, el qual maneja l'encriptatge TLS/SSL pel connector del Jabber. Instal·leu el paquet <application
+>qca-tls</application
+> (i finalment <application
+>qca-ossl</application
+>) o rebre el connector des de la <ulink url="http://delta.affinix.com/qca"
+>seva pàgina d'inici</ulink
+>. Si us plau, tingueu en compte que només cal instal·lar el connector <application
+>qca-tls</application
+>, <emphasis
+>no</emphasis
+> la biblioteca QCA en si. No cal tornar a compilar el &kopete;, de fet ni tan sols un reinici. En el cas d'haver instal·lat el connector i encara no funcioni, probablement és que les &Qt; no el troben. Una vegada s'instal·la el qca-tls com un connector de &Qt;, haureu d'assegurar-vos que s'instal·la al directori de connectors per a la versió de les &Qt; que esteu utilitzant per executar el &kopete;.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Uso junts el Jabber i l'ICQ. Cada vegada que em connecto amb el Jabber, estic desconnectat a l'ICQ amb un missatge d'error sobre connectat des d'un altre client. Què passa?</para>
+</question>
+<answer
+><para
+>Recordeu quan jugàveu amb els transports ICQ en aquest altre client de Jabber? Configureu un <quote
+>Transport ICQ</quote
+> que permeti parlar amb la gent de l'ICQ des del Jabber. ICQ no permet múltiples connexions al mateix compte, i us desconnecta. Cerqueu als vostres contactes de Jabber per a un contacte de la forma <guilabel
+>123456@icq.jabber.org</guilabel
+> i suprimiu-lo.</para>
+</answer>
+</qandaentry>
+</qandaset>
+</chapter
+> <!-- faq -->
+
+<!--FIXME chapter id="specialised">
+<title
+>Specialized Actions</title>
+<para
+>Command line parameters</para>
+<para
+>Installing emoticon sets</para>
+</chapter--> <!-- specialised -->
+
+<chapter id="credits-and-license">
+<title
+>Crèdits i llicència</title>
+<para
+>&kopete;: copyright 2001-2007, Desenvolupadors del &kopete; </para>
+<para
+>Traductor/Revisor de la documentació: Rafael Carreras<email
+>rcarreras@caliu.cat</email
+></para
+> &underFDL; &underGPL; <sect1 id="team">
+<title
+>L'equip</title>
+<sect2 id="current-team">
+<title
+>Equip de desenvolupament actual</title>
+<!-- please keep in sync with the authors list on the webpage -->
+<itemizedlist>
+<listitem
+><para
+>Pali Rohár (pali.rohar at gmail com): Desenvolupador i mantenidor</para
+></listitem>
+<listitem
+><para
+>Duncan Mac-Vicar Prett (duncan at kde org): Autor original, desenvolupador i líder del projecte</para
+></listitem>
+<listitem
+><para
+>Till Gerken (till at tantalo net): Desenvolupador, mantenidor del Jabber</para
+></listitem>
+<listitem
+><para
+>Olivier Goffart (ogoffart at tiscalinet be): Desenvolupador principal, mantenidor del connector WLM</para
+></listitem>
+<listitem
+><para
+>Andy Goossens (andygoossens at telenet be): Desenvolupador</para
+></listitem>
+<listitem
+><para
+>Grzegorz Jaskiewicz (gregj at pointblue com pl): Desenvolupador, mantenidor del connector Gadu-gadu</para
+></listitem>
+<listitem
+><para
+>Jason Keirstead (jason at keirstead org): Desenvolupador</para
+></listitem>
+<listitem
+><para
+>&Matt.Rogers; (mattr at kde org): Desenvolupador principal, mantenidor dels connectors AIM i ICQ</para
+></listitem>
+<listitem
+><para
+>Richard Smith (lilachaze at hotmail com): Desenvolupador, mantenidor de la IU</para
+></listitem>
+<listitem
+><para
+>&Will.Stephenson; (lists at stevello free-online co uk): Desenvolupador, icones, connectors, autor del manual</para
+></listitem>
+<listitem
+><para
+>Michel Hermier (michel.hermier at wanadoo fr): Mantenidor del connector IRC</para
+></listitem>
+<listitem
+><para
+>Andre Duffeck (andre at duffeck de): Desenvolupador, mantenidor del connector Yahoo</para
+></listitem>
+<listitem
+><para
+>&Michael.Larouche; (michael.larouche at kdemail net): Desenvolupador, WLM, finestra de xat.</para
+></listitem>
+</itemizedlist>
+</sect2>
+<sect2 id="ex-team">
+<title
+>Desenvolupadors antics (&kopete; Hall Of Fame)</title>
+<para
+>Aquesta gent se n'han anat del &kopete;, així que no els contacteu per a suport del &kopete;. Estem eternament agraïts per les seves contribucions. </para>
+<itemizedlist>
+<listitem
+><para
+>Christopher TenHarmsel (tenharmsel at users sourceforge net): Desenvolupador, hacker d'Oscar</para
+></listitem>
+<listitem
+><para
+>Ryan Cumming (ryan at kde org): Desenvolupador del nucli</para
+></listitem>
+<listitem
+><para
+>Richard Stellingwerff (remenic at linuxfromscratch org): Desenvolupador</para
+></listitem>
+<listitem
+><para
+>Hendrik vom Lehn (hennevl at hennevl de): Desenvolupador</para
+></listitem>
+<listitem
+><para
+>Stefan Gehn (sgehn at gmx net): Desenvolupador</para
+></listitem>
+<listitem
+><para
+>&Robert.Gogolok; (robertgogolock at gmx de): Desenvolupador</para
+></listitem>
+<listitem
+><para
+>&Nick.Betcher; (nbetcher at kde org): Autor original dels connectors ICQ, AIM i IRC</para
+></listitem>
+<listitem
+><para
+>Daniel Stone (dstone at kde org): Autor original del connector Jabber</para
+></listitem>
+<listitem
+><para
+>James Grant (topace at lightbox org): Desenvolupador, autor del connector d'importació</para
+></listitem>
+<listitem
+><para
+>Zack Rusin (zack at kde org): Desenvolupador, antic autor del connector Gadu-gadu</para
+></listitem>
+<listitem
+><para
+>Gav Wood (gav at kde org): Autor del connector WinPopup</para
+></listitem>
+<listitem
+><para
+>Martijn Klingens (klingens at kde org): Desenvolupador, hacker del WLM</para
+></listitem>
+</itemizedlist>
+</sect2>
+<sect2 id="documentation">
+<title
+>Documentació</title>
+<para
+>Copyright de la documentació 2003, 2004, 2005 &Will.Stephenson; (lists at stevello free-online co uk), copyright 2005 &Matt.Rogers; (mattr at kde org), copyright 2005, 2006 &Michael.Larouche; (michael.larouche at kdemail net). </para>
+</sect2>
+</sect1>
+</chapter
+><!-- credits-and-license -->
+
+&kopete-chatstyle;
+&kopete-pipes;
+&kopete-jabber;
+&kopete-icq;
+&kopete-emoticonspec;
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet
+-->

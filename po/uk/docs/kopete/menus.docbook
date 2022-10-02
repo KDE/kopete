@@ -1,0 +1,939 @@
+<!-- Kopete Handbook, Menus Chapter copyright 2003 Will Stephenson.  Licensed under the GNU Free Documentation License -->
+<chapter id="menus">
+<title
+>Пункти меню</title>
+
+<para
+>Далі за текстом докладно обговорено кожен з пунктів меню. Якщо існує клавіатурне скорочення, яке виконує ту саму дію, що і пункт меню, поряд з пунктом меню буде вказано це скорочення.</para>
+<sect1 id="menus-contactlist">
+<title
+>Меню вікна списку контактів</title>
+<sect2 id="menus-contactlist-file">
+<title
+>Меню «Файл»</title>
+
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Файл</guimenu
+> <guisubmenu
+>Встановити стан</guisubmenu
+> <guimenuitem
+>В мережі</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Увійти в мережу на всіх облікових записах</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Файл</guimenu
+> <guisubmenu
+>Встановити стан</guisubmenu
+> <guimenuitem
+>Відсутній</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Встановити стан відсутності на всіх з’єднаних облікових записах</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Файл</guimenu
+> <guisubmenu
+>Встановити стан</guisubmenu
+> <guimenuitem
+>Поза мережею</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Встановити стан «поза мережею» на всіх облікових записах</para>
+</listitem>
+</varlistentry>
+<!--FIXME missing Set Status Invisible, Busy, Edit Messages, Edit Statuses-->
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Файл</guimenu
+> <guimenuitem
+>Додати контакт...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Цей пункт запускає майстер додавання контакту, за допомогою якого ви зможете додати новий контакт до вашого списку.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Файл</guimenu
+> <guimenuitem
+>Створити нову групу...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Запитує вас про назву нової групи і додає її до списку контактів.</para>
+</listitem>
+</varlistentry>
+<!--FIXME missing Export Contacts-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Файл</guimenu
+> <guimenuitem
+>Вийти</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Встановлює стан роз’єднання у всіх ваших системах миттєвого обміну повідомленнями, закриває всі вікна і завершує роботу програми.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-contactlist-edit">
+<title
+>Меню «Зміни»</title>
+<variablelist>
+<!--FIXME not in Edit menu
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Z</keycap
+></keycombo>
+</shortcut>
+<guimenu
+>Edit</guimenu>
+<guimenuitem
+>Undo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Reverts the last change that was made to the contact list.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>Z</keycap
+></keycombo>
+</shortcut>
+<guimenu
+>Edit</guimenu>
+<guimenuitem
+>Redo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Reverts the last change that was made to the contact list by <guimenu
+>Edit</guimenu
+><guimenuitem
+>Undo</guimenuitem
+></para>
+</listitem>
+</varlistentry>
+-->
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edit</guimenu
+> <guimenuitem
+>Відіслати повідомлення...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Відкриває вікно повідомлення, схоже на подібні вікна клієнтів електронної пошти, для вибраного контакту, за допомогою цього вікна ви можете надіслати одне повідомлення.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Зміни</guimenu
+> <guimenuitem
+>Почати спілкування...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Відкриває вікно спілкування для вибраного контакту.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Зміни</guimenu
+> <guimenuitem
+>Відіслати файл...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Якщо така можливість підтримується системою миттєвого обміну повідомленнями, цей пункт відкриває вікно вибору файла, який буде надіслано вибраному контакту.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Зміни</guimenu
+> <guisubmenu
+>Пересунути в</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Буде увімкнено, якщо вибрано контакт) Виберіть іншу групу з підменю, і контакт буде пересунуто до цієї групи.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Зміни</guimenu
+> <guisubmenu
+>Копіювати в</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Буде увімкнено, якщо вибрано контакт) Виберіть групу з підменю, і контакт буде пересунуто до цієї групи. Дані систем миттєвого обміну повідомленнями, у яких передбачено можливість знаходження контакту одразу у декількох групах у списку контактів на сервері, буде відповідним чином оновлено.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Зміни</guimenu
+> <guisubmenu
+>Додати контакт...</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Буде увімкнено, якщо вибрано контакт) Виберіть інший обліковий запис з підменю: таким чином ви зможете додати ще один спосіб обміну повідомленнями з особою, що користується цим обліковим записом.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Зміни</guimenu
+> <guimenuitem
+>Додати до списку контактів...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Буде увімкнено, якщо вибрано контакт) Іноді вам писатимуть люди, яких ще немає у вашому списку контактів. У цьому випадку &kopete; створюватиме для них тимчасові записи, для того, щоб зберегти їх у вашому списку контактів, скористайтеся цим пунктом меню.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo
+><keycap
+>Del</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Зміни</guimenu
+> <guimenuitem
+>Вилучити контакт</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Буде увімкнено, якщо вибрано контакт) Повністю вилучає контакт зі списку контактів.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo
+><keycap
+>F2</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Зміни</guimenu
+> <guimenuitem
+>Перейменувати</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Буде увімкнено, якщо вибрано контакт) Допомагає у перейменуванні контакту зі списку контактів. Якщо ви виконаєте подібну дію, запис у списку контактів більше не змінюватиметься, якщо цей контакт змінить своє екранне ім’я власноруч. Подібну можливість можна повторно увімкнути за допомогою діалогового вікна властивостей контакту.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Зміни</guimenu
+> <guimenuitem
+>Властивості</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>За допомогою діалогового вікна властивостей ви можете обрати нетипову піктограму для вибраного запису, або змінити його назву.</para>
+<para
+>Для контактів ви можете змінити запис адресної книги &kde;, з якими буде пов’язано ці контакти.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Зміни</guimenu
+> <guimenuitem
+>Вилучити групу</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Буде увімкнено, якщо вибрано групу) Повністю вилучає групу зі списку контактів. Всі контакти, які знаходяться лише у цій групі, буде пересунуто на найвищий рівень.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Зміни</guimenu
+> <guimenuitem
+>Перейменувати групу</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Буде увімкнено, якщо вибрано групу) Перейменовує групу.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect2>
+<sect2 id="menus-settings">
+<title
+>Меню «Параметри»</title>
+<para
+>У &kopete; передбачено типове меню <guimenu
+>Параметри</guimenu
+> &kde;, яке описано у <ulink url="help:/fundamentals/menus.html#menus-settings"
+>підручнику з основ &kde;</ulink
+>, із додатковими пунктами:</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Параметри</guimenu
+> <guimenuitem
+>Показувати користувачів, які поза мережею</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>За допомогою цього пункту можна переглянути або сховати записи контактів, які зараз перебувають поза мережею. Вони стануть видимими, коли знову увійдуть до мережі.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>G</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Параметри</guimenu
+> <guimenuitem
+>Показувати порожні групи</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>За допомогою цього пункту можна переглянути або сховати групи, у яких немає членів, або такі групи, всі члени яких перебувають поза мережею, а отже, їх приховано (див. попередній пункт).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><!--FIXME no global Shortcuts dialog, it is the app shortcuts dialog-->
+<term>
+<menuchoice
+><guimenu
+>Параметри</guimenu
+> <guimenuitem
+>Налаштувати глобальні скорочення...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Відкриває стандартне діалогове вікно налаштування загальних клавіатурних скорочень &kde;, за допомогою цього діалогового вікна ви зможете змінити клавіатурні скорочення, які працюватимуть під час вашої роботи у &kde;.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-help">
+<title
+>Меню «Довідка»</title>
+<para
+>У вікні списку контактів передбачено типові пункти меню <guimenu
+>Довідка</guimenu
+> &kde; Щоб дізнатися більше, ознайомтеся з розділом, присвяченим <ulink url="help:/fundamentals/menus.html#menus-help"
+>меню «Довідка»</ulink
+> підручника з основ роботи у &kde;. </para>
+</sect2>
+</sect1
+>  <!-- menus-contactlist -->
+
+<sect1 id="menus-chatwindow">
+<title
+>Меню вікна спілкувань</title>
+<sect2 id="menus-chatwindow-chat">
+<title
+>Меню «Спілкування»</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycap
+>Return</keycap
+></shortcut
+> <guimenu
+>Спілкування</guimenu
+> <guimenuitem
+>Надіслати повідомлення</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Надсилає повідомлення.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Send File missing-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>S</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Спілкування</guimenu
+> <guimenuitem
+>Зберегти</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Зберігає вміст спілкування до файла.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>P</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Спілкування</guimenu
+> <guimenuitem
+>Друкувати...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Надсилає вміст спілкування на принтер.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Спілкування</guimenu
+> <guisubmenu
+>Контакти</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>У цьому меню подано список всіх ваших співрозмовників. За його допомогою ви зможете отримати доступ до всіх пунктів меню контакту, яке також можна відкрити наведенням вказівника миші на запис контакту у списку контактів з наступним клацанням <mousebutton
+>правою</mousebutton
+> кнопкою миші. Це меню надасть вам змогу виконувати специфічні дії для контакту, наприклад надіслати йому файл, переглянути інформацію щодо користувача або заблокувати контакт.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Commands missing-->
+<!--FIXME Close All But This Tab missing-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>W</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Спілкування</guimenu
+> <guimenuitem
+>Закрити</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Закриває поточне спілкування. Якщо у інших вкладках поточного вікна продовжується спілкування, це вікно не буде закрито.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Спілкування</guimenu
+> <guimenuitem
+>Вийти</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Закриває всі поточні спілкування у поточному вікні.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-edit">
+<title
+>Меню «Зміни»</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>X</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Зміни</guimenu
+> <guimenuitem
+>Вирізати</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Вирізання тексту працює так само, як у більшості текстових редакторів: виділений текст копіюється до буфера обміну, а потім вилучається з попереднього місця. Зауважте, що ви також можете просто вибрати текст, а потім перетягнути його вказівником миші на нове місце.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>C</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Зміни</guimenu
+> <guimenuitem
+>Копіювати</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Копіювання тексту працює так само, як у більшості текстових редакторів: виділений текст копіюється до буфера обміну. Зауважте, що для копіювання ви також можете просто вибрати текст, утримуючи натиснутою клавішу &Ctrl;, а потім перетягнути його вказівником миші на нове місце.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>V</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Зміни</guimenu
+> <guimenuitem
+>Вставити</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Вставлення тексту працює так само, як у більшості текстових редакторів: текст з буфера обміну вставляється у поточну позицію курсора.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-format">
+<title
+>Меню «Формат»</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Формат</guimenu
+> <guisubmenu
+>Додати посмішку</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>У цьому меню містяться смайлики або емоційки з поточної схеми емоційок. Ви можете змінити цю схему за допомогою <link linkend="configuring-appearance-emoticons"
+>діалогового вікна налаштування Kopete</link
+>.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Alignment missing-->
+<!--FIXME not in 4.11
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guimenuitem
+>Text Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Opens a color selector that modifies the text color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guimenuitem
+>Background Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Opens a color selector that modifies the background color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guisubmenu
+>Font</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para
+>This menu allows you to change the font used in the chat.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guisubmenu
+>Font Size</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para
+>This menu allows you to change the font size used in the chat.</para>
+</listitem>
+</varlistentry>
+-->
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tabs">
+<title
+>Меню «Вкладки»</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Вкладки</guimenu
+> <guisubmenu
+>Розташування вкладок</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>За допомогою цього меню ви можете змінити місце, де буде показано вкладки у перегляді спілкування: згори чи знизу.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>B</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Вкладки</guimenu
+> <guimenuitem
+>Відокремити спілкування</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Відокремлює поточне спілкування у власне вікно.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Вкладки</guimenu
+> <guisubmenu
+>Перемістити вкладку до вікна</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>За допомогою цього меню ви зможете пересувати вкладки спілкувань між вікнами, — вам слід лише обрати вікно спілкування, до якого слід пересунути поточну вкладку.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Activate Previous Tab, Activate Next Tab,  Activate Next Active Tab missing-->
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tools">
+<title
+>Меню «Інструменти»</title>
+<para
+>У цьому меню містяться пункти, які буде додано завантаженими додатками. Докладніше про меню можна дізнатися з <link linkend="plugins"
+>глави про додатки</link
+>.</para>
+</sect2>
+<sect2 id="menus-chatwindow-settings">
+<title
+>Меню «Параметри»</title>
+<para
+>У &kopete; передбачено типове меню <guimenu
+>Параметри</guimenu
+> &kde;, яке описано у <ulink url="help:/fundamentals/menus.html#menus-settings"
+>підручнику з основ &kde;</ulink
+>, із додатковими пунктами:</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Параметри</guimenu
+> <guisubmenu
+>Показати учасників</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>За допомогою цього пункту меню можна вказати, чи буде показано список учасників спілкування праворуч від панелі спілкування.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-help">
+<title
+>Меню «Довідка»</title>
+<para
+>У вікні спілкування передбачено типові пункти меню <guimenu
+>Довідка</guimenu
+> &kde; Щоб дізнатися більше, ознайомтеся з розділом, присвяченим <ulink url="help:/fundamentals/menus.html#menus-help"
+>меню «Довідка»</ulink
+> підручника з основ роботи у &kde;. </para>
+
+</sect2>
+<!--
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Chat</guimenu>
+<guimenuitem
+></guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+></para>
+</listitem>
+</varlistentry>
+
+-->
+</sect1
+> <!-- menus-chatwindow -->
+</chapter
+> <!-- menus -->
+<!--
+CHAT
+Send Message
+Save
+Print...
+Contacts>
+Close
+Quit
+EDIT
+Cut
+Copy
+Paste
+FORMAT
+Add Smiley>
+Text Color...
+Background Color...
+Font>
+Font Size>
+TABS
+Tab Placement>
+Detach Chat
+Move Chat to Window>
+(TOOLS
+Send Media Info)
+SETTINGS
+Show Menubar
+Toolbars>
+	Show Main Toolbar (Kopete)
+	Show Status (Kopete)
+	Show Format Toolbar (Kopete)
+Show Statusbar
+Chat Members List>
+	Place to Left of Chat Area
+	Place to Right of Chat Area
+	Show
+Configure Shortcuts...
+Configure Toolbars...
+HELP
+-->
+<!--FILE
+Connection>
+	Connect All
+	Disconnect All
+Status>
+	Set Available Globally
+	Set Away Globally
+Add Contact...
+Create New Group...
+Save ContactList
+Quit
+EDIT 
+Send Message..
+Start Chat...
+Send File...
+Move To>
+	(Group List)
+Copy To>
+	(Group List)
+Remove From Group
+(on Group)
+Remove Group
+Rename Group
+(on Contact)
+Remove Contact
+Rename Contact
+Add Contact
+Add To Contact List
+View History
+Properties
+SETTINGS
+View Menubar
+View Toolbar
+View Statusbar
+Show Offline Users
+Show Empty Groups
+Configure Shortcuts...
+Configure Global Shortcuts...
+Configure Toolbars...
+Configure...
+HELP
+Kopete Handbook...
+What's This?
+Report Bug
+About Kopete
+About KDE
+-->

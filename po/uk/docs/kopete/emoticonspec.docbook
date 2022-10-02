@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-emoticons">
+<appendixinfo>
+    <title
+>Специфікація емоційок</title>
+    <releaseinfo
+>Версія 0.1</releaseinfo>
+    <date
+>7 січня 2005 року</date>
+    <authorgroup>
+      <author
+><firstname
+>Olivier</firstname
+> <surname
+>Goffart</surname
+> <affiliation
+> <address
+> <email
+>ogoffart@tiscalinet.be</email>
+	  </address>
+	</affiliation>
+      </author>
+    </authorgroup>
+  </appendixinfo>
+
+<title
+>Емоційки</title>
+
+  <sect1 id="introduction-emoticons">
+    <title
+>Вступ</title>
+    <para
+>Це чернетка, що описує створення теми емоційок, яку типово використовують у програмах для миттєвого обміну повідомленнями. </para>
+    <para
+>Базова схема є дуже простою. Тема складається з одного підкаталогу, який містить усі зображення та одного файла &XML;, у якому з кожним зображенням пов’язується набір символів ASCII. Також може бути використано один файл .directory. </para>
+  <sect2 id="location">
+    <title
+>Розташування файлів</title>
+    <para
+>Файли, описані у цій специфікації, розташовуються відповідно до «Специфікації базових каталогів стільничного середовища», з якою можна ознайомитися на сайті <ulink url="http://www.freedesktop.org/standards/"
+>www.freedesktop.org</ulink
+>. </para>
+    <para
+>Усі файли теми мають зберігатися у підкаталозі каталогу <varname
+>$XDG_DATA_DIRS</varname
+>/emoticons/. Назва підкаталогу має збігатися з назвою теми. Підкаталог має містити файл з назвою <varname
+>emoticons.xml</varname
+>. Формат цього файла описано нижче. </para>
+	<para
+>Каталог теми може також містити файл .directory, у якому зберігатимуться переклади назви теми та/або дані щодо піктограми теми. </para>
+  </sect2>
+  <sect2 id="emoticons-map-format">
+    <title
+>Формат файла emoticons.xml</title>
+    <para
+>Файли кар емоційок мають бути коректними файлами &XML;. У реалізаціях обробників мають ігноруватися невідомі теґи та невідомі атрибути. </para>
+    <sect3 id="emoticons-map-elements">
+      <title
+>Елементи</title>
+      <para>
+        <variablelist>
+          <varlistentry>
+					<term
+>&lt;messaging-emoticon-map&gt; [version="0.1"]</term>
+            <listitem>
+              <para
+>Кореневим елементом є &lt;messaging-emoticon-map&gt;. Цей елемент містить усі інші елементи. </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;emoticon file="..."&gt;</term>
+            <listitem>
+              <para
+>Цей елемент відповідає одній емоційці. Атрибут файла має містити назву файла зображення у тому самому каталозі. Суфікс назви файла можна не вказувати. Якщо суфікс не вказано, реалізація обробника має шукати файл із вказаною назвою у якомусь із підтримуваних форматів. </para>
+				  <para
+>Емоційки у карті не впорядковано. Втім, першою піктограмою у карті є піктограма, яка ідентифікує тему графічно. Типово, цією піктограмою має бути :-) </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;string&gt;</term>
+            <listitem>
+              <para
+>Цей елемент можна вказувати лише під &lt;emoticon&gt;. Від визначає рядок ASCII, який обробник має шукати у тексті для заміни зображенням, вказаним атрибутом file емоційки. </para>
+				  <para
+>У однієї піктограми може бути декілька елементів string. </para>
+				  <para
+>Особливого порядку рядків (елементів string) у записі емоційки не передбачено. Втім, першим має бути типовий рядок, його буде використано якщо позначено відповідний пункт у графічному інтерфейсі. </para>
+            </listitem>
+          </varlistentry>
+	    </variablelist>
+  </para>
+    </sect3>
+  </sect2>
+
+  <sect2 id="img-format">
+    <title
+>Формат зображення.</title>
+    <para
+>Усі зображення має бути збережено у таких форматах: PNG, GIF або MNG. </para>
+  </sect2>
+
+  <sect2 id="implementation">
+    <title
+>Зауваження щодо реалізації</title>
+	 <sect3 id="impl-parser">
+	  <title
+>Обробник емоційок</title>
+    <para
+>Окремих рекомендацій щодо обробки емоційок немає. Втім, емоційки з довшими рядками повинні мати вищий пріоритет за емоційки з короткими рядками. (Приклад: якщо у темі визначено емоційки для :-() і :-(, слід використовувати зображення для першої з них, якщо буде виявлено рядок «:-()») </para>
+</sect3>
+</sect2>
+
+<sect2 id="example">
+	  <title
+>Приклад</title>
+	  <para>
+			 <programlisting
+>&lt;messaging-emoticon-map&gt;
+        &lt;emoticon file="smile.png"&gt;
+                        &lt;string&gt;:-)&lt;/string&gt;
+                        &lt;string&gt;:)&lt;/string&gt;
+                        &lt;string&gt;:o)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="wink.png"&gt;
+                        &lt;string&gt;;-)&lt;/string&gt;
+                        &lt;string&gt;;)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="unhappy.png"&gt;
+                        &lt;string&gt;:-(&lt;/string&gt;
+                        &lt;string&gt;:(&lt;/string&gt;
+        &lt;/emoticon&gt;
+&lt;/messaging-emoticon-map&gt;
+
+ </programlisting>
+</para>
+</sect2>
+
+<!--sect2 id="todo">
+	  <title
+>TODO</title>
+	  <para>
+			 A DTD of the XML file
+	  </para>
+</sect2-->
+</sect1>
+</appendix>
+

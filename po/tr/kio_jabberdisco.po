@@ -1,0 +1,41 @@
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Translators:
+# Görkem Çetin <gorkem@gorkemcetin.com>, 2005.
+# S.Çağlar Onur <caglar@uludag.org.tr>, 2005.
+# Emir SARI <emir_sari@icloud.com>, 2022.
+msgid ""
+msgstr ""
+"Project-Id-Version: kdenetwork-kde4\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:10+0200\n"
+"PO-Revision-Date: 2022-07-21 12:44+0300\n"
+"Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
+"Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Lokalize 22.04.2\n"
+
+#: jabberdisco.cpp:96 jabberdisco.cpp:183
+#, kde-format
+msgid "TLS"
+msgstr "TLS"
+
+#: jabberdisco.cpp:166
+#, kde-format
+msgid "The server certificate is invalid. Do you want to continue? "
+msgstr "Sunucu sertifikası geçersiz. Sürdürmek istiyor musunuz?"
+
+#: jabberdisco.cpp:167
+#, kde-format
+msgid "Certificate Warning"
+msgstr "Sertifika Uyarısı"
+
+#: jabberdisco.cpp:284
+#, kde-format
+msgid "The login details are incorrect. Do you want to try again?"
+msgstr "Giriş bilgileri yanlış. Yeniden denemek istiyor musunuz?"

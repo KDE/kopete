@@ -1,0 +1,40 @@
+# translation of kio_jabberdisco.po to Latvian
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Maris Nartiss <maris.kde@gmail.com>, 2007.
+msgid ""
+msgstr ""
+"Project-Id-Version: kio_jabberdisco\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:10+0200\n"
+"PO-Revision-Date: 2007-12-01 19:45+0200\n"
+"Last-Translator: Maris Nartiss <maris.kde@gmail.com>\n"
+"Language-Team: Latvian <locale@laka.lv>\n"
+"Language: lv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
+"2);\n"
+
+#: jabberdisco.cpp:96 jabberdisco.cpp:183
+#, kde-format
+msgid "TLS"
+msgstr "TLS"
+
+#: jabberdisco.cpp:166
+#, kde-format
+msgid "The server certificate is invalid. Do you want to continue? "
+msgstr "Servera sertifikāts nav derīgs. Vai vēlaties turpināt?"
+
+#: jabberdisco.cpp:167
+#, kde-format
+msgid "Certificate Warning"
+msgstr "Sertifikāta brīdinājums"
+
+#: jabberdisco.cpp:284
+#, kde-format
+msgid "The login details are incorrect. Do you want to try again?"
+msgstr "Pieteikšanās detaļas ir nepareizas. Mēģināsiet vēlreiz?"

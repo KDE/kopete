@@ -1,0 +1,950 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-jabber">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Este documento foi convertido a partir da página da Base de Utilizadores do KDE <ulink url=" http://userbase.kde.org/Kopete/Jabber"
+>Kopete/Jabber</ulink
+>.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+<othercredit role="translator"
+><firstname
+>José</firstname
+><surname
+>Pires</surname
+><affiliation
+><address
+><email
+>zepires@gmail.com</email
+></address
+></affiliation
+><contrib
+>Tradução</contrib
+></othercredit
+> 
+    </authorgroup>
+<date
+>2010-12-05</date>
+    <releaseinfo
+>&kde; SC 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2010-12-05T08:12:25Z</timestamp
+>-->
+<title
+>Manual do Jabber</title>
+<!--userbase-content-->
+<sect1 id="about-jabber-xmpp"
+><title
+>Acerca do XMPP do Jabber</title>
+<para
+>O <ulink url="http://en.wikipedia.org/wiki/XMPP"
+>XMPP</ulink
+> ou Jabber (estas palavras significam de facto o mesmo) é o nome de um protocolo aberto e descentralizado de rede que é usado para mensagens instantâneas. Está desenhado como uma infra-estrutura cliente-servidor, com muitos servidores por toda a Internet, onde qualquer pessoa poderá obter uma conta. Os <ulink url="http://en.wikipedia.org/wiki/Server_%28computing%29"
+>servidores</ulink
+> estão normalmente ligados a vários <ulink url="http://en.wikipedia.org/wiki/Client_%28computing%29"
+>clientes</ulink
+> de um lado e a outros servidores de XMPP da Internet no outro. Iremos inventar um pequeno exemplo a explicar como é que funciona: </para>
+<para
+>Romeu adora Julieta e deseja comunicar com ela através da rede Jabber. Ele poderá escrever mensagens do seu cliente (que está ligado com <userinput
+>montecchio.net</userinput
+>) à sua r, cujo cliente está ligado a um servidor chamado <userinput
+>capuleto.com</userinput
+>. </para>
+<para
+>Quando ele registou uma conta num servidor, ele escolher um dado JID (Identificador do Jabber). Este JID funciona basicamente como um endereço de e-mail e está ligado ao nome do servidor com um <quote
+>@</quote
+>. Um exemplo de JID válido do Romeu é <userinput
+>romeu@montecchio.net</userinput
+>. </para>
+<para
+>Para poder falar com outras pessoas, o Romeu tem de adicionar os seus JID's à sua lista de contactos. Poderão estar ligado no mesmo servidor (&eg; <userinput
+>bobo@montecchio.net</userinput
+>), assim como podem ter origem noutro servidor (&eg; <userinput
+>pedro@wasinet.org</userinput
+> ou, obviamente, <userinput
+>julieta@capuleto.com</userinput
+>). </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_jabbernetwork.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Visualização da rede do Jabber</phrase>
+    </textobject>
+    <caption>
+      <para
+>Visualização da rede do Jabber</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>O Jabber/XMPP é, obviamente, capaz de muitos mais serviços (&eg; encriptação ponto-a-ponto das mensagens, conferências de <ulink url="http://en.wikipedia.org/wiki/Voicechat"
+>voz</ulink
+> e <ulink url="http://en.wikipedia.org/wiki/Video_conferencing"
+>vídeo</ulink
+>, conversas em grupo), que o tutorial irá introduzir parcialmente mais tarde. </para>
+<para
+>Dois grandes fornecedores de mensagens instantâneas usam o  Jabber/XMPP nos seus servidores em segundo plano: o Google Talk e a conversação do Facebook. As contas dentro destes sistemas poderão ser usadas como se fossem contas normais de Jabber no &kopete;. Os detalhes serão explicados <link linkend="fill-in-your-account-data-in-kopete"
+>posteriormente</link
+> ou podê-los-á encontrar nas páginas Web destes fornecedores. </para>
+<para
+>Com esta informação, poderemos começar com a parte principal do tutorial. Como configurar um cliente de Jabber funcional e quais as funcionalidades boas que o &kopete; tem. </para>
+</sect1>
+<sect1 id="first-steps"
+><title
+>Primeiros passos</title>
+<sect2 id="get-kopete"
+><title
+>Obter o Kopete</title
+> 
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopeteicon.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Ícone do Kopete</phrase>
+    </textobject>
+    <caption>
+      <para
+>Ícone do Kopete</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Obviamente, terá de obter primeiro o &kopete; antes de o poder usar. Se tiver um <ulink url="http://en.wikipedia.org/wiki/Linux"
+>sistema GNU/Linux</ulink
+>, existem boas hipóteses para ter o &kopete; já instalado (se já tiver instalado a <ulink url="http://en.wikipedia.org/wiki/KDE_Software_Compilation"
+>Compilação de Software do KDE - KDE SC</ulink
+>) ou que esteja num dos repositórios da sua distribuição. </para>
+<para
+>Agora instale o &kopete; e inicie-o pela primeira vez. </para>
+</sect2>
+</sect1>
+<sect1 id="create-your-jabber-account"
+><title
+>Crie a sua conta do Jabber</title>
+<para
+>Quando iniciar agora o &kopete;, irá obter uma janela vazia. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap001_emptykopete.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Janela vazia do Kopete</phrase>
+    </textobject>
+    <caption>
+      <para
+>Janela vazia do Kopete</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Na secção inferior diz <guilabel
+>Carregue aqui para adicionar uma conta</guilabel
+>. Carregue aí ou abra a opção <menuchoice
+><guimenu
+>Configuração</guimenu
+><guimenuitem
+>Configurar...</guimenuitem
+></menuchoice
+> para criar uma conta nova. De facto, iremos criar uma conta de Jabber, pelo que iremos seleccionar o item do menu <guilabel
+>Jabber</guilabel
+> e depois carregar em <guilabel
+>Seguinte</guilabel
+>. Depois de carregar em <guilabel
+>Registar uma conta nova</guilabel
+>, irá abrir uma janela nova onde poderá escrever o nome de um servidor de Jabber, de modo a criar uma conta no mesmo. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap002_configacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Configurar o Kopete</phrase>
+    </textobject>
+    <caption>
+      <para
+>Configurar o Kopete</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Tanto poderá escrevê-lo manualmente no campo de texto <guilabel
+>Servidor de Jabber</guilabel
+> como seleccioná-lo na lista indicada, a qual aparece ao carregar no botão <guilabel
+>Escolher...</guilabel
+> </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutoial_snap003_selectserver.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Janela de selecção do servidor</phrase>
+    </textobject>
+    <caption>
+      <para
+>Janela de selecção do servidor</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Depois de seleccionar um servidor, poderá completar o seu ID de Jabber desejado, &ie; o seu nome de utilizador. Adicione o seu nome preferido à frente do <quote
+>@</quote
+> no campo <guilabel
+>ID de Jabber Desejado</guilabel
+>. Depois de preencher a sua senha e de a repetir, deverá assinalar a opção <guilabel
+>Usar a encriptação do protocolo (SSL)</guilabel
+> para ter uma ligação cliente-servidor <ulink url="http://en.wikipedia.org/wiki/Secure_Sockets_Layer"
+>encriptada</ulink
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap004_createacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Crie a sua conta</phrase>
+    </textobject>
+    <caption>
+      <para
+>Crie a sua conta</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Alguns servidores poderão não suportar esta opção, mas a maioria é. Agora, carregue em <guilabel
+>Registar</guilabel
+> para terminar a subscrição. </para>
+<para
+>Parabéns, registou agora uma conta nova num servidor de Jabber! </para>
+</sect1>
+<sect1 id="fill-in-your-account-data-in-kopete"
+><title
+>Preencha os dados da sua conta no Kopete</title>
+<para
+>Agora possui uma conta num servidor de Jabber e o &kopete; está a pedir-lhe o <emphasis
+>Passo dois: Informação da conta</emphasis
+>. O &kopete; adiciona o seu ID do Jabber e a sua senha nos campos obrigatórios automaticamente. Se quiser que o &kopete; recorde a sua senha, para que não a tenha de escrever sempre que se ligar ao seu servidor, assinale a opção <guilabel
+>Recordar a senha</guilabel
+>. </para>
+<para
+>Se quiser usar as suas contas existentes do <ulink url="http://www.google.com/support/chat/bin/answer.py?hl=en&amp;answer=57557"
+>Google Talk</ulink
+> ou da conversação no Facebook com o &kopete; (estes também são, de facto, servidor de Jabber), use o seu endereço de GMail ou a sua conta no Facebook (<ulink url="http://www.facebook.com/sitetour/chat.php"
+>explicado aqui</ulink
+>) para se ligar aos servidores. </para>
+<para
+>Opcionalmente, poderá assinalar a opção <guilabel
+>Excluir de ligar todos</guilabel
+>. Isto diz ao &kopete; para não passar ao estado ligado quando se ligar em todas as suas contas do &kopete; (dado que o &kopete; é um multi-mensageiro com suporte para muitos outros protocolos como o <ulink url="http://en.wikipedia.org/wiki/ICQ"
+>ICQ</ulink
+> ou o <ulink url="http://en.wikipedia.org/wiki/.NET_Messenger_Service"
+>MSN</ulink
+>). Quando tiver assinalado isto, terá de se ligar explicitamente nesta conta, sempre que se quiser ligar ao seu servidor. </para>
+<para
+>O seu &kopete; dever-se-á parecer agora como isto: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap005_enterjid.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Janela de informações da conta</phrase>
+    </textobject>
+    <caption>
+      <para
+>Janela de informações da conta</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Carregue na página <guilabel
+>Ligação</guilabel
+> para verificar as opções adicionais. Especialmente, seleccione a opção <guilabel
+>Usar o protocolo de encriptação</guilabel
+> e desligue a <guilabel
+>Permitir a autenticação em texto simples</guilabel
+> por razões de segurança básicas. </para>
+<para
+>A <guilabel
+>informação do servidor por omissão</guilabel
+> deverá estar correcta, caso esteja numa rede doméstica normal sem configurações especiais da <ulink url="http://en.wikipedia.org/wiki/Firewall_%28computing%29"
+>firewall</ulink
+>. </para>
+<para
+>A secção <emphasis
+>Configuração da Localização</emphasis
+> é outra especialidade do Jabber: Poderá definir <quote
+>Recursos</quote
+> para identificar a partir de onde você efectua conversas. Por exemplo, se se ligar ao Jabber a partir do seu telemóvel e do seu portátil ao mesmo tempo (sim, poderá faz isso), o recurso explica aos seus contactos onde é que você está. Como tal, poderá chamá-los de <quote
+>Portátil</quote
+> ou <quote
+>Android</quote
+>, dependendo do dispositivo onde está a instalar o Kopete. Lembre-se que os seus recursos poderão ser vistos a partir dos seus parceiros de conversação (serão adicionados ao JID da seguinte forma: <userinput
+>romeu@montecchio.net/Portátil</userinput
+>), pelo que poderá ter de considerar alguma privacidade ao escolher o nome dos seus recursos. </para>
+<para
+>No nosso exemplo, o <guilabel
+>Recurso</guilabel
+> será configurado como <replaceable
+>Portátil</replaceable
+>. A prioridade é principalmente útil quando lidar com vários dispositivos e indicar no cliente do seu parceiro qual dos seus dispositivos que está ligado de momento (&eg; o seu telemóvel ou o seu portátil) a contactar neste caso. O número de prioridade máximo dos seus recursos ligados será o que irá receber a mensagem. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap006_connection.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Definir a configuração da conta</phrase>
+    </textobject>
+    <caption>
+      <para
+>Definir a configuração da conta</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>A próxima página, a <guilabel
+>Transferência de Ficheiros</guilabel
+>, normalmente não é afectada ao configurar uma conta de Jabber numa rede normal. </para>
+<para
+>Finalmente, existem algumas configurações de privacidade na página <guilabel
+>Privacidade</guilabel
+>, sendo estes bastante auto-explicativos. A opção <guilabel
+>Usar o antigo formato incorporado de PGP para as mensagens assinadas e encriptadas</guilabel
+> (leia aqui o que significa <ulink url="http://en.wikipedia.org/wiki/Pretty_Good_Privacy"
+>PGP</ulink
+>) não é recomendada, dado que existem um método para o fazer com o OTR incorporado, o qual será explicado <link linkend="useful-configuration-hints"
+>posteriormente neste tutorial</link
+>. </para>
+<para
+>Nesta altura, poderá carregar em <guilabel
+>Seguinte</guilabel
+> de novo, para que tenha a sua conta configurada. Poderá escolher uma cor opcional para a sua conta e, quando se sentir à vontade para se ligar da primeira vez ao seu servidor de Jabber, a opção <guilabel
+>Ligar agora</guilabel
+> terá de estar assinalada. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap007_conf-ready.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Último passo de configuração</phrase>
+    </textobject>
+    <caption>
+      <para
+>Último passo de configuração</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Agora poderá terminar a configuração. </para>
+<para
+>Caso contrário, poder-se-á ligar manualmente ao servidor se carregar em <menuchoice
+><guimenu
+>Estado</guimenu
+><guimenuitem
+>Ligado</guimenuitem
+></menuchoice
+> na janela principal do Kopete ou se carregar com o botão direito no símbolo do Kopete na bandeja do sistema e seleccionar a opção <menuchoice
+><guimenu
+>Mudar o Estado</guimenu
+><guimenuitem
+>Ligado</guimenuitem
+></menuchoice
+>. Se seleccionou a opção <guilabel
+>Excluir de ligar todos</guilabel
+> anteriormente, terá de se autenticar ao carregar no botão direito na bandeja do sistema do Kopete e seleccionar a opção <menuchoice
+><guimenu
+>o-seu-JID@exemplo.org</guimenu
+><guimenuitem
+>Ligado</guimenuitem
+></menuchoice
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap008_goonline.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Passar ao estado ligado</phrase>
+    </textobject>
+    <caption>
+      <para
+>Passar ao estado ligado</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="adding-friends"
+><title
+>Adicionar amigos</title>
+<para
+>Depois da sua primeira autenticação, a sua janela do &kopete; aparece bastante vazia. Poderá existir um contacto predefinido adicionado pelo servidor, o qual lhe possa mandar uma mensagem de boas-vindas, mas não existirão contactos reais na sua lista de contactos. O primeiro passo para adicionar amigos no Jabber é, obviamente, pedir-lhes qual é o seu ID de Jabber. Quando obtiver um, poderá adicioná-lo automaticamente no &kopete;. Poderá tanto carregar em <menuchoice
+><guimenu
+>Adicionar</guimenu
+><guimenuitem
+>o-seu-JID@exemplo.org</guimenuitem
+></menuchoice
+> ou <menuchoice
+><guimenu
+>Ficheiro</guimenu
+><guimenuitem
+>Adicionar um Contacto</guimenuitem
+></menuchoice
+>. Irá aparecer uma janela nova a perguntar-lhe o <guilabel
+>ID do Jabber</guilabel
+> que deseja adicionar à sua lista de contactos. Basta escrevê-lo e carregar em <guilabel
+>OK</guilabel
+>. A opção do <guilabel
+>Grupo</guilabel
+> é usada caso tenha definido grupos de contactos (&eg; <quote
+>família</quote
+> e <quote
+>trabalho</quote
+>). Pode estabelecer uma ligação ao seu <ulink url="http://userbase.kde.org/Special:myLanguage/KAddressBook"
+>KAddressBook</ulink
+> com o <guilabel
+>Item do livro de endereços</guilabel
+>, para que possa trocar informações, como as imagens de perfil entre as duas aplicações. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap009_addfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Adicionar um amigo</phrase>
+    </textobject>
+    <caption>
+      <para
+>Adicionar um amigo</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Agora adicionou o seu primeiro amigo à sua lista. Todavia, antes de poder começar a escrever mensagens para a pessoa, o seu contacto terá de autorizar o seu pedido. Até que isso aconteça, o contacto aparece com um ponto de exclamação amarelo do lado direito do seu campo de contacto. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap010_exlamationmarkfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>O seu contacto</phrase>
+    </textobject>
+    <caption>
+      <para
+>O seu contacto</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Quando o seu amigo tiver autorizado o seu pedido ou o tiver adicionado à lista de contactos dele, o seu ícone irá aparecer colorido quando ficar ligado. Os significados exactos dos diferentes ícones (Ligado, Ausente, &etc;) poderão ser vistos no <guilabel
+>Estado</guilabel
+> onde poderá definir os seus também. Irá receber uma notificação quando tiver autorização. </para>
+<para
+>Normalmente, o seu amigo colocá-lo-á também na lista de contactos dele, pelo que terá também de autorizar esse pedido. O &kopete; notifica-o acerca disso no fundo, com um bandeira verde e a descrição do pedido. Carregue em <guilabel
+>Autorizar</guilabel
+> para aceitar. A área de notificações poderá ser fechada se carregar na cruz do canto superior direito da área. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap011_addedbyfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Foi agora adicionado pelo seu contacto</phrase>
+    </textobject>
+    <caption>
+      <para
+>Foi agora adicionado pelo seu contacto</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Depois deste procedimento, deverá ver uma lista de contactos como a da imagem seguinte. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap012_fullauthorized.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>O seu contacto está completamente autorizado</phrase>
+    </textobject>
+    <caption>
+      <para
+>O seu contacto está completamente autorizado</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Você adicionou com sucesso o seu primeiro contacto à lista. </para>
+</sect1>
+<sect1 id="messaging-and-sending-files"
+><title
+>Mensagens e envio de ficheiros</title>
+<para
+>Poderá iniciar a conversa com um contacto se carregar no nome do mesmo. Irá abrir uma janela nova onde poderá escrever mensagens no campo mais pequeno do fundo, onde o cursor já se encontra. Quando quiser enviar o seu texto, carregue em &Enter; ou carregue no botão <guilabel
+>Enviar</guilabel
+>. Você e o seu parceiro poderá então comunicar através do Jabber. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap013_firstchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>A sua primeira conversa</phrase>
+    </textobject>
+    <caption>
+      <para
+>A sua primeira conversa</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<sect2 id="transfer-files"
+><title
+>Transferir ficheiros</title
+> 
+<para
+>Para transferir ficheiros com o Jabber, carregue em <guilabel
+>Enviar um Ficheiro</guilabel
+> e seleccione o ficheiro que deseja enviar na janela que aparece. Será notificado quando a transacção terminar ou falhar por alguma razão. </para>
+<para
+><warning
+><para
+>Isto poderá não funcionar em alguns casos, devido a configurações incompatíveis de alguns servidores</para
+></warning>
+</para>
+</sect2>
+<sect2 id="group-chat"
+><title
+>Conversa em grupo</title
+> 
+<para
+>O Jabber não é capaz só de comunicar com uma pessoa. Poderá usar a Conversa em Grupo para fazer uma discussão do estilo do <ulink url="http://en.wikipedia.org/wiki/IRC"
+>IRC</ulink
+>, onde poderá ter muitas pessoas a falar entre si. Para usar a Conversa em Grupo, terá de carregar com o botão direito do rato no ícone da bandeja do &kopete; e seleccionar a opção <menuchoice
+><guimenu
+><replaceable
+>o-seu-JID</replaceable
+></guimenu
+><guimenuitem
+>Juntar a Conversa em Grupo...</guimenuitem
+></menuchoice
+>, onde o <replaceable
+>o-seu-JID</replaceable
+> corresponde ao seu próprio ID do Jabber. Irá aparecer uma janela nova onde se poderá juntar a uma sala de conversação. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_snap021_groupchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Conversa em grupo</phrase>
+    </textobject>
+    <caption>
+      <para
+>Conversa em grupo</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Carregue em <guilabel
+>Consulta</guilabel
+> para mostrar a lista de salas de conversação no seu servidor de Jabber. Seleccione uma e carregue em &Enter; para entrar nesta sala. </para>
+<para
+>Em alternativa, poderá escrever e criar a sua própria sala, escrevendo o seu nome na linha <guilabel
+>Quarto</guilabel
+>. Depois, carregue em &Enter; ou carregue em <guilabel
+>Ligar</guilabel
+> para se juntar. </para>
+<para
+>Depois de criar a sala de conversação, irá ver um campo novo que aparece na sua janela do &kopete; com o JID <replaceable
+>nome-sala@jabber.exemplo.org</replaceable
+>. Trate-a como um contacto normal, &ie; terá de carregar neste JID para conversar, &etc; </para>
+<para
+>Nesta altura, já tem configurado um cliente funcional de Jabber e será, à partida, capaz de conversar com os seus contactos. Contudo, para uma melhor experiência do &kopete;, será capaz de configurar a aplicação para as suas melhores necessidades. Um conjunto com algumas <link linkend="useful-configuration-hints"
+>Dicas de configuração úteis</link
+> será o conteúdo da página seguinte deste tutorial. </para>
+</sect2>
+</sect1>
+<sect1 id="useful-configuration-hints"
+><title
+>Dicas de configuração úteis</title>
+<para
+>Estas sugestões referem-se todas à janela de configuração do &kopete; em <menuchoice
+><guimenu
+>Configuração</guimenu
+><guimenuitem
+>Configurar...</guimenuitem
+></menuchoice
+>. Certifique-se que carrega em <guilabel
+>Aplicar</guilabel
+> ou <guilabel
+>OK</guilabel
+> se quiser gravar as suas alterações. </para>
+<para
+>Todos os ajustes que afectem a configuração da sua conta e das várias contas no &kopete; (Jabber/XMPP assim como <ulink url="http://en.wikipedia.org/wiki/Icq"
+>ICQ</ulink
+>, <ulink url="http://en.wikipedia.org/wiki/.NET_Messenger_Service"
+>MSN</ulink
+> e muitos outros protocolos de mensagens) poderão ser encontrados na página de <guilabel
+>Contas</guilabel
+>. Se quiser configurar a sua informação pessoal ou estiver dispositivo a usar uma foto de contacto, carregue em <guilabel
+>Modificar a Identidade...</guilabel
+> e fazer a sua configuração. Poderá enviar uma foto se carregar no pequeno ícone do lado inferior esquerdo da área de imagens. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap014_setidentity.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Definir a identidade</phrase>
+    </textobject>
+    <caption>
+      <para
+>Definir a identidade</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>A página seguinte na lista vertical que aparece do lado esquerdo é a <guilabel
+>Lista de Contactos</guilabel
+>. Estas opções são normalmente intuitivas e parece útil a activação de <guilabel
+>Usar as fotos dos contactos quando disponíveis</guilabel
+>. As outras três páginas horizontais (<guilabel
+>Cores &amp; Tipos de Letra</guilabel
+>, <guilabel
+>Avançado</guilabel
+> e <guilabel
+>Disposição</guilabel
+>) incluem algumas opções especiais e, provavelmente, afiná-las-á quando tiver usado o &kopete; durante algumas semanas. </para>
+<para
+>As configurações do <guilabel
+>Estado</guilabel
+> permitem-lhe definir as suas próprias <ulink url="http://en.wikipedia.org/wiki/Status_message"
+>mensagens de estado</ulink
+> predefinidas quando estiver Ligado, Ausente, Invisível, &etc; </para>
+<para
+>Se carregar em <guilabel
+>Comportamento</guilabel
+>, irá abrir um conjunto de opções de configuração bastante detalhados. As mais interessantes, as que poderá encontrar na página <guilabel
+>Geral</guilabel
+>, são o <guilabel
+>Tratamento das Mensagens</guilabel
+> e o <guilabel
+>Estado Inicial</guilabel
+>. A primeira decide se as mensagens recebidas dos seus contactos aparecem instantaneamente numa janela nova ou se são colocadas em espera até que você mesmo abra o &kopete;. A segunda diz ao &kopete; se deverá passar ao estado ligado quando iniciar o programa. Quando definir esta opção, ficará sempre disponível para os seus contactos assim que executar o &kopete;. A página <guilabel
+>Eventos</guilabel
+> permite-lhe definir em que casos é que o &kopete; o notifica através do sistema de notificações do seu computador (normalmente, o <guilabel
+>KNotify</guilabel
+>). Quando quiser que o &kopete; mude o seu estado automaticamente para <quote
+>Ausente</quote
+>, abra a página <guilabel
+>Configuração da Ausência</guilabel
+> e active a primeira opção. Poderá definir o tempo que terá de passar após a sua última acção (acção do teclado ou do rato) para que o &kopete; o passe a <quote
+>ausente</quote
+>. O valor por omissão é de 10 minutos. As opções localizadas em <guilabel
+>Conversa</guilabel
+> são mais uma vez intuitivas e já têm valores úteis atribuídos. </para>
+<para
+>O item seguinte na fila vertical do lado esquerdo é a <guilabel
+>Janela de Conversação</guilabel
+>. A primeira página do mesmo, o <guilabel
+>Estilo</guilabel
+>, poderá ser usada para definir outra aparência diferente da predefinida. Poderá também instalar os seus próprios estilos ou transferir novos da Internet, carregando para tal em <guilabel
+>Obter Novos...</guilabel
+>. Quando tiver um <ulink url="http://en.wikipedia.org/wiki/Emoticon"
+>Ícone Emotivo</ulink
+> durante uma conversação, o &kopete; irá convertê-lo para um ícone gráfico por omissão. Para desactivar esta funcionalidade ou usar outro conjunto de ícones, vá a <guilabel
+>Ícones Emotivos</guilabel
+>. A última página, a <guilabel
+>Cores &amp; Tipos de Letra</guilabel
+> é, uma vez mais, intuitiva e configura essas opções para a sua janela de conversação. </para>
+<para
+>As <ulink url="http://en.wikipedia.org/wiki/Webcam"
+>Webcams</ulink
+> são suportadas no &kopete;, mas neste momento (Novembro de 2010) existem ainda algumas dificuldades no que respeita às conversas por vídeo, pelo que as opções no <guilabel
+>Vídeo</guilabel
+> são feitas à sua responsabilidade, dado que é bastante possível que não funcione como esperado. Os <ulink url="http://forum.kde.org/viewforum.php?f=18"
+>Fóruns do KDE</ulink
+> poderão ser úteis ao lidar com as questões das Webcams. </para>
+</sect1>
+<sect1 id="jabber-plugins"
+><title
+>'Plugins'</title
+> 
+<para
+>Uma funcionalidade bastante poderosa do &kopete; é a possibilidade de usar os 'plugins'. Existe um conjunto de 'plugins' pré-instalados (poderá instalados novos, por exemplo, com o gestor de pacotes da sua distribuição de &Linux;) e podê-los-á activar e configurar em <guilabel
+>Plugins</guilabel
+>. Podê-los-á activar se os assinalar na opção respectiva. A maioria deles são mais uma vez intuitivos, mas os mais úteis serão aqui explicados de qualquer forma. Um 'plugin' bastante útil é o <guilabel
+>Histórico</guilabel
+>. Com esta opção activa, o Kopete irá registar todas as suas conversas e gravá-las no seu disco rígido. Podê-lo-á consultar na sua janela de conversação, quando seleccionar o ícone <guilabel
+>Ver o Histórico</guilabel
+> ou quando o abrir com a opção <menuchoice
+><guimenu
+>Ferramentas</guimenu
+><guimenuitem
+>Ver o Histórico</guimenuitem
+></menuchoice
+>. </para>
+<sect2 id="otr"
+><title
+>OTR</title
+> 
+<para
+>Um dos 'plugins' mais importantes no que respeita à privacidade é o <ulink url="http://en.wikipedia.org/wiki/Off-the-Record_Messaging"
+>OTR</ulink
+>. Este pequeno módulo encripta a sua conversa por inteiro de um extremo ao outro e impossibilita a terceiros lerem a sua conversação. Depois de ter activado o 'plugin', terá de abrir a sua configuração (carregue no ícone da chave-inglesa) e <guilabel
+>Gerar</guilabel
+> uma chave. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap015_otrgenerate.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Gerar uma chave OTR</phrase>
+    </textobject>
+    <caption>
+      <para
+>Gerar uma chave OTR</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Isto poderá levar algum tempo e você poderá ter de esperar até que o &kopete; termine. Depois disso, feche a janela do OTR com o <guilabel
+>OK</guilabel
+> e <guilabel
+>Aplicar</guilabel
+> as alterações. Terá eventualmente de reiniciar o &kopete; a seguir a isto. Depois, abra uma janela de conversação do contacto com o qual deseja comunicar de forma segura. Vá a <menuchoice
+><guimenu
+>Ferramentas</guimenu
+><guimenuitem
+>Configuração do OTR</guimenuitem
+></menuchoice
+> ou use o ícone <menuchoice
+><guimenu
+>Encriptação do OTR</guimenu
+><guimenuitem
+>Iniciar a Sessão de OTR</guimenuitem
+></menuchoice
+>. O &kopete; irá iniciar a sessão caso o seu contacto tenha suporte para o OTR, caso contrário irá obter uma mensagem de erro. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap016_otrfirstuse.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Primeira utilização do OTR</phrase>
+    </textobject>
+    <caption>
+      <para
+>Primeira utilização do OTR</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Para garantir que o seu contacto adicionado é realmente quem diz ser, é necessário autenticá-lo uma vez. Poderá fazer isto se invocar a opção <menuchoice
+><guimenu
+>Ferramentas</guimenu
+><guisubmenu
+>Configuração do OTR</guisubmenu
+><guimenuitem
+>Autenticar o Contacto</guimenuitem
+></menuchoice
+>. Poderá optar entre três opções: </para>
+<itemizedlist>
+<listitem
+><para
+>A primeira é perguntar ao seu parceiro uma pergunta cuja resposta só ele/ela possa saber. </para
+></listitem>
+<listitem
+><para
+>A possibilidade seguinte é uma frase-senha secreta que o seu parceiro terá de saber (poderá pensar em dar-lhe essa senha através de outro canal de comunicações seguro, &eg; telefone). </para
+></listitem>
+<listitem
+><para
+>Em terceiro lugar, existe a opção de verificar manualmente a impressão digital do OTR. Esta é a opção mais segura, mas não é muito útil e, se puder escolher uma das outras, será mais confortável e rápido. Quando verificar a impressão digital, terá de perguntar ao seu parceiro qual é a impressão digital de OTR deles por uma ligação segura (&eg; telefone ou e-mail encriptado) para que se possa verificar a mesma. </para
+></listitem>
+</itemizedlist>
+<para
+>Vamos assumir que escolhemos a primeira opção e fazemos uma pergunta ao nosso parceiro. Escreva-a no campo e indique a resposta esperada que o seu parceiro deverá dar, para que ele ou ela fique autenticado. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap017_seqretquestion.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Fazer uma pergunta secreta</phrase>
+    </textobject>
+    <caption>
+      <para
+>Fazer uma pergunta secreta</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Quando prosseguirmos, o seu parceiro irá ver a pergunta e, caso a resposta esteja correcta, o OTR fica activado agora. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap018_otrsuccess.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Configuração do OTP terminada</phrase>
+    </textobject>
+    <caption>
+      <para
+>Configuração do OTP terminada</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>O seu parceiro poderá fazer o mesmo, por seu turno, para que veja uma janela de autenticação a fazer-lhe uma pergunta, para que você seja também um utilizador autenticado na lista de contactos do seu amigo. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap019_otrauth.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Autenticação do OTR</phrase>
+    </textobject>
+    <caption>
+      <para
+>Autenticação do OTR</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Sempre que comunicar em segurança, irá ver o cadeado a verde no topo da sua janela de conversação. Para terminar a ligação segura, tanto poderá fechar a sua janela de conversação como carregar em <menuchoice
+><guimenu
+>Encriptação OTR</guimenu
+><guimenuitem
+>Terminar a Sessão de OTR</guimenuitem
+></menuchoice
+>. </para>
+</sect2>
+</sect1>
+</appendix>

@@ -1,0 +1,2558 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY Will.Stephenson "<personname
+><firstname
+>Will</firstname
+><surname
+>Stephenson</surname
+></personname
+>">
+  <!ENTITY Will.Stephenson.mail "<email
+>lists@stevello.free-online.co.uk</email
+>">
+  <!ENTITY Matt.Rogers "<personname
+><firstname
+>Matt</firstname
+><surname
+>Rogers</surname
+></personname
+>">
+  <!ENTITY Matt.Rogers.mail "<email
+>mattr@kde.org</email
+>">
+  <!ENTITY Michael.Larouche "<personname
+><firstname
+>Michaël</firstname
+><surname
+>Larouche</surname
+></personname
+>">
+  <!ENTITY Michael.Larouche.mail "<email
+>michael.larouche@kdemail.net</email
+>">
+  <!ENTITY Olivier.Goffart "<personname
+><firstname
+>Olivier</firstname
+><surname
+>Goffart</surname
+></personname
+>">
+  <!ENTITY Olivier.Goffart.mail "<email
+>ogoffart@kde.org</email
+>">
+  <!ENTITY Charles.Connell "<personname
+><firstname
+>Charles</firstname
+><surname
+>Connell</surname
+></personname
+>">
+  <!ENTITY Charles.Connell.mail "<email
+>charles@connells.org</email
+>">
+  <!ENTITY im "<acronym
+>IM</acronym
+>">
+  <!ENTITY ascii "<acronym
+>ASCII</acronym
+>">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % Swedish "INCLUDE">
+  <!ENTITY kopete-menus SYSTEM "menus.docbook">
+  <!ENTITY kopete-chatstyle SYSTEM "chatstyle.docbook">
+  <!ENTITY kopete-pipes SYSTEM "pipes.docbook">
+  <!ENTITY kopete-jabber SYSTEM "jabber.docbook">
+  <!ENTITY kopete-icq SYSTEM "icq.docbook">
+  <!ENTITY kopete-emoticonspec SYSTEM "emoticonspec.docbook">
+]>
+<!--
+Intro (1st draft, Will)
+Getting Started (1st draft, Will)
+        Add an account
+        Go online
+        Start chatting
+Using &kopete; (1st draft, Will)
+        Contact List window
+		Layout
+			Menu
+			Toolbar
+			Contact List view
+			Status bar
+		Set your presence
+		Start a chat
+            	Organising contacts
+                	Adding contacts
+				Metacontacts
+			Grouping Contacts
+				Within Metacontacts
+			Renaming Contacts
+		Configure &kopete;
+		Quit.
+		Shortcuts
+        Chat window
+		Layout
+			Chat members list
+			Status bar (typing notifications, etc )
+			Tabbing
+		Starting group chats
+		Shortcuts
+	        File transfers
+Configuring &kopete; (1st draft, Will)
+	Global Shortcuts
+	Configure Dialog
+		Adding/Editing Accounts (
+		Behaviour
+		Appearance
+	Loading Plugins
+Plugins (Outlined, Will)
+        (Section on each plugin, use, and configuration)
+Menus (Done, Will)
+        (Short description of each menu item)
+FAQ (1st draft, Will)
+Specialized Tasks
+    (Any tricks involving _use_ of Kopete)
+	Command line flags
+Credits (1st draft, Will)
+Appendix: Obtaining and installation (1st draft, Will)
+Appendix: Chat Window Style Guide (1st draft, Michaël)
+-->
+
+<book id="kopete" lang="&language;">
+<bookinfo>
+<title
+>Handbok &kopete;</title>
+
+<authorgroup>
+
+<author
+>&Will.Stephenson; &Will.Stephenson.mail;</author>
+<author
+>&Matt.Rogers; &Matt.Rogers.mail;</author>
+<author
+>&Michael.Larouche; &Michael.Larouche.mail;</author>
+
+<othercredit role="translator"
+> <firstname
+>Stefan</firstname
+> <surname
+>Asserhäll</surname
+> <affiliation
+><address
+><email
+>stefan.asserhall@bredband.net</email
+></address
+></affiliation
+> <contrib
+>Översättare</contrib
+></othercredit
+> 
+</authorgroup>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>2006-12-15</date>
+<releaseinfo
+>0.12</releaseinfo>
+
+<copyright>
+<year
+>2003, 2004, 2005, 2006, 2007</year>
+</copyright>
+
+<!-- Abstract about this handbook -->
+
+<abstract>
+<para
+>&kopete; är direktmeddelandeklienten för flera protokoll av &kde;-gemenskapen. </para>
+</abstract>
+
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>IM</keyword>
+<keyword
+>Direkt</keyword>
+<keyword
+>Meddelande</keyword>
+<keyword
+>Jabber</keyword>
+<keyword
+>IRC</keyword>
+<keyword
+>ICQ</keyword>
+<keyword
+>AIM</keyword>
+<keyword
+>Gadu-Gadu</keyword>
+<keyword
+>GroupWise</keyword>
+<keyword
+>Novell</keyword>
+<keyword
+>WinPopup</keyword>
+<keyword
+>SMS</keyword>
+</keywordset>
+
+</bookinfo>
+
+<chapter id="introduction">
+<title
+>Inledning</title>
+
+<sect1 id="intro-to-kopete">
+<title
+>&kopete;, &kde;:s direktmeddelandeklient</title>
+<sect2 id="intro-to-kopete-next">
+<title
+>Innan du börjar...</title>
+<para
+>Om du inte är bekant med direktmeddelandetjänster, läs gärna avsnittet <link linkend="getting-started"
+>Komma igång</link
+> för att lära dig mer om denna underbara värld, innan du fortsätter.</para>
+</sect2>
+<sect2 id="intro-to-kopete-about">
+<title
+>Vad är &kopete;?</title>
+<para
+>&kopete; är &kde;:s direktmeddelandeklient. Den låter dig kommunicera med dina vänner och kolleger med hjälp av diverse direktmeddelandetjänster. Ett enda program är lätt att lära sig och bekvämt om dina vänner och kolleger använder mer än en tjänst för direktmeddelanden. </para>
+<para
+>&kopete; är konstruerat för att fungera bra ihop med &kde;-skrivbordet, så att det omedelbart känns bekant. Användargränssnittet är rent och enkelt, utan några finesser som distraherar användaren. Samtidigt har &kopete; som mål att placera kommunikationen i fokus för direktmeddelandesystem, genom att ta bort skillnader mellan de olika systemen. En funktion som &kopete; introducerar för att stödja detta är <link linkend="organise-contacts-metacontacts"
+>metakontakter</link
+>, som kombinerar de olika sätt som finns för att kontakta någon till en enda <quote
+>person</quote
+> i kontaktlistan. Andra direktmeddelandeprogram listar samma persons olika direktmeddelandekonton separat, vilket är förvirrande för mindre erfarna användare. &kopete; gör livet enklare: En metakontakt är en person, och kontakter är sätt att kommunicera med den personen. Du känner enkelt igen kontakter i en metakontakt som små ikoner som representerar direktmeddelandetjänster som du kan använda för att kommunicera med personen.</para>
+<para
+>&kopete; är avsett för användare på alla nivåer. Från början stöder det en minimal uppsättning funktioner för att göra det så lätt som möjligt att chatta. Mer avancerade användare kan lägga till funktioner som statistik med &kopete;s <link linkend="plugins"
+>insticksprogramsystem</link
+>.</para>
+</sect2>
+<sect2 id="intro-to-kopete-web">
+<title
+>Mer information om &kopete; på webben</title>
+<para
+>Om du behöver kontakta gruppen, finns värddatorn för &kopete;s utvecklares e-postlista på <ulink url="https://mail.kde.org/mailman/listinfo/kopete-devel"
+>https://mail.kde.org/mailman/listinfo/kopete-devel</ulink
+>.</para>
+<para
+>Om du vill ha direkthjälp, finns en chattkanal på Internet Relay Chat för &kopete;, där gruppen diskuterar tekniska frågor (ja, kanske inte alltid) eller bara är tillgängliga. Du kan använda vilken IRC-klient som helst för att gå med i kanalen (inklusive &kopete;). Lägg bara till en IRC-kontakt och använd <userinput
+>irc.freenode.org</userinput
+> som server och <userinput
+>#kopete</userinput
+> som kanalnamn. Vi ses där!</para>
+</sect2>
+</sect1>
+<sect1 id="intro-to-instant-messaging">
+<title
+>Inledning till direktmeddelandetjänster</title>
+<para
+>Vad är direktmeddelanden (Instant Messaging, &im;)? Det är ett sätt att kommunicera direkt med dina vänner via Internet. Det kanske inte låter särskilt annorlunda jämfört med e-post. Men har du någonsin märkt hur besvärligt det är att föra ett kort samtal via e-post? Du måste klicka svara på varje brev, sedan hitta rätt ställe i brevet att skriva in något nytt, och sedan skicka det. Därefter måste du vänta på att nästa brev ska komma tillbaka! Direktmeddelanden låter dig föra ett samtal nästan lika naturligt som via telefon eller öga mot öga, genom att skriva in meddelanden i ett fönster som delas av dig och din väns skärm.</para>
+<para
+>En annan skillnad mellan direktmeddelanden och e-post är att med direktmeddelanden kan du se dina vänners närvaro, dvs. om de verkligen är uppkopplade samtidigt som dig. Det låter dig verkligen skicka meddelanden direkt, istället för att skicka iväg ett brev och vänta på att din vän kontrollerar sin brevlåda. Ett direktmeddelande dyker upp på den andra personens skärm så fort du skickar det. Om du inte vill bli avbruten, kan du förstås ändra din närvaro så att andra vet att de inte ska störa dig.</para>
+<para
+>Det finns massor med andra roliga och användbara funktioner med direktmeddelanden som du kan utforska med &kopete;, som gruppchatt, filöverföringar och smilisar som motsvarar ditt humör. Läs vidare för att lära dig mer!</para>
+</sect1>
+</chapter>
+
+<chapter id="getting-started">
+<title
+>Komma igång</title>
+<para
+>För att använda &kopete; måste du skapa ett eller flera konton för de direktmeddelandetjänster som du vill använda.</para>
+<para
+>Du har troligen redan valt en meddelandetjänst, antingen därför att du redan använder direktmeddelanden, eller därför att du måste använda samma tjänst som dina vänner. Om du inte passar in i någon av dessa kategorier, fundera på att använda en meddelandetjänst som är baserad på öppna standarder, eftersom de är konstruerade för användning av fri programvara. Andra meddelandetjänster är benägna att ändra bakomliggande teknik utan att göra detaljerad information tillgänglig, vilket gör dem svårare att stödja för utvecklare av fri programvara.</para>
+<para
+>Meddelandetjänster som &kopete; stöder, som är baserade på öppna standarder är Jabber och IRC.</para>
+<para
+>Följande avsnitt antar att du redan är registrerad hos en meddelandetjänst. Om inte, kan du registrera med Gadu-Gadu och Jabber inne i &kopete;. För övriga tjänster, måste du registrera med deras respektive webbtjänst innan du skapar ett konto i &kopete;.</para>
+<sect1 id="creating-accounts">
+<title
+>Skapa konton</title>
+<para
+>För att skapa ett konto, använd <menuchoice
+><guimenu
+>Inställningar</guimenu
+> <guimenuitem
+>Anpassa...</guimenuitem
+></menuchoice
+> för att visa inställningsfönstret.</para>
+<para
+>Inställningsfönstret är det huvudsakliga sättet att ställa in och anpassa &kopete;. Till vänster styr en kolumn med ikoner vilken aspekt av &kopete; som ställs in. Klicka på ikonen <guiicon
+>Konton</guiicon
+>. Fönstret ändras för att visa kontohanteringsrutan. Den är för närvarande tom, men visar snart dina meddelandetjänstkonton. Klicka på <guibutton
+>Lägg till kontot</guibutton
+> för att visa <interface
+>kontoguiden</interface
+>.</para>
+<para
+><interface
+>Kontoguiden</interface
+> hjälper dig att skapa ett meddelandetjänstkonto. På första sidan ombeds du välja meddelandetjänsten som ska användas. Klicka på en av tjänsterna som visas och klicka därefter på knappen <guibutton
+>Nästa</guibutton
+>. På följande sida, ska du skriva in din registreringsinformation för meddelandetjänsten.</para>
+<para
+>De flesta tjänster kräver bara att du skriver in ett användarnamn eller unikt identifieringsnummer (<acronym
+>UIN</acronym
+>) och lösenord. Specialtjänsterna Winpopup och <acronym
+>SMS</acronym
+> fungerar något annorlunda, så titta i deras särskilda avsnitt. Det finns ett antal andra alternativ som gäller de flesta tjänster, som du bör titta på:</para>
+<variablelist>
+<varlistentry
+><term
+>Kom ihåg lösenord</term
+><listitem
+><para
+>När det här är markerat, lagrar &kopete; lösenordet åt dig, så att du inte behöver skriva in det varje gång du ansluter till meddelandetjänsten. Om du är säkerhetsmedveten eller vill begränsa åtkomsten till tjänsten, kan du lämna det omarkerat.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Anslutning vid start</term
+><listitem
+><para
+>När det här är markerat, försöker &kopete; ansluta till meddelandetjänsten när det startar. Om du använder ett lokalt nätverk, <acronym
+>DSL</acronym
+> eller en annan anslutning som alltid är uppkopplad, är detta lämpligt. Användare av uppringda modem ska stänga av alternativet och ansluta manuellt efter uppringning.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>När du väl har skrivit in information om meddelandetjänsten, kan du fortsätta till sidan <guilabel
+>Klar</guilabel
+> och därefter stänga guiden och inställningsfönstret.</para>
+</sect1
+><!-- creating-accounts -->
+<sect1 id="go-online">
+<title
+>Koppla upp och börja chatta!</title>
+<para
+>Nu ser du att en ikon som representerar kontot har dykt upp i statusraden längst ner i &kopete;s <interface
+>kontaktlista</interface
+>. Den representerar din aktuella närvaro i kontot. <mousebutton
+>Höger</mousebutton
+>klicka på den så kan du koppla upp dig från menyn som visas. Statusradens ikon animeras medan &kopete; ansluter till meddelandetjänsten.</para>
+<para
+>När du väl är uppkopplad, och om du har använt meddelandetjänsten tidigare, hämtas dina kontakter från servern och visas i <interface
+>kontaktlistan</interface
+>. För att börja chatta med en kontakt, klicka bara på namnet så visas ett chattfönster. Övre delen av fönstret är platsen där konversationen syns. För att säga något, skriv i nedre delen av fönstret och klicka på <guibutton
+>Skicka</guibutton
+>.</para>
+<para
+>Om du precis skapat ett nytt konto har du inga kontakter. Se <link linkend="organise-contacts-adding"
+>Lägga till kontakter</link
+> för information om hur man gör det.</para>
+<tip
+><para
+>Snabbtangenten för <guibutton
+>Skicka</guibutton
+> är normalt inställd som <keycombo action="simul"
+>&Ctrl;<keycap
+>Retur</keycap
+></keycombo
+>. Du kan ändra det i chattfönstret med <menuchoice
+><guimenu
+>Inställningar</guimenu
+><guimenuitem
+>Anpassa genvägar...</guimenuitem
+></menuchoice
+>.</para
+></tip>
+</sect1
+><!-- go-online -->
+</chapter>
+
+<chapter id="using-kopete">
+<title
+>Använda &kopete;</title>
+<para
+>Det här kapitlet ger en översikt över &kopete;s grundfunktioner. Först tittar vi på kontaktlistan, där dina kontakter visas, och sedan på chattfönstret, där konversationen sker.</para>
+<sect1 id="contact-list">
+<title
+>Kontaktlistan</title>
+<para
+><interface
+>Kontaktlistan</interface
+> visas när du startar &kopete;. Den är huvudfönstret där du kan ställa in din närvaro, starta en chatt, organisera dina kontakter, anpassa &kopete; och avsluta programmet.</para>
+<sect2 id="contact-list-layout">
+<title
+>Layout av kontaktlistans fönster</title>
+<sect3 id="contact-list-layout-menu"
+><title
+>Meny</title
+><para
+>Du hittar oftast menyraden ovanför kontaktlistan. Om den inte finns där, kan du ha stängt av den. Du kan aktivera den igen med <keycombo action="simul"
+>&Ctrl;<keycap
+>M</keycap
+></keycombo
+>. Detaljinformation om varje menyalternativ finns i <link linkend="menus"
+>kapitlet om menystrukturen</link
+>.</para>
+</sect3>
+<sect3 id="contact-list-layout-toolbar"
+><title
+>Verktygsrad</title
+><para
+>Verktygsraden innehåller de vanligaste åtgärderna i &kopete;. Du kan anpassa den med <menuchoice
+><guimenu
+>Inställningar</guimenu
+> <guimenuitem
+>Anpassa verktygsrader...</guimenuitem
+></menuchoice
+>. Observera knapparna <guibutton
+>Visa nerkopplade användare</guibutton
+> och <guibutton
+>Visa tomma grupper</guibutton
+>. Med dessa kan du dölja kontakter och grupper som är nerkopplade.</para>
+	<para
+>&kopete; gör det ännu enklare att ange ett statusmeddelande som talar om för dina kontakter vilket humör du är på eller varför du är upptagen för tillfället. Klicka på knappen <guibutton
+>Ange statusmeddelande</guibutton
+> och börja skriva för att ange ett nytt meddelande, eller välj ett av de tidigare meddelanden du har använt.</para>
+	<para
+><guilabel
+>Snabbsökraden</guilabel
+> filtrerar snabbt listan med kontakter genom att skriva in några få bokstäver från en kontakts namn.</para>
+</sect3>
+<sect3 id="contact-list-layout-contactlist"
+><title
+>Kontaktlista</title
+><para
+><interface
+>Kontaktlistan</interface
+> upptar huvuddelen av fönstret. Alla dina kontakter listas här, i grupperna du har valt för dem. Du kan öppna eller stänga grupper genom att klicka på plussymbolen intill gruppen. Du kan ända ordningen grupperna är sorterade genom att klicka på rubriken <guilabel
+>Kontakter</guilabel
+> ovanför listan.</para>
+<para
+>Den sammanhangsberoende menyn i <interface
+>kontaktlistan</interface
+> ändras beroende på vad musen pekar på. <link linkend="organise-contacts-grouping"
+>Grupper</link
+>, <link linkend="organise-contacts-metacontacts"
+>metakontakter</link
+> och kontakter specifika för en meddelandetjänst har sina egna alternativ. Den sammanhangsberoende menyn på tomma områden i <interface
+>kontaktlistan</interface
+> låter dig lägga till kontakter eller grupper, eller ändra visningsalternativ för listan.</para>
+</sect3>
+<sect3 id="contact-list-layout-statusbar"
+><title
+>Statusraden</title
+><para
+>Statusraden visar en ikon för varje meddelandetjänstkonto som du har skapat. Ikonerna representerar nuvarande närvaro för varje konto, som kan ändras genom att <mousebutton
+>höger</mousebutton
+>klicka på kontots ikon. </para>
+	<para
+>&kopete; visar också ditt nuvarande statusmeddelande på <guilabel
+>statusraden</guilabel
+>. Genom att klicka på notikonen i hörnet kan du också ändra eller rensa statusmeddelandet.</para>
+</sect3>
+</sect2>
+<sect2 id="contact-list-setting-presence">
+<title
+>Ställa in din närvaro</title>
+<para
+>Vi introducerade inställning av närvaro i <link linkend="go-online"
+>förra kapitlet</link
+>. Närvaro anger hur synlig du är på meddelandetjänstens nätverk. För att överhuvudtaget använda nätverket, måste du koppla upp, så att du kan skicka och ta emot meddelanden och se andras närvaro. När du väl är uppkopplad, låter de flesta meddelandetjänster dig ange vad du gör och om du vill chatta genom att ställa in särskilda sorters närvaro, som <emphasis
+>Borta</emphasis
+> eller <emphasis
+>Ledig för chatt</emphasis
+>. De olika närvaroinställningarna är annorlunda för varje system, men Kopete ger dig viss kontroll över alla meddelandetjänster på en gång genom att ställa in dem till <emphasis
+>Frånvarande</emphasis
+> eller <emphasis
+>Tillgänglig</emphasis
+> samtidigt.</para>
+<para
+>Du anger din närvaro för individuella konton genom att <mousebutton
+>höger</mousebutton
+>klicka på kontots ikon i <interface
+>statusraden</interface
+> längst ner i <interface
+>kontaktlistan</interface
+>. Den sammanhangsberoende menyn för varje konto låter dig välja de möjliga närvaroinställningarna för varje meddelandesystem.</para>
+<para
+>För att ändra närvaro i alla dina konton samtidigt, klicka på <guibutton
+>Status</guibutton
+>, eller använd menyalternativet <menuchoice
+><guimenu
+>Arkiv</guimenu
+> <guimenuitem
+>Status</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="contact-list-start-chat">
+<title
+>Börja chatta från kontaktlistan</title>
+<para
+>För att börja chatta från <interface
+>kontaktlistan</interface
+>, klicka helt enkelt på en kontakt. Ett <link linkend="chat-window"
+>chattfönster</link
+> visas.</para>
+<para
+>Du kan också <mousebutton
+>högerklicka</mousebutton
+> på en kontakt och antingen välja <menuchoice
+><guimenuitem
+>Skicka meddelande</guimenuitem
+></menuchoice
+> eller <menuchoice
+><guimenuitem
+>Börja chatta</guimenuitem
+></menuchoice
+>. <menuchoice
+><guimenuitem
+>Skicka meddelande</guimenuitem
+></menuchoice
+> fungerar annorlunda genom att bara skickar ett ensamt meddelande utan att öppna <interface
+>chattfönstret</interface
+>, med en enkel dialogruta. Använd det för meddelanden du vill <quote
+>skicka och glömma</quote
+>.</para>
+</sect2>
+<sect2 id="contact-list-send-file">
+	<title
+>Skicka en fil</title>
+	<para
+>Du kan skicka filer från <interface
+>kontaktlistan</interface
+> genom att använda den sammanhangsberoende menyn för personen som du vill skicka dem till. Om &kopete; stöder filöverföring med deras direktmeddelandesystem, finns alternativet <menuchoice
+><guimenuitem
+>Skicka fil...</guimenuitem
+></menuchoice
+>. Alternativt kan du dra en fil från var som helst i &kde; till personens namn för att starta en filöverföring.</para>
+</sect2>
+<sect2 id="organise-contacts">
+<title
+>Organisera kontakter</title>
+<sect3 id="organise-contacts-metacontacts">
+<title
+>Några ord om metakontakter</title>
+<para
+>En av &kopete;s principer är att det erbjuder ett standardiserat sätt att använda meddelandesystem. Skillnader mellan meddelandesystemen jämnas ut, vilket gör det lättare att kommunicera. Vi följer principen när det gäller hur kontakter organiseras. När du använder &kopete; hittar du bara kontakter med namn, den verkliga meddelandetjänsten som används är mindre viktig. Vissa personer har mer än ett meddelandekonto, &kopete; tar först hänsyn till personen som använder kontot.</para>
+<para
+>För att stödja detta, har &kopete; introducerat <quote
+>metakontakter</quote
+>, som representerar personen du vill chatta med. Alla olika meddelandetjänstkonton som de kan ha tillhör metakontakten, vilket gör det lätt att se om någon är tillgänglig med en snabb titt på metakontaktens 'smilisikon', oberoende av vilken meddelandetjänst de använder just nu.</para>
+</sect3>
+<sect3 id="organise-contacts-grouping">
+<title
+>Några ord om att gruppera kontakter</title>
+<para
+>&kopete; låter dig skapa grupper för att sortera dina kontakter. En kontakt kan vara i mer än en grupp. Om möjligt, sparas grupperingar i serversidans kontaktlista, så om du använder andra direktmeddelandeprogram, hålls gruppmedlemskap synkroniserade. Om du skulle ändra grupper i ett annat direktmeddelandeprogram, kan &kopete; dock inte automatiskt veta att en metakontakt ska flyttas, utan det måste du lösa för hand.</para>
+<para
+>För att ändra grupp som en metakontakt visas i, kan du använda den sammanhangsberoende menyn för att flytta den eller kopiera den till en ny grupp, eller ta bort den från en grupp. Du kan också använda dra och släpp här. Släpp bara metakontakten på en annan grupps namn.</para>
+</sect3
+><sect3 id="organise-contacts-adding">
+<title
+>Lägga till kontakter</title>
+<para
+>För att lägga till en kontakt, välj <menuchoice
+><guimenu
+>Arkiv</guimenu
+> <guimenuitem
+>Lägg till kontakt...</guimenuitem
+></menuchoice
+> eller klicka på knappen <guibutton
+>Lägg till</guibutton
+> i verktygsraden. Det visar guiden för att lägga till kontakter.</para>
+<para
+>Guiden Lägg till kontakt skapara en ny metakontakt för ett eller flera meddelandesystem, genom att leda dig genom följande sidor.</para>
+
+<orderedlist>
+<listitem
+><para
+>Välkomstsidan. Här kan du välja om du vill använda &kde;:s adressbok för kontakten. Genom att lagra information om meddelandetjänster i &kde;:s adressbok, blir det möjligt för andra direktmeddelandeprogram i &kde; att dela kontaktinformation med &kopete;, och i framtiden kan &kde;-program använda &kopete; för att skicka information via meddelandetjänster. Om du föredrar att hålla dina meddelandetjänstkontakter separata, markera inte kryssrutan.</para
+></listitem>
+<listitem
+><para
+>Välj post i &kde;:s adressbok. Genom att välja en post från &kde;:s adressbok, kan du använda dess namn som namn att visa i &kopete;. Du kan också skapa en ny post här. Sidan visas inte om du väljer att inte använda &kde;:s adressbok.</para
+></listitem>
+<listitem
+><para
+>Välj namn att visa och grupp. Här kan du skriva in ett namn att visa (namnet som används för personen inne i &kopete;), och välja <link linkend="organise-contacts-grouping"
+>gruppen</link
+> som det tillhör.</para
+></listitem>
+<listitem
+><para
+>Välj meddelandetjänstkonto. Här kan du välja vilket konto som du vill använda för att chatta med den nya kontakten. Om du bara har ett meddelandetjänstkonto, ser du inte den här sidan.</para
+></listitem>
+<listitem
+><para
+>Kontospecifika sidor för att lägga till kontakter. Du får en sida för varje konto, där du kan skriva in <acronym
+>UIN</acronym
+>, kompisnamn eller e-postadresser, beroende på meddelandesystemet som används.</para
+></listitem>
+<listitem
+><para
+>Avslutningssidan. Allt klart, om inte meddelandesystemet kräver behörighetskontroll (som <trademark
+>ICQ</trademark
+>) för att lägga till en kontakt i din lista. Om det är fallet, blir du tillfrågad om lösenord efter guiden avslutats.</para
+></listitem>
+</orderedlist>
+
+<para
+>Du kan lägga till kontakter i en befintlig metakontakt med dess sammanhangsberoende meny.</para>
+</sect3>
+
+<sect3 id="organise-contacts-renaming">
+<title
+>Byta namn på kontakter</title>
+<para
+>Du kan byta namn på en kontakt med <menuchoice
+><guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Byt namn på kontakt</guimenuitem
+></menuchoice
+> eller med samma alternativ i metakontaktens sammanhangsberoende meny.</para>
+<para
+>Vissa direktmeddelandesystem tillåter att du anger ett <quote
+>namn som visas</quote
+> som skiljer sig från ditt användarnamn, till exempel <quote
+>Alice gillar kryptering!</quote
+>. Om du ändrar en kontakts namn för hand, överskrider det deras namn som visas. För att få tillbaka det, öppna kontaktens egenskapsdialogruta och markera kryssrutan <guilabel
+>Använd namnet som ges av servern</guilabel
+>.</para>
+</sect3>
+<sect3 id="organise-contacts-removing">
+<title
+>Ta bort kontakter</title>
+<para
+>Om du inte längre vill att en kontakt ska vara i kontaktlistan, kan du ta bort en metakontakt och alla underliggande kontakter med <menuchoice
+><guimenu
+>metakontaktens sammanhangsberoende meny</guimenu
+> <guimenuitem
+>Ta bort kontakt</guimenuitem
+></menuchoice
+>.</para>
+</sect3>
+<sect3 id="organise-contacts-moving-contact">
+<title
+>Flytta kontakter mellan metakontakter</title>
+<para
+>Du kan ändra metakontakten som en kontakt hör till. I praktiken behöver du bara göra det när du just har lagt till flera konton i &kopete;, och du vet att HotDog76 och mikejones@hotmail.com båda är samma person.</para>
+<para
+>Det finns två sätt att göra detta:</para>
+<variablelist>
+<varlistentry
+><term
+>Drag och släpp</term
+><listitem
+><para
+>Kontaktikonen till höger om metakontaktens namn kan dras från en metakontakt till en annan.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Kontaktens sammanhangsberoende meny</term
+><listitem
+><para
+>Kontaktens sammanhangsberoende meny (<mousebutton
+>höger</mousebutton
+>klicka på kontaktikonen) låter dig välja den nya metakontakten i en dialogruta.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Om förflyttningen skulle lämna metakontakten tom (utan några kontakter) blir du tillfrågad om du vill ta bort den.</para>
+</sect3>
+<sect3 id="organise-contacts-removing-contacts-">
+<title
+>Ta bort kontakter från metakontakter</title>
+<para
+>För att ta bort en kontakt från en metakontakt, välj <menuchoice
+><guimenu
+>Kontaktens sammanhangsberoende meny</guimenu
+> <guimenuitem
+>Ta bort kontakt...</guimenuitem
+></menuchoice
+>.</para>
+</sect3>
+</sect2>
+<sect2 id="contact-list-configure">
+<title
+>Anpassa &kopete;</title>
+<para
+>Du kan anpassa &kopete; med <menuchoice
+><guimenu
+>Inställningar</guimenu
+><guimenuitem
+>Anpassa...</guimenuitem
+></menuchoice
+>. Se <link linkend="configuring"
+>nästa kapitel</link
+> för detaljerad information.</para>
+</sect2>
+<sect2 id="contact-list-quit">
+<title
+>Avsluta &kopete;</title>
+<para
+>För att avsluta &kopete; ska du använda <menuchoice
+><guimenu
+>Arkiv</guimenu
+> <guimenuitem
+>Avsluta</guimenuitem
+></menuchoice
+>, <keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+>, eller den sammanhangsberoende menyn för &kopete;s ikon i systembrickan. Om du bara stänger <interface
+>kontaktlistan</interface
+>s fönster, fortsätter &kopete; att köra i &kde;:s systembricka.</para>
+</sect2>
+<sect2 id="contact-list-shortcuts">
+<title
+>Snabbtangenter</title>
+<para
+>Följande snabbtangenter stöds i <interface
+>kontaktlistan</interface
+>s fönster:</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Snabbtangenter</entry>
+<entry
+>Åtgärd</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+><keycap
+>Uppåtpil</keycap
+></entry>
+<entry
+>Välj föregående rad i kontaktlistan.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Neråtpil</keycap
+></entry>
+<entry
+>Välj nästa rad i kontaktlistan.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Vänsterpil</keycap
+></entry>
+<entry
+>Stäng aktuell grupp.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Högerpil</keycap
+></entry>
+<entry
+>Öppna aktuell grupp.</entry>
+</row>
+<row>
+<entry
+>Returtangent</entry>
+<entry
+>Börja chatta med markerad kontakt.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>M</keycap
+></keycombo
+></entry>
+<entry
+>Visa eller dölj menyraden.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>U</keycap
+></keycombo
+></entry>
+<entry
+>Visa eller dölj nerkopplade användare.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>G</keycap
+></keycombo
+></entry>
+<entry
+>Visa eller dölj tomma grupper.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect2>
+</sect1
+><!-- contact-list -->
+
+<sect1 id="chat-window">
+<title
+>Chattfönstret</title>
+<sect2 id="chat-window-layout"
+><title
+>Chattfönstrets layout</title>
+<sect3 id="chat-window-layout-chatview"
+><title
+>Chattvyn</title
+><para
+>Chattvyn upptar oftast största delen av chattfönstret, och det är här som konversationen mellan dig och dina kontakter äger rum. Meddelanden visas i den ordning de tas emot, med de tidigaste meddelandena längst upp i vyn.</para>
+<para
+>Du kan <link linkend="configuring-appearance"
+>styra</link
+> hur <interface
+>chattvyn</interface
+> ser ut, för att få den att se ut som andra direktmeddelandeklienter eller skapa ett helt individuellt utseende.</para>
+</sect3>
+<sect3 id="chat-window-layout-memberslist"
+><title
+>Chattens medlemslista</title>
+<para
+>Eftersom vissa meddelandesystem låter dig chatta som en grupp, är det användbart att se vem som chattar för ögonblicket. Chattens medlemslista visas till vänster eller höger om chattvyn. Du kan ändra det med <menuchoice
+><guimenu
+>Inställningar</guimenu
+> <guisubmenu
+>Lista över chattmedlemmar</guisubmenu
+></menuchoice
+>. Kontakternas sammanhangsberoende menyer är tillgänglig i chattens medlemslista.</para
+></sect3>
+<sect3 id="chat-window-layout-input-area"
+><title
+>Inmatningsområdet</title
+><para
+>Inmatningsområdet finns under chattvyn. Det är här du skriver in meddelanden innan du skickar dem. Du kan ändra teckensnitt och färg på meddelandet med de vanliga verktygen i verktygsraden. Om meddelandesystemet stödjer det, syns ditt meddelande i färg när dina kontakter läser det.</para
+><para
+>Normalt är snabbtangenten för att skicka meddelanden <keycap
+>Returtangent</keycap
+>.</para
+></sect3>
+<sect3 id="chat-window-layout-statusbar"
+><title
+>Statusraden</title
+><para
+>Statusraden innehåller tillfälliga meddelanden, som information om att någon annan skriver något, samt knappen <guibutton
+>Skicka</guibutton
+>.</para
+></sect3>
+<sect3 id="chat-window-layout-tabbing"
+><title
+>Flikhantering</title
+><para
+>&kopete; låter dig föra flera samtal i ett fönster, genom att placera vart och ett i sin egen flik i fönstret. Flikarnas namn ändrar färg för att visa när ett nytt meddelande har tagits emot:</para>
+<variablelist>
+<varlistentry
+><term
+>Röd</term
+><listitem
+><para
+>Någon skrev in ett meddelande.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Grön</term
+><listitem
+><para
+>Någon skriver in ett meddelande.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Blå</term
+><listitem
+><para
+>Någon skrev in ett meddelande som innehöll ditt smeknamn.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Det finns flera sätt att styra gruppering. För att anpassa beteendet, gå till fliken Chatt på sidan Beteende i &kopete;s inställningsdialogruta. Du kan också flytta en chatt mellan fönster med menyn <menuchoice
+><guimenu
+>Flikar</guimenu
+></menuchoice
+>, och styra placeringen av flikar i fönstret.</para
+></sect3>
+</sect2>
+<sect2 id="chat-window-group">
+<title
+>Gruppchatt i &kopete;</title>
+<para
+>Du kan använda &kopete; för att chatta med en enda person, eller en hel grupp, när meddelandetjänsten stöder det.</para>
+<para
+>För att bjuda in andra till en chatt, dra dem från kontaktlistan till chattfönstret, eller använd <menuchoice
+><guimenu
+>Chatt</guimenu
+> <guisubmenu
+>Bjud in</guisubmenu
+> <guimenuitem
+>&lt;kontaktnamn&gt;</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="chat-window-file-xfer">
+<title
+>Filöverföringar</title>
+<para
+>Vissa meddelandetjänster låter dig skicka och ta emot filer. Du kan komma åt funktionen i kontaktens sammanhangsberoende meny. Om du redan chattar, och vill skicka en fil, dra helt enkelt filen från något annat ställe i &kde; till chattfönstret eller välj menyalternativet <menuchoice
+><guimenu
+>Chatt</guimenu
+> <guisubmenu
+>Skicka fil</guisubmenu
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="chat-window-shortcuts">
+<title
+>Snabbtangenter</title>
+<para
+>Följande snabbtangenter stöds i chattfönstret:</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Snabbtangenter</entry>
+<entry
+>Åtgärd</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+>Returtangent</entry>
+<entry
+>Skicka meddelandet i <interface
+>inmatningsområdet</interface
+>.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>P</keycap
+></keycombo
+></entry>
+<entry
+>Skriv ut innehållet i chattvyn.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>S</keycap
+></keycombo
+></entry>
+<entry
+>Spara innehållet i chattvyn.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>W</keycap
+></keycombo
+></entry>
+<entry
+>Stäng aktuell chattvy. Chattfönstret stängs om det inte finns mer än en flik i fönstret.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>,</keycap
+></keycombo
+></entry>
+<entry
+>Byt till föregående flik.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>.</keycap
+></keycombo
+></entry>
+<entry
+>Byt till nästa flik.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>B</keycap
+></keycombo
+></entry>
+<entry
+>Koppla loss en chattflik till ett separat fönster.</entry>
+</row>
+<row>
+<entry
+>Tabulator</entry>
+<entry
+>Komplettera ett delvis inskrivet smeknamn som hör till någon du chattar med.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect2>
+
+</sect1
+><!-- chat-window -->
+</chapter
+><!-- Using-kopete -->
+
+<chapter id="configuring">
+<title
+>Anpassa &kopete;</title>
+<para
+>För att anpassa &kopete;, titta i menyn <menuchoice
+><guimenu
+>Inställningar</guimenu
+></menuchoice
+>. </para>
+<sect1 id="configuring-global-shortcuts">
+<title
+>Globala genvägar</title>
+<para
+>&kopete; definierar några snabbtangenter som gäller i alla &kde;-program.</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Globala snabbtangenter</entry>
+<entry
+>Åtgärd</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>I</keycap
+></keycombo
+></entry>
+<entry
+>Läs meddelande. Det är användbart om du har dolt fönstret med <interface
+>Kontaktlistan</interface
+> och ikonen i systembrickan animeras för att tala om för dig att du har ett nytt meddelande.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>C</keycap
+></keycombo
+></entry>
+<entry
+>Visa eller dölj (docka) fönstret med <interface
+>kontaktlistan</interface
+>. <emphasis
+>Varning:</emphasis
+> Om &kopete;s ikon i systembrickan inte är aktiverad, eller om du inte har en systembricka, kan det göra att <interface
+>kontaktlistan</interface
+> försvinner. Det enda sättet att få tillbaka den är att använda den här snabbtangenten igen.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect1>
+
+<sect1 id="configure-dialog">
+<title
+>Dialogrutan för att anpassa &kopete;</title>
+<sect2 id="configuring-accounts">
+<title
+>Lägga till och redigera konton</title>
+<para
+>Vi visade kortfattat hur man lägger till ett konto i <link linkend="getting-started"
+>Komma igång</link
+>. För att senare ändra ett kontos inställningar, öppna dialogrutan <guilabel
+>Anpassa &kopete;</guilabel
+> med <menuchoice
+><guimenu
+>Inställningar</guimenu
+> <guimenuitem
+>Anpassa...</guimenuitem
+></menuchoice
+>. På liknande sätt som i &kde;:s systeminställningar är inställningarna uppdelade i sidor. Ikonerna till vänster i dialogrutan byter mellan sidorna.</para>
+<para
+>På kontosidan kan du <link linkend="creating-accounts"
+><guibutton
+>Lägga till</guibutton
+></link
+>, <guibutton
+>Ta bort</guibutton
+> eller <guibutton
+>Ändra</guibutton
+> konton. Att redigera konton liknar mycket att lägga till dem, men observera att du inte kan ändra UIN, kompisnamn eller den identifiering som direktmeddelandesystemet använder. Den är inneboende i kontot. Om du vill ändra den, måste du lägga till ett annat konto med den nya kontoidentifieringen och (valfritt) ta bort det gamla kontot.</para>
+<para
+>Du kan snabbt skilja på flera konton som använder samma direktmeddelandesystem genom att ge en egen färg till varje kontos post i statusraden och kontaktikoner. För att göra det, välj kontot och klicka på färgväljaren till höger på sidan. </para>
+<para
+>Du kan styra prioriteten mellan konton med ikonerna <guiicon
+>Upp</guiicon
+> och <guiicon
+>Ner</guiicon
+> på den här sidan. Om du har fler än ett sätt att skicka meddelanden till kontakter, avgör detta vilket direktmeddelandesystem som &kopete; använder för att kommunicera med dem.</para>
+</sect2>
+<sect2 id="global-identity">
+<title
+>Generell identitet</title>
+<para
+>&kopete;s generella identitet låter dig ställa in ditt eget smeknamn och foto en gång för alla direktmeddelandekonton. Du kan läsa informationen från din egen post i &kde;:s adressbok, från en enskild kontakt, eller lägga till ett helt nytt smeknamn eller foto. Om du har ett spännande dubbelliv kan du skapa flera identiteter och byta mellan dem på sidan <guilabel
+>Identitet</guilabel
+>.</para>
+</sect2>
+<sect2 id="configuring-behavior">
+<title
+>Uppträdande</title>
+<para
+>Beteende täcker sättet som &kopete; integreras med skrivbordet, <quote
+>Frånvaroinställningar</quote
+>, och inställningar för chattanvändargränssnittet.</para>
+<sect3 id="configuring-behavior-general">
+<title
+>Fliken Allmänt</title>
+<para
+>Här kan du anpassa &kopete;s integrering med skrivbordet, och styra hur kontaktlistan formateras.</para>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Visa ikon i systembrickan</guilabel
+></term>
+<listitem>
+<para
+>Normalt placerar &kopete; en ikon i systembrickan. Om du inte föredrar det, kan du stänga av det här.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Starta med dolt huvudfönster</guilabel
+></term>
+<listitem>
+<para
+>Det här gör att &kopete; startar med fönstret <interface
+>Kontaktlista</interface
+> dolt (dockat). Du kan göra det synligt genom att klicka på ikonen i systembrickan eller med den globala snabbtangenten <link linkend="configuring-global-shortcuts"
+>Visa kontaktlista</link
+>.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Öppna meddelande omedelbart</guilabel
+></term>
+<listitem>
+<para
+>Nya meddelanden öppnar chattfönster så fort de har anlänt.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Använd meddelandekö</guilabel
+></term>
+<listitem>
+<para
+>Meddelandekön är stället &kopete; lägger meddelanden när inget chattfönster är öppet. Det gör att du blir underrättad om nya meddelanden med en <quote
+>textbubbla</quote
+> som dyker upp, eller genom att ikonen i systembrickan animeras. Om du väljer att inte aktivera meddelandekön, öppnas chattfönster så fort du tar emot ett nytt meddelande.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Använd meddelandestapel</guilabel
+></term>
+<listitem>
+<para
+>Om du använder en meddelandestapel visar &kopete; meddelanden som nyligen har anlänt med början på det senast mottagna meddelandet.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-general-notifications">
+<title
+>Underrättelser</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Visa bubbla vid nytt meddelande</guilabel
+></term>
+<listitem>
+<para
+>Alternativet visar en <quote
+>textbubbla</quote
+> som kommer från ikonen i systembrickan när du tar emot ett nytt meddelande. Du kan starta en chatt eller ignorera meddelandet. Webbadresser hämtas från meddelandet. Om du klickar på en länk, öppnas den i webbläsaren du föredrar, och meddelandet försvinner.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Blinka systembrickan vid nytt meddelande</guilabel
+></term>
+<listitem>
+<para
+>Det här alternativet gör att ikonen i systembrickan animeras när ett nytt meddelande tas emot. Genom att klicka på ikonen visas meddelandet i ett chattfönster.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Aktivera händelser vid frånvaro</guilabel
+></term>
+<listitem>
+<para
+>Om du inte vill bli distraherad av dessa underrättelser medan du är angiven som <emphasis
+>borta</emphasis
+>, avmarkera rutan.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Anpassa ljud och händelser</guilabel
+></term>
+<listitem>
+<para
+>Ljud, blinkande ikoner i aktivitetsfältet, passiva meddelanderutor och mer exotiska underrättelser stöds av &kopete; med &kde;:s meddelandesystem. Skriv <userinput
+>help:/kcontrol/kcmnotify</userinput
+> i &konqueror; eller välj fliken Hjälp i systeminställningarnas modul <guilabel
+>Systemunderrättelser</guilabel
+> för mer information.</para>
+<para
+>Högerklicka på en kontakt i kontaktlistan och välj Egenskaper för att lägga till egna underrättelser för en kontakt. Det låter dig starta en chatt, spela en egen ljudeffekt eller visa ett meddelande för kontakten eller gruppen. Annars kan du använda underrättelsen <quote
+>Kör ett program</quote
+> för att ge egna meddelanden. Om du till exempel har installerat <application
+>XOSD</application
+> (X On-Screen Display), kan du få meddelanden på skärmen när händelsen <quote
+>användare kopplas upp</quote
+> inträffar genom att köra följande kommando:</para>
+<para
+><userinput
+>echo %s | osd_cat -o 100 -p bottom -A center -f -*-helvetica-*-r-*-*-24-*-*-*-*-*-*-* -O 2 -c gold</userinput
+></para>
+<para
+>OhReally på &kde; Forum föreslår att du låter dina underrättelser läsas upp av ett talsyntesprogram, genom att använda <ulink url="http://mambo.ucsc.edu/psl/mbrola"
+>MBROLA</ulink
+> så här:</para>
+<para
+><userinput
+>echo %s | sed -e 's/online/onlaain/i' | /usr/local/bin/mbrdico.dutch.female</userinput
+></para>
+<para
+>Kommandot 'sed' i mitten gör utmatningen från &kopete; fonetisk, så att talsyntesen får ett bättre holländskt uttal.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-away">
+<title
+>Frånvaroinställningar</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Meddela alla öppna chatter när jag lämnar dem</guilabel
+></term>
+<listitem
+><para
+>Var försiktig om du aktiverar det här. Det gör att ett meddelande skickas till öppna chatter när du anger att du är frånvarande, vilket vissa personer kan tycka vara påfluget.</para
+></listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-away-auto">
+<title
+>Automatiskt frånvaro</title>
+<para
+>Här kan du välja att låta &kopete; ange att du är frånvarande efter en viss tid utan aktivitet.</para>
+</sect4>
+<sect4 id="configuring-behavior-away-messages">
+<title
+>Fördefinierat frånvaromeddelande</title>
+<para
+>Du kan definiera så många egna frånvaromeddelanden som du vill här, och välja bland dem när du anger att du är <emphasis
+>Borta</emphasis
+> med knappen <guibutton
+>Status</guibutton
+> i <link linkend="contact-list-layout-toolbar"
+>huvudverktygsraden</link
+>.</para>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-chat">
+<title
+>Chattinställningar</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Höj fönster eller flik vid nytt meddelande</guilabel
+></term>
+<listitem
+><para
+>Det här gör att ett chattfönster höjs upp när det tar emot ett nytt meddelande.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Visa händelser i chattfönstret</guilabel
+></term>
+<listitem
+><para
+>Vissa direktmeddelandesystem kan ge extra information, som att personer går med eller lämnar en chatt. Det här alternativet gör att du tar emot dessa meddelanden i ditt chattfönster.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Markera meddelanden som innehåller ditt smeknamn</guilabel
+></term>
+<listitem
+><para
+>Det här markerar meddelanden i en chatt som innehåller ditt smeknamn. För mer kraftfull styrning av markering och andra händelser, se insticksprogrammet <link linkend="plugins-highlight"
+>Markera</link
+>.</para
+></listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-chat-interface">
+<title
+>Gränssnittsinställningar</title>
+<para
+>&kopete; kan antingen skicka meddelanden med ett gränssnitt som <quote
+>skickar och glömmer</quote
+> och inte väntar på ett svar, eller i ett chattfönster där konversationen är synlig under tiden den äger rum. Här kan du välja vilket sätt som normalt används.</para>
+</sect4>
+<sect4 id="configuring-behavior-chat-grouping">
+<title
+>Grupperingspolicy för chattfönster</title>
+<para
+>Om du vill gruppera chatter under flikar i ett ensamt fönster, låter &kopete; dig välja flera olika sätt att avgöra grupperingen.</para>
+<itemizedlist>
+<listitem
+><para
+>Öppna alla meddelanden i ett nytt chattfönster</para
+></listitem>
+<listitem
+><para
+>Gruppera meddelanden från samma konto i samma chattfönster</para
+></listitem>
+<listitem
+><para
+>Gruppera alla meddelanden i samma chattfönster</para
+></listitem>
+<listitem
+><para
+>Gruppera meddelanden från kontakter i samma grupp i samma chattfönster</para
+></listitem>
+<listitem
+><para
+>Gruppera meddelanden från samma metakontakt i samma chattfönster</para
+></listitem>
+</itemizedlist>
+</sect4>
+<sect4 id="configuring-behavior-chat-lines">
+<title
+>Maximalt antal rader i chattfönster</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Maximalt antal rader i chattfönster</guilabel
+></term>
+<listitem
+><para
+>Det här begränsar antal rader med text som chattfönstret kan visa.</para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect4>
+</sect3>
+</sect2
+> <!-- configuring-behavior -->
+<sect2 id="configuring-appearance">
+<title
+>Utseende</title>
+<para
+>Utseende styr chattfönstrets stil, dess färger och teckensnitt, och låter dig välja smilisar som du föredrar.</para>
+<sect3 id="configuring-appearance-emoticons">
+<title
+>Smilisar</title>
+<para
+>Smilisar är kombinationer av tecken såsom <userinput
+>;-)</userinput
+>, som ser ut som ett ansikte, och kommunicerar humör eller uttryck. &kopete; kan alternativt använda grafiska smilisar istället för själva tecknen.</para>
+<para
+>Under den här fliken kan du välja vilken uppsättning med smilisar som du föredrar, eller stänga av grafiska smilisar helt och hållet.</para>
+<!--FIXME uncomment when chapter id="specialised" has content
+<para
+>See <link linkend="specialised"
+>Specialized Actions</link
+> for details of how to install extra emoticon sets.</para>
+-->
+</sect3>
+<sect3 id="configuring-appearance-chat">
+<title
+>Chattfönster</title>
+<sect4 id="configuring-appearance-chat-styles">
+<title
+>Stilar</title>
+<para
+>Chattvyns stil kan ändras för att se ut som andra klienter. Installerade stilar visas i listan till vänster och kan förhandsgranskas i huvudrutan. Se dokumentet <link linkend="chatwindowstyleguide"
+>Stilguide för chattfönster</link
+> om hur man skapar sin egen stil.</para>
+<para
+>Stilar från tredjepart är tillgängliga på <ulink url="https://store.kde.org/"
+>KDE-butiken</ulink
+>. Från och med &kopete; 0.12, stöds stilar från Adium (ett direktmeddelandeprogram på &Mac; OS X). Du kan alltså ladda ner stilar från Adium här: <ulink url="http://www.adiumxtras.com/"
+>Adium Xtras</ulink
+> och välja Message View Styles.</para>
+<para
+>Klicka på <guibutton
+>Installera...</guibutton
+> för att installera en stil. Välj en arkivfil som innehåller stilen. Markera en stil i listan och klicka på <guibutton
+>Ta bort</guibutton
+> för att ta bort en stil.</para>
+<para
+><guilabel
+>Gruppera meddelanden i en följd</guilabel
+> är ett användbart alternativ för att göra en chatt mer läsbar. Om du tar emot flera meddelanden i rad från samma kontakt, grupperas de utan att upprepa avsändarens namn.</para>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-general-contactlist">
+<title
+>Kontaktlista</title>
+<variablelist>
+<varlistentry>
+	<term
+><guilabel
+>Ordna metakontakter enligt grupp</guilabel
+></term>
+<listitem>
+<para
+>Genom att inaktivera detta, döljs &kopete;s grupper och kontakter delas bara upp i <guilabel
+>Uppkopplade kontakter</guilabel
+> och <guilabel
+>Nerkopplade kontakter</guilabel
+>.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Visa trädens grenlinjer</guilabel
+></term>
+<listitem>
+<para
+>Oftast visar &kopete; kontakter och grupper som ett träd, där gruppmedlemmar är indenterade. Du kan stänga av detta för att få ett enklare utseende, så att kontaktlistan blir en vanlig lista. Du kan också styra om grenar indenteras här.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Kontaktvisningsläge</guilabel
+></term>
+<listitem>
+	<para
+>Här finns flera sätt du kan presentera kontaktlistan. Alternativet <guilabel
+>Använd kontaktfoton om tillgängliga</guilabel
+>, som visar kontaktlistan med foton valda av kontakter eller från &kde;:s adressbok, kan vara särskilt intressant.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Animering av kontaktlistan</guilabel
+></term>
+<listitem>
+	<para
+>Det här styr hur mycket som animeras i kontaktlistan. Att stänga av det gör att &kopete; svarar snabbare på långsamma datorer.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Dölj kontaktlistan automatiskt</guilabel
+></term>
+<listitem>
+	<para
+>Genom att aktivera det här försvinner kontaktlistan automatiskt några få sekunder efter pekaren lämnar fönstret.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Ändra innehåll i verktygstips...</guilabel
+></term>
+<listitem>
+	<para
+>Du har stor möjlighet att styra hur mycket eller hur lite detaljinformation som visas i kontaktlistans verktygstips med den här dialogrutan.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+<sect3 id="configuring-appearance-colors-fonts">
+<title
+>Färger och teckensnitt</title>
+<sect4 id="configuring-appearance-colors-fonts-chat">
+<title
+>Färger för chattfönster</title>
+<para
+>Här kan du ändra grundteckensnitt och textfärger som används vid chatt.</para>
+</sect4>
+<sect4 id="configuring-appearance-colors-fonts-overrides">
+<title
+>Formatering överskrider</title>
+<para
+>Om kontakter brukar välja teckensnitt och färger som du inte tycker om, kan du tala om för &kopete; att ignorera dem och använda ditt vanliga teckensnitt.</para>
+</sect4>
+<sect4 id="configuring-appearance-colors-fonts-contactlist">
+<title
+>Kontaktlista</title>
+<para
+>Vissa direktmeddelandesystem låter dig se om kontakter är overksamma vid sina datorer. Det här alternativet gör att färgen för overksamma kontakter kan ändras.</para>
+</sect4>
+</sect3>
+</sect2
+> <!-- configuring-appearance -->
+<sect2 id="configuring-devices">
+<title
+>Enheter</title>
+<para
+>Sidan Enheter låter dig välja och ställa in vilka multimediaenheter som används för chatt med ljud och video. Om det fungerar för dig beror i stor utsträckning på vilken hårdvara du har, och hur bra den stöds av operativsystemet.</para>
+<sect3 id="configuring-devices-video">
+<title
+>Video</title>
+<para
+>&kopete; använder systemet Video4Linux 2 för video. Det visar en blå fyrkant om ingen videoenhet kan hittas, eller en förhandsgranskning om kameran fungerar. För aktuell information om stöd för webbkameror i &kopete;, se <ulink url="http://userbase.kde.org/Kopete/Webcam_Support"
+>Kopetes wiki-sida om webbkamerastöd</ulink
+>.</para>
+</sect3>
+<sect3 id="configuring-devices-audio">
+<title
+>Ljud</title>
+	<para
+>Stöd för ljud i &kopete; är på experimentstadiet. Om du har en ljudflik, använder du troligen en förhandsversion av &kopete;.</para>
+</sect3>
+</sect2>
+</sect1>
+
+<sect1 id="configuring-load-plugins-dialog">
+<title
+>Ladda insticksprogram</title>
+<para
+>Du kan anpassa &kopete; med särskilda funktioner som kan vara användbara, eller bara lite roliga. Visa dialogrutan <guilabel
+>Välj och anpassa insticksprogram</guilabel
+> med <menuchoice
+><guimenu
+>Inställningar</guimenu
+> <guimenuitem
+>Anpassa...</guimenuitem
+></menuchoice
+> och därefter posten <guilabel
+>Insticksprogram</guilabel
+>.</para>
+<para
+>Insticksprogram kan sättas på eller stängas av i listan till vänster på sidan. Varje insticksprogram kan anpassas till höger. Se <link linkend="plugins"
+>kapitlet om insticksprogram</link
+> för detaljinformation om varje insticksprogram.</para>
+</sect1>
+</chapter
+> <!-- configuring -->
+
+<chapter id="protocols">
+	<title
+>&kopete;s protokoll</title>
+	<para
+>&kopete; kallar olika direktmeddelandesystem för "protokoll". När du lägger till ett konto är det specifikt för ett enskilt protokoll. Även om &kopete; försöker få direktmeddelanden att se likadana ut, oberoende av vilket protokoll du använder, finns det vissa skillnader i hur mycket stöd som finns för avancerade funktioner som filöverföring och multimedia.</para>
+	<sect1 id="protocols-list">
+		<title
+>Protokoll</title>
+		<sect2 id="protocols-aim">
+			<title
+>AIM</title>
+			<para
+>AIM stöder chattrum. Använd kommandot <guilabel
+>Gå med i chatt...</guilabel
+> i AIM-kontots meny för att delta i ett chattrum. Kontaktbilder och egna smilisar stöds också.</para>
+		</sect2>
+		<sect2 id="protocols-icq">
+			<title
+>ICQ</title>
+			<para
+>ICQ har en osynlighetsfunktion som låter dig gömma dig från utvalda kontakter. Du kan också söka i ICQ:s användarkatalog när en kontakt läggs till. En omfattande mängd kontaktinformation kan ställas in med alternativet <guilabel
+>Egenskaper</guilabel
+>.</para>
+		</sect2>
+		<sect2 id="protocols-jabber">
+			<title
+>Jabber</title>
+			<para
+>Jabber, som också är känt som XMPP, stöder filöverföring, konferenser och alla andra tjänster som tillhandahålls av Jabber-servern. Många Jabber-servrar har till exempel en användarkatalog, och vissa tillhandahåller överföring till andra direktmeddelandesystem. Använd <menuchoice
+><guimenu
+>Tjänster</guimenu
+></menuchoice
+> i kontomenyn för att komma åt tjänsterna. Filöverföring med Jabber kan fungera utan att vidarebefordra portar, men får bättre prestanda om en direktanslutning är möjlig. Normalt används port 8010 för vidarebefordran, men det kan ändras i inställningarna för varje konto.</para>
+		</sect2>
+		<sect2 id="protocols-gtalk">
+			<title
+>Google Talk</title>
+			<para
+>Eftersom Google Talk är baserat på Jabber, har det bra stöd i &kopete;, med undantag för röstbaserad chatt, som det arbetas på.</para>
+			<para
+>Inställning av &kopete; för Google Talk: Använd hela Googles e-postadress som användarnamn. Markera <guilabel
+>Använd protokollkryptering (SSL)</guilabel
+>, <guilabel
+>Tillåt behörighetskontroll med lösenord i klartext</guilabel
+> och <guilabel
+>Överskrid förvald serverinformation</guilabel
+>. Servern är <quote
+>talk.google.com</quote
+> eller <quote
+>gmail.com</quote
+> och portarna 443 eller 5223 ska användas.</para>
+		</sect2>
+		<sect2 id="protocols-groupwise">
+			<title
+>Novell Groupwise</title>
+			<para
+>GroupWise Messenger är ett meddelandesystem för företag från Novell Inc. Den fullständiga uppsättningen funktioner stöds, inklusive privata meddelanden, gruppchatt, rik text och sökning efter användare.</para>
+		</sect2>
+		<sect2 id="protocols-gadu-gadu">
+			<title
+>Gadu-Gadu</title>
+			<para
+>Gadu-Gadu är ett chattsystem som har sitt ursprung i Polen. För närvarande stöder &kopete; grundläggande chattfunktioner.</para>
+		</sect2>
+		<sect2 id="protocols-winpopup">
+			<title
+>Winpopup</title>
+			<para
+>Winpopup är ett sätt att använda &kopete; för att skicka meddelanden till och ta emot meddelanden från &Windows;-datorer i det lokala nätverket. Winpopup-protokollet stöder bara enstaka meddelanden med vanlig text.</para>
+		</sect2>
+		<sect2 id="protocols-others">
+			<title
+>Andra protokoll</title>
+			<para
+>Förutom de protokoll som namnges ovan, stöder &kopete; flera andra protokoll. I de flesta fall är de inte normalt aktiverade, eller måste ett ytterligare insticksprogram installeras. För tillfället tillhandahålls SMS, Skype och SILC på detta sätt. &kopete;-gruppen är dock inte ansvarig för dessa protokoll.</para>
+		</sect2>
+	</sect1>
+</chapter>
+	
+<chapter id="plugins">
+<title
+>&kopete;s insticksprogram</title>
+<para
+>&kopete; erbjuder insticksprogram som tillhandahåller funktioner som inte är väsentliga för att skicka meddelanden, men är användbara för vissa personer.</para>
+<sect1 id="plugins-list">
+<title
+>Insticksprogram</title>
+<!-- disabled from build in 4.11/master sect2 id="plugins-alias">
+<title
+>Alias</title>
+<para
+><guilabel
+>Alias</guilabel
+> lets you define your own commands, &eg; /hello, in &kopete; that run scripts and output the result in the chat window.  If you know how the alias Unix command works, this is just the same</para>
+</sect2-->
+<sect2 id="plugins-auto-replace">
+<title
+>Ersätt automatiskt</title>
+<para
+><guilabel
+>Ersätt automatiskt</guilabel
+> låter dig rätta ord som ofta stavas fel, eller spara tid när vissa ord skrivs in genom att använda förkortningar.</para>
+</sect2>
+<sect2 id="plugins-bookmarks">
+<title
+>Bokmärken</title>
+<para
+>Insticksprogrammet <guilabel
+>Bokmärken</guilabel
+> skapar bokmärken i &kde;:s bokmärkeslista från webbadresser som tas emot i direktmeddelanden.</para>
+</sect2>
+<!-- was removed with Revision 732681
+sect2 id="plugins-connection-status">
+<title
+>Connection Status</title>
+<para
+><guilabel
+>Connection Status</guilabel
+> is useful for modem users or others who don't have a permanent Internet connection.  It watches for an active Internet connection and sets your accounts online when it detects you have dialed up.</para>
+</sect2-->
+<sect2 id="plugins-contact-notes">
+<title
+>Kontaktanteckningar</title>
+<para
+><guilabel
+>Kontaktanteckningar</guilabel
+> låter dig anteckna användbar kort information för en metakontakt.</para>
+</sect2>
+<sect2 id="plugins-cryptography">
+<sect2info>
+<authorgroup>
+<author
+>&Olivier.Goffart; &Olivier.Goffart.mail;</author>
+<author
+>&Charles.Connell; &Charles.Connell.mail;</author>
+</authorgroup>
+<date
+>2007-10-14</date>
+<releaseinfo
+>1.3.0</releaseinfo>
+</sect2info>
+
+<title
+>Kryptering</title>
+<para
+>Insticksprogrammet för kryptering låter dig skicka och ta emot krypterade och/eller signerade meddelanden.</para>
+<para
+>Kryptering låter dig använda en implementering av OpenPGP för att kryptera och signera meddelanden i konversationer. Observera att det inte är samma sak som en chattsession säkrad av SSL. Kryptografi kan kryptera meddelanden till en enskild person så att bara innehavaren av motsvarande nyckel kan läsa det. Om du vill att mottagaren av dina meddelanden ska kunna kontrollera att du har skickat meddelandena, kan du signera meddelanden. Signering och kryptering kan användas separat eller tillsammans. När du tar emot ett meddelande som har krypterats, visas en låsikon. Om det har signerats med en verifierbar signatur (du har avsändarens öppna nyckel), visas en pennikon. För en signatur som inte går att verifiera visas en röd pennikon.</para>
+<para
+>Välj din privata nyckel på insticksprogrammets inställningssida för att ställa in kryptering. Välj därefter den öppna nyckeln i den sammanhangsberoende menyn för varje metakontakt med <menuchoice
+><guimenuitem
+>Välj öppen nyckel</guimenuitem
+></menuchoice
+>. Du blir tillfrågad om din lösenordsfras när insticksprogrammet används.</para>
+<para
+>På grund av begränsningar i vissa av de direktmeddelandeprotokoll som &kopete; använder, kan inte krypterade meddelanden skickas med dessa protokoll. Om du försöker använda ett protokoll som inte stöds, får du en varning.</para>
+<para
+>Kryptering kan använda de öppna nycklarna som lagras i &kde;:s adressbok för varje kontakt. Dock måste det veta vilken post i adressboken som hör ihop med vilken metakontakt. Välj Egenskaper i metakontaktens sammanhangsberoende meny och ställ därefter in adressbokslänken, för att tillhandahålla denna information. Kryptering kan också exportera öppna nycklar som du har ställt in till din adressbok. Om en metakontakt har en adressbokslänk, placeras nyckeln i rätt post i adressboken, där den ersätter en befintlig nyckel. Om det inte finns någon länk (möjligen eftersom det inte finns någon post i adressboken för personen i fråga), skapas en ny post. Posten har två ifyllda fält: den öppna nyckeln från &kopete; och namnet som visas för metakontakten.</para>
+<para
+>Dokumentation copyright &copy; &Olivier.Goffart; &Olivier.Goffart.mail; och &copy; 2007 &Charles.Connell; &Charles.Connell.mail;</para>
+</sect2>
+<sect2 id="plugins-highlight">
+<title
+>Markera</title>
+<para
+><guilabel
+>Markera</guilabel
+> fungerar lite grand som e-postfilter, genom att det låter dig göra saker som svar på vissa meddelanden. Förutom att markera text, kan du spela ljud.</para>
+</sect2>
+<!--FIXME History2 missing
+Another history plugin based on sqlite.
+Most important changes:
+- based on sqlite3 instead of xml-files
+- import history button in config dialog
+- import option added for the other xml-based history-plugin
+- pidgin import improved
+- test and skip duplicates on import (so it is possible to synchronize
+  regularly from a windows-pidgin installation for example)
+- more speed in most cases
+The main reason I began to rewrite the complete plugin was, that I had
+dataloss by importing from pidgin with the old history plugin.
+The months, which where imported from pidgin, did overwrite the kopete
+history. This was unacceptable.
+-->
+<sect2 id="plugins-history">
+<title
+>Historik</title>
+<para
+>Insticksprogrammet <guilabel
+>Historik</guilabel
+>, spelar in konversationer med vilken direktmeddelandetjänst som helst, och låter dig titta på gamla konversationer, när det är aktiverat. Alternativet <menuchoice
+><guimenuitem
+>Historik</guimenuitem
+></menuchoice
+> visas i varje metakontakts sammanhangsberoende meny, så att du kan visa meddelandehistoriken för metakontakten.</para>
+<para
+>Följande alternativ läggs till i kontaktlistans menyer:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigera</guimenu
+> <guimenuitem
+>Visa historik</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Aktiverad när en kontakt är markerad) Det här visar historikbläddraren för markerad kontakt.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para
+>Följande alternativ läggs till i chattfönstrets menyer:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Alt;&Shift;<keycap
+>Vänsterpil</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Verktyg</guimenu
+> <guimenuitem
+>Föregående i historik</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Det här gör att du kan se den näst äldsta uppsättningen meddelanden från historiken i chattfönstret.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Alt;&Shift;<keycap
+>Högerpil</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Verktyg</guimenu
+> <guimenuitem
+>Nästa i historik</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Det här gör att du kan se den näst senaste uppsättningen meddelanden från historiken i chattfönstret.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Verktyg</guimenu
+> <guimenuitem
+>Sist i historik</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Det här gör att du kan se den senaste uppsättningen meddelanden från historiken i chattfönstret.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="plugins-kopetex">
+<title
+>Kopetetex</title>
+<para
+>Kopetex gör det möjligt för vetenskapsmän och matematiker att utföra samtal där markeringsspråket Latex används. Uttryck som skrivs in inom $$ ritas upp grafiskt i chattfönstret, och kan klippas ut och klistras in som den ursprungliga Latex-texten. Du måste ha installerat Latex för att kunna använda insticksprogrammet.</para>
+</sect2>
+<!-- Revision 732090 don't compile motionautoaway. it's moving back to playground
+sect2 id="plugins-motion-auto-away">
+<title
+>Motion Auto-Away</title>
+<para
+>In conjunction with a webcam and the <application
+>Video4Linux</application
+> package, this lets you detect when you're no longer at your computer and have &kopete; automatically become <emphasis
+>Away</emphasis
+>.</para>
+</sect2-->
+<sect2 id="plugins-now-listening">
+<title
+>Lyssnar nu</title>
+<para
+>Med insticksprogrammet <guilabel
+>Lyssnar nu</guilabel
+>, kan du låta de som du chattar med få reda på vad du lyssnar på, genom att skriva <userinput
+>/media</userinput
+> i en chatt, eller genom att använda menyn <menuchoice
+><guimenu
+>Verktyg</guimenu
+> <guimenu
+>Skicka mediainformation</guimenu
+></menuchoice
+> i chattfönstret.</para>
+</sect2>
+<sect2 id="plugins-otr">
+<title
+>OTR</title>
+<para
+>Insticksprogrammet <guilabel
+>OTR</guilabel
+> låter dig kryptera konversationer med krypteringsmetoden Off-The-Record. Krypteringsmetoden fungerar i grunden som PGP-kryptering, men är optimerad för direktmeddelanden och hanterar nyckelutbytet på egen hand. Det enda du måste göra är att försäkra dig om att du verkligen skriver till personen du förväntar dig genom att använda en av mekanismerna för behörighetskontroll i OTR.</para>
+<sect3 id="plugins-otr-menus">
+<title
+>Menyalternativ</title>
+<para
+>Följande alternativ läggs till i kontaktlistans menyer:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigera</guimenu
+> <guimenuitem
+>OTR-policy</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Aktiveras när en kontakt markeras.) Du kan ställa in krypteringspolicy för varje kontakt här. Att ställa in värdet till "Förval" gör att &kopete; använder den förvalda inställningen från inställningsdialogrutan.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para
+>Följande alternativ läggs till i chattfönstrets menyer:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Verktyg</guimenu
+> <guimenuitem
+>OTR-inställningar</guimenuitem
+> <guimenuitem
+>Starta OTR-session</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Låter dig påbörja en session krypterad med OTR.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Verktyg</guimenu
+> <guimenuitem
+>OTR-inställningar</guimenuitem
+> <guimenuitem
+>Avsluta OTR-session</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Låter dig avsluta en tidigare upprättad session med OTR.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Verktyg</guimenu
+> <guimenuitem
+>OTR-inställningar</guimenuitem
+> <guimenuitem
+>Kontrollera kontaktens behörighet</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Använd menyalternativet om du vill kontrollera kontaktens behörighet.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+<sect3 id="plugins-otr-setup">
+<title
+>Inställningsdialogrutan</title>
+<para
+>Du har olika alternativ för att ställa in modulernas beteende under chattsessioner i inställningsdialogrutan. De viktigaste av dem är förvald policyinställning. Ställ in policy till "Om möjligt" om du önskar att &kopete; ska kontrollera om kontakter stöder OTR och upprätta en krypterad session på egen hand, eller till "Manuell" om du vill styra varje krypteringstillstånd själv. Alternativen "Alltid" och "Aldrig" rekommenderas bara för avancerade användare som vill ställa in policyn baserat på varje kontakt. I rutan "Privata nycklar" har du möjlighet att skapa ditt personliga nyckelpar för varje konto. Du behöver inte göra det manuellt. Om ett konto inte har ett nyckelpar skapas det automatiskt första gången det behövs. Under fliken "Kända fingeravtryck" har du möjlighet att se, verifiera och ta bort kända öppna fingeravtryck för dina kontakter.</para>
+</sect3>
+<sect3 id="plugins-otr-auth">
+<title
+>Behörighetskontroll</title>
+<para
+>Du har troligen tagit emot e-post från personer som låtsas vara banker, kreditinstitut, eller till och med rika nigerianer i exil. Folk ljuger hela tiden om vilka de är på Internet. Behörighetskontroll är ett sätt att försäkra sig om att inga kan ljuga om vilka de är när de använder OTR.</para>
+<sect4 id="plugins-otr-auth-when">
+<title
+>När man ska kontrollera behörighet</title>
+<para
+>Du bör kontrollera en kompis behörighet den allra första gången du talar med honom med användning av OTR. Om du inte gör det, kan du inte vara helt säker på att inte någon annan utger sig för att vara honom, eller försöker avlyssna konversationen. När du väl kontrollerat din kompis behörighet en gång, behöver du inte göra det igen. OTR gör automatiskt behörighetskontroll för alla framtida konversationer med den kompisen. </para>
+<para
+>Det enda undantaget uppstår när din kompis byter mellan flera datorer eller flera direktmeddelandekonton. I detta fall, måste du kontrollera behörigheten en gång för varje dator och konto. När du väl har gjort det, kan din kompis fritt använda någon av datorerna du kontrollerat honom på, och OTR känner automatiskt igen honom. Om din kompis använder en ny dator eller konto som OTR inte känner igen, dyker ett meddelande upp i ditt konversationsfönster som talar om det för dig.</para>
+<screenshot>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="otr-auth-1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>När man ska kontrollera behörighet</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</sect4>
+<sect4 id="plugins-otr-auth-how">
+<title
+>Hur man kontrollerar behörighet</title>
+<para
+>Starta en konversation med någon för att kontrollera deras behörighet, och klicka på "Kontrollera kontaktens behörighet" på OTR-knappen. En guide visas, som frågar dig om vilken metod för behörighetskontroll som du vill använda. Följ stegen i guiden.</para>
+<para
+>Om behörighetskontrollen lyckades, vet du att du verkligen pratar med din vän. En bedragare skulle ha svårt att gissa vad du skriver in, så du kan ta dem på bar gärning. </para>
+</sect4>
+</sect3>
+</sect2>
+<sect2 id="plugins-pipes">
+<title
+>Skicka genom</title>
+<para
+>Skicka genom låter dig skicka inkommande eller utgående meddelanden genom ett externt skript eller program. Ett inkommande meddelande skickas via programmet innan det når ditt chattfönster, medan utgående meddelanden skickas via programmet innan de går vidare till Internet. Skicka genom kan ta emot text på en av tre former: <variablelist
+><varlistentry
+><term
+>Enkel meddelandetext</term
+><listitem
+><para
+>Meddelandets text, som enkel &ascii;-text</para
+></listitem
+> </varlistentry
+><varlistentry
+> <term
+>&HTML;-meddelandetext</term
+> <listitem
+><para
+>Meddelandets text med &HTML;, som det skulle se ut om din chattpartner hade skickat &HTML; till dig, som återges i chattfönstret.</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Fullständigt &XML;-meddelande</term
+> <listitem
+><para
+>Ett &XML;-dokument som beskriver meddelandets hela karaktäristik, inklusive &HTML;-meddelandetext</para
+></listitem
+> </varlistentry
+> </variablelist
+> I de flesta fall ska du nog använda alternativen enkel meddelandetext eller &HTML;-meddelandetext. De kan användas med program för översättning eller sammanfattning. &XML;-formatet är bara lämpligt för användning med program eller skript särskilt skrivna för att arbeta ihop med insticksprogrammet. Om du skulle vilja skriva ett program eller skript som arbetar med insticksprogrammet, se <link linkend="pipes"
+>den mer detaljerade dokumentationen</link
+>. </para>
+</sect2>
+<!--FIXME missing
+preview
+privacy
+Import Privacy Plugin into svn.
+This plugin allows flexible filtering of messages by sender and/or by content.
+FEATURE: 63839
+scripting
+  -->
+<sect2 id="plugins-statistics">
+<title
+>Statistik</title>
+<para
+>Det här insticksprogrammet använder en databas för att samla information om dina kontakters aktivitetsmönster. Du kan använda det för att till exempel se när en kontakt oftast är uppkopplad.</para>
+</sect2>
+<sect2 id="plugins-text-effect">
+<title
+>Texteffekter</title>
+<para
+>Texteffekter inför roliga effekter i dina meddelanden innan de skickas, som färgläggning eller ändra ordens skiftläge. Glöm bara inte bort att du har aktiverat det: Vi har fått felrapporter från glömska användare av <guilabel
+>Texteffekter</guilabel
+>!</para>
+</sect2>
+<sect2 id="plugins-translator">
+<title
+>Översättning</title>
+<para
+>Insticksprogrammet Översättning låter dig ange ett föredraget språk för varje metakontakt, och översätter sedan meddelanden från dem med webbaserade översättningstjänster som <trademark
+>Google</trademark
+>. Ställ in språket som du själv föredrar i dialogrutan <guilabel
+>Välj och anpassa insticksprogram</guilabel
+>. Det språk som varje kontakt föredrar kan ställas in via den sammanhangsberoende meny.</para>
+<para
+>Följande alternativ läggs till i chattfönstrets menyer:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>T</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Verktyg</guimenu
+> <guimenuitem
+>Översättning</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Om du inte aktiverade automatisk översättning, översätter det här aktuell chatt.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="plugins-web-presence">
+<title
+>Webbnärvaro</title>
+<para
+>Webbnärvaro låter dig publicera din närvaro i meddelandeklienter på webben. Ge sökvägen till en fil på en &FTP;-server (till exempel), så laddar det upp ett kort stycke &HTML; till filen, som du kan inkludera på din hemsida. &kde;:s nätverkstransparens gör detta enkelt. Bra för användare av webbloggar att skaffa vänner, eller att använda för att utnyttja direktmeddelande i ett företag.</para>
+<para
+>Till exempel använder <userinput
+>sftp://användarnamn@värddator.org/sökväg/till/hemkataloger/användare/im.html</userinput
+> protokollet <acronym
+>SFTP</acronym
+> för att ladda upp din närvaro direkt till webbservern.</para>
+<para
+>Se <ulink url="help:/kioslave/index.html"
+>I/O-slav handböckerna</ulink
+> för tips om särskilda nätverksprotokoll.</para>
+<!--FIXME wrong url to ioslaves
+in konsole "khelpcenter khelpcenter:kioslaves" works-->
+</sect2>
+<sect2 id="plugins-contributing">
+<title
+>Bidra med ett insticksprogram</title>
+<para
+>&kopete; är konstruerat för att göra det lätt att skapa insticksprogram som ger extra funktioner. Så om du har en bra idé om hur &kopete; kan göras ännu bättre, <link linkend="intro-to-kopete-web"
+>hör av dig</link
+>.</para>
+</sect2>
+</sect1>
+</chapter
+><!-- plugins -->
+
+&kopete-menus;
+
+<chapter id="faq">
+<title
+>Vanliga frågor</title>
+<qandaset>
+<qandaentry>
+<question
+><para
+>Vad betyder &kopete;? Hur uttalar man det?</para
+></question>
+<answer
+><para
+>&kopete;s namn kommer från ordet Copete, som används i Chile med betydelsen <quote
+>att dricka tillsammans med vänner</quote
+>. Duncan, den ursprungliga upphovsmannen, spelade in hur det <ulink type="audio/x-vorbis+ogg" url="http://kopete.kde.org/files/kopete_en.ogg"
+>uttalas</ulink
+>.</para
+></answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>När jag har mer än en meddelandetjänst för en användares namn i min kontaktlista och klickar på användarens namn, skickas meddelandet med fel meddelandetjänst.</para>
+</question>
+<answer
+><para
+>Du kan ändra ordning på konton som &kopete; försöker använda för att skicka meddelanden till personer med uppåt- och neråtpilarna i nedre högra hörnet på kontots inställningssida. &kopete; försöker ansluta till konton uppifrån och ner. Om en tjänst dock har ett högre statusvärde än övriga för den användaren, använder &kopete; den. Om en person till exempel har tre tjänster, och två anger frånvaro och den tredje anger uppkopplad, försöker &kopete; alltid skicka meddelanden till användaren med tjänsten som är uppkopplad.</para
+><tip
+><para
+>Om du klickar på den lilla protokollikonen till höger om menyalternativet istället för på personens namn, försöker du alltid kontakta personen med den tjänsten.</para
+></tip>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Jag måste ansluta via en SOCKS-proxy, men jag hittar inga alternativ för proxyinställning i &kopete;. Hur ställer jag in &kopete; att använda SOCKS?</para>
+</question>
+<answer
+><itemizedlist>
+<listitem
+><para
+><trademark
+>ICQ</trademark
+>, <trademark
+>AIM</trademark
+> och Jabber använder &kde;:s nätverksinfrastruktur. Deras inställning av SOCKS-proxy görs tillsammans med resten av &kde; i systeminställningarna under <menuchoice
+><guimenu
+>Nätverk och anslutningar</guimenu
+><guisubmenu
+>Nätverksinställningar</guisubmenu
+><guimenuitem
+>Proxyservrar</guimenuitem
+></menuchoice
+>.</para
+></listitem>
+</itemizedlist>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Är det möjligt att anpassa ikonerna som syns i &kopete;?</para
+></question>
+<answer
+><para
+>Du kan byta mellan olika smilisar under fliken Smilisar på sidan Utseende i &kopete;s inställningsdialogruta.</para>
+<para
+>För att installera nya smilisar, titta först på <ulink url="https://store.kde.org/"
+>KDE-butiken</ulink
+>, där det finns många ytterligare smilisuppsättningar att ladda ner.</para>
+
+<para
+>Smilisarna är enkla att installera. Du skapar bara en katalog som innehåller ikonfilerna tillsammans med en &XML;-fil som beskriver sambandet mellan text och bild i $KDEDIR/share/apps/kopete/pics/emoticons (eller $KDEHOME, till exempel i /home/användare/.kde/).</para>
+
+<orderedlist>
+<listitem
+><para
+>Kopiera den uppackade katalogen till $KDEDIR/share/apps/kopete/pics/emoticons eller $HOME/.kde/share/apps/kopete/pics/emoticons (eller var $KDEHOME än finns)</para
+></listitem>
+<listitem
+><para
+>Välj Anpassa &kopete; i menyn Inställningar, klicka på Utseende i vänstra rutan av inställningsfönstret och klicka på fliken Smilisar</para
+></listitem>
+<listitem
+><para
+>Välj smilisuppsättningen du just installerat i listan</para
+></listitem>
+<listitem
+><para
+>Nu kan du använda de nyinstallerade smilisarna i &kopete;</para
+></listitem>
+</orderedlist>
+<para
+>För att ersätta protokollikonerna, måste du ersätta ikonerna i $KDEDIR/share/apps/kopete/icons, eller tillhandahålla ersättningar som överskrider dem i samma katalog under $KDEHOME. För närvarande finns det inte några fullständiga uppsättningar för att ersätta dem som du helt enkelt kan packa upp där.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+  <question
+><para
+>Jag ser inga insticksprogram listade i dialogrutan <quote
+>Anpassa insticksprogram</quote
+>. Vad står på?</para>
+</question>
+<answer
+><para
+>Det finns två lösningar på problemet. Om du använder binärpaket, försäkra dig om att du använder binärpaket skapade för din distribution, och den specifika versionen av din distribution. Att korsa distributioner och versioner fungerar inte med &kopete;. Om det inte finns några binärpaket för ditt system, måste du kompilera &kopete; genom att använda källkodspaketen. Om du kompilerar &kde;, måste &kopete; använda samma prefix som &kde;. Om du dock kompilerar källkodspaket, försäkra dig om att &kopete; installeras på samma ställe som &kde;. Om så inte är fallet, kan du tvinga att det görs genom att ange ett prefixkommando till <application
+>cmake</application
+>. Exempel: <userinput
+><command
+>cmake</command
+> <parameter
+>-DCMAKE_PREFIX=/opt/kde4</parameter
+></userinput
+> (där <userinput
+>/opt/kde4</userinput
+> är prefixet). För att bestämma vad ditt &kde;-prefix är, skriv <userinput
+><command
+>which</command
+> <parameter
+>dolphin</parameter
+></userinput
+> i ett terminalfönster. Det bör visa något som liknar <computeroutput
+>/opt/kde4/bin/dolphin</computeroutput
+>, och då är  ditt prefix <filename class="directory"
+>/opt/kde4</filename
+>. Om istället <computeroutput
+>/usr/bin/dolphin</computeroutput
+> visas, är ditt prefix <filename class="directory"
+>/usr</filename
+>. Försäkra dig också om att du utför <command
+>make install</command
+>, och att det inte finns några föråldrade installationer av &kopete; från tidigare versioner på olika platser. Det kan också vara nödvändigt att köra <application
+>kbuildsycoca4</application
+> för hand efter att ha installerat &kopete;. <application
+>kbuildsycoca4</application
+> uppdaterar databasen med insticksprogram. Det körs när ny programvara som använder insticksprogram installeras, men det är möjligt att <command
+>kopete</command
+> startar &kopete; innan uppdateringen är färdig.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Jag har många &lt;skrivbord / bildskärmar / datorer&gt; och/eller pratar jag med många personer samtidigt, och vill på grund av detta att &kopete; skulle kunna &lt;spela ett ljud/visa en meddelanderuta / ändra mitt skrivbordsunderlägg / starta om datorn&gt; så snart &lt;jag tar emot ett nytt meddelande / någon kopplar upp sig / någon kopplar ner sig&gt;. När kommer det läggas till?</para>
+</question>
+<answer
+><para
+>Det finns redan på plats (förvånad?). &kopete; är ett &kde;-program och använder därmed KNotify för alla underrättelser. För de som inte vet, är KNotify en mycket kraftfull arkitektur som låter dig göra i stort sett vad som helst när en händelse inträffar i ett &kde;-program. Man kan spela ett ljud, visa en passiv dialogruta, logga ett meddelande, eller till och med köra sina egna kommandon som ett skalskript, eller göra vad som helst man önskar sig. För att komma åt denna skattgömma, gå till dialogrutan <menuchoice
+><guimenu
+>Inställningar</guimenu
+> <guimenuitem
+>Anpassa underrättelser</guimenuitem
+></menuchoice
+>. Den visar dig alla de olika åtgärder som går att utföra med händelserna som listas ovanför. Ett tips är att ta en titt på några andra &kde;-program för att se vilka händelser de låter dig ta om hand. Själv tycker jag att en passiv meddelanderuta vid ny e-post i &kmail; kan vara mycket praktisk.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Vad beror det på att filöverföringar inte fungerar?</para>
+</question>
+<answer
+><para
+>Det finns många orsaker till detta. WLM var det första protokoll där vi implementerade stöd för filöverföringar. Stöd för filöverföringar i Jabber och IRC lades till i &kopete; 0.9.0 (inkluderat i &kde; 3.3), och ICQ och AIM i &kopete; 0.50.0 (inkluderat i &kde; 4.0.0). Dessutom kanske inte filöverföringar fungerar om du är bakom en brandvägg, se avsnittet om WLM i protokollkapitlet.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Varför finns allt det där dumma beteendet vid enkelklick? Det är mycket irriterande!</para>
+</question>
+<answer
+><para
+>Kopete är ett &kde;-program. Det är inte något taskigt tredjepartsprogram som bestämt sig för att &quot;se ut&quot; som resten av KDE. Det har också KDE:s aspekter av &quot;känsla&quot; och &quot;integrering&quot;, vilket betyder att &kopete; följer KDE:s vanliga beteende med &quot;enkelklick&quot;. Om du vill ändra det, måste du ändra det i hela KDE. Det går att ändra stil för dubbelklick genom att starta systeminställningarna, gå till <menuchoice
+><guimenu
+>Inmatningsenheter</guimenu
+><guimenuitem
+>Mus</guimenuitem
+></menuchoice
+>, och ändra alternativet <guilabel
+>Dubbelklicka för att öppna filer och kataloger (välj ikoner vid första klickningen)</guilabel
+>.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Kommer skal läggas till i användargränssnittet?</para>
+</question>
+<answer
+><para
+>Det enda svaret på detta är nej. &kopete; uppfanns för att vara ett program för direktmeddelanden i &kde;, och också ha &kde;:s utseende och känsla. Genom att lägga till skal skulle vi bryta regeln och att både ha stöd för skal och inte samtidigt är dessutom opraktiskt. Välj bara en annan stil under &kde;:s systeminställningar, och var nöjd med att ha genomskinliga menyer och annat snyggt ögongodis som &kde; erbjuder idag. Du kan dock köra kopete med en annan stil. Kör bara exempelvis <userinput
+>kopete --style=marble</userinput
+>. Vilken giltig &kde;- eller &Qt;-stil som helst fungerar.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Jag skulle vilja ha en ny funktion i nästa version av Kopete.</para>
+</question>
+<answer
+><para
+>Gå till <ulink url="https://bugs.kde.org"
+>&kde; Bugzilla</ulink
+> och skapa ett önskemål för programmet 'kopete'. Var mycket detaljerad och granskningsläs vad du skriver till oss. Detta är INTE en garanti att vi lägger till den här funktionen i någon version, men gör det möjligt för oss att överväga det.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>&kopete; kraschade eller har/hade ett oväntat beteende (oväntat beteende är INTE i kategorin &quot;Kopete beter sig inte som Pidgin&quot;, etc.).</para>
+</question>
+<answer
+><para
+>Rapportera felet till oss genom att gå till <ulink url="https://bugs.kde.org"
+>&kde; Bugzilla</ulink
+> och skapa en felrapport för programmet 'kopete'. Felrapporter accepteras bara om de är på engelska, är detaljerade, och om de innehåller en bakåtspårning när en krasch är inblandad (texten under fliken markerad <guilabel
+>Bakåtspårning</guilabel
+> när &kopete; väl har kraschat). Om du använder &kopete; från git, skicka då e-post till oss via <ulink url="mailto:kopete-devel@kde.org"
+>e-postlistan för &kopete;s utvecklare</ulink
+> istället för att skapa en felrapport.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Stöd för SSL i Jabber har slutat fungera. Jag får meddelandet att QCA TLS-insticksprogrammet troligtvis saknas. Vad ska jag göra åt det?</para>
+</question>
+<answer
+><para
+>Som felmeddelandet anger, saknar du insticksprogrammet QCA TLS, vilket hanterar TLS/SSL-kryptering år Jabber-insticksprogrammet. Installera paketet <application
+>qca-tls</application
+> (och slutligen <application
+>qca-ossl</application
+>) eller hämta insticksprogrammet från <ulink url="http://delta.affinix.com/qca"
+>dess hemsida</ulink
+>. Observera att du bara behöver installera insticksprogrammet <application
+>qca-tls</application
+>, <emphasis
+>inte</emphasis
+> själva QCA-biblioteket. Någon omkompilering av &kopete; är inte nödvändig, i själva verket inte ens en omstart. I fallet då du har installerat insticksprogrammet och det ändå inte fungerar, kan Qt troligtvis inte hitta det. Eftersom qca-tls installeras som ett &Qt;-insticksprogram, måste du försäkra dig om att det installeras i instickskatalogen för den &Qt;-version som används för att köra &kopete;.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Jag använder Jabber och ICQ tillsammans. Så fort jag kopplar upp mig med Jabber, kopplas jag ner från ICQ med ett felmeddelande om att jag är ansluten från en annan klient. Vad står på?</para>
+</question>
+<answer
+><para
+>Kommer du ihåg när du lekte med ICQ-överföringar på den där andra Jabber-klienten? Du ställde in en <quote
+>ICQ-överföring</quote
+> som låter dig tala med ICQ-personer från Jabber. ICQ tillåter inte flera anslutningar till samma konto, och kopplar ner dig. Leta efter en kontakt på formen <guilabel
+>123456@icq.jabber.org</guilabel
+> under dina Jabber-kontakter och ta bort den.</para>
+</answer>
+</qandaentry>
+</qandaset>
+</chapter
+> <!-- faq -->
+
+<!--FIXME chapter id="specialised">
+<title
+>Specialized Actions</title>
+<para
+>Command line parameters</para>
+<para
+>Installing emoticon sets</para>
+</chapter--> <!-- specialised -->
+
+<chapter id="credits-and-license">
+<title
+>Tack till och licens</title>
+<para
+>&kopete; copyright 2001-2007, &kopete;-utvecklarna </para>
+<para
+>Stefan Asserhäll<email
+>stefan.asserhall@bredband.net</email
+></para
+> &underFDL; &underGPL; <sect1 id="team">
+<title
+>Gruppen</title>
+<sect2 id="current-team">
+<title
+>Nuvarande utvecklingsgrupp</title>
+<!-- please keep in sync with the authors list on the webpage -->
+<itemizedlist>
+<listitem
+><para
+>Pali Rohár (pali.rohar snabel-a gmail com): Utvecklare och underhåll</para
+></listitem>
+<listitem
+><para
+>Duncan Mac-Vicar Prett (duncan snabel-a kde org): Ursprunglig upphovsman, utvecklare och projektledare</para
+></listitem>
+<listitem
+><para
+>Till Gerken (till snabel-a tantalo net): Utvecklare, underhåll av Jabber</para
+></listitem>
+<listitem
+><para
+>Olivier Goffart (ogoffart snabel-a tiscalinet be): Huvudutvecklare, underhåll av WLM-insticksprogram</para
+></listitem>
+<listitem
+><para
+>Andy Goossens (andygoossens snabel-a telnet be): Utvecklare</para
+></listitem>
+<listitem
+><para
+>Grzegorz Jaskiewicz (gregj snabel-a pointblue com pl): Utvecklare, underhåll av Gadu-gadu-insticksprogram</para
+></listitem>
+<listitem
+><para
+>Jason Keirstead (jason snabel-a keirstead org): Utvecklare</para
+></listitem>
+<listitem
+><para
+>&Matt.Rogers; (mattr snabela kde org): Huvudutvecklare, underhåll av AIM- och ICQ-insticksprogram</para
+></listitem>
+<listitem
+><para
+>Richard Smith (lilachaze snabel-a hotmail com): Utvecklare, underhåll av användargränssnitt</para
+></listitem>
+<listitem
+><para
+>&Will.Stephenson; (lists snabela stevello free-online co uk): Utvecklare, ikoner, insticksprogram, författare till handbok</para
+></listitem>
+<listitem
+><para
+>Michel Hermier (michel.hermier snabel-a wanadoo fr): Underhåll av IRC-insticksprogram</para
+></listitem>
+<listitem
+><para
+>Andre Duffeck (andre snabel-a duffeck de): Utvecklare, underhåll av Yahoo-insticksprogram</para
+></listitem>
+<listitem
+><para
+>&Michael.Larouche; (michael.larouche snabela kdemail net): Utvecklare, WLM, chattfönster.</para
+></listitem>
+</itemizedlist>
+</sect2>
+<sect2 id="ex-team">
+<title
+>Tidigare utvecklare (&kopete;s berömdheter)</title>
+<para
+>Dessa personer har lämnat &kopete;, så kontakta dem inte för frågor om &kopete;. Vi är oändligt tacksamma för deras bidrag. </para>
+<itemizedlist>
+<listitem
+><para
+>Christopher TenHarmsel (tenharmsel snabel-a users sourceforgenet): Utvecklare, Oscar-hackare</para
+></listitem>
+<listitem
+><para
+>Ryan Cumming (ryan snabel-a kde org): Kärnutvecklare</para
+></listitem>
+<listitem
+><para
+>Richard Stellingwerff (remenic snabel-a linuxfromscratch org): Utvecklare</para
+></listitem>
+<listitem
+><para
+>Hendrik vom Lehn (hennevl snabel-a hennevl de): Utvecklare</para
+></listitem>
+<listitem
+><para
+>Stefan Gehn (sgehn snabel-a gmx net): Utvecklare</para
+></listitem>
+<listitem
+><para
+>&Robert.Gogolok; (robertgogolock snabela gmx de): Utvecklare</para
+></listitem>
+<listitem
+><para
+>&Nick.Betcher; (nbetcher snabela kde org): Ursprunglig upphovsman till ICQ-, AIM- och IRC-insticksprogram</para
+></listitem>
+<listitem
+><para
+>Daniel Stone (dstone snabel-a kde org): Ursprunglig upphovsman till Jabber-insticksprogram</para
+></listitem>
+<listitem
+><para
+>James Grant (topace snabel-a lightbox org): Utvecklare, upphovsman till importinsticksprogram</para
+></listitem>
+<listitem
+><para
+>Zack Rusin (zack snabel-a kde org): Utvecklare, upphovsman till gammalt Gadu-gadu-insticksprogram</para
+></listitem>
+<listitem
+><para
+>Gav Wood (gav snabel-a kde org): Upphovsman till Winpopup-insticksprogram</para
+></listitem>
+<listitem
+><para
+>Martijn Klingens (klingens snabel-a kde org): Utvecklare, WLM-hackare</para
+></listitem>
+</itemizedlist>
+</sect2>
+<sect2 id="documentation">
+<title
+>Dokumentation</title>
+<para
+>Dokumentation copyright 2003, 2004, 2005 &Will.Stephenson; (lists snabela stevello free-online co uk), copyright 2005 &Matt.Rogers; (mattr snabela kde org), copyright 2005, 2006 &Michael.Larouche; (michael.larouche snabela kdemail net). </para>
+</sect2>
+</sect1>
+</chapter
+><!-- credits-and-license -->
+
+&kopete-chatstyle;
+&kopete-pipes;
+&kopete-jabber;
+&kopete-icq;
+&kopete-emoticonspec;
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet
+-->

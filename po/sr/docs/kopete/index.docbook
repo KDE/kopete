@@ -1,0 +1,3259 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY kopete "<application
+>Kopete</application
+>">
+  <!ENTITY Will.Stephenson "<personname
+><firstname
+>Will</firstname
+><surname
+>Stephenson</surname
+></personname
+>">
+  <!ENTITY Will.Stephenson.mail "<email
+>lists@stevello.free-online.co.uk</email
+>">
+  <!ENTITY Matt.Rogers "<personname
+><firstname
+>Matt</firstname
+><surname
+>Rogers</surname
+></personname
+>">
+  <!ENTITY Matt.Rogers.mail "<email
+>mattr@kde.org</email
+>">
+  <!ENTITY Michael.Larouche "<personname
+><firstname
+>Michaël</firstname
+><surname
+>Larouche</surname
+></personname
+>">
+  <!ENTITY Michael.Larouche.mail "<email
+>michael.larouche@kdemail.net</email
+>">
+  <!ENTITY Olivier.Goffart "<personname
+><firstname
+>Olivier</firstname
+><surname
+>Goffart</surname
+></personname
+>">
+  <!ENTITY Olivier.Goffart.mail "<email
+>ogoffart@kde.org</email
+>">
+  <!ENTITY Charles.Connell "<personname
+><firstname
+>Charles</firstname
+><surname
+>Connell</surname
+></personname
+>">
+  <!ENTITY Charles.Connell.mail "<email
+>charles@connells.org</email
+>">
+  <!ENTITY package "kopete">
+  <!ENTITY kappname-n '<application>Копете</application>'>
+  <!ENTITY kappname-g '<application>Копетеа</application>'>
+  <!ENTITY kappname-d '<application>Копетеу</application>'>
+  <!ENTITY kappname-a '<application>Копете</application>'>
+  <!ENTITY kappname-i '<application>Копетеом</application>'>
+  <!ENTITY kappname-l '<application>Копетеу</application>'>
+  <!ENTITY im "<acronym
+>IM</acronym
+>">
+  <!ENTITY ascii "<acronym
+>ASCII</acronym
+>">
+  <!ENTITY html "<acronym
+>HTML</acronym
+>">
+  <!ENTITY xml "<acronym
+>XML</acronym
+>">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % Serbian "INCLUDE">
+  <!ENTITY kopetewww "<ulink url='http://kopete.kde.org'
+>http://kopete.kde.org</ulink
+>">
+  <!ENTITY kopete-menus SYSTEM "menus.docbook">
+  <!ENTITY kopete-chatstyle SYSTEM "chatstyle.docbook">
+  <!ENTITY kopete-pipes SYSTEM "pipes.docbook">
+  <!ENTITY kopete-jabber SYSTEM "jabber.docbook">
+  <!ENTITY kopete-icq SYSTEM "icq.docbook">
+  <!ENTITY kopete-emoticonspec SYSTEM "emoticonspec.docbook">
+]>
+<!--
+Intro (1st draft, Will)
+Getting Started (1st draft, Will)
+        Add an account
+        Go online
+        Start chatting
+Using &kopete; (1st draft, Will)
+        Contact List window
+		Layout
+			Menu
+			Toolbar
+			Contact List view
+			Status bar
+		Set your presence
+		Start a chat
+            	Organising contacts
+                	Adding contacts
+				Metacontacts
+			Grouping Contacts
+				Within Metacontacts
+			Renaming Contacts
+		Configure &kopete;
+		Quit.
+		Shortcuts
+        Chat window
+		Layout
+			Chat members list
+			Status bar (typing notifications, etc )
+			Tabbing
+		Starting group chats
+		Shortcuts
+	        File transfers
+Configuring &kopete; (1st draft, Will)
+	Global Shortcuts
+	Configure Dialog
+		Adding/Editing Accounts (
+		Behaviour
+		Appearance
+	Loading Plugins
+Plugins (Outlined, Will)
+        (Section on each plugin, use, and configuration)
+Menus (Done, Will)
+        (Short description of each menu item)
+FAQ (1st draft, Will)
+Specialized Tasks
+    (Any tricks involving _use_ of Kopete)
+	Command line flags
+Credits (1st draft, Will)
+Appendix: Obtaining and installation (1st draft, Will)
+Appendix: Chat Window Style Guide (1st draft, Michaël)
+-->
+
+<book id="kopete" lang="&language;">
+<bookinfo>
+<title
+>Приручник за <application
+>Копете</application
+></title>
+
+<authorgroup>
+
+<author
+><personname
+><firstname
+>Вил</firstname
+> <surname
+>Стивенсон</surname
+></personname
+> &Will.Stephenson.mail;</author>
+<author
+><personname
+><firstname
+>Мат</firstname
+> <surname
+>Роџерс</surname
+></personname
+> &Matt.Rogers.mail;</author>
+<author
+><personname
+><firstname
+>Микаел</firstname
+> <surname
+>Ларуш</surname
+></personname
+> &Michael.Larouche.mail;</author>
+
+<othercredit role="translator"
+><firstname
+>Драган</firstname
+><surname
+>Пантелић</surname
+><affiliation
+><address
+><email
+>falcon-10@gmx.de</email
+></address
+></affiliation
+><contrib
+>превод</contrib
+></othercredit
+> 
+</authorgroup>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>15. 12. 2006.</date>
+<releaseinfo
+>0.12</releaseinfo>
+
+<copyright>
+<year
+>2003, 2004, 2005, 2006, 2007</year>
+</copyright>
+
+<!-- Abstract about this handbook -->
+
+<abstract>
+<para
+><application
+>Копете</application
+> је КДЕ‑ов вишепротоколски брзогласнички клијент. </para>
+</abstract>
+
+
+<keywordset>
+<keyword
+>КДЕ</keyword>
+<keyword
+>ИМ</keyword>
+<keyword
+>брзи</keyword>
+<keyword
+>гласник</keyword>
+<keyword
+>џабер</keyword>
+<keyword
+>ИРЦ</keyword>
+<keyword
+>ВЛМ</keyword>
+<keyword
+>ајсикју</keyword>
+<keyword
+>АИМ</keyword>
+<keyword
+>Јаху</keyword>
+<keyword
+>гаду‑гаду</keyword>
+<keyword
+>групвајз</keyword>
+<keyword
+>Новел</keyword>
+<keyword
+>Винпопап</keyword>
+<keyword
+>СМС</keyword>
+</keywordset>
+
+</bookinfo>
+
+<chapter id="introduction">
+<title
+>Увод</title>
+<!--
+<chapterinfo>
+<authorgroup>
+<author>
+<firstname
+>Will</firstname>
+<surname
+>Stephenson</surname>
+<affiliation
+><address>
+<email
+>lists@stevello.free-online.co.uk</email>
+</address
+></affiliation>
+</author>
+</authorgroup>
+<date
+>2003-10-05</date>
+<releaseinfo
+>0.8</releaseinfo>
+</chapterinfo>
+-->
+<sect1 id="intro-to-kopete">
+<title
+><application
+>Копете</application
+>, брзогласнички клијент за КДЕ</title>
+<sect2 id="intro-to-kopete-next">
+<title
+>Пре него што почнемо...</title>
+<para
+>Пре него што наставите, ако нисте већ вични брзом гласништву, прочитате секцију <link linkend="getting-started"
+>„Први кораци“</link
+> ради упознавања овог чудесног света.</para>
+</sect2>
+<sect2 id="intro-to-kopete-about">
+<title
+>Шта је <application
+>Копете</application
+>?</title>
+<para
+><application
+>Копете</application
+> је КДЕ‑ов брзогласнички (ИМ) клијент. Омогућава вам да комуницирате са пријатељима и колегама кроз различите брзогласничке сервисе — лакше је научити и погодније користити један једини програм за све те сервисе, него више њих. </para>
+<para
+><application
+>Копете</application
+> је пројектован да се добро уклапа у радну површ КДЕ‑а, да буде јасан на први поглед. Корисничко сучеље је чисто и једноставно, без сувишности које би одвраћале пажњу кориснику. Уклањањем разлика између различитих ИМ система, <application
+>Копете</application
+> у фокус ставља комуникацију саму. Једна могућност <application
+>Копетеа</application
+> у овом смеру јесу <link linkend="organise-contacts-metacontacts"
+>метаконтакти</link
+>, који групишу различите начине да се неко контактира под једну „особу“ у листи контаката. Други вишепротоколски гласници засебно набрајају различите ИМ налоге исте особе, што мање искусне кориснике доводи у забуну. <application
+>Копете</application
+> олакшава живот: метаконтакт је особа, а контакти су начини за комуникацију с том особом. Контакте у једном метаконтакту препознаћете као мале иконице, које представљају ИМ сервисе преко којих можете комуницирати са датом особом.</para>
+<para
+><application
+>Копете</application
+> је намењен корисницима свих нивоа. Из старта подржава минимални скуп функција које што више олакшавају ћаскање. Напреднији корисници могу додавати допунске функције (попут статистике) преко <application
+>Копетеовог</application
+> <link linkend="plugins"
+>система прикључака</link
+>.</para>
+</sect2>
+<sect2 id="intro-to-kopete-web">
+<title
+>Више информација о <application
+>Копетеа</application
+> на Вебу</title>
+<para
+>За више информација о пројекту <application
+>Копетеа</application
+>, развојни тим одржава веб сајт на &kopetewww;. Тамо су увек доступне најновије вести и надоградње.</para>
+<para
+>Ако желите да се обратите тиму, поштанска листа програмера <application
+>Копетеа</application
+> налази се на <ulink url="https://mail.kde.org/mailman/listinfo/kopete-devel"
+>https://mail.kde.org/mailman/listinfo/kopete-devel</ulink
+>.</para>
+<para
+>Ако желите подршку уживо, ту је <acronym
+>ИРЦ</acronym
+> канал <application
+>Копетеа</application
+>, где чланови тима разговарају о техничким питањима (па, не баш увек!) или се просто друже. Каналу се можете придружити било којим <acronym
+>ИРЦ</acronym
+> клијентом, укључујући <application
+>Копете</application
+> — додајте <acronym
+>ИРЦ</acronym
+> контакт, задавши <userinput
+>irc.freenode.org</userinput
+> за сервер и <userinput
+>#kopete</userinput
+> за канал. Видимо се тамо!</para>
+</sect2>
+</sect1>
+<sect1 id="intro-to-instant-messaging">
+<title
+>Увод у брзо гласништво</title>
+<para
+>Шта је брзо гласништво (ИМ)? ИМ је начин за тренутно комуницирање са пријатељима преко Интернета. Овако речено, можда не звучи много другачије од е‑поште. Јесте ли већ приметили како је незграпно извести кратак разговор путем е‑поште? Морате да кликнете на „Одговори“ за сваку поруку, нађете право место њој да укуцате шта треба, затим да је пошаљете; и онда још чекате да стигне следећа порука! ИМ омогућава да разговарате природно скоро као телефоном или лицем у лице, куцањем порука у прозору који делите са својим пријатељима.</para>
+<para
+>Друга разлика између ИМ‑а и е‑поште је та што преко ИМ‑а можете видити присуство пријатеља̂, то јест да ли су заиста на вези у исто време као и ви. Ово вам омогућава да поруке шаљете истински одмах, уместо као са е‑поштом где чекате пријатеља да провери своје поштанско сандуче — ИМ порука искаче на екрану циљне особе чим је пошаљете. Наравно, када желите да вас не прекидају, можете изменити сопствено присуство тако да други знају да вас не треба узнемиравати.</para>
+<para
+>Постоје још многе забавне и корисне могућности ИМ‑а које можете истражити <application
+>Копетеом</application
+>, као што су групна ћаскања, пренос фајлова, или емотикони који одражавају ваше расположење. Наставите с читањем да сазнате више!</para>
+</sect1>
+</chapter>
+
+<chapter id="getting-started">
+<title
+>Први кораци</title>
+<para
+>За коришћење <application
+>Копетеа</application
+> треба да подесите један или више налога на жељеним брзогласничким сервисима.</para>
+<para
+>Вероватно сте већ изабрали гласнички сервис, било зато што већ користите ИМ, било зато што желите да користите исти сервис као и ваши пријатељи. Ако не спадате у ове две категорије, узмите у обзир коришћење сервиса заснованог на отвореним стандардима, који су пројектовани за добру сарадњу са слободном софтвером. Други гласнички сервиси подложни су изменама подложних технологија без упозорења и благовременог обзнањивања детаља, што програмерима слободног софтвера отежава њихову подршку.</para>
+<para
+>Џабер и <acronym
+>ИРЦ</acronym
+> су два гласничка сервиса заснована на отвореним стандардима које <application
+>Копете</application
+> подржава.</para>
+<para
+>Следећа секција претпоставља да сте већ регистровани на неки ИМ сервис. Ако нисте, на гаду‑гаду, џабер и ВЛМ можете се регистровати унутар <application
+>Копетеа</application
+>, док се на друге сервисе морате регистровати преко њихових веб сајтова, пре него што направите налог у <application
+>Копетеу</application
+>.</para>
+<sect1 id="creating-accounts">
+<title
+>Стварање налога̂</title>
+<para
+>За стварање налога, позовите дијалог за подешавање преко <menuchoice
+><guimenu
+>Поставке</guimenu
+> <guimenuitem
+>Подеси Копете...</guimenuitem
+></menuchoice
+>.</para>
+<para
+>Дијалог за подешавање је главни начин за прилагођавање <application
+>Копетеа</application
+>. Лево стоји колона иконица којом се бира област <application
+>Копетеа</application
+> која се подешава. Кликните на иконицу <guiicon
+>Налози</guiicon
+>. Главно окно промениће се на приказ управљања налозима. Тренутно је празно, али ће убрзо набрајати ваше ИМ налоге. Кликните на дугме <guibutton
+>Додај налог...</guibutton
+> да прикажете чаробњак за налоге.</para>
+<para
+>Чаробњак за налоге вам помаже у стварању ИМ налога. На првој страници, бићете питани да изаберете жељени гласнички сервис. Кликните на један од приказаних, па затим на дугме <guibutton
+>Наредно</guibutton
+>. На следећој страници уносите детаље за пријављивање на изабрани брзогласнички сервис.</para>
+<para
+>Већина сервиса захтева само да унесете корисничко име или јединствени идентификациони број (УИН) и лозинку. Сервиси специјалне намене Винпопап и СМС раде понешто другачије, те погледајте њихове засебне секције. Постоје још неке опције које се примењују на већину сервиса, а које треба да имате у виду:</para>
+<variablelist>
+<varlistentry
+><term
+>Упамти лозинку</term
+><listitem
+><para
+>Ако је попуњено, <application
+>Копете</application
+> ће ускладиштити лозинку, тако да је не морате уносити при сваком повезивању на дати ИМ сервис. Ако се бринете за безбедност, или желите да ограничите приступ ИМ налогу, оставите ово непопуњено.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Повежи се по покретању</term
+><listitem
+><para
+>Ако је попуњено, <application
+>Копете</application
+> ће по покретању покушати да се повеже на ИМ сервис. Ако вам је веза преко ЛАН‑а, ДСЛ‑а, односно било која „стална“, ово је прикладно; корисници с модемским приступом требало би ово да искључе и повежу се ручно након успостављања везе.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Пошто сте унели ИМ детаље, можете продужити на последњу страницу, где напуштате чаробњак и дијалог за подешавање.</para>
+</sect1
+><!-- creating-accounts -->
+<sect1 id="go-online">
+<title
+>На везу и започнимо ћаскање!</title>
+<para
+>Приметићете да се иконица која представља налог појавила на траци стања, при дну <application
+>Копетеовог</application
+> прозора с листом контаката. Иконица одражава вашу тренутну присутност за дати налог. Кликните <mousebutton
+>десним</mousebutton
+> на њу, па из менија који искочи изаберите ступање на везу. Иконица у траци стања играће док се <application
+>Копете</application
+> повезује на ИМ сервис.</para>
+<para
+>Кад ступите на везу, ако сте већ користили овај ИМ сервис, ваши ће контакти бити добављени са сервера и приказани у листи контаката. Ћаскање са контактом почињете тако што кликните на његово име, када се појављује прозор за ћаскање. Ток разговора се приказује у горњем делу прозора; оно што желите наредно да кажете треба да укуцате у доњи део прозора и кликнете на <guibutton
+>Пошаљи</guibutton
+>.</para>
+<para
+>Ако сте налог управо створили, нећете имати никаквих контаката. За детаље о додавању контаката, погледајте <link linkend="organise-contacts-adding"
+>„Додавање контаката“</link
+>.</para>
+<tip
+><para
+>Подразумевана пречица за <guibutton
+>Пошаљи</guibutton
+> је <keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>Enter</keycap
+></keycombo
+>; можете је изменити у прозору за ћаскање, кроз <menuchoice
+><guimenu
+>Поставке</guimenu
+><guimenuitem
+>Подеси пречице...</guimenuitem
+></menuchoice
+>.</para
+></tip>
+</sect1
+><!-- go-online -->
+</chapter>
+
+<chapter id="using-kopete">
+<title
+>Коришћење <application
+>Копетеа</application
+></title>
+<para
+>Ово поглавље даје преглед основних могућности <application
+>Копетеа</application
+>. Прво ћемо размотрити листу контаката, у којој су приказани контакти, а затим прозор за ћаскање, у коме водите разговор.</para>
+<sect1 id="contact-list">
+<title
+>Листа контаката</title>
+<para
+>Листа контаката се појављује кад покренете <application
+>Копете</application
+>. Она је главни прозор, у коме можете подесити своје присуство, започети ћаскање, организовати контакте, подесити или напустити <application
+>Копете</application
+>.</para>
+<sect2 id="contact-list-layout">
+<title
+>Распоред прозора листе контаката </title>
+<sect3 id="contact-list-layout-menu"
+><title
+>Мени</title
+><para
+>На врху листе контаката обично стоји трака менија. Ако је нема, можда сте је искључили; поново је укључите помоћу <keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>M</keycap
+></keycombo
+>. Детаљи о свакој ставци менија могу се наћи у <link linkend="menus"
+>поглављу о структури менија</link
+>.</para>
+</sect3>
+<sect3 id="contact-list-layout-toolbar"
+><title
+>Трака алатки</title
+><para
+>Трака алатки садржи најчешће коришћене радње у <application
+>Копетеу</application
+>. Прилагодити је можете помоћу <menuchoice
+><guimenu
+>Поставке</guimenu
+> <guimenuitem
+>Подеси траке алатки...</guimenuitem
+></menuchoice
+>. Запазите дугмад <guibutton
+>Прикажи кориснике ван везе</guibutton
+> и <guibutton
+>Прикажи празне групе</guibutton
+> — њима можете сакривати контакте и групе које су ван везе.</para>
+	<para
+><application
+>Копете</application
+> још више олакшава постављање поруке стања, којом своје контакте обавештавате о расположењу или разлогу тренутној заузетости. Кликните на дугме <guibutton
+>Постави поруку стања</guibutton
+> и почните да куцате нову поруку, или изаберите неку коју сте раније унели.</para>
+	<para
+><guilabel
+>Трака брзе претраге</guilabel
+> брзо филтрира листу контаката, тако што упишете неколико слова из имена контакта. </para>
+</sect3>
+<sect3 id="contact-list-layout-contactlist"
+><title
+>Листа контаката</title
+><para
+>Листа контаката заузима највећи део прозора. Она набраја све ваше контакте, сврстане у групе под које сте их подвели. Групе можете отварати и затварати кликом на симбол плуса поред групе. Редослед ређања група можете обрнути кликом на етикету <guilabel
+>Контакти</guilabel
+> изнад листе.</para>
+<para
+>Контекстни мени у листи контаката мења се зависно од ставке испод показивача. <link linkend="organise-contacts-grouping"
+>Групе</link
+>, <link linkend="organise-contacts-metacontacts"
+>метаконтакти</link
+> и контакти посебни по ИМ систему, пружају различите опције. Контекстни мени над празним областима листе контаката омогућава додавање контаката и група, и измену начина приказа.</para>
+</sect3>
+<sect3 id="contact-list-layout-statusbar"
+><title
+>Трака стања</title
+><para
+>Трака стања садржи по једну иконицу за сваки ИМ налог који сте направили. Иконица одражава тренутно присуство за дати налог, које се може изменити <mousebutton
+>десним</mousebutton
+> кликом на иконицу. </para>
+	<para
+><application
+>Копете</application
+> у траци стања такође приказује тренутну поруку стања. Можете је изменити или обрисати кликом на иконицу поруке у углу.</para>
+</sect3>
+</sect2>
+<sect2 id="contact-list-setting-presence">
+<title
+>Постављање присуства</title>
+<para
+>Постављање присуства накратко је поменуто у <link linkend="go-online"
+>претходном поглављу</link
+>. „Присуство“ одређује колико сте видљиви на ИМ мрежи. Да бисте уопште користили мрежу, морате се повезати на њу, тако да можете слати и примати поруке и видети присуство других. Пошто се повежете, већина ИМ система омогућава вам да наведете шта радите и да ли желите да ћаскате, постављањем специјалних типова присуства, као што су <emphasis
+>одсутност</emphasis
+> или <emphasis
+>доступност за ћаскање</emphasis
+>. Расположиве поставке присутности зависе од система, али вам <application
+>Копете</application
+> омогућава извесну контролу над свим ИМ системима истовремено, постављањем стања на <emphasis
+>одсутност</emphasis
+> или <emphasis
+>доступност</emphasis
+>.</para>
+<para
+>Своје присуство за појединачне ИМ налоге постављате <mousebutton
+>десним</mousebutton
+> кликом на иконицу налога у траци стања, на дну листе контаката. Добијени контекстни мени представља избор могућих поставки присуства за дати ИМ систем.</para>
+<para
+>За измену присуства под свим налозима истовремено, кликните на <guibutton
+>Стање</guibutton
+> или ставку менија <menuchoice
+><guimenu
+>Фајл</guimenu
+> <guimenuitem
+>Стање</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="contact-list-start-chat">
+<title
+>Покретање ћаскања са листе контаката</title>
+<para
+>Ћаскање преко листе контаката започињете простим кликом на контакт. Појавиће се <link linkend="chat-window"
+>прозор за ћаскање</link
+>.</para>
+<para
+>Можете и кликнути <mousebutton
+>десним</mousebutton
+> на контакт па изабрати или <menuchoice
+><guimenuitem
+>Пошаљи поруку</guimenuitem
+></menuchoice
+> или <menuchoice
+><guimenuitem
+>Покрени ћаскање...</guimenuitem
+></menuchoice
+>. <menuchoice
+><guimenuitem
+>Пошаљи поруку</guimenuitem
+></menuchoice
+> ради другачије по томе што шаље само једну поруку, без отварања прозора за ћаскање, већ преко једноставног дијалога; корисно за поруке на које не очекујете одговор.</para>
+</sect2>
+<sect2 id="contact-list-send-file">
+	<title
+>Слање фајлова</title>
+	<para
+>Фајл можете послати преко листе контаката, кроз контекстни мени особе којој желите да пошаљете. Ако <application
+>Копете</application
+> подржава пренос фајлова на циљном ИМ систему, контекстни мени ће садржати ставку <menuchoice
+><guimenuitem
+>Пошаљи фајл...</guimenuitem
+></menuchoice
+>. Уместо овога, слање можете започети и превлачењем фајла однекуд другде у КДЕ‑у на име особе у листи контаката.</para>
+</sect2>
+<sect2 id="organise-contacts">
+<title
+>Организовање контаката</title>
+<sect3 id="organise-contacts-metacontacts">
+<title
+>Укратко о метаконтактима</title>
+<para
+>Један од принципа иза <application
+>Копетеа</application
+> јесте пружање стандардизованог начина за коришћење ИМ система — разлике међу ИМ системима су испеглане, олакшавајући комуницирање. Овај принцип је испраћен и у начину организације контаката. У <application
+>Копетеу</application
+> контактима баратате само по имену; подложни ИМ систем мање је важан. Неки имају више од једног ИМ налога — <application
+>Копете</application
+> на прво место ставља особу која користи налог.</para>
+<para
+>Ради овога <application
+>Копете</application
+> уводи „метаконтакте“, који представљају особе с којима желите да комуницирате. Један метаконтакт садржи све различите ИМ ИД‑ове које особа има, омогућавајући да се брзим погледом на иконицу метаконтакта види да ли је та особа доступна, без обзира на то који ИМ систем тренутно користи.</para>
+</sect3>
+<sect3 id="organise-contacts-grouping">
+<title
+>Укратко о груписању контаката</title>
+<para
+><application
+>Копете</application
+> омогућава стварање група ради разврставања контаката. Један контакта може се наћи у више група. Где је то могуће, груписања се уписују на серверску листу контаката, тако да чланства у групама остају синхронизована при употреби других ИМ програма. Међутим, ако уређујете групе у другом ИМ програму, <application
+>Копете</application
+> не може знати како да аутоматски премести метаконтакт; то морате ручно разрешити.</para>
+<para
+>Групу којој метаконтакт припада можете изменити кроз његов контекстни мени, одакле га премештате или копирате у нову групу, или уклањате из тренутне. Можете се послужити и превлачењем — једноставно испустите метаконтакт на име друге групе.</para>
+</sect3
+><sect3 id="organise-contacts-adding">
+<title
+>Додавање контаката</title>
+<para
+>Контакт додајете или преко менија <menuchoice
+><guimenu
+>Фајл</guimenu
+><guimenuitem
+>Додај контакт</guimenuitem
+></menuchoice
+> или кликом на дугме <guibutton
+>Додај</guibutton
+> на траци алатки. Овим се позива чаробњак за додавање контаката.</para>
+<para
+>Чаробњак за додавање контаката ствара нови метаконтакт, користећи један или више ИМ система, тако што вас води кроз следеће странице.</para>
+
+<orderedlist>
+<listitem
+><para
+>Страница добродошлице. Овде можете изабрати да ли желите да употребите КДЕ‑ов адресар за овај контакт. Уписивање ИМ података у КДЕ‑ов адресар омогућава другим КДЕ програмима да их деле са <application
+>Копетеом</application
+>, или чак да користе <application
+>Копете</application
+> за слање ИМ порука. Ако бисте радије раздвојено држали своје ИМ контакте, испразните ову кућицу.</para
+></listitem>
+<listitem
+><para
+>Избор уноса у КДЕ‑овом адресару. Из постојећег уноса у свом КДЕ адресару можете преузети име за приказно име у <application
+>Копетеу</application
+>, или направити нови унос. Ова страница се не приказује ако нисте изабрали употребу КДЕ‑овог адресара.</para
+></listitem>
+<listitem
+><para
+>Избор приказног имена и групе. Овде можете унети приказно име дате особе (оно под којим ће водити у <application
+>Копетеу</application
+>) и изабрати <link linkend="organise-contacts-grouping"
+>групе</link
+> којима ће припадати.</para
+></listitem>
+<listitem
+><para
+>Избор ИМ налога. Овде можете изабрати које своје налоге желите да користите за ћаскање са новим контактом. Ако имате само један ИМ налог, ова страница се неће приказати.</para
+></listitem>
+<listitem
+><para
+>Странице за додавање контакта посебне по налогу. За сваки налог добићете једну страницу где можете унети УИН, другарско име или адресу е‑поште, у зависности од датог ИМ система.</para
+></listitem>
+<listitem
+><para
+>Завршни екран. Додавање је готово. Осим ако ИМ систем не захтева овлашћивање (као нпр. у ајсикјуу) за додавање контакта на листу, када ћете бити упитани по изласку из чаробњака.</para
+></listitem>
+</orderedlist>
+
+<para
+>Постојећем метаконтакту можете додавати контакте преко његовог контекстног менија.</para>
+</sect3>
+
+<sect3 id="organise-contacts-renaming">
+<title
+>Преименовање контаката</title>
+<para
+>Контакт можете преименовати кроз <menuchoice
+><guimenu
+>Уређивање</guimenu
+><guimenuitem
+>Преименуј контакт</guimenuitem
+></menuchoice
+> или истом ставком у контекстном менију метаконтакта.</para>
+<para
+>Неки ИМ системи омогућавају вам да поставите „приказно име“, различито од корисничког имена, попут „Алиса воли шифровање!“. Ако име контакта измените ручно, то ће потиснути његово приказно име. Да га повратите, отворите дијалог својстава за тај контакт и попуните кућицу <guilabel
+>Користи име које даје сервер</guilabel
+>.</para>
+</sect3>
+<sect3 id="organise-contacts-removing">
+<title
+>Уклањање контаката</title>
+<para
+>Ако више не желите да контакт буде на вашој листи контаката, метаконтакт и све контакте под њим можете уклонити кроз његов контекстни мени, ставка <menuchoice
+><guimenuitem
+>Уклони контакт</guimenuitem
+></menuchoice
+>.</para>
+</sect3>
+<sect3 id="organise-contacts-moving-contact">
+<title
+>Премештање контаката међу метаконтактима</title>
+<para
+>Можете изменити којем метаконтакту контакт припада. У пракси је ово потребно само кад сте у <application
+>Копетеу</application
+> управо додали више контаката, а знате да су <literal
+>PeraMajstor</literal
+> и <literal
+>peraperic@hotmail.com</literal
+> исте особе.</para>
+<para
+>Ово можете учинити на два начина:</para>
+<variablelist>
+<varlistentry
+><term
+>превлачењем</term
+><listitem
+><para
+>Иконица контакта десно од имена метаконтакта може се превући са једног на други метаконтакт.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>кроз контекстни мени контаката</term
+><listitem
+><para
+>Контекстни мени контакта (кликните <mousebutton
+>десним</mousebutton
+> на иконицу контакта) омогућава вам да изаберете нови метаконтакт преко дијалога.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Ако премештање остави метаконтакт празним (без контаката), бићете питани да ли желите га обришете.</para>
+</sect3>
+<sect3 id="organise-contacts-removing-contacts-">
+<title
+>Уклањање контаката из метаконтаката</title>
+<para
+>За уклањање контакта из метаконтакта, из његовог контекстног менија изаберите <menuchoice
+><guimenuitem
+>Обриши контакт</guimenuitem
+></menuchoice
+>.</para>
+</sect3>
+</sect2>
+<sect2 id="contact-list-configure">
+<title
+>Подешавање <application
+>Копетеа</application
+></title>
+<para
+><application
+>Копете</application
+> можете подесити користећи <menuchoice
+><guimenu
+>Поставке</guimenu
+><guimenuitem
+>Подеси Копете...</guimenuitem
+></menuchoice
+>. Више о овоме потражите у <link linkend="configuring"
+>наредном поглављу</link
+>.</para>
+</sect2>
+<sect2 id="contact-list-quit">
+<title
+>Напуштање <application
+>Копетеа</application
+></title>
+<para
+><application
+>Копете</application
+> напуштате преко <menuchoice
+><guimenu
+>Фајл</guimenu
+><guimenuitem
+>Напусти</guimenuitem
+></menuchoice
+>, <keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>Q</keycap
+></keycombo
+> или контекстног менија <application
+>Копетеове</application
+> иконице у системској касети. Ако само затворите прозор листе контаката, <application
+>Копете</application
+> ће наставити да ради у КДЕ‑овој системској касети.</para>
+</sect2>
+<sect2 id="contact-list-shortcuts">
+<title
+>Пречице са тастатуре</title>
+<para
+>Следеће пречице са тастатуре подржане су у прозору листе контаката:</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>пречица са тастатуре</entry>
+<entry
+>радња</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+><keycap
+>стрелица нагоре</keycap
+></entry>
+<entry
+>Бира претходну ставку у листи контаката.</entry>
+</row>
+<row>
+<entry
+><keycap
+>стрелица надоле</keycap
+></entry>
+<entry
+>Бира следећу ставку у листи контаката.</entry>
+</row>
+<row>
+<entry
+><keycap
+>стрелица лево</keycap
+></entry>
+<entry
+>Затвара текућу групу.</entry>
+</row>
+<row>
+<entry
+><keycap
+>стрелица десно</keycap
+></entry>
+<entry
+>Отвара текућу групу.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Enter</keycap
+></entry>
+<entry
+>Покреће ћаскање с изабраним контактом.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>M</keycap
+></keycombo
+></entry>
+<entry
+>Приказује и сакрива траку менија.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>U</keycap
+></keycombo
+></entry>
+<entry
+>Приказује и сакрива кориснике ван везе.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>G</keycap
+></keycombo
+></entry>
+<entry
+>Приказује и сакрива празне групе.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect2>
+</sect1
+><!-- contact-list -->
+
+<sect1 id="chat-window">
+<title
+>Прозор за ћаскање</title>
+<sect2 id="chat-window-layout"
+><title
+>Распоред прозора за ћаскање</title>
+<sect3 id="chat-window-layout-chatview"
+><title
+>Приказ ћаскања</title
+><para
+>Приказ ћаскања обично заузима највећи део прозора за ћаскање, и у њему се одвија разговор између вас и ваших контаката. Поруке се појављују редоследом примања, са најранијим порукама на врху приказа.</para>
+<para
+>Изглед приказа ћаскања можете <link linkend="configuring-appearance"
+>подесити</link
+> тако да наличи другим ИМ клијентима, или створити потпуно јединствен изглед.</para>
+</sect3>
+<sect3 id="chat-window-layout-memberslist"
+><title
+>Списак чланова у ћаскању</title>
+<para
+>Пошто неки ИМ системи допуштају групна ћаскања, корисно је видити ко је тренутно у ћаскању. Списак чланова у ћаскању даје се лево или десно од приказа ћаскања. Ово можете изменити преко <menuchoice
+><guimenu
+>Поставке</guimenu
+><guisubmenu
+>Списак чланова ћаскања</guisubmenu
+></menuchoice
+>. Контекстни мени контакта доступан је и преко ставки на овом списку.</para
+></sect3>
+<sect3 id="chat-window-layout-input-area"
+><title
+>Улазна област</title
+><para
+>Улазна област је испод приказа ћаскања. То је место где куцате поруке пре него што их пошаљете. Можете мењати фонт и боју поруке, користећи уобичајене алатке са траке алатки. Ако ИМ систем ово подржава, ваше поруке појављиваће се у боји кад их ваши контакти читају.</para
+><para
+>Подразумевана пречица са тастатуре за слање порука је <keycap
+>Enter</keycap
+>.</para
+></sect3>
+<sect3 id="chat-window-layout-statusbar"
+><title
+>Трака стања</title
+><para
+>Трака стања садржи привремене поруке, као што су обавештење да неко други у том тренутку пише, те дугме <guibutton
+>Пошаљи</guibutton
+>.</para
+></sect3>
+<sect3 id="chat-window-layout-tabbing"
+><title
+>Језичци</title
+><para
+><application
+>Копете</application
+> вам омогућава да водите више разговора у једном прозору, стављајући сваки под засебан језичак унутар прозора. Наслови језичака мењају боју да покажу кад је примљена нова порука:</para>
+<variablelist>
+<varlistentry
+><term
+>црвена</term
+><listitem
+><para
+>Неко је написао поруку.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>зелена</term
+><listitem
+><para
+>Неко пише поруку.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>плаво</term
+><listitem
+><para
+>Неко је написао поруку која садржи ваш надимак.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Постоји неколико начина груписања; да бисте га изабрали, у <application
+>Копетеовом</application
+> дијалогу за подешавање идите под језичак <guilabel
+>Ћаскање</guilabel
+> на страници <guilabel
+>Понашање</guilabel
+>. Ћаскања можете и премештати између прозора, користећи мени <menuchoice
+><guimenu
+>Језичци</guimenu
+></menuchoice
+>, као и одређивати смештај језичака у прозору.</para
+></sect3>
+</sect2>
+<sect2 id="chat-window-group">
+<title
+>Групно ћаскање у <application
+>Копетеу</application
+></title>
+<para
+><application
+>Копетеом</application
+> можете ћаскати један‑на‑један, или, где то ИМ систем подржава, у групи.</para>
+<para
+>Друге у ћаскање можете позвати превлачењем из листе контаката у прозор за ћаскање, или кроз мени <menuchoice
+><guimenu
+>Ћаскање</guimenu
+><guisubmenu
+>Позови</guisubmenu
+><guimenuitem
+>&lt;име контакта&gt;</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="chat-window-file-xfer">
+<title
+>Преноси фајлова</title>
+<para
+>Неки ИМ системи допуштају вам да шаљете и примате фајлове. Овој функцији можете приступити из контекстног менија контакта. Ако већ ћаскате, и желите да пошаљете фајл, просто га превуците из било ког дела КДЕ‑а у прозор за ћаскање, или изаберите мени<menuchoice
+><guimenu
+>Ћаскање</guimenu
+><guimenuitem
+>Пошаљи фајл...</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="chat-window-shortcuts">
+<title
+>Пречице са тастатуре</title>
+<para
+>Следеће пречице са тастатуре подржане су у прозору за ћаскање:</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>пречица са тастатуре</entry>
+<entry
+>радња</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+><keycap
+>Enter</keycap
+></entry>
+<entry
+>Шаље поруку уписану у улазној области.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>P</keycap
+></keycombo
+></entry>
+<entry
+>Штампа садржаје приказа ћаскања.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>S</keycap
+></keycombo
+></entry>
+<entry
+>Уписује садржај приказа ћаскања.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>W</keycap
+></keycombo
+></entry>
+<entry
+>Затвара текући приказ ћаскања. Прозор за ћаскање ће се затворити, осим ако у њему има више од једног језичка.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>,</keycap
+></keycombo
+></entry>
+<entry
+>Пребацује на претходни језичак.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>.</keycap
+></keycombo
+></entry>
+<entry
+>Пребацује на следећи језичак.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>Shift</keycap
+><keycap
+>B</keycap
+></keycombo
+></entry>
+<entry
+>Издваја ћаскање под језичком у засебан прозор.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Tab</keycap
+></entry>
+<entry
+>Допуњује делимично откуцан надимак, ако таквог има у тренутном ћаскању.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect2>
+
+</sect1
+><!-- chat-window -->
+</chapter
+><!-- Using-kopete -->
+
+<chapter id="configuring">
+<title
+>Подешавање <application
+>Копетеа</application
+></title>
+<para
+>За подешавање <application
+>Копетеа</application
+>, погледајте мени <menuchoice
+><guimenu
+>Поставке</guimenu
+></menuchoice
+>. </para>
+<sect1 id="configuring-global-shortcuts">
+<title
+>Глобалне пречице</title>
+<para
+><application
+>Копете</application
+> дефинише неке пречице које важе у свим КДЕ програмима.</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Глобалне пречице са тастатуре</entry>
+<entry
+>радња</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>Shift</keycap
+><keycap
+>I</keycap
+></keycombo
+></entry>
+<entry
+>Читање поруке. Корисно ако сте сакрили прозор листе контаката, а иконица системске касете игра да покаже да имате на нову поруку.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>Shift</keycap
+><keycap
+>C</keycap
+></keycombo
+></entry>
+<entry
+>Приказује и сакрива (сидри) прозор листе контаката. <emphasis
+>Упозорење:</emphasis
+> ако сте искључили <application
+>Копетеову</application
+> иконицу системске касете, или не користите системску касету, резултат може бити нестанак листе контаката — једини начин да је повратите јесте понављањем ове пречице.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect1>
+
+<sect1 id="configure-dialog">
+<title
+>Дијалог за подешавање <application
+>Копетеа</application
+></title>
+<sect2 id="configuring-accounts">
+<title
+>Додавање и уређивање налога</title>
+<para
+>У <link linkend="getting-started"
+>„Првим корацима“</link
+> укратко смо описали додавање налога. Да бисте накнадно изменили поставке налога, отворите дијалог за подешавање <application
+>Копетеа</application
+>, помоћу <menuchoice
+><guimenu
+>Поставке</guimenu
+><guimenuitem
+>Подеси Копете...</guimenuitem
+></menuchoice
+>. Налик Системским поставкама КДЕ‑а, подешавање је подељено у секције; иконице на левој страни дијалога пребацују између секција.</para>
+<para
+>На страници <guilabel
+>Налози</guilabel
+> можете <link linkend="creating-accounts"
+>додавати</link
+>, уклањати и мењати налоге. Уређивање налога у великој мери исто је као њихово додавање, само што не можете изменити УИН, другарско име, или било шта што датом ИМ систему служи као идентификатор налога. Ако желите да измените идентификатор, морате додати нови налог са новим идентификатором и (опционо) уклонити стари.</para>
+<para
+>Различите налоге на истом ИМ систему можете брзо разликовати тако што задате сваком посебну боју за иконице у траци стања и контаката. Да ово урадите, изаберите налог и кликните на бирач боја десно на страници. </para>
+<para
+>Приоритет налога можете одредити користећи иконице за нагоре и надоле на овој страници. Ако постоји више од једног начина да се контакту шаљу поруке, ово одређује ИМ систем који ће <application
+>Копете</application
+> употребити за комуникацију.</para>
+</sect2>
+<sect2 id="global-identity">
+<title
+>Глобални идентитет</title>
+<para
+><application
+>Копетеов</application
+> „глобални идентитет“ омогућава да једном поставите свој надимак и фотографију за све своје ИМ налоге. Ови детаљи могу бити учитани из вашег личног уноса у КДЕ‑овом адресару, из неког од ваших контаката, или задати на лицу места. Ако водите узбудљив двоструки живот, можете направити вишеструке идентитете и пребацивати се између њих у секцији <guilabel
+>идентитет</guilabel
+>.</para>
+</sect2>
+<sect2 id="configuring-behavior">
+<title
+>Понашање</title>
+<para
+>У понашање спада начин на који се <application
+>Копете</application
+> уклапа у површ, поставке одсутности и опције корисничког сучеља за ћаскање.</para>
+<sect3 id="configuring-behavior-general">
+<title
+>Језичак <guilabel
+>Опште</guilabel
+></title>
+<para
+>Овде можете прилагодити уклапање <application
+>Копетеа</application
+> у површ и управљати распоредом листе контаката.</para>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Иконица у системској касети</guilabel
+></term>
+<listitem>
+<para
+><application
+>Копете</application
+> подразумевано ставља иконицу у КДЕ‑ову системску касету. Ако то не желите, овде га можете искључити.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Сакривен главни прозор по покретању</guilabel
+></term>
+<listitem>
+<para
+>Ово чини да се <application
+>Копете</application
+> покрене са скривеним (усидреним) прозором листе контаката. Прозор можете дозвати кликом на иконицу системске касете или <link linkend="configuring-global-shortcuts"
+>глобалном пречицом за приказ листе контаката</link
+>.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Отварај поруке одмах</guilabel
+></term>
+<listitem>
+<para
+>Нове поруке отварају прозоре за ћаскање чим стигну.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Стављај поруке у ред</guilabel
+></term>
+<listitem>
+<para
+>Ред порука је место где <application
+>Копете</application
+> ставља поруке кад нема отвореног прозора за ћаскање. На овај начин можете бити обавештени о новим порукама помоћу искачућих „стрипских балончића“ или играјуће иконице системске касете. Ако искључите ред порука, чим примите нову поруку отвориће се прозор за ћаскање.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Стављај поруке на стек</guilabel
+></term>
+<listitem>
+<para
+>Ако користите стек порука, <application
+>Копете</application
+> приказује недавно примљене поруке почев од последње примљене.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-general-notifications">
+<title
+>Обавештења</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Балончић на нову поруку</guilabel
+></term>
+<listitem>
+<para
+>Овом опцијом приказује се „стрипски балончић“ над иконицом системске касете кад примите нову поруку. Можете покренути ћаскање или игнорисати поруку. УРЛ‑ови се рашчлањују из поруке — ако кликнете на везу, отвориће се у подразумеваном прегледачу, а порука ће бити склоњена.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Анимирај иконицу у системској касети</guilabel
+></term>
+<listitem>
+<para
+>Ова опција чини да иконица системске касете игра кад примите нову поруку. Клик на иконицу приказаће поруку у прозору за ћаскање.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Догађаји и током одсутности</guilabel
+></term>
+<listitem>
+<para
+>Ако не желите да вас узнемиравају обавештења када поставите одсутност, испразните ову кућицу.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Подеси обавештења...</guilabel
+></term>
+<listitem>
+<para
+>Звуци, трепћући уноси траке задатака, пасивни искакачи и друга егзотична обавештења, подржани су у <application
+>Копетеу</application
+> преко КДЕ‑ових системских обавештења. За више информација, упишите <userinput
+>help:/kcontrol/kcmnotify</userinput
+> у <application
+>К‑освајачу</application
+>, или идите под језичак <guilabel
+>Помоћ</guilabel
+> у секцији <guilabel
+>Обавештења</guilabel
+> у Системским поставкама.</para>
+<para
+>За додавање посебних обавештења по контакту, кликните десним на контакт у листи контаката и изаберите <guilabel
+>Својства</guilabel
+>. Можете задати да се покрене ћаскање, пусти посебан звучни ефекат или прикаже порука за дати контакт или групу. За посебна обавештења, можете задати извршавање спољашњих наредби; на пример, ако желите ОСД обавештење кроз Икс‑ОСД на догађај пристизања корисника на везу, можете уписати следећу наредбу:</para>
+<para
+><userinput
+>echo %s | osd_cat -o 100 -p bottom -A center -f -*-helvetica-*-r-*-*-24-*-*-*-*-*-*-* -O 2 -c gold</userinput
+></para>
+<para
+>Или, један од предлога са КДЕ‑овог форума, да обавештења о пристизању на везу изговара синтетизатор говора <ulink url="http://mambo.ucsc.edu/psl/mbrola"
+>МБРОЛА</ulink
+>:</para>
+<para
+><userinput
+>echo %s | sed -e 's/online/onlaain/i' | /usr/local/bin/mbrdico.dutch.female</userinput
+></para>
+<para
+>(<command
+>sed</command
+> у средини фонетизује <application
+>Копетеов</application
+> излаз, како би синтетизатор дао бољи изговор.)</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-away">
+<title
+>Поставке одсутности</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Обавести сва отворена ћаскања кад одем</guilabel
+></term>
+<listitem
+><para
+>Будите пажљиви с укључивањем овога. Учиниће да порука буде послата у отворена ћаскања кад год постанете одсутни, што неки могу сматрати наметљивим.</para
+></listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-away-auto">
+<title
+>Ауто. одсутност</title>
+<para
+>Овде можете изабрати да вам <application
+>Копете</application
+> постави одсутност после периода неактивности.</para>
+</sect4>
+<sect4 id="configuring-behavior-away-messages">
+<title
+>Предефинисане поруке о одсутности</title>
+<para
+>Овде можете дефинисати посебне поруке о одсутности, тако да их после можете бирати при постављању одсутности дугметом <guibutton
+>Стање</guibutton
+> на <link linkend="contact-list-layout-toolbar"
+>главној траци алатки</link
+>.</para>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-chat">
+<title
+>Поставке ћаскања</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Подигни прозор на долазну поруку</guilabel
+></term>
+<listitem
+><para
+>Прозор за ћаскање искаче по пријему нове поруке.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Догађаји у прозору ћаскања</guilabel
+></term>
+<listitem
+><para
+>Неки ИМ системи пружају додатне информације, попут тога ко се придружио или напустио ћаскање. Овом опцијом задајете да примате такве поруке у прозору за ћаскање.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Истакни поруке које садрже мој надимак</guilabel
+></term>
+<listitem
+><para
+>Истиче поруке у ћаскању које садрже ваш надимак. За више контроле над истицањем и другим догађајима, погледајте <link linkend="plugins-highlight"
+>прикључак за истицање</link
+>.</para
+></listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-chat-interface">
+<title
+>Поставке сучеља</title>
+<para
+><application
+>Копете</application
+> може да шаље поруке или кроз сучеље типа „испали и заборави“, које не чека на одговор, или кроз прозор за ћаскање, где се види ток разговора. Овде можете изабрати шта је од овога подразумевано.</para>
+</sect4>
+<sect4 id="configuring-behavior-chat-grouping">
+<title
+>Смерница груписања прозорâ ћаскања</title>
+<para
+>Ако желите да групишете ћаскања под језичцима у једном прозору, <application
+>Копете</application
+> вам пружа неколико начина за груписање.</para>
+<itemizedlist>
+<listitem
+><para
+>Отварање свих порука у новом прозору за ћаскање.</para
+></listitem>
+<listitem
+><para
+>Груписање свих поруке са истог налога у истом прозору за ћаскање.</para
+></listitem>
+<listitem
+><para
+>Груписање свих порука у истом прозору за ћаскање.</para
+></listitem>
+<listitem
+><para
+>Груписање свих поруке из исте групе у истом прозору за ћаскање.</para
+></listitem>
+<listitem
+><para
+>Груписање свих порука истог метаконтакта у истом прозору за ћаскање.</para
+></listitem>
+</itemizedlist>
+</sect4>
+<sect4 id="configuring-behavior-chat-lines">
+<title
+>Ограничење редова у прозору за ћаскање</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Највише редова у прозору ћаскања:</guilabel
+></term>
+<listitem
+><para
+>Ограничава број редова текста које ће приказивати прозор за ћаскање.</para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect4>
+</sect3>
+</sect2
+> <!-- configuring-behavior -->
+<sect2 id="configuring-appearance">
+<title
+>Изглед</title>
+<para
+>У изглед спада стил прозора за ћаскање, боје, фонтови, као и скуп емотикона.</para>
+<sect3 id="configuring-appearance-emoticons">
+<title
+>Емотикони</title>
+<para
+>Емотикони (познати и као смешкови) комбинације су знакова попут <userinput
+>;-)</userinput
+>, које представљају расположења и изразе лица. Уместо текстуалних знакова, <application
+>Копете</application
+> опционо може да приказује графичке емотиконе.</para>
+<para
+>Под овим језичком можете изабрати жељени скуп емотикона, или потпуно искључити графичке емотиконе.</para>
+<!--FIXME uncomment when chapter id="specialised" has content
+<para
+>See <link linkend="specialised"
+>Specialized Actions</link
+> for details of how to install extra emoticon sets.</para>
+-->
+</sect3>
+<sect3 id="configuring-appearance-chat">
+<title
+>Прозор за ћаскање</title>
+<sect4 id="configuring-appearance-chat-styles">
+<title
+>Стилови</title>
+<para
+>Стил приказа ћаскања може се изменити тако да личи на друге клијенте. Инсталирани стилови приказани су у списку лево, а прегледати се могу у главном панелу. Ако желите да направите сопствени стил, погледајте <link linkend="chatwindowstyleguide"
+>водич за стилове прозора за ћаскање</link
+>.</para>
+<para
+>Стилови са стране доступни су на <ulink url="http://kde-look.org"
+>http://kde-look.org</ulink
+>. <application
+>Копете</application
+> од верзије 0.12 подржава стилове из Адијума (ИМ програм за МекОС X), које можете преузети са веб сајта <ulink url="http://www.adiumxtras.com/"
+><foreignphrase lang='en'
+>Adium Xtras</foreignphrase
+></ulink
+> (идите на <foreignphrase lang='en'
+>Message View Styles</foreignphrase
+>).</para>
+<para
+>За инсталирање стила, кликните на <guibutton
+>Инсталирај...</guibutton
+>. Изаберите архивски фајл који садржи стил. За брисање стила, изаберите стил са списка и кликните на <guibutton
+>Обриши</guibutton
+>.</para>
+<para
+><guilabel
+>Групиши надовезујуће поруке</guilabel
+> је корисна опција за повећање читљивости ћаскања. Кад примите неколико порука заредом од истог контакта, оне се групишу без понављања пошиљаочевог имена.</para>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-general-contactlist">
+<title
+>Листа контаката</title>
+<variablelist>
+<varlistentry>
+	<term
+><guilabel
+>Распореди метаконтакте по групи</guilabel
+></term>
+<listitem>
+<para
+>Искључењем овога сакривају се групе у <application
+>Копетеу</application
+>, тако да контакти буду подељени само на контакте на вези и контакте ван везе.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Линије гранања стабла</guilabel
+></term>
+<listitem>
+<para
+><application
+>Копете</application
+> обично приказује контакте и групе као стабло, при чему су чланови група увучени. Ово можете искључити ако желите једноставнији изглед, тако да листа контаката постане раван списак. Можете одредити и да ли се гране увлаче.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Приказ контаката</guilabel
+></term>
+<listitem>
+	<para
+>Контакти се могу представљати на неколико начина. Посебно занимљива може бити опција <guilabel
+>Слике контаката кад су доступне</guilabel
+>, која приказује листу контаката у виду фотографија, које су изабрали контакти сами или су повучене из КДЕ‑овог адресара.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Анимације листе контаката</guilabel
+></term>
+<listitem>
+	<para
+>Одређује степен анимације за листу контаката. Искључите ово ако желите бржи одзив <application
+>Копетеа</application
+> на споријим машинама.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Самоскривање листе контаката</guilabel
+></term>
+<listitem>
+	<para
+>Укључивањем овога листа контаката аутоматски нестаје неколико секунди након што показивач напусти прозор.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Промени садржај облачића...</guilabel
+></term>
+<listitem>
+	<para
+>Овај дијалог омогућава одређивање састава и бројности детаља у облачићима над листом контаката.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+<sect3 id="configuring-appearance-colors-fonts">
+<title
+>Боје и фонтови</title>
+<sect4 id="configuring-appearance-colors-fonts-chat">
+<title
+>Боје прозора за ћаскање</title>
+<para
+>Овде можете изменити основни фонт и боје текста у ћаскању.</para>
+</sect4>
+<sect4 id="configuring-appearance-colors-fonts-overrides">
+<title
+>Потискивање форматирања</title>
+<para
+>Ако неки контакт користи фонтове и боје које вам се не допадају, можете рећи <application
+>Копетеу</application
+> да их игнорише и користити свој уобичајени фонт.</para>
+</sect4>
+<sect4 id="configuring-appearance-colors-fonts-contactlist">
+<title
+>Листа контаката</title>
+<para
+>Неки ИМ системи омогућавају да видите када контакти мирују за својим рачунарима. Овом опцијом можете изменити боју мирујућих контаката.</para>
+</sect4>
+</sect3>
+</sect2
+> <!-- configuring-appearance -->
+<sect2 id="configuring-devices">
+<title
+>Уређаји</title>
+<para
+>У секцији уређаја бирате и подешавате мултимедијске уређаје за аудио-визуелно ћаскање. Да ли ће оно радити, јако зависи од хардвера који имате и колико га добро подржава оперативни систем.</para>
+<sect3 id="configuring-devices-video">
+<title
+>Видео</title>
+<para
+><application
+>Копете</application
+> за видео користи систем Видео‑фор‑линукс 2. Овде се види плави квадрат ако видео уређај није нађен, а преглед ако камера функционише. За ажурне информације о <application
+>Копетеове</application
+> подршци веб камера, погледајте <ulink url="http://userbase.kde.org/Kopete/Webcam_Support"
+>вики страницу о томе</ulink
+>.</para>
+</sect3>
+<sect3 id="configuring-devices-audio">
+<title
+>Звук</title>
+	<para
+>Подршка за звук у <application
+>Копетеу</application
+> је на експерименталном нивоу. Ако видите језичак <guilabel
+>Звук</guilabel
+>, вероватно користите развојну градњу <application
+>Копетеа</application
+>.</para>
+</sect3>
+</sect2>
+</sect1>
+
+<sect1 id="configuring-load-plugins-dialog">
+<title
+>Учитавање прикључака</title>
+<para
+><application
+>Копете</application
+> можете прилагодити додајући специјалне функције, било практичног било забавног типа. Позовите дијалог за подешавање <menuchoice
+><guimenu
+>Поставке</guimenu
+><guimenuitem
+>Подеси Копете......</guimenuitem
+></menuchoice
+>, па идите на страницу <guilabel
+>Прикључци</guilabel
+>.</para>
+<para
+>Прикључци се могу укључивати и искључивати у списку лево на страници, док се изабрани прикључак подешава на десној страни. За детаље о сваком прикључку, погледајте <link linkend="plugins"
+>поглавље о прикључцима</link
+>.</para>
+</sect1>
+</chapter
+> <!-- configuring -->
+
+<chapter id="protocols">
+	<title
+><application
+>Копетеови</application
+> протоколи</title>
+	<para
+><application
+>Копете</application
+> различите ИМ системе назива „протоколима“. Кад додајете налог, он се везује за један протокол. Мада <application
+>Копете</application
+> покушава да оствари брзо гласништво независно од протокола који користите, постоје неке разлике у степену подршке за напредне могућности, попут преноса фајлова и мултимедије.</para>
+	<sect1 id="protocols-list">
+		<title
+>Протоколи</title>
+		<sect2 id="protocols-aim">
+			<title
+>АИМ</title>
+			<para
+>АИМ подржава собе за ћаскање. Користите наредбу <guilabel
+>Придружи се ћаскању...</guilabel
+> у менију налога на АИМ‑у да уђете у собу за ћаскање. Подржане су и фотографије контакта и посебни емотикони.</para>
+		</sect2>
+		<sect2 id="protocols-icq">
+			<title
+>Ајсикју</title>
+			<para
+>Ајсикју поседује могућност „невидљивости“, којом се можете сакрити од изабраних контаката. При додавању контакта можете претражити ајсикјуов именик корисника. Кроз опцију <guilabel
+>Својства</guilabel
+> може се поставити широк спектар детаља о контакту.</para>
+		</sect2>
+		<sect2 id="protocols-msn">
+			<title
+>ВЛМ</title
+> 
+			<para
+>Ради пренос фајлова и вишекорисничко ћаскање. За пренос фајла, превуците фајл из <application
+>Делфина</application
+> или са површи у прозор за ћаскање. За позив некоме на ћаскање, превуците кога желите из листе контаката у прозор за ћаскање. Ове наредбе садржи и мени <menuchoice
+><guimenu
+>Фајл</guimenu
+></menuchoice
+>. ВЛМ подржава и посебне емотиконе.</para>
+			<para
+>За преносе фајлова морате обезбедити да се порт 6891 прослеђује на ваш рачунар.</para>
+		</sect2>
+		<sect2 id="protocols-yahoo">
+			<title
+>Јаху</title>
+			<para
+>Јаху може да шаље и прима видео с веб камере. Кроз мени налога подржана је Јахуова пошта и адресар. Могуће су и видео конференција.</para>
+		</sect2>
+		<sect2 id="protocols-jabber">
+			<title
+>Џабер</title>
+			<para
+>Џабер, познат и као ИксМПП, подржава пренос фајлова, конференцију и све друге сервисе које пружају џабер сервери. На пример, многи сервери имају именик корисника, а неки обезбеђују транспорт ка другим гласничким системима. За приступ сервисима, користите <menuchoice
+><guimenu
+>Сервиси...</guimenu
+></menuchoice
+> у менију налога. Џаберов пренос фајлова може да ради без прослеђивања порта, али је бржи када се оствари директна веза. Подразумевано треба проследити порт 8010, али се ово може подесити по налогу.</para>
+		</sect2>
+		<sect2 id="protocols-gtalk">
+			<title
+>Гугл‑разговор</title>
+			<para
+>Пошто је Гугл‑разговор заснован на џаберу, добро је подржан у <application
+>Копетеу</application
+> (с изузетком гласовног ћаскања, на чему се ради).</para>
+			<para
+>Подешавање <application
+>Копетеа</application
+> за Гугл‑разговор: као корисничко име задајте пуну адресу са Гугл‑поште. Укључите <guilabel
+>Шифровање протокола (ССЛ):</guilabel
+>, <guilabel
+>Дозволи аутентификацију лозинком у обичном тексту</guilabel
+> и <guilabel
+>Потисни подразумеване серверске податке</guilabel
+>. Сервер је <literal
+>talk.google.com</literal
+> или <literal
+>gmail.com</literal
+>, а портови 443 или 5223.</para>
+		</sect2>
+		<sect2 id="protocols-groupwise">
+			<title
+>Новелов групвајз</title>
+			<para
+>Групвајз је предузетнички гласнички систем из Новела. Подржана је цела лепеза могућности, укључујући приватност, групно ћаскање, богати текст и тражење корисника.</para>
+		</sect2>
+		<sect2 id="protocols-gadu-gadu">
+			<title
+>Гаду‑гаду</title>
+			<para
+>Гаду‑гаду је систем за ћаскање који долази из Пољске. <application
+>Копете</application
+> тренутно подржава основне функције ћаскања.</para>
+		</sect2>
+		<sect2 id="protocols-winpopup">
+			<title
+>Винпопап</title>
+			<para
+>Винпопап служи да <application
+>Копетеом</application
+> шаљете и примате поруке са рачунара под Виндоузом у локалној мрежи. Протокол Винпопап подржава само појединачне поруке с обичним текстом.</para>
+		</sect2>
+		<sect2 id="protocols-others">
+			<title
+>Остали протоколи</title>
+			<para
+>Поред поменутих протокола, <application
+>Копете</application
+> пружа подршку за још неколицину. Већина их није подразумевано укључена, или се мора инсталирати додатни прикључак. Овако су подржани минвајл, СМС, Скајп и СИЛЦ. За детаље погледајте &kopetewww;, али имајте на уму да за ове протоколе није одговоран тим <application
+>Копетеа</application
+>.</para>
+		</sect2>
+	</sect1>
+</chapter>
+	
+<chapter id="plugins">
+<title
+><application
+>Копетеови</application
+> прикључци</title>
+<para
+><application
+>Копете</application
+> нуди прикључке за функције који нису преко потребне за ћаскање, али некима могу бити корисне.</para>
+<sect1 id="plugins-list">
+<title
+>Прикључци</title>
+<!-- disabled from build in 4.11/master sect2 id="plugins-alias">
+<title
+>Alias</title>
+<para
+><guilabel
+>Alias</guilabel
+> lets you define your own commands, &eg; /hello, in &kopete; that run scripts and output the result in the chat window.  If you know how the alias Unix command works, this is just the same</para>
+</sect2-->
+<sect2 id="plugins-auto-replace">
+<title
+>Аутоматска замена</title>
+<para
+><guilabel
+>Аутоматска замена</guilabel
+> служи за исправљање речи које се често погрешно напишу, или уштеду куцања извесних речи путем скраћеница.</para>
+</sect2>
+<sect2 id="plugins-bookmarks">
+<title
+>Обележивачи</title>
+<para
+>Прикључак <guilabel
+>Обележивачи</guilabel
+> ствара обележиваче у вашем КДЕ списку обележивача, из УРЛ‑ова пристиглих у ИМ порукама.</para>
+</sect2>
+<!-- was removed with Revision 732681
+sect2 id="plugins-connection-status">
+<title
+>Connection Status</title>
+<para
+><guilabel
+>Connection Status</guilabel
+> is useful for modem users or others who don't have a permanent Internet connection.  It watches for an active Internet connection and sets your accounts online when it detects you have dialed up.</para>
+</sect2-->
+<sect2 id="plugins-contact-notes">
+<title
+>Белешке о контактима</title>
+<para
+><guilabel
+>Белешке о контактима</guilabel
+> служе за бележење било каквих корисних података о метаконтакту.</para>
+</sect2>
+<sect2 id="plugins-cryptography">
+<sect2info>
+<authorgroup>
+<author
+><personname
+><firstname
+>Оливје</firstname
+> <surname
+>Гофар</surname
+></personname
+> &Olivier.Goffart.mail;</author>
+<author
+><personname
+><firstname
+>Чарлс</firstname
+> <surname
+>Конел</surname
+></personname
+> &Charles.Connell.mail;</author>
+</authorgroup>
+<date
+>14. 10. 2007.</date>
+<releaseinfo
+>1.3.0</releaseinfo>
+</sect2info>
+
+<title
+>Криптографија</title>
+<para
+>Прикључак за криптографију омогућава вам да шаљете и примате шифроване и потписане поруке.</para>
+<para
+>Криптографија вам омогућава коришћење изведбе опенПГП‑а за шифровање и потписивање порука у разговорима. Имајте на уму да ово није исто што и ССЛ‑ом обезбеђена сесија ћаскања. Можете шифровати своје поруке одређеном примаоцу, тако да је само особа која поседује одговарајући кључ може прочитати. Ако желите да прималац буде сигуран да је порука од вас, можете је потписати. Шифровање и потписивање могу се применити било заједно било засебно. Када примите шифровану поруку, видећете иконицу катанца. Ако садржи овериви потпис (имате јавни кључ пошиљаоца), видећете иконицу оловке; ако потпис не може да се овери, иконица оловке ће бити црвена.</para>
+<para
+>Криптографију подешавате тако што прво изаберете свој приватни кључ на страници за подешавање. Затим, помоћу <menuchoice
+><guimenuitem
+>Изабери јавни кључ...</guimenuitem
+></menuchoice
+> у контекстним менијима метаконтаката, изаберите њихове јавне кључеве. При употреби овог прикључка биће вам затражена лозинка.</para>
+<para
+>Због ограничења̂ у неким брзогласничким протоколима које <application
+>Копете</application
+> користи, шифроване поруке се не могу слати преко њих. Бићете упозорени ако покушате да употребите неподржани протокол.</para>
+<para
+>Криптографија може да користи јавне кључеве складиштене у вашем КДЕ адресару за сваки контакт. Међутим, мора бити познато који је метаконтакт придружен којем уносу адресара. Ову информацију задајете тако што у контекстном менију метаконтакта изаберете <guilabel
+>Својства</guilabel
+>, па затим поставите <guilabel
+>Веза с адресаром</guilabel
+>. Такође, јавни кључеви које сте поставили могу бити извезени у адресар. Ако метаконтакт садржи везу са адресаром, кључ ће бити уписан одговарајућем уносу адресара, замењујући евентуално постојећи. Ако везе нема (нпр. зато што не постоји унос адресара за дату особу), биће направљен нови унос. Том уносу ће бити попуњена два поља: јавни кључ из <application
+>Копетеа</application
+> и приказно име метаконтакта.</para>
+<para
+>© документације: <personname
+><firstname
+>Оливје</firstname
+> <surname
+>Гофар</surname
+></personname
+> &Olivier.Goffart.mail;; 2007, <personname
+><firstname
+>Чарлс</firstname
+> <surname
+>Конел</surname
+></personname
+> &Charles.Connell.mail;.</para>
+</sect2>
+<sect2 id="plugins-highlight">
+<title
+>истакнуту</title>
+<para
+><guilabel
+>истакнуту</guilabel
+> ради донекле слично филтерима е‑поште, утолико што вам допушта да урадите понешто у одговор на одређене поруке. Поред истицања текста, могу се пуштати и звуци.</para>
+</sect2>
+<!--FIXME History2 missing
+Another history plugin based on sqlite.
+Most important changes:
+- based on sqlite3 instead of xml-files
+- import history button in config dialog
+- import option added for the other xml-based history-plugin
+- pidgin import improved
+- test and skip duplicates on import (so it is possible to synchronize
+  regularly from a windows-pidgin installation for example)
+- more speed in most cases
+The main reason I began to rewrite the complete plugin was, that I had
+dataloss by importing from pidgin with the old history plugin.
+The months, which where imported from pidgin, did overwrite the kopete
+history. This was unacceptable.
+-->
+<sect2 id="plugins-history">
+<title
+>Историјат</title>
+<para
+>Прикључак <guilabel
+>Историјат</guilabel
+> записује разговоре са било којег ИМ система, и дозвољава вам да их касније прегледате. По активирању, у контекстном менију сваког метаконтакта јавља се ставка <menuchoice
+><guimenuitem
+>Историјат</guimenuitem
+></menuchoice
+>, којом можете видети историјат порука за дати метаконтакт.</para>
+<para
+>Следећа ставка додаје се менијима листе контаката:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Прикажи историјат</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Укључено кад је изабран контакт.) Приказује прегледач историјата за изабрани контакт.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para
+>Следеће ставке додају се менијима прозора за ћаскање:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+><keycap
+>Alt</keycap
+><keycap
+>Shift</keycap
+><keycap
+>стрелица лево</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Алатке</guimenu
+> <guimenuitem
+>Претходно у историјату</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Приказује први старији скуп порука из историјата у прозору за ћаскање.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+><keycap
+>Alt</keycap
+><keycap
+>Shift</keycap
+><keycap
+>стрелица десно</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Алатке</guimenu
+> <guimenuitem
+>Наредно у историјату</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Приказује први новији скуп порука из историјата у прозору за ћаскање.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Алатке</guimenu
+> <guimenuitem
+>Последње у историјату</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Приказује последњи скуп порука из историјата у прозору за ћаскање.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="plugins-kopetex">
+<title
+>Копете‑тех</title>
+<para
+>Копете‑тех омогућава научницима и математичарима да у разговорима користе обележивачки језик латех. Изрази унети унутар <literal
+>$...$</literal
+> претварају се у графику у прозору за ћаскање, и могу се исецати и налепљивати као изворни латех. За употребу овог прикључка, латех мора бити инсталиран.</para>
+</sect2>
+<!-- Revision 732090 don't compile motionautoaway. it's moving back to playground
+sect2 id="plugins-motion-auto-away">
+<title
+>Motion Auto-Away</title>
+<para
+>In conjunction with a webcam and the <application
+>Video4Linux</application
+> package, this lets you detect when you're no longer at your computer and have &kopete; automatically become <emphasis
+>Away</emphasis
+>.</para>
+</sect2-->
+<sect2 id="plugins-now-listening">
+<title
+>Тренутно слушам</title>
+<para
+>Прикључак <guilabel
+>Тренутно слушам</guilabel
+> показује саговорницима шта тренутно слушате, тако што укуцате <userinput
+>/media</userinput
+> у ћаскање, или кроз <menuchoice
+><guimenu
+>Алатке</guimenu
+><guimenuitem
+>Пошаљи податке о медију</guimenuitem
+></menuchoice
+> у прозору за ћаскање.</para>
+</sect2>
+<sect2 id="plugins-otr">
+<title
+>ОТР</title>
+<para
+>Прикључак <guilabel
+>ОТР</guilabel
+> омогућава шифровање разговора методом шифровања оф‑д‑рекорд. Овај метод у основи ради као ПГП шифровање, али је оптимизован за брзо гласништво и самостално управља разменом кључева. Једино треба да се уверите да заиста пишете особи коју очекујете, кроз један од ОТР‑ових механизама аутентификације.</para>
+<sect3 id="plugins-otr-menus">
+<title
+>Ставке менија</title>
+<para
+>Следећа ставка додаје се менијима листе контаката:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Смерница ОТР‑а</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Укључено кад је изабран контакт.) Овде можете подесити смерницу шифровања за сваки контакт. Ако се изабере <guilabel
+>подразумевано</guilabel
+>, <application
+>Копете</application
+> користи подразумевану поставку из дијалога за подешавање.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para
+>Следеће ставке додају се менијима прозора за ћаскање:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Алатке</guimenu
+> <guimenuitem
+>Поставке ОТР‑а</guimenuitem
+> <guimenuitem
+>Почни ОТР сесију</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Омогућава вам да покренете сесију шифровану ОТР‑ом.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Алатке</guimenu
+> <guimenuitem
+>Поставке ОТР‑а</guimenuitem
+> <guimenuitem
+>Заврши ОТР сесију</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Омогућава вам да окончате претходно успостављену ОТР сесију.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Алатке</guimenu
+> <guimenuitem
+>Поставке ОТР‑а</guimenuitem
+> <guimenuitem
+>Аутентификуј контакт</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Употребите ову ставку менија кад желите да аутентификујете контакт.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+<sect3 id="plugins-otr-setup">
+<title
+>Дијалог поставки</title>
+<para
+>Дијалог поставки пружа разне опције за понашање модула током сесија ћаскања. Најважнија од њих је подешавање подразумеване смернице. Задајте <guilabel
+>опортунистички</guilabel
+> ако желите да <application
+>Копете</application
+> провери да ли контакт подржава ОТР и тада аутоматски успостави шифровану сесију, или <guilabel
+>ручно</guilabel
+> ако желите да сами управљате стањем шифровања. Опције <guilabel
+>увек</guilabel
+> и <guilabel
+>никад</guilabel
+> препоручују се само искусним корисницима који желе да поставе смернице по контакту. Окно <guilabel
+>Приватни кључеви</guilabel
+> омогућава стварања личног пара кључева за сваки налог. Ово не морате радити ручно — ако неки налог нема пар кључева, биће аутоматски створен први пут када буде потребан. Под језичком <guilabel
+>Познати отисци</guilabel
+> можете прегледати, оверавати и брисати познате јавне отиске својих контаката.</para>
+</sect3>
+<sect3 id="plugins-otr-auth">
+<title
+>Аутентификовање</title>
+<para
+>Вероватно сте добијали е‑пошту од неких који се претварају да су банке, кредитне агенције, чак богати нигеријски апатриди. На Интернету увек има људи који лажу о томе ко су. Аутентификовање је процес којим обезбеђујете да не будете преварени о идентитету оних који користе ОТР.</para>
+<sect4 id="plugins-otr-auth-when">
+<title
+>Када аутентификовати</title>
+<para
+>Саговорника треба да аутентификујете када први пут пожелите да причате с њим преко ОТР‑а. Ако то не урадите, не можете бити сигурни да саговорник не преузима туђ идентитет, или покушава да прислушкује разговор. Међутим, једном када аутентификујете саговорника, није потребно то поново чинити — ОТР ће аутоматски аутентификовати све наредне разговоре са истим саговорником. </para>
+<para
+>Изузетак овоме је када се саговорник пребацује између различитих рачунара или ИМ налога. У том случају, морате ручно аутентификовати по једном за сваки рачунар и налог. Потом ће ОТР аутоматски препознавати саговорника када користи било који од рачунара на којем је аутентификован. Када се саговорник пребаци на нови рачунар или налог, који ОТР не препознаје, у прозору разговора искочиће порука која вас о томе обавештава.</para>
+<screenshot>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="otr-auth-1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Када аутентификовати</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</sect4>
+<sect4 id="plugins-otr-auth-how">
+<title
+>Како аутентификовати</title>
+<para
+>Да бисте неког аутентификовали, започните разговор с њим и кликните на дугме <guilabel
+>Аутентификуј контакт</guilabel
+> под ОТР‑ом. Појавиће се чаробњак који вас пита за жељени метод аутентификације. Следите кораке у чаробњаку.</para>
+<para
+>Ако је аутентификовање прошло успешно, онда знате да заиста причате с очекиваним саговорником. Варалицима треба да буде тешко да погоде шта куцате, тако да ћете моћи да их ухватите на делу. </para>
+</sect4>
+</sect3>
+</sect2>
+<sect2 id="plugins-pipes">
+<title
+>Цеви</title>
+<para
+>Цеви омогућавају провлачење долазних и одлазних порука кроз спољашњу наредбу. Долазна порука провлачи се кроз наредбу пре него што доспе у прозор за ћаскање, док се одлазна порука провлачи пре него што се пошаље. Цеви могу да примају текст у једном од три облика: <variablelist
+> <varlistentry
+> <term
+>порука као обични текст</term
+> <listitem
+> <para
+>Тело поруке као чист текст.</para
+> </listitem
+> </varlistentry
+> <varlistentry
+> <term
+>порука као ХТМЛ</term
+> <listitem
+> <para
+>Тело поруке у облику ХТМЛ‑а, како би изгледало када би вам саговорник послао ХТМЛ поруке каква изгледа у прозору за ћаскање.</para
+> </listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Копетеов ИксМЛ порукâ</term
+> <listitem
+> <para
+>ИксМЛ документ који описује све карактеристике поруке, укључујући ХТМЛ тело.</para
+> </listitem
+> </varlistentry
+> </variablelist
+>. За већину намена, вероватно вам треба тело поруке као обичан текст или као ХТМЛ. Такво се може користити у програмима попут преводилаца и сажимача. ИксМЛ формат је прикладан за програме и скрипте посебно написане за рад с овим прикључком. Ако желите да напишете један такав програм или скрипту, завирите у <link linkend="pipes"
+>детаљнију документацију</link
+>. </para>
+</sect2>
+<!--FIXME missing
+preview
+privacy
+Import Privacy Plugin into svn.
+This plugin allows flexible filtering of messages by sender and/or by content.
+FEATURE: 63839
+scripting
+  -->
+<sect2 id="plugins-statistics">
+<title
+>Статистика</title>
+<para
+>Овај прикључак користи базу података за прикупљање информација о обрасцима активности ваших контаката. Тако можете уочити, на пример, у које је време дати контакт најчешће на вези.</para>
+</sect2>
+<sect2 id="plugins-text-effect">
+<title
+>Ефекти текста</title>
+<para
+>Забавни текстуални ефекти над порукама које шаљете, као што су разнобојност или смене великих и малих слова. Само не заборавите када је прикључак активиран — заборавни корисници су нам чак слали извештаје о грешкама!</para>
+</sect2>
+<sect2 id="plugins-translator">
+<title
+>Преводилац</title>
+<para
+>Преводилац омогућава да дефинишете језик за сваки метаконтакт, а затим преводи поруке са и на тај језик, користећи преводилачке сервисе на Вебу попут Гугла. Језик који желите за себе постављате у дијалогу за подешавање прикључака, а језик контакта се може поставити кроз његов контекстни мени.</para>
+<para
+>Следећа ставка додата је менијима прозора за ћаскање:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>T</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Алатке</guimenu
+> <guimenuitem
+>Преведи</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Ако нисте укључили аутоматско превођење, ово преводи текуће ћаскање.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="plugins-web-presence">
+<title
+>Присутност на Вебу</title>
+<para
+>Присутност на Вебу обзнањује вашу ИМ присутност преко Веба. Задајте путању до фајла на неком ФТП серверу (на пример), и у њега ће бити уписиван кратак сегмент ХТМЛ‑а — тај фајл може бити ваша домаћа страница. КДЕ‑ова мрежна прозирност ово чини једноставним. Корисно блогерима како би их пријатељи лако пратили.</para>
+<para
+>Пример: <userinput
+>sftp://korisnik@domacin.org/putanja/do/domacih/korisnik/im.html</userinput
+> користи протокол СФТП да отпреми вашу присутност директно на веб сервер.</para>
+<para
+>За савете о појединим мрежним протоколима, погледајте <ulink url="help:/kioslave/index.html"
+>приручнике У/И захвата</ulink
+>.</para>
+<!--FIXME wrong url to ioslaves
+in konsole "khelpcenter khelpcenter:kioslaves" works-->
+</sect2>
+<sect2 id="plugins-contributing">
+<title
+>Прилагање прикључка</title>
+<para
+><application
+>Копете</application
+> је пројектован да учини лаким извођење прикључака који му додају функционалност. Ако имате сјајну идеју да <application
+>Копете</application
+> постане још бољи, <link linkend="intro-to-kopete-web"
+>обратите нам се</link
+>!</para>
+</sect2>
+</sect1>
+</chapter
+><!-- plugins -->
+
+&kopete-menus;
+
+<chapter id="faq">
+<title
+>Често постављана питања</title>
+<qandaset>
+<qandaentry>
+<question
+><para
+>Шта значи „<application
+>Копете</application
+>“? Како се то изговара?</para
+></question>
+<answer
+><para
+><application
+>Копетеово</application
+> име долази од чилеанске речи <foreignphrase lang='es'
+>copete</foreignphrase
+>, која значи „пићенце с пријатељима“. <personname
+><firstname
+>Данкан</firstname
+> <surname
+>Мак‑Викар Прет</surname
+></personname
+>, првобитни аутор, снимио је и <ulink type="audio/x-vorbis+ogg" url="http://kopete.kde.org/files/kopete_en.ogg"
+>звучни узорак</ulink
+>.</para
+></answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Кад под именом корисника на мојој листи контаката има више од једног гласничког сервиса, и кликнем на то корисничко име, зашто порука бива послата на погрешан сервис?</para>
+</question>
+<answer
+><para
+>Можете изменити редослед налога према којем <application
+>Копете</application
+> покушава да контактира људе, користећи стрелице нагоре и надоле у доњем десном углу дијалога за подешавање налога. <application
+>Копете</application
+> ће покушати да се повеже са налозима почев од оног на врху. Међутим, ако један сервис има вишу вредност стања од осталих за тог корисника, <application
+>Копете</application
+> ће употребити њега. На пример, ако особа има налоге на три сервиса, од којих је на два пријављена као одсутна а на трећем као на вези, <application
+>Копете</application
+> ће употребити тај сервис који пријављује присутност.</para
+><tip
+><para
+>Ако кликнете на малу иконицу протокола десно од ставке менија, уместо на име особе, <application
+>Копете</application
+> ће покушати да контактира особу баш преко тог сервиса.</para
+></tip>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Треба да се повежем преко СОКС проксија, али у <application
+>Копетеу</application
+> нема опција за подешавање проксија. Како да подесим <application
+>Копете</application
+> да користи СОКС?</para>
+</question>
+<answer
+><itemizedlist>
+<listitem
+><para
+>ВЛМ, ајсикју, АИМ, џабер и Јаху користе КДЕ‑ову мрежну инфраструктуру. Детаљи СОКС проксија за њих подешени су на нивоу целог КДЕ‑а у Системским поставкама, секција <menuchoice
+><guimenu
+>Мрежа и повезивост</guimenu
+><guisubmenu
+>Мрежне поставке</guisubmenu
+><guimenuitem
+>Прокси</guimenuitem
+></menuchoice
+>.</para
+></listitem>
+</itemizedlist>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Да ли је могуће прилагодити иконице у <application
+>Копетеу</application
+>?</para
+></question>
+<answer
+><para
+>Можете бирати између различитих емотикона под језичком <guilabel
+>Емотикони</guilabel
+> на страници <guilabel
+>Прозор за ћаскање</guilabel
+> у дијалогу за подешавање <application
+>Копетеа</application
+>.</para>
+<para
+>За инсталирање нових емотикона, прво погледајте на <ulink url="http://www.kde-look.org/content/search.php"
+>КДЕ‑изгледу</ulink
+>, где можете наћи многе скупове емотикона за преузимање.</para>
+
+<para
+>Емотикони се лако инсталирају — само убаците фасциклу која садржи фајлове иконица и ИксМЛ фајл (који мапира текст у слике) у <filename class='directory'
+><envar
+>$KDEDIR</envar
+>/share/apps/kopete/pics/emoticons</filename
+>, или у <envar
+>$KDEHOME</envar
+> (на пример <filename class='directory'
+>/home/peraperic/.kde/</filename
+>).</para>
+
+<orderedlist>
+<listitem
+><para
+>Копирајте распаковану фасциклу у <filename class='directory'
+><envar
+>$KDEDIR</envar
+>/share/apps/kopete/pics/emoticons</filename
+> или <filename class='directory'
+><envar
+>$HOME</envar
+>/.kde/share/apps/kopete/pics/emoticons</filename
+> (или где год да је <envar
+>$KDEHOME</envar
+>).</para
+></listitem>
+<listitem
+><para
+>Изаберите <menuchoice
+><guimenu
+>Поставке</guimenu
+><guimenuitem
+>Подеси Копете...</guimenuitem
+></menuchoice
+>, кликните на <guilabel
+>Прозор за ћаскање</guilabel
+> лево у панелу дијалога за подешавање, па на језичак <guilabel
+>Емотикони</guilabel
+>.</para
+></listitem>
+<listitem
+><para
+>Изаберите са списка скуп емотикона који сте управо инсталирали.</para
+></listitem>
+<listitem
+><para
+>Сада ће <application
+>Копете</application
+> почети да користи инсталиране емотиконе.</para
+></listitem>
+</orderedlist>
+<para
+>Иконице протокола мењате тако што замените иконице у <filename class='directory'
+>$KDEDIR/share/apps/kopete/icons</filename
+>, или у <envar
+>$KDEHOME</envar
+> убаците замене које ће потиснути системске иконице. Тренутно нема потпуних скупова иконица које бисте једноставно могли распаковати на ове локације.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+  <question
+><para
+>Не видим ниједан прикључак у дијалогу за подешавање прикључака. У чему је ствар?</para>
+</question>
+<answer
+><para
+>Постоје два решења за овај проблем. Ако користите бинарне пакете, уверите се да су баш за вашу дистрибуцију, и то за дато издање дистрибуције. Мешање дистрибуција и издања неће радити за <application
+>Копете</application
+>. Ако нема бинарних пакета за ваш систем, мораћете да компилујете <application
+>Копете</application
+> из изворних пакета. Ако сте сами компиловали КДЕ, <application
+>Копете</application
+> мора да се нађе у истом префиксу као и КДЕ. Ако сте, међутим, компиловали изворне пакете, проверите да ли је <application
+>Копете</application
+> инсталиран на истој локацији као и КДЕ; ако није, можете то наметнути задавањем префикса уз наредбу <command
+>cmake</command
+>. Пример: <userinput
+><command
+>cmake</command
+> <parameter
+>-DCMAKE_PREFIX=/opt/kde4</parameter
+></userinput
+> (где је <userinput
+>/opt/kde4</userinput
+> ваш префикс). Да одредите који је префикс КДЕ‑а, извршите <userinput
+><command
+>which</command
+> <parameter
+>dolphin</parameter
+></userinput
+> у прозору <application
+>Конзоле</application
+>. Требало би да прикаже нешто попут <computeroutput
+>/opt/kde4/bin/dolphin</computeroutput
+>, што значи да је префикс <filename class="directory"
+>/opt/kde4</filename
+>; или, ако испише <computeroutput
+>/usr/bin/dolphin</computeroutput
+>, префикс је <filename class="directory"
+>/usr</filename
+>. Не заборавите да извршите <command
+>make install</command
+>, и проверите да нема неких заосталих инсталација <application
+>Копетеа</application
+> ранијих издања на другим локацијама. Можда ћете морати и да ручно извршите <command
+>kbuildsycoca4</command
+> после инсталирања <application
+>Копетеа</application
+>, да би се ажурирала база прикључака (требало би да се изврши аутоматски по инсталирању новог софтвера, али се <application
+>Копете</application
+> може покренути пре него што је ажурирање завршено).</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Имам много &lt;површи / монитора / рачунара&gt; и / или причам с многим људима истовремено, и зато би било лепо када би <application
+>Копете</application
+> могао да &lt;пусти звук / искочи поруку / промени тапет / ресетује рачунар&gt; кад год &lt;примим нову поруку / неко ступи на везу / неко оде ван везе&gt;. Када ће ово бити додато?</para>
+</question>
+<answer
+><para
+>Већ га има (изненађење!). <application
+>Копете</application
+> је КДЕ програм, што значи да користи К‑обавештења за сва обавештења. Ако нисте знали, К‑обавештења је моћна архитектура која вам омогућава да задате да се готово било шта догоди на неки догађај у КДЕ програму. Може се пустити звук, искочити пасивни дијалог, забележити порука, па и извршити нека посебна наредба (попут скрипте шкољке) да уради шта год вам воља. Овом обиљу могућности приступате кроз дијалог <menuchoice
+><guimenu
+>Поставке</guimenu
+><guimenuitem
+>Подеси обавештења...</guimenuitem
+></menuchoice
+>. Видећете све различите радње које се могу одиграти при гореспоменутим догађајима. Разгледајте такође и који све догађаји постоје по другим КДЕ програмима. На пример, можете наћи врло згодним пасивни искакач на новопридошле поруке е‑поште из <application
+>К‑поште</application
+>.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Како то да не ради пренос фајлова?</para>
+</question>
+<answer
+><para
+>Могући су различити узроци. ВЛМ је први протокол у којем смо извели подршку за пренос фајлова. То је затим додато за џабер и <acronym
+>ИРЦ</acronym
+> у <application
+>Копетеу</application
+> 0.9.0 (у саставу КДЕ‑а 3.3), а затим за ајсикју и АИМ у <application
+>Копетеу</application
+> 0.50.0 (у саставу КДЕ‑а 4.0.0). Пренос фајлова такође може да не ради када сте иза заштитног зида. Погледајте одељак за ВЛМ у поглављу о протоколима.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Одакле ово блесаво понашање на један клик? Баш нервира!</para>
+</question>
+<answer
+><para
+><application
+>Копете</application
+> је КДЕ програм, а не неки безвезни програм са треће стране који само покушава да „изгледа“ као остатак КДЕ‑а. <application
+>Копете</application
+> пружа „осећај“ и „уклапање“ у КДЕ, што значи да прати КДЕ‑ово стандардно понашање на један клик. Ово можете изменити једино на нивоу читавог КДЕ‑а. Покрените Системске поставке, идите на <menuchoice
+><guimenu
+>Улазни уређаји</guimenu
+> <guimenuitem
+>Миш</guimenuitem
+></menuchoice
+>, па укључите опцију <guilabel
+>Двоструки клик отвара фајлове и фасцикле (први клик изабира)</guilabel
+>.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Хоћете ли омогућити пресвлаке за корисничко сучеље?</para>
+</question>
+<answer
+><para
+>Једини одговор на ово је — не. <application
+>Копете</application
+> је замишљен као КДЕ‑ов брзи гласник, што укључује и КДЕ изглед и осећај. Увођењем пресвлака нарушили бисмо ово правило, а и непрактично је истовремено одржавати подршку и за пресвлаке и без пресвлака. Уместо тога, просто изаберите неки други стил у Системским поставкама, који ће давати провидне меније и остале графичке посластице данашњег КДЕ‑а. Затим, можете покренути само <application
+>Копете</application
+> са другим стилом. На пример, извршите <userinput
+>kopete --style=marble</userinput
+>. Можете користити било који КДЕ или КуТ стил.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Може ли та‑и‑та могућност у наредном издању <application
+>Копетеа</application
+>?</para>
+</question>
+<answer
+><para
+>Идите на <ulink url="http://bugs.kde.org"
+>КДЕ‑ову Бубаждају</ulink
+> и поднесите ставку листе жеља у категорији <literal
+>kopete</literal
+>. Будите детаљни и двапут прочитајте то што напишете. Имајте на уму да нема НИКАКВЕ гаранције да ћемо додати могућност коју желите, у било ком издању, али ћемо бар моћи да размотримо ваш предлог.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+><application
+>Копете</application
+> се срушио или се неочекивано понаша (у шта НЕ спадају ствари попут „<application
+>Копете</application
+> се понаша другачије него Пиџин“ и сл).</para>
+</question>
+<answer
+><para
+>Пријавите нам грешку тако што одете на <ulink url="http://bugs.kde.org"
+>КДЕ‑ову Бубаждају</ulink
+> и поднесете извештај о грешци у категорији <literal
+>kopete</literal
+>. Извештаје прихватамо само ако су на енглеском, ако су детаљни, и, у случају пада, ако садрже контратраг (текст под језичком <guilabel
+>Контратраг</guilabel
+> пошто се <application
+>Копете</application
+> сруши). Ако користите <application
+>Копете</application
+> из изворне ризнице, уместо подношења извештаја о грешци обратите се на <ulink url="mailto:kopete-devel@kde.org"
+>поштанску листу програмера <application
+>Копетеа</application
+></ulink
+>.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Подршка за ССЛ на џаберу више не ради, добијам поруку да вероватно недостаје ТЛС прикључак за КуЦА. Шта да радим?</para>
+</question>
+<answer
+><para
+>Као што грешка наводи, недостаје вам ТЛС прикључак за КуЦА, који рукује ТЛС/ССЛ шифровањем на џаберу. Инсталирајте пакет <literal
+>qca-tls</literal
+> (евентуално и <literal
+>qca-ossl</literal
+>) или добавите прикључак са <ulink url="http://delta.affinix.com/qca"
+>његове домаће странице</ulink
+>. Имајте на уму да треба да инсталирате само прикључак, а <emphasis
+>не</emphasis
+> и целу библиотеку КуЦА. Није неопходно поново компиловање <application
+>Копетеа</application
+>, заправо чак ни поновно покретање. Ако сте прикључак инсталирали али и даље не ради, КуТ вероватно не може да га нађе. Пошто  се овај прикључак инсталира као КуТ прикључак, морате обезбедити да се нађе у фасцикли прикључака оног издања КуТ‑а над којим ради <application
+>Копете</application
+>.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Налазим се иза заштитног зида. Које портове треба да отворим ради преноса фајлова преко ВЛМ‑а?</para>
+</question>
+<answer
+><para
+>Ако сте иза заштитног зида, порт 6891 мора да буде отворен за долазни ТЦП саобраћај.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Користим заједно џабер и ајсикју. Кад год ступим на везу на џаберу, избаци ме са везе на ајсикјуу уз поруку о грешци да већ постоји веза преко другог клијента. Шта се дешава?</para>
+</question>
+<answer
+><para
+>Сећате ли се кад сте се играли са ајсикју преносима у том другом џабер клијенту? Поставили сте „ајсикју транспорт“, што омогућава разговор са људима на ајсикјуу преко џабера. Ајсикју не дозвољава вишеструке везе на истом налогу, тако да вам прекине везу. Потражите међу џабер контактима неки налик на <literal
+>123456@icq.jabber.org</literal
+> и обришите га.</para>
+</answer>
+</qandaentry>
+</qandaset>
+</chapter
+> <!-- faq -->
+
+<!--FIXME chapter id="specialised">
+<title
+>Specialized Actions</title>
+<para
+>Command line parameters</para>
+<para
+>Installing emoticon sets</para>
+</chapter--> <!-- specialised -->
+
+<chapter id="credits-and-license">
+<title
+>Заслуге и лиценца</title>
+<para
+><application
+>Копете</application
+>: © 2001–2007, програмери <application
+>Копетеа</application
+> </para>
+<para
+>Превео Драган Пантелић <email
+>falcon-10@gmx.de</email
+>.</para
+> 
+&underFDL; &underGPL; <sect1 id="team">
+<title
+>Тим</title>
+<sect2 id="current-team">
+<title
+>Тренутни програмерски тим</title>
+<!-- please keep in sync with the authors list on the webpage -->
+<itemizedlist>
+<listitem
+><para
+><personname
+><firstname
+>Пали</firstname
+> <surname
+>Рохар</surname
+></personname
+> <email
+>pali.rohar at gmail com</email
+>: програмер и одржавалац.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Данкан</firstname
+> <surname
+>Мак‑Викар Прет</surname
+></personname
+> <email
+>duncan at kde org</email
+>: првобитни аутор, програмер и вођа пројекта.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Тил</firstname
+> <surname
+>Геркен</surname
+></personname
+> <email
+>till at tantalo net</email
+>: програмер, одржавалац подршке за џабер.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Оливје</firstname
+> <surname
+>Гофар</surname
+></personname
+> <email
+>ogoffart at tiscalinet be</email
+>: водећи програмер, одржавалац прикључка за ВЛМ.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Анди</firstname
+> <surname
+>Госенс</surname
+></personname
+> <email
+>andygoossens at telenet be</email
+>: програмер.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Гжегож</firstname
+> <surname
+>Јашкјевич</surname
+></personname
+> <email
+>gregj at pointblue com pl</email
+>: програмер, одржавалац прикључка за гаду‑гаду.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Џејсон</firstname
+> <surname
+>Кејрстид</surname
+></personname
+> <email
+>jason at keirstead org</email
+>: програмер.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Мат</firstname
+> <surname
+>Роџерс</surname
+></personname
+> <email
+>mattr at kde org</email
+>: водећи програмер, одржавалац прикључака за АИМ и ајсикју.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Ричард</firstname
+> <surname
+>Смит</surname
+></personname
+> <email
+>lilachaze at hotmail com</email
+>: програмер, одржавалац сучеља.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Вил</firstname
+> <surname
+>Стивенсон</surname
+></personname
+> <email
+>lists at stevello free-online co uk</email
+>: програмер, иконице, прикључци, аутор приручника.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Мишел</firstname
+> <surname
+>Ермје</surname
+></personname
+> <email
+>michel.hermier at wanadoo fr</email
+>: одржавалац прикључка за <acronym
+>ИРЦ</acronym
+>.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Андре</firstname
+> <surname
+>Дуфек</surname
+></personname
+> <email
+>andre at duffeck de</email
+>: програмер, одржавалац прикључка за Јаху.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Микаел</firstname
+> <surname
+>Ларуш</surname
+></personname
+> <email
+>michael.larouche at kdemail net</email
+>: програмер, ВЛМ, прозор за ћаскање.</para
+></listitem>
+</itemizedlist>
+</sect2>
+<sect2 id="ex-team">
+<title
+>Бивши програмери (<application
+>Копетеова</application
+> дворана славних)</title>
+<para
+>Наредне особе више не раде на <application
+>Копетеу</application
+>, па их немојте контактирати ради подршке. Вечно смо им захвални за доприносе. </para>
+<itemizedlist>
+<listitem
+><para
+><personname
+><firstname
+>Кристофер</firstname
+> <surname
+>Тенхармсел</surname
+></personname
+> <email
+>tenharmsel at users sourceforge net</email
+>: програмер, хакер оскара.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Рајан</firstname
+> <surname
+>Каминг</surname
+></personname
+> <email
+>ryan at kde org</email
+>: средишњи програмер.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Рихард</firstname
+> <surname
+>Стелингверф</surname
+></personname
+> <email
+>remenic at linuxfromscratch org</email
+>: програмер.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Хендрик</firstname
+> <surname
+>фом Лен</surname
+></personname
+> <email
+>hennevl at hennevl de</email
+>: програмер.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Штефан</firstname
+> <surname
+>Ген</surname
+></personname
+> <email
+>sgehn at gmx net</email
+>: програмер.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Роберт</firstname
+> <surname
+>Гоголок</surname
+></personname
+> <email
+>robertgogolock at gmx de</email
+>: програмер.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Ник</firstname
+> <surname
+>Бечер</surname
+></personname
+> <email
+>nbetcher at kde org</email
+>: првобитни аутор прикључака за ајсикју, АИМ и <acronym
+>ИРЦ</acronym
+>.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Данијел</firstname
+> <surname
+>Стоун</surname
+></personname
+> <email
+>dstone at kde org</email
+>: првобитни аутор прикључка за џабер.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Џејмс</firstname
+> <surname
+>Грант</surname
+></personname
+> <email
+>topace at lightbox org</email
+>: програмер, аутор прикључка за увоз.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Зaк</firstname
+> <surname
+>Расин</surname
+></personname
+> <email
+>zack at kde org</email
+>: програмер, аутор старог прикључка за гаду‑гаду.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Гав</firstname
+> <surname
+>Вуд</surname
+></personname
+> <email
+>gav at kde org</email
+>: аутор прикључка за Винпопап.</para
+></listitem>
+<listitem
+><para
+><personname
+><firstname
+>Мартајн</firstname
+> <surname
+>Клингенс</surname
+></personname
+> <email
+>klingens at kde org</email
+>: програмер, хакер ВЛМ‑а.</para
+></listitem>
+</itemizedlist>
+</sect2>
+<sect2 id="documentation">
+<title
+>Документација</title>
+<para
+>© 2003, 2004, 2005, <personname
+><firstname
+>Вил</firstname
+> <surname
+>Стивенсон</surname
+></personname
+> <email
+>lists at stevello free-online co uk</email
+>; © 2005, <personname
+><firstname
+>Мат</firstname
+> <surname
+>Роџерс</surname
+></personname
+> <email
+>mattr at kde org</email
+>, © 2005, 2006, <personname
+><firstname
+>Микаел</firstname
+> <surname
+>Ларуш</surname
+></personname
+> <email
+>michael.larouche at kdemail net</email
+>. </para>
+</sect2>
+</sect1>
+</chapter
+><!-- credits-and-license -->
+
+<appendix id="installation">
+<title
+>Инсталирање</title>
+<sect1 id="getting-kopete">
+<title
+>Како набавити <application
+>Копете</application
+>?</title>
+&install.intro.documentation; <para
+>Развојне верзије могу се преузети са &kopetewww;.</para>
+</sect1>
+<sect1 id="requirements">
+<title
+>Потребне библиотеке</title>
+<para
+>Ако сте инсталирали <application
+>Копете</application
+> као део дистрибуције, вероватно су већ инсталиране.</para>
+<para
+>Прикључак за гаду‑гаду захтева пакет <literal
+>libgadu</literal
+>. За детаље погледајте <ulink url="http://gj.pointblue.com.pl/projects/kopete/"
+>ову страницу</ulink
+>.</para>
+<para
+>Прикључку „Тренутно слушам“ треба <literal
+>libxmms</literal
+> да би приступио ономе што се тренутно пушта у ИксММС‑у. Требало би да је ова библиотека доступна у вашој дистрибуцији, у супротном се може преузети као део пакета ИксММС‑а са његове <ulink url="http://www.xmms.org"
+>домаће странице</ulink
+>.</para>
+</sect1>
+<sect1 id="compilation">
+<title
+>Компиловање и инсталирање</title>
+&install.compile.documentation; </sect1>
+</appendix>
+
+&kopete-chatstyle;
+&kopete-pipes;
+&kopete-jabber;
+&kopete-icq;
+&kopete-emoticonspec;
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet
+-->

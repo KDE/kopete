@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-emoticons">
+<appendixinfo>
+    <title
+>Especificacions de les emoticones</title>
+    <releaseinfo
+>Versió 0.1</releaseinfo>
+    <date
+>7 de gener de 2005</date>
+    <authorgroup>
+      <author
+><firstname
+>Olivier</firstname
+> <surname
+>Goffart</surname
+> <affiliation
+> <address
+> <email
+>ogoffart@tiscalinet.be</email>
+	  </address>
+	</affiliation>
+      </author>
+    </authorgroup>
+  </appendixinfo>
+
+<title
+>Emoticones</title>
+
+  <sect1 id="introduction-emoticons">
+    <title
+>Introducció</title>
+    <para
+>Aquest document de PROJECTE defineix com crear un tema d'emoticones utilitzat típicament en aplicacions de missatgeria instantània </para>
+    <para
+>L'esquema bàsic és molt simple. El tema consisteix en un subdirectori que conté totes les imatges i un fitxer &XML; que dona cadascun dels símbols ASCII de la imatge. Es pot utilitzar un fitxer «.directory». </para>
+  <sect2 id="location">
+    <title
+>Ubicacions dels fitxers</title>
+    <para
+>Els fitxers involucrats en aquesta especificació estan ubicats d'acord amb l'«especificació per a directori base de l'escriptori» que es pot trobar a <ulink url="http://www.freedesktop.org/standards/"
+>www.freedesktop.org</ulink
+>. </para>
+    <para
+>Tots els fitxers del tema haurien d'anar a un subdirectori de <varname
+>$XDG_DATA_DIRS</varname
+>/emoticons/. El nom del directori haurà de ser igual que el nom del tema. Aquest directori <emphasis
+>haurà</emphasis
+> de contenir un fitxer anomenat <varname
+>emoticons.xml</varname
+>, el format d'aquest fitxer es descriu a continuació. </para>
+	<para
+>El directori del tema també pot contenir un fitxer «.directory» que contingui les traduccions del nom del tema i/o una icona per a aquest tema. </para>
+  </sect2>
+  <sect2 id="emoticons-map-format">
+    <title
+>Format del fitxer «emoticons.xml»</title>
+    <para
+>Els fitxers de mapes per a les emoticones han de ser fitxers XML ben formats. Les implementacions han d'ignorar etiquetes o atributs desconeguts. </para>
+    <sect3 id="emoticons-map-elements">
+      <title
+>Elements</title>
+      <para>
+        <variablelist>
+          <varlistentry>
+					<term
+>&lt;messaging-emoticon-map&gt; [version="0.1"]</term>
+            <listitem>
+              <para
+>L'element arrel és &lt;messaging-emoticon-map&gt;, tots els altres elements estaran continguts en el mateix. </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;emoticon file="..."&gt;</term>
+            <listitem>
+              <para
+>Aquest element representa una «emoticon». El fitxer d'atribut és el nom del fitxer d'imatge que haurà d'estar en el mateix directori. L'extensió es pot ometre. En aquest cas, l'aplicació cercarà en aquest directori per un fitxer amb el mateix nom en un format admès. </para>
+				  <para
+>No hi ha cap ordre definida per a «emoticon» al mapa. Però la primera icona al mapa generalment s'utilitza per identificar el tema de forma gràfica. Per convenció hauria de ser aquesta. :-) </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;string&gt;</term>
+            <listitem>
+              <para
+>Aquest element només pot aparèixer sota &lt;emoticon&gt;. Representa la cadena ASCII que es correspon amb el text, i se substitueix per la imatge especificada per l'atribut de fitxer de «emoticon». </para>
+				  <para
+>Hi poden haver diverses cadenes per a «emoticon». </para>
+				  <para
+>No hi ha una ordre per a la cadena dins d'una «emoticon». Però la primera hauria de ser la predeterminada, i es prendrà si hi ha un selector d'IGU. </para>
+            </listitem>
+          </varlistentry>
+	    </variablelist>
+  </para>
+    </sect3>
+  </sect2>
+
+  <sect2 id="img-format">
+    <title
+>El format de la imatge.</title>
+    <para
+>Totes les imatges han d'estar en un format admès: PNG, GIF o MNG. </para>
+  </sect2>
+
+  <sect2 id="implementation">
+    <title
+>Notes de les implementacions</title>
+	 <sect3 id="impl-parser">
+	  <title
+>Analitzador «emoticon»</title>
+    <para
+>No hi ha cap recomanació real sobre com analitzar les emoticones. Però una emoticona amb una cadena més llarga tindrà prioritat sobre l'altra amb una cadena més curta. (Exemple: si ambdues :-() i :-( es troben en un tema, s'utilitzarà la imatge de la primera d'elles quan es trobi :-() </para>
+</sect3>
+</sect2>
+
+<sect2 id="example">
+	  <title
+>Exemple</title>
+	  <para>
+			 <programlisting
+>&lt;messaging-emoticon-map&gt;
+        &lt;emoticon file="smile.png"&gt;
+                        &lt;string&gt;:-)&lt;/string&gt;
+                        &lt;string&gt;:)&lt;/string&gt;
+                        &lt;string&gt;:o)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="wink.png"&gt;
+                        &lt;string&gt;;-)&lt;/string&gt;
+                        &lt;string&gt;;)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="unhappy.png"&gt;
+                        &lt;string&gt;:-(&lt;/string&gt;
+                        &lt;string&gt;:(&lt;/string&gt;
+        &lt;/emoticon&gt;
+&lt;/messaging-emoticon-map&gt;
+
+ </programlisting>
+</para>
+</sect2>
+
+<!--sect2 id="todo">
+	  <title
+>TODO</title>
+	  <para>
+			 A DTD of the XML file
+	  </para>
+</sect2-->
+</sect1>
+</appendix>
+

@@ -1,0 +1,931 @@
+<!-- Kopete Handbook, Menus Chapter copyright 2003 Will Stephenson.  Licensed under the GNU Free Documentation License -->
+<chapter id="menus">
+<title
+>Menu-items</title>
+
+<para
+>Elke menuoptie wordt hieronder beschreven. Als er een sneltoets beschikbaar is, dan wordt deze bij de menuoptie getoond.</para>
+<sect1 id="menus-contactlist">
+<title
+>De menu's van het hoofdvenster met de contactenlijst</title>
+<sect2 id="menus-contactlist-file">
+<title
+>Menu Bestand</title>
+
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bestand</guimenu
+> <guisubmenu
+>Status instellen</guisubmenu
+> <guimenuitem
+>Online</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Ga online met al uw accounts.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bestand</guimenu
+> <guisubmenu
+>Status instellen</guisubmenu
+> <guimenuitem
+>Afwezig</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Zet al uw online accounts op afwezig.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bestand</guimenu
+> <guisubmenu
+>Status instellen</guisubmenu
+> <guimenuitem
+>Offline</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Zet al uw accounts op offline.</para>
+</listitem>
+</varlistentry>
+<!--FIXME missing Set Status Invisible, Busy, Edit Messages, Edit Statuses-->
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bestand</guimenu
+> <guimenuitem
+>Contact toevoegen...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Dit toont de assistent "Contact toevoegen", waarmee u een nieuwe contact aan uw lijst kunt toevoegen.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bestand</guimenu
+> <guimenuitem
+>Nieuwe groep aanmaken...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Hiermee kunt u nieuwe groepen aanmaken. U wordt gevraagd om een groepsnaam op te geven.</para>
+</listitem>
+</varlistentry>
+<!--FIXME missing Export Contacts-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Bestand</guimenu
+> <guimenuitem
+>Afsluiten</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Dit verbreekt alle verbindingen met de &im;-diensten, sluit alle vensters en beëindigt het programma.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-contactlist-edit">
+<title
+>Menu Bewerken</title>
+<variablelist>
+<!--FIXME not in Edit menu
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Z</keycap
+></keycombo>
+</shortcut>
+<guimenu
+>Edit</guimenu>
+<guimenuitem
+>Undo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Reverts the last change that was made to the contact list.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>Z</keycap
+></keycombo>
+</shortcut>
+<guimenu
+>Edit</guimenu>
+<guimenuitem
+>Redo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Reverts the last change that was made to the contact list by <guimenu
+>Edit</guimenu
+><guimenuitem
+>Undo</guimenuitem
+></para>
+</listitem>
+</varlistentry>
+-->
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edit</guimenu
+> <guimenuitem
+>Bericht verzenden...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Opent een venster waarmee u een bericht kunt sturen aan de geselecteerde contact.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bewerken</guimenu
+> <guimenuitem
+>Gesprek starten...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Opent een gespreksvenster waarin u kunt converseren met de geselecteerde contact.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bewerken</guimenu
+> <guimenuitem
+>Bestand verzenden...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Indien de &im;-dienst het ondersteund opent deze optie een bestandskiezer waarmee u een bestand kunt selecteren om naar de huidige contact te sturen.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bewerken</guimenu
+> <guisubmenu
+>Verplaatsen naar</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Actief als er een contact is geselecteerd.) Kies een andere groep in het submenu, en de contact zal naar deze groep worden verplaatst.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bewerken</guimenu
+> <guisubmenu
+>Kopiëren naar</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Actief als er een contact is geselecteerd.) Kies een groep in het submenu, en de contacten zullen naar deze groep worden gekopieerd. Bij &im;-diensten die toestaan dat contacten in meer dan één groep voorkomen zal de contactenlijst op de server ook worden aangepast.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bewerken</guimenu
+> <guisubmenu
+>Contact toevoegen...</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Actief als een contact is geselecteerd.) Kies een ander account in het submenu om een andere &im;-dienst toe te voegen aan deze persoon.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bewerken</guimenu
+> <guimenuitem
+>Toevoegen aan uw contactenlijst...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Actief als een contact is geselecteerd.) Soms willen personen die niet in uw contactenlijst staan u een bericht sturen. In dat geval voegt &kopete; ze tijdelijk als contact toe aan uw contactenlijst, maar om ze te behouden dient u ze met deze menuoptie toevoegen aan de contactenlijst.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo
+><keycap
+>Del</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Bewerken</guimenu
+> <guimenuitem
+>Contactpersoon verwijderen</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Actief als een contact is geselecteerd.) Verwijdert een contact volledig uit de contactenlijst.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo
+><keycap
+>F2</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Bewerken</guimenu
+> <guimenuitem
+>Hernoemen</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Actief als een contact is geselecteerd.) Hernoemt een contact in de contactenlijst. Als u dit doet zal de naam in de contactenlijst niet langer veranderen als bijhorende persoon zijn of haar weergave naam verandert. U kunt dat opnieuw activeren in de eigenschappendialoog van de contact.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bewerken</guimenu
+> <guimenuitem
+>Eigenschappen</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>In de eigenschappendialoog kunt u een pictogram kiezen voor het geselecteerde item, en de naam van de contact wijzigen.</para>
+<para
+>Voor contacten kunt u het bijhorende adresboekitem veranderen.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bewerken</guimenu
+> <guimenuitem
+>Groep verwijderen</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Actief als een groep is geselecteerd.) Verwijdert een groep volledig uit de contactenlijst. Alle contacten in deze groep worden in het bovenste niveau geplaatst.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bewerken</guimenu
+> <guimenuitem
+>Groep hernoemen</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Actief als een groep is geselecteerd.) Hernoemt de groep.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect2>
+<sect2 id="menus-settings">
+<title
+>Menu Instellingen</title>
+<para
+>&kopete; heeft een standaard &kde;-menu Instellen, zoals is beschreven in de <ulink url="help:/fundamentals/menus.html#menus-settings"
+>Basisinformatie van &kde; </ulink
+> met extra items:</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Instellingen</guimenu
+> <guimenuitem
+>Offlinegebruikers tonen</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Dit toont/verbergt de contacten die momenteel offline zijn. Ze worden zichtbaar op het moment dat ze online gaan.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>G</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Instellingen</guimenu
+> <guimenuitem
+>Lege groepen tonen/verbergen</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Dit toont/verbergt groepen die geen contacten bevatten, of waarvan alle contacten offline en verborgen zijn.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><!--FIXME no global Shortcuts dialog, it is the app shortcuts dialog-->
+<term>
+<menuchoice
+><guimenu
+>Instellingen</guimenu
+> <guimenuitem
+>Globale sneltoetsen instellen...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Hier kunt u sneltoetsen instellen die vanuit elke plek in &kde; werken.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-help">
+<title
+>Menu Help</title>
+<para
+>Het venster met de lijst contactpersonen heeft een aantal van de algemene &kde; items in het menu Help, voor meer informatie lees de sectie hierover in het <ulink url="help:/fundamentals/menus.html#menus-help"
+>Menu Help</ulink
+> van de basisinformatie van &kde;. </para>
+</sect2>
+</sect1
+>  <!-- menus-contactlist -->
+
+<sect1 id="menus-chatwindow">
+<title
+>De menu's van het gespreksvenster</title>
+<sect2 id="menus-chatwindow-chat">
+<title
+>Menu Chat</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycap
+>Return</keycap
+> </shortcut
+> <guimenu
+>Chat</guimenu
+> <guimenuitem
+>Bericht verzenden</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Verstuurt een bericht.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Send File missing-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>S</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Gesprek</guimenu
+> <guimenuitem
+>Opslaan</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Slaat de inhoud van een gesprek op in een bestand.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>P</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Gesprek</guimenu
+> <guimenuitem
+>Afdrukken...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Drukt het gesprek af op papier.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Gesprek</guimenu
+> <guisubmenu
+>Contacten</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Dit menu toont alle personen die deelnemen aan een gesprek. U hebt toegang tot hetzelfde menu als in de contactenlijst, als u met de <mousebutton
+>rechter</mousebutton
+> muisknop op de contact klikt. U kunt specifieke acties zoals het verzenden van een bestand, gebruikersinformatie bekijken of de contact blokkeren.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Commands missing-->
+<!--FIXME Close All But This Tab missing-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>W</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Gesprek</guimenu
+> <guimenuitem
+>Sluiten</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Beëindigt het huidige gesprek. Als het venster meerdere tabbladen met gesprekken bevat, dan blijft het venster geopend.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Gesprek</guimenu
+> <guimenuitem
+>Afsluiten</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Beëindigt alle gesprekken die plaatsvinden in dit venster.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-edit">
+<title
+>Menu Bewerken</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>X</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Bewerken</guimenu
+> <guimenuitem
+>Knippen</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Het knippen van tekst werkt zoals in de meeste tekstverwerkers: de geselecteerde tekst wordt verwijderd en op het klembord geplaatst. Merk op dat u ook tekst kunt selecteren en naar een nieuwe positie slepen.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>C</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Bewerken</guimenu
+> <guimenuitem
+>Kopiëren</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Het kopiëren van tekst werkt zoals bij de meeste tekstverwerkers: de geselecteerde tekst wordt gekopieerd naar het klembord. Merk op dat u ook tekst kunt selecteren terwijl u de toets &Ctrl; ingedrukt houdt, en vervolgens naar een nieuwe positie te slepen om het daarheen te kopiëren.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>V</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Bewerken</guimenu
+> <guimenuitem
+>Plakken</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Het plakken van tekst werkt zoals in de meeste tekstverwerkers: de tekst van het klembord wordt op de huidige cursorpositie ingevoegd.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-format">
+<title
+>Menu Opmaak</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Opmaak</guimenu
+> <guisubmenu
+>Smiley toevoegen</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Dit menu bevat alle smileys/emoticons die het huidige emoticonthema bevat. U kunt van thema veranderen in de <link linkend="configuring-appearance-emoticons"
+>configuratiedialoog</link
+> van Kopete.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Alignment missing-->
+<!--FIXME not in 4.11
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guimenuitem
+>Text Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Opens a color selector that modifies the text color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guimenuitem
+>Background Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Opens a color selector that modifies the background color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guisubmenu
+>Font</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para
+>This menu allows you to change the font used in the chat.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guisubmenu
+>Font Size</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para
+>This menu allows you to change the font size used in the chat.</para>
+</listitem>
+</varlistentry>
+-->
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tabs">
+<title
+>Menu Tabbladen</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Tabbladen</guimenu
+> <guisubmenu
+>Tabbladplaatsing</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Hiermee kunt u bepalen of de tabbladen boven of onder de gespreksweergave worden geplaatst.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>B</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Tabbladen</guimenu
+> <guimenuitem
+>Gesprek losweken</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Plaatst de huidige gespreksweergave in een eigen venster.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Tabbladen</guimenu
+> <guisubmenu
+>Tabblad naar venster verplaatsen</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Met deze menuoptie kunt u gespreksweergaven naar een bepaald venster verhuizen. Kies in het menu het venster waar u de gespreksweergave als tabblad aan toe wilt voegen.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Activate Previous Tab, Activate Next Tab,  Activate Next Active Tab missing-->
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tools">
+<title
+>Menu Hulpmiddelen</title>
+<para
+>Dit menu bevat items die toegevoegd door de plugins die u hebt geladen. Kijk in het hoofdstuk <link linkend="plugins"
+>Plugins</link
+> voor meer informatie.</para>
+</sect2>
+<sect2 id="menus-chatwindow-settings">
+<title
+>Menu Instellingen</title>
+<para
+>&kopete; heeft een standaard &kde;-menu Instellen, zoals is beschreven in de <ulink url="help:/fundamentals/menus.html#menus-settings"
+>Basisinformatie van &kde; </ulink
+> met extra items:</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Instellingen</guimenu
+> <guisubmenu
+>Deelnemers tonen</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Dit menu bepaalt of de lijst met deelnemers rechts van de gespreksweergave wordt getoond.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-help">
+<title
+>Menu Help</title>
+<para
+>Het chat-venster heeft een aantal van de algemene &kde; items in het menu Help, voor meer informatie lees de sectie hierover in het <ulink url="help:/fundamentals/menus.html#menus-help"
+>Menu Help</ulink
+> van de basisinformatie van &kde;. </para>
+
+</sect2>
+<!--
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Chat</guimenu>
+<guimenuitem
+></guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+></para>
+</listitem>
+</varlistentry>
+
+-->
+</sect1
+> <!-- menus-chatwindow -->
+</chapter
+> <!-- menus -->
+<!--
+CHAT
+Send Message
+Save
+Print...
+Contacts>
+Close
+Quit
+EDIT
+Cut
+Copy
+Paste
+FORMAT
+Add Smiley>
+Text Color...
+Background Color...
+Font>
+Font Size>
+TABS
+Tab Placement>
+Detach Chat
+Move Chat to Window>
+(TOOLS
+Send Media Info)
+SETTINGS
+Show Menubar
+Toolbars>
+	Show Main Toolbar (Kopete)
+	Show Status (Kopete)
+	Show Format Toolbar (Kopete)
+Show Statusbar
+Chat Members List>
+	Place to Left of Chat Area
+	Place to Right of Chat Area
+	Show
+Configure Shortcuts...
+Configure Toolbars...
+HELP
+-->
+<!--FILE
+Connection>
+	Connect All
+	Disconnect All
+Status>
+	Set Available Globally
+	Set Away Globally
+Add Contact...
+Create New Group...
+Save ContactList
+Quit
+EDIT 
+Send Message..
+Start Chat...
+Send File...
+Move To>
+	(Group List)
+Copy To>
+	(Group List)
+Remove From Group
+(on Group)
+Remove Group
+Rename Group
+(on Contact)
+Remove Contact
+Rename Contact
+Add Contact
+Add To Contact List
+View History
+Properties
+SETTINGS
+View Menubar
+View Toolbar
+View Statusbar
+Show Offline Users
+Show Empty Groups
+Configure Shortcuts...
+Configure Global Shortcuts...
+Configure Toolbars...
+Configure...
+HELP
+Kopete Handbook...
+What's This?
+Report Bug
+About Kopete
+About KDE
+-->

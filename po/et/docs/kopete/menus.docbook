@@ -1,0 +1,931 @@
+<!-- Kopete Handbook, Menus Chapter copyright 2003 Will Stephenson.  Licensed under the GNU Free Documentation License -->
+<chapter id="menus">
+<title
+>Menüükirjed</title>
+
+<para
+>Allpool kirjeldatakse kõiki menüükirjeid. Kui vastava menüükirjega on seotud seda sooritada suutev klahvikombinatsioon, tuuakse vaikimisi kiirklahv samuti ära.</para>
+<sect1 id="menus-contactlist">
+<title
+>Kontaktide nimekirja akna menüüd</title>
+<sect2 id="menus-contactlist-file">
+<title
+>Menüü Fail</title>
+
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Fail</guimenu
+> <guisubmenu
+>Määra olek</guisubmenu
+> <guimenuitem
+>Võrgus</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Loob kõigi kontode ühenduse.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Fail</guimenu
+> <guisubmenu
+>Määra olek</guisubmenu
+> <guimenuitem
+>Eemal</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Muudab kõik ühendatud kontod eemalolevaks.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Fail</guimenu
+> <guisubmenu
+>Määra olek</guisubmenu
+> <guimenuitem
+>Pole võrgus</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Katkestab kõigi kontode ühenduse.</para>
+</listitem>
+</varlistentry>
+<!--FIXME missing Set Status Invisible, Busy, Edit Messages, Edit Statuses-->
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Fail</guimenu
+> <guimenuitem
+>Lisa kontakt...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Avab kontakti lisamise nõustaja, mis võimaldab lisada oma nimekirja uue kontakti.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Fail</guimenu
+> <guimenuitem
+>Loo uus grupp...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Võimaldab anda uuele grupile nime ja lisab selle kontaktide nimekirja.</para>
+</listitem>
+</varlistentry>
+<!--FIXME missing Export Contacts-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Fail</guimenu
+> <guimenuitem
+>Välju</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Katkestab ühenduse kõigi &im; süsteemidega, sulgeb kõik aknad ja lõpetab rakenduse töö.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-contactlist-edit">
+<title
+>Menüü Redigeerimine</title>
+<variablelist>
+<!--FIXME not in Edit menu
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Z</keycap
+></keycombo>
+</shortcut>
+<guimenu
+>Edit</guimenu>
+<guimenuitem
+>Undo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Reverts the last change that was made to the contact list.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>Z</keycap
+></keycombo>
+</shortcut>
+<guimenu
+>Edit</guimenu>
+<guimenuitem
+>Redo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Reverts the last change that was made to the contact list by <guimenu
+>Edit</guimenu
+><guimenuitem
+>Undo</guimenuitem
+></para>
+</listitem>
+</varlistentry>
+-->
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>Saada lühisõnum...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Avab sõnumiakna, mis võimaldab valitud kontaktile ühe sõnumi saata.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>Alusta vestlust...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Avab vestlusakna, mis võimaldab valitud kontaktiga vestlusse astuda.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>Saada fail...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Kui &im; süsteem seda toetab, avatakse failivalija, kus saab valida faili, mida soovid antud kontaktile saata.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigeerimine</guimenu
+> <guisubmenu
+>Liiguta</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Võimalik ainult kontakti valimise korral) Võimaldab valida alammenüüst mõne grupi, kuhu valitud kontakt liigutatakse.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigeerimine</guimenu
+> <guisubmenu
+>Kopeeri</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Võimalik ainult kontakti valimise korral) Võimaldab valida alammenüüst mõne grupi, kuhu valitud kontakt kopeeritakse. &im; süsteemid, kus on võimalik üht ja sama kontakti hoida serveri kontaktide nimekirjas enam kui ühes grupis, uuendatakse selle käsu valimise järel.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigeerimine</guimenu
+> <guisubmenu
+>Lisa kontakt...</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Võimalik ainult kontakti valimise korral) Võimaldab valida alammenüüst mõne muu konto ning seeläbi lubab kontaktiga ka muul viisil ühendust luua.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>Lisa oma kontaktide nimekirja</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Võimalik ainult kontakti valimise korral) Vahel saadavad sulle sõnumi inimesed, keda veel sinu kontaktide nimekirjas ei ole. Sellisel juhul loob &kopete; neile ajutise kirje, kuid nende säilitamiseks oma kontaktide nimekirjas kasuta just seda käsku.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo
+><keycap
+>Del</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>Kustuta kontakt</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Võimalik ainult kontakti valimise korral) Eemaldab kontakti kontaktide nimekirjast täielikult.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo
+><keycap
+>F2</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>Muuda nime</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Võimalik ainult kontakti valimise korral) Annab kontaktile kontaktide nimekirjas uue nime. Selle kasutamisel ei muudeta kontaktide nimekirja kirjet enam ka juhul, kui kontakt ise oma näidatavat nime muudab. Viimase võimaluse saab uuesti sisse lülitata kontakti omaduste dialoogis.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>Omadused</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Omaduste dialoog võimaldab valida valitud elemendile meelepärased ikoonid ja muuta selle nime.</para>
+<para
+>Kontaktide korral saab muuta sellega seotud &kde; aadressiraamatu kirjet.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>Eemalda grupp</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Võimalik ainult grupi valimise korral) Eemaldab grupi täielikult kontaktide nimekirjast. Kõik ainult selles grupis olnud kontaktid liigutatakse tipptasemele.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Redigeerimine</guimenu
+><guimenuitem
+> Nimeta grupp ümber</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Võimalik ainult grupi valimise korral) Võimaldab anda grupile uue nime.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect2>
+<sect2 id="menus-settings">
+<title
+>Menüü Seadistused</title>
+<para
+>&kopete; kasutab tavapärast &kde; seadistustemenüüd, mida kirjeldab <ulink url="help:/fundamentals/ui.html#menus-settings"
+>&kde; põhialuste käsiraamat</ulink
+>, kuid sel on siiski lisakirjeid:</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Seadistused</guimenu
+> <guimenuitem
+>Võrgus mitteolevate kasutajate näitamine</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Näitab/peidab kontaktid, keda pole parajasti võrgus. Kui nad võrku tagasi tulevad, ilmuvad nad ka uuesti nähtavale.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>G</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Seadistused</guimenu
+> <guimenuitem
+>Näita tühje gruppe</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Näitad/peidab grupid, milles pole ühtki liiget või mille kõik liikmed on võrgust ära ja peidetud (vaata eelmise käsu kirjeldust).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><!--FIXME no global Shortcuts dialog, it is the app shortcuts dialog-->
+<term>
+<menuchoice
+><guimenu
+>Seadistused</guimenu
+> <guimenuitem
+>Üldiste kiirklahvide seadistamine...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Avab &kde; tavapärase kiirklahvide seadistamise dialoogi, kus saab muuta kogu &kde; ulatuses toimivaid kiirklahve.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-help">
+<title
+>Menüü Abi</title>
+<para
+>Kontaktiloendi aken kasutab tavapäraseid &kde; menüü Abi kirjeid, millest kõneleb lähemalt &kde; põhialuste käsiraamatu <ulink url="help:/fundamentals/ui.html#menus-help"
+>menüüd Abi</ulink
+> käsitlev osa. </para>
+</sect2>
+</sect1
+>  <!-- menus-contactlist -->
+
+<sect1 id="menus-chatwindow">
+<title
+>Vestlusakna menüüd</title>
+<sect2 id="menus-chatwindow-chat">
+<title
+>Menüü Vestlus</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycap
+>Return</keycap
+> </shortcut
+> <guimenu
+>Vestlus</guimenu
+> <guimenuitem
+>Saada sõnum</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Saadab sõnumi.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Send File missing-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>S</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Vestlus</guimenu
+> <guimenuitem
+>Salvesta</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Salvestab vestluse sisu faili.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>P</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Vestlus</guimenu
+> <guimenuitem
+>Trüki...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Trükib vestluse sisu.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Vestlus</guimenu
+> <guisubmenu
+>Kontaktid</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>See menüü toob ära kõik vestluses osalejad. Samale menüüle pääseb ligi, kui klõpsata hiire <mousebutton
+>parema</mousebutton
+> nupuga kontakti nimel kontaktide nimekirja aknas, ning see võimaldab ette võtta teatud spetsiifilisi toiminguid, näiteks saata faili, vaadata kasutajainfot või kasutaja blokeerida.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Commands missing-->
+<!--FIXME Close All But This Tab missing-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>W</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Vestlus</guimenu
+> <guimenuitem
+>Sulge</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Sulgeb aktiivse vestluse. Kui sama akna teistel kaartidel on avatud veel mõni vestlus, jääb aken avatuks.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Vestlus</guimenu
+> <guimenuitem
+>Välju</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Sulgeb kõik antud aknas käivad vestlused ja akna enda.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-edit">
+<title
+>Menüü Redigeerimine</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>X</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>Lõika</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Teksti lõikamine käib samamoodi nagu enamikus redaktorites: valitud tekst eemaldatakse ja asetatakse lõikepuhvrisse. Pane tähele, et võimalik on ka tekst valida ja uude kohta lohistada.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>C</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>Kopeeri</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Teksti kopeerimine käib samamoodi nagu enamikus redaktorites: valitud tekst kopeeritakse lõikepuhvrisse. Pane tähele, et teksti saab ka valida klahvi &Ctrl; all hoides ja lohistada see kopeerimiseks uude asukohta.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>V</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Redigeerimine</guimenu
+> <guimenuitem
+>Aseta</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Asetamine käib samamoodi nagu enamikus redaktorites: tekst lõikepuhvrist asetatakse kursori asukohta.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-format">
+<title
+>Menüü Vormindus</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Vormindus</guimenu
+> <guisubmenu
+>Lisa emotikon</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Selles menüüs leiduvad kõik emotikonid (smiley'd), mida parajasti valitud emotikoniskeem pakub. Skeemi saab muuta <link linkend="configuring-appearance-emoticons"
+>Kopete seadistustedialoogis</link
+>.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Alignment missing-->
+<!--FIXME not in 4.11
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guimenuitem
+>Text Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Opens a color selector that modifies the text color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guimenuitem
+>Background Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Opens a color selector that modifies the background color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guisubmenu
+>Font</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para
+>This menu allows you to change the font used in the chat.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guisubmenu
+>Font Size</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para
+>This menu allows you to change the font size used in the chat.</para>
+</listitem>
+</varlistentry>
+-->
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tabs">
+<title
+>Menüü Kaardid</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Kaardid</guimenu
+> <guisubmenu
+>Kaardi asukoht</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Selles menüüs saab valida, kas kaardid on näha vestlusakna üla- või alaosas.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>B</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Kaardid</guimenu
+> <guimenuitem
+>Haagi vestlus lahti</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Eraldab valitud vestluse omaette aknasse.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Kaardid</guimenu
+> <guisubmenu
+>Liiguta kaart aknasse</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Selle menüü abil saab vestlusi akende vahel liigutada.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Activate Previous Tab, Activate Next Tab,  Activate Next Active Tab missing-->
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tools">
+<title
+>Menüü Tööriistad</title>
+<para
+>Selles menüüs on elemendid, mida lisavad sinu valitud pluginad. Vaata lähemalt peatükki, mis pajatab <link linkend="plugins"
+>pluginatest</link
+>.</para>
+</sect2>
+<sect2 id="menus-chatwindow-settings">
+<title
+>Menüü Seadistused</title>
+<para
+>&kopete; kasutab tavapärast &kde; seadistustemenüüd, mida kirjeldab <ulink url="help:/fundamentals/ui.html#menus-settings"
+>&kde; põhialuste käsiraamat</ulink
+>, kuid sel on siiski lisakirjeid:</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Seadistused</guimenu
+> <guisubmenu
+>Näita osalejaid</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Selles menüüs saab määrata, kas vestluse liikmete loendit näidatakse vestlusaknast paremal pool.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-help">
+<title
+>Menüü Abi</title>
+<para
+>Vestlusaken kasutab tavapäraseid &kde; menüü Abi kirjeid, millest kõneleb lähemalt &kde; põhialuste käsiraamatu <ulink url="help:/fundamentals/ui.html#menus-help"
+>menüüd Abi</ulink
+> käsitlev osa. </para>
+
+</sect2>
+<!--
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Chat</guimenu>
+<guimenuitem
+></guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+></para>
+</listitem>
+</varlistentry>
+
+-->
+</sect1
+> <!-- menus-chatwindow -->
+</chapter
+> <!-- menus -->
+<!--
+CHAT
+Send Message
+Save
+Print...
+Contacts>
+Close
+Quit
+EDIT
+Cut
+Copy
+Paste
+FORMAT
+Add Smiley>
+Text Color...
+Background Color...
+Font>
+Font Size>
+TABS
+Tab Placement>
+Detach Chat
+Move Chat to Window>
+(TOOLS
+Send Media Info)
+SETTINGS
+Show Menubar
+Toolbars>
+	Show Main Toolbar (Kopete)
+	Show Status (Kopete)
+	Show Format Toolbar (Kopete)
+Show Statusbar
+Chat Members List>
+	Place to Left of Chat Area
+	Place to Right of Chat Area
+	Show
+Configure Shortcuts...
+Configure Toolbars...
+HELP
+-->
+<!--FILE
+Connection>
+	Connect All
+	Disconnect All
+Status>
+	Set Available Globally
+	Set Away Globally
+Add Contact...
+Create New Group...
+Save ContactList
+Quit
+EDIT 
+Send Message..
+Start Chat...
+Send File...
+Move To>
+	(Group List)
+Copy To>
+	(Group List)
+Remove From Group
+(on Group)
+Remove Group
+Rename Group
+(on Contact)
+Remove Contact
+Rename Contact
+Add Contact
+Add To Contact List
+View History
+Properties
+SETTINGS
+View Menubar
+View Toolbar
+View Statusbar
+Show Offline Users
+Show Empty Groups
+Configure Shortcuts...
+Configure Global Shortcuts...
+Configure Toolbars...
+Configure...
+HELP
+Kopete Handbook...
+What's This?
+Report Bug
+About Kopete
+About KDE
+-->

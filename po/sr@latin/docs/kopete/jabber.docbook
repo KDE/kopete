@@ -1,0 +1,1032 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-jabber">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Dokumentacija preuzeta sa stranice o <ulink url=" http://userbase.kde.org/Kopete/ICQ"
+><application
+>Kopeteu</application
+>/Jabberu</ulink
+> na Korisničkoj bazi KDE‑a.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+<othercredit role="translator"
+><firstname
+>Časlav</firstname
+><surname
+>Ilić</surname
+><affiliation
+><address
+><email
+>caslav.ilic@gmx.net</email
+></address
+></affiliation
+><contrib
+>prevod</contrib
+></othercredit
+> 
+    </authorgroup>
+<date
+>5. 11. 2011.</date>
+    <releaseinfo
+>SK KDE‑a 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2010-12-05T08:12:25Z</timestamp
+>-->
+<title
+>Priručnik za Jabber</title>
+<!--userbase-content-->
+<sect1 id="about-jabber-xmpp"
+><title
+>O Jabberu/XMPPu</title>
+<para
+><ulink url="http://en.wikipedia.org/wiki/XMPP"
+>XMPP</ulink
+> ili Jabber (ove reči zapravo znače jedno isto) naziv je otvorenog, decentralizovanog mrežnog protokola za brzo glasništvo. Projektovan je za infrastrukturu server—klijent sa mnogim serverima po Internetu, na kojima svako može dobiti nalog. <ulink url="http://en.wikipedia.org/wiki/Server_%28computing%29"
+>Severi</ulink
+> su obično povezani sa mnogim <ulink url="http://en.wikipedia.org/wiki/Client_%28computing%29"
+>klijentima</ulink
+> s jedne strane, i sa drugim XMPP serverima sa druge strane. Objasnim na malom primeru kako ovo funkcioniše: </para>
+<para
+>Romeo voli Juliju i zato želi da komunicira s njom preko Jabber mreže. Može da piše poruke iz svog klijenta, koji je povezan sa <userinput
+>montegi.net</userinput
+>, devojci čiji je klijent povezan na server <userinput
+>kapuleti.com</userinput
+>. </para>
+<para
+>Kada je registrovao nalog na serveru, izabrao je tzv. JID (Jabber identifikator). JID funkcioniše u osnovi kao adresa e‑pošte, i povezan je sa imenom servera iza „@“. Jedan pravilan Romeov JID mogao bi da bude <userinput
+>romeo@montegi.net</userinput
+>. </para>
+<para
+>Da bi mogao da priča sa drugima, Romeo mora da doda njihove JID‑ove u svoju listu kontakata. Oni mogu biti povezani na isti server (npr. <userinput
+>boban@montagi.net</userinput
+>), ali i na bilo koji drugi (npr. <userinput
+>peter@wasinet.org</userinput
+> ili, naravno, <userinput
+>julija@kapuleti.com</userinput
+>). </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_jabbernetwork.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Vizuelizacija Jabber mreže.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Vizuelizacija Jabber mreže.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Jabber/XMPP naravno pruža još mnoge usluge (npr. šifrovanje poruka kraj—kraj, <ulink url="http://en.wikipedia.org/wiki/Voicechat"
+>glasovno</ulink
+> i <ulink url="http://en.wikipedia.org/wiki/Video_conferencing"
+>video ćaskanje</ulink
+>, grupno ćaskanje), o kojima će biti reči kasnije u ovom tutorijalu. </para>
+<para
+>Dva velika provajdera brzog glasništva koriste Jabber/XMPP u pozadini svojih servera: Google-razgovor i Facebookovo ćaskanje. Nalozi na ovim sistemima mogu se koristiti u <application
+>Kopeteu</application
+> kao i normalni Jabber nalozi. Detalji će biti razjašnjeni <link linkend="fill-in-your-account-data-in-kopete"
+>kasnije</link
+>, a možete ih naći i na veb sajtovima ovih provajdera. </para>
+<para
+>Sa ovim informacijama, možemo preći na glavni deo tutorijala: kako postaviti Jabber klijent, i koje fine mogućnosti pruža <application
+>Kopete</application
+>. </para>
+</sect1>
+<sect1 id="first-steps"
+><title
+>Prvi koraci</title>
+<sect2 id="get-kopete"
+><title
+>Dobavljanje <application
+>Kopetea</application
+></title
+> 
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopeteicon.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Ikonica <application
+>Kopetea</application
+>.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Ikonica <application
+>Kopetea</application
+>.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Naravno, morate prvo dobaviti <application
+>Kopete</application
+> da biste počeli da radite s njim. Ako koristite neki <ulink url="http://en.wikipedia.org/wiki/Linux"
+>sistem tipa GNU/Linux</ulink
+>, <application
+>Kopete</application
+> je najverovatnije već instaliran ako ste instalirali <ulink url="http://en.wikipedia.org/wiki/KDE_Software_Compilation"
+>Softversku kompilaciju KDE‑a</ulink
+>, inače ga možete naći u riznici distribucije. </para>
+<para
+>Pošto ste instalirali <application
+>Kopete</application
+>, pokrenite ga po prvi put. </para>
+</sect2>
+</sect1>
+<sect1 id="create-your-jabber-account"
+><title
+>Stvaranje Jabber naloga</title>
+<para
+>Po pokretanju <application
+>Kopetea</application
+>, dobićete prazan prozor. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap001_emptykopete.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Prazan prozor <application
+>Kopetea</application
+>.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Prazan prozor <application
+>Kopetea</application
+>.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>U donjem delu piše <guilabel
+>Kliknite da dodate novi nalog</guilabel
+>. Kliknite na to, ili idite na <menuchoice
+><guimenu
+>Podešavanje</guimenu
+><guimenuitem
+>Podesi Kopete...</guimenuitem
+></menuchoice
+>, da biste napravili novi nalog. Pošto želimo da to bude Jabber nalog, biramo stavku menija <guilabel
+>Jabber</guilabel
+> pa kliknemo na <guilabel
+>Naredno</guilabel
+>. Pošto kliknemo na <guilabel
+>Registruj novi nalog</guilabel
+>, otvara se novi prozor gde možemo upisati Jabber server na kojem će nalog biti napravljen. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap002_configacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Podešavanje <application
+>Kopetea</application
+>.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Podešavanje <application
+>Kopetea</application
+>.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Server možete ili ručno upisati u polje <guilabel
+>Jabber server:</guilabel
+>, ili ga izabrati sa spiska koji dobijete pošto kliknete na <guilabel
+>Izaberi...</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutoial_snap003_selectserver.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Dijalog za biranje servera.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Dijalog za biranje servera.</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Pošto izaberete server, možete uneti željeni Jabber ID, tj. svoje korisničko ime. Unesite željeno ime ispred znaka „@“ u polju <guilabel
+>Željeni Jabber ID:</guilabel
+>. Zatim unesite lozinku i potvrdu lozinke, te popunite kućicu <guilabel
+>Šifrovanje protokola (SSL):</guilabel
+> da bi veza klijent—server bila <ulink url="http://en.wikipedia.org/wiki/Secure_Sockets_Layer"
+>šifrovana</ulink
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap004_createacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Stvaranje naloga.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Stvaranje naloga.</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Neki serveri ne nude ovu opciju, ali ih većina nudi. Na kraju kliknite na <guilabel
+>Registruj</guilabel
+> da dovršite registraciju. </para>
+<para
+>Čestitamo, upravo ste registrovali novi nalog na Jabber serveru! </para>
+</sect1>
+<sect1 id="fill-in-your-account-data-in-kopete"
+><title
+>Unos podataka o nalogu u <application
+>Kopeteu</application
+></title>
+<para
+>Sada posedujete nalog na Jabber serveru i <application
+>Kopete</application
+> vam traži podatke o nalogu. <application
+>Kopete</application
+> će automatski dodati vaš Jabber ID i lozinku u odgovarajuća polja. Ako želite da <application
+>Kopete</application
+> zapamti lozinku, kako je ne biste unosili pri svakom povezivanju na server, popunite <guilabel
+>Upamti lozinku</guilabel
+>. </para>
+<para
+>Ako želite da kroz <application
+>Kopete</application
+> koristite postojeći nalog na <ulink url="http://www.google.com/support/chat/bin/answer.py?hl=en&amp;answer=57557"
+>Google-razgovoru</ulink
+> ili Facebookovom ćaskanju (to su zapravo takođe Jabber serveri), unesite svoju adresu na GMailu ili podatke o nalogu na Facebooku (<ulink url="http://www.facebook.com/sitetour/chat.php"
+>objašnjeno ovde</ulink
+>) za povezivanje na njihove servere. </para>
+<para
+>Po želji možete popuniti <guilabel
+>Isključi iz povezivanja svega</guilabel
+>. Ovo govori <application
+>Kopeteu</application
+> da ne stupa na vezu sa ovim nalogom kada stupite na vezu sa svim nalozima (pošto je <application
+>Kopete</application
+> višestruki glasnik sa podrškom za mnoge druge protokole, poput <ulink url="http://en.wikipedia.org/wiki/ICQ"
+>ICQ‑a</ulink
+> ili <ulink url="http://en.wikipedia.org/wiki/.NET_Messenger_Service"
+>MSN‑a</ulink
+>). Ako popunite ovo, moraćete izričito da stupite na vezu sa ovim nalogom kad god želite da se povežete na odgovarajući server. </para>
+<para
+>Sada bi <application
+>Kopete</application
+> trebalo da izgleda ovako: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap005_enterjid.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Prozor podataka o nalogu.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Prozor podataka o nalogu.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Kliknite na jezičak <guilabel
+>Veza</guilabel
+> da popunite još neke opcije. Posebno, trebalo bi da uključite <guilabel
+>Šifrovanje protokola (SSL):</guilabel
+> i isključite <guilabel
+>Dozvoli autentifikaciju lozinkom u običnom tekstu</guilabel
+> radi osnovne bezbednosti. </para>
+<para
+>Podrazumevani podaci o serveru trebalo bi da su u redu, ako ste na uobičajenoj kućnoj mreži bez posebne postave <ulink url="http://en.wikipedia.org/wiki/Firewall_%28computing%29"
+>zaštitnog zida</ulink
+>. </para>
+<para
+>Odeljak <guilabel
+>Postavke lokacije</guilabel
+> odražava još jedan specijalitet Jabbera: možete postaviti tzv. „resurse“ za određivanje mesta odakle ćaskate. Na primer, ako se prijavite na Jabber sa mobilnog telefona i laptopa istovremeno (da, to je moguće) resurs otkriva vašim kontaktima gde se nalazite. Tako da ga možete nazvati npr. „netbuk“ ili „Android“, u zavisnosti od toga na kojem uređaju <application
+>Kopete</application
+> radi. Imajte na umu da će vaši resursi biti vidljivi sagovornicima u ćaskanju (biće dodati uz JID ovako: <userinput
+>romeo@montegi.net/netbuk</userinput
+>), pa uzmite u obzir pitanje privatnosti kad birate ime resursa. </para>
+<para
+>U našem primeru, postavimo <guilabel
+>Resurs:</guilabel
+> na <replaceable
+>laptop</replaceable
+>. Prioritet je uglavnom od koristi kada baratate sa više uređaja, i govori klijentima sagovornika koji od vaših uređaja na vezi u datom trenutku (npr. mobilni telefon ili laptop) treba kontaktirati u ovom slučaju. Poruku će primiti resurs koji je na vezi sa najvećim prioritetom. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap006_connection.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Podešavanje naloga.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Podešavanje naloga.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Naredni jezičak, <guilabel
+>Prenos fajlova</guilabel
+>, obično ne treba dirati kada se Jabber nalog postavlja u normalnoj mreži. </para>
+<para
+>Napokon, tu su neke postavke privatnosti pod jezičkom <guilabel
+>Privatnost</guilabel
+>, i uglavnom su samoočigledne. Opcija <guilabel
+>Stari utkani PGP format za potpisane i šifrovane poruke</guilabel
+> (pročitajte ovde šta <ulink url="http://en.wikipedia.org/wiki/Pretty_Good_Privacy"
+>PGP</ulink
+> znači) nije preporučljiva, pošto postoji način da se ovo uradi kroz OTR, što će biti objašnjeno <link linkend="useful-configuration-hints"
+>kasnije u ovom tutorijalu</link
+>. </para>
+<para
+>Na ovom mestu možete ponovo da kliknete na <guilabel
+>Naredno</guilabel
+>, i nalog je time podešen. Možete izabrati željenu boju za ovaj nalog, pa ako želite odmah da se povežete na Jabber server, popuniti kućicu <guilabel
+>Poveži se sada</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap007_conf-ready.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Poslednji korak podešavanja.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Poslednji korak podešavanja.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Sada možete da okončate podešavanje. </para>
+<para
+>U suprotnom, možete se ručno povezati na server klikom na <menuchoice
+><guimenu
+>Stanje</guimenu
+><guimenuitem
+>Na vezi</guimenuitem
+></menuchoice
+> u glavnom prozoru <application
+>Kopetea</application
+>, ili desnim klikom na ikonicu <application
+>Kopetea</application
+> u sistemskoj kaseti i izborom <menuchoice
+><guimenu
+>Postavi stanje</guimenu
+><guimenuitem
+>Na vezi</guimenuitem
+></menuchoice
+>. Ako ste ranije izabrali opciju <guilabel
+>Isključi iz povezivanja svega</guilabel
+>, moraćete da se prijavite desnim klikom na ikonicu sistemske kasete i izborom <menuchoice
+><guimenu
+>vasJID@primer.org</guimenu
+><guimenuitem
+>Na vezi</guimenuitem
+></menuchoice
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap008_goonline.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Stupanje na vezu.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Stupanje na vezu.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="adding-friends"
+><title
+>Dodavanje prijatelja</title>
+<para
+>Po prvom prijavljivanju, prozor <application
+>Kopetea</application
+> je prilično prazan. Možda će tu biti podrazumevani kontakt, koji je dodao server, da vam poželi dobrodošlicu, ali neće biti nijednog stvarnog kontakta na „popisu“ (kako se, inače, naziva lista kontakata u svetu Jabbera). Prvi korak za dodavanje prijatelja, naravno, jeste da im zatražite njihove Jabber ID‑ove. Pošto dobijete neki, možete ga odmah dodati u <application
+>Kopete</application
+>. Ili kliknite na <menuchoice
+><guimenu
+>Dodaj</guimenu
+><guimenuitem
+>vasJID@example.org</guimenuitem
+></menuchoice
+> ili idite na <menuchoice
+><guimenu
+>Fajl</guimenu
+><guisubmenu
+>Dodaj kontakt</guisubmenu
+><guimenuitem
+>vasJID@example.org</guimenuitem
+></menuchoice
+>. Pojaviće se novi prozor koji traži Jabber ID koji treba dodati u popis. Prosto ga upišite i kliknite na <guilabel
+>U redu</guilabel
+>. Možete upotrebiti opciju <guilabel
+>grupa</guilabel
+> ako ste već definisali grupe kontakata (npr. „posao“ i „kuća“). Preko <guilabel
+>Unos u adresaru:</guilabel
+> može se uspostaviti veza sa <ulink url="http://userbase.kde.org/Special:myLanguage/KAddressBook"
+><application
+>K‑adresara</application
+></ulink
+>, tako da se podaci poput slika iz profila dele između ova dva programa. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap009_addfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Dodavanje prijatelja.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Dodavanje prijatelja.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Dodali ste prvog prijatelja na svoj popis. Ali, pre nego što možete da počnete da mu pišete poruke, on vas mora ovlastiti. Dok se to ne dogodi, desno od polja kontakta stoji mali žuti znak uzvika. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap010_exlamationmarkfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Vaš kontakt.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Vaš kontakt.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Pošto vaš prijatelj ovlasti vaš zahtev za dodavanje na popis, njegova ikonica biće obojena kada je na vezi. Tačna značenja različitih ikonica (na vezi, odsutan, itd.) možete videti pod <guilabel
+>Stanje</guilabel
+>, gde ih takođe možete postaviti za sebe. Bićete obavešteni kad dobijete ovlašćenje. </para>
+<para
+>Obično će vas prijatelj zauzvrat dodati na svoju listu kontakata, što vi morate da odobrite sa svoje strane. <application
+>Kopete</application
+> vas obaveštava o tome pri dnu, zelenom zastavicom i opisom zahteva. Kliknite na <guilabel
+>Ovlasti</guilabel
+> da prihvatite. Zona obaveštenja može biti zatvorena klikom na krstić u njenom gornjem desnom delu. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap011_addedbyfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kontakt dodaje vas.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kontakt dodaje vas.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Posle celog postupka, trebalo bi da vidite listu kontakata kao na sledećoj slici. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap012_fullauthorized.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kontakt je potpuno ovlašćen.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kontakt je potpuno ovlašćen.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Uspešno ste dodali prvi kontakt na svoj popis. </para>
+</sect1>
+<sect1 id="messaging-and-sending-files"
+><title
+>Glasništvo i slanje fajlova</title>
+<para
+>Ćaskanje sa kontaktom možete započeti klikom na njegovo ime. Otvoriće se novi prozor u kojem poruke unositi u manjem polju pri dnu, i kursor već stoji u njemu. Tekst šaljete tako što pritisnete <keycap
+>Enter</keycap
+> ili dugme <guilabel
+>Pošalji</guilabel
+>. Sada ste spremni za komuniciranje sa svojim sagovornikom preko Jabbera. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap013_firstchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Prvo ćaskanje.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Prvo ćaskanje.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<sect2 id="transfer-files"
+><title
+>Prenos fajlova</title
+> 
+<para
+>Fajlove prenosite putem Jabbera tako što kliknete na <guilabel
+>Pošalji fajl...</guilabel
+> pa u iskačućem prozoru izaberete fajl za slanje. Bićete obavešteni kada se prenos dovrši, ili propadne iz nekog razloga. </para>
+<para
+><warning
+><para
+>U nekim slučajevima ovo može i da ne radi, zbog nesaglasnih postava nekih servera.</para
+></warning>
+</para>
+</sect2>
+<sect2 id="group-chat"
+><title
+>Grupno ćaskanje</title
+> 
+<para
+>Jabber nije ograničen na komuniciranje samo sa jednom osobom. Možete upotrebiti grupno ćaskanje za razgovor u stilu <ulink url="http://en.wikipedia.org/wiki/IRC"
+><acronym
+>IRC‑a</acronym
+></ulink
+>, gde mnogo ljudi može međusobno da priča. Da uđete na grupno ćaskanje, kliknite desnim na <application
+>Kopeteovu</application
+> ikonicu u sistemskoj kaseti, pa izaberite <menuchoice
+><guimenu
+><replaceable
+>vasJID</replaceable
+></guimenu
+><guimenuitem
+>Pridruži se grupnom ćaskanju...</guimenuitem
+></menuchoice
+>, gde <replaceable
+>vasJID</replaceable
+> označava vaš Jabber ID. Pojaviće se novi prozor u kojem se možete pridružiti nekoj sobi za ćaskanje. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_snap021_groupchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Grupno ćaskanje.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Grupno ćaskanje.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Klikom na <guilabel
+>Upit</guilabel
+> pozivate spisak postojećih soba za ćaskanje na datom Jabber serveru. Izaberite jednu sobu pa pritisnite <keycap
+>Enter</keycap
+> da uđete u nju. </para>
+<para
+>Takođe možete napraviti sopstvenu sobu za ćaskanje, tako što unesete njeno ime u polje <guilabel
+>Soba:</guilabel
+> pa pritisnete <keycap
+>Enter</keycap
+> ili kliknete na <guilabel
+>Pridruži se</guilabel
+>. </para>
+<para
+>Pošto napravite sobu za ćaskanje, u prozoru <application
+>Kopetea</application
+> pojaviće se novo polje sa JID‑om <replaceable
+>imesobe@jabber.primer.org</replaceable
+>. Shvatite ga kao običan kontakt, tj. da treba kliknuti na njega radi ćaskanja, itd. </para>
+<para
+>Stigavši dovde, postavili ste funkcionalni Jabber klijent i u principu možete da ćaskate sa svojim kontaktima. Ali, radi boljeg ugođaja sa <application
+>Kopeteom</application
+>, možete podesiti program prema svojim potrebama. Naredna stranica tutorijala daje neke <link linkend="useful-configuration-hints"
+>korisne savete za podešavanje</link
+>. </para>
+</sect2>
+</sect1>
+<sect1 id="useful-configuration-hints"
+><title
+>Korisni saveti za podešavanje</title>
+<para
+>Svi ovi saveti odnose se na <application
+>Kopeteov</application
+> glavni prozor za podešavanje, koji se dobija preko <menuchoice
+><guimenu
+>Podešavanje</guimenu
+><guimenuitem
+>Podesi Kopete...</guimenuitem
+></menuchoice
+>. Ne zaboravite da kliknete na <guilabel
+>Primeni</guilabel
+> ili <guilabel
+>U redu</guilabel
+> kada želite da sačuvate načinjene izmene. </para>
+<para
+>Pod jezičkom <guilabel
+>Nalozi</guilabel
+> nalaze se sve postavke naloga i postava višestrukih naloga u <application
+>Kopeteu</application
+> (Jabber/XMPP, kao i <ulink url="http://en.wikipedia.org/wiki/Icq"
+>ICQ</ulink
+>, <ulink url="http://en.wikipedia.org/wiki/.NET_Messenger_Service"
+>MSN</ulink
+> i mnogi drugi glasnički protokoli). Ako želite da unesete svoje lične podatke, ili da dodate fotografiju uz svoj kontakt, kliknite na <guilabel
+>Izmeni identitet...</guilabel
+>. Fotografija se može otpremiti klikom na malu ikonicu na levoj strani i pri dnu zone za sliku. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap014_setidentity.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Postavljanje identiteta.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Postavljanje identiteta.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Naredni jezičak na uspravnom spisku levo je <guilabel
+>Lista kontakata</guilabel
+>. Ove postavke su samoočigledne, i od njih deluje korisno uključiti <guilabel
+>Slike kontakata kad su dostupne</guilabel
+>. Preostala tri vodoravna jezička (<guilabel
+>Boje i fontovi</guilabel
+>, <guilabel
+>Napredno</guilabel
+> i <guilabel
+>Raspored</guilabel
+>) sadrže mnoge fine postavke, koje ćete možda želeti da naštelujete pošto budete koristili <application
+>Kopete</application
+> nekoliko sedmica. </para>
+<para
+>Postavke pod <guilabel
+>Stanje</guilabel
+> omogućavaju vam da postavite podrazumevane <ulink url="http://en.wikipedia.org/wiki/Status_message"
+>poruke o stanju</ulink
+>, za slučajeve kada ste na vezi, odsutni, nevidljivi, itd. </para>
+<para
+>Klik na <guilabel
+>Ponašanje</guilabel
+> otvara vrlo detaljan skup opcija. Najzanimljivije od njih, pod jezičkom <guilabel
+>Opšte</guilabel
+>, jesu <guilabel
+>Rukovanje porukama</guilabel
+> i <guilabel
+>Početno stanje</guilabel
+>. Prva određuje da li se dolazne poruke kontakata trenutno otvaraju u novom prozoru, ili se stavljaju u red dok ručno ne otvorite prozor <application
+>Kopetea</application
+>. Druga govori <application
+>Kopeteu</application
+> da li da stupi na vezu kada pokrenete program. Ako postavite ovo, bićete dostupni svojim kontaktima čim pokrenete <application
+>Kopete</application
+>. Jezičak <guilabel
+>Događaji</guilabel
+> omogućava vam da odredite u kojim slučajevima vas <application
+>Kopete</application
+> obaveštava preko sistemskih obaveštenja. Ako želite da <application
+>Kopete</application
+> automatski postavlja vaše stanje na odsutno, idite pod jezičak <guilabel
+>Postavke odsutnosti</guilabel
+> i popunite prvu kućicu. Možete zadati vreme od svoje poslednje radnje (ulaza sa tastature ili pomeranja miša) posle kojeg će <application
+>Kopete</application
+> postaviti stanje odsutnosti. Podrazumevano je 10 minuta. Opcije pod <guilabel
+>Ćaskanje</guilabel
+> ponovo su samoočigledne i već imaju pogodne vrednosti. </para>
+<para
+>Naredna stavka u koloni levo je <guilabel
+>Prozor za ćaskanje</guilabel
+>. Prvi jezičak u njoj, <guilabel
+>Stil</guilabel
+>, služi za postavljanje drugačijeg izgleda u odnosu na podrazumevani. Možete i instalirati svoje stilove, ili ih preuzimati sa Interneta klikom na <guilabel
+>Dobavi novi...</guilabel
+>. Kada ukucate <ulink url="http://en.wikipedia.org/wiki/Emoticon"
+>emotikon</ulink
+> tokom razgovora, <application
+>Kopete</application
+> će podrazumevano dati njegovu grafičku predstavu. Da biste ovu mogućnost isključili, ili izabrali drugi skup emotikona, idite pod <guilabel
+>Emotikoni</guilabel
+>. Poslednji jezičak, <guilabel
+>Boje i fontovi</guilabel
+>, ponovo je samoočigledan i u njemu se podešavaju ovi elementi prozora za ćaskanje. </para>
+<para
+><application
+>Kopete</application
+> podržava <ulink url="http://en.wikipedia.org/wiki/Webcam"
+>veb kamere</ulink
+>, ali u ovom trenutku (novembar 2010.) još uvek ima nekih poteškoća sa video ćaskanjem. Zato je na vama šta ćete uraditi sa postavkama pod <guilabel
+>Video</guilabel
+>, i vrlo je moguće da isprva neće raditi kako treba. Rešenja za probleme sa veb kamerom možete potražiti i na <ulink url="http://forum.kde.org/viewforum.php?f=18"
+>Forumima KDE‑a</ulink
+>. </para>
+</sect1>
+<sect1 id="jabber-plugins"
+><title
+>Priključci</title
+> 
+<para
+>Vrlo moćna mogućnost <application
+>Kopetea</application
+> jeste korišćenje priključaka. Jedan komplet priključaka se instalira zajedno sa <application
+>Kopeteom</application
+> (novi se mogu instalirati npr. kroz menadžer paketa vaše distribucije), i možete ih aktivirati i podesiti pod <guilabel
+>Priključci</guilabel
+>. Priključak se aktivira popunjavanjem njegove kućice. Namena većine je samoočigledna, ali ćemo najkorisnije svejedno pomenuti ovde. Aktiviranjem priključka <guilabel
+>Istorijat</guilabel
+>, <application
+>Kopete</application
+> će beležiti sva vaša ćaskanja na disk. Dnevnike možete čitati u prozoru za ćaskanje klikom na ikonicu <guilabel
+>Prikaži istorijat</guilabel
+>, ili ih otvarati kroz <menuchoice
+><guimenu
+>Alatke</guimenu
+><guimenuitem
+>Prikaži istorijat</guimenuitem
+></menuchoice
+>. </para>
+<sect2 id="otr"
+><title
+>OTR</title
+> 
+<para
+>Jedan od najvažnijih priključaka u vezi sa privatnošću jeste <ulink url="http://en.wikipedia.org/wiki/Off-the-Record_Messaging"
+>OTR</ulink
+>. Ovaj komad softvera šifruje celokupan razgovor s jednog kraja na drugi, sprečavajući treću stranu da nadgleda vaš razgovor. Pošto aktivirate ovaj priključak, morate otvoriti njegove postavke (klik na ikonicu francuskog ključa) i generisati ključ. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap015_otrgenerate.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Generisanje OTR ključa.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Generisanje OTR ključa.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Ovo može potrajati i moraćete da sačekate <application
+>Kopete</application
+> da završi. Potom zatvorite prozor OTR‑a klikom na <guilabel
+>U redu</guilabel
+>, pa onda na <guilabel
+>Primeni</guilabel
+>. Na kraju, moraćete ponovo da pokrenete <application
+>Kopete</application
+>. Zatim otvorite prozor za ćaskanje sa kontaktom sa kojim želite bezbedno da komunicirate. Idite na <menuchoice
+><guimenu
+>Alatke</guimenu
+><guisubmenu
+>Postavke OTR‑a</guisubmenu
+><guimenuitem
+>Počni OTR sesiju</guimenuitem
+></menuchoice
+> ili upotrebite ikonicu <menuchoice
+><guimenu
+>Šifrovanje OTR‑om</guimenu
+><guimenuitem
+>Počni OTR sesiju</guimenuitem
+></menuchoice
+>. <application
+>Kopete</application
+> će započeti sesiju ako je kontakt opremljen za OTR, inače ćete dobiti poruku o grešci. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap016_otrfirstuse.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Prva upotreba OTR‑a.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Prva upotreba OTR‑a.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Da biste se uverili da je dodati kontakt zaista ona osoba za koju se izdaje, neophodno je da ga autentifikujete. Ovo možete učiniti preko <menuchoice
+><guimenu
+>Alatke</guimenu
+><guisubmenu
+>Postavke OTR‑a</guisubmenu
+><guimenuitem
+>Autentifikuj kontakt</guimenuitem
+></menuchoice
+>. Na raspolaganju su vam tri opcije: </para>
+<itemizedlist>
+<listitem
+><para
+>Prva je da sagovorniku u ćaskanju postavite pitanje na koje odgovor zna samo pretpostavljena osoba. </para
+></listitem>
+<listitem
+><para
+>Sledeća mogućnost je tajna lozinka koju sagovornik mora da zna, a koju ste mu saopštili drugim bezbednim kanalom (npr. telefonom). </para
+></listitem>
+<listitem
+><para
+>Na trećem mestu je ručna provera OTR otiska. Ovo je najbezbednija opcija, ali nije previše zgodna, pa je udobnije i brže ako možete upotrebiti neku od prethodne dve. Za proveru otiska, morate od sagovornika dobiti otisak preko neke druge bezbedne veze (npr. telefona ili šifrovane e‑pošte), pa ga uporediti. </para
+></listitem>
+</itemizedlist>
+<para
+>Pretpostavimo da smo izabrali prvu opciju, pitanje sagovorniku. Unesite ga u polje i zadajte odgovor koji sagovornik mora da pruži da bi bio autentifikovan. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap017_seqretquestion.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Postavljanje tajnog pitanja.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Postavljanje tajnog pitanja.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Sagovornik će potom videti pitanje i, odgovori li tačno, OTR će biti spreman za upotrebu. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap018_otrsuccess.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kraj postavljanja OTR‑a.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kraj postavljanja OTR‑a.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>I sagovornik može učiniti isto, tako da kad vidite prozor sa zahtevom sa autentifikaciju, odgovorite na pitanje da biste bili dodati na sagovorniku listu kontakata kao autentifikovani korisnik. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap019_otrauth.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>OTR autentifikacija.</phrase>
+    </textobject>
+    <caption>
+      <para
+>OTR autentifikacija.</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Kad god komunicirate bezbedno, videćete ikonicu zelenog oklopnog katanca na vrhu prozora za ćaskanje. Bezbednu vezu okončavate ili zatvaranjem prozora za ćaskanje ili klikom na <menuchoice
+><guimenu
+>Šifrovanje OTR‑om</guimenu
+><guimenuitem
+>Završi OTR sesiju</guimenuitem
+></menuchoice
+>. </para>
+</sect2>
+</sect1>
+</appendix>

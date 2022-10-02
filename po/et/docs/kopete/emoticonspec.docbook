@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-emoticons">
+<appendixinfo>
+    <title
+>Emotikonide spetsifikatsioon</title>
+    <releaseinfo
+>Versioon 0.1</releaseinfo>
+    <date
+>07 . jaanuar 2005</date>
+    <authorgroup>
+      <author
+><firstname
+>Olivier</firstname
+> <surname
+>Goffart</surname
+> <affiliation
+> <address
+> <email
+>ogoffart@tiscalinet.be</email>
+	  </address>
+	</affiliation>
+      </author>
+    </authorgroup>
+  </appendixinfo>
+
+<title
+>Emotikonid</title>
+
+  <sect1 id="introduction-emoticons">
+    <title
+>Sissejuhatus</title>
+    <para
+>See MUSTANDDOKUMENT defineerib, kuidas luua emotikoniteemat, mida tavaliselt kasutataksae kiirsuhtlusrakendustes. </para>
+    <para
+>Põhiskeem on väga lihtne. Teema koosneb ühest alamkataloogist, mis sisaldab kõiki pilte ja &XML;-faili, mis annab igale pildile ASCII-sümbolid. Kasutada võib .directory-faili. </para>
+  <sect2 id="location">
+    <title
+>Failide asukohad</title>
+    <para
+>Spetsifikatsiooniga hõlmatud failide asukohad on määratud spetsifikatsiooniga "desktop base directory specification", mille leiab aadressilt <ulink url="http://www.freedesktop.org/standards/"
+>www.freedesktop.org</ulink
+>. </para>
+    <para
+>Kõik teema failid peavad asuma alamkataloogis <varname
+>$XDG_DATA_DIRS</varname
+>/emoticons/ Kataloogi nimi peab olema sama teema nimega. Kataloog <emphasis
+>peab</emphasis
+> sisaldama faili <varname
+>emoticons.xml</varname
+>, mille vormingut kirjeldatakse allpool. </para>
+	<para
+>Teemakataloog võib samuti sisaldada .directory-faili, mis sisaldab teema nime tõlkeid ja/või teema ikooni. </para>
+  </sect2>
+  <sect2 id="emoticons-map-format">
+    <title
+>Faili emoticons.xml vorming</title>
+    <para
+>Emotikoni määratlusfailid peavad olema korrektses vormingus XML-failid. Teostuses peab vältima tundmatuid silte ja atribuute. </para>
+    <sect3 id="emoticons-map-elements">
+      <title
+>Elemendid</title>
+      <para>
+        <variablelist>
+          <varlistentry>
+					<term
+>&lt;messaging-emoticon-map&gt; [version="0.1"]</term>
+            <listitem>
+              <para
+>Juurelement on &lt;messaging-emoticon-map&gt;, mis hõlmab kõiki teisi elemente. </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;emoticon file="..."&gt;</term>
+            <listitem>
+              <para
+>See element esindab üht emotikoni. Atribuut file on pildifaili nimi, mis peab asuma samas kataloogis. Laiendi võib ära jätta. Sel juhul otsib teostus kataloogis sama nimega ja toetatud vormingus faili. </para>
+				  <para
+>Emotikonide järjekord ei ole oluline. Kuid üldiselt genereeritakse esimese ikooni põhjal teema graafiline esitus. Tavakohaselt PEAKS see olema :-) </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;string&gt;</term>
+            <listitem>
+              <para
+>See element võib esineda ainult &lt;emoticon&gt; järel. See esindab ASCII stringi, mis sobitatakse tekstiga ning asendatakse pildiga, mille määrab emotikoni failiatribuut. </para>
+				  <para
+>Ühel emotikonil võib olla mitu stringi. </para>
+				  <para
+>Stringide järjekord emotikonis ei ole oluline. Kuid esimene PEAB olema vaikimisi string, mida kasutatakse juhul, kui pakutakse graafilist valijat. </para>
+            </listitem>
+          </varlistentry>
+	    </variablelist>
+  </para>
+    </sect3>
+  </sect2>
+
+  <sect2 id="img-format">
+    <title
+>Pildi vorming.</title>
+    <para
+>Kõik pildid PEAVAD olema toetatud vormingus: PNG, GIF või MNG. </para>
+  </sect2>
+
+  <sect2 id="implementation">
+    <title
+>Märkused teostuse kohta</title>
+	 <sect3 id="impl-parser">
+	  <title
+>Emotikonide parser</title>
+    <para
+>Selle kohta, kuidas parsida emotikone, pole kindlat soovitust. Üldiselt peaks pikema stringiga emotikoni prioriteet olema kõrgem kui lühema stringiga emotikonil. (Näiteks kui teemas on nii  :-() kui ka :-(, siis tuleks kasutada esimese pilti juhul, kui esineb  :-() ). </para>
+</sect3>
+</sect2>
+
+<sect2 id="example">
+	  <title
+>Näide</title>
+	  <para>
+			 <programlisting
+>&lt;messaging-emoticon-map&gt;
+        &lt;emoticon file="smile.png"&gt;
+                        &lt;string&gt;:-)&lt;/string&gt;
+                        &lt;string&gt;:)&lt;/string&gt;
+                        &lt;string&gt;:o)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="wink.png"&gt;
+                        &lt;string&gt;;-)&lt;/string&gt;
+                        &lt;string&gt;;)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="unhappy.png"&gt;
+                        &lt;string&gt;:-(&lt;/string&gt;
+                        &lt;string&gt;:(&lt;/string&gt;
+        &lt;/emoticon&gt;
+&lt;/messaging-emoticon-map&gt;
+
+ </programlisting>
+</para>
+</sect2>
+
+<!--sect2 id="todo">
+	  <title
+>TODO</title>
+	  <para>
+			 A DTD of the XML file
+	  </para>
+</sect2-->
+</sect1>
+</appendix>
+

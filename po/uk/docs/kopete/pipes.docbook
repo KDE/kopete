@@ -1,0 +1,189 @@
+<!-- Copyright (c) 2008 by Charles Connell <charles@connells.org
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="pipes">
+<title
+>Довідник з розробки для додатка каналів &kopete;</title>
+<para
+>Починаючи з версії &kopete; 1.0, &kopete; постачається з додатком під назвою «Канал». Канали надають вам змогу пропускати ваші вхідні і вихідні повідомлення через зовнішній скрипт або виконуваний файл. Вхідне повідомлення буде пропущено через виконуваний файл до того, як потрапити до вікна спілкування,  а вихідне повідомлення — до надсилання цього повідомлення мережею Інтернет. Канали можуть отримувати текст у одній з трьох форм: <variablelist
+> <varlistentry
+> <term
+>Звичайний текст</term
+> <listitem
+><para
+>Текст повідомлення у вигляді тексту &ascii;</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Текст повідомлення у &HTML;</term
+> <listitem
+><para
+>Текст повідомлення як код &HTML; у тому вигляді, як його було надіслано як HTML вашим співрозмовником, і у якому його буде показано у вікні спілкування</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Повідомлення у вигляді повноцінного &XML;</term
+> <listitem
+><para
+>Документ &XML;, у якому описано всі характеристики повідомлення, зокрема код &HTML;.</para
+></listitem
+> </varlistentry
+> </variablelist
+> У цьому документі описано специфічні особливості формату &XML; та подано настанови щодо написання програм для його обробки. </para>
+
+<sect1 id="xml-output">
+<title
+>Вихідний &XML;</title>
+<para
+>Ось приклад того, що програма отримає у стандартному вхідному потоці: <literallayout>
+&lt;?xml version="1.0" encoding="ISO-8859-1"?>
+&lt;message subject=""
+        route="outbound"
+        importance="1"
+        formattedTimestamp="11:06:46 am"
+        timestamp="Sat Dec 1 11:06:46 2007"
+        type="normal"
+        mainContactId="spacemonkey1234"
+        time="11:06 am" >
+        &lt;from>
+                &lt;contact contactId="tdurden"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/oscarpictures/tdurden.jpg" >
+                        &lt;contactDisplayName dir="ltr" text="tdurden" />
+                        &lt;metaContactDisplayName dir="ltr"
+                                text="Tyler" />
+                &lt;/contact>
+        &lt;/from>
+        &lt;to>
+                &lt;contact contactId="spacemonkey1234"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/avatars/User/7e542903e0ac7519a7496e85f5a5b99d.png" >
+                        &lt;contactDisplayName dir="ltr" text="spacemonkey1234" />
+                        &lt;metaContactDisplayName dir="ltr" text="Robert Paulson" />
+                &lt;/contact>
+                &lt;/to>
+        &lt;body dir="ltr"
+                bgcolor="#000000"
+                color="#000000" >
+                &amp;lt;span style=" color:#000000;"
+>hey&amp;lt;/span
+>&lt;/body>
+&lt;/message>
+</literallayout
+> Цей код &XML; у загальних рисах засновано на XSD, що використовується у стилях спілкування і знаходиться на <ulink url="http://kopete.kde.org/files/kopetemessage.xsd"
+>сайті Kopete</ulink
+>. У коді подано одне повідомлення. Існує декілька речей, які слід зауважити: <itemizedlist>
+<listitem
+><para
+>Атрибут «timestamp» у елементі «message» подано у стандартному форматі ISO 8601.</para
+></listitem>
+<listitem
+><para
+>Атрибут «protocolIcon» у елементі «contact» буде вибрано у такий спосіб: <orderedlist>
+<listitem
+><para
+>Якщо об’єкт контакту має встановлену властивість «фотографія», буде використано шлях до фотографії.</para
+></listitem>
+<listitem
+><para
+>Якщо такої властивості не встановлено, буде проведено пошук зображення у метаконтакті контакту. Результат буде використано незалежно від того, чи буде він нульовим, чи ні.</para
+></listitem>
+</orderedlist>
+</para
+></listitem>
+<listitem
+><para
+>Атрибути «color» і «bgcolor» у елементі «body» є порожніми рядками, якщо їх не встановлено у Kopete. Ці атрибути буде подано у форматі вебкольорів.</para
+></listitem>
+<listitem
+><para
+>Вміст елемента «body» слід екранувати символом «&lt;», щоб його не можна було сплутати з справжньою структурою &XML;. Очевидно, щоб правильно розпізнати текст повідомлення як HTML, слід перетворити всі «amp;lt;» на «&lt;».</para
+></listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1 id="xml-input">
+<title
+>Вхідний &XML;</title>
+<para
+>Ваша програма отримуватиме &XML; у потоці вхідної інформації, зможе змінити цю інформацію, а потім передати змінену інформацію до &kopete; за посередництва стандартного вихідного потоку інформації. Якщо ваша програма змінить перелічені нижче елементи, внутрішні дані, які отримає &kopete; щодо зміненого повідомлення, відображатимуть внесені вами зміни. <itemizedlist
+> <listitem
+><para
+>атрибут «timestamp» елемента «message», але не інші часові атрибути</para
+></listitem
+> <listitem
+><para
+>атрибут «subject» елемента «message» </para
+></listitem
+> <listitem
+><para
+>атрибут «type» елемента «message»</para
+></listitem
+> <listitem
+><para
+>атрибут «importance» елемента «message»</para
+></listitem
+> <listitem
+><para
+>атрибут «color» елемента «body». Зазвичай значенням такого атрибута є вебномер кольору, але можна встановити і назву кольору. Назви кольорів, які визначаються у стандарті <ulink url="http://www.w3.org/TR/SVG/types.html#ColorKeywords"
+>SVG</ulink
+>, є прийнятними для параметра QColor у Qt 4, отже, можна використовувати лише ці назви.</para
+></listitem
+> <listitem
+><para
+>атрибут «color» елемента «bgbody», — ті самі зауваження, що і для «color»</para
+></listitem
+> <listitem
+><para
+>вміст елемента "body"</para
+></listitem
+> </itemizedlist
+> Якщо ви зміните елементи або їх атрибути, які не було згадано вище за текстом, ці зміни не вплинуть на показ повідомлень. </para>
+</sect1>
+
+<sect1 id="acceptable-values">
+<title
+>Прийнятні значення</title>
+<para
+>Деякі з атрибутів мають обмежену множину прийнятних значень. У вихідному потоці додатка «Канали» завжди будуть коректні значення. Якщо ваша програма намагатиметься змінити ці атрибути, їх значення має залишатися коректним. Якщо цю вимогу не буде виконано, поведінка &kopete; може бути непередбачуваною. <variablelist>
+<varlistentry
+><term
+>Атрибут «route» елемента «message»</term
+><listitem
+><para
+>Повинен мати значення «inbound», «outbound» або «internal»</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Атрибут «type» елемента «message»</term
+><listitem
+><para
+>Повинен мати значення «action» або «normal»</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Атрибут «importance» елемента «message»</term
+><listitem
+><para
+>Повинен мати значення «0» (низька важливість), «1» (звичайна важливість) або «2» (підвищена важливість)</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Атрибут «dir» у багатьох елементах</term
+><listitem
+><para
+>Повинен мати значення «ltr» (для правописних систем запису) або «rtl» (для лівописних систем запису)</para
+></listitem
+></varlistentry>
+</variablelist>
+</para>
+</sect1>
+
+</appendix>

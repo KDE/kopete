@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-icq">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Aquesta documentació s'ha convertit des de la pàgina «<ulink url=" http://userbase.kde.org/Kopete/ICQ"
+>Kopete/ICQ</ulink
+>» de KDE UserBase.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+&traductor.Antoni.Bella; 
+    </authorgroup>
+<date
+>6 de gener de 2011</date>
+    <releaseinfo
+>&kde; SC 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2011-01-06T06:11:26Z</timestamp
+>-->
+<title
+>El manual d'ICQ</title>
+<!--userbase-content-->
+<sect1 id="about-icq"
+><title
+>Quant a ICQ</title>
+<para
+>Aquesta guia d'aprenentatge us ajudarà a utilitzar ICQ, un protocol de xat comú al &kopete;. </para>
+<para
+><ulink url="http://www.icq.com/en.html"
+>ICQ</ulink
+> és un programa de missatgeria instantània patentat, desenvolupat per l'empresa israeliana Mirabilis. Utilitza el protocol de xarxa OSCAR d'AOL per enviar els missatges de text. Per identificar les persones, utilitza un nombre, anomenat UIN (Unified Identification Number -nombre d'identificació únic-). Si registreu un compte d'ICQ, també haureu d'introduir una adreça de correu electrònic. Alguns clients ICQ accepten entrar amb aquesta adreça de correu electrònic en lloc del vostre UIN (però no el &kopete;). </para>
+<sect2 id="features"
+><title
+>Característiques</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Missatges fora de línia </para
+></listitem>
+<listitem
+><para
+>Xat multiusuari </para
+></listitem>
+<listitem
+><para
+>Transferència de fitxers </para
+></listitem>
+</itemizedlist>
+<sect3 id="features-not-yet-supported-by-kopete"
+><title
+>Característiques encara no suportades per Kopete</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Jocs </para
+></listitem>
+<listitem
+><para
+>Enviament d'SMS </para
+></listitem>
+</itemizedlist>
+</sect3>
+</sect2>
+<sect2 id="criticism"
+><title
+>Crítica</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Privacitat: d'acord amb l'analista de seguretat Carr Jeffrey, el servei secret rus podria obtenir accés als protocols de xat. Per a més informació veure <ulink url="http://greylogic.us/2010/07/13/your-icq-identity-now-belongs-to-the-fsb/"
+>aquí</ulink
+>. </para
+></listitem>
+<listitem
+><para
+>Correu brossa: hi ha una gran quantitat de correu brossa (publicitat no desitjada o virus) a la xarxa ICQ. </para
+></listitem>
+<listitem
+><para
+>Drets d'autor: d'acord amb la <ulink url="http://www.icq.com/legal/policy.html"
+>Política d'ús acceptable d'ICQ</ulink
+>, esteu permetent que ICQ utilitzi el material publicat en qualsevol manera que considerin adequada. </para
+></listitem>
+</itemizedlist>
+ 
+</sect2>
+</sect1>
+<sect1 id="create-your-icq-account"
+><title
+>Crear el vostre compte d'ICQ</title
+> 
+<para
+>Abans de poder xatejar a través d'ICQ, haureu de crear un compte d'ICQ. Si ja en teniu un, podeu saltar aquesta pàgina. </para>
+<para
+>Aneu a la pàgina de registre amb el vostre navegador web preferit (&pex;, <guilabel
+>Firefox</guilabel
+>, <guilabel
+>Konqueror</guilabel
+>, <guilabel
+>Chromium</guilabel
+>) <ulink url="https://www.icq.com/register/"
+>www.icq.com/register</ulink
+> </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_create_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Introduïu les vostres dades.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Introduïu les vostres dades.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Ara us haureu d'esperar fins que rebeu un correu electrònic des d'ICQ, el qual contindrà un enllaç de verificació. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_activate_new_account1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Feu clic a l'enllaç de verificació en el vostre correu electrònic per a verificar el registre.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Feu clic a l'enllaç de verificació en el vostre correu electrònic per a verificar el registre.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Ara ja teniu el vostre compte ICQ! Però de moment, amb el &kopete; només hi podreu entrar utilitzant un UIN (nombre d'identificació únic). ICQ no us està mostrant el vostre UIN per omissió. Haureu d'anar amb el navegador a <ulink url="https://www.icq.com/people"
+>www.icq.com/people</ulink
+> i accedir-hi. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_log_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Accedir a www.icq.com</phrase>
+    </textobject>
+    <caption>
+      <para
+>Accedir a www.icq.com</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Llavors haureu d'anar al vostre perfil: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_go_to_profile.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Feu clic sobre El meu perfil.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Feu clic sobre El meu perfil.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Ara obtindreu una pàgina d'informació quant al compte. Si feu clic a <quote
+>Quant a mi</quote
+>, veureu una entrada anomenada ICQ#. Aquest és el vostre UIN: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_uin.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="connect-through-kopete"
+><title
+>Connectar-hi a través del &kopete;</title>
+<para
+>La primera vegada que s'inicia el &kopete;, veureu una finestra com aquesta: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_first_start.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kopete durant el primer inici.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kopete durant el primer inici.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Per afegir el vostre compte d'ICQ feu clic a <guilabel
+>Cliqueu per afegir un compte nou</guilabel
+>. O si ja heu entrat en un altre compte (com MSN o Jabber) aneu al menú <menuchoice
+><guimenu
+>Arranjament</guimenu
+><guimenuitem
+>Configura...</guimenuitem
+></menuchoice
+> i feu clic a <guilabel
+>Afegeix un compte</guilabel
+>. </para>
+<para
+>Ara veureu una llista de tots els protocols de xat disponibles per a &kopete;. En aquest cas, haureu de triar l'entrada ICQ: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Escolliu el vostre protocol.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Escolliu el vostre protocol.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>A continuació veureu el diàleg de configuració pel vostre compte. Feu clic a <guilabel
+>Configuració bàsica</guilabel
+> a la barra de pestanyes. Haureu d'introduir el vostre UIN. Si no voleu introduir la contrasenya cada vegada, també li podeu afegir. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_setup.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Configuració bàsica del compte.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Configuració bàsica del compte.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>La pestanya <guilabel
+>Preferències del compte</guilabel
+> conté opcions més detallades: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_preferences.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Més paràmetres.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Més paràmetres.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>&kopete; hauria de funcionar sense canviar aquí cap opció de configuració. Així que si no enteneu els punts esmentats a continuació, no us preocupeu, feu cas omís d'aquesta secció. </para>
+</sect1>
+<sect1 id="options-explained"
+><title
+>Explicació de les opcions</title
+> 
+<itemizedlist>
+<listitem
+><para
+><guilabel
+>Requerir autorització abans que ningú us pugui afegir a la vostra llista de contactes:</guilabel
+> Escolliu aquesta opció si voleu que se us demani abans que algú altre us afegeixi a la seva llista d'amics. Normalment, cadascú pot realitzar cerques i afegir-vos a la seva llista. Això vol dir que qualsevol estrany no podrà veure si esteu connectat o si podrà enviar-vos missatges. Si no voleu això, podeu marcar aquesta opció i a partir de llavors us demanarà si voleu confirmar abans que algú pugui xatejar amb vosaltres. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Oculta l'adreça IP:</guilabel
+> Si no voleu que els altres vegin la vostra <ulink url="http://ca.wikipedia.org/wiki/Adreça_IP"
+>IP</ulink
+>, podeu marcar aquesta opció. L'adreça IP és un ID per identificar-vos a Internet. Aquest nombre és únic. Un usuari d'Internet mitjà no pot obtenir el vostre nom des de la vostra adreça IP, només pot fer-ho el vostre proveïdor! ICQ desa l'adreça IP de totes maneres per a una hora específica. De manera que no és un problema de privacitat real el no escollir aquesta opció. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Fes el meu estat disponible via el centre unificat de missatges ICQ:</guilabel
+> Si escolliu aquesta opció, el vostre estat serà publicat al centre de missatgeria (visible per a tothom a www.icq.com/people). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Substitueix la Informació per defecte del servidor:</guilabel
+> Si voleu modificar l'adreça amb la qual el &kopete; accedeix a la xarxa ICQ, aquesta opció ho fa possible (normalment aquesta opció no serà necessària). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Habilita el servidor intermediari:</guilabel
+> connecta a través d'un <ulink url="http://en.wikipedia.org/wiki/Proxy_server"
+>servidor intermediari</ulink
+>. Els servidors intermediaris són servidors que sol·liciten transferències. Algunes companyies, escoles i universitats utilitzen aquests servidors per a denegar l'accés a alguns llocs web. Els usuaris que es connecten des de casa no necessiten aquesta opció. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Interval del port::</guilabel
+> Aquesta opció li diu a &kopete; quins ports s'han d'utilitzar per a la connexió P2P. Una explicació més detallada d'aquesta característica queda fora de l'abast d'aquesta documentació. Si voleu obtenir més informació, mireu l'<ulink url="http://en.wikipedia.org/wiki/Port_numbers"
+>article de la Wikipedia</ulink
+>. Normalment, no tindreu cap problema amb la configuració per omissió. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Temps d'espera:</guilabel
+> defineix quants segons ha d'esperar el &kopete; abans de tallar aquest tipus de connexions. Per exemple, envieu un fitxer a un dels vostres contactes, però la connexió a Internet del vostre contacte està ocupada, així que no el rep. Aquesta opció li diu al &kopete; quant de temps ha d'intentar enviar-lo. Normalment, no ho haureu de canviar. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Codificació per omissió:</guilabel
+> estableix la codificació dels missatges. Els usuaris de Windows utilitzen la codificació <quote
+>windows-125*</quote
+> (windows-1250 a windows-1258), de manera que si xatejareu amb usuaris de Windows, escolliu aquesta opció. Fins i tot si només xategeu amb persones que no fan servir Windows és probable que també utilitzin l'opció windows-125* (perquè potser xategen amb gent que utilitza Windows). Les diferents codificacions de Windows són per als diferents països. Escolliu la més adequada (per exemple, <quote
+>Occidental Windows-1252</quote
+> per a països com França o Alemanya). La diferència entre aquestes codificacions són només alguns caràcters especials, de manera que si no es visualitzen correctament, proveu amb una altra. </para
+></listitem>
+</itemizedlist>
+<para
+>Ara que heu configurat correctament el vostre compte d'ICQ. Podeu fer clic a <guilabel
+>Següent</guilabel
+> i <guilabel
+>Acaba</guilabel
+>. Si teniu més d'un compte, podeu escollir diferents colors, de manera que pugueu veure amb facilitat els contactes que provenen de cada compte. </para>
+</sect1>
+<sect1 id="add-a-contact"
+><title
+>Afegir un contacte</title
+> 
+<para
+>Ara que ha connectat el &kopete; i el vostre compte. La finestra s'assemblarà a això: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_logged_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Connectat.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Connectat.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Per afegir un contacte premeu <guilabel
+>Afegeix</guilabel
+> a la barra d'eines i escolliu el vostre compte (en aquest cas, és el vostre UIN), o podeu utilitzar el menú <menuchoice
+><guimenu
+>Fitxer</guimenu
+><guisubmenu
+>Afegeix contacte</guisubmenu
+><guimenuitem
+><replaceable
+>«el vostre compte»</replaceable
+></guimenuitem
+></menuchoice
+>. Podeu introduir l'UIN de la persona que voleu afegir. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_add_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Si no coneixeu l'UIN, però potser el sobrenom o l'adreça de correu electrònic d'una persona, també és possible cercar el vostre contacte. Feu clic al botó <guilabel
+>Cerca</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_search_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>També és possible cercar els UIN.</phrase>
+    </textobject>
+    <caption>
+      <para
+>També és possible cercar els UIN.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="being-added"
+><title
+>Ser afegit com a contacte</title
+> 
+<para
+>Si utilitzeu ICQ, és molt probable que una altra persona us afegeixi com a contacte. Si succeeix, &kopete; mostrarà un missatge que conté l'UIN de la persona que us vol afegir a la seva llista. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_added.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Sol·licitud d'autorització.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Sol·licitud d'autorització.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Per obtenir més informació sobre la persona feu clic a <guilabel
+>Informació...</guilabel
+>. S'obrirà una finestra amb tota la informació disponible sobre aquesta persona. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_information.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Informació.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Informació.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Ara podreu autoritzar o bloquejar aquesta persona. Si l'autoritzeu, podreu xatejar-hi i viceversa, si la bloquegeu, no hi podreu parlar. </para>
+</sect1>
+<sect1 id="chatting"
+><title
+>Xatejar</title
+> 
+<para
+>Per a xatejar, feu clic sobre un dels vostres contactes. Apareixerà una finestra de xat. Llavors podreu escriure text i enviar-lo. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_chat_window.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Xatejant amb els vostres contactes.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Xatejant amb els vostres contactes.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>També és possible enviar missatges a persones que estan fora de línia. Elles rebran el vostre missatge quan es connectin. </para>
+</sect1>
+<sect1 id="spam"
+><title
+>Correu brossa</title
+> 
+<para
+>Lamentablement, hi ha una gran quantitat de correu brossa (són missatges no desitjats, normalment publicitat o virus) a la xarxa ICQ. Per evitar-lo, només heu d'autoritzar a persones conegudes. Realment no s'hi pot fer res. Simplement ignoreu-lo! </para>
+</sect1>
+</appendix>

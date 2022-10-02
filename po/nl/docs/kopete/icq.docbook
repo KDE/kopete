@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-icq">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Deze documentatie is geconverteerd uit de pagina in de KDE UserBase <ulink url=" http://userbase.kde.org/Kopete/ICQ"
+>Kopete/ICQ</ulink
+>.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+&Freek.de.Kruijf; 
+    </authorgroup>
+<date
+>2011-01-06</date>
+    <releaseinfo
+>&kde; SC 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2011-01-06T06:11:26Z</timestamp
+>-->
+<title
+>Het handboek van ICQ</title>
+<!--userbase-content-->
+<sect1 id="about-icq"
+><title
+>Info over ICQ</title>
+<para
+>Deze snelcursus legt uit hoe ICQ te gebruiken, een algemeen chat-protocol in &kopete;. </para>
+<para
+><ulink url="http://www.icq.com/en.html"
+>ICQ</ulink
+> is een particulier programma voor instant-messaging, eerst ontwikkeld door het Israëlische bedrijf Mirabilis. Het gebruikt het OSCAR-netwerkprotocol van AOL voor het verzenden van tekstberichten. Om mensen te identificeren gebruikt het een nummer, genaamd UIN (Unified Identification Number). Als u een ICQ-account registreert, moet u ook een e-mailadres ingeven. Sommige ICQ-clients ondersteunen aanmelden met dat e-mailadres in plaats van uw UIN (maar &kopete; niet). </para>
+<sect2 id="features"
+><title
+>Eigenschappen</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Offline berichten </para
+></listitem>
+<listitem
+><para
+>chat met meer dan één gebruiker </para
+></listitem>
+<listitem
+><para
+>bestandsoverdracht </para
+></listitem>
+</itemizedlist>
+<sect3 id="features-not-yet-supported-by-kopete"
+><title
+>Functies die nog niet ondersteund worden door Kopete</title
+> 
+<itemizedlist>
+<listitem
+><para
+>spellen </para
+></listitem>
+<listitem
+><para
+>SMS wordt verzonden </para
+></listitem>
+</itemizedlist>
+</sect3>
+</sect2>
+<sect2 id="criticism"
+><title
+>Kritiek</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Privacy: volgens de beveiligingsanalyst Jeffrey Carr, kan de Russische geheime dienst toegang krijgen tot chat-protocols. Voor verdere informatie zie <ulink url="http://greylogic.us/2010/07/13/your-icq-identity-now-belongs-to-the-fsb/"
+>hier</ulink
+> </para
+></listitem>
+<listitem
+><para
+>Spam: er is heel wat spam (ongewenste advertenties of viruses) in het ICQ netwerk </para
+></listitem>
+<listitem
+><para
+>Copyright: volgens de <ulink url="http://www.icq.com/legal/policy.html"
+>ICQ Acceptable Use Policy</ulink
+> staat u ICQ toe om gepost materiaal op elke manier, die zij willen, te gebruiken </para
+></listitem>
+</itemizedlist>
+ 
+</sect2>
+</sect1>
+<sect1 id="create-your-icq-account"
+><title
+>Maak uw ICQ-account aan</title
+> 
+<para
+>Voordat u via ICQ kunt chatten moet u een ICQ-account hebben. Als u er al een heeft kunt u deze pagina overslaan. </para>
+<para
+>Ga naar de registratiepagina met de webbrowser van uw voorkeur (&eg; <guilabel
+>Firefox</guilabel
+>, <guilabel
+>Konqueror</guilabel
+>, <guilabel
+>Chromium</guilabel
+>) <ulink url="https://www.icq.com/register/"
+>www.icq.com/register</ulink
+> </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_create_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Voer uw gegevens in</phrase>
+    </textobject>
+    <caption>
+      <para
+>Voer uw gegevens in</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nu moet u wachten totdat u een e-mail krijgt van ICQ, die uw koppeling voor verificatie bevat. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_activate_new_account1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>klik op de koppeling voor verificatie in uw e-mailbericht om uw registratie te bevestigen</phrase>
+    </textobject>
+    <caption>
+      <para
+>klik op de koppeling voor verificatie in uw e-mailbericht om uw registratie te bevestigen</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nu bent u in het bezit van uw ICQ-account! Op dat moment echter kunt u alleen zich aanmelden met Kopete met UIN's (Unified Identification Number). ICQ toont niet standaard uw UIN. U moet met uw browser naar <ulink url="https://www.icq.com/people"
+>www.icq.com/people</ulink
+> gaan en zich daar aanmelden. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_log_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>aanmelden op www.icq.com</phrase>
+    </textobject>
+    <caption>
+      <para
+>aanmelden op www.icq.com</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Daarna moet u naar uw profiel gaan: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_go_to_profile.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>klik op My Profile</phrase>
+    </textobject>
+    <caption>
+      <para
+>klik op My Profile</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>U krijgt nu een informatiepagina met uw account. Als u op <quote
+>More about me</quote
+> klikt krijgt u een item te zien genaamd ICQ#. Dit is uw UIN: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_uin.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="connect-through-kopete"
+><title
+>Verbinden via Kopete</title>
+<para
+>De eerste keer dat u &kopete; start ziet u een venster zoals deze: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_first_start.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kopete op het moment van de eerste keer starten</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kopete op het moment van de eerste keer starten</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Om uw ICQ-account toe te voegen klikt u op <guilabel
+>Klik om een account toe te voegen</guilabel
+>. Of als u al ander account hebt ingevoerd (zoals MSN of Jabber) gaat u naar het menu <menuchoice
+><guimenu
+>Instellingen</guimenu
+><guimenuitem
+>Instellen...</guimenuitem
+></menuchoice
+> en klik op <guilabel
+>Account toevoegen</guilabel
+>. </para>
+<para
+>U ziet dan een lijst met alle in &kopete; beschikbare chat-protocollen. In dit geval, als u ICQ wilt gebruiken, moet u het ICQ item kiezen: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kies uw protocol</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kies uw protocol</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>U ziet nu de instellingendialoog voor uw account. Klik op <guilabel
+>Basis instelling</guilabel
+> bovenaan in de tabbladbalk. Daar moet u uw UIN invoeren. Als u niet elke keer dat u opstart uw wachtwoord wilt invoeren, kunt u uw wachtwoord ook invoeren. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_setup.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Basisinstellingen van uw account</phrase>
+    </textobject>
+    <caption>
+      <para
+>Basisinstellingen van uw account</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Het tabblad <guilabel
+>Voorkeuren voor account</guilabel
+> bevat meer gedetailleerde instellingen: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_preferences.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Meer instellingen</phrase>
+    </textobject>
+    <caption>
+      <para
+>Meer instellingen</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>&kopete; zou nu moeten werken zonder hier enige instelling te wijzigen. Dus als u de onderstaande punten niet begrijpt, geen paniek, sla deze over. </para>
+</sect1>
+<sect1 id="options-explained"
+><title
+>Opties uitgelegd</title
+> 
+<itemizedlist>
+<listitem
+><para
+><guilabel
+>Autorisatie eisen voordat iemand u kan toevoegen aan hun lijst met contactpersonen:</guilabel
+> Kies deze optie als u gevraagd wilt worden voordat iemand anders u kan toevoegen aan zijn buddy-lijst. Normaal kan iedereen u zoeken en toevoegen aan zijn lijst. Dit betekent dat iedere vreemdeling die u zelfs niet kent u kunt zien of u online bent of niet of u berichten kan zenden. Als u dat niet wilt kunt u deze opties activeren en daarna zult u worden gevraagd of u wilt iemand bevestigen voordat deze met u een chat kan doen. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>IP-adres verbergen:</guilabel
+> Als u niet wilt dat anderen uw <ulink url="http://en.wikipedia.org/wiki/IP_address"
+>IP-adres</ulink
+>, dan kunt deze optie activeren. Het IP-adres is een ID om u te identificeren in het internet. Dit nummer is uniek. Een gemiddelde internetgebruiker kan uw naam niet uit uw IP-adres halen, alleen uw provider kan dat doen! ICQ slaat uw IP-adres in elk geval gedurende een specifieke tijd op. Het is dus geen echt privacyprobleem deze optie niet te activeren. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Mijn status beschikbaar maken via ICQ's berichtencentrum:</guilabel
+> Als u deze optie kiest zal uw status publiek worden gemaakt op het berichtencentrum (zichtbaar voor iedereen op www.icq.com/people). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Standaard serverinformatie overschrijven:</guilabel
+> Als u het adres waar &kopete; u aanmeldt aan het ICQ-network wilt wijzigen, dan maakt deze optie het mogelijk (normaal heeft u deze instelling niet nodig). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Proxy activeren:</guilabel
+> verbindt via een <ulink url="http://nl.wikipedia.org/wiki/Proxyserver"
+>Proxyserver</ulink
+>. Proxyservers zijn servers die verbindingen doorgeven. Sommige bedrijven, scholen en universiteiten gebruiken deze servers om toegang tot sommige websites te verbieden. Gebruikers die vanaf hun thuis verbinden hebben deze instelling niet nodig. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Poortbereik:</guilabel
+> Deze optie vertelt &kopete; welke poorten gebruikt zouden moeten worden voor peer-to-peer verbindingen. Verdere uitleg over de functies van poorten zou hier te ver gaan. Als u meer informatie wilt neem dan een kijkje op het <ulink url="http://nl.wikipedia.org/wiki/TCP-_en_UDP-poorten"
+>Wikipedia artikel</ulink
+>. Normaal zal u geen problemen hebben met de standaard instellingen. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Timeout:</guilabel
+> definieert, hoeveel seconden &kopete; zou moeten wachten voordat het verbinding laat vallen. Wanneer u bijvoorbeeld een bestand verzendt naar een van uw contactpersonen maar de internetverbinding met uw contactpersoon heeft problemen zodat deze het bestand niet ontvangt. Deze optie vertelt &kopete; hoe lang het moet proberen om het bestand te verzenden. Normaal hoeft u dit niet te wijzigen. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Standaard codering:</guilabel
+> stelt de codering in van de berichten. Gebruikers van Windows zullen de codering <quote
+>windows-125*</quote
+> (windows-1250 tot windows-1258) gebruiken, dus als u met gebruikers van Windows gaat chatten, kies dan deze optie. En zelfs als u alleen praat met personen die geen Windows gebruiken is het waarschijnlijk dat ze ook de instelling windows-125* gebruiken (omdat zij misschien chatten met mensen die Windows gebruiken). De verschillende coderingen van Windows zijn er voor verschillende landen. Kies diegene die het best overeenkomt (bijvoorbeeld de <quote
+>Windows-1252 Western</quote
+> voor landen zoals Frankrijk of Duitsland). De verschillen tussen deze coderingen zijn slechts enkele speciale tekens, dus als ze niet juist worden weergegeven probeert u een andere. </para
+></listitem>
+</itemizedlist>
+<para
+>U hebt nu met succes uw ICQ-account ingesteld. U kunt dan klikken op <guilabel
+>Volgende</guilabel
+> en <guilabel
+>Beëindigen</guilabel
+>. Als u meer dan een account hebt kunt u verschillende kleuren voor ze kiezen, zodat u gemakkelijk kunt zien welke contacten behoren bij welk account. </para>
+</sect1>
+<sect1 id="add-a-contact"
+><title
+>Een contactpersoon toevoegen</title
+> 
+<para
+>U hebt nu &kopete; en uw account verbonden. Het venster zou er uit moeten zien als deze: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_logged_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Verbonden</phrase>
+    </textobject>
+    <caption>
+      <para
+>Verbonden</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Om een contactpersoon toe te voegen drukt u in de werkbalk op <guilabel
+>Toevoegen</guilabel
+> en kiest u uw account (in dit geval is het uw UIN) of u kunt het menu <menuchoice
+><guimenu
+>Bestand</guimenu
+><guisubmenu
+>Contactpersoon toevoegen</guisubmenu
+><guimenuitem
+><replaceable
+>uw account</replaceable
+></guimenuitem
+></menuchoice
+>. U kunt daar de UIN van de persoon die u wilt toevoegen invoeren. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_add_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Als u de UIN niet weet, maar misschien de schermnaam of het e-mailadres van een persoon, dan is het ook mogelijk naar uw contactpersoon te zoeken. Klik op de knop <guilabel
+>Zoeken</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_search_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Het is ook mogelijk naar UIN's te zoeken</phrase>
+    </textobject>
+    <caption>
+      <para
+>Het is ook mogelijk naar UIN's te zoeken</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="being-added"
+><title
+>Toegevoegd worden</title
+> 
+<para
+>Als u ICQ gebruikt, is zeer wel mogelijk dat u toegevoegd wordt door iemand anders. Als dat gebeurt zal &kopete; een bericht tonen met de UIN van de persoon die u toe wil voegen aan zijn/haar lijst. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_added.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>autorisatieverzoek</phrase>
+    </textobject>
+    <caption>
+      <para
+>autorisatieverzoek</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Om meer informatie over de persoon te krijgen klikt u op <guilabel
+>Info...</guilabel
+>. Er zal een venster worden geopend die alle beschikbare informatie over de persoon bevat. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_information.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Informatie</phrase>
+    </textobject>
+    <caption>
+      <para
+>Informatie</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nu kunt u de persoon autoriseren of blokkeren. Als u deze autoriseert kunt u met hem of haar chatten en vice versa, als u hen of haar blokkeert kan deze niet met u praten. </para>
+</sect1>
+<sect1 id="chatting"
+><title
+>Chatten</title
+> 
+<para
+>Om te chatten klikt u op een van uw contactpersonen. Er zal een chat-venster verschijnen. Daar kunt u uw tekst invoeren en verzenden. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_chat_window.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Chatten met uw contactpersonen</phrase>
+    </textobject>
+    <caption>
+      <para
+>Chatten met uw contactpersonen</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Het is ook mogelijk berichten naar personen te zenden die offline zijn. Zij zullen uw bericht ontvangen zodra ze online gaan. </para>
+</sect1>
+<sect1 id="spam"
+><title
+>Ongewenste post</title
+> 
+<para
+>Helaas is er heel veel spam (spam zijn berichten die u niet wilt, gewoonlijk advertenties of virussen) op het ICQ-netwerk. Om spam te vermijden moet u alleen mensen autoriseren die u kent. Er is niets dat u er echt tegen dit probleem kunt doen. Negeer het! </para>
+</sect1>
+</appendix>

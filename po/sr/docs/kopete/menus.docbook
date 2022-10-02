@@ -1,0 +1,963 @@
+<!-- Kopete Handbook, Menus Chapter copyright 2003 Will Stephenson.  Licensed under the GNU Free Documentation License -->
+<chapter id="menus">
+<title
+>Ставке менија</title>
+
+<para
+>Свака ставка менија описана је испод. Ако постоји пречица са тастатуре која ради исто што и ставка менија, подразумевана пречица наведена је уз њу.</para>
+<sect1 id="menus-contactlist">
+<title
+>Менији прозора листе контаката</title>
+<sect2 id="menus-contactlist-file">
+<title
+>Мени Фајл</title>
+
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Фајл</guimenu
+> <guisubmenu
+>Постави стање</guisubmenu
+> <guimenuitem
+>на вези</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Иде на везу са свим налозима.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Фајл</guimenu
+> <guisubmenu
+>Постави стање</guisubmenu
+> <guimenuitem
+>одсутан</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Поставља све повезане налоге на одсутност.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Фајл</guimenu
+> <guisubmenu
+>Постави стање</guisubmenu
+> <guimenuitem
+>ван везе</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Поставља све налоге ван везе.</para>
+</listitem>
+</varlistentry>
+<!--FIXME missing Set Status Invisible, Busy, Edit Messages, Edit Statuses-->
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Фајл</guimenu
+> <guimenuitem
+>Додај контакт</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Позива чаробњак за додавање контаката, којим на листу додајете нови контакт.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Фајл</guimenu
+> <guimenuitem
+>Направи нову групу...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Пита вас за име нове групе и додаје је на листу контаката.</para>
+</listitem>
+</varlistentry>
+<!--FIXME missing Export Contacts-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Фајл</guimenu
+> <guimenuitem
+>Напусти</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Прекида везу са свим ИМ системима, затвара све прозоре и напушта програм.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-contactlist-edit">
+<title
+>Мени Уређивање</title>
+<variablelist>
+<!--FIXME not in Edit menu
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Z</keycap
+></keycombo>
+</shortcut>
+<guimenu
+>Edit</guimenu>
+<guimenuitem
+>Undo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Reverts the last change that was made to the contact list.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>Z</keycap
+></keycombo>
+</shortcut>
+<guimenu
+>Edit</guimenu>
+<guimenuitem
+>Redo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Reverts the last change that was made to the contact list by <guimenu
+>Edit</guimenu
+><guimenuitem
+>Undo</guimenuitem
+></para>
+</listitem>
+</varlistentry>
+-->
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Пошаљи једну поруку...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Отвара прозор поруке у стилу е‑поште, са изабраним контактом, ради слања једне поруке.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Покрени ћаскање...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Отвара прозор за ћаскање с изабраним контактом, ради разговора.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Пошаљи фајл...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Ако га подржава ИМ систем, отвара бирач фајлова ради избора фајла за слање изабраном контакту.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Уређивање</guimenu
+> <guisubmenu
+>Премести у</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Укључено кад је контакт изабран.) Изаберите другу групу из подменија, и контакт ће бити премештен у њу.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Уређивање</guimenu
+> <guisubmenu
+>Копирај у</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Укључено кад је контакт изабран.) Изаберите групу из подменија, и контакт ће бити копиран у њу. ИМ системи који дозвољавају да контакти буду у више од једне групе на серверској листи контаката биће одговарајуће ажурирани.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Уређивање</guimenu
+> <guisubmenu
+>Додај контакт</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Укључено кад је контакт изабран.) Изаберите други налог из подменија, и можете додати још један начин да се особа контактира преко тог налога.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Додај у листу контаката</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Укључено кад је контакт изабран.) Понекад ће вам поруку послати неко ко још увек није на вашој листи контаката. <application
+>Копете</application
+> тада ствара привремени унос у листи контаката за ту особу, а да бисте га задржали на листи, употребите ову функцију.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo
+><keycap
+>Del</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Обриши контакт</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Укључено кад је контакт изабран.) Потпуно уклања контакт са листе контаката.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo
+><keycap
+>F2</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Преименуј</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Укључено кад је контакт изабран.) Мења име контакту на листи. Ако ово урадите, ставка на листи контаката неће се више мењати ако контакт удаљено промени своје име. Удаљену промену можете поново дозволити преко контактовог дијалога својстава.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Својства</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Дијалог својстава омогућава избор посебних иконица за одабрану ставку и мењање њеног имена.</para>
+<para
+>За контакте, можете променити уносе у КДЕ‑овом адресару којима су придружени.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Уклони групу</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Укључено кад је изабрана група.) Потпуно уклања групу са листе контаката. Контакти који се налазе само у овој групи премештају се на врх.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Преименуј групу</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Укључено кад је изабрана група.) Мења име групи.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect2>
+<sect2 id="menus-settings">
+<title
+>Мени Подешавање</title>
+<para
+><application
+>Копете</application
+> има подразумевани КДЕ мени поставки, како је описано у <ulink url="help:/fundamentals/ui.html#menus-settings"
+>Основама КДЕ‑а</ulink
+>, уз ове додатне ставке:</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Подешавање</guimenu
+> <guimenuitem
+>Прикажи кориснике ван везе</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Приказује и сакрива контакте који су тренутно ван везе. Ако су скривени, постаће видљиви кад дођу на везу.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>G</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Подешавање</guimenu
+> <guimenuitem
+>Прикажи празне групе</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Приказује и сакрива групе које немају чланова, или где су сви чланови ван везе и сакривени (в. претходно).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><!--FIXME no global Shortcuts dialog, it is the app shortcuts dialog-->
+<term>
+<menuchoice
+><guimenu
+>Подешавање</guimenu
+> <guimenuitem
+>Подеси глобалне пречице...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Позива стандардни КДЕ‑ов дијалог за подешавање глобалних пречица, где можете променити пречице са тастатуре које раде било где у КДЕ‑у.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-help">
+<title
+>Мени Помоћ</title>
+<para
+>Прозор листе контаката има подразумеване ставке КДЕ менија помоћи, за више детаља прочитајте <ulink url="help:/fundamentals/ui.html#menus-help"
+>одељак о овом менију</ulink
+> у Основама КДЕ‑а. </para>
+</sect2>
+</sect1
+>  <!-- menus-contactlist -->
+
+<sect1 id="menus-chatwindow">
+<title
+>Менији прозора за ћаскање</title>
+<sect2 id="menus-chatwindow-chat">
+<title
+>Мени Ћаскање</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycap
+>Return</keycap
+> </shortcut
+> <guimenu
+>Ћаскање</guimenu
+> <guimenuitem
+>Пошаљи поруку</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Шаље поруку.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Send File missing-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>S</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Ћаскање</guimenu
+> <guimenuitem
+>Сачувај</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Уписује садржај ћаскања у фајл.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>P</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Ћаскање</guimenu
+> <guimenuitem
+>Штампај...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Штампа папирну копију ћаскања.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ћаскање</guimenu
+> <guisubmenu
+>Контакти</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Овај мени набраја све учеснике у ћаскању. Имате приступ истом менију контакта који добијате <mousebutton
+>десним</mousebutton
+> кликом на име контакта у листи контаката, тако да можете извести радње посебне по контакту, попут слања фајла, приказа корисничких података или блокирања.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Commands missing-->
+<!--FIXME Close All But This Tab missing-->
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>W</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Ћаскање</guimenu
+> <guimenuitem
+>Затвори</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Затвара текуће ћаскање. Ако се још нека ћаскања одвијају под другим језичцима овог прозора, прозор ће остати отворен.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Ћаскање</guimenu
+> <guimenuitem
+>Напусти</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Затвара сва ћаскања која се одвијају у овом прозору.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-edit">
+<title
+>Мени Уређивање</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>X</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Исеци</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Исецање текста ради као у већини уређивача: изабрани текст се уклања и ставља у клипборд. Текст такође можете изабрати и превући на нови положај.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>C</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Копирај</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Копирање текста ради као у већини уређивача: изабрани текст се копира у клипборд. Текст такође можете изабрати уз држање тастера <keycap
+>Ctrl</keycap
+> и превући га на положај где желите да се копира.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>V</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Уређивање</guimenu
+> <guimenuitem
+>Налепи</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Налепљивање ради исто као у већини уређивача: текст из клипборда налепљује се на текући положај курсора.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-format">
+<title
+>Мени Формат</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Формат</guimenu
+> <guisubmenu
+>Додај емотикон</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Овај мени садржи све емотиконе (смешкове) дате текућом шемом емотикона. Шему можете изменити у <link linkend="configuring-appearance-emoticons"
+>дијалогу за подешавање <application
+>Копетеа</application
+></link
+>.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Alignment missing-->
+<!--FIXME not in 4.11
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guimenuitem
+>Text Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Opens a color selector that modifies the text color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guimenuitem
+>Background Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+>Opens a color selector that modifies the background color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guisubmenu
+>Font</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para
+>This menu allows you to change the font used in the chat.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Format</guimenu>
+<guisubmenu
+>Font Size</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para
+>This menu allows you to change the font size used in the chat.</para>
+</listitem>
+</varlistentry>
+-->
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tabs">
+<title
+>Мени Језичци</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Језичци</guimenu
+> <guisubmenu
+>Постављање језичка</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Кроз овај мени одређујете да ли се језичци дају на врху или на дну приказа ћаскања.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+><keycap
+>Ctrl</keycap
+><keycap
+>Shift</keycap
+><keycap
+>B</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Језичци</guimenu
+> <guimenuitem
+>Откачи ћаскање</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Издваја текуће ћаскање у засебан прозор.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Језичци</guimenu
+> <guisubmenu
+>Премести језичак у прозор</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Овим менијем можете премештати ћаскања између прозора. Изаберите из менија прозор за ћаскање у који треба преместити језичак.</para>
+</listitem>
+</varlistentry>
+<!--FIXME Activate Previous Tab, Activate Next Tab,  Activate Next Active Tab missing-->
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tools">
+<title
+>Мени Алатке</title>
+<para
+>Овај мени садржи ставке које додају учитани прикључци. За детаље погледајте <link linkend="plugins"
+>поглавље о прикључцима</link
+>.</para>
+</sect2>
+<sect2 id="menus-chatwindow-settings">
+<title
+>Мени Подешавање</title>
+<para
+><application
+>Копете</application
+> има подразумевани КДЕ мени поставки, како је описано у <ulink url="help:/fundamentals/ui.html#menus-settings"
+>Основама КДЕ‑а</ulink
+>, уз ове додатне ставке:</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Подешавање</guimenu
+> <guisubmenu
+>Прикажи учеснике</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Овај мени одређује да ли се листа учесника види десно од приказа ћаскања.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-help">
+<title
+>Мени Помоћ</title>
+<para
+>Прозор ћаскања има подразумеване ставке КДЕ менија помоћи, за више детаља прочитајте <ulink url="help:/fundamentals/ui.html#menus-help"
+>одељак о овом менију</ulink
+> у Основама КДЕ‑а. </para>
+
+</sect2>
+<!--
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Chat</guimenu>
+<guimenuitem
+></guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+></para>
+</listitem>
+</varlistentry>
+
+-->
+</sect1
+> <!-- menus-chatwindow -->
+</chapter
+> <!-- menus -->
+<!--
+CHAT
+Send Message
+Save
+Print...
+Contacts>
+Close
+Quit
+EDIT
+Cut
+Copy
+Paste
+FORMAT
+Add Smiley>
+Text Color...
+Background Color...
+Font>
+Font Size>
+TABS
+Tab Placement>
+Detach Chat
+Move Chat to Window>
+(TOOLS
+Send Media Info)
+SETTINGS
+Show Menubar
+Toolbars>
+	Show Main Toolbar (Kopete)
+	Show Status (Kopete)
+	Show Format Toolbar (Kopete)
+Show Statusbar
+Chat Members List>
+	Place to Left of Chat Area
+	Place to Right of Chat Area
+	Show
+Configure Shortcuts...
+Configure Toolbars...
+HELP
+-->
+<!--FILE
+Connection>
+	Connect All
+	Disconnect All
+Status>
+	Set Available Globally
+	Set Away Globally
+Add Contact...
+Create New Group...
+Save ContactList
+Quit
+EDIT 
+Send Message..
+Start Chat...
+Send File...
+Move To>
+	(Group List)
+Copy To>
+	(Group List)
+Remove From Group
+(on Group)
+Remove Group
+Rename Group
+(on Contact)
+Remove Contact
+Rename Contact
+Add Contact
+Add To Contact List
+View History
+Properties
+SETTINGS
+View Menubar
+View Toolbar
+View Statusbar
+Show Offline Users
+Show Empty Groups
+Configure Shortcuts...
+Configure Global Shortcuts...
+Configure Toolbars...
+Configure...
+HELP
+Kopete Handbook...
+What's This?
+Report Bug
+About Kopete
+About KDE
+-->

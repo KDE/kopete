@@ -1,0 +1,956 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-jabber">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Käesolev käsiraamat on teisendatud KDE Userbase'i <ulink url=" http://userbase.kde.org/Kopete/Jabber"
+>Kopete/Jabber</ulink
+> leheküljelt.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+<othercredit role="translator"
+><firstname
+>Marek</firstname
+><surname
+>Laane</surname
+><affiliation
+><address
+><email
+>bald@smail.ee</email
+></address
+></affiliation
+><contrib
+>Tõlge eesti keelde</contrib
+></othercredit
+> 
+    </authorgroup>
+<date
+>2010-12-05</date>
+    <releaseinfo
+>&kde; SC 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2010-12-05T08:12:25Z</timestamp
+>-->
+<title
+>Jabberi käsiraamat</title>
+<!--userbase-content-->
+<sect1 id="about-jabber-xmpp"
+><title
+>Jabber XMPP-st</title>
+<para
+><ulink url="http://en.wikipedia.org/wiki/XMPP"
+>XMPP</ulink
+> või Jabber (tegelikult tähendavad mõlemad üht ja sama) tähistab kiirsuhtlemiseks kasutatavat avatud detsentraalset võrguprotokolli. See on loodud server-klient-taristuna, millel on palju servereid kogu internetis ja kus igaüks võib luua endale konto. <ulink url="http://en.wikipedia.org/wiki/Server_%28computing%29"
+>Serverid</ulink
+> on tavaliselt ühelt poolt ühendatud paljude <ulink url="http://en.wikipedia.org/wiki/Client_%28computing%29"
+>klientidega</ulink
+> ja teiselt poolt teiste internetis leiduvate XMPP-serveritega. Vaatame väljamõeldud näite peale, kuidas see töötab: </para>
+<para
+>Romeo armastab Juliat ja soovib temaga suhelda Jabberi võrgu kaudu. Ta võib kirjutada sõnumi oma kliendis (mis on ühendatud serveriga <userinput
+>montague.net</userinput
+>) oma pruudile, kelle klient on ühendatud serveriga, mis kannab nime <userinput
+>capulet.com</userinput
+>. </para>
+<para
+>Kui Romeo registreeris konto serveris, valis ta endale nõndanimetatud JID (Jabberi IDentifikaator). JID toimib sisuliselt nagu e-posti aadress ning on ühendatud serverinimega lisandusega <quote
+>@</quote
+>. Romeo JID näeb niisiis välja selline: <userinput
+>romeo@montague.net</userinput
+>. </para>
+<para
+>Teiste inimestega kõnelemiseks peab Romeo lisama nende JID-d oma kontaktide nimekirja. Nad võivad olla ühendatud sama serveriga (&eg; <userinput
+>bob@montague.net</userinput
+>) või ka hoopis mõne muuga (&eg; <userinput
+>peter@wasinet.org</userinput
+> või, mõistagi <userinput
+>juliet@capulet.com</userinput
+>). </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_jabbernetwork.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Jabberi võrgu kujutis</phrase>
+    </textobject>
+    <caption>
+      <para
+>Jabberi võrgu kujutis</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Jabber/XMPP pakub mõistagi palju rohkem teenuseid (&eg; sõnumite täielik krüptimine vestlejate vahel, <ulink url="http://en.wikipedia.org/wiki/Voicechat"
+>häälvestlus</ulink
+> ja <ulink url="http://en.wikipedia.org/wiki/Video_conferencing"
+>videovestlus</ulink
+>, grupivestlus), millest kõneldakse veidi hiljem. </para>
+<para
+>Kaks väga suurt kiirsuhtlusteenuse pakkujat kasutavad oma taustaprogrammina just Jabber/XMPP-d: Google Talk ja Facebooki vestlus. Nende süsteemide kontosid saab &kopete;s kasutada nagu iga muud Jabberi kontot. Üksikasju selgitame <link linkend="fill-in-your-account-data-in-kopete"
+>hiljem</link
+>, aga selle kohta leiab teavet ka teenusepakkujate veebilehekülgedel. </para>
+<para
+>Eelnev teave tallel, võime minna käsiraamatu põhiosa juurde: kuidas seadistada tööle Jabberi klient ja milliseid kenasid omadusi &kopete; selle puhul pakub. </para>
+</sect1>
+<sect1 id="first-steps"
+><title
+>Esimesed sammud</title>
+<sect2 id="get-kopete"
+><title
+>Kopete hankimine</title
+> 
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopeteicon.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kopete ikoon</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kopete ikoon</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Loomulikult tuleb enne hankida &kopete;, kui seda saab kasutama hakata. Kui sul on <ulink url="http://en.wikipedia.org/wiki/Linux"
+>GNU/Linuxi süsteem</ulink
+>, siis on tõenäoliselt &kopete; juba ka paigaldatud (kui on paigaldatud <ulink url="http://en.wikipedia.org/wiki/KDE_Software_Compilation"
+>KDE</ulink
+>) või leiad selle oma distributsiooni tarkvarahoidlast.  </para>
+<para
+>Kui &kopete; on paigaldatud, käivita see esimest korda. </para>
+</sect2>
+</sect1>
+<sect1 id="create-your-jabber-account"
+><title
+>Jabberi konto loomine</title>
+<para
+>&kopete; käivitamisel näeb kõigepealt tühja akent. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap001_emptykopete.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kopete tühi aken</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kopete tühi aken</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Allosas seisab kiri <guilabel
+>Klõpsa siia konto lisamiseks</guilabel
+>. Klõpsa sellele või vali uue konto loomiseks menüükäsk <menuchoice
+><guimenu
+>Seadistused</guimenu
+><guimenuitem
+>Seadista...</guimenuitem
+></menuchoice
+> Me soovime luua Jabberi kontot, mistõttu valime kirje <guilabel
+>Jabber</guilabel
+> ja klõpsame <guilabel
+>Edasi</guilabel
+>. Pärast klõpsu nupule <guilabel
+>Registreeri uus konto</guilabel
+> avaneb uus aken, kus saab kirja panna Jabberi serveri, milles konto tuleb luua. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap002_configacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kopete seadistamine</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kopete seadistamine</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Selle võib kirjutada käsitsi tekstikasti <guilabel
+>Jabberi server</guilabel
+> või valida etteantud loendist, mis ilmub nähtavale, kui klõpsata nupule <guilabel
+>Vali...</guilabel
+> </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutoial_snap003_selectserver.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Serveri valimise dialoog</phrase>
+    </textobject>
+    <caption>
+      <para
+>Serveri valimise dialoog</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Serveri valimise järel saab oma soovitud Jabberi ID, &ie; kasutajanime loomise lõpule viia. Lisa enda eelistatud nimi märgi <quote
+>@</quote
+> ette väljal <guilabel
+>Soovitud Jabberi ID</guilabel
+>. Kui oled kirjutanud parooli ja seda korranud, tuleks ära märkida ka kastike <guilabel
+>Protokolli krüptimise kasutamine (SSL)</guilabel
+>, mis võimaldab <ulink url="http://en.wikipedia.org/wiki/Secure_Sockets_Layer"
+>krüptitud</ulink
+> kliendi ja serveri ühenduse. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap004_createacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Konto loomine</phrase>
+    </textobject>
+    <caption>
+      <para
+>Konto loomine</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Mõned serverid ei pruugi seda valikut tunnistada, aga enamik siiski tunnistab. Registreerimise lõpetamiseks klõpsa nupule <guilabel
+>Registreeri</guilabel
+>. </para>
+<para
+>Õnnitleme! Sa oled nüüd registreerinud oma uue konto Jabberi serveris! </para>
+</sect1>
+<sect1 id="fill-in-your-account-data-in-kopete"
+><title
+>Konto andmete täitmine Kopetes</title>
+<para
+>Jabberi serveris on sul konto olemas ja nüüd pakub &kopete; ette võtta <emphasis
+>järgmise sammu: konto teave</emphasis
+>. &kopete; lisab sinu Jabberi ID ja parooli automaatselt vajalikele väljadele. Kui soovid, et &kopete; peaks parooli meeles, nii et sa ei pea seda sisestama iga kord serveriga ühendudes, märgi ära kastike <guilabel
+>Parool jäetakse meelde</guilabel
+>. </para>
+<para
+>Kui soovid kasutada oma olemasolevaid <ulink url="http://www.google.com/support/chat/bin/answer.py?hl=en&amp;answer=57557"
+>Google Talki</ulink
+> või Facebooki vestluse kontosid &kopete;s (need on tegelikult samuti Jabberi serverid), kasuta nende serveritega ühendumiseks oma GMaili aadressi või Facebooki konto andmeid (viimast on <ulink url="http://www.facebook.com/sitetour/chat.php"
+>selgitatud siin</ulink
+>). </para>
+<para
+>Lisaks võib ära märkida kastikese <guilabel
+>Kõigi ühendamisel jäetakse välja</guilabel
+>. See annab &kopete;le nõu mitte minna võrku, kui lähed võrku oma ülejäänud &kopete; kontodega (&kopete; on teatavasti niinimetatud multimessenger, mis toetab paljusid protokolle, näiteks <ulink url="http://en.wikipedia.org/wiki/ICQ"
+>ICQ</ulink
+> või <ulink url="http://en.wikipedia.org/wiki/.NET_Messenger_Service"
+>MSN</ulink
+>). Märkimise korral tuleb sul hiljem kontoga spetsiaalselt võrku ühenduda, kui soovid selle konto kaudu suhelda. </para>
+<para
+>Nüüd peaks &kopete; välja nägema selline: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap005_enterjid.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Konto teabe aken</phrase>
+    </textobject>
+    <caption>
+      <para
+>Konto teabe aken</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Klõpsa sakile <guilabel
+>Ühendus</guilabel
+> ja kontrolli muid valikuid. Elementaarsetel turbekaalutlustel tasuks ära märkida <guilabel
+>Protokolli krüptimise kasutamine</guilabel
+> ning jätta märkimata <guilabel
+>Lihttekstiga parooli autentimise lubamine</guilabel
+>. </para>
+<para
+><guilabel
+>Serveri vaikeinfo</guilabel
+> valikuga peaks kõik korras olema, kui tegutsed tavalises koduvõrgus ilma eriliste <ulink url="http://en.wikipedia.org/wiki/Firewall_%28computing%29"
+>tulemüüri</ulink
+> seadistusteta. </para>
+<para
+>Sektsioon <emphasis
+>Asukoha seadistused</emphasis
+> on veel üks Jabberi iseärasusi. Sa võid määrata nõndanimetatud <quote
+>ressursid</quote
+>, mis näitavad, kust sa vestled. Kui näiteks logid Jabberisse üheaegselt oma mobiiltelefonist ja sülearvutist (jah, see on võimalik), siis näitab ressurss sinu kontaktidele, kumba sa parajasti kasutad. Nii et võid kutsuda seda näiteks <quote
+>Sülearvutiks</quote
+> või <quote
+>Androidiks</quote
+> sõltuvalt sellest, millisesse seadmesse on Kopete paigaldatud. Arvesta, et sinu vestluspartnerid näevad ressursse (need lisatakse sinu JID-le järgmiselt: <userinput
+>romeo@montague.net/Sülearvuti</userinput
+>), nii et siin tasuks ressursi nime valides silmas pidada privaatsuskaalutlusi. </para>
+<para
+>Meie näites on <guilabel
+>ressursi</guilabel
+> nimeks <replaceable
+>Laptop</replaceable
+>. Prioriteet on kasulik peamiselt siis, kui sul on palju seadmeid ning soovid vestluskaaslasele teada anda, millise seadmega oled parajasti võrgus (&eg; oma mobiiltelefoniga või sülearvutiga). Suurima prioriteediga võrgus olev ressurss saab sõnumi. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap006_connection.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Konto seadistamine</phrase>
+    </textobject>
+    <caption>
+      <para
+>Konto seadistamine</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Järgmisel kaardil <guilabel
+>Failiedastus</guilabel
+> ei ole Jabberi konto seadistamisel tavalises võrgus vaja midagi muuta. </para>
+<para
+>Lõpuks on kaardil <guilabel
+>Privaatsus</guilabel
+> mõned privaatsusega seotud valikud, mis peaksid olema enesestmõistetavad. Valiku <guilabel
+>Vana sisese PGP vormingu kasutamine allkirjastatud ja krüptitud sõnumite puhul</guilabel
+> (loe siit, mida tähendab <ulink url="http://en.wikipedia.org/wiki/Pretty_Good_Privacy"
+>PGP</ulink
+>) märkimine ei ole soovitatav, sest selle asemel võib kasutada sisseehitatud OTR-i, millest kõneleme <link linkend="useful-configuration-hints"
+>veidi hiljem</link
+>. </para>
+<para
+>Nüüd võid klõpsata taas <guilabel
+>Edasi</guilabel
+> ja konto ongi seadistatud. Soovi korral võid valida kontole värvi ning kui oled valmis ühenduma esimest korda Jabberi serveriga, märgi ära kastike <guilabel
+>Ühendatakse kohe</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap007_conf-ready.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Seadistamise viimane samm</phrase>
+    </textobject>
+    <caption>
+      <para
+>Seadistamise viimane samm</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nüüd võid seadistamise lõpetada. </para>
+<para
+>Teise võimalusena võib serveriga ühenduda käsitsi, klõpsates Kopete peaaknas <menuchoice
+><guimenu
+>Olek</guimenu
+><guimenuitem
+>Võrgus</guimenuitem
+></menuchoice
+> või tehes Kopete ikoonil süsteemisalves paremklõpsu ja valides <menuchoice
+><guimenu
+>Määra olek</guimenu
+><guimenuitem
+>Võrgus</guimenuitem
+></menuchoice
+>. Kui märkisid varem valiku <guilabel
+>Kõigi ühendamisel jäetakse välja</guilabel
+>, siis pead sisse logima, tehes paremklõpsu Kopete süsteemisalve ikoonil ja valides <menuchoice
+><guimenu
+>sinuJID@kuskil.org</guimenu
+><guimenuitem
+>Võrgus</guimenuitem
+></menuchoice
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap008_goonline.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Võrku minemine</phrase>
+    </textobject>
+    <caption>
+      <para
+>Võrku minemine</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="adding-friends"
+><title
+>Sõprade lisamine</title>
+<para
+>Pärast esimest sisselogimist on &kopete; aken päris tühi. Server võib olla lisanud vaikekontakti, mis võib saata sulle tervituse, kuid nimekiri ehk roster (seda sõna kasutatakse Jabberi maailmas <quote
+>kontaktide nimekirja</quote
+> kohta) ei ole ühtegi tegelikku kontakti. Esimene samm sõprade lisamisel Jabberis on loomulikult nende Jabberi ID pärimine. Kui oled selle teada saanud, võid sõbra kohe &kopete;s lisada. Klõpsa <menuchoice
+><guimenu
+>Lisa</guimenu
+><guimenuitem
+>sinuJID@kuskil.org</guimenuitem
+></menuchoice
+> või vali <menuchoice
+><guimenu
+>Fail</guimenu
+><guisubmenu
+>Lisa kontakt</guisubmenu
+><guimenuitem
+>sinuJID@kuskil.org</guimenuitem
+></menuchoice
+>. Ilmub uus aken, mis tahab teada <guilabel
+>Jabberi ID-d</guilabel
+>, mida soovid nimekirja lisada. Kirjuta see ja klõpsa <guilabel
+>OK</guilabel
+>. Valikut <guilabel
+>Grupp</guilabel
+> saab kasutada siis, kui oled määranud kontaktide rühmad (&eg; <quote
+>perekond</quote
+> ja <quote
+>töö</quote
+>). Seose sinu <ulink url="http://userbase.kde.org/Special:myLanguage/KAddressBook"
+>KDE aadressiraamatuga</ulink
+> saab luua väljal <guilabel
+>Aadressiraamatu kirje</guilabel
+>, mis annab võimaluse vahetada kahe rakenduse vahel teavet, näiteks profiilipilte. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap009_addfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Sõbra lisamine</phrase>
+    </textobject>
+    <caption>
+      <para
+>Sõbra lisamine</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nüüd oled lisanud oma esimese sõbra kontaktide nimekirja. Aga enne seda, kui saad talle sõnumit kirjutama hakata, peab ta sinu soovi autentima. Enne seda on kontaktist paremal näha väike kollane küsimärk. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap010_exlamationmarkfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Sinu kontakt</phrase>
+    </textobject>
+    <caption>
+      <para
+>Sinu kontakt</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Kui sõber on sinu soovi autentinud või lisanud sind enda kontaktide nimekirja, ilmub ikoon nähtavale värvilisena, kui ta on võrgus. Eri ikoonide (võrgus, eemal &etc;) täpset tähendust võib näha <guilabel
+>Oleku</guilabel
+> all, kus neid saab ka ise määrata ja muuta. Autentimise korral saad ka vastava teate. </para>
+<para
+>Tavaliselt lisab ka sõber sind oma kontaktide nimekirja, nii et ka sina pead tema soovi autentima. &kopete; annab sellest teada akna allosas rohelise lipukese ja soovi kirjeldusega. Nõustumiseks klõpsa <guilabel
+>Autendi</guilabel
+>. Märguannete ala võib sulgeda, kui klõpsata ristile ala ülemises paremas nurgas. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap011_addedbyfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kontakt lisas sind</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kontakt lisas sind</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Pärast seda peaksid nägema kontakti nii, nagu järgmisel pildil. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap012_fullauthorized.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Kontakt on täielikult autenditud</phrase>
+    </textobject>
+    <caption>
+      <para
+>Kontakt on täielikult autenditud</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Nüüd oledki edukalt lisanud nimekirja oma esimese kontakti. </para>
+</sect1>
+<sect1 id="messaging-and-sending-files"
+><title
+>Sõnumite ja failide saatmine</title>
+<para
+>Kontaktiga saab vestlema hakata, kui klõpsata tema nimel. Ilmub uus aken, kus saad oma sõnumi kirjutada akna allossa väikesele väljale, kus vilgub juba kursor. Kui soovid teksti ära saata, vajuta klahvi &Enter; või klõpsa nupule <guilabel
+>Saada</guilabel
+>. Nüüd võid oma partneriga Jabberi vahendusel suhelda. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap013_firstchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Sinu esimene vestlus</phrase>
+    </textobject>
+    <caption>
+      <para
+>Sinu esimene vestlus</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<sect2 id="transfer-files"
+><title
+>Failide edastamine</title
+> 
+<para
+>Failide edastamiseks Jabberi kaudu klõpsa <guilabel
+>Saada fail</guilabel
+> ja vali hüpikaknast fail, mida soovid saata. Sulle antakse märku, kui edastamine õnnestus või mingil põhjusel nurjus. </para>
+<para
+><warning
+><para
+>Mõningate serverite ühildumatute seadistuste tõttu ei pruugi see alati toimida</para
+></warning>
+</para>
+</sect2>
+<sect2 id="group-chat"
+><title
+>Grupivestlus</title
+> 
+<para
+>Jabberi kaudu võib suhelda ka rohkem kui ühe inimesega. Grupivestlus võimaldab ette võtta <ulink url="http://en.wikipedia.org/wiki/IRC"
+>IRC</ulink
+> stiilis arutelusid, kus paljud inimesed räägivad üksteisega. Grupivestluseks tuleb teha paremklõps &kopete; süsteemisalve ikoonil ja valida <menuchoice
+><guimenu
+><replaceable
+>sinuJID</replaceable
+></guimenu
+><guimenuitem
+>Liitu grupivestlusega...</guimenuitem
+></menuchoice
+>, kus <replaceable
+>sinuJID</replaceable
+> tähendab sinu enda Jabberi ID-d. Ilmub uus aken, kus saad liituda vestlusruumiga. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_snap021_groupchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Grupivestlus</phrase>
+    </textobject>
+    <caption>
+      <para
+>Grupivestlus</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Klõpsa <guilabel
+>Päring</guilabel
+>, et näha sinu Jabberi serveris olevaid jututubasid. Vali neist üks ja vajuta sellesse sisenemiseks klahvile &Enter;. </para>
+<para
+>Teine võimalus on luua omaenda jututuba, kirjutades selle nime reale <guilabel
+>Ruum</guilabel
+>. Seejärel vajuta klahvi &Enter; või klõpsa ühinemiseks <guilabel
+>Ühine</guilabel
+>. </para>
+<para
+>Kui oled loonud jututpa, näed &kopete; aknas uut välja JID-ga<replaceable
+>jututoanimi@jabber.kuskil.org</replaceable
+>. Kohtle seda kui tavalist kontakti, &ie; klõpsa JID-l vestlemiseks &etc; </para>
+<para
+>Nüüdseks on sul seadistatud toimiv Jabberi klient ja sa oled põhimõtteliselt võimeline oma kontaktidega vestlema. Kuid &kopete; etemaks ärakastaumiseks võib seadistada rakenduse nii, et see täidaks kõik su vajadused. Järgnevalt toomegi ära mõned <link linkend="useful-configuration-hints"
+>kasulikud seadistamisvihjed</link
+>. </para>
+</sect2>
+</sect1>
+<sect1 id="useful-configuration-hints"
+><title
+>Kasulikud seadistamisvihjed</title>
+<para
+>Kõik need vihjed viitavad &kopete; peamisele seadistustedialoogile, mille avab menüükäsk <menuchoice
+><guimenu
+>Seadistused</guimenu
+><guimenuitem
+>Seadista...</guimenuitem
+></menuchoice
+> Kui soovid, et su muudatused salvestataks, klõpsa kindlasti nupule <guilabel
+>Rakenda</guilabel
+> või <guilabel
+>OK</guilabel
+>. </para>
+<para
+>Kõik valikud, mis mõjutavad sinu konto seadistust ja üldse kõigi &kopete; kontode seadistusi (nii Jabber/XMPP kui ka <ulink url="http://en.wikipedia.org/wiki/Icq"
+>ICQ</ulink
+>, <ulink url="http://en.wikipedia.org/wiki/.NET_Messenger_Service"
+>MSN</ulink
+> ja veel paljud teised kiirsuhtlemisprotokollid), leiab kaardilt <guilabel
+>Kontod</guilabel
+>. Kui soovid määrata kindlaks oma isikliku teabe või kasutada kontaktifotot, klõpsa <guilabel
+>Muuda identiteeti...</guilabel
+> ja tee oma valikud. Foto saab üles laadida, kui klõpsata väikest ikooni pildiala allosas vasakul. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap014_setidentity.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Identiteedi määramine</phrase>
+    </textobject>
+    <caption>
+      <para
+>Identiteedi määramine</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Järgmine kirje vasakul servas asuvas loetelus on <guilabel
+>Kontaktide nimekiri</guilabel
+>. Need valikud on üldiselt enesestmõistetavad ning nende seast võib olla mõistlik ära märkida <guilabel
+>Kontakti foto kasutamine võimaluse korral</guilabel
+>. Ülejäänud kolm sakki (<guilabel
+>Värvid ja fondid</guilabel
+>, <guilabel
+>Muu</guilabel
+> ja <guilabel
+>Paigutus</guilabel
+>) sisaldavad üsna spetsiifilis seadistusi, mida on ehk mõtet hakata uurima alles siis, kui oled kasutanud &kopete;t juba mõne nädala. </para>
+<para
+><guilabel
+>Oleku</guilabel
+>seadistused võimaldavad kindlaks määrata vaikimisi <ulink url="http://en.wikipedia.org/wiki/Status_message"
+>olekuteated</ulink
+> puhuks, kui oled võrgus, eemal, nähtamatu &etc; </para>
+<para
+>Kaardil <guilabel
+>Käitumine</guilabel
+> näeb üsna palju valikuid. Huvipakkuvamad saki <guilabel
+>Üldine</guilabel
+> all on <guilabel
+>Sõnumi käsitlemine</guilabel
+> ja <guilabel
+>Algolek</guilabel
+>. Esimene neist määrab kindlaks, kas kontaktidelt saabuvad sõnumid avatakse otsekohe uues aknas või pannakse nad järjekorda, kuni avad ise &kopete;. Teine annab &kopete;le teada, kas minna rakenduse käivitamisel kohe võrku. Selle lubamisel oled alati kohe oma kontaktidele kättesaadav, kui käivitad &kopete;. Kaardil <guilabel
+>Sündmused</guilabel
+> saab määrata, millisel juhul annab &kopete; sulle märki arvuti märguannete süsteemi kaudu (enamasti on selleks <guilabel
+>KNotify</guilabel
+>). Kui soovid, et &kopete; määraks sinu olekuks automaatselt <quote
+>Eemal</quote
+>, ava kaart <guilabel
+>Eemaloleku seadistused</guilabel
+> ja märgi ära esimene kastike. Võid määrata aja, mis peab kuluma viimasest toimingust (klaviatuuri kasutamisest või hiire liikumisest), enne kui &kopete; määrab sinu olekuks <quote
+>Eemal</quote
+>. Vaikimisi on selleks 10 minutit. Kaardi <guilabel
+>Vestlus</guilabel
+> valikud on taas enesestmõistetavad ning vaikeväärtused peaksid olema igati sobivad. </para>
+<para
+>Järgmine kirje vasakul servas on <guilabel
+>Vestlusaken</guilabel
+>. Selle esimesel kaardil <guilabel
+>Stiil</guilabel
+> saab anda aknale vaikevälimusest erineva välimuse. Võid ka paigaldada oma stiile või hankida uusi stiile internetist, klõpsates <guilabel
+>Hangi uus...</guilabel
+> Kui kirjutad vestluse ajal mõne <ulink url="http://en.wikipedia.org/wiki/Emoticon"
+>emotikoni</ulink
+>, teisendab &kopete; selle vaikimisi graafiliseks emotikoniks. Selle keelamiseks või mõne muu emotikonide kogu kasutamiseks mine kaardile <guilabel
+>Emotikonid</guilabel
+>. Viimane kaart <guilabel
+>Värvid ja fondid</guilabel
+> on taas enesestmõistetav ning siin saab seadistada just vestlusakent puudutavaid asju. </para>
+<para
+><ulink url="http://en.wikipedia.org/wiki/Webcam"
+>Veebikaamerad</ulink
+> on &kopete;s toetatud, kuid praegu (novembris 2010) on endiselt mõningaid probleeme videovestlusega, mistõttu seadistused kaardil <guilabel
+>Video</guilabel
+> jäävad puhtalt sinu südametunnistusele, sest on päris võimalik, et kõik ei tööta nii nagu peab. Veebikaamerate probleemide puhul võib abi olla <ulink url="http://forum.kde.org/viewforum.php?f=18"
+>KDE foorumitest</ulink
+>. </para>
+</sect1>
+<sect1 id="jabber-plugins"
+><title
+>Pluginad</title
+> 
+<para
+>&kopete; väga võimas omadus on pluginate kasutamine. Teatavad pluginad on juba rakendusega kaasas (teisi võib paigaldada näiteks sinu &Linux; distributsiooni tarkvarahalduriga) ning neid saab sisse ja välja lülitada kaardil <guilabel
+>Pluginad</guilabel
+>. Sisselülitamiseks tuleb ära märkida kastike nende nime ees. Enamik neist on samuti enesestmõistetavad, aga kasulikumaid me siin siiski tutvustame veidi lähemalt. Väga tulus plugin on <guilabel
+>Ajalugu</guilabel
+>. Selle sisselülitamisel logib Kopete kõik sinu vestlused ja salvestab selle kõvakettale. S võid lugeda seda vestlusaknas, valides ikooni <guilabel
+>Vaata ajalugu</guilabel
+> või menüükäsu <menuchoice
+><guimenu
+>Tööriistad</guimenu
+><guimenuitem
+>Vaata ajalugu</guimenuitem
+></menuchoice
+>. </para>
+<sect2 id="otr"
+><title
+>OTR</title
+> 
+<para
+>Üks tähtsamaid privaatsust puudutavaid pluginaid on <ulink url="http://en.wikipedia.org/wiki/Off-the-Record_Messaging"
+>OTR</ulink
+>. See tarkvara krüptib kogu sinu vestluse partneriga ning muudab kõrvalisel isikul teie vestluse jälgimise võimatuks. Pärast selle plugina sisselülitamist tuleb avada plugina seadistused (klõpsa mutrivõtmega ikoonile) ja <guilabel
+>genereerida</guilabel
+> võti. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap015_otrgenerate.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>OTR võtme genereerimine</phrase>
+    </textobject>
+    <caption>
+      <para
+>OTR võtme genereerimine</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>See võib võtta aega ja sul tuleb oodata, kuni &kopete; töö lõpetab. Seejärel sulge OTR aken klõpsuga nupule <guilabel
+>OK</guilabel
+> ja <guilabel
+>rakenda</guilabel
+> muudatused. Lõpuks pead kogu &kopete; uuesti käivitama. Seejärel ava vestlustaken kontaktiga, kellega soovid turvaliselt vestelda. Vali menüükäsk <menuchoice
+><guimenu
+>Tööriistad</guimenu
+><guisubmenu
+>OTR seadistused</guisubmenu
+><guimenuitem
+>Alusta OTR-seanssi</guimenuitem
+></menuchoice
+> või kasuta ikooni <menuchoice
+><guimenu
+>OTR krüptimine</guimenu
+><guimenuitem
+>Alusta OTR-seanssi</guimenuitem
+></menuchoice
+>. &kopete; alustab seanssi, kui kontakt on OTR-iks võimeline, vastasel juhul saad veateate. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap016_otrfirstuse.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>OTR esimene kasutamine</phrase>
+    </textobject>
+    <caption>
+      <para
+>OTR esimene kasutamine</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Tagamaks, et lisatud kontakt on tõesti see, keda ta ennast väidab olevat, on vajalik ta autentida. Seda saab teha menüükäsuga <menuchoice
+><guimenu
+>Tööriistad</guimenu
+><guisubmenu
+>OTR seadistused</guisubmenu
+><guimenuitem
+>Autendi kontakt</guimenuitem
+></menuchoice
+>. Valida on kolme võimaluse vahel: </para>
+<itemizedlist>
+<listitem
+><para
+>Esiteks esitada vestluspartnerile küsimus, mille vastust teate ainult tema ja sina. </para
+></listitem>
+<listitem
+><para
+>Teine võimalus on salajane paroolifraas, mida su partner peab teadma (sa võid edastada saladuse talle mõne muu turvalise sidekanali, &eg; telefoni kaudu). </para
+></listitem>
+<listitem
+><para
+>Kolmandaks on võimalus käsitsi kontrollida OTR sõrmejälge. See on kõige turvalisem viis, aga mitte väga mugav, nii et kui soovid mugavamat ja kiiremat viisi, vali üks eespool nimetatutest. Sõrmejälge kontrollimiseks tuleb sul paluda partneri sõrmejälge turvalise ühenduse kaudu (&eg; telefoni või krüptitud e-kirja vahendusel), et sa saaksid seda üldse kontrollida. </para
+></listitem>
+</itemizedlist>
+<para
+>Oletame, et valisid esimese võimaluse ja esitad partnerile küsimuse. Kirjuta see väljale ja määra vastus, mida partner peaks andma, et sul oleks võimalik ta autentida. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap017_seqretquestion.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Salaküsimuse esitamine</phrase>
+    </textobject>
+    <caption>
+      <para
+>Salaküsimuse esitamine</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Jätkamise korral näeb partner sinu küsimust ja kui tema vastus on õige, ongi OTR töökorras. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap018_otrsuccess.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>OTR loomise lõpp</phrase>
+    </textobject>
+    <caption>
+      <para
+>OTR loomise lõpp</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Sinu partner võib soovida samaga vastata, nii et kui näed akent, mis palub sul ennast autentida, vasta lihtsalt küsimusele, mille järel oled ka oma sõbra juures autenditud. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap019_otrauth.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>OTR autentimine</phrase>
+    </textobject>
+    <caption>
+      <para
+>OTR autentimine</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Alati, kui suhtled turvaliselt, näed vestlusakna ülaosas rohelist lukku. Turvalise ühenduse lõpetamiseks võid sulgeda vestlusakna või klõpsata <menuchoice
+><guimenu
+>OTR seadistused</guimenu
+><guimenuitem
+>Lõpeta OTR-seanss</guimenuitem
+></menuchoice
+>. </para>
+</sect2>
+</sect1>
+</appendix>

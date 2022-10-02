@@ -1,0 +1,650 @@
+<!-- Copyright (c) 2005 by Michaël Larouche <michael.larouche@kdemail.net
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="chatwindowstyleguide">
+<title
+>&kopete; vestlusakna stiili juhised</title>
+<sect1 id="chatstyle-reference">
+<title
+>&kopete; vestlusakna stiili tutvustus</title>
+<para
+>Alates &kopete; versioonist 0.12 kasutame vestlusaknas <ulink url="http://www.adiumx.com/"
+>Adiumi</ulink
+> vormingut. Selle vormingu aluseks on <acronym
+>HTML</acronym
+>-mallid ja <acronym
+>CSS</acronym
+>. Nende loomine ja arendamine on üsna lihtne, vajalikud on ainult teadmised <acronym
+>HTML</acronym
+>-ist ja <acronym
+>CSS</acronym
+>-ist. Samuti võivad stiilidel olla variandid (mida kirjeldavad <acronym
+>CSS</acronym
+>-failid), mis võimaldavad kõike veel paremini kohandada. </para>
+
+<sect2 id="chatstyle-reference-guide">
+	<title
+>Tutvustus</title>
+<para
+>Adiumi vorming koosneb kataloogistruktuuris, <acronym
+>HTML</acronym
+>-mallidest, <acronym
+>CSS</acronym
+>-failidest ja võtmesõnadest, mis asendatakse iga kord, kui malli töödeldakse. Lõppteisenduseks on <acronym
+>XHTML</acronym
+>-lehekülg, kuhu sõnumeid lisatakse <acronym
+>DOM</acronym
+>-operatsioonidega. Keskne element on div-element nimetusega <filename
+>Chat</filename
+>. Enne ja pärast div-elementi on mallid Header ja Footer. Sõnumid on div-elemendi <filename
+>Chat</filename
+> järglased. </para>
+
+<sect3 id="chatstyle-reference-directory">
+	<title
+>Kataloogistruktuur</title>
+<para
+>Stiil peab järgima kataloogistruktuuri. &kopete; koodi keskmes seisabki just see kataloogistruktuur. Stiili arhiveerides arhiveeri kataloog <filename
+>styleName</filename
+>. Kataloogistruktuur on <application
+>Mac OS X</application
+> komplekti struktuur, mis peaks ütlema midagi vähemalt neile, kes seda süsteemi tunnevad. Samuti tuleb järgida siinset tähesuurust, sest <acronym
+>UNIX</acronym
+>-süsteemid on tõstutundlikud.</para>
+<programlisting
+>styleName\ (can have .adiumMessageStyle as suffix, because in Mac OS X it is a bundle)
+        Contents\
+                Info.plist
+                Resources\
+                        main.css
+                        Header.html
+                        Footer.html
+                        Status.html
+                        Incoming\ (and Outgoing\)
+                                Content.html
+                                NextContent.html (for consecutive messages)
+                                Context.html (for message history)
+                                NextContext.html
+                                Action.html
+                        Variants\
+                                *.css
+</programlisting>
+</sect3>
+
+<sect3 id="chatstyle-reference-divinsert">
+	<title
+>&lt;div id="insert"&gt;&lt;/div&gt; kohta</title>
+	<para
+>See on spetsiaalne seesmiselt kasutatav div-element. See on kohatäitja, mis osutab sellele, kuhu lisada järgmine sõnum. Kui tegemist on uue sõnumiga, see eemaldatakse ja selle asemele tuleb uus sõnum. Kui aga tegu on järgsõnumiga, asendatakse div-element uue sõnumi sisuga. See spetsiaalne div-element on <emphasis
+>nõutav</emphasis
+> mallides Content, Context, NextContent ja NextContext. Samuti ei tee paha lisada see ka malli Action ja Status. </para>
+</sect3>
+
+<sect3 id="chatstyle-reference-templates">
+	<title
+>HTML-mallid</title>
+
+<variablelist
+><title
+>Mallide kirjeldus</title>
+
+<varlistentry
+><term
+><filename
+>Header.html</filename
+> (nõutav)</term>
+<listitem>
+<para
+>Malliga Header saab lasta kuvada vestluse kena päist. See mall lisatakse enne div-elementi <filename
+>Chat</filename
+>. Kui sa seda ei kasuta, lisa lihtsalt tühi fail. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Footer.html</filename
+> (nõutav)</term>
+<listitem>
+<para
+>See on põhimõtteliselt sama, mis Header, ainult et vestluse jaluse jaoks. See mall lisatakse pärast div-elementi <filename
+>Chat</filename
+>. Kui sa seda ei kasuta, lisa lihtsalt tühi fail. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Status.html</filename
+> (nõutav)</term>
+<listitem>
+<para
+>Seda malli ksutatakse sisemise sõnumi kuvamiseks. Sisemised sõnumid on näiteks olekumuutused või Kopete sõnumid (&eg; keegi tahab sulle faili saata). Kui stiil ei toeta malli Action, kasutatakse seda Action sõnumi kuvamiseks. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/Content.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Content.html</filename
+> (nõutav)</term>
+<listitem>
+<para
+>Sisumall on sõnumi tuum. See on nagu plokk, mis hõlmab sõnumeid. Kontrolli, et see oleks valmis vastu võtma järgsõnumeid, ära loo seda ainult ühe sõnumi kuvamiseks. Järgsõnumid lisatakse div insert elemendi juurde. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/NextContent.html</filename
+></term>
+              <term
+><filename
+>Outgoing/NextContent.html</filename
+> (nõutav)</term>
+<listitem>
+<para
+>Mall NextContent on järgsõnumite sõnumifragment. See lisatakse peamisse sõnumiplokki. HTML-mall peab sõnumi kuvamiseks seda sisaldama. </para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry
+><term
+><filename
+>Incoming/Action.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Action.html</filename
+> (pole nõutav) (&kopete; laiend)</term>
+<listitem>
+<para
+>See mall on Adiumi vormingu &kopete; laiend. See on saadaval nii sisenevas kui väljuvas suunas. Toimingusõnumid on spetsiaalsed sõnumid, mis annavad teada, et võetakse ette mingi toiming. Näide: "/me paigaldab &kopete;t" kuvatakse kujul "DarkShock paigaldab &kopete;t". </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/Context.html</filename
+></term>
+              <term
+><filename
+>Incoming/NextContext.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Context.html</filename
+></term>
+              <term
+><filename
+>Outgoing/NextContext.html</filename
+> (pole nõutav)</term>
+<listitem>
+<para
+>Kopete neid malle ei kasuta. Adiumis kasutatakse neid ajaloo kuvamiseks. Üldiselt on need samad, mis Content ja NextContent, aga teatud erinevustega, et neid saaks eristada tavalistest sõnumitest. </para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect3>
+
+<sect3 id="chatstyle-reference-css">
+	<title
+>CSS-stiilidest ja variantidest</title>
+	<para
+>HTML-mall kirjeldab struktuuri olemust. Kuid kogu stiili kirjeldavad <acronym
+>CSS</acronym
+>-failid. <filename
+>main.css</filename
+> kirjeldab põhistiili, variandid aga selle variante. Variantideks on näiteks teistsuguste värvide kasutamine või kasutaja foto mittenäitamine. Nii <filename
+>main.css</filename
+> kui ka variandid imporditakse lõplikule <acronym
+>XHTML</acronym
+>-leheküljele.</para>
+	<sect4 id="chatstyle-reference-css-main">
+		<title
+><filename
+>main.css</filename
+></title>
+		<para
+>See on peamine <acronym
+>CSS</acronym
+>-fail, mis on ühine kõigile variantidele. See fail peab sisaldama kogu stiili põhikirjeldust.</para>
+	</sect4>
+	<sect4 id="chatstyle-reference-css-variants">
+		<title
+>Variandid</title>
+		<para
+>Variandid on <acronym
+>CSS</acronym
+>-failid, mis paiknevad kataloogis <filename
+>Variants</filename
+>. Iga variant on omaette <acronym
+>CSS</acronym
+>-fail, mis kaasab faili <filename
+>main.css</filename
+> ja teeb põhistiili muudatusi.</para>
+	</sect4>
+</sect3>
+
+<sect3 id="chatstyle-reference-debug">
+	<title
+>Stiilide silumine</title>
+	<para
+>Kaks vihjet stiili testimise kohta selle loomisel.</para>
+	<sect4 id="chatstyle-reference-debug-save">
+		<title
+>Näidisvestluse salvestamine</title>
+		<para
+>Vestlusaknas saab vestluse <action
+>salvesta</action
+>da. See on kuvatava XHTML-lehekülje koopia. Kasuta seda <application
+>Konqueror</application
+>is oma <acronym
+>CSS</acronym
+>-failide testimiseks.</para>
+	</sect4>
+	<sect4 id="chatstyle-reference-debug-disable-cache">
+		<title
+>Stiilipuhvri keelamine</title>
+		<para
+>Stiilipuhvri saab keelata väikese seadistuslülitiga. Kui see on lubatud, laaditakse HTML-mallid iga kord, kui stiili kasutada soovitakse. Lisa järgmised read faili <filename
+>kopeterc</filename
+>. See on väga kasulik &kopete; stiili testimisel.</para>
+		<programlisting
+>[KopeteStyleDebug]
+disableStyleCache=true
+</programlisting>
+	</sect4>
+</sect3>
+
+</sect2>
+
+<sect2 id="chatstyle-reference-keywords">
+	<title
+>Võtmesõnade kirjeldus</title>
+	<para
+>Võtmesõnad on nagu augud, mis täidetakse sisuga. Iga uue sõnumi korral asendatakse need vastavalt kontekstile korrektsete väärtustega. Kopete kõigi võimaluste täielikuks ärakasutamiseks oleme lisanud Adiumile mõned omapoolsed laiendid. Mõned võtmesõnad on saadaval ainult kindlas kontekstis.</para>
+
+<variablelist
+><title
+>Mallide Header ja Footer võtmesõnade loend </title>
+<para
+>neid võtmesõnu töödeldakse vestluse alguses.</para>
+<varlistentry
+><term
+><filename
+>%chatName%</filename
+></term>
+<listitem>
+<para
+>See on aktiivse vestlusseansi nimi. Tüüpilise seansi korral kuvab see kontakti nime ja olekut. <acronym
+>IRC</acronym
+> korral kuvatakse kanali teemat. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%sourceName%</filename
+></term>
+              <term
+><filename
+>%destinationName%</filename
+></term>
+<listitem>
+<para
+>Need on vestlusseansi kontaktide nimed. <filename
+>%sourceName%</filename
+> on sinu nimi, <filename
+>%destinationName%</filename
+> kontakti nimi, kellega vestled. Neile tuleks eelistada <filename
+>%chatName%</filename
+>, sest need võivad tekitada segadust jututubade ja IRC korral. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%incomingIconPath%</filename
+></term>
+              <term
+><filename
+>%outgoingIconPath%</filename
+></term>
+<listitem>
+<para
+>Need on vestlusseansi kontaktide pildid/fotod/avatarid. Sisenev tähistab kontakti fotot, väljuv sinu enda oma. Kui fotot pole saadaval, kasutatakse pilti <filename
+>buddy_icon.png</filename
+>, mis asub kataloogis <filename
+>Incoming</filename
+> või <filename
+>Outgoing</filename
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%timeOpened%</filename
+></term>
+              <term
+><filename
+>%timeOpened{X}%</filename
+></term>
+<listitem>
+<para
+>See on vestlusseansi alguse aeg. <filename
+>%timeOpened%</filename
+> kasutab aktiivse lokaadi vaikimisi ajavormingut. Kui soovid kasutada mõnda konkreetset ajavormingut, kasuta <filename
+>%timeOpened{X}%</filename
+>, kus X on ajavormingut sisaldav string. Ajaparameetrid on samad, mis glibc'i funktsioonis <function
+>strftime</function
+>. Saadaolevaid parameetreid näeb käsuga <command
+>man strftime</command
+>. </para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist
+><title
+>Mallide Content, NextContent, Context, NextContext ja Action võtmesõnade loend</title>
+<para
+>Neid võtmesõnu töödeldakse iga sõnumi korral.</para>
+
+<varlistentry
+><term
+><filename
+>%userIconPath%</filename
+></term>
+<listitem>
+<para
+>See on sõnumiga seotud kontakti pilt/foto/avatar. Kui fotot pole saadaval, kasutatakse pilti <filename
+>buddy_icon.png</filename
+>, mis asub sõltuvalt sõnumi suunast kataloogis <filename
+>Incoming</filename
+> või <filename
+>Outgoing</filename
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderScreenName%</filename
+></term>
+<listitem>
+<para
+>See on sõnumiga seotud kontakti ID. Näited: mina@hotmail.com, 45566576, JohnSmith. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%sender%</filename
+></term>
+<listitem>
+<para
+>See on sõnumiga seotud kontakti nimi. See kasutab allikana metakontakti näidatavat nime. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%service%</filename
+></term>
+<listitem>
+<para
+>See kuvab sõnumiga seotud teenuse nime. Näited: Jabber, Yahoo, MSN. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%textbackgroundcolor{X}%</filename
+></term>
+<listitem>
+<para
+>&kopete; kasutab seda võtmesõna esiletõstu taustavärvi tähistamiseks. Ignoreeri sulgudes olevat parameetrit ja kasuta seda kujul <filename
+>%textbackgroundcolor{}</filename
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderStatusIcon%</filename
+> (&kopete; laiend)</term>
+<listitem>
+<para
+>Kuvab sõnumiga seotud kontakti oleku ikooni. See on faili asukoht. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderColor%</filename
+></term
+>  <term
+><filename
+>%senderColor{N}%</filename
+> (&kopete; laiend)</term>
+<listitem>
+<para
+>Genereerib saatja kontakti ID-st värvi. Seda saab kasutada kontakti hüüdnime erineva värviga kuvamiseks. </para>
+<para
+><filename
+>%senderColor{N}%</filename
+>, kus N on positiivne arv. Kui N on suurem kui 100, tähistab see kontakti värvist heledamat värvi. Kui N on 150, on see 50 protsenti heledam värv. Kui N on alla 100, on see tumedam värv. See on kasulik iga kontakti tausta erineva värviga kuvamiseks. </para>
+<para
+>Kui soovid kasutada neid värve variandis, aga mitte põhistiilis, on ka see võimalik. <programlisting>
+<![CDATA[
+<div style="color:%senderColor%;border:none;border-color:%senderColor{40}%;"
+><p class="message"
+>...</p
+></div>
+]]>
+</programlisting
+> Võid rakendada värvi või p.message elemendi failis <filename
+>main.css</filename
+> ja lisada varianti midagi sellist <programlisting
+>p.message { color:inherit; border-color:inherit; }
+</programlisting>
+
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist
+><title
+>Sõnumite ja Status.html ühiste võtmesõnade loend</title>
+
+<varlistentry
+><term
+><filename
+>%message%</filename
+></term>
+<listitem>
+<para
+>Sõnum ise. See on HTML-fragment. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%time%</filename
+></term>
+              <term
+><filename
+>%time{X}%</filename
+></term>
+<listitem>
+<para
+>Sõnumi saamise aeg. <filename
+>%time%</filename
+> kasutab aktiivse lokaadi vaikimisi ajavormingut. Kui soovid kasutada mõnda konkreetset ajavormingut, kasuta <filename
+>%time{X}%</filename
+>, kus X on ajavormingut sisaldav string. Ajaparameetrid on samad, mis glibc'i funktsioonis <function
+>strftime</function
+>. Saadaolevaid parameetreid näeb käsuga <command
+>man strftime</command
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%messageDirection%</filename
+> (&kopete; laiend)</term>
+<listitem>
+<para
+>Tähistab sõnumi suunda, kui sõnumit tuleb esitada paremalt vasakule või vasakult paremale. Väärtused on kas "rtl" või "ltr". Võtmesõna korrektset kasutamist tutvustab lõik <link linkend="chatstyle-guideline-direction"
+>Sõnumi suund</link
+>. </para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+</sect1>
+
+<sect1 id="chatstyle-guideline">
+	<title
+>&kopete; vestlusakna stiili juhend</title>
+<para
+>&kopete; vestlusakna juhend kujutab endast mõningate asjade kogumit, mida sinu vestlusakna stiil peab toetama, et vastata Kopete nõuetele.</para>
+<sect2 id="chatstyle-guideline-highlight">
+	<title
+>Esiletõstu toetus</title>
+	<para
+>Sinu stiil peab näitama esiletõstu. Kopetes ja Adiumis asendatakse <filename
+>%textbackgroundcolor{}%</filename
+> esiletõstu värviga. Lisa stiili atribuut: <userinput
+>background-color: %textbackgroundcolor{}%</userinput
+> HTML-elemendile, mis kuvab sõnumit.</para>
+</sect2>
+<sect2 id="chatstyle-guideline-consecutive">
+	<title
+>Järgsõnumite mallide vajalikkus</title>
+	<para
+>See juhend on mõeldud isikutele, kes kirjutavad vanu XSL-stiile ümber uude vormingusse. Kõik stiilid peavad sisaldama malli järgsõnumite jaoks. See on nüüd vaikimisi omadus.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-encoding">
+	<title
+><acronym
+>UTF-8</acronym
+> kodeeringu kasutamine</title>
+	<para
+>Pealkiri ütleb kõik: failid tuleb salvestada kodeeringus <acronym
+>UTF-8</acronym
+>.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-info">
+	<title
+><filename
+>Contents/Info.plist</filename
+> pakkumine ühildumiseks Adiumiga</title>
+	<para
+>Kopete ei kasuta veel faili <filename
+>Contents/Info.plist</filename
+>. Aga kui soovid, et sinu stiil ühilduks <application
+>Adium</application
+>iga, tuleb see fail lisada. Toome siin elementaarse näidise. Asendatavaid stringe ümbritseb "$".</para>
+<programlisting
+><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key
+>CFBundleDevelopmentRegion</key>
+        <string
+>English</string>
+        <key
+>CFBundleGetInfoString</key>
+        <string
+>$Your style full name$</string>
+        <key
+>CFBundleIdentifier</key>
+        <string
+>$Your style ID in the form: com.adiumx.smooth.operator.style$</string>
+        <key
+>CFBundleInfoDictionaryVersion</key>
+        <string
+>1.0</string>
+        <key
+>CFBundleName</key>
+        <string
+>$Your style name here$</string>
+        <key
+>CFBundlePackageType</key>
+        <string
+>AdIM</string>
+        <key
+>MessageViewVersion</key>
+        <integer
+>3</integer>
+</dict>
+</plist>
+]]>
+</programlisting>
+
+</sect2>
+
+<sect2 id="chatstyle-guideline-buddyicon">
+	<title
+><filename
+>buddy_icon.png</filename
+> pakkumine</title>
+	<para
+>Fail <filename
+>buddy_icon.png</filename
+> tuleb asetada kataloogi <filename
+>Incoming</filename
+> ja <filename
+>Outgoing</filename
+>. Neid pilte kasutatakse siis, kui kontaktil puudub foto.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-direction">
+	<title
+>Paremalt vasakule kirjutatavate keelte toetus võtmesõnaga <filename
+>%messageDirection%</filename
+></title>
+	<para
+>Võtmesõna <filename
+>%messageDirection%</filename
+> on mõeldud keeltele, milles kirjutatakse paremalt vasakule. See määrab sõnumi suuna, väärtusteks on "rtl" (paremalt vasakule) või "ltr" (vasakult paremale). Lisa see stiiliatribuut HTML-elemendile, mis kuvab sõnumit: <userinput
+>direction: %messageDirection%</userinput
+>. Stiili eelvaatlus seadistustes sisaldab paremalt vasakule näidist, mis võimaldab kontrollida, kas stiil kuvab seda õigesti. Sel juhul peab string algama paremalt.</para>
+</sect2>
+</sect1>
+</appendix>

@@ -1,0 +1,2544 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY Will.Stephenson "<personname
+><firstname
+>Will</firstname
+><surname
+>Stephenson</surname
+></personname
+>">
+  <!ENTITY Will.Stephenson.mail "<email
+>lists@stevello.free-online.co.uk</email
+>">
+  <!ENTITY Matt.Rogers "<personname
+><firstname
+>Matt</firstname
+><surname
+>Rogers</surname
+></personname
+>">
+  <!ENTITY Matt.Rogers.mail "<email
+>mattr@kde.org</email
+>">
+  <!ENTITY Michael.Larouche "<personname
+><firstname
+>Michaël</firstname
+><surname
+>Larouche</surname
+></personname
+>">
+  <!ENTITY Michael.Larouche.mail "<email
+>michael.larouche@kdemail.net</email
+>">
+  <!ENTITY Olivier.Goffart "<personname
+><firstname
+>Olivier</firstname
+><surname
+>Goffart</surname
+></personname
+>">
+  <!ENTITY Olivier.Goffart.mail "<email
+>ogoffart@kde.org</email
+>">
+  <!ENTITY Charles.Connell "<personname
+><firstname
+>Charles</firstname
+><surname
+>Connell</surname
+></personname
+>">
+  <!ENTITY Charles.Connell.mail "<email
+>charles@connells.org</email
+>">
+  <!ENTITY im "<acronym
+>IM</acronym
+>">
+  <!ENTITY ascii "<acronym
+>ASCII</acronym
+>">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % German "INCLUDE">
+  <!ENTITY kopete-menus SYSTEM "menus.docbook">
+  <!ENTITY kopete-chatstyle SYSTEM "chatstyle.docbook">
+  <!ENTITY kopete-pipes SYSTEM "pipes.docbook">
+  <!ENTITY kopete-jabber SYSTEM "jabber.docbook">
+  <!ENTITY kopete-icq SYSTEM "icq.docbook">
+  <!ENTITY kopete-emoticonspec SYSTEM "emoticonspec.docbook">
+]>
+<!--
+Intro (1st draft, Will)
+Getting Started (1st draft, Will)
+        Add an account
+        Go online
+        Start chatting
+Using &kopete; (1st draft, Will)
+        Contact List window
+		Layout
+			Menu
+			Toolbar
+			Contact List view
+			Status bar
+		Set your presence
+		Start a chat
+            	Organising contacts
+                	Adding contacts
+				Metacontacts
+			Grouping Contacts
+				Within Metacontacts
+			Renaming Contacts
+		Configure &kopete;
+		Quit.
+		Shortcuts
+        Chat window
+		Layout
+			Chat members list
+			Status bar (typing notifications, etc )
+			Tabbing
+		Starting group chats
+		Shortcuts
+	        File transfers
+Configuring &kopete; (1st draft, Will)
+	Global Shortcuts
+	Configure Dialog
+		Adding/Editing Accounts (
+		Behaviour
+		Appearance
+	Loading Plugins
+Plugins (Outlined, Will)
+        (Section on each plugin, use, and configuration)
+Menus (Done, Will)
+        (Short description of each menu item)
+FAQ (1st draft, Will)
+Specialized Tasks
+    (Any tricks involving _use_ of Kopete)
+	Command line flags
+Credits (1st draft, Will)
+Appendix: Obtaining and installation (1st draft, Will)
+Appendix: Chat Window Style Guide (1st draft, Michaël)
+-->
+
+<book id="kopete" lang="&language;">
+<bookinfo>
+<title
+>Das Handbuch zu &kopete;</title>
+
+<authorgroup>
+
+<author
+>&Will.Stephenson; &Will.Stephenson.mail;</author>
+<author
+>&Matt.Rogers; &Matt.Rogers.mail;</author>
+<author
+>&Michael.Larouche; &Michael.Larouche.mail;</author>
+
+<othercredit role="translator"
+><firstname
+>Luc</firstname
+><surname
+>de Louw</surname
+><affiliation
+><address
+><email
+>luc@delouw.ch</email
+></address
+></affiliation
+><contrib
+>Deutsche Übersetzung</contrib
+></othercredit
+> 
+</authorgroup>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>2006-12-15</date>
+<releaseinfo
+>0.12</releaseinfo>
+
+<copyright>
+<year
+>2003, 2004, 2005, 2006, 2007</year>
+</copyright>
+
+<!-- Abstract about this handbook -->
+
+<abstract>
+<para
+>&kopete; ist das Multiprotokoll-Instant-Messenger-Programm der &kde;-Gemeinschaft. </para>
+</abstract>
+
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>IM</keyword>
+<keyword
+>Instant</keyword>
+<keyword
+>Messaging</keyword>
+<keyword
+>Jabber</keyword>
+<keyword
+>IRC</keyword>
+<keyword
+>ICQ</keyword>
+<keyword
+>AIM</keyword>
+<keyword
+>Gadu-Gadu</keyword>
+<keyword
+>GroupWise</keyword>
+<keyword
+>Novell</keyword>
+<keyword
+>WinPopup</keyword>
+<keyword
+>SMS</keyword>
+</keywordset>
+
+</bookinfo>
+
+<chapter id="introduction">
+<title
+>Einleitung</title>
+
+<sect1 id="intro-to-kopete">
+<title
+>&kopete; ist das Instant-Messenger-Programm von &kde;.</title>
+<sect2 id="intro-to-kopete-next">
+<title
+>Vor dem Start ...</title>
+<para
+>Falls Sie bereits Erfahrung mit Instant-Messaging haben, können Sie den Abschnitt <link linkend="getting-started"
+>Erste Schritte</link
+> überspringen, ansonsten sollten Sie zumindest einen kurzen Blick darauf werfen.</para>
+</sect2>
+<sect2 id="intro-to-kopete-about">
+<title
+>Was ist &kopete;?</title>
+<para
+>&kopete; ist das Instant-Messaging-Programm (&im;) von &kde;. Sie können damit mit Freunden und Kollegen über verschiedene Instant-Messaging-Dienste kommunizieren. Ein einzelnes Programm ist leichter zu lernen und bequemer, wenn Ihre Freund und Kollegen unterschiedliche &im;-Dienste benutzen. </para>
+<para
+>&kopete; ist in die &kde;-Arbeitsoberfläche integriert, sodass Ihnen der Umgang mit dem Programm sogleich vertraut sein dürfte. Die Oberfläche ist einfach und klar, ohne ablenkenden Schnickschnack. Gleichzeitig wird der Fokus auf die Kommunikation gelegt, indem die Unterschiede zwischen verschiedenen &im;-Systemen durch die Oberfläche kompensiert werden. Eine wichtige Hilfe dabei sind <link linkend="organise-contacts-metacontacts"
+>Metakontakte</link
+>. Sie kombinieren die verschiedenen Möglichkeiten, eine bestimmte Person zu erreichen, zu <quote
+>einem Eintrag</quote
+> in der Kontaktliste. Die übliche Methode, eine Person mehrfach aufzulisten, führte häufig zu Verwirrung. In &kopete; entspricht ein Metakontakt einer Person, und Kontakte sind verschiedene Arten, mit dieser Person in Verbindung zu treten. Die Kontakte werden innerhalb des Metakontaktes als kleine Symbole für die sie repräsentierenden &im;-Dienste dargestellt.</para>
+<para
+>&kopete; ist für unterschiedlich erfahrene Benutzer entworfen. In der Standardeinstellung stehen nur wenige Funktionen zur Verfügung. Dafür ist die Benutzung möglichst einfach. Erfahrene Benutzer können Sonderfunktionen wie eine Statistik durch das <link linkend="plugins"
+>Modulsystem</link
+> von &kopete; leicht hinzufügen.</para>
+</sect2>
+<sect2 id="intro-to-kopete-web">
+<title
+>Weitere Informationen zu &kopete; im Internet</title>
+<para
+>Wenn Sie Kontakt mit dem Team aufnehmen möchten, finden Sie die Mailingliste der &kopete;-Entwickler unter <ulink url="https://mail.kde.org/mailman/listinfo/kopete-devel"
+>https://mail.kde.org/mailman/listinfo/kopete-devel</ulink
+>.</para>
+<para
+>Direkte Unterstützung finden Sie im Internet Relay Chat Kanal für &kopete;. Zur Verbindung können Sie jedes IRC-Programm (einschließlich &kopete;) verwenden. Fügen Sie einfach einen IRC-Kontakt mit dem Server <userinput
+>irc.freenode.org</userinput
+> und dem Kanal <userinput
+>#kopete</userinput
+> hinzu.</para>
+</sect2>
+</sect1>
+<sect1 id="intro-to-instant-messaging">
+<title
+>Eine Einführung in das Instant-Messaging</title>
+<para
+>Was versteht man unter Instant Messaging (&im;)? Bei &im; handelt es sich um eine Form der Kommunikation mit Freunden über das Internet. Das klingt ähnlich wie E-Mail, allerdings kann selbst eine kurze Konversation per E-Mail schon anstrengend sein. Sie müssen jedes Mal auf <quote
+>Antworten</quote
+> klicken, dann die richtige Stelle im Text finden und schließlich die E-Mail absenden. Es vergeht immer eine gewisse Wartezeit, bis die nächste Nachricht ankommt. Mit &im; ist die Konversation ähnlich flüssig wie per Telefon oder im persönlichen Gespräch. Die Nachrichten werden in ein gemeinsames Fenster eingegeben.</para>
+<para
+>Weiterhin kann man bei &im; die Anwesenheit der Freunde feststellen, ob sie wirklich zur selben Zeit wie man selbst Online sind. Dadurch werden die Nachrichten direkt versandt, anstatt davon abhängig zu sein, wann die Freunde ihre Postfächer leeren. Die Nachricht erscheint direkt auf dem Bildschirm der angeschriebenen Person. Falls man selbst nicht unterbrochen werden möchte, kann man seinen eigenen Status entsprechend ändern.</para>
+<para
+>Es gibt viele weitere nützliche Anwendungen für &im;. Mit &kopete; können Sie alle diese Funktionen wie Gruppen-Chat, Dateiübertragungen und Emoticons, die die eigene Gemütslage darstellen, ausprobieren. In den weiteren Abschnitten finden sich Informationen dazu.</para>
+</sect1>
+</chapter>
+
+<chapter id="getting-started">
+<title
+>Erste Schritte</title>
+<para
+>Bevor Sie &kopete; verwenden können, müssen Sie einen oder auch mehrere Zugänge für den gewünschten Instant-Messaging-Dienst (oder die gewünschten Instant-Messaging-Dienste) einrichten.</para>
+<para
+>Wahrscheinlich haben Sie sich zu diesem Zeitpunkt bereits für einen Dienst entschieden, entweder, weil Sie bereits einen Dienst benutzen, oder weil Sie den gleichen Dienst wie Ihre Freunde benutzen möchten. Falls das nicht zutrifft, sollten Sie einen Instant-Messaging-Dienst auswählen, der auf offenen Standards beruht. Andere Dienste könnten ungestraft die zugrunde liegenden Protokolle ändern. Das macht es schwerer, für diese Dienste freie Programme zu entwickeln und zu pflegen.</para>
+<para
+>Die von &kopete; unterstützten auf offenen Standards basierenden Dienste sind Jabber und IRC.</para>
+<para
+>Der folgende Abschnitt ist für Benutzer, die bereits einen Zugang bei einem &im;-Dienst besitzen. Falls nicht, können Sie &kopete; zur Registrierung bei Gadu-Gadu und Jabber benutzen; bei den anderen Diensten müssen Sie sich vor der Einrichtung eines Zugangs in &kopete; zunächst über die Internetseite des jeweiligen Anbieters registrieren.</para>
+<sect1 id="creating-accounts">
+<title
+>Das Erstellen von Zugängen</title>
+<para
+>Über den Menüeintrag <menuchoice
+><guimenu
+>Einstellungen</guimenu
+><guimenuitem
+>Einrichten ...</guimenuitem
+></menuchoice
+> gelangen Sie zum Einrichtungsdialog.</para>
+<para
+>Im Einrichtungsdialog wird &kopete; an die Wünsche des Benutzers angepasst. In der Symbolleiste links können Sie auswählen, welchen Bereich von &kopete; Sie einrichten möchten. Klicken Sie auf das Symbol <guiicon
+>Zugänge</guiicon
+>. Daraufhin erscheint im Hauptbereich die Zugangsdatenverwaltung. Dieser Bereich ist zunächst leer und dient zur Aufnahme der eigenen &im;-Zugänge. Klicken Sie auf <guibutton
+>Zugang hinzufügen ...</guibutton
+>, um den <interface
+>Zugangsassistenten</interface
+> aufzurufen.</para>
+<para
+>Der <interface
+>Zugangsassistent</interface
+> hilft bei der Einrichtung eines &im;-Zugangs. Auf der ersten Seite werden Sie nach dem einzurichtenden Dienst gefragt. Wählen Sie einen der Dienste aus und gehen Sie durch Klicken auf <guibutton
+> Weiter</guibutton
+> zur nächsten Seite. Dort müssen Sie die Details zur Registrierung bei diesem Dienst eintragen.</para>
+<para
+>Die meisten Dienste erfordern lediglich die Eingabe eines Benutzernamens oder einer eindeutigen Nummer (<acronym
+>UIN</acronym
+>) und eines Passworts. Spezielle Dienste wie Winpopup und <acronym
+>SMS</acronym
+> arbeiten etwas anders. Einige der anderen Optionen sind auf die meisten Dienste anwendbar:</para>
+<variablelist>
+<varlistentry
+><term
+>Passwort merken</term
+><listitem
+><para
+>Ist dieses Ankreuzfeld markiert, speichert &kopete; das Passwort. Daher muss es nicht bei jeder Verbindung zum &im;-Dienst wieder neu eingegeben werden. Aus Sicherheitsgründen können Sie dieses Feld unmarkiert lassen.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Beim Start verbinden</term
+><listitem
+><para
+>Ist dieses Ankreuzfeld markiert, versucht &kopete;, beim Start eine Verbindung zu diesem &im;-Dienst herzustellen. Falls Sie eine <acronym
+>LAN</acronym
+>- oder <acronym
+>DSL</acronym
+>-Verbindung oder eine andere <quote
+>ständige</quote
+> Internetverbindung benutzen, ist diese Einstellung sinnvoll. Modembenutzer sollten dieses Ankreuzfeld unmarkiert lassen und die Verbindung bei Bedarf manuell herstellen.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Nach Eingabe der &im;-Details können Sie auf <guilabel
+>Fertigstellen</guilabel
+> klicken und damit den Assistenten und den Einrichtungsdialog schließen.</para>
+</sect1
+><!-- creating-accounts -->
+<sect1 id="go-online">
+<title
+>Online gehen und einen Chat beginnen</title>
+<para
+>In der Statusleiste unten im Fenster mit der <interface
+>Kontaktliste</interface
+> von &kopete; erscheint ein Symbol, das den eingerichteten Zugang repräsentiert. Klicken Sie mit der <mousebutton
+>rechten</mousebutton
+> Maustaste darauf, können Sie über das angezeigte Menü direkt Online gehen. Während des Verbindungsaufbaus zum &im;-Dienst zeigt die Statusleiste eine kleine Animation.</para>
+<para
+>Falls Sie diesen &im;-Dienst bereits verwendet haben, werden als nächstes ihre Kontakte vom Server geholt und in der <interface
+>Kontaktliste</interface
+> angezeigt. Einen Chat starten Sie durch Klicken auf einen der Namen in dieser Liste. Im oberen Teil des neu erscheinenden Fensters erscheint die Konversation, während eigene Beiträge im unteren Teil des Fensters geschrieben und durch Klicken auf <guibutton
+>Senden</guibutton
+> abgeschickt werden.</para>
+<para
+>Ein neu eingerichteter Zugang enthält noch keine Kontakte. Unter <link linkend="organise-contacts-adding"
+>Kontakte hinzufügen</link
+> finden Sie Hinweise zum Hinzufügen von Kontakten.</para>
+<tip
+><para
+>Der Kurzbefehl für <guibutton
+>Senden</guibutton
+> ist standardmäßig <keycombo action="simul"
+>&Ctrl;&Enter;</keycombo
+>. Diese Festlegung kann unter <menuchoice
+><guimenu
+>Einstellungen</guimenu
+><guimenuitem
+>Kurzbefehle festlegen ...</guimenuitem
+></menuchoice
+> geändert werden.</para
+></tip>
+</sect1
+><!-- go-online -->
+</chapter>
+
+<chapter id="using-kopete">
+<title
+>Arbeiten mit &kopete;</title>
+<para
+>In diesem Kapitel werden die grundlegenden Funktionen von &kopete; vorgestellt. Zuerst wird die Kontaktliste und danach das Chatfenster vorgestellt.</para>
+<sect1 id="contact-list">
+<title
+>Die Kontaktliste</title>
+<para
+>Die <interface
+>Kontaktliste</interface
+> erscheint als erstes beim Start von &kopete;. Sie befindet sich im Hauptfenster, in dem Sie auch Ihren Anwesenheitsstatus setzen, einen Chat beginnen, Ihre Kontakte verwalten, &kopete; einrichten und beenden können.</para>
+<sect2 id="contact-list-layout">
+<title
+>Gestaltung des Kontaktlistenfensters</title>
+<sect3 id="contact-list-layout-menu"
+><title
+>Menü</title
+><para
+>Die Menüleiste befindet sich oben über der Kontaktliste. Falls sie dort nicht ist, wurde sie deaktiviert. Durch <keycombo action="simul"
+>&Ctrl;<keycap
+>M</keycap
+></keycombo
+> wird sie wieder aktiviert. Hinweise zu den Menüpunkten finden Sie im <link linkend="menus"
+>Kapitel über die Menüstruktur</link
+>.</para>
+</sect3>
+<sect3 id="contact-list-layout-toolbar"
+><title
+>Werkzeugleiste</title
+><para
+>In der Werkzeugleiste befinden sich die in &kopete; am meisten benötigten Aktionen. Sie können diese Leiste mit <menuchoice
+><guimenu
+>Einstellungen</guimenu
+> <guimenuitem
+>Werkzeugleisten einrichten ...</guimenuitem
+></menuchoice
+> anpassen. </para>
+	<para
+>&kopete; erleichtert die Eingabe einer Statusmeldung, um den Kontakten Ihre Stimmung mitzuteilen oder anzuzeigen, warum Sie gerade so beschäftigt sind. Klicken Sie auf das Notizsymbol und geben Sie eine neue Meldung ein oder wählen Sie eine der vorher benutzten Meldungen aus.</para>
+	<para
+>Mit der Suchleiste können die Einträge in der Kontaktliste gefiltert werden, indem Sie einige Buchstaben eines Kontaktnamens eingeben.</para>
+</sect3>
+<sect3 id="contact-list-layout-contactlist"
+><title
+>Kontaktliste</title
+><para
+>Die <interface
+>Kontaktliste</interface
+> nimmt den größten Teil des Hauptfensters ein. Alle Kontakte werden hier innerhalb der gewählten Gruppen angezeigt. Einzelne Gruppen können durch Klicken auf das nebenstehende Plussymbol geöffnet oder geschlossen werden. Die Sortierreihenfolge kann durch Klicken auf den Spaltenkopf <guilabel
+>Kontakte</guilabel
+> umgekehrt werden.</para>
+<para
+>Das Kontextmenü der <interface
+>Kontaktliste</interface
+> passt sich dem Eintrag an, für den es geöffnet wird. <link linkend="organise-contacts-grouping"
+>Gruppen</link
+>, <link linkend="organise-contacts-metacontacts"
+>Metakontakte</link
+> und &im;-spezifische Kontakte habe jeweils eigene Optionen. In freien Bereichen der <interface
+>Kontaktliste</interface
+> können Sie über das Kontextmenü neue Kontakte oder Gruppen hinzufügen bzw. die Ansichtseinstellungen der Liste verändern.</para>
+</sect3>
+<sect3 id="contact-list-layout-statusbar"
+><title
+>Statusleiste</title
+><para
+>In der Statusleiste wird für jeden &im;-Zugang ein Symbol angezeigt. Die Symbole zeigen für jeden Zugang den aktuellen Anwesenheitsstatus an. Dieser kann durch Klicken mit der <mousebutton
+>rechten</mousebutton
+> Maustaste über dem Symbol geändert werden. </para>
+	<para
+>&kopete; zeigt auch Ihre aktuelle Statusmeldung in der Statusleiste an. Klicken Sie auf das Notizsymbol auf der linken Seite und Sie können den Text ändern oder löschen.</para>
+</sect3>
+</sect2>
+<sect2 id="contact-list-setting-presence">
+<title
+>Einstellung des Anwesenheitsstatus</title>
+<para
+>Im <link linkend="go-online"
+>vorigen Kapitel</link
+> wurde eine Einführung zum Anwesenheitsstatus gegeben. Die <quote
+>Anwesenheit</quote
+> legt fest, inwieweit Sie für andere Benutzer im &im;-Netzwerk sichtbar sind. Dazu müssen Sie natürlich zunächst einmal eine Verbindung herstellen, um Nachrichten empfangen und den Anwesenheitsstatus anderer Benutzer sehen zu können. Anschließend ermöglichen die meisten &im;-Systeme einen speziellen Status wie <emphasis
+>Abwesend</emphasis
+> oder <emphasis
+>Bereit zum Chat</emphasis
+> anzunehmen. Die unterschiedlichen &im;-Systeme haben jeweils eigene Statuseinstellungen, aber &kopete; ermöglicht das Setzen einiger der gebräuchlichsten Statusmeldungen wie <emphasis
+>Abwesend</emphasis
+> oder <emphasis
+>Verfügbar</emphasis
+> für alle Dienste gleichzeitig.</para>
+<para
+>Für einzelne &im;-Zugänge setzen Sie den Status über einen Klick mit der <mousebutton
+>rechten</mousebutton
+> Maustaste auf das entsprechende Symbol in der <interface
+>Statusleiste</interface
+> unten in der <interface
+>Kontaktliste</interface
+>. Das Kontextmenü jedes Zugangs enthält die möglichen Statusmeldungen für das jeweilige &im;-System.</para>
+<para
+>Um den Status für alle Zugänge gleichzeitig zu ändern, klicken Sie auf den Knopf <guibutton
+>Status</guibutton
+> oder verwenden im Menü <menuchoice
+><guimenu
+>Datei</guimenu
+><guimenuitem
+>Status</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="contact-list-start-chat">
+<title
+>Das Starten eines Chats aus der Kontaktliste</title>
+<para
+>Um einen Chat mit einem Eintrag der <interface
+>Kontaktliste</interface
+> zu starten, klicken Sie auf den gewünschten Kontakt. Es erscheint ein <link linkend="chat-window"
+>Chatfenster</link
+>.</para>
+<para
+>Alternativ können Sie mit der <mousebutton
+>rechten</mousebutton
+> Maustaste auf einen Kontakt klicken und <menuchoice
+><guimenuitem
+>Nachricht senden</guimenuitem
+></menuchoice
+> oder <menuchoice
+><guimenuitem
+>Chat starten</guimenuitem
+></menuchoice
+> wählen. Der Unterschied ist, dass <menuchoice
+><guimenuitem
+>Nachricht senden</guimenuitem
+></menuchoice
+> eine einzige Nachricht an den Empfänger versendet, ohne ein <interface
+>Chat-Fenster</interface
+> zu öffnen.</para>
+</sect2>
+<sect2 id="contact-list-send-file">
+	<title
+>Das Übertragen einer Datei</title>
+	<para
+>Dateien können Sie aus der <interface
+>Kontaktliste</interface
+> über das Kontextmenü des Empfängers versenden. Falls &kopete; für dessen &im;-Dienst diese Funktion bereitstellt, findet sich dort ein Eintrag <menuchoice
+><guimenuitem
+>Datei senden ...</guimenuitem
+></menuchoice
+>. Alternativ können Sie eine Dateiübertragung durch Ziehen einer Datei auf den gewünschten Namen starten.</para>
+</sect2>
+<sect2 id="organise-contacts">
+<title
+>Das Verwalten von Kontakten</title>
+<sect3 id="organise-contacts-metacontacts">
+<title
+>Einige Hinweise zu Metakontakten</title>
+<para
+>Eines der Hauptprinzipien von &kopete; ist, eine einheitliche Oberfläche für unterschiedliche &im;-Dienste zu bieten. Dazu werden die Unterschiede der &im;-Dienste möglichst angeglichen. Das gilt auch für die Kontaktverwaltung. Kontakte sind in &kopete; nach Namen geordnet, der darunterliegende &im;-Dienst spielt eine untergeordnete Rolle. Es gibt viele Personen, die mehrere &im;-Dienste verwenden. Daher ist die Liste nach Namen geordnet.</para>
+<para
+>&kopete; verwendet hierzu <quote
+>Metakontakte</quote
+>, die jeweils eine Person repräsentieren. Ein Metakontakt enthält alle Informationen zu den verschiedenen &im;-Diensten, die von dieser Person benutzt werden. Damit können Sie den Anwesenheitsstatus der Person schnell überprüfen, unabhängig vom gerade verwendeten &im;-Dienst.</para>
+</sect3>
+<sect3 id="organise-contacts-grouping">
+<title
+>Hinweise zur Gruppierung von Kontakten</title>
+<para
+>Mit &kopete; können Sie Kontakte in Gruppen einordnen. Dabei kann ein Kontakt zu mehreren Gruppen gehören. Falls möglich, speichert das Programm die Gruppeninformationen auf dem Server, sodass die Kontakte auch bei Verwendung anderer &im;-Programme aktuell bleiben. Falls Sie allerdings Gruppen in einem anderen &im;-Programm verändern, kann &kopete; das nicht automatisch nachvollziehen. Solche Veränderungen müssen Sie von Hand anpassen.</para>
+<para
+>Um die Gruppe zu ändern, in der ein Metakontakt erscheint, können Sie das Kontextmenü des Kontakts zum Verschieben, Kopieren oder Löschen benutzen, oder Sie ziehen Sie den Kontakt einfach auf die gewünschte Gruppe.</para>
+</sect3
+><sect3 id="organise-contacts-adding">
+<title
+>Das Hinzufügen von Kontakten</title>
+<para
+>Um einen Kontakt hinzuzufügen, wählen Sie entweder im Menü <menuchoice
+><guimenu
+>Datei</guimenu
+><guimenuitem
+>Kontakt hinzufügen ...</guimenuitem
+></menuchoice
+> oder klicken auf das Symbol <guibutton
+>Hinzufügen ...</guibutton
+> in der Werkzeugleiste. Es erscheint jeweils der Kontaktassistent.</para>
+<para
+>Der Kontaktassistent dient zum Anlegen eines neuen Metakontakts unter Verwendung eines oder mehrerer &im;-Systeme:</para>
+
+<orderedlist>
+<listitem
+><para
+>Die Begrüßungsseite. Auf dieser Seite können Sie auswählen, ob Sie das &kde;-Adressbuch zur Speicherung dieses Kontakts verwenden wollen. Die Speicherung des &im;-Kontakts im &kde;-Adressbuch hat den Vorteil, dass andere &kde; &im;-Programme ebenfalls die Kontaktinformationen von &kopete; verwenden können. Zukünftige &kde;-Programme können vielleicht sogar &kopete; verwenden, um Nachrichten über &im;-Dienste zu versenden. Falls Sie die &im;-Kontakte getrennt speichern möchten, entfernen Sie die entsprechende Markierung.</para
+></listitem>
+<listitem
+><para
+>Wählen Sie den &kde;-Adressbucheintrag. Durch die Auswahl wird der Name des ausgewählten Eintrags als Anzeigename in &kopete; verwendet. Sie können auch einen neuen Eintrag erstellen. Diese Seite wird nicht angezeigt, wenn Sie das &kde;-Adressbuch nicht zur Speicherung von Kontakten verwenden.</para
+></listitem>
+<listitem
+><para
+>Anzeigename und Gruppe auswählen. Hier können Sie einen Anzeigenamen (der innerhalb von &kopete; für diese Person verwendete Name) und die <link linkend="organise-contacts-grouping"
+>Gruppen</link
+> auswählen, zu denen der Kontakt gehören soll.</para
+></listitem>
+<listitem
+><para
+>Auswahl des &im;-Zugangs. Hier können Sie auswählen, welche Zugänge Sie für den Chat mit dem neuen Kontakt verwenden wollen. Diese Seite wird nicht angezeigt, falls Sie nur über einen &im;-Zugang verfügen.</para
+></listitem>
+<listitem
+><para
+>Zugangsspezifische Seite zum Hinzufügen von Kontakten. Es erscheint für jeden Zugang eine Seite, auf der abhängig vom verwendeten &im;-Dienst <acronym
+>UIN</acronym
+>, Spitzname oder E-Mail-Adresse eingetragen werden muss.</para
+></listitem>
+<listitem
+><para
+>Fertigstellungsseite. Diese Seite erscheint als Abschluss. Falls der &im;-Dienst eine Autorisierung erfordert, um einen Kontakt zu Ihrer Kontaktliste hinzuzufügen (<trademark
+>ICQ</trademark
+> ist ein Beispiel dafür), erscheint nach Beenden des Assistenten eine Passwortabfrage.</para
+></listitem>
+</orderedlist>
+
+<para
+>Über das Kontextmenü können zu weitere Kontakte zu einem Metakontakt hinzufügen.</para>
+</sect3>
+
+<sect3 id="organise-contacts-renaming">
+<title
+>Das Umbenennen von Kontakten</title>
+<para
+>Über den Menüeintrag <menuchoice
+><guimenu
+>Bearbeiten</guimenu
+><guimenuitem
+>Kontakt umbenennen</guimenuitem
+></menuchoice
+> oder dem gleichnamigen Eintrag im Kontextmenü können Sie einen Kontakt umbenennen.</para>
+<para
+>Einige &im;-Systeme erlauben das Setzen eines speziellen <quote
+>Angezeigten Namens</quote
+>, der sich vom Benutzernamen unterscheidet, also &eg; <quote
+>Alice liebt Krypto</quote
+>. Falls Sie allerdings den Namen des Kontakts manuell ändern, wird der Angezeigte Name überschrieben. Um diesen wiederherzustellen, öffnen Sie den Eigenschaftendialog zum Kontakt und markieren <guilabel
+>Den vom Server vergebenen Namen verwenden</guilabel
+>. </para>
+</sect3>
+<sect3 id="organise-contacts-removing">
+<title
+>Das Entfernen von Kontakten</title>
+<para
+>Falls Sie einen Kontakt aus der Kontaktliste entfernen möchten, können Sie dessen Metakontakt mit allen darin befindlichen Kontakten im Kontextmenü mit <guimenuitem
+>Kontakt entfernen</guimenuitem
+> löschen.</para>
+</sect3>
+<sect3 id="organise-contacts-moving-contact">
+<title
+>Das Verschieben von Kontakten zwischen Metakontakten</title>
+<para
+>Sie können einen Kontakt einem anderen Metakontakt zuordnen. In der Praxis kommt das nur dann vor, wenn Sie gerade in &kopete; viele Zugänge hinzugefügt haben und nachher feststellen, dass sich hinter <quote
+>HotDog76</quote
+> und <quote
+>mikejones@hotmail.com</quote
+> die gleiche Person verbirgt.</para>
+<para
+>Sie können dieses auf zwei Arten bewerkstelligen:</para>
+<variablelist>
+<varlistentry
+><term
+>Ziehen und Ablegen</term
+><listitem
+><para
+>Das Kontaktsymbol rechts vom Namen des Metakontakts kann von einem Metakontakt auf einen anderen gezogen werden.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Im Kontextmenü des Kontakts</term
+><listitem
+><para
+>Öffnen Sie das Kontextmenü des Kontakts (<mousebutton
+>rechte</mousebutton
+> Maustaste auf dem Kontaktsymbol betätigen) und wählen Sie im Dialog den neuen Metakontakt.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Falls durch die Verschiebung ein Metakontakt leer wird (ohne Kontakte), werden Sie gefragt, ob dieser Metakontakt gelöscht werden soll.</para>
+</sect3>
+<sect3 id="organise-contacts-removing-contacts-">
+<title
+>Das Entfernen von Kontakten aus Metakontakten</title>
+<para
+>Um einen Kontakt aus einem Metakontakt zu löschen, wählen Sie im Kontextmenü <guimenuitem
+>Kontakt löschen ...</guimenuitem
+>.</para>
+</sect3>
+</sect2>
+<sect2 id="contact-list-configure">
+<title
+>Das Einrichten von &kopete;</title>
+<para
+>Sie können &kopete; über den Menüpunkt <menuchoice
+><guimenu
+>Einstellungen</guimenu
+><guimenuitem
+>Einrichten ...</guimenuitem
+></menuchoice
+> konfigurieren. Näheres dazu im Kapitel <link linkend="configuring"
+>Kopete einrichten</link
+>.</para>
+</sect2>
+<sect2 id="contact-list-quit">
+<title
+>Das Beenden von &kopete;</title>
+<para
+>&kopete; wird durch Auswahl von <menuchoice
+><guimenu
+>Datei</guimenu
+><guimenuitem
+>Beenden</guimenuitem
+></menuchoice
+>, die Tastenkombination <keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> oder durch Auswahl des entsprechenden Eintrags im Kontextmenü des Kontrollleistensymbols von &kopete; beendet. Falls Sie lediglich das <interface
+>Kontaktlisten</interface
+>-Fenster schließen, bleibt &kopete; weiterhin in der Kontrollleiste aktiv.</para>
+</sect2>
+<sect2 id="contact-list-shortcuts">
+<title
+>Tastenkürzel</title>
+<para
+>Folgende Tastenkürzel unterstützt &kopete; im <interface
+>Kontaktlisten</interface
+>-Fenster:</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Tastenzuordnung</entry>
+<entry
+>Aktion</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+><keycap
+>Pfeil hoch</keycap
+></entry>
+<entry
+>Wählt den vorherigen Eintrag in der Kontaktliste.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Pfeil runter</keycap
+></entry>
+<entry
+>Wählt den nächsten Eintrag in der Kontaktliste.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Pfeil links</keycap
+></entry>
+<entry
+>Schließt die aktuelle Gruppe.</entry>
+</row>
+<row>
+<entry
+><keycap
+>Pfeil rechts</keycap
+></entry>
+<entry
+>Öffnet die aktuelle Gruppe.</entry>
+</row>
+<row>
+<entry
+>&Enter;</entry>
+<entry
+>Startet einen Chat mit dem ausgewählten Kontakt.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>M</keycap
+></keycombo
+></entry>
+<entry
+>Anzeigen/Ausblenden der Menüleiste.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>U</keycap
+></keycombo
+></entry>
+<entry
+>Anzeigen/Ausblenden von Benutzern, die offline sind.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>G</keycap
+></keycombo
+></entry>
+<entry
+>Anzeigen/Ausblenden leerer Gruppen.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect2>
+</sect1
+><!-- contact-list -->
+
+<sect1 id="chat-window">
+<title
+>Das Chatfenster</title>
+<sect2 id="chat-window-layout"
+><title
+>Gestaltung des Chatfensters</title>
+<sect3 id="chat-window-layout-chatview"
+><title
+>Die Chat-Ansicht</title
+><para
+>Die Chat-Ansicht nimmt gewöhnlich den größten Teil des Chatfensters ein. In diesem Bereich findet die eigentliche Konversation statt. Die Nachrichten erscheinen in der empfangenen Reihenfolge mit der jüngsten Nachricht oben.</para>
+<para
+>Sie können das Erscheinungsbild der <interface
+>Chat-Ansicht</interface
+> <link linkend="configuring-appearance"
+>verändern</link
+>, um es anderen &im;-Programmen anzupassen oder ganz individuell zu gestalten.</para>
+</sect3>
+<sect3 id="chat-window-layout-memberslist"
+><title
+>Chat-Mitgliederliste</title>
+<para
+>Da einige &im;-Dienste Gruppen-Chats unterstützen, ist es nützlich zu sehen, wer gerade am Chat teilnimmt. Die Chat-Mitgliederliste erscheint links oder rechts der Chat-Ansicht. Das kann über <menuchoice
+><guimenu
+>Einstellungen</guimenu
+><guisubmenu
+>Teilnehmer anzeigen</guisubmenu
+></menuchoice
+> geändert werden. In der Chat-Mitgliederliste ist auch das Kontaktkontextmenü verfügbar.</para
+></sect3>
+<sect3 id="chat-window-layout-input-area"
+><title
+>Eingabebereich</title
+><para
+>Der Eingabebereich befindet sich unterhalb der Chat-Ansicht. In diesen Bereich werden eigene Nachrichten eingetippt. Sie können sowohl die Schriftart als auch die Farbe für die Nachricht mithilfe der Werkzeugleiste ändern. Ob die Nachricht bei den Gesprächspartnern auch in dieser Formatierung angezeigt wird, hängt von den Fähigkeiten des verwendeten &im;-Dienstes ab.</para
+><para
+>Das voreingestellte Tastaturkürzel zum Senden ist &Enter;.</para
+></sect3>
+<sect3 id="chat-window-layout-statusbar"
+><title
+>Statusleiste</title
+><para
+>Die Statusleiste enthält neben temporären Meldungen, wie &eg; dass jemand gerade eine Nachricht eintippt, den Knopf <guibutton
+>Senden</guibutton
+>.</para
+></sect3>
+<sect3 id="chat-window-layout-tabbing"
+><title
+>Unterfenster</title
+><para
+>&kopete; kann mehrere Konversationen in einem einzigen Fenster darstellen, indem jede ein eigene Unterfenster in diesem Fenster erhält. Trifft eine neue Nachricht ein, ändert der Titel des Unterfensters seine Farbe:</para>
+<variablelist>
+<varlistentry
+><term
+>rot</term
+><listitem
+><para
+>Jemand hat eine Nachricht geschrieben.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>grün</term
+><listitem
+><para
+>Jemand schreibt gerade eine Nachricht.</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>blau</term
+><listitem
+><para
+>Jemand hat eine Nachricht geschrieben, die ihren Spitznamen enthält.</para
+></listitem
+></varlistentry>
+</variablelist>
+<para
+>Die Gruppierung von Chats kann auf mehrere Arten erfolgen. Die Gruppierung wird im Dialog <quote
+>&kopete; einrichten ...</quote
+> unter Verhalten auf der Karteikarte Chat eingestellt. Mithilfe des Menüs <menuchoice
+><guimenu
+>Unterfenster</guimenu
+></menuchoice
+> können Konversationen zwischen verschiedenen Fenstern verschoben und die Platzierung der Unterfenster im Chatfenster geändert werden.</para
+></sect3>
+</sect2>
+<sect2 id="chat-window-group">
+<title
+>Gruppen-Chats in &kopete;</title>
+<para
+>&kopete; kann entweder für Chats zu zweit oder mehreren Personen verwendet werden. Nicht jeder &im;-Dienst unterstützt allerdings Gruppen-Chats.</para>
+<para
+>Um andere Personen zum Chat einladen, ziehen Sie den Kontakt aus der Kontaktliste in das Chatfenster oder wählen Sie im Menü  <menuchoice
+><guimenu
+>Chat</guimenu
+><guisubmenu
+>Einladen</guisubmenu
+><guimenuitem
+>&lt;Kontaktname&gt;</guimenuitem
+></menuchoice
+>.</para>
+</sect2>
+<sect2 id="chat-window-file-xfer">
+<title
+>Dateiübertragungen</title>
+<para
+>Einige &im;-Dienste können Dateien übertragen. Diese Funktion erreichen Sie über das Kontextmenü des Kontakts. Während eines Chats müssen Sie lediglich die Datei in das Chatfenster ziehen oder im Menü <menuchoice
+><guimenu
+>Chat</guimenu
+><guisubmenu
+>Datei senden</guisubmenu
+></menuchoice
+> auswählen.</para>
+</sect2>
+<sect2 id="chat-window-shortcuts">
+<title
+>Tastenzuordnungen</title>
+<para
+>Folgende Tastaturkürzel sind im Chatfenster verfügbar:</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Tastenzuordnung</entry>
+<entry
+>Aktion</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+>&Enter;</entry>
+<entry
+>Sendet die Nachricht im <interface
+>Eingabebereich</interface
+>.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>P</keycap
+></keycombo
+></entry>
+<entry
+>Druckt den Inhalt der Chat-Ansicht.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>S</keycap
+></keycombo
+></entry>
+<entry
+>Speichert den Inhalt der Chat-Ansicht.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>W</keycap
+></keycombo
+></entry>
+<entry
+>Schließt die aktuelle Chat-Ansicht. Damit schließt sich auch das Chatfenster, wenn sich nicht mehr als ein Unterfenster in diesem Fenster befindet.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>,</keycap
+></keycombo
+></entry>
+<entry
+>Wechselt zum vorherigen Unterfenster.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;<keycap
+>.</keycap
+></keycombo
+></entry>
+<entry
+>Wechselt zum nächsten Unterfenster.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>B</keycap
+></keycombo
+></entry>
+<entry
+>Verselbständigen eines Chat-Unterfensters und Darstellung in einem eigenen Fenster.</entry>
+</row>
+<row>
+<entry
+>&Tab;</entry>
+<entry
+>Automatische Vervollständigung des Namens eines der Chat-Teilnehmer.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect2>
+
+</sect1
+><!-- chat-window -->
+</chapter
+><!-- Using-kopete -->
+
+<chapter id="configuring">
+<title
+>&kopete; einrichten</title>
+<para
+>Die Einrichtung von &kopete; wird über das Menü <menuchoice
+><guimenu
+>Einstellungen</guimenu
+></menuchoice
+> durchgeführt. </para>
+<sect1 id="configuring-global-shortcuts">
+<title
+>Globale Kurzbefehle</title>
+<para
+>&kopete; definiert einige Tastenkürzel, die in jeder &kde;-Anwendung verwendet werden können.</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry
+>Globale Tastenzuordnungen</entry>
+<entry
+>Aktion</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>I</keycap
+></keycombo
+></entry>
+<entry
+>Nachricht lesen. Diese Funktion ist sinnvoll, falls die <interface
+>Kontaktliste</interface
+> ausgeblendet ist und das Kontrollleistensymbol eine neue Nachricht signalisiert.</entry>
+</row>
+<row>
+<entry
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>C</keycap
+></keycombo
+></entry>
+<entry
+>Ein-/Ausblenden der <interface
+>Kontaktliste</interface
+>. <emphasis
+>Warnung:</emphasis
+> Falls das Kontrollleistensymbol von &kopete; deaktiviert ist oder keine Kontrollleiste vorhanden ist, verschwindet die <interface
+>Kontaktliste</interface
+> vollständig - lediglich durch Wiederholung des Tastaturkurzbefehls kann sie wiederhergestellt werden.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect1>
+
+<sect1 id="configure-dialog">
+<title
+>Der Dialog &kopete; einrichten</title>
+<sect2 id="configuring-accounts">
+<title
+>Hinzufügen und Bearbeiten von Zugängen</title>
+<para
+>Unter <link linkend="getting-started"
+>Erste Schritte</link
+> wurde erklärt, wie Sie einen Zugang hinzufügen. Die Einstellungen eines Zugangs können Sie später im Einrichtungsdialog ändern, den Sie im Menü über <menuchoice
+><guimenu
+>Einstellungen</guimenu
+><guimenuitem
+>Einrichten ...</guimenuitem
+></menuchoice
+> aufrufen. Wie auch in anderen Einrichtungsdialogen wie zum Beispiel in den &kde;-&systemsettings; ist die Einrichtung auf mehrere Seiten aufgeteilt. Mit den Symbolen auf der linken Seite wird zwischen den Seiten umgeschaltet.</para>
+<para
+>Auf der Seite <link linkend="creating-accounts"
+>Zugänge</link
+> können Sie <guibutton
+>Zugänge hinzufügen</guibutton
+>, <guibutton
+>Zugänge entfernen</guibutton
+> oder <guibutton
+>Zugänge ändern</guibutton
+>. Die Änderung von Einträgen funktioniert ähnlich wie das Hinzufügen. Allerdings kann die UIN, der Name oder was immer das &im;-System zur Identifikation des Zugangs verwendet, nicht geändert werden. Falls Sie diese Einstellung ändern möchten, müssen Sie einen neuen Zugang einrichten und möglicherweise den alten löschen.</para>
+<para
+>Zur besseren Unterscheidung mehrerer Zugänge für das gleiche &im;-System können Sie unterschiedliche Farben für die Statusleiste und Kontaktsymbole vergeben. Wählen Sie dazu den gewünschten Zugang aus und klicken Sie auf den Farbauswahlknopf rechts. </para>
+<para
+>Mit Hilfe der Maus können Sie die Zugänge in der Liste verschieben und so die Priorität der Zugänge verändern. Bei Kontakten, die auf mehrere Arten erreicht werden können, wird hierüber das gewünschte &im;-System von &kopete; ausgewählt.</para>
+</sect2>
+<sect2 id="global-identity">
+<title
+>Standard-Identität</title>
+<para
+>Mit &kopete;s „Standard-Identität“ kann ein Spitzname und ein Foto sowie weitere Addressdaten zur Verwendung für alle &im;-Zugänge eingegeben werden. Es ist auch möglich, mehrere <guilabel
+>Identitäten</guilabel
+> zu erstellen und zwischen ihnen zu wechseln.</para>
+</sect2>
+<sect2 id="configuring-behavior">
+<title
+>Verhalten</title>
+<para
+>Unter Verhalten befinden sich Einstellungen zur Integration von &kopete; in ihre Arbeitsfläche und Einstellungen zur Oberfläche der Chatfenster.</para>
+<sect3 id="configuring-behavior-general">
+<title
+>Die Karteikarte Allgemein</title>
+<para
+>Hier können Sie die Arbeitsflächenintegration und das Erscheinungsbild der Kontaktliste von &kopete; festlegen.</para>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Symbol im Systemabschnitt der Kontrollleiste anzeigen</guilabel
+></term>
+<listitem>
+<para
+>Standardmäßig fügt &kopete; ein Symbol zur &kde; Kontrollleiste hinzu. Das können Sie hier abschalten.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Mit ausgeblendetem Hauptfenster starten</guilabel
+></term>
+<listitem>
+<para
+>Diese Einstellung lässt &kopete; mit ausgeblendeter <interface
+>Kontaktliste</interface
+> starten. Sie wird erst durch Klicken auf das Kontrollleistensymbol oder über <link linkend="configuring-global-shortcuts"
+>Anzeigen/Ausblenden der Kontaktliste</link
+> eingeblendet.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Nachrichten sofort öffnen</guilabel
+></term>
+<listitem>
+<para
+>Beim Eintreffen neuer Nachrichten wird sofort ein neues Chatfenster geöffnet.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Nachrichtenwarteschlange verwenden</guilabel
+></term>
+<listitem>
+<para
+>In die Nachrichtenwarteschlange platziert &kopete; die Nachrichten, wenn kein Chatfenster geöffnet ist. Das ermöglicht die Benachrichtigung mit <quote
+>Sprechblasen</quote
+> oder über ein animiertes Kontrollleistensymbol bei neuen Nachrichten. Bei deaktivierter Nachrichtenwarteschlange wird bei einer eintreffenden Nachricht sofort ein Chatfenster geöffnet.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Ungelesene Nachrichten in Warteschlange ablegen</guilabel
+></term>
+<listitem>
+<para
+>Ungelesene Nachrichten werden in einem bereits offenen, aber inaktiven Fenster angezeigt. Nur eingehende Nachrichten in der Warteschlange werden in der Sprechblase und über das animierte Symbol angezeigt. Wenn diese Einstellung inaktiv ist, werden nur neue eingehende Nachrichten in die Warteschlange gestellt, d. h. Nachrichten, die nicht direkt angezeigt werden können.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-general-notifications">
+<title
+>Benachrichtigungen</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Bei neuer Nachricht Sprechblase anzeigen</guilabel
+></term>
+<listitem>
+<para
+>Diese Option zeigt bei einer neuen Nachricht eine <quote
+>Sprechblase</quote
+> an, die aus dem Kontrollleistensymbol kommt. Sie können die Nachricht ignorieren oder einen Chat beginnen. &URL;s werden aus der Nachricht extrahiert. Beim Klicken darauf öffnet sich der eingestellte Browser und die Nachricht verschwindet.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Bei neuer Nachricht Systemabschnitt aufblinken lassen</guilabel
+></term>
+<listitem>
+<para
+>Durch diese Option wird eine Animation des Systemabschnittsymbols bei Ankunft einer neuen Nachricht angezeigt. Klicken auf das Symbol zeigt die Nachricht in einem neu geöffneten Chatfenster.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Ereignisse bei Abwesenheit aktivieren</guilabel
+></term>
+<listitem>
+<para
+>Falls Sie nicht von Benachrichtigungen abgelenkt werden wollen, solange der Status <emphasis
+>Abwesend</emphasis
+> gesetzt ist, entfernen Sie diese Markierung.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Klänge &amp; Ereignisse einrichten</guilabel
+></term>
+<listitem>
+<para
+>&kopete; unterstützt Klänge, blinkende Fensterleisteneinträge, passive Meldungsfenster und andere ungewöhnliche Benachrichtigungsarten mit Hilfe des &kde;-Benachrichtigungssystems. Tippen Sie <userinput
+>help:/kcontrol/kcmnotify</userinput
+> in &konqueror; oder wählen Sie die Hilfe im Abschnitt <guilabel
+>Benachrichtigungen</guilabel
+> der &systemsettings; für genauere Informationen.</para>
+<para
+>Zum Einrichten einer benutzerdefinierten Benachrichtigung für einen Kontakt  klicken Sie mit der rechten Maustaste auf den Kontakt in der Kontaktliste und wählen dann Eigenschaften. Auf diese Weise können Chats gestartet, Sound-Effekte wiedergegeben oder Nachrichten für diesen Kontakt oder die Gruppe angezeigt werden. Außerdem kann man <quote
+>Programm ausführen</quote
+> als benutzerdefinierte Benachrichtigung verwenden. Beispielsweise können Sie mit <application
+>XOSD</application
+> (X On-Screen-Display) eine OSD-Benachrichtigung erhalten, wenn das Ereignis <quote
+>Benutzer geht Online</quote
+> auftritt:</para>
+<para
+><userinput
+>echo %s | osd_cat -o 100 -p bottom -A center -f -*-helvetica-*-r-*-*-24-*-*-*-*-*-*-* -O 2 -c gold</userinput
+></para>
+<para
+>Sie können nach einem Vorschlag im &kde;-Forum die Online-Benachrichtigungen mit einem Sprachsynthesizer mit <ulink url="http://mambo.ucsc.edu/psl/mbrola"
+>MBROLA</ulink
+> vorlesen lassen:</para>
+<para
+><userinput
+>echo %s | sed -e 's/online/onlaain/i' | /usr/local/bin/mbrdico.dutch.female</userinput
+></para>
+<para
+>Das <quote
+>sed</quote
+> in der Mitte dient dazu, für die Ausgabe von &kopete; eine bessere holländische Aussprache zu erzielen.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-away">
+<title
+>Abwesenheitseinstellungen</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Alle geöffneten Chats von meiner Abwesenheit informieren</guilabel
+></term>
+<listitem
+><para
+>Bedenken Sie vor dem Aktivieren dieser Einstellung, dass bei ihrer Abwesenheit an jeden offenen Chat eine Nachricht gesendet wird. Einige könnten das als aufdringlich empfinden.</para
+></listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-away-auto">
+<title
+>Automatische Abwesenheit</title>
+<para
+>Hier können Sie einstellen, dass &kopete; nach einer gewissen Inaktivitätszeit auf Abwesenheit umschaltet.</para>
+</sect4>
+<sect4 id="configuring-behavior-away-messages">
+<title
+>Vordefinierte Abwesenheitsnachrichten</title>
+<para
+>Sie können beliebig viele Abwesenheitsnachrichten vordefinieren und von diesen beim Umschalten auf <emphasis
+>Abwesenheit</emphasis
+> eine auswählen. Dazu verwenden Sie den Knopf <guibutton
+>Status</guibutton
+> in der <link linkend="contact-list-layout-toolbar"
+>Hauptwerkzeugleiste</link
+>.</para>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-chat">
+<title
+>Chat-Einstellungen</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Fenster bei neuen Nachrichten nach vorne holen</guilabel
+></term>
+<listitem
+><para
+>Damit öffnet sich ein Chatfenster, wenn es eine neue Nachricht erhält.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Ereignisse im Chatfenster anzeigen</guilabel
+></term>
+<listitem
+><para
+>Einige &im;-Dienste bieten zusätzliche Informationen wie hinzukommende oder sich entfernende Personen. Diese Option zeigt derartige Informationen im Chatfenster an.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Nachrichten mit ihrem Spitznamen farblich hervorheben</guilabel
+></term>
+<listitem
+><para
+>Hiermit werden Nachrichten, die den eigenen Spitznamen enthalten, hervorgehoben. Weiter reichende Einstellungen zu Hervorhebungen und anderen Ereignissen finden Sie im Modul <link linkend="plugins-highlight"
+>Hervorgehoben</link
+>.</para
+></listitem>
+</varlistentry>
+</variablelist>
+<sect4 id="configuring-behavior-chat-interface">
+<title
+>Schnittstellenauswahl</title>
+<para
+>Die Eingabe von Nachrichten in &kopete; kann entweder über ein <quote
+>Senden und Vergessen</quote
+>-Interface, das nicht auf eine Antwort wartet, oder über ein Chatfenster, das den Dialog so darstellt, wie er sich entwickelt, erfolgen. Hier kann der Standardstil ausgewählt werden.</para>
+</sect4>
+<sect4 id="configuring-behavior-chat-grouping">
+<title
+>Regelungen zur Gruppierung von Chatfenstern</title>
+<para
+>Falls Sie Chatfenster als Unterfenster innerhalb eines Fensters anordnen möchten, bietet &kopete; dafür einige Einstellungen.</para>
+<itemizedlist>
+<listitem
+><para
+>Jede Nachricht in einem eigenen Chatfenster anzeigen.</para
+></listitem>
+<listitem
+><para
+>Alle Nachrichten des gleichen Zugangs im gleichen Chatfenster zusammenfassen</para
+></listitem>
+<listitem
+><para
+>Alle Nachrichten werden in einem Chatfenster gruppiert angezeigt</para
+></listitem>
+<listitem
+><para
+>Alle Nachrichten der gleichen Gruppe werden im selben Chatfenster angezeigt</para
+></listitem>
+<listitem
+><para
+>Alle Nachrichten des gleichen Metakontaktes werden im selben Chatfenster angezeigt</para
+></listitem>
+</itemizedlist>
+</sect4>
+<sect4 id="configuring-behavior-chat-lines">
+<title
+>Zeilenanzahl des Chatfensters</title>
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Maximale Anzahl der Zeilen im Chatfenster</guilabel
+></term>
+<listitem
+><para
+>Hiermit wird die maximale Anzahl von Textzeilen des Chatfensters begrenzt.</para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect4>
+</sect3>
+</sect2
+> <!-- configuring-behavior -->
+<sect2 id="configuring-appearance">
+<title
+>Erscheinungsbild</title>
+<para
+>Das Erscheinungsbild beeinflusst den Stil der Chatfenster, deren Farben und Schriftarten, und ermöglicht die Auswahl von bevorzugten Emoticons.</para>
+<sect3 id="configuring-appearance-emoticons">
+<title
+>Emoticons</title>
+<para
+>Emoticons (auch bekannt als <quote
+>Smileys</quote
+>) sind Kombinationen von Zeichen wie &eg; <userinput
+>;-)</userinput
+>, die wie Gesichter aussehen und Stimmungen ausdrücken sollen. &kopete; kann an Stelle der Zeichen grafische Emoticons verwenden.</para>
+<para
+>Auf dieser Seite kann der gewünschte Stil der Emoticons ausgewählt oder grafische Emoticons komplett abgeschaltet werden.</para>
+<!--FIXME uncomment when chapter id="specialised" has content
+<para
+>See <link linkend="specialised"
+>Specialized Actions</link
+> for details of how to install extra emoticon sets.</para>
+-->
+</sect3>
+<sect3 id="configuring-appearance-chat">
+<title
+>Chatfenster</title>
+<sect4 id="configuring-appearance-chat-styles">
+<title
+>Stile</title>
+<para
+>Sie können den Stil des Chatfensters an das Aussehen anderer Programme anpassen oder selbst einen Stil erfinden. Sie finden die installierten Stile in der Liste links und deren Vorschau im Hauptbereich. Weitere Informationen zum Erstellen eigener Stile finden Sie in <link linkend="chatwindowstyleguide"
+>Einführung in Chatfenster-Stile</link
+>.</para>
+<para
+>Stile, die von Dritten bereitgestellt werden, finden Sie im <ulink url="https://store.kde.org/"
+>KDE Store</ulink
+>. Beginnend mit &kopete; 0.12 werden Stile von Adium (ein &im;-Programm für &Mac; OS X) unterstützt. Sie können nun Stile für Adium unter folgender Adresse herunterladen: <ulink url="http://www.adiumxtras.com/"
+>Adium Xtras</ulink
+>. Wählen Sie hier <quote
+>Message View Styles</quote
+>.</para>
+<para
+>Um einen Stil zu installieren, klicken Sie <guibutton
+>Installieren ...</guibutton
+>. Wählen Sie das Archiv aus, in dem der Stil enthalten ist. Um einen Stil zu löschen, wählen Sie diesen in der Liste aus und drücken <guibutton
+>Löschen</guibutton
+>.</para>
+<para
+><guilabel
+>Aufeinander folgende Nachrichten gruppieren</guilabel
+> ist eine Einstellung die es erleichtert, den Chat zu lesen. Hiermit werden aufeinander folgende Nachrichten, die vom selben Benutzer kommen, ohne wiederholte Anzeige des Sendernamens gruppiert.</para>
+</sect4>
+</sect3>
+<sect3 id="configuring-behavior-general-contactlist">
+<title
+>Kontaktliste</title>
+<variablelist>
+<varlistentry>
+	<term
+><guilabel
+>Metakontakte nach Gruppen ordnen</guilabel
+></term>
+<listitem>
+<para
+>Durch Deaktivierung dieser Option blendet &kopete; Gruppen aus und die Kontakte sind nur in <guilabel
+>Online-Kontakte</guilabel
+> und <guilabel
+>Offline-Kontakte</guilabel
+> unterteilt.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Baumartige Linien anzeigen</guilabel
+></term>
+<listitem>
+<para
+>Üblicherweise zeigt &kopete; Kontakte und Gruppen in einer Baumstruktur an, bei der Gruppenmitglieder eingerückt sind. Das kann zugunsten eines einfacheren Erscheinungsbildes in eine einfache Liste umgewandelt werden.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Kontaktanzeigemodus</guilabel
+></term>
+<listitem>
+	<para
+>Es gibt verschiedene Ansichten für die Kontaktliste. Besonders interessant ist der Modus <guilabel
+>Kontaktfotos verwenden, falls verfügbar</guilabel
+>, in dem in der Kontaktliste auch je das Foto des Kontaktes angezeigt wird. Das Foto kommt entweder vom Nachrichtendienst oder aus dem KDE-Adressbuch.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Animationen der Kontaktliste</guilabel
+></term>
+<listitem>
+	<para
+>Hier wird eingestellt, welche Änderungen in der Kontaktliste animiert werden. Das Deaktivieren der Einstellungen führt bei langsamen Maschinen zu besseren Reaktionszeiten.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Kontaktliste automatisch ausblenden</guilabel
+></term>
+<listitem>
+	<para
+>Falls diese Einstellung eingeschaltet ist, wird die Kontaktliste kurz nachdem die Maus das Fenster verlassen hat, automatisch ausgeblendet.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Kurztipp-Inhalte ändern ...</guilabel
+></term>
+<listitem>
+	<para
+>Sie haben die volle Kontrolle über den Inhalt der Kurztipps. Diese werden in der Kontaktliste angezeigt, wenn die Maus über einem Kontakt verweilt.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+<sect3 id="configuring-appearance-colors-fonts">
+<title
+>Farben &amp; Schriftarten</title>
+<sect4 id="configuring-appearance-colors-fonts-chat">
+<title
+>Farben des Chatfensters</title>
+<para
+>Hier können die Grundschriftart und die Textfarben der Chatfenster eingestellt werden.</para>
+</sect4>
+<sect4 id="configuring-appearance-colors-fonts-overrides">
+<title
+>Aufhebung von Formatierungen</title>
+<para
+>Wenn Ihre Kontakte Farb- und Schrifteinstellungen benutzen, die Ihnen nicht gefallen, können Sie die Einstellungen der Kontakte in diesem Abschnitt überschreiben und Ihre eigenen verwenden.</para>
+</sect4>
+<sect4 id="configuring-appearance-colors-fonts-contactlist">
+<title
+>Kontaktliste</title>
+<para
+>Einige &im;-Dienste übermitteln Informationen über den Leerlauf der Rechner von Kontakten. Durch diese Option kann für Rechner im Leerlauf die Farbe des zugehörigen Kontakts geändert werden.</para>
+</sect4>
+</sect3>
+</sect2
+> <!-- configuring-appearance -->
+<sect2 id="configuring-devices">
+<title
+>Geräte</title>
+<para
+>Im Abschnitt Geräte können Sie auswählen und einstellen, welche Multimediageräte für das Chatten mit Audio oder Video verwendet werden. Es hängt von der Hardware und deren Unterstützung durch das Betriebssystem ab, ob sie mit Multimediageräten chatten können. </para>
+<sect3 id="configuring-devices-video">
+<title
+>Video</title>
+<para
+>&kopete; benutzt für Videos das System Video4Linux 2. Wurde kein Videogerät gefunden, wird nur ein Kamerasymbol angezeigt, sonst eine Bildvorschau. Aktuelle Informationen über die Webcam-Unterstützung finden Sie auf der <ulink url="http://userbase.kde.org/Kopete/Webcam_Support"
+>Kopete-Webcam</ulink
+>-Webseite.</para>
+</sect3>
+<sect3 id="configuring-devices-audio">
+<title
+>Audio</title>
+	<para
+>Unterstützung für Audio ist in &kopete; noch im experimentellen Stadium, daher ist diese Seite nur in Entwicklerversionen vorhanden.</para>
+</sect3>
+</sect2>
+</sect1>
+
+<sect1 id="configuring-load-plugins-dialog">
+<title
+>Module laden</title>
+<para
+>Die Fähigkeiten von &kopete; können mit einigen besonderen Funktionen erweitert werden, die nützlich oder mindestens lustig sind. Sie finden diese auf der Seite <guilabel
+>Module</guilabel
+> im Einrichtungsdialog, den Sie über das Menü unter <menuchoice
+><guimenu
+>Einstellungen</guimenu
+><guimenuitem
+>Einrichten ...</guimenuitem
+></menuchoice
+> aufrufen.</para>
+<para
+>In der Liste kann jedes einzelne Modul links ein- oder ausgeschaltet und auf der rechten Seite dessen Einstellungen verändert werden. Im <link linkend="plugins"
+>nächsten Kapitel</link
+> finden Sie zu jedem Modul genauere Informationen.</para>
+</sect1>
+</chapter
+> <!-- configuring -->
+
+<chapter id="protocols">
+	<title
+>&kopete;'s Protokolle</title>
+	<para
+>In &kopete; werden die verschiedenen &im;-System als „Protokolle“ bezeichnet. Wenn Sie einen neuen Zugang einrichten, müssen Sie dafür ein Protokoll bestimmen. Obwohl in &kopete; unabhängig vom Protokoll alle &im;-Dienste unter einer einheitlichen Oberfläche angezeigt werden, gibt es Unterschiede in der Unterstützung erweiterter Fähigkeiten wie Dateiübertragung und Multimedia.</para>
+	<sect1 id="protocols-list">
+		<title
+>Protokolle</title>
+		<sect2 id="protocols-aim">
+			<title
+>AIM</title>
+			<para
+>AIM unterstützt Chaträume. Verwenden Sie <guilabel
+>Kanal beitreten ...</guilabel
+> aus dem AIM-Zugangsmenü, um einen Chatraum zu betreten. Kontaktbilder und benutzerdefinierte Emoticons können ebenfalls benutzt werden.</para>
+		</sect2>
+		<sect2 id="protocols-icq">
+			<title
+>ICQ</title>
+			<para
+>In ICQ können Sie den Status auf „Unsichtbar“ ändern, um die eigene Anwesenheit vor anderen Benutzern zu verbergen. Wenn Sie einen Kontakt hinzufügen, können Sie den ICQ-Benutzerordner suchen. Weitere Details zum Kontakt können Sie mit der Option <guilabel
+>Eigenschaften</guilabel
+> einstellen.</para>
+		</sect2>
+		<sect2 id="protocols-jabber">
+			<title
+>Jabber</title>
+			<para
+>Jabber, auch unter dem Namen XMPP bekannt, ermöglicht Dateiübertragungen, Konferenzen und weitere Dienste, die vom Jabberserver angeboten werden. Einige Jabberserver haben zum Beispiel Benutzerordner und übertragen die Nachrichten in andere Messaging-Systeme. Mit <menuchoice
+><guimenu
+>Dienste ...</guimenu
+></menuchoice
+> im Zugangsmenü können Sie auf diese Dienste zugreifen. Die Dateiübertragung funktioniert ohne Port-Weiterleitung, ist aber bei direkter Verbindung schneller. In der Voreinstellung wird Port 8010 zur Weiterleitung verwendet, das lässt sich für jeden Zugang einzeln ändern.</para>
+		</sect2>
+		<sect2 id="protocols-gtalk">
+			<title
+>Google Talk</title>
+			<para
+>Da Google Talk auf Jabber basiert, wird es in &kopete; gut unterstützt, nur das Chatten mit Sprachausgabe funktioniert nicht.</para>
+			<para
+>Einrichtung von &kopete; für Google Talk: Geben Sie Ihre gesamte Google E-Mailadresse als Benutzername ein. Aktivieren Sie die Einstellungen <guilabel
+>Protokollverschlüsselung verwenden (SSL)</guilabel
+>, <guilabel
+>Authentifizierung mit Klartextpasswort zulassen</guilabel
+> und <guilabel
+>Standardserverinformationen übergehen</guilabel
+>. Als Server ist <quote
+>talk.google.com</quote
+> oder <quote
+>gmail.com</quote
+> einzutragen und als Port sollte 443 oder 5223 benutzt werden.</para>
+		</sect2>
+		<sect2 id="protocols-groupwise">
+			<title
+>Novell GroupWise</title>
+			<para
+>GroupWise ist ein Unternehmens-Nachrichtensystem von Novell Inc. Alle Funktionen sind verfügbar, einschließlich privater Unterhaltung, Gruppenchats, formatierter Text und Suche nach Benutzern.</para>
+		</sect2>
+		<sect2 id="protocols-gadu-gadu">
+			<title
+>Gadu-Gadu</title>
+			<para
+>Gadu-Gadu ist ein Chatsystem aus Polen. Zurzeit unterstützt &kopete; nur die wichtigsten Chat-Funktionen.</para>
+		</sect2>
+		<sect2 id="protocols-winpopup">
+			<title
+>WinPopup</title>
+			<para
+>WinPopup ist ein in &kopete; benutztes Protokoll um Nachrichten mit &Windows;-Rechnern im lokalen Netz auszutauschen. In diesem  Protokoll ist nur unformatierter Text erlaubt.</para>
+		</sect2>
+		<sect2 id="protocols-others">
+			<title
+>Weitere Protokolle</title>
+			<para
+>Zusätzlich zu den oben genannten Protokollen unterstützt &kopete; noch weitere Protokolle. Diese sind in der Voreinstellung entweder nicht aktiviert oder es müssen zusätzliche Module installiert werden, dies gilt für die Protokolle SMS, Skype and SILC. Die Unterstützung für diese Protokolle kommt nicht vom Kopete-Team. </para>
+		</sect2>
+	</sect1>
+</chapter>
+	
+<chapter id="plugins">
+<title
+>Module von &kopete;</title>
+<para
+>Die Module von &kopete; bieten Funktionen, die zwar nicht essentiell für die Nachrichtendienste, aber für einige Leute dennoch nützlich sind.</para>
+<sect1 id="plugins-list">
+<title
+>Module</title>
+<!-- disabled from build in 4.11/master sect2 id="plugins-alias">
+<title
+>Alias</title>
+<para
+><guilabel
+>Alias</guilabel
+> lets you define your own commands, &eg; /hello, in &kopete; that run scripts and output the result in the chat window.  If you know how the alias Unix command works, this is just the same</para>
+</sect2-->
+<sect2 id="plugins-auto-replace">
+<title
+>Automatische Ersetzung</title>
+<para
+><guilabel
+>Automatische Ersetzung</guilabel
+> ermöglicht die automatische Korrektur häufig falsch getippter Worte und das automatische Einsetzen von Worten durch Verwendung von Abkürzungen.</para>
+</sect2>
+<sect2 id="plugins-bookmarks">
+<title
+>Lesezeichen</title>
+<para
+>Das Modul <guilabel
+>Lesezeichen</guilabel
+> erstellt Lesezeichen für die &kde;-Lesezeichenliste aus URLs, die in &im;-Nachrichten enthalten sind.</para>
+</sect2>
+<!-- was removed with Revision 732681
+sect2 id="plugins-connection-status">
+<title
+>Connection Status</title>
+<para
+><guilabel
+>Connection Status</guilabel
+> is useful for modem users or others who don't have a permanent Internet connection.  It watches for an active Internet connection and sets your accounts online when it detects you have dialed up.</para>
+</sect2-->
+<sect2 id="plugins-contact-notes">
+<title
+>Kontakt-Notizen</title>
+<para
+><guilabel
+>Kontakt-Notizen</guilabel
+> sind nützliche Informationen, die man für Metakontakte speichern kann.</para>
+</sect2>
+<sect2 id="plugins-cryptography">
+<sect2info>
+<authorgroup>
+<author
+>&Olivier.Goffart; &Olivier.Goffart.mail;</author>
+<author
+>&Charles.Connell; &Charles.Connell.mail;</author>
+</authorgroup>
+<date
+>2007-10-14</date>
+<releaseinfo
+>1.3.0</releaseinfo>
+</sect2info>
+
+<title
+>Kryptografie</title>
+<para
+>Das Kryptografie-Modul ermöglicht es ihnen, verschlüsselte und/oder signierte Nachrichten zu senden und zu empfangen.</para>
+<para
+>Kryptografie ermöglicht es Ihnen, OpenPGP zum Verschlüsseln und Signieren von Nachrichten in Unterhaltungen zu benutzen. Dies ist nicht das Gleiche wie mit SSL gesicherte Chat-Sitzungen. Kryptografie kann Nachrichten für einen einzelnen Benutzer verschlüsseln, so dass die Nachricht nur vom Eigentümer des passenden Schlüssels gelesen werden kann. Damit der Empfänger Ihrer Nachrichten überprüfen kann, ob sie tatsächlich von Ihnen gesendet wurden, können Sie die Nachrichten signieren. Verschlüsseln und Signieren kann getrennt oder zusammen verwendet werden. Erhalten Sie eine verschlüsselte Nachricht, wird das durch ein Schlosssymbol angezeigt. Ist die Nachricht signiert und Sie können die Signatur überprüfen, weil Sie den öffentlichen Schlüssel des Absenders haben, wird dies durch ein Stiftsymbol angezeigt. Bei einer nicht überprüfbaren Signatur hat das Stiftsymbol eine rote Farbe.</para>
+<para
+>Wählen Sie ihren eigenen privaten Schlüssel auf der Einrichtungsseite, um Kryptographie zu aktivieren. Wählen Sie dann <menuchoice
+><guimenuitem
+>Öffentlichen Schlüssel auswählen</guimenuitem
+></menuchoice
+> aus dem Kontextmenü für jeden Kontakt und wählen Sie jeweils den passenden Schlüssel. Bei Verwendung dieses Moduls werden Sie nach ihrer Passphrase gefragt.</para>
+<para
+>Auf Grund von Beschränkungen in den von &kopete; verwendeten Instant-Messaging-Protokollen können verschlüsselte Nachrichten mit diesen Protokollen nicht versendet werden. Versuchen Sie ein nicht unterstütztes Protokoll zu benutzen, wird eine Warnung angezeigt.</para>
+<para
+>Kryptografie kann die öffentlichen Schlüssel verwenden, die in Ihrem &kde;-Adressbuch für jeden Kontakt gespeichert sind. Die Verknüpfung zwischen einem Eintrag im Adressbuch und einem Metakontakt muss jedoch bekannt sein. Um diese Information einzugeben, wählen Sie Eigenschaften aus dem Kontextmenü des Metakontakts und setzen die Verknüpfung zum Adressbuch. Kryptografie kann auch die öffentlichen Schlüssel aus Ihrem Adressbuch exportieren. Hat ein Metakontakt eine Verknüpfung zum Adressbuch, wird der Schlüssel zum richtigen Eintrag im Adressbuch hinzugefügt und ein vorhandener Schlüssel ersetzt. Ist keine Verknüpfung vorhanden, weil es zum Beispiel noch keinen Eintrag im Adressbuch für die Person gibt, wird ein neuer Eintrag erstellt. Für diesen Eintrag werden zwei Felder ausgefüllt: der Öffentliche Schlüssel von &kopete; und der Anzeigename des Metakontakts.</para>
+<para
+>Dokumentation Copyright &copy; &Olivier.Goffart; &Olivier.Goffart.mail; and &copy; 2007 &Charles.Connell; &Charles.Connell.mail;</para>
+</sect2>
+<sect2 id="plugins-highlight">
+<title
+>Hervorgehoben</title>
+<para
+><guilabel
+>Hervorgehoben</guilabel
+> arbeitet ähnlich zu E-Mail-Filtern, indem aufgrund von bestimmten Nachrichten festgelegte Aktionen ausgelöst werden. Es kann Text hervorgehoben, aber auch ein Klang abgespielt werden.</para>
+</sect2>
+<!--FIXME History2 missing
+Another history plugin based on sqlite.
+Most important changes:
+- based on sqlite3 instead of xml-files
+- import history button in config dialog
+- import option added for the other xml-based history-plugin
+- pidgin import improved
+- test and skip duplicates on import (so it is possible to synchronize
+  regularly from a windows-pidgin installation for example)
+- more speed in most cases
+The main reason I began to rewrite the complete plugin was, that I had
+dataloss by importing from pidgin with the old history plugin.
+The months, which where imported from pidgin, did overwrite the kopete
+history. This was unacceptable.
+-->
+<sect2 id="plugins-history">
+<title
+>Verlauf</title>
+<para
+>Das Modul <guilabel
+>Verlauf</guilabel
+> speichert die über irgendeinen &im;-Dienst geführten Konversationen und erlaubt so den Rückgriff auf alte Konversationen. Der Zugriff erfolgt über den Menüeintrag <menuchoice
+><guimenuitem
+>Verlauf</guimenuitem
+></menuchoice
+> im Kontextmenü jedes Metakontakts.</para>
+<para
+>Der folgende Eintrag wird zu den Kontaktlistenmenüs hinzugefügt:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bearbeiten</guimenu
+><guimenuitem
+>Verlauf anzeigen</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Dieser Menüeintrag ist nur aktiviert, wenn ein Kontakt ausgewählt ist, er zeigt für den gewählten Kontakt den Verlauf des Chats an.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para
+>Die folgenden Einträge werden zu den Chatfenster-Menüs hinzugefügt:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Alt;&Shift;<keycap
+>Pfeil links</keycap
+></keycombo
+></shortcut
+><guimenu
+>Extras</guimenu
+><guimenuitem
+>Voriger Verlauf</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Zeigt die nächstältesten Nachrichten des Verlaufs im Chatfenster an.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Alt;&Shift;<keycap
+>Pfeil rechts</keycap
+></keycombo
+></shortcut
+><guimenu
+>Extras</guimenu
+><guimenuitem
+>Nächster Verlauf</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Zeigt die nächstneueren Nachrichten des Verlaufs im Chatfenster an.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Extras</guimenu
+><guimenuitem
+>Letzter Verlauf</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Zeigt die neuesten Nachrichten des Verlaufs im Chatfenster an.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="plugins-kopetex">
+<title
+>KopeteTeX</title>
+<para
+>KopeteTeX ermöglicht Wissenschaftlern und Mathematikern Gespräche in der Sprache LaTeX. Ausdrücke zwischen $$ werden als Grafik im Chatfenster dargestellt und können als original LaTeX-Quelltext kopiert und eingefügt werden. Um dieses Modul nutzen zu können, muss LaTeX installiert sein.</para>
+</sect2>
+<!-- Revision 732090 don't compile motionautoaway. it's moving back to playground
+sect2 id="plugins-motion-auto-away">
+<title
+>Motion Auto-Away</title>
+<para
+>In conjunction with a webcam and the <application
+>Video4Linux</application
+> package, this lets you detect when you're no longer at your computer and have &kopete; automatically become <emphasis
+>Away</emphasis
+>.</para>
+</sect2-->
+<sect2 id="plugins-now-listening">
+<title
+>Im Hintergrund läuft</title>
+<para
+>Mit dem Modul <guilabel
+>Im Hintergrund läuft</guilabel
+> teilen Sie anderen Gesprächsteilnehmern automatisch mit, welche Musik Sie hören, indem Sie <userinput
+>/media</userinput
+> in einem Gespräch eingeben oder im Chatfenster aus dem Menü <menuchoice
+><guimenu
+>Extras</guimenu
+><guimenuitem
+>Medien-Infos senden</guimenuitem
+></menuchoice
+> auswählen.</para>
+</sect2>
+<sect2 id="plugins-otr">
+<title
+>OTR</title>
+<para
+>Mit dem Modul <guilabel
+>OTR</guilabel
+> können Konversationen mit dem Off-The-Record-Verfahren verschlüsselt werden. Das Verfahren funktioniert im Prinzip wie die PGP-Verschlüsselung, ist aber für Instant-Messaging optimiert und führt den Austausch der Schlüssel selbst durch. Es muss durch die OTR-Authentifizierung nur sichergestellt werden, dass der Kontakt wirklich die behauptete Identität besitzt.</para>
+<sect3 id="plugins-otr-menus">
+<title
+>Menüeinträge</title>
+<para
+>Der folgende Eintrag wird zu den Kontaktlistenmenüs hinzugefügt:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Bearbeiten</guimenu
+><guimenuitem
+>OTR-Regelung</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Dieser Menüeintrag ist nur aktiviert, wenn ein Kontakt ausgewählt ist. Hier kann für jeden Kontakt eine eigene Verschlüsselungsregelung eingestellt werden. Mit der Auswahl von „Standard“ wird die Standardeinstellungen aus dem Einrichtungsdialog verwendet.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para
+>Die folgenden Einträge werden zu den Chatfenster-Menüs hinzugefügt:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Extras</guimenu
+><guimenuitem
+>OTR-Einstellungen</guimenuitem
+><guimenuitem
+>OTR-Sitzung starten</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Startet eine OTR-verschlüsselte Sitzung.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Extras</guimenu
+><guimenuitem
+>OTR-Einstellungen</guimenuitem
+><guimenuitem
+>OTR-Sitzung beenden</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Beendet eine bestehende OTR-verschlüsselte Sitzung.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Extras</guimenu
+><guimenuitem
+>OTR-Einstellungen</guimenuitem
+><guimenuitem
+>Kontakt authentifizieren</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Mit diesem Menüeintrag kann ein Kontakt authentifiziert werden.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+<sect3 id="plugins-otr-setup">
+<title
+>Der Einrichtungsdialog</title>
+<para
+>In diesem Dialog gibt es Einstellungen für das Verhalten des Moduls in Chatsitzungen. Das Wichtigste ist die Einstellung der Standardregelung. Wählen Sie dafür „Opportunistisch“, dann wird überprüft, ob der Kontakt OTR unterstützt und die Sitzung automatisch verschlüsselt. Mit „Manuell“ können Sie den Verschlüsselungsstaus selbst einstellen. Nur erfahrene Benutzer, die die Regelung für jeden Kontakt einzeln einstellen möchten, sollten „Immer“ oder „Nie“ wählen. Auf der Seite „Private Schlüssel“ kann ein persönliches Schlüsselpaar für jeden Zugang erzeugt werden. Dies muss aber nicht manuell durchgeführt werden. Wenn es für einen Zugang noch kein Schlüsselpaar gibt, wird es automatisch beim ersten Mal generiert. Auf der Karteikarte „Bekannte Fingerabdrücke“ können bekannte öffentliche Fingerabdrücke angezeigt, überprüft und gelöscht werden.</para>
+</sect3>
+<sect3 id="plugins-otr-auth">
+<title
+>Authentifizierung</title>
+<para
+>Sie haben sicher schon E-Mails von Personen erhalten, die vorgeben Mitarbeiter einer Bank oder eines Kreditinstituts zu sein. Diese Personen geben Ihnen eine falsche Identität an. Mit einer Authentifizierung durch mit dem Modul OTR können Sie die Identität eines Kontakts überprüfen.</para>
+<sect4 id="plugins-otr-auth-when">
+<title
+>Wann sollte authentifiziert werden?</title>
+<para
+>Einen Kontakt sollten Sie beim ersten Chat mit OTR authentifizieren. Wenn Sie das erst später nachholen, können Sie nicht sicher sein, ob es sich wirklich um den Kontakt handelt oder ob jemand Ihre Konversation abhört. Wenn der Kontakt erst einmal authentifiziert ist, kann OTR in Zukunft den Chat mit dem Kontakt automatisch authentifizieren. </para>
+<para
+>Wenn Ihr Kontakt mehrere Rechner oder mehrere &im;-Zugänge benutzt, dann muss die Authentifizierung für jeden Rechner und jeden Zugang durchgeführt werden. Danach kann Ihr Kontakt einen beliebigen authentifizierten Rechner oder Zugang benutzen, das wird automatisch von OTR erkannt. Benutzt Ihr Kontakt einen neuen Rechner oder Zugang, der OTR noch nicht bekannt ist, werden Sie durch eine Meldung im Chatfenster darüber informiert.</para>
+<screenshot>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="otr-auth-1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Wann sollte authentifiziert werden?</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</sect4>
+<sect4 id="plugins-otr-auth-how">
+<title
+>Wie wird authentifiziert?</title>
+<para
+>Öffnen Sie dazu eine Konversation mit einem Kontakt und klicken dann auf den Knopf „Kontakt authentifizieren“. Damit öffnen Sie einen Assistenten, wählen ein Authentifizierungsverfahren und folgen den weiteren Anleitungen im Assistenten.</para>
+<para
+>War die Authentifizierung erfolgreich, können sie sicher sein, dass der Kontakt tatsächlich die behauptete Identität besitzt. </para>
+</sect4>
+</sect3>
+</sect2>
+<sect2 id="plugins-pipes">
+<title
+>Umleitungen</title>
+<para
+>Mit diesem Modul können ein- oder ausgehende Nachrichten durch ein externes Skript oder Programm geleitet werden. Durch das Programm geleitet werden alle eingehen Nachrichten, ehe sie das Chatfenster erreichen und alle ausgehenden Nachrichten, ehe sie ins Internet geschickt werden. Für Umleitungen gibt es drei verschiedene Format für den Text: <variablelist
+> <varlistentry
+> <term
+>Unformatierter Text</term
+> <listitem
+><para
+>Die eigentliche Nachricht im &ascii;-Textformat</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>&HTML;-Text</term
+> <listitem
+><para
+>Die eigentliche Nachricht im &HTML;-Format, die für die Anzeige im Chatfenster gerendert wird</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Vollständige &XML;-Nachricht</term
+> <listitem
+><para
+>Ein &XML;-Dokument mit einer vollständigen Beschreibung der Nachricht einschließlich des &HTML;-Textteils</para
+></listitem
+> </varlistentry
+> </variablelist
+>Unformatierter Text oder &HTML;-Text kann &eg; für Übersetzungsprogramme verwendet werden. Das &XML;-Format kann nur mit einem Skript oder Programm speziell für dieses Modul benutzt werden. Weitere Informationen zu diesem Modul finden Sie im Kapitel <link linkend="pipes"
+>Handbuch zur Implementierung für das Modul Umleitung</link
+>. </para>
+</sect2>
+<!--FIXME missing
+preview
+privacy
+Import Privacy Plugin into svn.
+This plugin allows flexible filtering of messages by sender and/or by content.
+FEATURE: 63839
+scripting
+  -->
+<sect2 id="plugins-statistics">
+<title
+>Statistik</title>
+<para
+>Dieses Modul verwendet eine Datenbank, um Informationen über das Verhalten Ihrer Kontakte zu sammeln. Sie können diese Daten &eg; verwenden, um herauszufinden, wann einer Ihrer Kontakte üblicherweise online ist.</para>
+</sect2>
+<sect2 id="plugins-text-effect">
+<title
+>Texteffekte</title>
+<para
+><guilabel
+>Texteffekte</guilabel
+> verändern den Text einer Nachricht vor dem Absenden. Beispiele sind die Einfärbung der Buchstaben in verschiedenen Farben oder die Änderung von Klein- und Großschreibung buchstabenweise.</para>
+</sect2>
+<sect2 id="plugins-translator">
+<title
+>Übersetzer</title>
+<para
+>Das Übersetzermodul ermöglicht die Angabe einer bevorzugten Sprache für jeden Metakontakt und übersetzt Nachrichten an oder von diesem Kontakt mithilfe von Internetdiensten wie <trademark
+>Google</trademark
+>. Die eigene bevorzugte Sprache können Sie im Einrichtungsdialog des Moduls festlegen. Die Sprache eines Kontakts können Sie über dessen Kontextmenü festlegen.</para>
+<para
+>Der folgende Eintrag wird zu den Chatfenster-Menüs hinzugefügt:</para>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>T</keycap
+></keycombo
+></shortcut
+><guimenu
+>Extras</guimenu
+><guimenuitem
+>Übersetzen</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Falls die automatische Übersetzung abgeschaltet ist, kann so der aktuelle Chat übersetzt werden.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="plugins-web-presence">
+<title
+>Web-Präsenz</title>
+<para
+>Web-Präsenz ermöglicht das Darstellen ihres &im;-Status im Internet. Das Modul lädt eine kurze HTML-Datei zu einem angegebenen FTP-Server hoch, die dann in ihre Internetseite eingebunden werden kann. Das wird durch &kde;s Netzwerktransparenz erleichtert. Damit können Sie &eg; in ihrer Firma &im;-Dienste verwenden.</para>
+<para
+>Beispiel: <userinput
+>sftp://username@somehost.org/Pfad/zu/Persönlichem Ordner/im.html</userinput
+> verwendet das <acronym
+>SFTP</acronym
+>-Protokoll, um ihre Anwesenheitsinformation direkt auf einen Internetserver zu übertragen.</para>
+<para
+>Informationen zu den verschiedenen Netzwerkprotokollen finden Sie in den <ulink url="help:/kioslave/sftp/index.html"
+>KIO-Handbüchern</ulink
+>.</para>
+<!--FIXME wrong url to ioslaves
+in konsole "khelpcenter khelpcenter:kioslaves" works-->
+</sect2>
+<sect2 id="plugins-contributing">
+<title
+>Ein Modul beitragen</title>
+<para
+>Die Modulstruktur von &kopete; erlaubt eine einfache Erweiterung um zusätzliche Funktionen. Falls Sie eine Idee zu einer in &kopete; fehlenden Funktion haben, <link linkend="intro-to-kopete-web"
+>melden Sie sich</link
+>.</para>
+</sect2>
+</sect1>
+</chapter
+><!-- plugins -->
+
+&kopete-menus;
+
+<chapter id="faq">
+<title
+>Fragen und Antworten</title>
+<qandaset>
+<qandaentry>
+<question
+><para
+>Was bedeutet &kopete;? Wie wird &kopete; ausgesprochen?</para
+></question>
+<answer
+><para
+>&kopete; kommt vom chilenischen Wort <quote
+>Copete</quote
+>, das <quote
+>mit Freunden einen Trinken gehen</quote
+> bedeutet. Duncan, der ursprüngliche Autor von &kopete; hat die Aussprache <ulink type="audio/x-vorbis+ogg" url="http://kopete.kde.org/files/kopete_en.ogg"
+>aufgenommen</ulink
+>.</para
+></answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Ich habe bei einem Benutzer mehrere Nachrichtendienste eingerichtet, über die dieser Benutzer erreicht werden kann. Wenn ich in der Kontaktliste auf diesen Benutzernamen klicke, wird leider der falsche Nachrichtendienst gestartet.</para>
+</question>
+<answer
+><para
+>Sie können die Reihenfolge der Nachrichtendienste ändern, die &kopete; beim Senden einer Nachricht benutzt, indem Sie die Einträge mit der Maus verschieben. &kopete; probiert den oben stehenden Nachrichtendienst zuerst aus. Falls allerdings einer der Zugänge einen höheren Status als die anderen hat, wird dieser zuerst benutzt. Falls beispielsweise von drei Zugängen zwei als abwesend markiert sind und einer als <quote
+>Online</quote
+>, wird sofort dieser dritte Zugang verwendet.</para
+><tip
+><para
+>Um einen bestimmten Nachrichtendienst für die Nachricht an eine bestimmte Person zu verwenden, klicken Sie auf das kleine Protokollsymbol rechts des Menüeintrags anstatt auf den Namen selbst.</para
+></tip>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Ich bin gezwungen, einen SOCKS-Proxy zur Verbindung zu verwenden. Ich finde dazu keinerlei Einstellmöglichkeiten in &kopete;. Wie kann ich &kopete; dazu bewegen, SOCKS zu benutzen?</para>
+</question>
+<answer
+><itemizedlist>
+<listitem
+><para
+>Die Dienste <trademark
+>ICQ</trademark
+>, <trademark
+>AIM</trademark
+> und Jabber verwenden die &kde;-Netzwerkinfrastruktur. Der SOCKS-Proxy wird für alle &kde;-Anwendungen gemeinsam in den &systemsettings; unter <menuchoice
+><guimenu
+>Netzwerk und Verbindungen</guimenu
+><guisubmenu
+>Netzwerkeinstellungen</guisubmenu
+><guimenuitem
+>Proxy</guimenuitem
+></menuchoice
+> eingerichtet.</para
+></listitem>
+</itemizedlist>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Kann ich für &kopete; eigene Symbole verwenden?</para
+></question>
+<answer
+><para
+>Sie können auf der Seite Erscheinungsbild unter Emoticons des Dialogs <quote
+>&kopete; einrichten</quote
+> zwischen mehreren Symbolstilen wählen.</para>
+<para
+>Zusätzliche Sätze von Emoticons zum Herunterladen finden Sie im <ulink url="https://store.kde.org/"
+>KDE Store</ulink
+></para>
+
+<para
+>Die Installation von Emoticons ist vergleichsweise einfach - fügen Sie einfach unter $KDEDIR/share/apps/kopete/pics/emoticons (oder $KDEHOME, &eg; in /home/benutzer/.kde/) einen Ordner mit den Symboldateien und einer XML-Datei mit den Zuordnungen von Texten zu Symbolen hinzu.</para>
+
+<orderedlist>
+<listitem
+><para
+>Kopieren Sie den ausgepackten Ordner nach $KDEDIR/share/apps/kopete/pics/emoticons oder $HOME/.kde/share/apps/kopete/pics/emoticons (oder wo sich $KDEHOME sonst befindet).</para
+></listitem>
+<listitem
+><para
+>Wählen Sie aus dem Menü <quote
+>Einstellungen</quote
+> <quote
+>&kopete; einrichten</quote
+> und klicken Sie unter Erscheinungsbild in den linken Bereich des Einstellungsfensters, und wählen Sie die Karteikarte Emoticons.</para
+></listitem>
+<listitem
+><para
+>Wählen Sie den gerade installierten Satz von Symbolen aus der Liste</para
+></listitem>
+<listitem
+><para
+>Sofort können Sie die neu installierten Symbole in &kopete; verwenden</para
+></listitem>
+</orderedlist>
+<para
+>Um die Protokollsymbole zu ersetzen, müssen Sie andere Symbole nach $KDEDIR/share/apps/kopete/icons kopieren oder sie mit entsprechenden Symbolen unter $KDEHOME überschreiben. Bisher gibt es keine vollständigen Sätze von Symbolen, die Sie verwenden können.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+  <question
+><para
+>Es werden keine Module im Dialog <quote
+>Module einrichten</quote
+> aufgeführt. Was ist der Grund dafür?</para>
+</question>
+<answer
+><para
+>Es gibt zwei Lösungen für dieses Problem. Wenn Sie Binärpakete verwendet haben, dann prüfen Sie, dass die Pakete für Ihre Distribution und deren Version entwickelt wurden. Mischen von Distributionen und Versionen funktioniert nicht mit &kopete;. Wenn es keine Binärpakete für Ihr System gibt, müssen Sie &kopete; aus dem Quelltext kompilieren. &kopete; muss dann in den Ordner wie Ihr &kde;installiert werden. Dazu können Sie folgende Option mit <application
+>cmake</application
+> benutzen:<userinput
+><command
+>cmake</command
+> <parameter
+>-DCMAKE_PREFIX=/opt/kde4</parameter
+></userinput
+>, wobei in <userinput
+>/opt/kde4</userinput
+> ist Ihr &kde; installiert ist. Um den Installationsordner für &kde; festzustellen,geben Sie <userinput
+><command
+>which</command
+> <parameter
+>dolphin</parameter
+></userinput
+> in einem &konsole;-Fenster ein. Ist die Ausgabe dieses Befehls <computeroutput
+>/opt/kde4/bin/dolphin</computeroutput
+>, dann ist &kde; in <filename class="directory"
+>/opt/kde4</filename
+> installiert. Bei <computeroutput
+>/usr/bin/dolphin</computeroutput
+>, dann ist &kde; in <filename class="directory"
+>/usr</filename
+> installiert. Führen Sie <command
+>make install</command
+> aus und überprüfen Sie, ob es keine früheren Versionen von &kopete; an verschiedenen Orten gibt. Sie müssen auch <application
+>kbuildsycoca4</application
+> manuell nach der Installation von &kopete; ausführen, damit die Modul-Datenbank aktualisiert wird.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Ich benutze viele Arbeitsflächen, Monitore, Rechner und spreche mit mehreren Personen gleichzeitig, daher sollte &kopete; eine Benachrichtigung senden, wenn zum Beispiel eine neue Nachricht kommt oder jemand online bzw offline geht. Ist da möglich?</para>
+</question>
+<answer
+><para
+>&kopete; als &kde;-Programm verwendet KNotify für alle Benachrichtigungen. Gehen Sie zu <menuchoice
+><guimenu
+>Einstellungen</guimenu
+><guimenuitem
+>Benachrichtigungen festlegen</guimenuitem
+></menuchoice
+> und passen &kopete; für Ihre Bedürfnisse an.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Warum funktioniert die Dateiübertragung nicht?</para>
+</question>
+<answer
+><para
+>Dafür kann es viele Gründe geben. Für WLM gab es die erste Unterstützung für Dateiübertragung, dann in Jabber und IRC in &kopete; 0.9.0 in &kde; 3.3 und in ICQ und AIM in &kopete; 0.50.0 in &kde; 4.0.0. Dateiübertragung funktioniert nicht hinter einer Firewall, lesen Sie dazu den Abschnitt WLM im Kapitel Protokolle.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Warum diese Einfach-Klick-verhalten? Ich finde es sehr störend. </para>
+</question>
+<answer
+><para
+>&kopete; benutzt die globalen &kde;-Einstellungen zum Mausklick. Um sie zu ändern, öffnen Sie in den &systemsettings; das Modul <menuchoice
+><guimenu
+>Eingabegeräte</guimenu
+> <guimenuitem
+>Maus</guimenuitem
+></menuchoice
+> und ändern <guilabel
+>Doppelklick zum Öffnen von Dateien/Ordnern (bei Einfachklick nur auswählen)</guilabel
+>.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Wird es Möglichkeiten zur Anpassung der Oberfläche über Skin/Design geben?</para>
+</question>
+<answer
+><para
+>Nein, &kopete; ist ein &kde;-Programm und benutzt das Erscheinungsbild von &kde;, das Sie in den &systemsettings; anpassen können. Alternativ können Sie zum Beispiel beim Starten mit <userinput
+>kopete --style=marble</userinput
+> einen anderen Stile verwenden. Jeder gültige &kde;- oder &Qt;-Stil sollte funktionieren.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Ich möchte gerne eine neue Funktion in der nächsten Version von Kopete haben.</para>
+</question>
+<answer
+><para
+>Wünsche können Sie im <ulink url="https://bugs.kde.org"
+>&kde;-Fehlerverfolgungssystem</ulink
+> unter dem Produkt „kopete“ angeben.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>&kopete; ist abgestürzt oder zeigt ein unerwartetes Verhalten, dies bedeutet nicht &quot;Kopete ist anders als Pidgin&quot;,</para>
+</question>
+<answer
+><para
+>Berichten Sie diesen Fehler auf dem <ulink url="https://bugs.kde.org"
+>&kde;-Fehlerverfolgungssystem</ulink
+> unter dem Produkt „kopete“ auf Englisch mit genauen Angaben und einer Rückverfolgung bei einem Absturz. Benutzen Sie jedoch die Git-Version von &kopete;, senden Sie den Bericht bitte an die <ulink url="mailto:kopete-devel@kde.org"
+>Mailingliste der &kopete;-Entwickler</ulink
+>.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Die Unterstützung für Jabber-SSL funktioniert nicht mehr. Als Fehlermeldung wird ausgegeben, dass wahrscheinlich das Modul QCA-TLS fehlt. Wie kann ich das Problem lösen?</para>
+</question>
+<answer
+><para
+>Wie die Fehlermeldung zeigt, fehlt Ihnen das QCA-TLS-Modul, welches für die TLS/SSL-Verschlüsselung in Jabber nötig ist. Installieren Sie das Paket <application
+>qca-tls</application
+> und eventuell <application
+>qca-oss</application
+>. Bitte beachten Sie, dass Sie nur das <application
+>qca-tls</application
+>-Modul  installieren müssen, <emphasis
+>nicht</emphasis
+> die QCA-Bibliothek selbst. Eine Neukompilierung von &kopete; ist nicht notwendig, nicht einmal ein Neustart. Falls Sie das Modul installiert haben und es immer noch nicht funktioniert, kann Qt kann es wahrscheinlich nicht finden. Da qca-tls als &Qt;-Modul installiert wird, überprüfen Sie, ob es im Modulordner der &Qt;-Version installiert wird, mit der Sie &kopete; ausführen.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question
+><para
+>Ich nutze Jabber und ICQ gemeinsam. Immer wenn ich mit Jabber online gehe, werde ich von ICQ mit einer Fehlermeldung über die Verbindung durch ein anderes Programm getrennt. Was ist die Ursache?</para>
+</question>
+<answer
+><para
+>Sie haben einen <quote
+>ICQ-Transport</quote
+> eingerichtet, mit dem Sie mit anderen auf ICQ über Jabber sprechen. ICQ lässt mehrere Verbindungen zum gleichen Zugang nicht zu und trennt die Verbindung. Suchen Sie in Ihren Jabber-Kontakten nach einem Kontakt wie <guilabel
+>123456@icq.jabber.org</guilabel
+> und löschen Sie ihn.</para>
+</answer>
+</qandaentry>
+</qandaset>
+</chapter
+> <!-- faq -->
+
+<!--FIXME chapter id="specialised">
+<title
+>Specialized Actions</title>
+<para
+>Command line parameters</para>
+<para
+>Installing emoticon sets</para>
+</chapter--> <!-- specialised -->
+
+<chapter id="credits-and-license">
+<title
+>Danksagungen und Lizenz</title>
+<para
+>&kopete; Copyright 2001-2007, &kopete;-Entwickler </para>
+<para
+>Deutsche Übersetzung von Luc de Louw <email
+>luc@delouw.ch</email
+></para
+> &underFDL; &underGPL; <sect1 id="team">
+<title
+>Das Entwicklerteam</title>
+<sect2 id="current-team">
+<title
+>Aktuelles Entwicklerteam</title>
+<!-- please keep in sync with the authors list on the webpage -->
+<itemizedlist>
+<listitem
+><para
+>Pali Rohár (pali.rohar at gmail com): Entwickler und Betreuer</para
+></listitem>
+<listitem
+><para
+>Duncan Mac-Vicar Prett (duncan at kde org): Ursprünglicher Autor, Entwickler und Projektleiter</para
+></listitem>
+<listitem
+><para
+>Till Gerken (till at tantalo net): Entwickler, Betreuer des Jabber-Moduls</para
+></listitem>
+<listitem
+><para
+>Olivier Goffart (ogoffart at tiscalinet be): Hauptentwickler, Betreuer des WLM-Moduls</para
+></listitem>
+<listitem
+><para
+>Andy Goossens (andygoossens at telenet be): Entwickler</para
+></listitem>
+<listitem
+><para
+>Grzegorz Jaskiewicz (gregj at pointblue com pl): Entwickler, Betreuer des Gadu-gadu-Moduls</para
+></listitem>
+<listitem
+><para
+>Jason Keirstead (jason at keirstead org): Entwickler</para
+></listitem>
+<listitem
+><para
+>&Matt.Rogers; (mattr at kde org): Hauptentwickler, Betreuer der Module AIM und ICQ</para
+></listitem>
+<listitem
+><para
+>Richard Smith (lilachaze at hotmail com): Entwickler, Betreuer der Benutzeroberfläche</para
+></listitem>
+<listitem
+><para
+>&Will.Stephenson; (lists at stevello free-online co uk): Entwickler, Symbole, Module, Handbuchautor</para
+></listitem>
+<listitem
+><para
+>Michel Hermier (michel.hermier at wanadoo fr): Betreuer des Moduls IRC</para
+></listitem>
+<listitem
+><para
+>Andre Duffeck (andre at duffeck de): Entwickler, Betreuer des Moduls Yahoo</para
+></listitem>
+<listitem
+><para
+>&Michael.Larouche; (michael.larouche at kdemail net): Entwickler, WLM, Chat-Fenster.</para
+></listitem>
+</itemizedlist>
+</sect2>
+<sect2 id="ex-team">
+<title
+>Weitere Entwickler (Ruhmeshalle von &kopete;)</title>
+<para
+>Diese Personen sind nicht mehr für &kopete; tätig. Sie haben sich anderen Projekten zugewandt. Bitte richten Sie keine Fragen an sie. Für ihre Unterstützung sind wir diesen Personen ewig dankbar. </para>
+<itemizedlist>
+<listitem
+><para
+>Christopher TenHarmsel (tenharmsel at users sourceforge net) Entwickler, Oscar-Programmierer</para
+></listitem>
+<listitem
+><para
+>Ryan Cumming (ryan at kde org): Kernentwickler</para
+></listitem>
+<listitem
+><para
+>Richard Stellingwerff (remenic at linuxfromscratch org): Entwickler</para
+></listitem>
+<listitem
+><para
+>Hendrik vom Lehn (hennevl at hennevl de): Entwickler</para
+></listitem>
+<listitem
+><para
+>Stefan Gehn (sgehn at gmx net): Entwickler</para
+></listitem>
+<listitem
+><para
+>&Robert.Gogolok; (robertgogolock at gmx de): Entwickler</para
+></listitem>
+<listitem
+><para
+>&Nick.Betcher; (nbetcher at kde org): Ursprünglicher Autor der ICQ-, AIM- und IRC-Module</para
+></listitem>
+<listitem
+><para
+>Daniel Stone (dstone at kde org): Ursprünglicher Autor des Jabber-Moduls</para
+></listitem>
+<listitem
+><para
+>James Grant (topace at lightbox org): Entwickler Autor des Import-Moduls</para
+></listitem>
+<listitem
+><para
+>Zack Rusin (zack at kde org): Entwickler, alter Autor des Gadu-gadu-Moduls</para
+></listitem>
+<listitem
+><para
+>Gav Wood (gav at kde org): Autor des WinPopup-Moduls</para
+></listitem>
+<listitem
+><para
+>Martijn Klingens (klingens at kde org): Entwickler, WLM-Programmierer</para
+></listitem>
+</itemizedlist>
+</sect2>
+<sect2 id="documentation">
+<title
+>Dokumentation</title>
+<para
+>Copyright der Dokumentation 2003,2004,2005 &Will.Stephenson; (lists at stevello free-online co uk), Copyright 2005 &Matt.Rogers; (mattr at kde org), Copyright 2005,2006 &Michael.Larouche; (michael.larouche at kdemail net). </para>
+</sect2>
+</sect1>
+</chapter
+><!-- credits-and-license -->
+
+&kopete-chatstyle;
+&kopete-pipes;
+&kopete-jabber;
+&kopete-icq;
+&kopete-emoticonspec;
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet
+-->

@@ -1,0 +1,189 @@
+<!-- Copyright (c) 2008 by Charles Connell <charles@connells.org
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="pipes">
+<title
+>Guia de Implementação de Plugins de Canais do &kopete;</title>
+<para
+>A partir do &kopete; 1.0, o &kopete; vem com um plugin chamado Canais. Ele permite encaminhar as mensagens recebidas ou enviadas por um programa externo. Uma mensagem recebida será encaminhada pelo executável antes de atingir a sua janela de conversação, enquanto as mensagens enviadas serão encaminhadas pelo executável antes de serem enviadas para a Internet. Os canais poderão receber o texto num de três formatos: <variablelist
+> <varlistentry
+> <term
+>Corpo em texto simples</term
+> <listitem
+><para
+>O corpo da mensagem, em texto &ascii; simples</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Corpo de texto em &HTML;</term
+> <listitem
+><para
+>O corpo da mensagem, em &HTML;, como apareceria se o seu parceiro tivesse enviado HTML para você, o qual será apresentado na janela de conversação</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Mensagem completa em &XML;</term
+> <listitem
+><para
+>Um documento em &XML; que descreve todas as características da mensagem, incluindo o corpo em &HTML;.</para
+></listitem
+> </varlistentry
+> </variablelist
+>. Este documento descreve os detalhes específicos do formato &XML;, bem como a maneira de criar um programa que possa lidar com este formato. </para>
+
+<sect1 id="xml-output">
+<title
+>Saída &XML;</title>
+<para
+>Aqui está um exemplo do que um programa irá receber no seu descritor de 'stdin': <literallayout>
+&lt;?xml version="1.0" encoding="ISO-8859-1"?>
+&lt;message subject=""
+        route="outbound"
+        importance="1"
+        formattedTimestamp="11:06:46 am"
+        timestamp="Sat Dec 1 11:06:46 2007"
+        type="normal"
+        mainContactId="macacoespaco1234"
+        time="11:06 am" >
+        &lt;from>
+                &lt;contact contactId="marcus"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/oscarpictures/marcus.jpg" >
+                        &lt;contactDisplayName dir="ltr" text="marcus" />
+                        &lt;metaContactDisplayName dir="ltr"
+                                text="Marcus" />
+                &lt;/contact>
+        &lt;/from>
+        &lt;to>
+                &lt;contact contactId="macacoespaco1234"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/avatars/User/7e542903e0ac7519a7496e85f5a5b99d.png" >
+                        &lt;contactDisplayName dir="ltr" text="macacoespaco1234" />
+                        &lt;metaContactDisplayName dir="ltr" text="Roberto Pires" />
+                &lt;/contact>
+                &lt;/to>
+        &lt;body dir="ltr"
+                bgcolor="#000000"
+                color="#000000" >
+                &amp;lt;span style=" color:#000000;"
+>olá&amp;lt;/span
+>&lt;/body>
+&lt;/message>
+</literallayout
+> Este &XML; baseia-se de certa forma no XSD usado para os estilos de conversação disponíveis na <ulink url="http://kopete.kde.org/files/kopetemessage.xsd"
+>página Web do Kopete</ulink
+>. Este código representa uma mensagem. Existem algumas notas a fazer: <itemizedlist>
+<listitem
+><para
+>O atributo "timestamp" do elemento "message" está no formato-padrão ISO 8601.</para
+></listitem>
+<listitem
+><para
+>O atributo "protocolIcon" do elemento "contact" é escolhido da seguinte forma: <orderedlist>
+<listitem
+><para
+>Se o objeto Contact tiver a propriedade 'photo' definida, é usado esse local.</para
+></listitem>
+<listitem
+><para
+>Caso contrário, é pedida ao Meta-Contato do Contato a localização de uma imagem, sendo esta usada se for nula ou não.</para
+></listitem>
+</orderedlist>
+</para
+></listitem>
+<listitem
+><para
+>Os atributos "color" e "bgcolor" do elemento "body" são cadeias de caracteres vazias se não estiverem definidas no Kopete. Estão no formato de cores da Web.</para
+></listitem>
+<listitem
+><para
+>O conteúdo dentro do elemento "body" tem o "&lt;" escapado, para que não seja confundido com a estrutura atual em &XML;. Obviamente, para interpretar corretamente o conteúdo como HTML, você terá que converter os "&amp;lt;"s para "&lt;"s.</para
+></listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1 id="xml-input">
+<title
+>Entrada em &XML;</title>
+<para
+>O seu programa irá receber o &XML; no seu canal-padrão de entrada ('stdin'), tendo a oportunidade para modificá-lo, passando-o finalmente de volta para o &kopete; pelo seu canal-padrão de saída ('stdout'). Se o seu programa modificar os elementos a seguir, o conhecimento interno que o &kopete; terá da mensagem será modificado para refletir as suas alterações. <itemizedlist
+> <listitem
+><para
+>o atributo "timestamp" de "message", mas sem outros atributos de tempo</para
+></listitem
+> <listitem
+><para
+>o atributo "subject" de "message"</para
+></listitem
+> <listitem
+><para
+>o atributo "type" de "message"</para
+></listitem
+> <listitem
+><para
+>o atributo "importance" de "message"</para
+></listitem
+> <listitem
+><para
+>o atributo "color" do "body". Normalmente está definido como um número de cor da Web, mas poderá ser definido com um nome. Os nomes definidos pelo <ulink url="http://www.w3.org/TR/SVG/types.html#ColorKeywords"
+>SVG</ulink
+> são aceitos pelo QColor no Qt 4, por isso são os únicos nomes que poderão ser usados.</para
+></listitem
+> <listitem
+><para
+>o atributo "bgcolor" do "body" &mdash; o mesmo comportamento que o "color"</para
+></listitem
+> <listitem
+><para
+>o conteúdo do elemento "body"</para
+></listitem
+> </itemizedlist
+> Se modificar elementos ou os seus atributos que não estiverem mencionados acima, as suas alterações a esses elementos não terão efeito. </para>
+</sect1>
+
+<sect1 id="acceptable-values">
+<title
+>Valores Aceitáveis</title>
+<para
+>Alguns atributos possuem determinados valores aceitáveis. O resultado do plugin de Canais terão sempre valores válidos. Se o seu programa optar por alterar estes atributos, os mesmos terão que permanecer válidos. Caso contrário, o comportamento do &kopete; é indefinido. <variablelist>
+<varlistentry
+><term
+>Atributo "route" no elemento "message"</term
+><listitem
+><para
+>Deverá ser "inbound", "outbound", ou "internal"</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Atributo "type" no elemento "message"</term
+><listitem
+><para
+>Deverá ser igual a "action" ou "normal"</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Atributo "importance" no elemento "message"</term
+><listitem
+><para
+>Deverá ser "0" para baixa, "1" para normal e "2" para alta</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Atributo "dir" em vários elementos</term
+><listitem
+><para
+>Deverá ser "ltr" para esquerda-para-direita ou "rtl" para direita-para-esquerda</para
+></listitem
+></varlistentry>
+</variablelist>
+</para>
+</sect1>
+
+</appendix>

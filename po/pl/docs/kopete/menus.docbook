@@ -1,0 +1,1166 @@
+<!-- Kopete Handbook, Menus Chapter copyright 2003 Will Stephenson.  Licensed under the GNU Free Documentation License -->
+<chapter id="menus">
+<title
+>Pozycje menu</title>
+
+<para
+>Każda pozycja menu została opisana poniżej. Domyślny skrót klawiszowy do funkcji znajduje się obok pozycji menu (jeśli jest dostępny).</para>
+<sect1 id="menus-contactlist">
+<title
+>Menu okna listy kontaktów</title>
+<sect2 id="menus-contactlist-file">
+<title
+>Menu <guimenu
+>Plik</guimenu
+> </title>
+
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Plik</guimenu
+> <guisubmenu
+>Ustaw status</guisubmenu
+> <guimenuitem
+>Dostępny</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Wszystkie Twoje konta stają się dostępne</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Plik</guimenu
+> <guisubmenu
+>Ustaw status</guisubmenu
+> <guimenuitem
+>Nieobecny</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Ustawia status wszystkich podłączonych kont na Nieobecny</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Plik</guimenu
+> <guisubmenu
+>Ustaw status</guisubmenu
+> <guimenuitem
+>Niedostępny</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Ustawia status wszystkich kont na Niedostępny</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Plik</guimenu
+> <guimenuitem
+>Dodaj kontakt...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Uruchomiony zostaje Asystent dodawania kontaktów, umożliwiający dodanie nowych osób do listy.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Plik</guimenu
+> <guimenuitem
+>Utwórz nową grupę...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Zostaniesz poproszony o nazwę nowej grupy, która zostanie dodana do listy kontaktów.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Plik</guimenu
+> <guimenuitem
+>Zakończ</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Zostaniesz odłączony od wszystkich komunikatorów, zostaną zamknięte wszystkie okna i program.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-contactlist-edit">
+<title
+>Menu <guimenu
+>Edycja</guimenu
+> </title>
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Z</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Cofnij</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Odwraca ostatnią zmianę dokonaną na liście kontaktów.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>Z</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Ponów</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Odwraca ostatnią zmianę na liście kontaktów wykonaną przez operację <guimenu
+>Edycja</guimenu
+><guimenuitem
+>Cofnij</guimenuitem
+></para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Wyślij pojedynczą wiadomość...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Otwiera okno rozmowy (przypominające program pocztowy) z zaznaczonym kontaktem, w celu wysłania pojedynczej wiadomości.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Rozpocznij rozmowę...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Otwiera okno rozmowy z zaznaczonym kontaktem, aby rozpocząć dyskusję.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Wyślij plik...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Jeśli jest to obsługiwane przez komunikator, zostanie otworzone pole wyboru, w celu zaznaczenia i wysłania pliku do zaznaczonego kontaktu.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edycja</guimenu
+> <guisubmenu
+>Przenieś do</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Włączone, gdy zaznaczony jest kontakt) Wybierz inna grupę w podmenu, a kontakt zostanie przeniesiony do tej grupy.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edycja</guimenu
+> <guisubmenu
+>Kopiuj do</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Włączone, gdy zaznaczony jest kontakt) Wybierz grupę z podmenu, a kontakt zostanie skopiowany do grupy. Komunikatory, które umożliwiają kontaktom przynależność do więcej niż jednej grupy na serwerze listy kontaktów, zostaną odpowiednio zaktualizowane.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo
+><keycap
+>Delete</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Usuń</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Włączone, gdy zaznaczony jest kontakt) Usuwa całkowicie kontakt z listy kontaktów.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Zmień nazwę kontaktu</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Włączone, gdy zaznaczony jest kontakt) Zmienia nazwę kontaktu na liście kontaktów. Jeśli to wykonasz, wpis na liście kontaktów nie zmieni się, gdy kontakt zdalnie zmieni wyświetlaną nazwę. Możesz ponownie włączyć tę funkcję w oknie Właściwości kontaktu.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edycja</guimenu
+> <guisubmenu
+>Dodaj kontakt...</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Włączone, gdy zaznaczony jest kontakt) Wybierz inne konto z podmenu, a następnie dodaj inną metodę wysyłania wiadomości do osoby korzystającej z tego konta.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Dodaj do Twojej listy kontaktów...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Włączone, gdy zaznaczony jest kontakt)  Czasami będziesz otrzymywał wiadomości od osób, które nie są już na Twojej liście kontaktów. W tym wypadku, &kopete; utworzy dla nich tymczasowy wpis, ale aby zatrzymać je na Twojej liście kontaktów, użyj tej funkcji.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Właściwości</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>W oknie Właściwości będziesz mógł wybrać własne ikony dla zaznaczonych pozycji i zmienić ich nazwy.</para>
+<para
+>Możesz zmienić też wpisy dla kontaktów w książce adresowej &kde; z którą są powiązane.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Usuń grupę</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Włączone, gdy zaznaczona jest grupa) Całkowicie usuwa grupę z listy kontaktów. Kontakty, które są tylko w tej grupie, są przenoszone na górę.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Zmień nazwę grupy</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>(Włączone, gdy zaznaczona jest grupa) Zmienia nazwę grupy.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect2>
+<sect2 id="menus-settings">
+<title
+>Menu <guimenu
+>Ustawienia</guimenu
+></title>
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guisubmenu
+>Paski narzędzi</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Pokazuje/ukrywa <guimenuitem
+>Główny pasek narzędzi</guimenuitem
+> oraz<guimenuitem
+>Pasek wyszukiwania</guimenuitem
+>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>M</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Ustawienia</guimenu
+> <guimenuitem
+>Pokaż pasek menu</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Pokazuje/ukrywa pasek menu.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guimenuitem
+>Pokaż pasek stanu</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Pokazuje/ukrywa pasek stanu.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guimenuitem
+>Pokaż niedostępnych użytkowników</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Pokazuje/ukrywa kontakty, które są w danym momencie niedostępne. Kontakty staną się widoczne, gdy znów będą dostępne.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>G</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Ustawienia</guimenu
+> <guimenuitem
+>Pokaż puste grupy</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Pokazuje/ukrywa grupy, które nie posiadają żadnych członków lub wszyscy członkowie są niedostępni lub też ukryci (patrz poniżej).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guimenuitem
+>Konfiguracja pasków narzędzi...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Wyświetla standardowe okno &kde; do konfiguracji pasków narzędzi, pozwalające na personalizację pasków narzędzi listy kontaktów.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenuitem
+>Konfiguracja powiadomień...</guimenuitem
+></menuchoice
+></term>
+<listitem
+><para
+>W oknie dialogowym wywoływanym przez tę pozycję menu możesz zmienić powiadomienia (dźwięki, komunikaty błędów, &etc;) używane przez program &kopete;. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guimenuitem
+>Konfiguracja skrótów globalnych...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Wyświetla standardowe okno &kde; służące do konfiguracji globalnych skrótów. Możesz w nim zmienić skróty klawiszowe funkcjonujące cały czas w &kde;.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guimenuitem
+>Konfiguracja skrótów...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Wyświetla standardowe okno &kde;, pozwalające skonfigurować skróty. Możesz w nim zmienić skróty klawiszowe działające w oknach listy kontaktów.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guimenuitem
+>Konfiguracja...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Wyświetla okno <link linkend="configure-dialog"
+>Konfiguracji Kopete</link
+>. </para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-help">
+<title
+>Menu <guimenu
+>Pomoc</guimenu
+></title>
+<para
+>Są to standardowe w &kde; pozycje menu <guimenu
+>Pomoc</guimenu
+>:</para>
+&help.menu.documentation; </sect2>
+</sect1
+>  <!-- menus-contactlist -->
+
+<sect1 id="menus-chatwindow">
+<title
+>Menu okna rozmowy</title>
+<sect2 id="menus-chatwindow-chat">
+<title
+>Menu <guimenu
+>Rozmowa</guimenu
+> </title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>&Enter;</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Rozmowa</guimenu
+> <guimenuitem
+>Wyślij wiadomość</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Wysyła wiadomość</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>S</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Rozmowa</guimenu
+> <guimenuitem
+>Zapisz</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Zapisuje zawartość okna rozmowy do pliku.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>P</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Rozmowa</guimenu
+> <guimenuitem
+>Drukuj...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Drukuje kopię rozmowy.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Rozmowa</guimenu
+> <guisubmenu
+>Kontakty</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>To menu wymienia wszystkie osoby uczestniczące w rozmowie. Masz tu dostęp do tego samego menu kontaktów, do którego wchodzisz klikając <mousebutton
+>prawym</mousebutton
+> przyciskiem na nazwie kontaktu na liście kontaktów. W ten sposób możesz wykonać nastepujące operacje: wysłać plik, przeczytać informację o użytkowniku lub zablokować go.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>W</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Rozmowa</guimenu
+> <guimenuitem
+>Zamknij</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Zamyka bieżącą rozmowę. Jeśli są rozmowy w innych kartach okna, okno pozostanie otwarte.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>Q</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Rozmowa</guimenu
+> <guimenuitem
+>Zakończ</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Zamyka wszystkie rozmowy z tego okna.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-edit">
+<title
+>Menu <guimenu
+>Edycja</guimenu
+> </title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>X</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Wytnij</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Wycinanie tekstu działa tak jak w innych edytorach: zaznaczony tekst jest usuwany i umieszczany w schowku. Zauważ także, że możesz zaznaczyć tekst i przeciągnąć go w inne miejsce.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>C</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Kopiuj</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Kopiowanie tekstu przypomina tę samą operację w innych edytorach: zaznaczony tekst jest kopiowany do schowka. Zauważ, że możesz zaznaczyć tekst trzymając klawisz &Ctrl; i przeciągnąć do innej pozycji i w ten sposób skopiować.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>V</keycap
+></keycombo
+></shortcut
+> <guimenu
+>Edycja</guimenu
+> <guimenuitem
+>Wklej</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Wklejanie działa na tej samej zasadzie co w innych edytorach: tekst ze schowka jest wklejany od bieżącej pozycji kursora.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-format">
+<title
+>Menu <guimenu
+>Format</guimenu
+> </title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Format</guimenu
+> <guisubmenu
+>Dodaj uśmieszek</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>To menu zawiera wszystkie uśmieszki/emotikony zawarte w bieżącym schemacie. Możesz zmienić schemat <link linkend="configuring-appearance-emoticons"
+>w oknie konfiguracyjnym Kopete</link
+>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Format</guimenu
+> <guimenuitem
+>Kolor tekstu...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Otwiera selektora kolorów służącego do zmiany koloru tekstu.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Format</guimenu
+> <guimenuitem
+>Kolor tła...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Otwiera selektora kolorów służącego do zmiany koloru tła.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Format</guimenu
+> <guisubmenu
+>Czcionka</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>W tym menu możesz zmienić czcionkę w oknie rozmowy.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Format</guimenu
+> <guisubmenu
+>Rozmiar czcionki</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>W tym menu możesz zmienić rozmiar czcionki w oknie rozmowy.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tabs">
+<title
+>Menu <guimenu
+>Karty</guimenu
+></title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Karty</guimenu
+> <guisubmenu
+>Rozmieszczenie kart</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>W tym menu możesz ustawić wyświetlanie kart u góry lub u dołu widoku rozmowy.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;&Shift;<keycap
+>B</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Karty</guimenu
+> <guimenuitem
+>Odłącz rozmowę</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Przenosi bieżącą rozmowę do osobnego okna.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Karty</guimenu
+> <guisubmenu
+>Przenieś kartę do okna</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Korzystając z tego menu, możesz przenosić rozmowy pomiędzy oknami. W menu wybierz okno rozmowy do którego ma być przeniesiona karta.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tools">
+<title
+>Menu <guimenu
+>Narzędzia</guimenu
+> </title>
+<para
+>To menu zawiera pozycje dodane po wczytaniu wtyczek. Aby dowiedzieć się więcej, przeczytaj <link linkend="plugins"
+>rozdział o wtyczkach</link
+>.</para>
+</sect2>
+<sect2 id="menus-chatwindow-settings">
+<title
+>Menu <guimenu
+>Ustawienia</guimenu
+></title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice
+><shortcut
+><keycombo action="simul"
+>&Ctrl;<keycap
+>M</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Ustawienia</guimenu
+> <guimenuitem
+>Pokaż pasek menu</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Przenosi bieżącą rozmowę do osobnego okna.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guisubmenu
+>Paski narzędzi</guisubmenu
+> <guimenuitem
+>Główny pasek narzędzi (Kopete)</guimenuitem
+></menuchoice>
+</term>
+<listitem>
+<para
+>Pokazuje/ukrywa główny pasek narzędzi.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guisubmenu
+>Paski narzędzi</guisubmenu
+> <guimenuitem
+>Pasek stanu (Kopete)</guimenuitem
+></menuchoice>
+</term>
+<listitem>
+<para
+>Pokazuje/ukrywa pasek stanu &kopete;. To miejsce, gdzie pojawia się zdjęcia kolegi.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guisubmenu
+>Paski narzędzi</guisubmenu
+> <guimenuitem
+>Pasek formatowania (Kopete)</guimenuitem
+></menuchoice>
+</term>
+<listitem>
+<para
+>Pokazuje/ukrywa pasek formatowania tekstu.</para>
+</listitem>
+</varlistentry>
+	
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guimenuitem
+>Pokaż pasek stanu</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Przenosi bieżącą rozmowę do osobnego okna.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guisubmenu
+>Pokaż listę uczestników rozmowy</guisubmenu
+> </menuchoice>
+</term>
+<listitem>
+<para
+>W tym menu ustawiasz czy lista rozmówców ukazuje się po lewej czy prawej stronie widoku rozmowy i czy w ogóle jest wyświetlana.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guimenuitem
+>Konfiguracja skrótów...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Wyświetla standardowe okno &kde; do konfiguracji skrótów. Mogą w nim być zmienione skróty klawiszowe funkcjonujące w oknie rozmowy.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice
+><guimenu
+>Ustawienia</guimenu
+> <guimenuitem
+>Konfiguracja pasków narzędzi...</guimenuitem
+> </menuchoice>
+</term>
+<listitem>
+<para
+>Wyświetla standardowe okno &kde; do konfiguracji pasków narzędzi. Możesz tu ustawić własne paski narzędzi okna rozmowy.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-help">
+<title
+>Menu <guimenu
+>Pomoc</guimenu
+></title>
+<para
+>Są to standardowe w &kde; pozycje menu <guimenu
+>Pomoc</guimenu
+>:</para>
+&help.menu.documentation; </sect2>
+<!--
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu
+>Chat</guimenu>
+<guimenuitem
+></guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para
+></para>
+</listitem>
+</varlistentry>
+
+-->
+</sect1
+> <!-- menus-chatwindow -->
+</chapter
+> <!-- menus -->
+<!--
+CHAT
+Send Message
+Save
+Print...
+Contacts>
+Close
+Quit
+EDIT
+Cut
+Copy
+Paste
+FORMAT
+Add Smiley>
+Text Color...
+Background Color...
+Font>
+Font Size>
+TABS
+Tab Placement>
+Detach Chat
+Move Chat to Window>
+(TOOLS
+Send Media Info)
+SETTINGS
+Show Menubar
+Toolbars>
+	Show Main Toolbar (Kopete)
+	Show Status (Kopete)
+	Show Format Toolbar (Kopete)
+Show Statusbar
+Chat Members List>
+	Place to Left of Chat Area
+	Place to Right of Chat Area
+	Show
+Configure Shortcuts...
+Configure Toolbars...
+HELP
+-->
+<!--FILE
+Connection>
+	Connect All
+	Disconnect All
+Status>
+	Set Available Globally
+	Set Away Globally
+Add Contact...
+Create New Group...
+Save ContactList
+Quit
+EDIT 
+Send Message..
+Start Chat...
+Send File...
+Move To>
+	(Group List)
+Copy To>
+	(Group List)
+Remove From Group
+(on Group)
+Remove Group
+Rename Group
+(on Contact)
+Remove Contact
+Rename Contact
+Add Contact
+Add To Contact List
+View History
+Properties
+SETTINGS
+View Menubar
+View Toolbar
+View Statusbar
+Show Offline Users
+Show Empty Groups
+Configure Shortcuts...
+Configure Global Shortcuts...
+Configure Toolbars...
+Configure...
+HELP
+Kopete Handbook...
+What's This?
+Report Bug
+About Kopete
+About KDE
+-->

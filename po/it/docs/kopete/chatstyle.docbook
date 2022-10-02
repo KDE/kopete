@@ -1,0 +1,668 @@
+<!-- Copyright (c) 2005 by Michaël Larouche <michael.larouche@kdemail.net
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="chatwindowstyleguide">
+<title
+>Guida per gli stili per la finestra di chat di &kopete;</title>
+<sect1 id="chatstyle-reference">
+<title
+>Guida di riferimento per gli stili della finestra di chat di &kopete;.</title>
+<para
+>A partire da &kopete; 0.12, ora usiamo il formato di <ulink url="http://www.adiumx.com/"
+>Adium</ulink
+> per gli stili delle finestre di conversazione. Il formato del tema è basato su modelli <acronym
+>HTML</acronym
+> e su <acronym
+>CSS</acronym
+>. Sono più facili da creare e sviluppare, richiedono solo la conoscenza di <acronym
+>HTML</acronym
+> e <acronym
+>CSS</acronym
+>. Inoltre gli stili possono avere delle varianti (definite con file <acronym
+>CSS</acronym
+>) che forniscono un valore aggiunto per la personalizzazione. </para>
+
+<sect2 id="chatstyle-reference-guide">
+	<title
+>Guida di riferimento.</title>
+<para
+>Il formato adium consiste di una struttura di directory, di modelli <acronym
+>HTML</acronym
+>, di file <acronym
+>CSS</acronym
+> e di parole chiave che sono sostituite ogni volta che il modello è elaborato. La conversazione finale è una pagina <acronym
+>XHTML</acronym
+> dove i messaggi sono aggiunti con operazioni <acronym
+>DOM</acronym
+>. L'elemento centrale è l'elemento div chiamato <filename
+>Chat</filename
+>. Prima e dopo l'elemento div, vengono i modelli Header e Footer. I messaggi sono figli dell'elemento div <filename
+>Chat</filename
+>. </para>
+
+<sect3 id="chatstyle-reference-directory">
+	<title
+>Struttura della directory</title>
+<para
+>Uno stile deve rispettare questa struttura di directory. Il codice di &kopete; è pensato attorno ad essa. Quando archivi lo stile, archivia la directory <filename
+>styleName</filename
+>. La struttura della directory è la struttura di un <quote
+>bundle</quote
+> di <application
+>Mac OS X</application
+>, per chi ha familiarità con tale sistema operativo. Inoltre è importante rispettare le maiuscole qui, perché i sistemi <acronym
+>UNIX</acronym
+> fanno distinzione.</para>
+<programlisting
+>styleName\ (può avere un suffisso .adiumMessageStyle, perché in Mac OS X è un bundle)
+        Contents\
+                Info.plist
+                Resources\
+                        main.css
+                        Header.html
+                        Footer.html
+                        Status.html
+                        Incoming\ (and Outgoing\)
+                                Content.html
+                                NextContent.html (for consecutive messages)
+                                Context.html (for message history)
+                                NextContext.html
+                                Action.html
+                        Variants\
+                                *.css
+</programlisting>
+</sect3>
+
+<sect3 id="chatstyle-reference-divinsert">
+	<title
+>Informazioni su &lt;div id="insert"&gt;&lt;/div&gt;</title>
+	<para
+>Questo è un elemento div speciale usato internamente. È un segnaposto che indica dove inserire il prossimo messaggio. Se è un nuovo messaggio, è rimosso e lo sostituisce il messaggio nuovo. Ma se è un messaggio consecutivo dello stesso utente, l'elemento div è sostituito con il contenuto del nuovo messaggio. Questo elemento div speciale è <emphasis
+>obbligatorio</emphasis
+> nei modelli Content, Context, NextContent, NextContext. Però non fa male nemmeno nei modelli Action e Status. </para>
+</sect3>
+
+<sect3 id="chatstyle-reference-templates">
+	<title
+>Modelli di HTML.</title>
+
+<variablelist
+><title
+>Descrizione del modello.</title>
+
+<varlistentry
+><term
+><filename
+>Header.html</filename
+> (Obbligatorio)</term>
+<listitem>
+<para
+>Usa il modello Header per mostrare una bella intestazione nella conversazione. Questo modello è inserito prima dell'elemento div <filename
+>Chat</filename
+>. Se non lo usi, puoi metterci un file vuoto. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Footer.html</filename
+> (Obbligatorio)</term>
+<listitem>
+<para
+>È quasi lo stesso di Header, ma è messo in calce alla conversazione. Questo modello è inserito dopo l'elemento div <filename
+>Chat</filename
+>. Se non lo usi, puoi metterci un file vuoto. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Status.html</filename
+> (Obbligatorio)</term>
+<listitem>
+<para
+>Questo modello è usato per mostrare un messaggio interno. I messaggi interni sono i cambi di stato e i messaggi da Kopete (&eg;, l'arrivo di un trasferimento di file). Quando lo stile non fornisce un modello Action, è usato anche per i messaggi di azione. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/Content.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Content.html</filename
+> (Obbligatorio)</term>
+<listitem>
+<para
+>Il modello Content è il nocciolo del messaggio. Pensalo come un blocco che fa da supporto ai messaggi. Assicurati che sia pronto ad accettare messaggi consecutivi, non progettarlo per mostrare un solo messaggio. I messaggi consecutivi saranno inseriti all'elemento div di inserimento. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/NextContent.html</filename
+></term>
+              <term
+><filename
+>Outgoing/NextContent.html</filename
+> (Obbligatorio)</term>
+<listitem>
+<para
+>Il modello NextContent è un frammento di messaggio per messaggi consecutivi. Sarà inserito nel blocco del messaggio principale. Il modello HTML dovrebbe contenere il minimo indispensabile per mostrare il messaggio. </para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry
+><term
+><filename
+>Incoming/Action.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Action.html</filename
+> (Opzionale, estensione di &kopete;)</term>
+<listitem>
+<para
+>Questo modello è un'estensione di &kopete; al formato Adium. È disponibile per le direzioni Incoming e Outgoing. I messaggi di azione sono messaggi speciali che dicono che noi stiamo facendo un'azione. Ad esempio <quote
+>/me sta installando &kopete;</quote
+> potrebbe essere mostrato come <quote
+>DarkShock sta installando &kopete;</quote
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/Context.html</filename
+></term>
+              <term
+><filename
+>Incoming/NextContext.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Context.html</filename
+></term>
+              <term
+><filename
+>Outgoing/NextContext.html</filename
+> (Opzionale)</term>
+<listitem>
+<para
+>Questi modelli non sono usati da Kopete. In Adium, sono usati per mostrare la cronologia. Sono quasi identici a Content e NextContent, ma con qualche differenza per distinguerli dai messaggi normali. </para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect3>
+
+<sect3 id="chatstyle-reference-css">
+	<title
+>Informazioni sugli stili CSS e le varianti</title>
+	<para
+>Dei modelli HTML sono usati per descrivere com'è fatta la struttura. Ma tutto lo stile è descritto  in file <acronym
+>CSS</acronym
+>. <filename
+>main.css</filename
+> è lo stile principale, dove le varianti sono solo alterazioni dello stile principale. Esempi di varianti sono colori diversi, assenza della visualizzazione della foto dell'utente. Sia <filename
+>main.css</filename
+> che le varianti sono importate nella pagina <acronym
+>XHTML</acronym
+> finale.</para>
+	<sect4 id="chatstyle-reference-css-main">
+		<title
+>-<filename
+>main.css</filename
+></title>
+		<para
+>Questo è il file <acronym
+>CSS</acronym
+> principale che è comune a tutte le varianti. Questo file deve contenere tutte le descrizioni principali dello stile.</para>
+	</sect4>
+	<sect4 id="chatstyle-reference-css-variants">
+		<title
+>-Varianti</title>
+		<para
+>Le varianti sono file <acronym
+>CSS</acronym
+> presenti nella cartella <filename
+>Variants</filename
+>. Ciascuna variante è un singolo file <acronym
+>CSS</acronym
+> che include <filename
+>main.css</filename
+> ed esegue alterazioni dello stile principale.</para>
+	</sect4>
+</sect3>
+
+<sect3 id="chatstyle-reference-debug">
+	<title
+>Debug degli stili</title>
+	<para
+>Ecco un paio di consigli per verificare il funzionamento di uno stile durante la sua creazione.</para>
+	<sect4 id="chatstyle-reference-debug-save">
+		<title
+>-Salvare una conversazione di esempio.</title>
+		<para
+>Nelle finestre di conversazione puoi <action
+>salvare</action
+> una conversazione. Questa è una copia della pagina XHTML interna che è visualizzata. Usala in <application
+>Konqueror</application
+> per provare i file <acronym
+>CSS</acronym
+>.</para>
+	</sect4>
+	<sect4 id="chatstyle-reference-debug-disable-cache">
+		<title
+>-Disabilitare la cache dello stile.</title>
+		<para
+>Una piccola variabile di configurazione esiste per disabilitare ela cache dello stile. Quando è abilitata, ricarica il modello HTML ogni volta che viene chiesto uno stile. Aggiungi la riga seguente al file <filename
+>kopeterc</filename
+>. È utilissimo per provare uno stile in &kopete;</para>
+		<programlisting
+>[KopeteStyleDebug]
+disableStyleCache=true
+</programlisting>
+	</sect4>
+</sect3>
+
+</sect2>
+
+<sect2 id="chatstyle-reference-keywords">
+	<title
+>Guida di riferimento delle parole chiave</title>
+	<para
+>Le parole chiave sono come buchi da riempire con i dettagli. In ciascun messaggio, sono sostituite dal valore corretto corrispondente al loro contenuto. Per gestire completamente tutte le funzioni di &kopete;, abbiamo aggiunto qualche estensione alle parole chiave di Adium. Inoltre alcune parole chiave sono disponibili solo in certi contesti.</para>
+
+<variablelist
+><title
+>Elenco di parole chiave per i modelli Header e Footer. </title>
+<para
+>Queste parole chiave sono valutate all'inizio di una conversazione.</para>
+<varlistentry
+><term
+><filename
+>%chatName%</filename
+></term>
+<listitem>
+<para
+>Questo è il nome della sessione di conversazione corrente. Per una sessione tipica, mostra il nome del contatto ed il suo stato. Per <acronym
+>IRC</acronym
+>, mostra l'argomento del canale. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%sourceName%</filename
+></term>
+              <term
+><filename
+>%destinationName%</filename
+></term>
+<listitem>
+<para
+>Questi sono i nomi dei contatti della sessione di conversazione. <filename
+>%sourceName%</filename
+> è il tuo nome. <filename
+>%destinationName%</filename
+> è il nome del contatto con cui stai chiacchierando. È preferibile usare <filename
+>%chatName%</filename
+> rispetto ai precedenti, perché possono essere fonte di confusione nelle discussioni di gruppo o per IRC. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%incomingIconPath%</filename
+></term>
+              <term
+><filename
+>%outgoingIconPath%</filename
+></term>
+<listitem>
+<para
+>Queste sono le immagini/foto/avatar dei contatti della sessione di conversazione. Incoming rappresenta la foto del contatto e Outgoing la tua. Se non ci sono foto disponibili, verrà usata l'immagine <filename
+>buddy_icon.png</filename
+> che è nella cartella <filename
+>Incoming</filename
+> o <filename
+>Outgoing</filename
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%timeOpened%</filename
+></term>
+              <term
+><filename
+>%timeOpened{X}%</filename
+></term>
+<listitem>
+<para
+>È l'ora in cui è iniziata la conversazione. <filename
+>%timeOpened%</filename
+> usa il formato predefinito per l'ora nel locale attuale. Se vuoi usare un formato specifico di tempo, usa <filename
+>%timeOpened{X}%</filename
+> dove X è una stringa contenente il formato dell'ora. I parametri dell'ora sono identici a quelli usati dalla funzione della glibc <function
+>strftime</function
+>. Usa <command
+>man strftime</command
+> per vedere l'elenco di formati disponibili. </para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist
+><title
+>Elenco delle parole chiave per i modelli Content, NextContent, Context, NextContext e Action</title>
+<para
+>Queste parole chiave sono valutare per ogni messaggio.</para>
+
+<varlistentry
+><term
+><filename
+>%userIconPath%</filename
+></term>
+<listitem>
+<para
+>Questa è l'immagini/foto/avatar del contatto associato al messaggio. Se non ci sono foto disponibili, verrà usata l'immagine <filename
+>buddy_icon.png</filename
+> che è nella cartella <filename
+>Incoming</filename
+> o <filename
+>Outgoing</filename
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderScreenName%</filename
+></term>
+<listitem>
+<para
+>Questo è l'ID del contatto associato al messaggio. Esempi: me@hotmail.com, 45566576, JohnSmith. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%sender%</filename
+></term>
+<listitem>
+<para
+>Questo è il nome del contatto associato al messaggio. Usa il nome da visualizzare del metacontatto come fonte. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%service%</filename
+></term>
+<listitem>
+<para
+>Mostra il nome del servizio associato al messaggio. Esempi: Jabber, Yahoo, MSN. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%textbackgroundcolor{X}%</filename
+></term>
+<listitem>
+<para
+>In &kopete;, questa parola chiave può essere usata per rappresentare il colore per evidenziare lo sfondo. Ignora il parametro fra parentesi graffe ed usalo solo come <filename
+>%textbackgroundcolor{}</filename
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderStatusIcon%</filename
+> (estensione di &kopete;)</term>
+<listitem>
+<para
+>Mostra l'icona di stato del contatto associato al messaggio. È il percorso di un file. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderColor%</filename
+></term
+>  <term
+><filename
+>%senderColor{N}%</filename
+> (estensione di &kopete;)</term>
+<listitem>
+<para
+>Genera un colore partendo dall'ID del contatto del mittente. Può essere usato per mostrare un colore diverso per il nick del contatto. </para>
+<para
+><filename
+>%senderColor{N}%</filename
+> dove N è un numero positivo. Se N è più grande di 100, rappresenta un colore più chiaro del colore del contatto. Se vale 150, indica un colore del 50% più chiaro. Se vale meno di 100 è un colore più scuro. È utile per avere uno sfondo colorato in modo diverso per ciascun contatto. </para>
+<para
+>Se vuoi usare questi colori in una variante, ma non nello stile principale, devi ricorrere ad un trucco. <programlisting>
+<![CDATA[
+<div style="color:%senderColor%;border:none;border-color:%senderColor{40}%;"
+><p class="message"
+>...</p
+></div>
+]]>
+</programlisting
+> puoi applicare il colore dell'elemento p.message nel file<filename
+>main.css</filename
+>, e nella variante inserire qualcosa come <programlisting
+>p.message { color:inherit; border-color:inherit; }
+</programlisting>
+
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist
+><title
+>Elenco di parole chiave comune per i messaggi e per Status.html</title>
+
+<varlistentry
+><term
+><filename
+>%message%</filename
+></term>
+<listitem>
+<para
+>Il messaggio stesso. È un frammento di HTML. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%time%</filename
+></term>
+              <term
+><filename
+>%time{X}%</filename
+></term>
+<listitem>
+<para
+>L'ora in cui è stato ricevuto il messaggio. <filename
+>%time%</filename
+> usa il formato orario predefinito per il locale attuale. Se vuoi usare un formato orario specifico, usa <filename
+>%time{X}%</filename
+> dove X è una stringa contenente il formato orario. I parametri del formato sono gli stessi della funzione <function
+>strftime</function
+> della glibc. Usa <command
+>man strftime</command
+> per vedere la lista dei parametri disponibili. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%messageDirection%</filename
+> (Estensione di &kopete;)</term>
+<listitem>
+<para
+>Rappresenta la direzione del messaggio, se il messaggio deve essere mostrato da destra a sinistra (come per l'arabo) o da sinistra a destra. Vedi <link linkend="chatstyle-guideline-direction"
+>Linee guida per la direzione dei messaggi</link
+> per scoprire come usare in modo appropriato questa parola chiave. </para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+</sect1>
+
+<sect1 id="chatstyle-guideline">
+	<title
+>Linee guida per gli stili della finestra di chat di &kopete;</title>
+<para
+>Le linee guida per gli stili della finestra di conversazione di &kopete; è una raccolta delle cose che lo stile della finestra di conversazione deve supportare per essere compatibile con Kopete.</para>
+<sect2 id="chatstyle-guideline-highlight">
+	<title
+>Gestione dell'evidenziazione</title>
+	<para
+>Il tuo stile deve mostrare delle evidenziazioni, a volte. In Kopete e Adium, <filename
+>%textbackgroundcolor{}%</filename
+> è sostituito con il colore di evidenziazione. Aggiungi questo attributo di stile: <userinput
+>background-color: %textbackgroundcolor{}%</userinput
+> all'elemento HTML che mostra il messaggio.</para>
+</sect2>
+<sect2 id="chatstyle-guideline-consecutive">
+	<title
+>Un modello per i messaggi consecutivi ora è obbligatorio.</title>
+	<para
+>Queste linee guida sono per chi deve riscrivere dei vecchi stili XSL nel nuovo formato. Tutti gli stili devono fornire un modello per i messaggi consecutivi. Ora è una funzione predefinita.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-encoding">
+	<title
+>Usa la codifica <acronym
+>UTF-8</acronym
+>.</title>
+	<para
+>Il titolo dice tutto. Devi salvare i file in <acronym
+>UTF-8</acronym
+>.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-info">
+	<title
+>Fornisci il file <filename
+>Contents/Info.plist</filename
+> per mantenere l'interoperabilità con <application
+>Adium</application
+></title>
+	<para
+>Il file <filename
+>Contents/Info.plist</filename
+> non è ancora usato da Kopete. Ma se vuoi creare uno stile compatibile con <application
+>Adium</application
+>, devi fornire anche questo file. Ecco un esempio base del file. Le stringhe da sostituire sono racchiuse fra <quote
+>$</quote
+>.</para>
+<programlisting
+><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key
+>CFBundleDevelopmentRegion</key>
+        <string
+>English</string>
+        <key
+>CFBundleGetInfoString</key>
+        <string
+>$Il nome completo dello stile$</string>
+        <key
+>CFBundleIdentifier</key>
+        <string
+>$L'ID dello stile nella forma: com.adiumx.smooth.operator.style$</string>
+        <key
+>CFBundleInfoDictionaryVersion</key>
+        <string
+>1.0</string>
+        <key
+>CFBundleName</key>
+        <string
+>$Il nome dello stile$</string>
+        <key
+>CFBundlePackageType</key>
+        <string
+>AdIM</string>
+        <key
+>MessageViewVersion</key>
+        <integer
+>3</integer>
+</dict>
+</plist>
+]]>
+</programlisting>
+
+</sect2>
+
+<sect2 id="chatstyle-guideline-buddyicon">
+	<title
+>Fornisci il file <filename
+>buddy_icon.png</filename
+></title>
+	<para
+>Devi mettere un file di nome <filename
+>buddy_icon.png</filename
+> in <filename
+>Incoming</filename
+> e <filename
+>Outgoing</filename
+>. Queste immagini saranno usate quando il contatto non ha una foto.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-direction">
+	<title
+>La parola chiave <filename
+>%messageDirection%</filename
+> permette la gestione delle lingue scritte da destra a sinistra.</title>
+	<para
+>La parola chiave <filename
+>%messageDirection%</filename
+> è presente per le lingue del mondo che scrivono da destra a sinistra. Definisce la direzione del messaggio, se è <quote
+>rtl</quote
+> (<emphasis
+>right-to-left</emphasis
+>, da destra a sinistra) o <quote
+>ltr</quote
+> (<emphasis
+>left-to-right</emphasis
+>, da sinistra a destra). Aggiungi questo attributo di stile all'elemento HTML che mostra il messaggio: <userinput
+>direction: %messageDirection%</userinput
+>. L'anteprima dello stile nella configurazione dell'aspetto include un controllo per il testo scritto da destra a sinistra per vedere se lo stile viene mostrato correttamente. Dovrebbe far cominciare la stringa dalla destra.</para>
+</sect2>
+</sect1>
+</appendix>

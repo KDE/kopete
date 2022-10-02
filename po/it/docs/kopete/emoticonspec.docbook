@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-emoticons">
+<appendixinfo>
+    <title
+>Specifiche delle faccine</title>
+    <releaseinfo
+>Versione 0.1</releaseinfo>
+    <date
+>7/1/2005</date>
+    <authorgroup>
+      <author
+><firstname
+>Olivier</firstname
+> <surname
+>Goffart</surname
+> <affiliation
+> <address
+> <email
+>ogoffart@tiscalinet.be</email>
+	  </address>
+	</affiliation>
+      </author>
+    </authorgroup>
+  </appendixinfo>
+
+<title
+>Faccine</title>
+
+  <sect1 id="introduction-emoticons">
+    <title
+>Introduzione</title>
+    <para
+>Questa BOZZA del documento definisce come creare un tema di faccine utilizzato tipicamente nelle applicazioni di messaggistica istantanea </para>
+    <para
+>Lo schema di base è davvero semplice. Il tema consiste di una sottocartella che contiene tutte le immagini e un file &XML; che fornisce a ogni immagine simboli ASCII. Un file .directory dovrebbe essere utilizzato. </para>
+  <sect2 id="location">
+    <title
+>Percorsi dei file</title>
+    <para
+>I file interessati da queste specifiche sono posizionati in base alla «specifica della cartella di base del desktop» che è disponibile su <ulink url="http://www.freedesktop.org/standards/"
+>www.freedesktop.org</ulink
+>. </para>
+    <para
+>Tutti i file del tema devono essere posizionati in una sottocartella di <varname
+>$XDG_DATA_DIRS</varname
+>/emoticons/ Il nome della cartella deve essere uguale al nome del tema. La cartella <emphasis
+>deve</emphasis
+> contenere un file con nome <varname
+>emoticons.xml</varname
+>il formato del file è scritto di seguito. </para>
+	<para
+>La cartella del tema potrebbe inoltre contenere un file .directory che include le traduzioni del nome del tema e/o un'icona per quel tema </para>
+  </sect2>
+  <sect2 id="emoticons-map-format">
+    <title
+>Formato del file emoticons.xml</title>
+    <para
+>I file della mappa delle faccine devono essere file XML formattati correttamente. Le implementazioni dovrebbero ignorare i tag o gli attributi sconosciuti. </para>
+    <sect3 id="emoticons-map-elements">
+      <title
+>Elementi</title>
+      <para>
+        <variablelist>
+          <varlistentry>
+					<term
+>&lt;messaging-emoticon-map&gt; [version="0.1"]</term>
+            <listitem>
+              <para
+>L'elemento radice è &lt;messaging-emoticon-map&gt; tutti gli altri elementi sono contenuti in esso </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;emoticon file="..."&gt;</term>
+            <listitem>
+              <para
+>Questo elemento rappresenta una faccina. Il file degli attributi ha il nome del file dell'immagine che deve essere nella stessa cartella. L'estensione potrebbe essere omessa. In tal caso, l'implementazione controlla la presenza nella cartella di un file con lo stesso nome in un formato supportato. </para>
+				  <para
+>Non esiste alcun ordine per le faccine nella mappa. Ma la prima icona della mappa è generalmente utilizzata per identificare graficamente il tema. Per convenzione, DOVREBBE essere :-)  </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;stringa&gt;</term>
+            <listitem>
+              <para
+>Questo elemento potrebbe apparire solo sotto &lt;emoticon&gt;. Rappresenta la stringa ASCII che sarà verificata nel testo, e sostituita dall'immagine specificata dall'attributo file della faccina. </para>
+				  <para
+>Potrebbero esserci diverse stringhe per emoticon. </para>
+				  <para
+>Non esiste alcun ordine per la stringa nella faccina. Ma la prima DOVREBBE essere la predefinita, e sarà utilizzata se è presente un selettore dell'interfaccia grafica. </para>
+            </listitem>
+          </varlistentry>
+	    </variablelist>
+  </para>
+    </sect3>
+  </sect2>
+
+  <sect2 id="img-format">
+    <title
+>Formato dell'immagine.</title>
+    <para
+>Tutte le immagini DOVREBBERO essere in un formato supportato: PNG, GIF o MNG. </para>
+  </sect2>
+
+  <sect2 id="implementation">
+    <title
+>Note di implementazione</title>
+	 <sect3 id="impl-parser">
+	  <title
+>Analizzatore delle faccine</title>
+    <para
+>Non esistono raccomandazioni su come elaborare le faccine. Ma una faccina con una stringa più lunga dovrebbe avere priorità su una con una stringa più corta. (Esempio: se entrambe :--() e :--( sono nello stesso tema, l'immagine per la prima dovrebbe essere utilizzata quando si trova :-()) </para>
+</sect3>
+</sect2>
+
+<sect2 id="example">
+	  <title
+>Esempio</title>
+	  <para>
+			 <programlisting
+>&lt;messaging-emoticon-map&gt;
+        &lt;emoticon file="smile.png"&gt;
+                        &lt;string&gt;:-)&lt;/string&gt;
+                        &lt;string&gt;:)&lt;/string&gt;
+                        &lt;string&gt;:o)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="wink.png"&gt;
+                        &lt;string&gt;;-)&lt;/string&gt;
+                        &lt;string&gt;;)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="unhappy.png"&gt;
+                        &lt;string&gt;:-(&lt;/string&gt;
+                        &lt;string&gt;:(&lt;/string&gt;
+        &lt;/emoticon&gt;
+&lt;/messaging-emoticon-map&gt;
+
+ </programlisting>
+</para>
+</sect2>
+
+<!--sect2 id="todo">
+	  <title
+>TODO</title>
+	  <para>
+			 A DTD of the XML file
+	  </para>
+</sect2-->
+</sect1>
+</appendix>
+

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-emoticons">
+<appendixinfo>
+    <title
+>Specificatie van emoticons</title>
+    <releaseinfo
+>Versie 0.1</releaseinfo>
+    <date
+>2005-01-07</date>
+    <authorgroup>
+      <author
+><firstname
+>Olivier</firstname
+> <surname
+>Goffart</surname
+> <affiliation
+> <address
+> <email
+>ogoffart@tiscalinet.be</email>
+	  </address>
+	</affiliation>
+      </author>
+    </authorgroup>
+  </appendixinfo>
+
+<title
+>Emoticons</title>
+
+  <sect1 id="introduction-emoticons">
+    <title
+>Inleiding</title>
+    <para
+>Dit CONCEPT document definieert hoe een thema emoticons te maken typisch gebruikt in "instant messaging" toepassingen </para>
+    <para
+>Het basis schema is erg eenvoudig. Het thema bestaat uit een submap die alle plaatjes bevat en een &XML;-bestand dat aan elk plaatje ASCII-symbolen toekent. Er kan een bestand .directory gebruikt worden. </para>
+  <sect2 id="location">
+    <title
+>Bestand locaties</title>
+    <para
+>Bestanden die met deze specificatie te maken hebben een locatie die overeenkomt met de "desktop base directory specification" die u kunt vinden op <ulink url="http://www.freedesktop.org/standards/"
+>www.freedesktop.org</ulink
+>. </para>
+    <para
+>Alle bestanden van het thema moet u plaatsen in een submap van <varname
+>$XDG_DATA_DIRS</varname
+>/emoticons/ De naam van de map moet overeenkomen met de naam van het thema. In die map <emphasis
+>moet</emphasis
+> een bestand genaamd <varname
+>emoticons.xml</varname
+> aanwezig zijn, de indeling van dat bestand volgt hieronder. </para>
+	<para
+>In de thema map mag ook een .bestand aanwezig zijn met vertalingen van de thema-naam en/of een pictogram voor dat thema. </para>
+  </sect2>
+  <sect2 id="emoticons-map-format">
+    <title
+>Indeling van het emoticons.xml bestand</title>
+    <para
+>Emoticon bestanden moeten correct opgemaakte XML-bestanden zijn. implementaties moeten onbekende tags of onbekende attributen negeren. </para>
+    <sect3 id="emoticons-map-elements">
+      <title
+>Elementen</title>
+      <para>
+        <variablelist>
+          <varlistentry>
+					<term
+>&lt;messaging-emoticon-map&gt; [version="0.1"]</term>
+            <listitem>
+              <para
+>Het basis-element is &lt;messaging-emoticon-map&gt; alle andere elementen zijn er onderdeel daarvan. </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;emoticon file="..."&gt;</term>
+            <listitem>
+              <para
+>Dit element stelt een emoticon voor. Het attribuut file is de naam van het afbeelding-bestand die in dezelfde map moet zijn. De extensie mag u weglaten. In dat geval zal de implementatie in die map zoeken naar een bestand in een ondersteunt formaat met dezelfde naam. </para>
+				  <para
+>Er is geen volgorde voor de emoticon in de map. Maar het eerste icoon in de map is meestal gebruikt om het thema grafisch te identificeren. Voor de handigheid ZOU dit zo moeten zijn :-) </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term
+>&lt;string&gt;</term>
+            <listitem>
+              <para
+>Dit element mag alleen onder &lt;emoticon&gt; verschijnen. Het stelt de ASCII tekenreeks voor waarvoor in de tekst wordt gezocht, en vervangen door de afbeelding die is opgegeven in het file attribuut van de emoticon. </para>
+				  <para
+>Er zijn per emoticon meerdere tekenreeksen toegestaan. </para>
+				  <para
+>Er is geen volgorde voor de tekenreeksen in een emoticon. Maar de eerste ZOU de standaard moeten zijn, en zal worden genomen als er een GUI selectie is. </para>
+            </listitem>
+          </varlistentry>
+	    </variablelist>
+  </para>
+    </sect3>
+  </sect2>
+
+  <sect2 id="img-format">
+    <title
+>Afbeeldingstype</title>
+    <para
+>Alle afbeeldingen MOETEN in een ondersteunt formaat zijn : PNG, GIF or MNG. </para>
+  </sect2>
+
+  <sect2 id="implementation">
+    <title
+>implementatie opmerkingen</title>
+	 <sect3 id="impl-parser">
+	  <title
+>Emoticon toevoegen</title>
+    <para
+>Er zijn niet echt aanbevelingen voor hoe u emoticons moet toevoegen. Maar een emoticon met een langere tekenreeks moet prioriteit hebben tegenover een met een kortere tekenreeks. (Voorbeeld: als beide :-() en :-( in een thema aanwezig zijn, dan moet de afbeelding voor de eerste worden gebruikt als men :-() tegenkomt) </para>
+</sect3>
+</sect2>
+
+<sect2 id="example">
+	  <title
+>Voorbeeld</title>
+	  <para>
+			 <programlisting
+>&lt;messaging-emoticon-map&gt;
+        &lt;emoticon file="smile.png"&gt;
+                        &lt;string&gt;:-)&lt;/string&gt;
+                        &lt;string&gt;:)&lt;/string&gt;
+                        &lt;string&gt;:o)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="wink.png"&gt;
+                        &lt;string&gt;;-)&lt;/string&gt;
+                        &lt;string&gt;;)&lt;/string&gt;
+        &lt;/emoticon&gt;
+
+        &lt;emoticon file="unhappy.png"&gt;
+                        &lt;string&gt;:-(&lt;/string&gt;
+                        &lt;string&gt;:(&lt;/string&gt;
+        &lt;/emoticon&gt;
+&lt;/messaging-emoticon-map&gt;
+
+ </programlisting>
+</para>
+</sect2>
+
+<!--sect2 id="todo">
+	  <title
+>TODO</title>
+	  <para>
+			 A DTD of the XML file
+	  </para>
+</sect2-->
+</sect1>
+</appendix>
+

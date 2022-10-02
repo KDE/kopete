@@ -1,0 +1,939 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-jabber">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Цю документацію було створено на основі сторінки UserBase KDE <ulink url=" http://userbase.kde.org/Kopete/Jabber"
+>Kopete/Jabber</ulink
+>.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+<othercredit role="translator"
+><firstname
+>Юрій</firstname
+><surname
+>Чорноіван</surname
+><affiliation
+><address
+><email
+>yurchor@ukr.net</email
+></address
+></affiliation
+><contrib
+>Переклад українською</contrib
+></othercredit
+> 
+    </authorgroup>
+<date
+>5 грудня 2010 року</date>
+    <releaseinfo
+>&kde; SC 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2010-12-05T08:12:25Z</timestamp
+>-->
+<title
+>Підручник з Jabber</title>
+<!--userbase-content-->
+<sect1 id="about-jabber-xmpp"
+><title
+>Про XMPP Jabber</title>
+<para
+><ulink url="http://uk.wikipedia.org/wiki/XMPP"
+>XMPP</ulink
+> або Jabber (насправді ці слова означають одне і те саме поняття) — назва відкритого, децентралізованого протоколу обміну даними мережею, який використовується для обміну миттєвими повідомленнями. Цей протокол розроблено для роботи у інфраструктурі сервер-клієнт з багатьма серверами у всій мережі Інтернет, де у кожного з користувачів є власний обліковий запис. <ulink url="http://en.wikipedia.org/wiki/Server_%28computing%29"
+>Сервер</ulink
+> зазвичай з’єднано з багатьма <ulink url="http://en.wikipedia.org/wiki/Client_%28computing%29"
+>клієнтами</ulink
+> з одного боку і іншими серверами XMPP у інтернеті з іншого. Давайте розглянемо невеличкий приклад, щоб пояснити методику роботи: </para>
+<para
+>Ромео кохає Джульєтту і бажає з нею спілкуватися за допомогою мережі Jabber. Ромео може писати повідомлення у власній клієнтській програмі (яку з’єднано з <userinput
+>montague.net</userinput
+>) до своєї коханої, чию клієнтську програму з’єднано з сервером з назвою <userinput
+>capulet.com</userinput
+>. </para>
+<para
+>Під час реєстрації облікового запису на сервері Ромео вибрав так званий JID (Jabber-ідентифікатор). Принципи роботи JID в основному схожі на адресу електронної пошти, його пов’язано з назвою сервера записом з використанням символу «@». Прикладом коректного JID для Ромео є <userinput
+>romeo@montague.net</userinput
+>. </para>
+<para
+>Для спілкування з іншими користувачами мережі Ромео слід додати їхні JID до власного списку контактів. Ці користувачі можуть використовувати той самий сервер (наприклад <userinput
+>bob@montague.net</userinput
+>) або інший сервер (наприклад <userinput
+>peter@wasinet.org</userinput
+> і, звичайно ж, <userinput
+>juliet@capulet.com</userinput
+>). </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_jabbernetwork.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Візуальне представлення мережі Jabber.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Візуальне представлення мережі Jabber.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Звичайно ж, Jabber/XMPP надає у розпорядження користувачів набагато більше служб (наприклад шифрування повідомлень, спілкування за допомогою <ulink url="http://en.wikipedia.org/wiki/Voicechat"
+>голосу</ulink
+> та <ulink url="http://en.wikipedia.org/wiki/Video_conferencing"
+>відео</ulink
+>, групове спілкування), про які ми поговоримо у цьому підручнику пізніше. </para>
+<para
+>Jabber/XMPP є основою роботи двох дуже великих мереж обміну повідомленнями: Google Talk та спілкування facebook. Обліковими записами у цих системах можна скористатися як звичайними обліковими записами Jabber у &kopete;. Докладніше про це ми поговоримо <link linkend="fill-in-your-account-data-in-kopete"
+>нижче</link
+>, крім того, настанови з використання систем обміну повідомленнями можна знайти на самих сторінках цих систем обміну повідомленнями. </para>
+<para
+>Наведені вище відомості надають нам змогу перейти до основної частини підручника: налаштування клієнтської програми jabber та використання чудових можливостей &kopete;. </para>
+</sect1>
+<sect1 id="first-steps"
+><title
+>Перші кроки</title>
+<sect2 id="get-kopete"
+><title
+>Встановлення Kopete</title
+> 
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopeteicon.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Піктограма Kopete.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Піктограма Kopete.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Звичайно ж, перш ніж ви зможете працювати з &kopete;, вам слід встановити програму. Якщо ви користуєтеся <ulink url="http://en.wikipedia.org/wiki/Linux"
+>системою на основі Linux</ulink
+>, ймовірно &kopete; вже встановлено (якщо вами було встановлено <ulink url="http://en.wikipedia.org/wiki/KDE_Software_Compilation"
+>збірку програмного забезпечення KDE</ulink
+>). Крім того, пакунок з програмою можна встановити з одного зі сховищ програмного забезпечення вашого дистрибутива. </para>
+<para
+>Встановіть &kopete; і запустіть програму. </para>
+</sect2>
+</sect1>
+<sect1 id="create-your-jabber-account"
+><title
+>Створення власного облікового запису Jabber</title>
+<para
+>Після запуску &kopete; ви побачите перед собою порожнє вікно. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap001_emptykopete.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Порожнє вікно Kopete.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Порожнє вікно Kopete.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>У нижній частині вікна ви побачите напис <guilabel
+>Натисніть, щоб додати обліковий запис</guilabel
+>. Натисніть цей напис або скористайтеся пунктом меню <menuchoice
+><guimenu
+>Параметри</guimenu
+><guimenuitem
+>Налаштувати...</guimenuitem
+></menuchoice
+>, <guilabel
+>Додати запис</guilabel
+> для створення облікового запису. Нам потрібно створити обліковий запис Jabber, отже слід вибрати пункт меню <guilabel
+>Jabber</guilabel
+> і натиснути кнопку <guilabel
+>Далі</guilabel
+>. Після натискання кнопки <guilabel
+>Зареєструвати новий обліковий запис</guilabel
+> програма відкриє нове вікно, за допомогою якого ви зможете вказати назву сервера Jabber, на якому має бути створено обліковий запис. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap002_configacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Налаштування &kopete;</phrase>
+    </textobject>
+    <caption>
+      <para
+>Налаштування &kopete;</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Назву сервера можна або вписати вручну до поля <guilabel
+>Сервер Jabber</guilabel
+>, або вибрати з типового списку, який буде показано після натискання кнопки <guilabel
+>Вибрати...</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutoial_snap003_selectserver.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Діалогове вікно вибору сервера.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Діалогове вікно вибору сервера.</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Після вибору сервера ви зможете вказати бажаний ідентифікатор Jabber, тобто ім’я вашого користувача. Додайте бажане ім’я користувача перед символом «@» у полі <guilabel
+>Бажане ІД для Jabber</guilabel
+>. Після визначення вами пароля і повторного його введення вам слід позначити поле <guilabel
+>
+>Використовувати шифрування протоколу (SSL)</guilabel
+> для створення <ulink url="http://en.wikipedia.org/wiki/Secure_Sockets_Layer"
+>шифрованого</ulink
+> з’єднання між клієнтською програмою і сервером. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap004_createacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Створення власного облікового запису.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Створення власного облікового запису.</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>На деяких серверах не передбачено можливості такого шифрування, але на більшості все ж передбачено. Натисніть кнопку <guilabel
+>Зареєструватись</guilabel
+>, щоб завершити процедуру реєстрації. </para>
+<para
+>Вітаємо, ви зареєстрували новий обліковий запис на сервері Jabber! </para>
+</sect1>
+<sect1 id="fill-in-your-account-data-in-kopete"
+><title
+>Визначення даних облікового запису у Kopete</title>
+<para
+>Тепер у вас власний обліковий запис на сервері Jabber і &kopete; запитає вас про дані <emphasis
+>Кроку два: інформація облікового запису</emphasis
+>. &kopete; додасть ваш ідентифікатор Jabber і ваш пароль у відповідні поля форми автоматично. Якщо ви бажаєте, щоб &kopete; запам’ятала ваш пароль з метою уникнення його повторного введення кожного разу, коли ви встановлюєте з’єднання з сервером, позначте пункт <guilabel
+>Запам’ятати пароль</guilabel
+>. </para>
+<para
+>Якщо ви бажаєте скористатися вже створеними вами обліковими записами <ulink url="http://www.google.com/support/chat/bin/answer.py?hl=en&amp;answer=57557"
+>Google Talk</ulink
+> або Facebook у &kopete; (насправді, ви маєте справу з серверами Jabber), вкажіть вашу адресу GMail або дані облікового запису facebook (<ulink url="http://www.facebook.com/sitetour/chat.php"
+>настанови можна знайти тут</ulink
+>) для встановлення з’єднання з цими серверами. </para>
+<para
+>Крім того, ви можете позначити пункт <guilabel
+>Виключити зі «з’єднати всі»</guilabel
+>. Таким чином, ви накажете &kopete; не з’єднуватися з сервером, коли ви наказуєте &kopete; встановити з’єднання з усіма вашими обліковими записами (оскільки у &kopete; передбачено підтримку багатьох інших протоколів, зокрема <ulink url="http://en.wikipedia.org/wiki/ICQ"
+>ICQ</ulink
+> або <ulink url="http://en.wikipedia.org/wiki/.NET_Messenger_Service"
+>MSN</ulink
+>). Якщо цей пункт буде позначено, пізніше ви повинні будете встановлювати з’єднання з цим обліковим записом окремо кожного разу, коли ви забажаєте спілкуватися з кимось за його допомогою. </para>
+<para
+>Тепер ваше вікно &kopete; має виглядати так: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap005_enterjid.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Вікно інформації про обліковий запис.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Вікно інформації про обліковий запис.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Перейдіть на вкладку <guilabel
+>З’єднання</guilabel
+>, щоб змінити додаткові параметри. З міркувань забезпечення захисту з’єднання варто позначити пункт <guilabel
+>Використовувати шифрування протоколу</guilabel
+> і зняти позначення з пункту <guilabel
+>Дозволяти автентифікацію паролями простого тексту</guilabel
+>. </para>
+<para
+><guilabel
+>Типові параметри сервера</guilabel
+> мають задовольняти ваші потреби, якщо комп’ютер працює у звичайній домашні мережі без особливих налаштувань <ulink url="http://en.wikipedia.org/wiki/Firewall_%28computing%29"
+>брандмауера</ulink
+>. </para>
+<para
+>Розділ <emphasis
+>Параметри перебування</emphasis
+> є ще однією особливістю Jabber: ви можете визначити так звані «ресурси», які вказуватимуть на те, яким чином ви спілкуєтеся. Наприклад, якщо ви увійшли до системи Jabber з вашого мобільного телефону і одночасно з ноутбука (так, такий вхід є можливим), ресурс повідомлятиме контактам, звідки було надіслано повідомлення. Отже, ви можете назвати ресурс «Ноутбук» або «Android», залежно від того, де було встановлено &kopete;. Не забувайте, що ваші ресурси зможуть бачити ваші співрозмовники (їх буде додано до JID десь так: <userinput
+>romeo@montague.net/Ноутбук</userinput
+>). Отже під час вибору назви ресурсу слід зважати на конфіденційність. </para>
+<para
+>У нашому прикладі ми використали назву <guilabel
+>Ресурсу</guilabel
+> <replaceable
+>Ноутбук</replaceable
+>. Пріоритет встановлюється, якщо ви використовуєте декілька пристроїв. Пріоритет повідомляє клієнтській програмі співрозмовника, з яким з пристроїв (наприклад мобільним телефоном чи ноутбуком) слід вести обмін даними. Повідомлення отримуватиме пристрій з найвищим значенням пріоритету. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap006_connection.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Налаштування облікового запису.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Налаштування облікового запису.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Параметри наступної вкладки, <guilabel
+>Перенесення файлів</guilabel
+>, у звичайних мережах змінювати немає потреби. </para>
+<para
+>Нарешті, можна налаштувати параметри конфіденційності на вкладці <guilabel
+>Конфіденційність</guilabel
+>. Призначення цих параметрів легко вгадати з їх назв. Ми не рекомендуємо вам позначати пункт <guilabel
+>Застарілий вбудований формат PGP для підписаних та зашифрованих повідомлень</guilabel
+> (докладніше про PGP можна дізнатися <ulink url="http://en.wikipedia.org/wiki/Pretty_Good_Privacy"
+>тут</ulink
+>), оскільки шифрування можна виконати за допомогою вбудованих механізмів OTR, про які ми поговоримо <link linkend="useful-configuration-hints"
+>пізніше</link
+>. </para>
+<para
+>Після цього ви можете натиснути кнопку <guilabel
+>Далі</guilabel
+> ще раз і отримати вже налаштований обліковий запис. Ви можете вибрати колір для пункту цього облікового запису. Якщо ви готові до входу до мережі Jabber, позначте пункт <guilabel
+>З’єднатися зараз</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap007_conf-ready.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Останній крок налаштування.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Останній крок налаштування.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Тепер налаштування завершено. </para>
+<para
+>Крім того, встановити з’єднання з сервером можна вручну за допомогою пункту меню <menuchoice
+><guimenu
+>Стан</guimenu
+><guimenuitem
+>В мережі</guimenuitem
+></menuchoice
+> у головному меню &kopete; або контекстному меню піктограми системного лотка &kopete; (викликається клацанням правою кнопкою миші): <menuchoice
+><guimenu
+>Встановити стан</guimenu
+><guimenuitem
+>У мережі</guimenuitem
+></menuchoice
+>. Якщо ви позначили пункт <guilabel
+>Виключити зі «з’єднати всі»</guilabel
+>, вам слід навести вказівник миші на піктограму &kopete; у системному лотку, клацнути правою кнопкою миші і вибрати пункт <menuchoice
+><guimenu
+>ваш_JID@десь_там.org</guimenu
+> <guimenuitem
+>В мережі</guimenuitem
+></menuchoice
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap008_goonline.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Виходимо у мережу.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Виходимо у мережу.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="adding-friends"
+><title
+>Додавання друзів</title>
+<para
+>Після першого вашого входу до системи вікно &kopete; буде майже порожнім. Ймовірно, у ньому буде лише типовий запис контакту, доданий вашим сервером, який, можливо, надіслав вам вітальне повідомлення, але у ньому не буде списку співрозмовників, з якими можна було б поспілкуватися. На першому кроці додавання записів ваших друзів слід вказати їхні ідентифікатори Jabber. Якщо вам відомий такий ідентифікатор, ви можете негайно додати його до списку &kopete;. Скористайтеся для цього пунктом <menuchoice
+><guimenu
+>Додати</guimenu
+> <guimenuitem
+>вашJID@example.org</guimenuitem
+></menuchoice
+> або <menuchoice
+><guimenu
+>Файл</guimenu
+> <guisubmenu
+>Додати контакт</guisubmenu
+><guimenuitem
+>вашJID@example.org</guimenuitem
+></menuchoice
+>. У відповідь програма відкриє вікно, у якому ви зможете вказати <guilabel
+>Jabber ID</guilabel
+>, який ви бажаєте додати до вашого списку. Введіть цей ідентифікатор і натисніть кнопку <guilabel
+>Гаразд</guilabel
+>. Якщо ви визначаєте групу записів контактів (наприклад «родина» чи «робота») слід скористатися пунктом <guilabel
+>Група</guilabel
+>. Зв’язок запису з <ulink url="http://userbase.kde.org/Special:myLanguage/KAddressBook"
+>адресною книгою</ulink
+> можна створити за допомогою пункту <guilabel
+>Запис адресної книги</guilabel
+>. Після визначення зв’язку ви зможете використовувати дані профілю користувача, зокрема знімок користувача, у багатьох програмах. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap009_addfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Додавання запису контакту.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Додавання запису контакту.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Отже, ви додали запис до вашого списку контактів. Але перш ніж ви зможете надсилати йому чи їй повідомлення, ваш контакт має уповноважити вас на надсилання таких повідомлень. До уповноваження праворуч від запису контакту буде показано знак оклику на жовтому тлі. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap010_exlamationmarkfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Ваш запис контакту.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Ваш запис контакту.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Після того, як ваш контакт уповноважить вас або додасть вас до власного списку контактів, програма зафарбовуватиме його чи її піктограму у списку контактів після входу відповідного користувача до системи обміну повідомленнями. Піктограми користувачів відповідатимуть їх <guilabel
+>Стану</guilabel
+>. Ви також можете встановити власний стан у мережі. Після уповноваження програма покаже вам відповідне повідомлення. </para>
+<para
+>Зазвичай, ваш контакт також додасть вас до свого списку контактів, отже вам також доведеться надати уповноваження. &kopete; сповістить про запит щодо уповноваження за допомогою зеленого прапорця з описом запиту. Щоб надати уповноваження, натисніть кнопку <guilabel
+>Уповноважити</guilabel
+>. Вікно сповіщення можна закрити натисканням хрестика у верхньому правому куті вікна сповіщення. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap011_addedbyfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Ваш контакт додав вас до власного списку.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Ваш контакт додав вас до власного списку.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Після виконання уповноважень ваш список контактів має набути вигляду, подібного до наведеного на наступному зображенні. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap012_fullauthorized.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Запис контакту після завершення процедури взаємного уповноваження.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Запис контакту після завершення процедури взаємного уповноваження.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Отже, ви додали ваш перший запис контакту до списку контактів. </para>
+</sect1>
+<sect1 id="messaging-and-sending-files"
+><title
+>Обмін повідомленнями та надсилання файлів</title>
+<para
+>Щоб розпочати спілкування з кимось з ваших контактів, наведіть вказівник миші на його пункт у списку і клацніть лівою кнопкою миші. Програма відкриє нове вікно у якому ви зможете вводити повідомлення у меншому полі, розташованому у її нижній частині, де буде показано курсор. Щоб надіслати введений текст натисніть клавішу &Enter; або кнопку <guilabel
+>Надіслати</guilabel
+>. Таким чином, ви зможете обмінюватися повідомленнями з вашим співрозмовником або співрозмовницею. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap013_firstchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Ваше перше спілкування.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Ваше перше спілкування.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<sect2 id="transfer-files"
+><title
+>Передавання файлів</title
+> 
+<para
+>Щоб передати файл за допомогою Jabber, натисніть кнопку <guilabel
+>Надіслати файл</guilabel
+> і вкажіть файл, який ви бажаєте надіслати за допомогою контекстного меню. Програма негайно сповістить вам про завершення передавання даних або помилку у такому передаванні. </para>
+<para
+><warning
+><para
+>Передавання файлів може не працювати через несумісність з налаштуваннями деяких з серверів.</para
+></warning>
+</para>
+</sect2>
+<sect2 id="group-chat"
+><title
+>Групове спілкування</title
+> 
+<para
+>Jabber можна користуватися не лише для спілкування з одним співрозмовником. Ви можете скористатися режимом групового спілкування для обговорень у стилі <ulink url="http://en.wikipedia.org/wiki/IRC"
+>IRC</ulink
+>, коли обмін думками може одночасно вести декілька співрозмовників. Щоб перевести програму групового спілкування, наведіть вказівник миші на піктограму системного лотка &kopete; і виберіть пункт <menuchoice
+><guimenu
+><replaceable
+>ваш_JID</replaceable
+></guimenu
+><guimenuitem
+>Приєднатись до групового спілкування...</guimenuitem
+></menuchoice
+>, де замість <replaceable
+>ваш_JID</replaceable
+> слід скористатися пунктом вашого ідентифікатора Jabber. У відповідь програма відкриє нове вікно, за допомогою якого ви зможете долучитися до кімнати групового спілкування. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_snap021_groupchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Групове спілкування.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Групове спілкування.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Натисніть кнопку <guilabel
+>Запит</guilabel
+>, щоб переглянути список всіх кімнат спілкування на вашому сервері Jabber. Виберіть одну з кімнат і натисніть клавішу &Enter;, щоб увійти до неї. </para>
+<para
+>Крім того, ви можете вказати і створити власну кімнату спілкування визначенням її назви у рядку <guilabel
+>Кімната</guilabel
+>. Після вибору або створення кімнати натисніть клавішу &Enter; або кнопку <guilabel
+>Приєднатись</guilabel
+>, щоб приєднатися до цієї кімнати. </para>
+<para
+>Після створення вами кімнати спілкування у вашому вікні &kopete; з’явиться нове поле з JID <replaceable
+>chatroomname@jabber.example.org</replaceable
+>. З цим пунктом можна поводитися як зі звичайним пунктом контакту, тобто для того, щоб розпочати спілкування, достатньо клацнути лівою кнопкою миші на цьому пункті JID тощо. </para>
+<para
+>Після реалізації цих настанови ви маєте налаштовану клієнтську програму Jabber і теоретично можете спілкуватися з вашими контактами. Але щоб скористатися можливостями &kopete; повністю, вам варто налаштувати програму відповідно до ваших потреб. На наступній сторінці цього підручника можна знайти набір <link linkend="useful-configuration-hints"
+>корисних порад з налаштування</link
+>. </para>
+</sect2>
+</sect1>
+<sect1 id="useful-configuration-hints"
+><title
+>Корисні поради з налаштування</title>
+<para
+>Всі наведені нижче настанови стосуються налаштувань за допомогою основного вікна налаштування &kopete;, яке можна відкрити за допомогою пункту меню <menuchoice
+><guimenu
+>Параметри</guimenu
+><guimenuitem
+>Налаштувати...</guimenuitem
+></menuchoice
+>. Не забудьте натиснути кнопку <guilabel
+>Застосувати</guilabel
+> або <guilabel
+>Гаразд</guilabel
+>, щоб внесені вами зміни було збережено. </para>
+<para
+>Доступ до всіх налаштувань, що стосуються роботи вашого облікового запису або декількох облікових записів у &kopete; (Jabber/XMPP, а також <ulink url="http://en.wikipedia.org/wiki/Icq"
+>ICQ</ulink
+>, <ulink url="http://en.wikipedia.org/wiki/.NET_Messenger_Service"
+>MSN</ulink
+> та багатьох інших протоколів обміну повідомленнями) можна отримати на сторінці <guilabel
+>Облікові записи</guilabel
+>. Якщо ви хочете змінити ваші особисті дані або використати у програмі фотографію, натисніть кнопку <guilabel
+>Змінити особу...</guilabel
+> і внесіть відповідні зміни. Фото можна вивантажити натисканням невеличкої піктограми, розташованої ліворуч у нижній частині області для зображення. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap014_setidentity.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Налаштування профілю.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Налаштування профілю.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Наступна сторінка у вертикальному списку, розташованому ліворуч, має назву <guilabel
+>Список контактів</guilabel
+>. Призначення пунктів цієї сторінки доволі очевидне. Корисним буде позначити пункт <guilabel
+>Використовувати фото контактів, якщо вони наявні</guilabel
+>. На інших сторінках налаштування (<guilabel
+>Кольори і шрифти</guilabel
+>, <guilabel
+>Додатково</guilabel
+> і <guilabel
+>Компонування</guilabel
+>) наведено пункти доволі специфічних налаштувань, зміни у які варто вносити після декількох тижнів користування &kopete;, коли ви визначитеся зі своїми уподобаннями. </para>
+<para
+>За допомогою сторінки налаштування <guilabel
+>Стан</guilabel
+> ви зможете вказати ваші типові <ulink url="http://en.wikipedia.org/wiki/Status_message"
+>повідомлення про стан</ulink
+>, які буде показано при переході до станів «У мережі», «Немає на місці», «Невидимий» тощо. </para>
+<para
+>На сторінці <guilabel
+>Поведінка</guilabel
+> наведено доволі багато цікавих налаштувань. Серед найцікавіших ті налаштування, які можна знайти на вкладці <guilabel
+>Загальне</guilabel
+>: <guilabel
+>Обробка повідомлень</guilabel
+> та <guilabel
+>Початковий стан</guilabel
+>. За допомогою першого можна визначити, будуть вхідні повідомлення від ваших контактів відкриватися негайно у новому вікні чи їх буде поставлено у чергу до часу, коли ви відкриєте вікно &kopete;. За допомогою другого пункту ви можете вказати &kopete;, чи слід програмі з’єднуватися з сервером обміну повідомленнями одразу після запуску програми. Якщо ви позначите цей пункт, ви зможете розпочинати спілкування одразу після запуску &kopete;. За допомогою вкладки <guilabel
+>Події</guilabel
+> можна визначити перелік подій, про настання яких &kopete; сповіщатиме вас за допомогою системи сповіщення середовища (наприклад <guilabel
+>KNotify</guilabel
+>). Якщо ви хочете, щоб &kopete; автоматично встановлювала стан «Немає на місці», відкрийте вкладку <guilabel
+>Параметри відсутності</guilabel
+> і позначте перший пункт. Ви можете вказати час, який має пройти з часу останньої дії (натискання клавіші або пересування миші), щоб &kopete; автоматично встановила стан відсутності. Типовим значенням є час у 10 хвилин. Пункти вкладки <guilabel
+>Спілкування</guilabel
+> очевидні, для них встановлено доволі прийнятні значення. </para>
+<para
+>Наступним пунктом у вертикальному меню є <guilabel
+>Вікно спілкування</guilabel
+>. За допомогою першої вкладки відповідної сторінки, <guilabel
+>Стиль</guilabel
+>, ви можете змінити вигляд спілкування. Ви можете встановити власний стиль або отримати стиль з інтернету натисканням кнопки <guilabel
+>Отримати новий...</guilabel
+>. Типово введення послідовності символів <ulink url="http://en.wikipedia.org/wiki/Emoticon"
+>емоційки</ulink
+> під час спілкування призводитиме до перетворення у &kopete; емоційки на відповідне зображення. Щоб вимкнути таке перетворення або скористатися іншим набором емоційок, відкрийте вкладку <guilabel
+>Емоційки</guilabel
+>. За допомогою останньої вкладки, <guilabel
+>Кольори і шрифти</guilabel
+>, ви зможете змінити відповідні параметри вікна спілкування. </para>
+<para
+>У &kopete; передбачено підтримку <ulink url="http://en.wikipedia.org/wiki/Webcam"
+>вебкамер</ulink
+>, але на цей момент (листопад 2010 року) існують певні труднощі з проведенням відеоспілкування, отже ви маєте самі перевірити працездатність параметрів, визначених на сторінці <guilabel
+>Відео</guilabel
+>, оскільки ймовірно, що не все працюватиме як слід. Корисні настанови щодо усування проблем з відеокамерами можна знайти на <ulink url="http://forum.kde.org/viewforum.php?f=18"
+>форумі KDE</ulink
+>. </para>
+</sect1>
+<sect1 id="jabber-plugins"
+><title
+>Додатки</title
+> 
+<para
+>Потужності &kopete; надає можливість використання додатків. Разом з програмою встановлюється типових набір пакунків (нові пакунки можна встановити, наприклад, за допомогою програми для керування пакунками вашого дистрибутива &Linux;). Додатки можна увімкнути і налаштувати за допомогою сторінки <guilabel
+>Додатки</guilabel
+>. Увімкнути додаток можна позначенням відповідного пункту. Хоча призначення більшості пунктів очевидне, ми все ж зупинимося на деяких з них. Дуже корисним додатком є додаток <guilabel
+>Журнал</guilabel
+>. Якщо його буде увімкнено, Kopete вестиме журнал спілкування і записуватиме його на жорсткий диск вашого комп’ютера. Переглянути цей журнал можна за допомогою вікна спілкування після натискання піктограми <guilabel
+>Переглянути журнал</guilabel
+> або вибору пункту меню <menuchoice
+><guimenu
+>Інструменти</guimenu
+><guimenuitem
+>Переглянути журнал</guimenuitem
+></menuchoice
+>. </para>
+<sect2 id="otr"
+><title
+>OTR</title
+> 
+<para
+>Одним з найважливіших додатків з огляду на питання конфіденційності є додаток <ulink url="http://en.wikipedia.org/wiki/Off-the-Record_Messaging"
+>OTR</ulink
+>. За допомогою цього додатка ви можете шифрувати дані обміну повідомленнями, що робить неможливим читання вашого обміну повідомленнями сторонніми особами. Після вмикання цього додатка вам слід відкрити сторінку його параметрів (натисніть піктограму з зображенням гайкового ключа) і <guilabel
+>Створити</guilabel
+> ключ. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap015_otrgenerate.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Створення ключа OTR.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Створення ключа OTR.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Створення ключа може бути доволі тривалою процедурою, вам доведеться зачекати на її завершення. Коли ключ буде створено, закрийте вікно OTR натисканням кнопки <guilabel
+>Гаразд</guilabel
+> і підтвердьте внесені зміни натисканням кнопки <guilabel
+>Застосувати</guilabel
+>. Нарешті, вам доведеться перезапустити програму &kopete;. Після перезапуску відкрийте вікно спілкування з тим контактом, з яким ви бажаєте поспілкуватися у захищеному режимі. Скористайтеся пунктом меню <menuchoice
+><guimenu
+>Інструменти</guimenu
+><guisubmenu
+>Параметри OTR</guisubmenu
+><guimenuitem
+>Розпочати сеанс OTR</guimenuitem
+></menuchoice
+> або натисніть піктограму <menuchoice
+><guimenu
+>Шифрування OTR</guimenu
+> <guimenuitem
+>Розпочати сеанс OTR</guimenuitem
+></menuchoice
+>. &kopete; розпочне сеанс, якщо клієнтська програма вашого контакту підтримує OTR. Якщо такої підтримки не передбачено, буде показано повідомлення про помилку. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap016_otrfirstuse.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Перше використання OTR.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Перше використання OTR.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Для забезпечення ідентифікації контакту з вашого списку контактів слід виконати одноразове розпізнавання. Скористайтеся для цього пунктом меню <menuchoice
+><guimenu
+>Інструменти</guimenu
+><guisubmenu
+>Параметри OTR</guisubmenu
+><guimenuitem
+>Уповноважити контакт</guimenuitem
+></menuchoice
+>. Вам буде запропоновано три варіанти розпізнавання: </para>
+<itemizedlist>
+<listitem
+><para
+>Першим варіантом є використання питання, відповідь на яке відома лише вам і вашому контакту. </para
+></listitem>
+<listitem
+><para
+>Наступним варіантом є розпізнавання за паролем, який відомий вашому співрозмовнику (повідомити пароль можна іншим захищеним каналом, наприклад телефоном). </para
+></listitem>
+<listitem
+><para
+>Третій варіант пов’язано з перевіркою відбитка OTR вручну. Цей варіант є найбезпечнішим, але не дуже зручним. Якщо ви можете скористатися одним з двох попередніх варіантів, їхнє використання буде зручнішим і швидшим. Для перевірки відбитка вам слід отримати від співрозмовника відбиток OTR за допомогою захищеного з’єднання (наприклад телефоном або електронною поштою) для наступної перевірки відбитка на місці. </para
+></listitem>
+</itemizedlist>
+<para
+>Припустімо, що ви обрали варіант з питанням. Вкажіть питання у відповідному полі і визначте очікувану відповідь, яку має дати ваш співрозмовник для отримання уповноваження на спілкування. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap017_seqretquestion.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Задаємо секретне питання.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Задаємо секретне питання.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Після підтвердження введених даних ваш потенційний співрозмовник побачить питання. Якщо відповідь буде правильно, налаштування спілкування OTR буде завершено і ви зможете перейти до спілкування. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap018_otrsuccess.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Налаштування OTR завершено.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Налаштування OTR завершено.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Ваш співрозмовник також може ініціювати процедуру уповноваження. У разі, якщо він це зробить, ви побачите вікно з питанням. Дайте правильну відповідь на це питання, і вас буде додано до списку уповноважених контактів вашого співрозмовника. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap019_otrauth.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Уповноваження OTR.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Уповноваження OTR.</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Під час кожного сеансу обміну захищеними повідомленнями ви бачитимете піктограму з зеленим замком у верхній частині вікна спілкування. Щоб зняти захист зі з’єднання, або закрийте вікно спілкування, або скористайтеся кнопкою панелі інструментів <menuchoice
+><guimenu
+>Шифрування OTR</guimenu
+><guimenuitem
+>Завершити сеанс OTR</guimenuitem
+></menuchoice
+>. </para>
+</sect2>
+</sect1>
+</appendix>

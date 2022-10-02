@@ -1,0 +1,650 @@
+<!-- Copyright (c) 2005 by Michaël Larouche <michael.larouche@kdemail.net
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="chatwindowstyleguide">
+<title
+>Stilguide för chattfönster i &kopete;</title>
+<sect1 id="chatstyle-reference">
+<title
+>Stilreferens för chattfönster i &kopete;</title>
+<para
+>Från och med &kopete; 0.12, använder vi nu formatet <ulink url="http://www.adiumx.com/"
+>Adium</ulink
+> för chattfönsterstilar. Temaformatet är baserat på <acronym
+>HTML</acronym
+>-mallar och <acronym
+>CSS</acronym
+>. De är enklare att skapa och utveckla, bara kunskap om <acronym
+>HTML</acronym
+> och <acronym
+>CSS</acronym
+> behövs. Dessutom kan stilar ha varianter (definierade med en <acronym
+>CSS</acronym
+>-fil), som lägger till flera egenanpassade värden. </para>
+
+<sect2 id="chatstyle-reference-guide">
+	<title
+>Referensguide.</title>
+<para
+>Adium-formatet består av en katalogstruktur, <acronym
+>HTML</acronym
+>-mallar, <acronym
+>CSS</acronym
+>-filer och nyckelord som ersätts varje gång mallen behandlas. Den slutliga konverteringen är en <acronym
+>XHTML</acronym
+>-sida där meddelanden läggs till med <acronym
+>DOM</acronym
+>-åtgärder. Det centrala elementet är ett div-element som heter <filename
+>Chat</filename
+>. Innan och efter detta div-element finns mallar för sidhuvud och sidfot. Meddelanden finns under div-elementet <filename
+>Chat</filename
+>. </para>
+
+<sect3 id="chatstyle-reference-directory">
+	<title
+>Katalogstruktur</title>
+<para
+>En stil måste hålla sig till denna katalogstruktur. Koden i &kopete; styrs av katalogstrukturen. När stilen arkiveras, arkivera då katalogen <filename
+>styleName</filename
+>. Katalogstrukturen är en struktur i enligthet med en bundle i <application
+>Mac OS X</application
+>, för de som känner till operativsystemet. Du måste dessutom följa skiftläget som visas här, eftersom <acronym
+>Unix</acronym
+>-system är skiftlägeskänsliga.</para>
+<programlisting
+>styleName\ (kan ha .adiumMessageStyle som suffix, eftersom det är en bundle i Mac OS X)
+        Contents\
+                Info.plist
+                Resources\
+                        main.css
+                        Header.html
+                        Footer.html
+                        Status.html
+                        Incoming\ (och Outgoing\)
+                                Content.html
+                                NextContent.html (för efterföljande meddelanden)
+                                Context.html (för meddelandehistorik)
+                                NextContext.html
+                                Action.html
+                        Variants\
+                                *.css
+</programlisting>
+</sect3>
+
+<sect3 id="chatstyle-reference-divinsert">
+	<title
+>Om &lt;div id="insert"&gt;&lt;/div&gt;</title>
+	<para
+>Detta är ett särskilt div-element som används internt. Det är en platsmarkör som anger var nästa meddelande ska infogas. Om det är ett nytt meddelande, tas det bort och det nya meddelandet tar dess plats. Men om det är ett efterföljande meddelande ersätts div-elementet med det nya meddelandets innehåll. Detta särskilda div-element <emphasis
+>krävs</emphasis
+> i mallarna Content, Context, NextContent, NextContext. Det skadar dock inte att också lägga till det i mallarna Action och Status. </para>
+</sect3>
+
+<sect3 id="chatstyle-reference-templates">
+	<title
+>HTML-mallar.</title>
+
+<variablelist
+><title
+>Mallbeskrivning.</title>
+
+<varlistentry
+><term
+><filename
+>Header.html</filename
+> (krävs)</term>
+<listitem>
+<para
+>Använd mallen Header för att visa ett snyggt sidhuvud för konversationenen. Mallen infogas innan div-elementet <filename
+>Chat</filename
+>. Om du inte använder det, lägg bara till en tom fil. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Footer.html</filename
+> (krävs)</term>
+<listitem>
+<para
+>Detta är i huvudsak samma som Header, men är för konversationens sidfot. Mallen infogas efter div-elementet <filename
+>Chat</filename
+>. Om du inte använder det, lägg bara till en tom fil. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Status.html</filename
+> (krävs)</term>
+<listitem>
+<para
+>Mallen används för att visa ett internt meddelande. Interna meddelanden som statusändringar, meddelanden från Kopete (t.ex. inkommande filöverföring) visas. När stilen inte tillhandahåller mallen Action, används den för att visa sådana meddelanden. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/Content.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Content.html</filename
+> (krävs)</term>
+<listitem>
+<para
+>Innehållsmallen är meddelandets kärna. Föreställ dig den som ett block som kommer att innehålla meddelanden. Försäkra dig om att den är klar att ta emot meddelanden i följd, konstruera den inte för att bara visa ett meddelande. Meddelanden i följd infogas vid div insert-elementet. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/NextContent.html</filename
+></term>
+              <term
+><filename
+>Outgoing/NextContent.html</filename
+> (krävs)</term>
+<listitem>
+<para
+>Mallen NextContent är meddelandefragment för efterföljande meddelanden. Den infogas i huvudmeddelandeblocket. HTML-mallen ska bara innehålla det som minimalt behövs för att visa ett meddelande. </para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry
+><term
+><filename
+>Incoming/Action.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Action.html</filename
+> (valfri) (utökning i &kopete;)</term>
+<listitem>
+<para
+>Denna mall är en utökning av Adium-formatet i &kopete;. Den är tillgänglig för inkommande och utgående riktningar. Åtgärdsmeddelanden är specialmeddelanden som talar om att en åtgärd utförs. Till exempel: "/me installerar &kopete;" skulle visas som "DarkShock installerar &kopete;".  </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>Incoming/Context.html</filename
+></term>
+              <term
+><filename
+>Incoming/NextContext.html</filename
+></term>
+              <term
+><filename
+>Outgoing/Context.html</filename
+></term>
+              <term
+><filename
+>Outgoing/NextContext.html</filename
+> (valfri)</term>
+<listitem>
+<para
+>Dessa mallar används inte i Kopete. I Adium används de för att visa historik. De är i huvudsak likadana som Content och NextContent men med vissa skillnader för att åtskilja dem från normala meddelanden. </para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect3>
+
+<sect3 id="chatstyle-reference-css">
+	<title
+>Om CSS-stilmallar och varianter</title>
+	<para
+>HTML-mallar används för att beskriva hur strukturen skapas, men alla stilar beskrivs i <acronym
+>CSS</acronym
+>-filer. <filename
+>main.css</filename
+> är huvudstilen, där varianter bara är ändringar av huvudstilen. Exempel på varianter är annorlunda färger, ingen visning av användarfoto. Både <filename
+>main.css</filename
+> och varianter importeras till den slutliga <acronym
+>XHTML</acronym
+>-sidan.</para>
+	<sect4 id="chatstyle-reference-css-main">
+		<title
+>-<filename
+>main.css</filename
+></title>
+		<para
+>Detta är den huvudsakliga <acronym
+>CSS</acronym
+>-filen som är gemensam för alla varianter. Filen ska innehålla all huvudsaklig beskrivning av stilen.</para>
+	</sect4>
+	<sect4 id="chatstyle-reference-css-variants">
+		<title
+>Varianter</title>
+		<para
+>Varianter är <acronym
+>CSS</acronym
+>-filer placerade i katalogen <filename
+>Variants/</filename
+>. Varje variant är en enda <acronym
+>CSS</acronym
+>-fil som inkluderar <filename
+>main.css</filename
+> och gör ändringar av huvudstilen.</para>
+	</sect4>
+</sect3>
+
+<sect3 id="chatstyle-reference-debug">
+	<title
+>Felsökning av stilar</title>
+	<para
+>Här är två tips om hur man provar en stil medan den skapas.</para>
+	<sect4 id="chatstyle-reference-debug-save">
+		<title
+>- Spara ett exempel på en konversation.</title>
+		<para
+>Du kan <action
+>spara</action
+> en konversation i chattfönstret. Detta är en kopia av den interna XHTML-sidan som visas. Använd den i <application
+>Konqueror</application
+> för att prova dina <acronym
+>CSS</acronym
+>-filer.</para>
+	</sect4>
+	<sect4 id="chatstyle-reference-debug-disable-cache">
+		<title
+>- Inaktivera stilcachen.</title>
+		<para
+>En liten inställningsflagga finns för att inaktivera stilcachen. När den aktiveras, laddas HTML-mallar om varje gång en stil efterfrågas. Lägg till följande rader i <filename
+>kopeterc</filename
+>. Mycket användbart när en stil provas i &kopete;.</para>
+		<programlisting
+>[KopeteStyleDebug]
+disableStyleCache=true
+</programlisting>
+	</sect4>
+</sect3>
+
+</sect2>
+
+<sect2 id="chatstyle-reference-keywords">
+	<title
+>Nyckelordsreferens</title>
+	<para
+>Nyckelord liknar hål som ska fyllas i med information. För varje nytt meddelande ersätts de av det riktiga värdet som motsvarar deras sammanhang. För att helt stödja alla funktioner i Kopete, har vissa utökningar av nyckelord tillagts i Adium. Vissa nyckelord är dessutom också bara tillgängliga i vissa sammanhang.</para>
+
+<variablelist
+><title
+>Nyckelordslista för mallarna Header och Footer. </title>
+<para
+>Där behandlas nyckelord när chatten startar.</para>
+<varlistentry
+><term
+><filename
+>%chatName%</filename
+></term>
+<listitem>
+<para
+>Detta är namnet på aktuell chattsession. I en typisk session visar det namn och status för kontakten. För <acronym
+>IRC</acronym
+> visas kanalens ämne. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%sourceName%</filename
+></term>
+              <term
+><filename
+>%destinationName%</filename
+></term>
+<listitem>
+<para
+>Dessa är namnen på kontakterna i en chattsession. <filename
+>%sourceName%</filename
+> är ditt namn. <filename
+>%destinationName%</filename
+> är namnet på kontakten du chattar med. Föredra <filename
+>%chatName%</filename
+> framför dessa, eftersom de kan vara förvirrande i gruppchatter och IRC. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%incomingIconPath%</filename
+></term>
+              <term
+><filename
+>%outgoingIconPath%</filename
+></term>
+<listitem>
+<para
+>Detta är kontakternas bild, foto eller avatar för en chattsession. Incoming representerar kontaktfotot och Outgoing representerar ditt eget foto. Om något foto inte är tillgängligt, används bilden <filename
+>buddy_icon.png</filename
+> som finns i katalogen <filename
+>Incoming</filename
+> eller <filename
+>Outgoing</filename
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%timeOpened%</filename
+></term>
+              <term
+><filename
+>%timeOpened{X}%</filename
+></term>
+<listitem>
+<para
+>Detta är tiden då chattsessionen började. <filename
+>%timeOpened%</filename
+> använder standardtidformatet för den aktuella landsinställningen. Om du vill använda ett specifikt tidformat, använd <filename
+>%timeOpened{X}%</filename
+> där X är en sträng som innehåller tidformatet. Tidparametrarna är samma som i glibc-funktionen <function
+>strftime</function
+>. Skriv <command
+>man strftime</command
+> för att få en lista med tillgängliga parametrar. </para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist
+><title
+>Nyckelordslista för mallarna Content, NextContent, Context, NextContext, Action</title>
+<para
+>Där behandlas nyckelord för varje meddelande.</para>
+
+<varlistentry
+><term
+><filename
+>%userIconPath%</filename
+></term>
+<listitem>
+<para
+>Detta är kontaktens bild, foto eller avatar som hör ihop med meddelandet. Om något foto inte är tillgängligt, används bilden <filename
+>buddy_icon.png</filename
+> som finns i katalogen <filename
+>Incoming</filename
+> eller <filename
+>Outgoing</filename
+> beroende på meddelandets riktning. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderScreenName%</filename
+></term>
+<listitem>
+<para
+>Detta är kontaktidentifikationen för kontakten som hör ihop med meddelandet, Exempelvis jag@hotmail.com, 45566576, AnnaJohansson. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%sender%</filename
+></term>
+<listitem>
+<para
+>Detta är kontaktens namn som hör ihop med meddelandet. Det använder metakontaktens namn att visa som källa. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%service%</filename
+></term>
+<listitem>
+<para
+>Visar tjänstens namn som hör ihop med meddelandet. Exempel: Jabber, Yahoo, MSN. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%textbackgroundcolor{X}%</filename
+></term>
+<listitem>
+<para
+>Nyckelordet används för att representera markerad bakgrundsfärg i &kopete;. Ignorerar parametern inom parentes och använder det bara som <filename
+>%textbackgroundcolor{}</filename
+>. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderStatusIcon%</filename
+> (utökning av &kopete;)</term>
+<listitem>
+<para
+>Visar kontaktens statusikon som hör ihop med meddelandet. Det är en filsökväg. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%senderColor%</filename
+></term
+>  <term
+><filename
+>%senderColor{N}%</filename
+> (utökning av &kopete;)</term>
+<listitem>
+<para
+>Skapa en färg från avsändarens kontaktidentifikation. Kan användas för att visa en annan färg för kontaktens smeknamn. </para>
+<para
+><filename
+>%senderColor{N}%</filename
+> där N är ett positivt tal. Om N är större än 100 representerar det en ljusare färg än kontaktens färg. Om N är lika med 150 är det en färg som är 50 % ljusare. Om N är mindre än 100 är det en mörkare färg. Användbar för att låta bakgrunden färgas olika för varje kontakt. </para>
+<para
+>Om du vill använda färgerna i en variant, men inte i huvudstilen, finns ett sätt att komma runt det. <programlisting>
+<![CDATA[
+<div style="color:%senderColor%;border:none;border-color:%senderColor{40}%;"
+><p class="message"
+>...</p
+></div>
+]]>
+</programlisting
+> Du kan använda färgen för elementet p.message i filen <filename
+>main.css</filename
+>, och skriva något som liknar följande i varianten: <programlisting
+>p.message { color:inherit; border-color:inherit; }
+</programlisting>
+
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<variablelist
+><title
+>Nyckelordslista gemensam för meddelanden och Status.html</title>
+
+<varlistentry
+><term
+><filename
+>%message%</filename
+></term>
+<listitem>
+<para
+>Själva meddelandet. Det är ett HTML-fragment. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%time%</filename
+></term>
+              <term
+><filename
+>%time{X}%</filename
+></term>
+<listitem>
+<para
+>Tiden då meddelandet togs emot. <filename
+>%time%</filename
+> använder standardtidformatet för den aktuella landsinställningen. Om du vill använda ett specifikt tidformat, använd <filename
+>%time{X}%</filename
+> där X är en sträng som innehåller tidformatet. Tidparametrarna är samma som i glibc-funktionen <function
+>strftime</function
+>. Skriv <command
+>man strftime</command
+> för att få en lista med tillgängliga parametrar. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry
+><term
+><filename
+>%messageDirection%</filename
+> (utökning av &kopete;)</term>
+<listitem>
+<para
+>Representerar meddelandets riktning, om meddelandet måste visas skrivet från höger till vänster eller från vänster till höger.Värden är antingen "rtl" eller "ltr". Läs <link linkend="chatstyle-guideline-direction"
+>Guide för meddelanderiktning</link
+> för att ta reda på hur nyckelordet används på ett riktigt sätt. </para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+</sect1>
+
+<sect1 id="chatstyle-guideline">
+	<title
+>Stilguide för chattfönster i &kopete;</title>
+<para
+>Stilguide för chattfönster i &kopete; är en uppsättning saker som din chattfönsterstil måste stödja för att fungera tillsammans med Kopete.</para>
+<sect2 id="chatstyle-guideline-highlight">
+	<title
+>Stöd markeringar</title>
+	<para
+>Stilen måste visa markeringar. I Kopete och Adium ersätts <filename
+>%textbackgroundcolor{}%</filename
+> med markeringsfärgen. Lägg till stilattributet <userinput
+>background-color: %textbackgroundcolor{}%</userinput
+> i HTML-elementet som visar meddelandet.</para>
+</sect2>
+<sect2 id="chatstyle-guideline-consecutive">
+	<title
+>Meddelandemallar för efterföljande meddelanden krävs.</title>
+	<para
+>Denna guide är till för dem som skriver om gamla XSL-stilar till det nya formatet. Alla stilar måste tillhandahålla en mall för efterföljande meddelanden. Det är nu en standardfunktion.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-encoding">
+	<title
+>Använd kodningen <acronym
+>UTF-8</acronym
+>.</title>
+	<para
+>Rubriken säger allt. Du måste spara filerna som <acronym
+>UTF-8</acronym
+>.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-info">
+	<title
+>Tillhandahåll <filename
+>Contents/Info.plist</filename
+> för att fungera tillsammans med Adium</title>
+	<para
+>Filen <filename
+>Contents/Info.plist</filename
+> används inte ännu i Kopete, men om du vill att stilen ska fungera tillsammans med <application
+>Adium</application
+> måste du tillhandahålla filen. Här är en grundläggande exempelfil. Strängar att ersätta omges av "$".</para>
+<programlisting
+><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key
+>CFBundleDevelopmentRegion</key>
+        <string
+>English</string>
+        <key
+>CFBundleGetInfoString</key>
+        <string
+>$Your style full name$</string>
+        <key
+>CFBundleIdentifier</key>
+        <string
+>$Your style ID in the form: com.adiumx.smooth.operator.style$</string>
+        <key
+>CFBundleInfoDictionaryVersion</key>
+        <string
+>1.0</string>
+        <key
+>CFBundleName</key>
+        <string
+>$Your style name here$</string>
+        <key
+>CFBundlePackageType</key>
+        <string
+>AdIM</string>
+        <key
+>MessageViewVersion</key>
+        <integer
+>3</integer>
+</dict>
+</plist>
+]]>
+</programlisting>
+
+</sect2>
+
+<sect2 id="chatstyle-guideline-buddyicon">
+	<title
+>Tillhandahåll <filename
+>buddy_icon.png</filename
+></title>
+	<para
+>Du måste placera en fil som heter <filename
+>buddy_icon.png</filename
+> i <filename
+>Incoming</filename
+> och <filename
+>Outgoing</filename
+>. Bilderna används när kontakten inte har något foto.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-direction">
+	<title
+>Stöd språk som skrivs från höger till vänster med nyckelordet <filename
+>%messageDirection%</filename
+>.</title>
+	<para
+>Nyckelordet <filename
+>%messageDirection%</filename
+> är till för de språk i världen som skrivs från höger till vänster. Det definierar meddelandets riktning om det är "rtl" (höger till vänster) eller "ltr" (vänster till höger). Lägg till stilattributet i HTML-elementet som visar meddelandet: <userinput
+>direction: %messageDirection%</userinput
+>. Förhandsgranskningen av stilen i utseendeinställningen innehåller en kontroll av att stilen visar höger till vänster riktigt. Den ska visa strängen med början från höger.</para>
+</sect2>
+</sect1>
+</appendix>

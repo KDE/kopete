@@ -1,0 +1,189 @@
+<!-- Copyright (c) 2008 by Charles Connell <charles@connells.org
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="pipes">
+<title
+>&kopete; torude plugina teostamise juhend</title>
+<para
+>Alates &kopete; versioonist 1.0 pakub &kopete; pluginat, mis kannab nimetust Torud. See võimaldab suunata saabuvaid või väljuvaid sõnumeid välise skripti või käivitatava faili kaudu. Saabuv sõnum suunatakse käivitatavale failile, enne kui ta saabub vestlusaknasse, väljuv sõnum aga enne, kui ta saadetakse interneti kaudu teele. Torud võivad teksti saada kolmel kujul: <variablelist
+> <varlistentry
+> <term
+>lihttekst</term
+> <listitem
+><para
+>sõnumi põhiosa puhta &ascii; tekstina</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>&html; tekst</term
+> <listitem
+><para
+>sõnumi põhiosa &html;-ina, nagu oleks sinu vestluskaaslane saatnud sulle HTML-i, mida renderdatakse vestlusaknas</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>&xml;-is täielik sõnum</term
+> <listitem
+><para
+>&xml;-dokument, mis kirjeldab kogu sõnumit, kaasa arvatud &html;-is põhiosa.</para
+></listitem
+> </varlistentry
+> </variablelist
+> Käesolev dokument kirjeldab &xml;-vormingu spetsiifikat ning selgitab, kuidas kirjutada programm, mis suudab seda käsitseda. </para>
+
+<sect1 id="xml-output">
+<title
+>&xml;-väljund</title>
+<para
+>Toome näite, mida programm saab standardse sisendvoona: <literallayout>
+&lt;?xml version="1.0" encoding="ISO-8859-1"?>
+&lt;message subject=""
+        route="outbound"
+        importance="1"
+        formattedTimestamp="11:06:46 am"
+        timestamp="Sat Dec 1 11:06:46 2007"
+        type="normal"
+        mainContactId="spacemonkey1234"
+        time="11:06 am" >
+        &lt;from>
+                &lt;contact contactId="tdurden"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/oscarpictures/tdurden.jpg" >
+                        &lt;contactDisplayName dir="ltr" text="tdurden" />
+                        &lt;metaContactDisplayName dir="ltr"
+                                text="Tyler" />
+                &lt;/contact>
+        &lt;/from>
+        &lt;to>
+                &lt;contact contactId="spacemonkey1234"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/avatars/User/7e542903e0ac7519a7496e85f5a5b99d.png" >
+                        &lt;contactDisplayName dir="ltr" text="spacemonkey1234" />
+                        &lt;metaContactDisplayName dir="ltr" text="Robert Paulson" />
+                &lt;/contact>
+                &lt;/to>
+        &lt;body dir="ltr"
+                bgcolor="#000000"
+                color="#000000" >
+                &amp;lt;span style=" color:#000000;"
+>hey&amp;lt;/span
+>&lt;/body>
+&lt;/message>
+</literallayout
+> Selle &xml;-i aluseks on XSD, mida kasutatakse vestlusstiilide puhul ja mille leiab <ulink url="http://kopete.kde.org/files/kopetemessage.xsd"
+>Kopete veebileheküljelt</ulink
+>. Kood vastab ühele sõnumile. Siin tasub tähele panna mõnda asja: <itemizedlist>
+<listitem
+><para
+>Atribuut "timestamp" elemendis "message" on ISO 8601 standardile vastavas vormingus.</para
+></listitem>
+<listitem
+><para
+>Atribuut "protocolIcon" elemendis "contact" valitakse järgmiselt: <orderedlist>
+<listitem
+><para
+>Kui objektile Contact on määratud foto omadus, kasutatakse seda asukohta.</para
+></listitem>
+<listitem
+><para
+>Kui see puudub, kasutatakse pildi asukohtana kontakti metakontakti sõltumata sellest, kas selle väärtus on null või mitte.</para
+></listitem>
+</orderedlist>
+</para
+></listitem>
+<listitem
+><para
+>Atribuudid "color" and "bgcolor" elemendis "body" on tühjad stringid, kui nad ei ole Kopetes määratud. Need on veebivärvide vormingus.</para
+></listitem>
+<listitem
+><para
+>Elemendi "body" sisu on varjestatud "&lt;" abil, nii et seda ei aeta segi tegelikult &xml;-i struktuuriga. Loomulikult peab selleks, et sõnumi põhiosa interpreteeritaks korrektselt HTML-ina, muutma kõik "&amp;lt;" "&lt;".</para
+></listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1 id="xml-input">
+<title
+>&xml;-sisend</title>
+<para
+>Sinu programm saab &xml;-i standardse sisendvoona, tal on seda võimalik muuta ning seejärel tuleb see anda &kopete;le tagasi programmi standardse väljundvoona. Kui sinu programm muudab järgmisi elemente, muudetakse vastavalt sellele ka sõnumit &kopete;s. <itemizedlist
+> <listitem
+><para
+>elemendi "message" atribuut "timestamp", aga mitte muud aja atribuudid</para
+></listitem
+> <listitem
+><para
+>elemendi "message" atribuut "subject"</para
+></listitem
+> <listitem
+><para
+>elemendi "message" atribuut "type"</para
+></listitem
+> <listitem
+><para
+>elemendi "message" atribuut "importance"</para
+></listitem
+> <listitem
+><para
+>elemendi "body" atribuut "color". See määratakse tavaliselt veebivärvi arvuna, kuid võib olla ka nimi. Nimesid, mida määrab <ulink url="http://www.w3.org/TR/SVG/types.html#ColorKeywords"
+>SVG</ulink
+>, tunnustab Qt4 QColor, nii et need on ka ainsad nimed, mida saab kasutada.</para
+></listitem
+> <listitem
+><para
+>elemendi "body" atribuut "bgcolor" &mdash; sama, mis atribuudi "color" korral</para
+></listitem
+> <listitem
+><para
+>elemendi "body" sisu</para
+></listitem
+> </itemizedlist
+> Kui muudad elemente või atribuute, mida pole eespool mainitud, ei võeta nende elementide muudatusi arvesse. </para>
+</sect1>
+
+<sect1 id="acceptable-values">
+<title
+>Aktsepteeritavad väärtused</title>
+<para
+>Mõnel atribuudil on teatud aktsepteeritavad väärtused. Torude plugina väljundil on alati legaalsed väärtused. Kui sinu programm otsustab neid atribuute muuta, peavad nad jääma legaalseks. Vastasel juhul jääb &kopete; käitumine defineerimata. <variablelist>
+<varlistentry
+><term
+>Atribuut "route" elemendis "message"</term
+><listitem
+><para
+>Peab olema "inbound", "outbound" või "internal"</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Atribuut "type" elemendis "message"</term
+><listitem
+><para
+>Peab olema "action" või "normal"</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Atribuut "importance" elemendis "message"</term
+><listitem
+><para
+>Peab olema "0" väikese, "1" tavalise ja "2" suure puhul</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Atribuut "dir" paljudes elementides</term
+><listitem
+><para
+>Peab olema  "ltr" vasakult paremale või "rtl" paremalt vasakule puhul</para
+></listitem
+></varlistentry>
+</variablelist>
+</para>
+</sect1>
+
+</appendix>

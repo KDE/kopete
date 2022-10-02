@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-icq">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Este documento foi convertido a partir da página do KDE UserBase <ulink url=" http://userbase.kde.org/Kopete/ICQ"
+>Kopete/ICQ</ulink
+>.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+<othercredit role="translator"
+><firstname
+>André Marcelo</firstname
+><surname
+>Alvarenga</surname
+><affiliation
+><address
+><email
+>andrealvarenga@gmx.net</email
+></address
+></affiliation
+><contrib
+>Tradução</contrib
+></othercredit
+> 
+    </authorgroup>
+<date
+>06/01/2011</date>
+    <releaseinfo
+>&kde; SC 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2011-01-06T06:11:26Z</timestamp
+>-->
+<title
+>Manual do ICQ</title>
+<!--userbase-content-->
+<sect1 id="about-icq"
+><title
+>Sobre o ICQ</title>
+<para
+>Este tutorial irá ajudá-lo a usar o ICQ, um protocolo de mensagens instantâneas comum no &kopete;. </para>
+<para
+>O <ulink url="http://www.icq.com/en.html"
+>ICQ</ulink
+> é um programa de mensagens instantâneas proprietário, que foi desenvolvido inicialmente pela companhia israelita Mirabilis. Ele usa o protocolo de rede OSCAR da AOL para enviar as mensagens de texto. Para identificar as pessoas, ele usa um número chamado UIN (Unified Identification Number - Número de Identificação Unificado). Se você registrar uma conta no ICQ, precisa também indicar um endereço de e-mail. Alguns clientes ICQ suportam a autenticação com esse endereço de e-mail, em vez do seu UIN (mas não o &kopete;). </para>
+<sect2 id="features"
+><title
+>Recursos</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Mensagens desconectado </para
+></listitem>
+<listitem
+><para
+>bate-papo multiusuário </para
+></listitem>
+<listitem
+><para
+>transferência de arquivos </para
+></listitem>
+</itemizedlist>
+<sect3 id="features-not-yet-supported-by-kopete"
+><title
+>Recursos ainda não suportados pelo Kopete</title
+> 
+<itemizedlist>
+<listitem
+><para
+>jogos </para
+></listitem>
+<listitem
+><para
+>envio de SMS </para
+></listitem>
+</itemizedlist>
+</sect3>
+</sect2>
+<sect2 id="criticism"
+><title
+>Críticas</title
+> 
+<itemizedlist>
+<listitem
+><para
+>Privacidade: de acordo com o analista de segurança Jeffrey Carr, os serviços secretos russos conseguiam ganhar acesso aos protocolos de mensagens instantâneas. Para mais informações, veja <ulink url="http://greylogic.us/2010/07/13/your-icq-identity-now-belongs-to-the-fsb/"
+>aqui</ulink
+> </para
+></listitem>
+<listitem
+><para
+>Spam: existe bastante spam (publicidade ou vírus indesejados) na rede ICQ </para
+></listitem>
+<listitem
+><para
+>Direitos autorais: de acordo com a <ulink url="http://www.icq.com/legal/policy.html"
+>Política de uso adequado do ICQ</ulink
+>, você autoriza o ICQ a usar o material publicado da forma que eles entenderem </para
+></listitem>
+</itemizedlist>
+ 
+</sect2>
+</sect1>
+<sect1 id="create-your-icq-account"
+><title
+>Criar a sua conta ICQ</title
+> 
+<para
+>Antes de poder conversar através do ICQ, você precisa criar uma conta. Se já tiver uma, você pode ir para esta página. </para>
+<para
+>Vá para a página de registro com o seu navegador Web favorito (&eg; <guilabel
+>Firefox</guilabel
+>, <guilabel
+>Konqueror</guilabel
+>, <guilabel
+>Chromium</guilabel
+>) <ulink url="https://www.icq.com/register/"
+>www.icq.com/register</ulink
+> </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_create_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Digite os seus dados</phrase>
+    </textobject>
+    <caption>
+      <para
+>Digite os seus dados</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Agora você precisa aguardar o recebimento de um e-mail do ICQ, que contém o seu link de verificação. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_activate_new_account1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>clique no link de verificação na sua mensagem de e-mail, para verificar o seu registro</phrase>
+    </textobject>
+    <caption>
+      <para
+>clique no link de verificação na sua mensagem de e-mail, para verificar o seu registro</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Agora você já possui a sua conta ICQ! Mas por enquanto, você só pode conectar-se no Kopete usando os UINs (Números de Identificação Unificados). O ICQ não mostra o seu UIN por padrão. É necessário ir com o seu navegador em <ulink url="https://www.icq.com/people"
+>www.icq.com/people</ulink
+> e autenticar-se lá. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_log_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>autenticação em www.icq.com</phrase>
+    </textobject>
+    <caption>
+      <para
+>autenticação em www.icq.com</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Então você precisa ir ao seu perfil: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_go_to_profile.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>clique em Meu Perfil</phrase>
+    </textobject>
+    <caption>
+      <para
+>clique em Meu Perfil</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Agora você precisa ter uma página de informação sobre a sua conta. Se clicar em <quote
+>Mais sobre mim</quote
+>, você verá um item chamado ICQ n°. Esse é o seu UIN: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_uin.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="connect-through-kopete"
+><title
+>Conectando-se pelo Kopete</title>
+<para
+>Na primeira vez que iniciar o &kopete;, você verá uma janela como esta: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_first_start.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>O Kopete na primeira execução</phrase>
+    </textobject>
+    <caption>
+      <para
+>O Kopete na primeira execução</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Para adicionar a sua conta ICQ, clique em <guilabel
+>Clique para adicionar uma conta</guilabel
+>. Caso já tenha inserido outra conta (como no MSN ou Jabber), você pode ir ao menu <menuchoice
+><guimenu
+>Configurações</guimenu
+><guimenuitem
+>Configurar...</guimenuitem
+></menuchoice
+> e clicar em <guilabel
+>Adicionar conta</guilabel
+>. </para>
+<para
+>Agora você verá uma lista com todos os protocolos de mensagem instantânea disponíveis no &kopete;. Neste caso, como deseja usar o ICQ, você deve escolher o item do ICQ: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Escolha o seu protocolo</phrase>
+    </textobject>
+    <caption>
+      <para
+>Escolha o seu protocolo</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Agora você verá o diálogo de configuração da sua conta. Clique em <guilabel
+>Configuração básica</guilabel
+> na barra de abas acima. Lá você precisa inserir o seu UIN. Se não quiser digitar a sua senha em cada inicialização, você pode adicioná-la também. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_setup.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Configuração básica da conta</phrase>
+    </textobject>
+    <caption>
+      <para
+>Configuração básica da conta</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>A aba <guilabel
+>Preferências da conta</guilabel
+> contém opções mais detalhadas: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_preferences.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Mais opções</phrase>
+    </textobject>
+    <caption>
+      <para
+>Mais opções</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>O &kopete; deverá funcionar sem alterar nenhuma configuração aqui. Porém, se você não entendeu os pontos acima mencionados, não entre em pânico, basta pular esta seção. </para>
+</sect1>
+<sect1 id="options-explained"
+><title
+>Opções explicadas</title
+> 
+<itemizedlist>
+<listitem
+><para
+><guilabel
+>Solicitar autorização antes que alguém possa adicionar à sua lista de contatos:</guilabel
+> Escolha esta opção se quiser que lhe perguntem antes de alguém o adicionar a sua lista de contatos. Normalmente, qualquer pessoa poderá pesquisar e adicionar você à sua lista. Isto significa que qualquer pessoa, mesmo quem não lhe conhece, poderá ver se está conectado ou não, assim como enviar-lhe mensagens. Se não quiser isto, você pode assinalar esta opção para que seja solicitada confirmação antes de alguém iniciar uma conversa com você. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Ocultar endereço IP:</guilabel
+> Se não quiser que os outros vejam o seu <ulink url="http://pt.wikipedia.org/wiki/Endereço_IP"
+>IP</ulink
+>, você pode assinalar esta opção. O endereço IP é o seu identificador na Internet. Este número é único e um usuário normal da Internet não poderá obter o seu nome a partir do seu endereço IP, somente o seu provedor de Internet! O ICQ salva o seu endereço IP para por um período de tempo específico. Por isso, não é um problema real de privacidade não escolher esta opção. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Disponibilizar o meu status no centro de mensagens unificado do ICQ:</guilabel
+> Se escolher esta opção, o seu status será publicado no centro de mensagens (visível para todos em www.icq.com/people). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Substituir informações padrão do servidor:</guilabel
+> Se quiser modificar o endereço onde o &kopete; se autentica na rede ICQ, esta opção torna isto possível (normalmente você não precisa desta opção). </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Habilitar proxy:</guilabel
+> conecta-se através de um <ulink url="http://pt.wikipedia.org/wiki/Proxy"
+>servidor proxy</ulink
+>. Estes servidores são usados para transferir as solicitações. Algumas empresas, escolas e universidades usam estes servidores para rejeitar o acesso a algumas páginas Web. Os usuários que se conectam a partir de suas casas não necessitam desta opção. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Intervalo de portas:</guilabel
+> Esta opção informa ao &kopete; quais as portas podem ser usadas nas conexões ponto-a-ponto. A explicação sobre a função das portas está fora do âmbito deste manual. Se quiser mais informações, verifique no <ulink url="http://en.wikipedia.org/wiki/Port_numbers"
+>artigo da Wikipédia</ulink
+>. Normalmente, você não terá problemas com as configurações padrão. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Tempo limite:</guilabel
+> define quantos segundos o &kopete; deverá esperar antes de parar as tentativas de conexão. Por exemplo, você envia um arquivo para um dos seus contatos, mas a conexão com a Internet dele pode ter problemas e, por este motivo, ele não recebe o arquivo. Esta opção informa ao &kopete; por quanto tempo deverá tentar enviar o arquivo. Normalmente, você não precisa alterar esta opção. </para
+></listitem>
+<listitem
+><para
+><guilabel
+>Codificação padrão:</guilabel
+> define a codificação das mensagens. Os usuários do Windows usarão a codificação <quote
+>windows-125*</quote
+> (do windows-1250 ao windows-1258). Por isso, se quiser conversar com usuários do Windows, escolha esta opção. E mesmo que converse com pessoas que não usem o Windows, é provável que elas também estejam usando a opção windows-125* (porque provavelmente eles falam com outras pessoas que usam o Windows). As diferentes codificações do Windows servem para os diferentes países. Escolha a mais adequada (por exemplo, o <quote
+>Windows-1252 Ocidental</quote
+> para países como o Brasil ou a Alemanha). A diferença entre estas codificações são apenas para alguns caracteres especiais e, por isso, caso não apareçam corretamente, tente outra codificação. </para
+></listitem>
+</itemizedlist>
+<para
+>Agora você já configurou com sucesso a sua conta ICQ. Clique em <guilabel
+>Próximo</guilabel
+> e <guilabel
+>Concluir</guilabel
+>. Se tiver mais que uma conta, você pode escolher cores diferentes para elas, para que os contatos possam ser facilmente identificados com cada conta. </para>
+</sect1>
+<sect1 id="add-a-contact"
+><title
+>Adicionar um contato</title
+> 
+<para
+>Agora que você está conectado à sua conta com o &kopete;, a janela deve ficar parecida com esta: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_logged_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Conectado</phrase>
+    </textobject>
+    <caption>
+      <para
+>Conectado</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Para adicionar um contato, clique em <guilabel
+>Adicionar</guilabel
+> na barra de ferramentas e escolha a sua conta (neste caso, o seu UIN) ou poderá usar o menu <menuchoice
+><guimenu
+>Arquivo</guimenu
+><guimenuitem
+>Adicionar contato</guimenuitem
+><guimenuitem
+><replaceable
+> sua conta</replaceable
+></guimenuitem
+></menuchoice
+>. Depois, você pode indicar o UIN da pessoa que deseja adicionar. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_add_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+></phrase>
+    </textobject>
+    <caption>
+      <para
+></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Se você não souber o UIN, mas sim o nome de exibição ou o endereço de e-mail de uma pessoa, também é possível localizar o seu contato. Clique no botão <guilabel
+>Pesquisar</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_search_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Também é possível pesquisar por UINs</phrase>
+    </textobject>
+    <caption>
+      <para
+>Também é possível pesquisar por UINs</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="being-added"
+><title
+>Sendo adicionado</title
+> 
+<para
+>Se você usar o ICQ, é bastante provável que venha a ser adicionado por outra pessoa. Se isso acontecer, o &kopete; irá mostrar uma mensagem que contém o UIN da pessoa que deseja adicioná-lo à sua lista. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_added.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>pedido de autorização</phrase>
+    </textobject>
+    <caption>
+      <para
+>pedido de autorização</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Para obter mais informações sobre a pessoa clique em <guilabel
+>Informações...</guilabel
+>. Será aberta uma janela que contém todas as informações disponíveis. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_information.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Informações</phrase>
+    </textobject>
+    <caption>
+      <para
+>Informações</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Agora você pode autorizar ou bloquear a pessoa. Se autorizar, você pode conversar com ela e vice-versa e se bloquear, ela não poderá falar com você. </para>
+</sect1>
+<sect1 id="chatting"
+><title
+>Conversando</title
+> 
+<para
+>Para conversar, clique em um dos seus contatos para aparecer uma janela de bate-papo. Ali você poderá escrever o seu texto e enviá-lo. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_chat_window.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Conversar com os seus contatos</phrase>
+    </textobject>
+    <caption>
+      <para
+>Conversar com os seus contatos</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Também é possível enviar mensagens para pessoas que estejam desconectadas. Elas receberão a sua mensagem assim que se conectarem. </para>
+</sect1>
+<sect1 id="spam"
+><title
+>Spam</title
+> 
+<para
+>Infelizmente, existe bastante spam (spam são mensagens indesejadas, normalmente publicidade ou vírus) na rede ICQ. Para evitá-los, você deve autorizar apenas as pessoas que conhece. Não há nada que possa ser feito para resolver este problema, apenas ignorá-los! </para>
+</sect1>
+</appendix>

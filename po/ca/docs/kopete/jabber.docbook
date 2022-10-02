@@ -1,0 +1,942 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-jabber">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname
+><firstname
+>Aquesta documentació s'ha convertit des de la pàgina «<ulink url="http://userbase.kde.org/Kopete/Jabber"
+>Kopete/Jabber</ulink
+>» de KDE UserBase.</firstname
+> <surname
+></surname
+> </personname>
+    </author>
+&traductor.Antoni.Bella; 
+    </authorgroup>
+<date
+>5 de desembre de 2010</date>
+    <releaseinfo
+>&kde; SC 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp
+>2010-12-05T08:12:25Z</timestamp
+>-->
+<title
+>El manual de Jabber</title>
+<!--userbase-content-->
+<sect1 id="about-jabber-xmpp"
+><title
+>Quant a Jabber XMPP</title>
+<para
+><ulink url="http://ca.wikipedia.org/wiki/Extensible_Messaging_and_Presence_Protocol"
+>XMPP</ulink
+> o Jabber (aquestes paraules realment signifiquen el mateix) és el nom d'un protocol obert de xarxa descentralitzada que s'utilitza per a missatgeria instantània. Està dissenyat com una infraestructura servidor-client amb molts servidors per tot Internet, on tothom pot aconseguir un compte. Els <ulink url="http://ca.wikipedia.org/wiki/Servidor"
+>servidors</ulink
+> normalment estan connectats a molts <ulink url="http://en.wikipedia.org/wiki/Client_%28computing%29"
+>clients</ulink
+> en un costat i a servidors XMPP d'Internet a l'altre costat. Ens inventarem un petit exemple per explicar com funciona: </para>
+<para
+>En Romeo estima a Julieta i vol comunicar-s'hi a través de la xarxa Jabber. Pot escriure missatges des del seu client (el qual està connectat amb <userinput
+>montague.net</userinput
+>) a la seva xicota, el client es connecta a un servidor anomenat <userinput
+>capulet.com</userinput
+>. </para>
+<para
+>Quan registrem un compte en un servidor, escollim l'anomenat JID (Jabber-Identifier -identificador de Jabber-). Aquest JID funciona bàsicament com una adreça de correu electrònic i està connectat amb el nom del servidor amb una <quote
+>@</quote
+>. Un exemple de JID vàlid per a Romeo seria <userinput
+>romeo@montague.net</userinput
+>. </para>
+<para
+>Per tal de parlar amb altres persones, en Romeo haurà d'afegir els seus JID a la seva llista de contactes. Ells poden estar connectats al mateix servidor (&pex; <userinput
+>bob@montague.net</userinput
+>), així com esdevenir des d'un altre servidor (&pex; <userinput
+>peter@wasinet.org</userinput
+> o, per descomptat, <userinput
+>julieta@capulet.com</userinput
+>). </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_jabbernetwork.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Visualització de la xarxa Jabber</phrase>
+    </textobject>
+    <caption>
+      <para
+>Visualització de la xarxa Jabber</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Per descomptat, Jabber/XMPP és capaç de molts més serveis (&pex;, serveis d'encriptatge d'extrem a extrem dels missatges, de <ulink url="http://en.wikipedia.org/wiki/Voicechat"
+>veu</ulink
+> i de <ulink url="http://ca.wikipedia.org/wiki/Videoconferència"
+>videoconferència</ulink
+>, xat de grup), que la guia d'aprenentatge en part us presentarà després. </para>
+<para
+>Dos proveïdors de missatgeria instantània molt grans utilitzen Jabber/XMPP en els seus servidors: el xat de Google Talk i de Facebook. Els comptes en aquests sistemes es poden utilitzar com a comptes normals de Jabber al &kopete;. Els detalls s'explicaran <link linkend="fill-in-your-account-data-in-kopete"
+>més endavant</link
+> o es pot trobar als llocs web d'aquests proveïdors. </para>
+<para
+>Amb aquesta informació podem començar amb la part principal de la guia d'aprenentatge: Com configurar un client de Jabber i quines bones característiques té el &kopete;. </para>
+</sect1>
+<sect1 id="first-steps"
+><title
+>Primers passos</title>
+<sect2 id="get-kopete"
+><title
+>Obtenir el &kopete;</title
+> 
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopeteicon.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Icona del Kopete</phrase>
+    </textobject>
+    <caption>
+      <para
+>Icona del Kopete</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Per descomptat, primer haureu d'obtenir el &kopete; abans de poder treballar amb ell. Si utilitzeu un <ulink url="http://ca.wikipedia.org/wiki/GNU/Linux"
+>sistema GNU/Linux</ulink
+> hi ha moltes bones possibilitats que trobeu el &kopete; ja instal·lat (si ja heu instal·lat la <ulink url="http://en.wikipedia.org/wiki/KDE_Software_Compilation"
+>KDE Software Compilation</ulink
+>) o estarà en un dels repositoris de la vostra distribució. </para>
+<para
+>Ara instal·leu el &kopete; i inicieu-lo per primera vegada. </para>
+</sect2>
+</sect1>
+<sect1 id="create-your-jabber-account"
+><title
+>Crear un compte de Jabber</title>
+<para
+>Ara, quan inicieu el &kopete; veureu una finestra buida. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap001_emptykopete.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Finestra buida del Kopete.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Finestra buida del Kopete.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>A la secció inferior diu <guilabel
+>Cliqueu per afegir un compte nou</guilabel
+>. Feu-hi clic o obriu <menuchoice
+><guimenu
+>Arranjament</guimenu
+><guimenuitem
+>Configura...</guimenuitem
+></menuchoice
+> per a crear un nou compte. En realitat, volem crear un compte Jabber, de manera que seleccioneu l'element de menú <guilabel
+>Jabber</guilabel
+> i feu clic a <guilabel
+>Següent</guilabel
+>. Després feu clic a <guilabel
+>Registra un nou compte</guilabel
+>, s'obrirà una nova finestra on podreu escriure un servidor de Jabber, on està creat el compte. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap002_configacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Configurant el Kopete.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Configurant el Kopete.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Podeu escriure manualment al quadre de text <guilabel
+>Servidor Jabber</guilabel
+> o seleccionar-lo des de la llista proporcionada, que apareix després de fer clic al botó <guilabel
+>Escull...</guilabel
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutoial_snap003_selectserver.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Diàleg de selecció del servidor.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Diàleg de selecció del servidor.</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Després de seleccionar un servidor podreu completar el vostre ID de Jabber desitjat, &ead;, el vostre nom d'usuari. Afegiu el vostre nom preferit al davant de la <quote
+>@</quote
+> al camp <guilabel
+>ID de Jabber desitjada</guilabel
+>. Després ompliu la contrasenya i repetiu-la marcant la casella de selecció <guilabel
+>Usa encriptatge del protocol (SSL)</guilabel
+> per tenir un <ulink url="http://en.wikipedia.org/wiki/Secure_Sockets_Layer"
+>encriptatge</ulink
+> a la connexió client-servidor. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap004_createacc.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Creant el vostre compte.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Creant el vostre compte.</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Alguns servidors podrien no ser capaços d'aquesta opció, però sí la majoria. Ara feu clic a <guilabel
+>Registra</guilabel
+> per a completar el registre. </para>
+<para
+>Felicitats, ara heu registrat un nou compte en un servidor Jabber! </para>
+</sect1>
+<sect1 id="fill-in-your-account-data-in-kopete"
+><title
+>Omplir les vostres dades de compte al &kopete;</title>
+<para
+>Ara sou el propietari d'un compte en un servidor Jabber i el &kopete; us demana <emphasis
+>Pas dos: Informació del compte</emphasis
+>. &kopete; afegirà el vostre ID de Jabber i la contrasenya als camps necessaris de forma automàtica. Si voleu que &kopete; recordi la contrasenya per a no escriure-la cada vegada quan us connecteu amb el servidor, marqueu <guilabel
+>Recorda la contrasenya</guilabel
+>. </para>
+<para
+>Si voleu utilitzar els vostres comptes existents de <ulink url="http://www.google.com/support/chat/bin/answer.py?hl=en&amp;answer=57557"
+>Google Talk</ulink
+> o de Facebook al &kopete; (aquests també són en realitat servidors de Jabber), utilitzeu la vostra adreça de Gmail o dades del vostre compte de Facebook (<ulink url="http://www.facebook.com/sitetour/chat.php"
+>s'explica aquí</ulink
+>) per a connectar-vos a aquests servidors. </para>
+<para
+>De manera opcional pot marcar <guilabel
+>Exclou de connecta-ho tot</guilabel
+>. Això avisa al &kopete; que no es connecti quan us connecteu amb tots els vostres comptes de &kopete; (com &kopete; és un multimissatger amb suport per a molts altres protocols com <ulink url="http://en.wikipedia.org/wiki/ICQ"
+>ICQ</ulink
+> o <ulink url="http://en.wikipedia.org/wiki/.NET_Messenger_Service"
+>MSN</ulink
+>). Si marqueu aquesta opció, haureu de connectar-vos més tard de forma explícita per aquest compte cada vegada que vulgueu connectar amb el servidor. </para>
+<para
+>Ara, el vostre &kopete; hauria de tenir aquest aspecte: </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap005_enterjid.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Finestra d'informació del compte.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Finestra d'informació del compte.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Feu clic a la pestanya <guilabel
+>Connexió</guilabel
+> per a marcar opcions addicionals. Especialment seleccioneu <guilabel
+>Usa encriptatge del protocol</guilabel
+> i desmarqueu <guilabel
+>Permet l'autenticació de contrasenya amb text net</guilabel
+> per raons bàsiques de seguretat. </para>
+<para
+>La <guilabel
+>informació del servidor per defecte</guilabel
+> hauria d'estar bé, si us trobeu en una xarxa domèstica normal sense una configuració especial per al <ulink url="http://ca.wikipedia.org/wiki/Tallafoc_%28informàtica%29"
+>tallafoc</ulink
+>. </para>
+<para
+>La secció <emphasis
+>Paràmetres d'ubicació</emphasis
+> és una altra de les especialitats de Jabber: Podeu establir els anomenats <quote
+>Recursos</quote
+> per identificar des d'on xategeu. Per exemple, si inicieu una sessió amb Jabber des del vostre telèfon mòbil i des de l'ordinador portàtil alhora (sí, ho podeu fer) el recurs explicarà als vostres contactes on us trobeu. D'aquesta podríeu anomenar <quote
+>Portàtil</quote
+> o <quote
+>Android</quote
+>, depenent del dispositiu on està instal·lant el &kopete;. Recordeu que els vostres recursos poden ser vists pels vostres interlocutors (que s'afegiran a la JID com: <userinput
+>romeo@montague.net/Portàtil</userinput
+>), així que hauríeu de considerar els problemes de privacitat en escollir el nom del vostre recurs. </para>
+<para
+>En el nostre exemple, el <guilabel
+>Recurs</guilabel
+> s'establirà a <replaceable
+>Portàtil</replaceable
+>. La prioritat és principalment útil quan es manegen múltiples dispositius i li indiquen al client de l'interlocutor quin dels vostres dispositius està connectat en aquest moment (&pex;, el telèfon mòbil o l'ordinador portàtil) perquè hi contacti. El recurs que disposi del nombre més alt de prioritat serà el que rebrà el missatge. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap006_connection.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Ajustant la configuració del compte.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Ajustant la configuració del compte.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>La següent pestanya, <guilabel
+>Transferència de fitxers</guilabel
+>, normalment no es veurà afectada quan es configura un compte de Jabber en una xarxa normal. </para>
+<para
+>Finalment, hi ha algunes configuracions de privacitat a la pestanya <guilabel
+>Privadesa</guilabel
+>, les quals són majoritàriament fàcils d'entendre. L'opció <guilabel
+>Utilitza el format del PGP en línia antic per als missatges signats i encriptats</guilabel
+> (llegiu aquí el que vol dir <ulink url="http://en.wikipedia.org/wiki/Pretty_Good_Privacy"
+>PGP</ulink
+>) no és recomanable, ja que no hi ha un mètode per a fer-ho amb OTR integrat, el qual s'explicarà <link linkend="useful-configuration-hints"
+>més endavant en aquesta guia d'aprenentatge</link
+>. </para>
+<para
+>En aquest punt podeu fer clic a <guilabel
+>Següent</guilabel
+> una altra vegada i el vostre compte estarà configurat. Podeu escollir un color opcional per al vostre compte i quan esteu llest connectar per primera vegada al vostre servidor de Jabber, la casella de selecció <guilabel
+>Connecta ara</guilabel
+> haurà d'estar marcada. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap007_conf-ready.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>L'últim pas de la configuració.</phrase>
+    </textobject>
+    <caption>
+      <para
+>L'últim pas de la configuració.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Ara podeu finalitzar la configuració. </para>
+<para
+>En cas contrari, podeu connectar manualment amb el servidor fent clic a <menuchoice
+><guimenu
+>Estat</guimenu
+><guimenuitem
+>Connectat</guimenuitem
+></menuchoice
+> a la finestra principal del &kopete; o fent doble clic a la icona del &kopete; a la safata del sistema i seleccionant <menuchoice
+><guimenu
+>Estableix l'estat</guimenu
+><guimenuitem
+>Connectat</guimenuitem
+></menuchoice
+>. Si escolliu l'opció <guilabel
+>Exclou de connecta-ho tot</guilabel
+>, haureu d'iniciar la sessió fent clic a la icona de la safata del sistema i seleccionant <menuchoice
+><guimenu
+>el_vostre_JID@exemple.org</guimenu
+><guimenuitem
+>Connectat</guimenuitem
+></menuchoice
+>. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap008_goonline.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Connectat.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Connectat.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="adding-friends"
+><title
+>Afegir als amics</title>
+<para
+>Després del vostre primer inici de sessió, la finestra del &kopete; estarà força buida. És possible que hi hagi un contacte predeterminat afegit pel servidor que potser us envia un missatge de benvinguda, però no hi haurà contactes reals en la vostra llista de contactes (<quote
+>roster</quote
+> al món Jabber). El primer pas per afegir amics al Jabber és, per descomptat, demanar-los la seva ID de Jabber. Quan en tingueu un, el podreu afegir immediatament al &kopete;. Podeu fer clic a <menuchoice
+><guimenu
+>Afegeix</guimenu
+><guimenuitem
+>el_vostre_JID@exemple.org</guimenuitem
+></menuchoice
+> o <menuchoice
+><guimenu
+>Fitxer</guimenu
+><guisubmenu
+>Afegeix contacte</guisubmenu
+><guimenuitem
+>el_vostre_JID@exemple.org</guimenuitem
+></menuchoice
+>. Apareixerà una nova finestra demanant l'<guilabel
+>ID de Jabber</guilabel
+> que volem afegir a la nostra llista. Simplement escriviu-lo i premeu <guilabel
+>D'acord</guilabel
+>. L'opció <guilabel
+>Grup</guilabel
+> s'utilitza, quan s'especifiquen els grups de contactes (&pex;, <quote
+>família</quote
+> i <quote
+>treball</quote
+>). Podeu establir una connexió des de <ulink url="http://userbase.kde.org/Special:myLanguage/KAddressBook"
+>KAddressBook</ulink
+> amb la vostra <guilabel
+>Entrada de la llibreta d'adreces</guilabel
+>, de manera que pugueu intercanviar informació, com fotos de perfil entre les dues aplicacions. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap009_addfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Afegint a un amic.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Afegint a un amic.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Ara que heu afegit el vostre primer amic a la vostra llista de contactes. Però abans que li pugueu començar a escriure missatges, el vostre contacte haurà d'autoritzar la vostra petició. Fins que això passi, el contacte apareixerà amb un petit signe d'exclamació groc al costat dret del seu camp de contacte. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap010_exlamationmarkfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>El vostre contacte.</phrase>
+    </textobject>
+    <caption>
+      <para
+>El vostre contacte.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Quan el vostre amic autoritzi la sol·licitud o us afegeixi a la seva llista, la seva icona apareixerà de color quan estigui en línia. Els significats exactes de les diferents icones (Connectat, Absent, &etc;) es pot veure a <guilabel
+>Estat</guilabel
+> des d'on també les podreu establir. Rebreu una notificació quan esteu autoritzat. </para>
+<para
+>Normalment, el vostre amic també us posarà a la seva llista de contactes, de manera que també haureu d'autoritzar aquesta petició. &kopete; notificarà a la part inferior amb una bandera verda i la descripció de la sol·licitud. Feu clic a <guilabel
+>Autoritza</guilabel
+> per acceptar-la. L'àrea de notificació es pot tancar fent clic sobre la creu a la part superior dreta de l'àrea. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap011_addedbyfriend.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>El vostre contacte ja ha estat afegit.</phrase>
+    </textobject>
+    <caption>
+      <para
+>El vostre contacte ja ha estat afegit.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Després d'aquest procediment hauria d'aparèixer una llista de contactes com a la següent imatge. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap012_fullauthorized.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>El vostre contacte està plenament autoritzat.</phrase>
+    </textobject>
+    <caption>
+      <para
+>El vostre contacte està plenament autoritzat.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Ara, heu afegit amb èxit el vostre primer contacte a la llista. </para>
+</sect1>
+<sect1 id="messaging-and-sending-files"
+><title
+>Missatgeria i enviar fitxers</title>
+<para
+>Podeu començar a xatejar amb un contacte fent clic sobre el nom. S'obrirà una nova finestra i podreu escriure els missatges en el petit camp a la part inferior, on ja resideix el cursor. Si voleu enviar el vostre text, premeu &Intro; o el botó <guilabel
+>Envia</guilabel
+>. Vosaltres i el vostre interlocutor us comunicareu ara a través de Jabber. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap013_firstchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>El vostre primer xat.</phrase>
+    </textobject>
+    <caption>
+      <para
+>El vostre primer xat.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<sect2 id="transfer-files"
+><title
+>Transferir fitxers</title
+> 
+<para
+>Per a transferir fitxers a través de Jabber feu clic a <guilabel
+>Envia fitxer</guilabel
+> i seleccioneu el fitxer que voleu enviar a la finestra emergent. Se us notificarà quan s'ha completat la transacció o si falla per alguna raó. </para>
+<para
+><warning
+><para
+>Això podria no funcionar en alguns casos a causa de configuracions incompatibles d'algun servidor.</para
+></warning>
+</para>
+</sect2>
+<sect2 id="group-chat"
+><title
+>Xat de grup</title
+> 
+<para
+>Jabber no és només capaç de comunicar-se amb una persona. Podeu utilitzar el grup de xat per a fer un debat d'estil <ulink url="http://en.wikipedia.org/wiki/IRC"
+>IRC</ulink
+>, on moltes persones poden parlar entre elles. Per utilitzar el grup de xat, haureu de fer clic dret sobre la icona a la safata del sistema de &kopete; i seleccioneu <menuchoice
+><guimenu
+><replaceable
+>el_vostre_JID</replaceable
+></guimenu
+><guimenuitem
+>Accedeix a un grup de xat...</guimenuitem
+></menuchoice
+>, on <replaceable
+>el_vostre_JID</replaceable
+> es refereix al vostre propi ID de Jabber. Apareixerà una nova finestra en la qual podreu unir-vos a una sala de xat. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_snap021_groupchat.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Grup de xat.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Grup de xat.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Feu clic a <guilabel
+>Consulta</guilabel
+> per a mostrar la llista de sales de xat existents al vostre servidor de Jabber. Seleccioneu-ne una i premeu &Intro; per entrar en aquesta sala. </para>
+<para
+>De manera alternativa, podeu escriure i crear la vostra pròpia sala de xat escrivint el seu nom a la línia <guilabel
+>Sala</guilabel
+>. A continuació, premeu &Intro; o feu clic a <guilabel
+>Accedeix</guilabel
+> per a unir-vos-hi. </para>
+<para
+>Després de crear la sala de xat, veureu un nou camp que apareix a la finestra del &kopete; amb el JID <replaceable
+>nom_sala_de_xat@jabber.exemple.org</replaceable
+>. Es tractarà com un contacte normal, &ead;, haureu de fer clic sobre aquest JID per xatejar, &etc; </para>
+<para
+>En aquest punt s'ha configurat un client de Jabber funcional i, en principi, podeu xatejar amb els vostres contactes. No obstant això, per a una millor experiència del &kopete;, podeu configurar l'aplicació per a les vostres millors necessitats. Un conjunt de <link linkend="useful-configuration-hints"
+>Consells de configuració d'utilitat</link
+> és el contingut de la següent pàgina en aquesta guia d'aprenentatge. </para>
+</sect2>
+</sect1>
+<sect1 id="useful-configuration-hints"
+><title
+>Consells de configuració d'utilitat</title>
+<para
+>Aquests consells es refereixen a la finestra de configuració principal de &kopete; que trobareu a <menuchoice
+><guimenu
+>Arranjament</guimenu
+><guimenuitem
+>Configura...</guimenuitem
+></menuchoice
+>. Assegureu-vos de fer clic a <guilabel
+>Aplica</guilabel
+> o a <guilabel
+>D'acord</guilabel
+> si voleu que es desin els canvis. </para>
+<para
+>Totes les opcions que afectin la configuració del vostre compte i de múltiples comptes al &kopete; (Jabber/XMPP, així com <ulink url="http://en.wikipedia.org/wiki/Icq"
+>ICQ</ulink
+>, <ulink url="http://en.wikipedia.org/wiki/.NET_Messenger_Service"
+>MSN</ulink
+> i molts altres protocols de missatgeria) es poden trobar sota la pestanya <guilabel
+>Comptes</guilabel
+>. Si voleu configurar la informació personal o disposar una fotografia per al contacte, feu clic a <guilabel
+>Modifica la identitat...</guilabel
+> i efectueu la configuració. Podeu carregar una fotografia fent clic a la petita icona al costat esquerre a baix de l'àrea d'imatge. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap014_setidentity.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Establint la identitat.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Establint la identitat.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>La següent pestanya a la llista vertical al costat esquerre és <guilabel
+>Llista de contactes</guilabel
+>. Aquestes opcions són majoritàriament fàcils d'entendre i sembla útil activar <guilabel
+>Usa les fotos dels contactes si estan disponibles</guilabel
+>. Les altres tres pestanyes horitzontals (<guilabel
+>Colors i tipus de lletra</guilabel
+>, <guilabel
+>Avançat</guilabel
+> i <guilabel
+>Disposició</guilabel
+>) inclouen opcions molt especials que potser afinareu quan utilitzeu el &kopete; durant unes quantes setmanes. </para>
+<para
+>Les configuracions d'<guilabel
+>Estat</guilabel
+> us permeten activar els <ulink url="http://en.wikipedia.org/wiki/Status_message"
+>missatges d'estat</ulink
+> quan està configurat com a Connectat, Absent, Invisible, &etc; </para>
+<para
+>En fer clic a <guilabel
+>Comportament</guilabel
+> s'obrirà un conjunt d'opcions força detallat. Les opcions més interessants que es poden trobar a la pestanya <guilabel
+>General</guilabel
+> són <guilabel
+>Gestió de missatges</guilabel
+> i <guilabel
+>Estat inicial</guilabel
+>. La primera decideix si els missatges entrants dels vostres contactes han d'obrir immediatament una nova finestra o si es posen en la cua fins que els obriu al &kopete;. El segon indica a &kopete; si està connectat quan inicieu el programa. Quan s'estableix això, estareu sempre disponible per als vostres contactes una vegada inicieu el &kopete;. La pestanya <guilabel
+>Esdeveniments</guilabel
+> permetrà especificar en quins casos el &kopete; us notificarà mitjançant el sistema de notificació de l'ordinador (en la majoria dels casos <guilabel
+>KNotify</guilabel
+>). Quan vulgueu que &kopete; estableixi el seu estat automàticament a <quote
+>Absent</quote
+>, obriu la pestanya <guilabel
+>Opcions absència</guilabel
+> i activeu la primera casella de selecció. Podeu establir el temps que haurà de transcórrer després de l'última acció (entrada de teclat o moviment del ratolí) fins que &kopete; us estableixi com a <quote
+>absent</quote
+>. Per omissió el valor és de 10 minuts. Les opcions ubicades al <guilabel
+>Xat</guilabel
+> són més fàcils d'entendre i ja estan establertes a valors útils. </para>
+<para
+>El següent element en la columna vertical de l'esquerra és <guilabel
+>Finestra de xat</guilabel
+>. La primera pestanya que apareix, <guilabel
+>Estil</guilabel
+>, es pot utilitzar per establir una altra aparença que la per omissió. També podeu instal·lar els vostres propis estils o descarregar-ne de nous des d'Internet, feu clic a <guilabel
+>Aconsegueix nou...</guilabel
+>. Quan escriviu una <ulink url="http://en.wikipedia.org/wiki/Emoticon"
+>emoticona</ulink
+> durant una conversa, el &kopete; la convertirà per omissió en una icona gestual gràfica. Per a desactivar aquesta funció o utilitzar un altre conjunt d'emoticones aneu a <guilabel
+>Emoticones</guilabel
+>. L'última pestanya, <guilabel
+>Colors i tipus de lletra</guilabel
+> és una altra vegada majoritàriament fàcil d'entendre i configura les preferències de la finestra del xat. </para>
+<para
+>Les <ulink url="http://en.wikipedia.org/wiki/Webcam"
+>càmeres web</ulink
+> estan suportades en &kopete;, però de moment (novembre de 2010) encara hi ha algunes dificultats en relació amb el xat de vídeo, de manera que les opcions a <guilabel
+>Vídeo</guilabel
+> es modifiquen sota la vostra responsabilitat, ja que és molt possible que no funcioni de la manera correcta. Els <ulink url="http://forum.kde.org/viewforum.php?f=18"
+>fòrums del KDE</ulink
+> poden ser-vos útils per tractar amb qüestions sobre la càmera web. </para>
+</sect1>
+<sect1 id="jabber-plugins"
+><title
+>Connectors</title
+> 
+<para
+>Una característica molt potent del &kopete; és la capacitat d'utilitzar connectors. Hi ha un conjunt de connectors preinstal·lats (els nous es poden instal·lar, per exemple, amb el gestor de paquets de la vostra distribució de &Linux;) i es poden activar i configurar a <guilabel
+>Connectors</guilabel
+>. Els podeu activar marcant la seva respectiva casella de selecció. La majoria són fàcils d'entendre, però de totes maneres els més útils s'expliquen aquí. Un connector molt útil és <guilabel
+>Historial</guilabel
+>. Amb aquesta opció activada, el &kopete; enregistrarà tots els xats i els escriurà al disc dur. Podeu llegir la vostra finestra de xat, quan seleccioneu la icona <guilabel
+>Veure l'historial...</guilabel
+> o obrir-la amb <menuchoice
+><guimenu
+>Eines</guimenu
+><guimenuitem
+>Veure l'historial...</guimenuitem
+></menuchoice
+>. </para>
+<sect2 id="otr"
+><title
+>OTR</title
+> 
+<para
+>Un dels connectors més importants considerant la privacitat és <ulink url="http://en.wikipedia.org/wiki/Off-the-Record_Messaging"
+>OTR</ulink
+>. Aquesta peça de programari encripta tota la conversa d'un extrem a l'altre i fa que sigui impossible que terceres persones llegeixin la vostra conversa. Després d'activar el connector, haureu d'obrir la vostra configuració (feu clic sobre la icona de la clau anglesa) i feu clic a <guilabel
+>Genera</guilabel
+> una clau. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap015_otrgenerate.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Generant una clau OTR.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Generant una clau OTR.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Això pot prendre una mica de temps i cal esperar fins que acabi &kopete;. Després tanqueu la finestra OTR amb <guilabel
+>D'acord</guilabel
+> i <guilabel
+>Aplica</guilabel
+> els canvis. De manera eventual haureu de reiniciar el &kopete; després d'això. A continuació, obriu una finestra de xat del contacte amb qui voleu comunicar-vos de forma segura. Aneu a <menuchoice
+><guimenu
+>Eines</guimenu
+><guisubmenu
+>Arranjament OTR</guisubmenu
+><guimenuitem
+>Inicia una sessió OTR</guimenuitem
+></menuchoice
+> o utilitzeu la icona <menuchoice
+><guimenu
+>Encriptatge OTR</guimenu
+><guimenuitem
+>Inicia una sessió OTR</guimenuitem
+></menuchoice
+>. &kopete; iniciarà la sessió si el contacte és capaç de fer OTR, en cas contrari rebreu un missatge d'error. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap016_otrfirstuse.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>El primer ús d'OTR.</phrase>
+    </textobject>
+    <caption>
+      <para
+>El primer ús d'OTR.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>Per assegurar que el seu contacte, és realment la que ell o ella està fingint, cal autenticar ell o ella una vegada. Vostè pot fer això trucant a <menuchoice
+><guimenu
+>Eines</guimenu
+><guisubmenu
+>Arranjament OTR</guisubmenu
+><guimenuitem
+>Autentica el contacte</guimenuitem
+></menuchoice
+>. Podreu escollir entre tres opcions: </para>
+<itemizedlist>
+<listitem
+><para
+>La primera és demanar-li al vostre interlocutor de xat una pregunta en què la resposta només la pugui conèixer ell o ella i vosaltres. </para
+></listitem>
+<listitem
+><para
+>La següent possibilitat és una frase de pas secreta que el vostre interlocutor haurà de conèixer (podeu considerar donar-li el secret a ell o ella a través d'un altre canal de comunicació segur, &pex;, per telèfon). </para
+></listitem>
+<listitem
+><para
+>En tercer lloc, hi ha l'opció de comprovar manualment l'empremta digital OTR. Aquesta és l'opció més segura, però no és molt pràctica i si podeu escollir una de les altres us resultarà més còmode i ràpid. En comprovar l'empremta digital, haureu de preguntar al vostre interlocutor per la seva empremta digital OTR a través d'una connexió segura (&pex;, el telèfon o correu electrònic encriptat) de manera que pugueu comprovar l'empremta digital. </para
+></listitem>
+</itemizedlist>
+<para
+>Suposem que escollim una opció i fem una pregunta al nostre interlocutor. Introduïu-la en el camp i definiu la resposta esperada a l'interlocutor, de manera que ell o ella pugui autenticar. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap017_seqretquestion.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Realitzant una pregunta secreta.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Realitzant una pregunta secreta.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>En continuació, el vostre interlocutor veurà la pregunta i si la resposta és correcta, l'opció OTR ja estarà llesta. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap018_otrsuccess.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Configuració OTR finalitzada.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Configuració OTR finalitzada.</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para
+>El vostre interlocutor haurà de fer el mateix, de manera que quan veieu una finestra demanant-vos l'autenticació, simplement haureu de respondre a la pregunta i també sereu un usuari autenticat a la llista de contactes del vostre amic. </para>
+<para>
+<screenshot>
+<screeninfo
+></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopetetutorial_snap019_otrauth.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase
+>Autenticació OTR.</phrase>
+    </textobject>
+    <caption>
+      <para
+>Autenticació OTR.</para>
+    </caption>
+  </mediaobject>
+</screenshot
+> 
+</para>
+<para
+>Cada vegada que us comuniqueu de forma segura, veureu la icona de cadenat verd a la part superior de la finestra del xat. Per a finalitzar la connexió segura, podeu tancar la finestra de xat o fer clic a <menuchoice
+><guimenu
+>Encriptatge OTR</guimenu
+><guimenuitem
+>Finalitza la sessió OTR</guimenuitem
+></menuchoice
+>. </para>
+</sect2>
+</sect1>
+</appendix>

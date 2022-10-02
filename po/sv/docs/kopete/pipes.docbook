@@ -1,0 +1,189 @@
+<!-- Copyright (c) 2008 by Charles Connell <charles@connells.org
+> -->
+<!-- Licensed under the GNU Free Documentation License  -->
+
+<appendix id="pipes">
+<title
+>Implemeteringsguide för &kopete;s insticksprogram Skicka genom</title>
+<para
+>Med början i &kopete; 1.0, levereras &kopete; med ett insticksprogram som kallas Skicka genom. Skicka genom låter dig skicka inkommande eller utgående meddelanden genom ett externt skript eller program. Ett inkommande meddelande skickas via programmet innan det når ditt chattfönster, medan utgående meddelanden skickas via programmet innan de går vidare till Internet. Skicka genom kan ta emot text på en av tre former: <variablelist
+><varlistentry
+><term
+>Enkel meddelandetext</term
+><listitem
+><para
+>Meddelandets text, som enkel &ascii;-text</para
+></listitem
+> </varlistentry
+><varlistentry
+> <term
+>&HTML;-meddelandetext</term
+> <listitem
+><para
+>Meddelandets text med &HTML;, som det skulle se ut om din chattpartner hade skickat HTML till dig, som återges i chattfönstret.</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Fullständigt &XML;-meddelande</term
+> <listitem
+><para
+>Ett &XML;-dokument som beskriver meddelandets hela karaktäristik, inklusive &HTML;-meddelandetext</para
+></listitem
+> </varlistentry
+> </variablelist
+> Det här dokumentet beskriver det speciella med &XML;-formatet, och hur man skriver ett program som kan hantera det. </para>
+
+<sect1 id="xml-output">
+<title
+>&XML;-utdata</title>
+<para
+>Här är ett exempel på vad ett program kan ta emot via standardinmatningen: <literallayout>
+&lt;?xml version="1.0" encoding="ISO-8859-1"?>
+&lt;message subject=""
+        route="outbound"
+        importance="1"
+        formattedTimestamp="11:06:46 am"
+        timestamp="Sat Dec 1 11:06:46 2007"
+        type="normal"
+        mainContactId="spacemonkey1234"
+        time="11:06 am" >
+        &lt;from>
+                &lt;contact contactId="tdurden"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/oscarpictures/tdurden.jpg" >
+                        &lt;contactDisplayName dir="ltr" text="tdurden" />
+                        &lt;metaContactDisplayName dir="ltr"
+                                text="Tyler" />
+                &lt;/contact>
+        &lt;/from>
+        &lt;to>
+                &lt;contact contactId="spacemonkey1234"
+                        protocolIcon="aim_protocol"
+                        userPhoto="/home/kde-devel/.kde4/share/apps/kopete/avatars/User/7e542903e0ac7519a7496e85f5a5b99d.png" >
+                        &lt;contactDisplayName dir="ltr" text="spacemonkey1234" />
+                        &lt;metaContactDisplayName dir="ltr" text="Robert Paulson" />
+                &lt;/contact>
+                &lt;/to>
+        &lt;body dir="ltr"
+                bgcolor="#000000"
+                color="#000000" >
+                &amp;lt;span style=" color:#000000;"
+>hey&amp;lt;/span
+>&lt;/body>
+&lt;/message>
+</literallayout
+> Denna &XML; är fritt baserad på den XSD som används för chattstilar från <ulink url="http://kopete.kde.org/files/kopetemessage.xsd"
+>Kopetes hemsida</ulink
+>. Koden representerar ett meddelande. Det finns ett antal saker att notera: <itemizedlist>
+<listitem
+><para
+>Egenskapen "timestamp" i elementet "message" har standardformatet ISO 8601.</para
+></listitem>
+<listitem
+><para
+>Egenskapen "protocolIcon" i elementet "contact" väljes på följande sätt: <orderedlist>
+<listitem
+><para
+>Om kontaktobjektet har en fotoegenskap inställd, används den sökvägen.</para
+></listitem>
+<listitem
+><para
+>Om inte, efterfrågas en bildsökväg i kontaktens metakontakt, och den används oberoende om den är tom eller inte.</para
+></listitem>
+</orderedlist>
+</para
+></listitem>
+<listitem
+><para
+>Egenskaperna "color" och "bgcolor" i elementet "body" är tomma strängar om de inte är inställda i Kopete. De har webbfärgformat.</para
+></listitem>
+<listitem
+><para
+>Innehållet i elementet "body" har "&lt;" skyddat, så att det inte blandas ihop med själva &XML;-strukturren. Uppenbarligen måste man konvertera "&amp;lt;" till "&lt;" för att tolka texten som HTML.</para
+></listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1 id="xml-input">
+<title
+>&XML;-indata</title>
+<para
+>Ditt program tar emot &XML; via standardinmatningen, har möjlighet att ändra den, och måste därefter skicka tillbaka den till &kopete; via standardutmatningen. Om programmet ändrar följande element, kommer den interna kunskapen som &kopete; har om meddelandet ändras för att motsvara dina ändringar. <itemizedlist
+> <listitem
+><para
+>Egenskapen "timestamp" i "message" men inte andra tidegenskaper</para
+></listitem
+> <listitem
+><para
+>Egenskapen "subject" i "message"</para
+></listitem
+> <listitem
+><para
+>Egenskapen "type" i "message"</para
+></listitem
+> <listitem
+><para
+>Egenskapen "importance" i "message"</para
+></listitem
+> <listitem
+><para
+>Egenskapen "color" i "body". Den anges oftast som ett webbfärgnummer, men kan anges som ett namn. Namn definierade av <ulink url="http://www.w3.org/TR/SVG/types.html#ColorKeywords"
+>SVG</ulink
+> accepteras av QColor i Qt 4, så de är de enda namn som kan användas.</para
+></listitem
+> <listitem
+><para
+>Egenskapen "bgcolor" i "body": samma beteende som "color"</para
+></listitem
+> <listitem
+><para
+> Innehållet i elementet "body"</para
+></listitem
+> </itemizedlist
+> Om du ändrar element som inte nämns ovan eller deras egenskaper, får ändringarna av dessa element ingen effekt. </para>
+</sect1>
+
+<sect1 id="acceptable-values">
+<title
+>Tillåtna värden</title>
+<para
+>Några egenskaper har vissa tillåtna värden. Utdata från insticksprogrammet Skicka genom kommer alltid att ha giltiga värden. Om ditt program väljer att ändra dessa egenskaper, måste de förbli giltiga. Om inte, är &kopete;s beteende odefinierat. <variablelist>
+<varlistentry
+><term
+>Egenskapen "route" i elementet "message"</term
+><listitem
+><para
+>Måste vara "inbound", "outbound", or "internal"</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Egenskapen "type" i elementet "message"</term
+><listitem
+><para
+>Måste vara "action" eller "normal"</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Egenskapen "importance" i elementet "message"</term
+><listitem
+><para
+>Måste vara "0" för låg, "1" för normal, och "2" för hög</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Egenskapen "dir" i många element</term
+><listitem
+><para
+>Måste vara "ltr" för vänster-till-höger eller "rtl" för höger-till-vänster</para
+></listitem
+></varlistentry>
+</variablelist>
+</para>
+</sect1>
+
+</appendix>
