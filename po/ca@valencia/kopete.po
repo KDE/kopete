@@ -236,7 +236,7 @@ msgstr "L'estil de xat no s'ha trobat o no és vàlid."
 #: kopete/chatwindow/chatmessagepart.cpp:1389
 #, kde-format
 msgid "Save File as"
-msgstr "Guarda el perfil com a"
+msgstr "Anomena i guarda el perfil"
 
 #: kopete/chatwindow/chatmessagepart.cpp:1389
 #, kde-format
@@ -1270,7 +1270,7 @@ msgid ""
 "&Automatically resize contact list window to fit number of contacts onscreen"
 msgstr ""
 "Redimensiona &automàticament la finestra de la llista de contactes per a "
-"ajustar-la al nombre de contactes a la pantalla"
+"ajustar-la al nombre de contactes en la pantalla"
 
 #. i18n: ectx: property (text), widget (QRadioButton, top)
 #: kopete/config/appearance/appearanceconfig_advanced.ui:186
@@ -1828,20 +1828,20 @@ msgstr "Obri tots els missatges a una finestra nova de xat"
 #, kde-format
 msgid "Group Messages From Same Account in Same Chat Window"
 msgstr ""
-"Els grups de missatges des del mateix compte a la mateixa finestra de xat"
+"Els grups de missatges des del mateix compte en la mateixa finestra de xat"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_chatWindowGroupPolicy)
 #: kopete/config/behavior/behaviorconfig_chat.ui:105
 #, kde-format
 msgid "Group All Messages in Same Chat Window"
-msgstr "Tots els grups de missatges a la mateixa finestra de xat"
+msgstr "Tots els grups de missatges en la mateixa finestra de xat"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_chatWindowGroupPolicy)
 #: kopete/config/behavior/behaviorconfig_chat.ui:110
 #, kde-format
 msgid "Group Messages From Contacts in Same Group in Same Chat Window"
 msgstr ""
-"Els grups de missatges des dels contactes del mateix grup a la mateixa "
+"Els grups de missatges des dels contactes del mateix grup en la mateixa "
 "finestra de xat"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_chatWindowGroupPolicy)
@@ -1849,7 +1849,7 @@ msgstr ""
 #, kde-format
 msgid "Group Messages From Same Metacontact in Same Chat Window"
 msgstr ""
-"Els grups de missatges des del mateix metacontacte a la mateixa finestra de "
+"Els grups de missatges des del mateix metacontacte en la mateixa finestra de "
 "xat"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_showDates)
@@ -2006,7 +2006,7 @@ msgid ""
 "chat window."
 msgstr ""
 "Si ja hi ha una finestra de xat oberta pel remitent del missatge "
-"visualitzada a la bambolla del missatge nou, el botó «Ignora» tancarà esta "
+"visualitzada en la bambolla del missatge nou, el botó «Ignora» tancarà esta "
 "finestra de xat."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_balloonNotifyIgnoreClosesChatView)
@@ -2019,7 +2019,7 @@ msgstr "El botó «I&gnora» a les bambolles de missatges nous tanca el xat"
 #: kopete/config/behavior/behaviorconfig_events.ui:117
 #, kde-format
 msgid "Notify only highlighted messages in group chats"
-msgstr "Notifica només els missatges ressaltats en els xats de grups"
+msgstr "Notifica només els missatges ressaltats en els xats de grup"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_queueOnlyHighlightedMessagesInGroupChats)
 #: kopete/config/behavior/behaviorconfig_events.ui:120
@@ -2028,8 +2028,8 @@ msgid ""
 "In very active group chats, important messages can be singled out by "
 "preventing notifications for non-highlighted messages."
 msgstr ""
-"En els xats de grups molt actius, els missatges importants es poden "
-"distingir excloent de la notificació els missatges no ressaltats."
+"En els xats de grup molt actius, els missatges importants es poden distingir "
+"excloent de la notificació els missatges no ressaltats."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_queueOnlyHighlightedMessagesInGroupChats)
 #: kopete/config/behavior/behaviorconfig_events.ui:123
@@ -2191,7 +2191,7 @@ msgstr ""
 "De manera predeterminada, la icona de la safata del sistema indica els "
 "missatges entrants nous amb una animació. Un clic en la icona amb el botó "
 "esquerre o mitjà del ratolí obrirà el missatge a una finestra nova de xat. "
-"Té el mateix efecte que prémer el botó «Veure» a la bambolla."
+"Té el mateix efecte que prémer el botó «Veure» en la bambolla."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_showSystemTray)
 #: kopete/config/behavior/behaviorconfig_general.ui:32
@@ -2270,7 +2270,7 @@ msgstr ""
 "Emmagatzema els missatges nous entrants en una cua. Els missatges nous són "
 "els que no es poden visualitzar en una finestra de xat ja oberta. Només els "
 "missatges posats a la cua provoquen notificacions via finestra de xat i "
-"animacions a la icona de la safata del sistema."
+"animacions en la icona de la safata del sistema."
 
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_useMessageQueue)
 #: kopete/config/behavior/behaviorconfig_general.ui:83
@@ -2296,7 +2296,7 @@ msgid ""
 msgstr ""
 "Els missatges sense llegir són els que es visualitzaran en una finestra de "
 "xat ja oberta però inactiva. Només els missatges entrants posats a la cua "
-"provoquen notificacions via finestra de xat i animacions a la icona de la "
+"provoquen notificacions via finestra de xat i animacions en la icona de la "
 "safata del sistema. Amb esta opció desactivada, només es posen a la cua els "
 "missatges entrants nous, és a dir, els missatges que no es poden visualitzar "
 "en una finestra de xat ja oberta."
@@ -3167,7 +3167,7 @@ msgstr "Afig-ne o activa'n un utilitzant la configuració del sistema KDE."
 #: kopete/contactlist/kabcexport.cpp:107
 #, kde-format
 msgid " (already in address book)"
-msgstr " (ja és a la llibreta d'adreces)"
+msgstr " (ja es troba en la llibreta d'adreces)"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: kopete/contactlist/kabcexport_page1.ui:22
@@ -3411,7 +3411,7 @@ msgstr ""
 #: kopete/contactlist/kopetecontactlistview.cpp:546
 #, kde-format
 msgid "No Email Address in Address Book"
-msgstr "Cap adreça de correu-e a la llibreta d'adreces"
+msgstr "Cap adreça de correu-e en la llibreta d'adreces"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:549
 #, kde-format
@@ -3419,7 +3419,7 @@ msgid ""
 "This contact was not found in the KDE address book. Check that a contact is "
 "selected in the properties dialog."
 msgstr ""
-"Este contacte no s'ha trobat a la llibreta d'adreces de KDE. Comproveu que "
+"Este contacte no s'ha trobat en la llibreta d'adreces de KDE. Comproveu que "
 "hi haja un contacte seleccionat en el diàleg de propietats."
 
 #: kopete/contactlist/kopetecontactlistview.cpp:550
@@ -3594,7 +3594,7 @@ msgstr "Selecciona el fitxer de so"
 #: kopete/contactlist/kopetemetalvipropswidget.ui:47
 #, kde-format
 msgid "Address Book Link"
-msgstr "Enllaç a la llibreta d'adreces"
+msgstr "Enllaç cap a la llibreta d'adreces"
 
 #. i18n: ectx: property (toolTip), widget (QPushButton, btnExportKABC)
 #: kopete/contactlist/kopetemetalvipropswidget.ui:91
@@ -4511,7 +4511,7 @@ msgid ""
 msgstr ""
 "Només carrega els connectors especificats. Per a carregar múltiples\n"
 "connectors, utilitzeu una llista separada per comes. Esta opció no té\n"
-"cap efecte quan --noplugins està establit a la línia d'ordres\n"
+"cap efecte quan --noplugins està establit en la línia d'ordres\n"
 "substituint tots els altres connectors."
 
 #. i18n: ectx: property (text), widget (QPushButton, clearButton)
@@ -5518,13 +5518,13 @@ msgstr "Temps d'espera per ocultar automàticament"
 #: libkopete/kopeteappearancesettings.kcfg:235
 #, kde-format
 msgid "Show offline users in contact list."
-msgstr "Mostra els usuaris fora de línia a la llista de contactes."
+msgstr "Mostra els usuaris fora de línia en la llista de contactes."
 
 #. i18n: ectx: label, entry, group (ContactList)
 #: libkopete/kopeteappearancesettings.kcfg:240
 #, kde-format
 msgid "Show empty groups in contact list."
-msgstr "Mostra els grups buits a la llista de contactes."
+msgstr "Mostra els grups buits en la llista de contactes."
 
 #. i18n: ectx: label, entry, group (ContactList)
 #: libkopete/kopeteappearancesettings.kcfg:245
@@ -5566,7 +5566,7 @@ msgstr "Posa a la cua els missatges no llegits."
 #: libkopete/kopetebehaviorsettings.kcfg:28
 #, kde-format
 msgid "Use mouse navigation only in contact list."
-msgstr "Utilitza la navegació amb el ratolí només a la llista de contactes."
+msgstr "Utilitza la navegació amb el ratolí només en la llista de contactes."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:32
@@ -5590,7 +5590,7 @@ msgstr "Mostra els esdeveniments a una finestra de xat."
 #: libkopete/kopetebehaviorsettings.kcfg:56
 #, kde-format
 msgid "Queue only highlighted messages in group chats"
-msgstr "Posa a la cua només els missatges ressaltats en els xats de grups"
+msgstr "Posa a la cua només els missatges ressaltats en els xats de grup"
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:60
@@ -5620,7 +5620,7 @@ msgstr "Notificació de la safata de sistema"
 #: libkopete/kopetebehaviorsettings.kcfg:76
 #, kde-format
 msgid "Trayflash Notification Left Click Opens Message."
-msgstr "Clic esquerre a la notificació obri el missatge."
+msgstr "Clic esquerre en la notificació obri el missatge."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:80
@@ -5762,7 +5762,7 @@ msgstr "Ara mateix no hi soc, però tornaré més tard"
 #: libkopete/kopetebehaviorsettings.kcfg:179
 #, kde-format
 msgid "Enable smooth scrolling in contact list."
-msgstr "Activa el desplaçament suau a la llista de contactes."
+msgstr "Activa el desplaçament suau en la llista de contactes."
 
 #. i18n: ectx: label, entry, group (ChatWindowSettings)
 #: libkopete/kopetebehaviorsettings.kcfg:186
@@ -5919,9 +5919,9 @@ msgid ""
 "the output in the chat buffer. If -o is specified, the output is sent to all "
 "members of the chat."
 msgstr ""
-"Ús: /exec [-o] <ordre> - Executa l'ordre especificada en mostra l'eixida a "
-"la memòria intermèdia del xat. Si s'especifica «-o», el resultat eixirà cap "
-"a tots els membres del xat."
+"Ús: /exec [-o] <ordre> - Executa l'ordre especificada i en mostra l'eixida "
+"en la memòria intermèdia del xat. Si s'especifica «-o», el resultat eixirà "
+"cap a tots els membres del xat."
 
 #: libkopete/kopetecommandhandler.cpp:248
 #, kde-format
@@ -6724,7 +6724,7 @@ msgid ""
 "name."
 msgstr ""
 "Introduïu el nom que es mostrarà del contacte. Així és com apareixerà el "
-"contacte a la llista de contactes.\n"
+"contacte en la llista de contactes.\n"
 "Deixeu-ho buit si voleu veure el sobrenom del contacte com a nom que es "
 "mostrarà."
 
@@ -6764,7 +6764,7 @@ msgstr ""
 #: libkopete/ui/contactaddednotifywidget.ui:171
 #, kde-format
 msgid "Address book link:"
-msgstr "Enllaç a la llibreta d'adreces:"
+msgstr "Enllaç cap a la llibreta d'adreces:"
 
 #. i18n: ectx: property (text), widget (QLabel, TextLabel1)
 #: libkopete/ui/kopeteawaydialogbase.ui:22
@@ -7339,7 +7339,7 @@ msgstr "&Seleccioneu la clau pública..."
 #, kde-format
 msgctxt "@action"
 msgid "&Export Public Keys To Address Book..."
-msgstr "&Exporta claus públiques a la llibreta d'adreces..."
+msgstr "&Exporta les claus públiques a la llibreta d'adreces..."
 
 #: plugins/cryptography/cryptographyplugin.cpp:378
 #, kde-format
@@ -7911,7 +7911,7 @@ msgid ""
 "WARNING: Cannot find %1 (%2) in your contact list. Found logs will not be "
 "imported.\n"
 msgstr ""
-"AVÍS: no s'ha pogut trobar %1 (%2) a la llista de contactes. Els registres "
+"AVÍS: no s'ha pogut trobar %1 (%2) en la llista de contactes. Els registres "
 "trobats no s'importaran.\n"
 
 #: plugins/history/historyimport.cpp:349
@@ -7959,7 +7959,7 @@ msgstr "Heu utilitzat «%1» com a sobrenom en l'historial?"
 #: plugins/history2/history2import.cpp:703
 #, kde-format
 msgid "WARNING: XML parser error in %1 at line %2, character %3: %4"
-msgstr "AVÍS: error d'anàlisi XML a %1 a la línia %2, caràcter %3: %4"
+msgstr "AVÍS: error d'anàlisi XML en %1 a la línia %2, caràcter %3: %4"
 
 #: plugins/history/historyimport.cpp:633
 #: plugins/history2/history2import.cpp:706
@@ -9377,13 +9377,13 @@ msgstr ""
 #: plugins/privacy/privacyconfig.kcfg:27
 #, kde-format
 msgid "Contacts on the whitelist."
-msgstr "Contactes a la llista blanca."
+msgstr "Contactes en la llista blanca."
 
 #. i18n: ectx: label, entry (BlackList), group (Privacy Plugin)
 #: plugins/privacy/privacyconfig.kcfg:31
 #, kde-format
 msgid "Contacts on the blacklist."
-msgstr "Contactes a la llista negra."
+msgstr "Contactes en la llista negra."
 
 #. i18n: ectx: label, entry (Content_DropIfAny), group (Privacy Plugin)
 #: plugins/privacy/privacyconfig.kcfg:35
@@ -10359,7 +10359,7 @@ msgid ""
 "The width to which images should be scaled down. Smaller images will appear "
 "in their original size."
 msgstr ""
-"L'amplària a la qual les imatges s'han d'escalar. Les imatges més xicotetes "
+"L'amplària a la qual s'han d'escalar les imatges. Les imatges més xicotetes "
 "no s'escalaran i apareixeran en la seua mida original."
 
 #. i18n: ectx: property (suffix), widget (QSpinBox, previewScaleWidth)
@@ -11188,7 +11188,7 @@ msgstr "La transferència de fitxers té problemes amb el fitxer."
 #, kde-format
 msgid "There was network error during file transfer."
 msgstr ""
-"S'ha produït un problema a la xarxa durant la transferència del fitxer."
+"S'ha produït un problema en la xarxa durant la transferència del fitxer."
 
 #: protocols/gadu/gadudcctransaction.cpp:444
 #, kde-format
@@ -11813,8 +11813,8 @@ msgid ""
 "If you do not currently have an account, please click the button to create "
 "one."
 msgstr ""
-"Per a connectar-vos a la xarxa de Gadu-Gadu, necessitareu un compte de Gadu-"
-"Gadu.<br/><br/>\n"
+"Per a connectar-vos amb la xarxa de Gadu-Gadu, necessitareu un compte de "
+"Gadu-Gadu.<br/><br/>\n"
 "Si no en disposeu d'un, per favor, cliqueu en el botó per a crear-ne un."
 
 #. i18n: ectx: property (toolTip), widget (QPushButton, btnRegister)
@@ -11887,7 +11887,7 @@ msgstr ""
 "primari de Gadu-Gadu falle. Si està marcada, Kopete intentarà connectar "
 "directament als servidors reals emprant la informació emmagatzemada damunt "
 "seu. Açò evita errors de connexió quan el servidor principal de balanceig de "
-"la càrrega no respon. A la pràctica açò no resulta quasi mai necessari."
+"la càrrega no respon. En la pràctica açò no resulta quasi mai necessari."
 
 #. i18n: ectx: property (text), widget (QCheckBox, cacheServersCheck__)
 #: protocols/gadu/ui/gadueditaccountui.ui:277
@@ -11909,7 +11909,7 @@ msgid ""
 "list will result in exporting your list to server."
 msgstr ""
 "Mantín sincronitzades la llista de contactes local i la del servidor. "
-"Qualsevol canvi a la llista local farà que esta s'exporte al servidor."
+"Qualsevol canvi en la llista local farà que esta s'exporte al servidor."
 
 #. i18n: ectx: property (text), widget (QCheckBox, exportCheck_)
 #: protocols/gadu/ui/gadueditaccountui.ui:303
@@ -12372,7 +12372,7 @@ msgid ""
 "A change happened to your GroupWise contact list while you were offline "
 "which was impossible to reconcile."
 msgstr ""
-"Ha esdevingut un canvi a la vostra llista de contactes GroupWise mentre "
+"Ha esdevingut un canvi en la vostra llista de contactes GroupWise mentre "
 "estàveu desconnectat, i que és impossible de reconciliar."
 
 #: protocols/groupwise/gwaccount.cpp:660
@@ -12849,7 +12849,7 @@ msgstr "Carpeta duplicada"
 #: protocols/groupwise/libgroupwise/gwerror.cpp:73
 #, kde-format
 msgid "Contact list entry already exists"
-msgstr "Ja existix l'entrada a la llista de contactes"
+msgstr "L'entrada ja existix en la llista de contactes"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:76
 #, kde-format
@@ -13249,7 +13249,7 @@ msgstr "Descripció general de la sala de xat"
 #: protocols/groupwise/ui/gwchatprops.ui:207
 #, kde-format
 msgid "Maximum number of simultaneous users allowed in the chatroom"
-msgstr "Màxim d'usuaris simultanis acceptats a la sala de xat"
+msgstr "Màxim d'usuaris simultanis acceptats en la sala de xat"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel10)
 #: protocols/groupwise/ui/gwchatprops.ui:220
@@ -13299,7 +13299,7 @@ msgstr "Accés predeterminat"
 #: protocols/groupwise/ui/gwchatprops.ui:327
 #, kde-format
 msgid "General permission to read messages in the chatroom"
-msgstr "Permís general per a llegir missatges a la sala de xat"
+msgstr "Permís general per a llegir missatges en la sala de xat"
 
 #. i18n: ectx: property (text), widget (QCheckBox, chkRead)
 #: protocols/groupwise/ui/gwchatprops.ui:330
@@ -13311,7 +13311,7 @@ msgstr "Llig el missatge"
 #: protocols/groupwise/ui/gwchatprops.ui:340
 #, kde-format
 msgid "General permission to write messages in the chatroom"
-msgstr "Permís general per a escriure missatges a la sala de xat"
+msgstr "Permís general per a escriure missatges en la sala de xat"
 
 #. i18n: ectx: property (text), widget (QCheckBox, chkWrite)
 #: protocols/groupwise/ui/gwchatprops.ui:343
@@ -13730,7 +13730,7 @@ msgid ""
 msgstr ""
 "No s'ha pogut vincular amb el port local el gestor de transferències de "
 "fitxer Jabber. Comproveu si el port de transferència de fitxers ja es troba "
-"en ús o trieu un altre port a la configuració del compte."
+"en ús o trieu un altre port en la configuració del compte."
 
 #: protocols/jabber/jabberaccount.cpp:204
 #, kde-format
@@ -14473,7 +14473,7 @@ msgstr "Canvi de sobrenom - Connector Jabber"
 #: protocols/jabber/jabbergroupcontact.cpp:419
 #, kde-format
 msgid "Please enter the new nickname you want to have in the room <i>%1</i>"
-msgstr "Introduïu el sobrenom nou que voleu tindre a la sala <i>%1</i>"
+msgstr "Introduïu el sobrenom nou que voleu tindre en la sala <i>%1</i>"
 
 #: protocols/jabber/jabberprotocol.cpp:67
 #, kde-format
@@ -15545,7 +15545,7 @@ msgstr "Paràmetres d'ubicació"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:579
 #, kde-format
 msgid "The resource name you would like to use on the Jabber network."
-msgstr "El nom de recurs que voleu utilitzar a la xarxa de Jabber."
+msgstr "El nom de recurs que voleu utilitzar en la xarxa de Jabber."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, TextLabel3_3)
 #. i18n: ectx: property (whatsThis), widget (QLineEdit, mResource)
@@ -15560,7 +15560,7 @@ msgid ""
 "different resource names, so you may wish to enter 'Home' or 'Work' here, "
 "for example."
 msgstr ""
-"El nom de recurs que voleu utilitzar a la xarxa de Jabber. Jabber us permet "
+"El nom de recurs que voleu utilitzar en la xarxa de Jabber. Jabber us permet "
 "accedir amb el mateix compte des de múltiples ubicacions amb diferents noms "
 "de recurs, de manera que ací podeu introduir alguna cosa pareixent a «Casa» "
 "o «Faena»."
@@ -16324,7 +16324,7 @@ msgstr "S'estan carregant instruccions des de la porta d'enllaç..."
 #: protocols/jabber/ui/jabberaddcontactpage.cpp:69
 #, kde-format
 msgid "Connect to the Jabber network and try again."
-msgstr "Connecteu-vos a la xarxa Jabber i torneu-ho a provar."
+msgstr "Connecteu-vos amb la xarxa Jabber i torneu-ho a provar."
 
 #: protocols/jabber/ui/jabberaddcontactpage.cpp:165
 #, kde-format
@@ -17063,7 +17063,7 @@ msgid ""
 "Connect to the AIM network and try again."
 msgstr ""
 "És necessari estar connectat per a poder afegir contactes.\n"
-"Connecteu a la xarxa AIM i torneu a provar."
+"Connecteu amb la xarxa AIM i torneu a provar."
 
 #: protocols/oscar/aim/ui/aimaddcontactpage.cpp:68
 #: protocols/oscar/icq/ui/icqaddcontactpage.cpp:94
