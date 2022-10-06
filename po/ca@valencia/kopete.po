@@ -901,7 +901,7 @@ msgstr "Còpia %1 de %2"
 #: kopete/config/accounts/kopeteaccountconfig.cpp:536
 #, kde-format
 msgid "&Add Account..."
-msgstr "&Afig un compte..."
+msgstr "Afi&g un compte..."
 
 #. i18n: ectx: property (text), widget (QPushButton, mButtonAccountModify)
 #: kopete/config/accounts/kopeteaccountconfig.cpp:544
@@ -1697,7 +1697,7 @@ msgstr "Absència automàtica"
 #: kopete/config/behavior/behaviorconfig_away.ui:23
 #, kde-format
 msgid "&Use auto away"
-msgstr "&Utilitza l'absència automàtica"
+msgstr "Utilit&za l'absència automàtica"
 
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #: kopete/config/behavior/behaviorconfig_away.ui:41
@@ -2081,7 +2081,7 @@ msgstr "Tracta tots els xats de l'escrip&tori actual com a xats actius"
 #: kopete/config/behavior/behaviorconfig_events.ui:147
 #, kde-format
 msgid "Miscellaneous"
-msgstr "Miscelànea"
+msgstr "Miscel·lània"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_enableEventsWhileAway)
 #: kopete/config/behavior/behaviorconfig_events.ui:153
@@ -2276,7 +2276,7 @@ msgstr ""
 #: kopete/config/behavior/behaviorconfig_general.ui:83
 #, kde-format
 msgid "Use message &queue"
-msgstr "&Utilitza la cua de missatges"
+msgstr "Utilit&za la cua de missatges"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_queueUnreadMessages)
 #: kopete/config/behavior/behaviorconfig_general.ui:93
@@ -2880,7 +2880,7 @@ msgstr "O&btín nous..."
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:140
 #, kde-format
 msgid "&Install..."
-msgstr "&Instal·la..."
+msgstr "I&nstal·la..."
 
 #. i18n: ectx: property (text), widget (QPushButton, deleteButton)
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:153
@@ -3335,7 +3335,7 @@ msgstr "Canvia el nom"
 #: kopete/contactlist/kopetecontactlistview.cpp:200 kopete/kopetewindow.cpp:416
 #, kde-format
 msgid "&Add Contact"
-msgstr "&Afig contacte"
+msgstr "Afi&g contacte"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:202
 #, kde-format
@@ -3446,7 +3446,7 @@ msgstr "Envia un sol missatge..."
 #: kopete/contactlist/kopetecontactlistview.cpp:837
 #, kde-format
 msgid "&Add Subcontact"
-msgstr "&Afig un subcontacte"
+msgstr "Afi&g un subcontacte"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:840
 #, kde-format
@@ -3466,7 +3466,7 @@ msgstr "Envia un missatge al grup"
 #: kopete/contactlist/kopetecontactlistview.cpp:846
 #, kde-format
 msgid "&Add Contact to Group"
-msgstr "&Afig contacte al grup"
+msgstr "Afi&g contacte al grup"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:849
 #, kde-format
@@ -3875,7 +3875,7 @@ msgstr "Visualitza"
 #: kopete/kopeteui.rc:5
 #, kde-format
 msgid "&File"
-msgstr "&Fitxer"
+msgstr "Fi&txer"
 
 #. i18n: ectx: Menu (edit)
 #. i18n: ectx: property (text), widget (QPushButton, m_btnEdit)
@@ -5965,7 +5965,7 @@ msgstr "Ordres"
 #: libkopete/kopetecontact.cpp:291
 #, kde-format
 msgid "&Add to Your Contact List"
-msgstr "&Afig a la vostra llista de contactes"
+msgstr "Afi&g a la vostra llista de contactes"
 
 #: libkopete/kopetecontact.cpp:334 libkopete/ui/kopetestdaction.cpp:109
 #, kde-format
@@ -6844,7 +6844,7 @@ msgstr "&Info d'usuari"
 #: libkopete/ui/kopetestdaction.cpp:94
 #, kde-format
 msgid "Send &File..."
-msgstr "Envia &fitxer..."
+msgstr "Envia fi&txer..."
 
 #: libkopete/ui/kopetestdaction.cpp:99
 #, kde-format
@@ -6999,7 +6999,7 @@ msgstr "Guar&da"
 #: protocols/jabber/ui/dlgcommand.ui:145
 #, kde-format
 msgid "&Cancel"
-msgstr "&Cancel·la"
+msgstr "C&ancel·la"
 
 #. i18n: ectx: property (toolTip), widget (K3ListView, protocolList)
 #. i18n: ectx: property (whatsThis), widget (K3ListView, protocolList)
@@ -7050,7 +7050,7 @@ msgstr "Ordre"
 #: plugins/alias/aliasdialogbase.ui:68
 #, kde-format
 msgid "&Add New Alias..."
-msgstr "&Afig nou àlies..."
+msgstr "Afi&g nou àlies..."
 
 #. i18n: ectx: property (text), widget (KPushButton, deleteButton)
 #: plugins/alias/aliasdialogbase.ui:75
@@ -7072,7 +7072,7 @@ msgstr "Edita àlies..."
 #: protocols/oscar/oscarlistnonservercontacts.cpp:37
 #, kde-format
 msgid "&Add"
-msgstr "&Afig"
+msgstr "Afi&g"
 
 #: plugins/alias/aliaspreferences.cpp:307
 #: plugins/alias/aliaspreferences.cpp:385
@@ -9330,7 +9330,7 @@ msgstr ""
 #, kde-format
 msgctxt "verb"
 msgid "&Add..."
-msgstr "&Afig..."
+msgstr "Afi&g..."
 
 #. i18n: ectx: property (text), widget (KPushButton, removeButton)
 #: plugins/pipes/pipesprefsbase.ui:45
@@ -9764,7 +9764,7 @@ msgstr "&Colors"
 #: plugins/texteffect/texteffectprefs.ui:90
 #, kde-format
 msgid "&Add..."
-msgstr "&Afig..."
+msgstr "Afi&g..."
 
 #. i18n: ectx: property (text), widget (QPushButton, mColorsUp)
 #: plugins/texteffect/texteffectprefs.ui:104
@@ -11277,7 +11277,7 @@ msgstr "Bu&sca"
 #: protocols/gadu/gadupubdir.cpp:123
 #, kde-format
 msgid "&Add User..."
-msgstr "&Afig usuari..."
+msgstr "Afi&g usuari..."
 
 #: protocols/gadu/gadupubdir.cpp:124 protocols/gadu/gaduregisteraccount.cpp:163
 #: protocols/oscar/aim/aimuserinfo.cpp:107
@@ -11899,7 +11899,7 @@ msgstr "Informació del servidor de c&au"
 #: protocols/gadu/ui/gadueditaccountui.ui:290
 #, kde-format
 msgid "&Use direct connections (DCC)"
-msgstr "&Utilitza connexions directes (DCC)"
+msgstr "Utilit&za connexions directes (DCC)"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, exportCheck_)
 #: protocols/gadu/ui/gadueditaccountui.ui:300
@@ -12098,7 +12098,7 @@ msgstr "Home"
 #: protocols/gadu/ui/gadueditaccountui.ui:680
 #, kde-format
 msgid "&File Transfer"
-msgstr "Transferència de &fitxers"
+msgstr "Transferència de fi&txers"
 
 #. i18n: ectx: property (title), widget (QGroupBox, dcc)
 #: protocols/gadu/ui/gadueditaccountui.ui:692
@@ -13373,7 +13373,7 @@ msgstr "Propietats de la sala de xat"
 #: protocols/groupwise/ui/gwchatsearch.ui:74
 #, kde-format
 msgid "&Refresh"
-msgstr "&Actualitza"
+msgstr "Act&ualitza"
 
 #: protocols/groupwise/ui/gwchatsearchdialog.cpp:43
 #, kde-format
@@ -13620,7 +13620,7 @@ msgstr "<< P&ermet"
 #: protocols/groupwise/ui/gwprivacy.ui:156
 #, kde-format
 msgid "A&dd..."
-msgstr "&Afig..."
+msgstr "Afi&g..."
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel3)
 #: protocols/groupwise/ui/gwprivacy.ui:205
@@ -17313,7 +17313,7 @@ msgstr ""
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:626
 #, kde-format
 msgid "&Use proxy instead"
-msgstr "&Utilitza el servidor intermediari"
+msgstr "Utilit&za el servidor intermediari"
 
 #. i18n: ectx: property (toolTip), widget (QLabel, lblTimeout)
 #. i18n: ectx: property (toolTip), widget (QSpinBox, sbxTimeout)
@@ -22303,7 +22303,7 @@ msgstr "Instal·la la compatibilitat a Samba per a activar este servei."
 #: protocols/winpopup/ui/wpeditaccountbase.ui:98
 #, kde-format
 msgid "I&nstall Into Samba"
-msgstr "I&nstala a dins de Samba"
+msgstr "I&nstal·la a dins de Samba"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel12)
 #: protocols/winpopup/ui/wpeditaccountbase.ui:138
