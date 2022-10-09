@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2022-07-28 12:43+0300\n"
+"PO-Revision-Date: 2022-10-08 12:50+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 22.04.2\n"
+"X-Generator: Lokalize 22.08.1\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -8736,7 +8736,7 @@ msgstr "Kişiye Kimlik Doğrulaması Yap"
 #: plugins/otr/otrguiclient.cpp:122 plugins/otr/otrguiclient.cpp:128
 #, kde-format
 msgid "Refresh OTR Session"
-msgstr "OTR Oturumunu Tazele"
+msgstr "OTR Oturumunu Yenile"
 
 #: plugins/otr/otrlchatinterface.cpp:176
 #, kde-format
@@ -8765,7 +8765,7 @@ msgstr "<b>OTR Oturumu sonlandırıldı. Sohbet artık güvenli değil.</b>"
 #: plugins/otr/otrlchatinterface.cpp:232
 #, kde-format
 msgid "<b>OTR connection refreshed successfully.</b>"
-msgstr "<b>OTR bağlantısı başarılı bir şekilde tazelendi.</b>"
+msgstr "<b>OTR bağlantısı, başarılı bir şekilde yenilendi.</b>"
 
 #: plugins/otr/otrlchatinterface.cpp:281
 #, kde-format
