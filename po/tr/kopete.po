@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2022-10-08 12:50+0300\n"
+"PO-Revision-Date: 2022-10-12 01:13+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -15039,7 +15039,7 @@ msgstr "Yenile"
 #: protocols/jabber/ui/dlgahclist.cpp:40
 #, kde-format
 msgid "Execute command"
-msgstr "Komut çalıştır"
+msgstr "Komutu yürüt"
 
 #: protocols/jabber/ui/dlgahcommand.cpp:41
 #, kde-format
