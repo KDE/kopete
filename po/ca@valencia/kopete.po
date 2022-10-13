@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2022-10-03 20:14+0200\n"
+"PO-Revision-Date: 2022-10-11 13:34+0200\n"
 "Last-Translator: Josep M. Ferrer <txemaq@gmail.com>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
 "Language: ca@valencia\n"
@@ -8360,8 +8360,8 @@ msgid ""
 "None of the supported media players (Amarok, KsCD, JuK, Kaffeine, Quod "
 "Libet, or Qmmp) are playing anything."
 msgstr ""
-"Cap dels reproductors acceptats (Amarok, KsCD, JuK, Kaffeine, Quod Libet o "
-"Qmmp) està reproduint res."
+"Cap dels reproductors multimèdia acceptats (Amarok, KsCD, JuK, Kaffeine, "
+"Quod Libet o Qmmp) està reproduint res."
 
 #: plugins/nowlistening/nowlisteningguiclient.cpp:68
 #, kde-format
@@ -17418,7 +17418,7 @@ msgstr "Sempre visible:"
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:895
 #, kde-format
 msgid "Contact to add:"
-msgstr "Contacte a afegir:"
+msgstr "Contacte que cal afegir:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel2_2)
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:836
