@@ -8,7 +8,7 @@
 # Ilpo Kantonen <ilpo@iki.fi>, 2004, 2005.
 # Lasse Liehu <lasse.liehu@gmail.com>, 2005, 2006, 2010, 2011.
 # Teemu Rytilahti <teemu.rytilahti@kde-fi.org>, 2008.
-# Tommi Nieminen <translator@legisign.org>, 2009, 2011, 2014, 2015, 2016, 2018, 2020, 2021.
+# Tommi Nieminen <translator@legisign.org>, 2009, 2011, 2014, 2015, 2016, 2018, 2020, 2021, 2022.
 # Lasse Liehu <lasse.liehu@gmail.com>, 2011, 2012, 2013, 2014, 2015, 2016.
 # Jiri Grönroos <jiri.gronroos+l10n@iki.fi>, 2013.
 # KDE Finnish translation sprint participants:
@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2021-05-06 17:23+0300\n"
+"PO-Revision-Date: 2022-08-19 13:05+0300\n"
 "Last-Translator: Tommi Nieminen <translator@legisign.org>\n"
 "Language-Team: Finnish <kde-i18n-doc@kde.org>\n"
 "Language: fi\n"
@@ -29,7 +29,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-POT-Import-Date: 2012-12-01 22:24:40+0000\n"
-"X-Generator: Lokalize 20.04.2\n"
+"X-Generator: Lokalize 20.12.0\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -4586,10 +4586,9 @@ msgstr "chroma agc"
 
 #. i18n: Combfilter
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:47
-#, fuzzy, kde-format
-#| msgid "Mobile"
+#, kde-format
 msgid "combfilter"
-msgstr "Langattomasti paikalla"
+msgstr "kampasuodatin"
 
 #. i18n: Automute
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:49
@@ -4709,7 +4708,7 @@ msgstr "Kohinan esto (pehmennys)"
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:99
 #, kde-format
 msgid "Minimum Clock Divider"
-msgstr ""
+msgstr "Kellon vähimmäisjako"
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:100
 #, kde-format
@@ -4828,16 +4827,14 @@ msgstr "Väritila"
 
 #. i18n: Auto Contour
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:128
-#, fuzzy, kde-format
-#| msgid "Country"
+#, kde-format
 msgid "Auto contour"
-msgstr "Maa"
+msgstr "Automaattinen ääriviiva"
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:129
-#, fuzzy, kde-format
-#| msgid "Country"
+#, kde-format
 msgid "Contour"
-msgstr "Maa"
+msgstr "Ääriviiva"
 
 #. i18n: Backlight Compensation
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:131
@@ -4883,7 +4880,7 @@ msgstr "Puskuria/toimenpide"
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:145
 #, kde-format
 msgid "NoFliker"
-msgstr ""
+msgstr "Vilkkumisen esto"
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:146
 #, kde-format
@@ -5013,7 +5010,7 @@ msgstr "Automaattinen valkotasapaino"
 #: libkopete/avdevice/videodevice.cpp:3713
 #, kde-format
 msgid "Do White Balance"
-msgstr ""
+msgstr "Tee valkotasapaino"
 
 #: libkopete/avdevice/videodevice.cpp:3715
 #, kde-format
@@ -18460,7 +18457,7 @@ msgstr "Tieteellinen/tekninen järjestö"
 #: protocols/oscar/icq/icqprotocol.cpp:717
 #, kde-format
 msgid "Self Improvement Group"
-msgstr ""
+msgstr "Itsekehitysryhmä"
 
 #: protocols/oscar/icq/icqprotocol.cpp:718
 #, kde-format
