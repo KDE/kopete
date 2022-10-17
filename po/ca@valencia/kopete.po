@@ -2444,7 +2444,7 @@ msgstr "(sense variació)"
 #: kopete/config/chatwindow/chatwindowconfig.cpp:443
 #, kde-format
 msgid "Choose Chat Window Style to Install"
-msgstr "Seleccioneu l'estil de finestra de xat que cal instal·lar"
+msgstr "Seleccioneu l'estil de finestra de xat que s'ha d'instal·lar"
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:453
 #, kde-format
@@ -3039,7 +3039,7 @@ msgstr "Marcador de posició"
 #: plugins/webpresence/webpresenceprefs.ui:187
 #, kde-format
 msgid "Display Name"
-msgstr "Nom que es mostrarà"
+msgstr "Nom que s'ha de mostrar"
 
 #: kopete/contactlist/contactlistlayoutmanager.cpp:62
 #: libkopete/kopeteglobal.cpp:142
@@ -3624,7 +3624,7 @@ msgstr "&Importa contactes"
 #: kopete/contactlist/kopetemetalvipropswidget.ui:135
 #, kde-format
 msgid "Display Name Source"
-msgstr "Origen del nom que es mostrarà"
+msgstr "Origen del nom que s'ha de mostrar"
 
 #. i18n: ectx: property (text), widget (QRadioButton, radioNameKABC)
 #: kopete/contactlist/kopetemetalvipropswidget.ui:141
@@ -4480,7 +4480,8 @@ msgstr "Deshabita la connexió automàtica"
 #: kopete/main.cpp:103
 #, kde-format
 msgid "URLs to pass to kopete / emoticon themes to install"
-msgstr "URL a passar a Kopete / temes d'emoticones que cal instal·lar"
+msgstr ""
+"URL que s'ha de passar a Kopete / temes d'emoticones que s'han d'instal·lar"
 
 #: kopete/main.cpp:104
 #, kde-format
@@ -5686,7 +5687,7 @@ msgstr "Llargària màxima a truncar el nom del contacte."
 #: libkopete/kopetebehaviorsettings.kcfg:129
 #, kde-format
 msgid "Maximum number of messages to show in a chat window."
-msgstr "Nombre màxim de missatges a mostrar en la finestra de xat."
+msgstr "Nombre màxim de missatges que es mostraran en la finestra de xat."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:133
@@ -6709,8 +6710,8 @@ msgid ""
 "The display name of the contact.  Leave it empty to use the contact's "
 "nickname."
 msgstr ""
-"El nom que es mostrarà del contacte. Deixeu-ho buit per a utilitzar el "
-"sobrenom del contacte."
+"El nom que es mostrarà. Deixeu-ho buit per a utilitzar el sobrenom del "
+"contacte."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, textLabel7)
 #. i18n: ectx: property (whatsThis), widget (KLineEdit, m_displayNameEdit)
@@ -6732,7 +6733,7 @@ msgstr ""
 #: libkopete/ui/contactaddednotifywidget.ui:113
 #, kde-format
 msgid "Display name:"
-msgstr "Nom que es mostrarà:"
+msgstr "Nom que s'ha de mostrar:"
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, textLabel5)
 #: libkopete/ui/contactaddednotifywidget.ui:141
@@ -7157,13 +7158,13 @@ msgstr "Opcions de frase"
 #: plugins/autoreplace/autoreplaceprefs.ui:54
 #, kde-format
 msgid "Add a dot at the end of each sent line"
-msgstr "Afig un punt al final de cada línia a enviar"
+msgstr "Afig un punt al final de cada línia que calga enviar"
 
 #. i18n: ectx: property (text), widget (QCheckBox, CapitalizeBeginningSentence)
 #: plugins/autoreplace/autoreplaceprefs.ui:61
 #, kde-format
 msgid "Start each sent line with a capital letter"
-msgstr "Comença cada línia a enviar amb una lletra en majúscula"
+msgstr "Comença cada línia que calga enviar amb una lletra en majúscula"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_2)
 #: plugins/autoreplace/autoreplaceprefs.ui:71
@@ -7504,7 +7505,7 @@ msgstr "Exporta les claus marcades a la llibreta d'adreces"
 #, kde-format
 msgctxt "@item:inlistbox"
 msgid "&lt;No metacontacts with keys to export&gt;"
-msgstr "&lt;No hi ha cap metacontacte amb claus a exportar&gt;"
+msgstr "&lt;No hi ha cap metacontacte amb claus per a exportar&gt;"
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: plugins/cryptography/exportkeysbase.ui:17
@@ -7521,7 +7522,7 @@ msgstr ""
 #: plugins/cryptography/exportkeysbase.ui:27
 #, kde-format
 msgid "Select Keys to Export"
-msgstr "Seleccioneu les claus que s'exportarà"
+msgstr "Seleccioneu les claus que s'han d'exportar"
 
 #. i18n: ectx: property (whatsThis), widget (QListWidget, keyList)
 #: plugins/cryptography/exportkeysbase.ui:30
@@ -7710,7 +7711,7 @@ msgstr "Mostra l'historial de xat als xats nous."
 #: plugins/history2/history2config.kcfg:16
 #, kde-format
 msgid "Number of messages to show."
-msgstr "Nombre de missatges a mostrar."
+msgstr "Nombre de missatges que es mostraran."
 
 #. i18n: ectx: label, entry (Number_ChatWindow), group (History2 Plugin)
 #. i18n: ectx: label, entry (Number_ChatWindow), group (History Plugin)
@@ -8046,7 +8047,7 @@ msgstr ""
 #: plugins/history/historyprefsui.ui:98 plugins/history2/history2prefsui.ui:107
 #, kde-format
 msgid "Number of messages to show:"
-msgstr "Nombre de missatges a mostrar:"
+msgstr "Nombre de missatges que s'han de mostrar:"
 
 #. i18n: ectx: property (whatsThis), widget (QSpinBox, Number_ChatWindow)
 #: plugins/history/historyprefsui.ui:141
@@ -9397,7 +9398,7 @@ msgstr ""
 #: plugins/privacy/privacyconfig.kcfg:39 plugins/privacy/privacyconfig.kcfg:47
 #, kde-format
 msgid "Words to look for."
-msgstr "Paraules a buscar."
+msgstr "Paraules que es buscaran."
 
 #. i18n: ectx: label, entry (Content_DropIfAll), group (Privacy Plugin)
 #: plugins/privacy/privacyconfig.kcfg:43
@@ -10462,19 +10463,19 @@ msgstr "Substituïx el protocol de text per a les imatges en (X)HTML"
 #: plugins/webpresence/webpresenceconfig.kcfg:48
 #, kde-format
 msgid "Use one of your IM names as display name"
-msgstr "Utilitza un dels meus noms MI com a nom que es mostrarà"
+msgstr "Utilitza un dels meus noms MI com a nom que s'ha de mostrar"
 
 #. i18n: ectx: label, entry (showAnotherName), group (Web Presence Plugin)
 #: plugins/webpresence/webpresenceconfig.kcfg:53
 #, kde-format
 msgid "Use another name as display name"
-msgstr "Utilitza un altre nom com a nom que es mostrarà"
+msgstr "Utilitza un altre nom com a nom que s'ha de mostrar"
 
 #. i18n: ectx: label, entry (showThisName), group (Web Presence Plugin)
 #: plugins/webpresence/webpresenceconfig.kcfg:58
 #, kde-format
 msgid "Desired display name"
-msgstr "Nom que es mostrarà"
+msgstr "Nom que s'ha de mostrar"
 
 #. i18n: ectx: label, entry (includeIMAddress), group (Web Presence Plugin)
 #: plugins/webpresence/webpresenceconfig.kcfg:62
@@ -13175,7 +13176,7 @@ msgstr "Propietats del xat GroupWise"
 #: protocols/groupwise/ui/gwchatprops.ui:34
 #, kde-format
 msgid "DISPLAY NAME"
-msgstr "NOM A MOSTRAR"
+msgstr "NOM QUE S'HA DE MOSTRAR"
 
 #. i18n: ectx: property (toolTip), widget (QLineEdit, creator)
 #: protocols/groupwise/ui/gwchatprops.ui:64
@@ -13429,7 +13430,7 @@ msgstr "ID de l'usuari"
 #: protocols/groupwise/ui/gwcontactprops.ui:134
 #, kde-format
 msgid "Change the display name used for this contact"
-msgstr "Canvia el nom que es mostrarà utilitzat per a este contacte"
+msgstr "Canvia el nom que s'ha de mostrar utilitzat per a este contacte"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
 #. i18n: ectx: property (text), widget (QLabel, textLabel14)
@@ -13449,7 +13450,7 @@ msgstr "Estat de l'usuari"
 #: protocols/groupwise/ui/gwcontactprops.ui:121
 #, kde-format
 msgid "&Display name:"
-msgstr "Nom a &mostrar:"
+msgstr "Nom que s'ha de &mostrar:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel15)
 #: protocols/groupwise/ui/gwcontactprops.ui:172
@@ -15681,7 +15682,7 @@ msgstr "Detecta automàticament les adreces IP externes"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:867
 #, kde-format
 msgid "First port to use:"
-msgstr "Primer port que s'utilitzarà:"
+msgstr "Primer port que s'ha d'utilitzar:"
 
 #. i18n: ectx: property (toolTip), widget (QSpinBox, firstPortEdit)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:881
@@ -16664,7 +16665,7 @@ msgstr "Connector Meanwhile: Missatge del servidor"
 #: protocols/winpopup/wpeditaccount.cpp:108
 #, kde-format
 msgid "<qt>You must enter a valid screen name.</qt>"
-msgstr "<qt>Heu d'introduir un nom que es mostrarà vàlid.</qt>"
+msgstr "<qt>Heu d'introduir un nom vàlid que es mostrarà.</qt>"
 
 #: protocols/meanwhile/meanwhileeditaccountwidget.cpp:148
 #: protocols/meanwhile/meanwhileeditaccountwidget.cpp:155
@@ -17092,7 +17093,7 @@ msgstr "Heu d'introduir un nom de pantalla d'AOL vàlid."
 #: protocols/oscar/aim/ui/aimaddcontactpage.cpp:78
 #, kde-format
 msgid "No Screen Name"
-msgstr "Sense nom que es mostrarà"
+msgstr "Sense nom que s'haja de mostrar"
 
 #. i18n: ectx: property (text), widget (QRadioButton, aimRadioButton)
 #: protocols/oscar/aim/ui/aimaddcontactui.ui:28
@@ -17123,8 +17124,8 @@ msgid ""
 "AIM screen name, please click the button to create one."
 msgstr ""
 "Per a connectar amb la xarxa de missatgeria instantània d'AOL, necessitareu "
-"utilitzar un nom que es mostrarà de l'AIM, AOL o .Mac.<br/><br/>Si no en "
-"teniu cap, per favor, premeu el botó per a crear-lo."
+"utilitzar un nom que s'haja de mostrar de l'AIM, AOL o .Mac.<br/><br/>Si no "
+"en teniu cap, per favor, premeu el botó per a crear-lo."
 
 #. i18n: ectx: property (toolTip), widget (QLabel, lblAccountId)
 #. i18n: ectx: property (toolTip), widget (QLineEdit, edtAccountId)
@@ -17151,7 +17152,7 @@ msgstr ""
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:207
 #, kde-format
 msgid "AIM &screen name:"
-msgstr "Nom a mo&strar de l'AIM:"
+msgstr "Nom que s'ha de mo&strar de l'AIM:"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, mAutoLogon)
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, chkAutoLogin)
@@ -17418,7 +17419,7 @@ msgstr "Sempre visible:"
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:895
 #, kde-format
 msgid "Contact to add:"
-msgstr "Contacte que cal afegir:"
+msgstr "Contacte que s'ha d'afegir:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel2_2)
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:836
@@ -17431,7 +17432,7 @@ msgstr "Sempre invisible:"
 #: protocols/oscar/aim/ui/aiminfobase.ui:63
 #, kde-format
 msgid "Screen name:"
-msgstr "Nom que es mostrarà:"
+msgstr "Nom que s'ha de mostrar:"
 
 #. i18n: ectx: property (text), widget (QLabel, lblWarnLevel)
 #: protocols/oscar/aim/ui/aiminfobase.ui:77
@@ -20321,7 +20322,8 @@ msgid ""
 "has one.  <b>Note:</b> this will open a socket, and let the user know you "
 "are downloading their picture.</dd></dl>"
 msgstr ""
-"<qt><p>Indica com Kopete baixarà les imatges a mostrar dels contactes</p>\n"
+"<qt><p>Indica com Kopete baixarà les imatges que s'han de mostrar dels "
+"contactes</p>\n"
 "<dl><dt>Només manualment</dt><dd>La imatge no baixa automàticament. Només "
 "baixa quan l'usuari la sol·licite</dd>\n"
 "<dt>Quan s'òbriga un xat</dt><dd>La imatge baixa quan s'òbriga un sòcol de "
@@ -21111,7 +21113,7 @@ msgstr "Tocada de Skype"
 #: protocols/skype/ui/skypecalldialogbase.ui:14
 #, kde-format
 msgid "Name(s) of Participant(s)"
-msgstr "Nom(s) del(s) participant(s)"
+msgstr "Noms dels participants"
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, NameLabel)
 #: protocols/skype/ui/skypecalldialogbase.ui:17
@@ -21266,7 +21268,7 @@ msgstr "Està autoritzat:"
 #: protocols/skype/ui/skypedetailsbase.ui:131
 #, kde-format
 msgid "Display Name:"
-msgstr "Nom que es mostrarà:"
+msgstr "Nom que s'ha de mostrar:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1_3)
 #: protocols/skype/ui/skypedetailsbase.ui:184
@@ -22350,7 +22352,7 @@ msgstr "Preferències de protocol"
 #: protocols/winpopup/ui/wpeditaccountbase.ui:281
 #, kde-format
 msgid "second(s)"
-msgstr "segon(s)"
+msgstr "segons"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel4)
 #: protocols/winpopup/ui/wpeditaccountbase.ui:303
