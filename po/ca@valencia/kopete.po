@@ -3763,7 +3763,7 @@ msgstr "Identitat del compte"
 #: kopete/identity/accountidentitybase.ui:38
 #, kde-format
 msgid "Select the identity to be used by the accounts:"
-msgstr "Seleccioneu la identitat a utilitzar per als comptes:"
+msgstr "Seleccioneu la identitat que s'ha d'utilitzar per als comptes:"
 
 #. i18n: ectx: property (text), widget (QLabel, accounts)
 #: kopete/identity/accountidentitybase.ui:69
@@ -7735,7 +7735,7 @@ msgstr "Color dels missatges"
 #: plugins/history2/history2config.kcfg:31
 #, kde-format
 msgid "Style to use in history-browser."
-msgstr "Estil a utilitzar en l'historial del navegador."
+msgstr "Estil que s'utilitzarà en l'historial del navegador."
 
 #: plugins/history/historydialog.cpp:102 plugins/history/historydialog.cpp:575
 #: plugins/history2/history2dialog.cpp:103
@@ -15708,7 +15708,7 @@ msgstr "Premsa"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:913
 #, kde-format
 msgid "Microphone to use:"
-msgstr "Micròfon a utilitzar:"
+msgstr "Micròfon que s'ha d'utilitzar:"
 
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:927
