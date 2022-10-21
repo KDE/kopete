@@ -10931,7 +10931,7 @@ msgstr "la connexió emprant SSL no ha sigut possible, proveu-ho sense."
 #: protocols/gadu/gaduaccount.cpp:797
 #, kde-format
 msgid "unable to connect to the Gadu-Gadu server(\"%1\")."
-msgstr "no es pot connectar al servidor Gadu-Gadu («%1»)."
+msgstr "no es pot connectar amb el servidor Gadu-Gadu («%1»)."
 
 #: protocols/gadu/gaduaccount.cpp:799 protocols/gadu/gaducommands.cpp:344
 #: protocols/gadu/gaducommands.cpp:353 protocols/gadu/gaducommands.cpp:403
@@ -11463,7 +11463,7 @@ msgstr "No es pot resoldre l'adreça del servidor. Fallada de DNS."
 #: protocols/gadu/gadusession.cpp:657
 #, kde-format
 msgid "Unable to connect to server."
-msgstr "No es pot connectar al servidor."
+msgstr "No es pot connectar amb el servidor."
 
 #: protocols/gadu/gadusession.cpp:659
 #, kde-format
@@ -12384,8 +12384,8 @@ msgid ""
 "'%1'.\n"
 "Please check your server and port settings and try again."
 msgstr ""
-"Kopete no ha pogut connectar al servidor GroupWise Messenger per al compte "
-"«%1».\n"
+"Kopete no ha pogut connectar amb el servidor GroupWise Messenger per al "
+"compte «%1».\n"
 "Comproveu la configuració del servidor i el port i torneu-ho a provar."
 
 #: protocols/groupwise/gwaccount.cpp:660
@@ -16698,12 +16698,12 @@ msgstr "<qt>0 no és un número de port vàlid.</qt>"
 #: protocols/meanwhile/meanwhilesession.cpp:204
 #, kde-format
 msgid "Could not connect to server"
-msgstr "No es pot connectar al servidor"
+msgstr "No es pot connectar amb el servidor"
 
 #: protocols/meanwhile/meanwhilesession.cpp:605
 #, kde-format
 msgid "Could not connect to redirected server"
-msgstr "No es pot connectar al servidor redirigit"
+msgstr "No es pot connectar amb el servidor redirigit"
 
 #: protocols/meanwhile/meanwhilesession.cpp:997
 #, kde-format
