@@ -84,7 +84,7 @@ msgid ""
 "\"Finish\" button.</p>"
 msgstr ""
 "<h2>Felicitats!</h2><p>Heu acabat de configurar el compte. Podeu afegir més "
-"comptes a <i>Configuració->Configura</i>. Cliqueu el botó «Acaba».</p>"
+"comptes en <i>Configuració->Configura</i>. Cliqueu en el botó «Acaba».</p>"
 
 #: kopete/addaccountwizard/addaccountwizard.cpp:172
 #, kde-format
@@ -192,8 +192,8 @@ msgid ""
 "If this is checked, the account will be connected right after you clicked on "
 "<i>Finished</i>."
 msgstr ""
-"Si està activada, el compte es connectarà tan bon punt feu clic a «<i>Acaba</"
-"i>»."
+"Si està activada, el compte es connectarà tan bon punt feu clic en "
+"«<i>Acaba</i>»."
 
 #. i18n: ectx: property (text), widget (QCheckBox, mConnectNow)
 #: kopete/addaccountwizard/addaccountwizardpage2.ui:145
@@ -5198,7 +5198,7 @@ msgid ""
 "%2</qt>"
 msgstr ""
 "<qt>Una altra aplicació ha afegit una adreça a este contacte.<br />Voleu "
-"utilitzar-la a Kopete?<br /><b>Protocol:</b> %1<br /><b>Adreça:</b> %2</qt>"
+"utilitzar-la en Kopete?<br /><b>Protocol:</b> %1<br /><b>Adreça:</b> %2</qt>"
 
 #: libkopete/kabcpersistence.cpp:350
 #, kde-format
@@ -5361,7 +5361,7 @@ msgstr "Emés quan es canvia l'aparença de la llista de contactes."
 #: libkopete/kopeteappearancesettings.kcfg:27
 #, kde-format
 msgid "Enable emoticon support in Kopete."
-msgstr "Activa el funcionament d'emoticones a Kopete."
+msgstr "Activa el funcionament d'emoticones en Kopete."
 
 #. i18n: ectx: label, entry, group (Appearance)
 #: libkopete/kopeteappearancesettings.kcfg:70
@@ -5681,7 +5681,7 @@ msgstr "Trunca el nom del contacte."
 #: libkopete/kopetebehaviorsettings.kcfg:125
 #, kde-format
 msgid "Truncate contact name max length."
-msgstr "Llargària màxima a truncar el nom del contacte."
+msgstr "Llargària màxima en la que es truncarà el nom del contacte."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:129
@@ -7158,7 +7158,7 @@ msgstr "Opcions de frase"
 #: plugins/autoreplace/autoreplaceprefs.ui:54
 #, kde-format
 msgid "Add a dot at the end of each sent line"
-msgstr "Afig un punt al final de cada línia que calga enviar"
+msgstr "Afig un punt al final de cada línia que s'haja d'enviar"
 
 #. i18n: ectx: property (text), widget (QCheckBox, CapitalizeBeginningSentence)
 #: plugins/autoreplace/autoreplaceprefs.ui:61
@@ -13111,7 +13111,7 @@ msgstr "És necessari estar connectat per a poder afegir contactes."
 #: protocols/groupwise/ui/gwaddcontactpage.cpp:66
 #, kde-format
 msgid "Connect to GroupWise Messenger and try again."
-msgstr "Connecta a GroupWise Messenger i prova-ho altra vegada."
+msgstr "Connecta amb GroupWise Messenger i prova-ho altra vegada."
 
 #. i18n: ectx: attribute (title), widget (QWidget, tab)
 #: protocols/groupwise/ui/gwaddui.ui:39
@@ -17232,7 +17232,7 @@ msgstr "Opcions de connexió directa"
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:564
 #, kde-format
 msgid "The ports to use for direct connections."
-msgstr "Els ports a utilitzar per a les connexions directes."
+msgstr "Els ports que s'utilitzaran per a les connexions directes."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, lblPort)
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:453
@@ -17242,8 +17242,8 @@ msgid ""
 "The ports to use when listening for direct connections. These must not be "
 "blocked by a firewall or router."
 msgstr ""
-"Els ports a utilitzar quan s'escolta en connexions directes. Estes no poden "
-"estar blocades per un tallafoc o un encaminador."
+"Els ports que s'utilitzaran quan s'escolta en connexions directes. Estes no "
+"poden estar blocades per un tallafoc o un encaminador."
 
 #. i18n: ectx: property (text), widget (QLabel, lblPort)
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:456

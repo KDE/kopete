@@ -10110,7 +10110,7 @@ msgstr "Türkçe"
 #: plugins/translator/translatorlanguages.cpp:89
 #, kde-format
 msgid "Ukrainian"
-msgstr "Ukrayna Dili"
+msgstr "Ukraynaca"
 
 #: plugins/translator/translatorlanguages.cpp:90
 #, kde-format
@@ -10130,12 +10130,12 @@ msgstr "Galce"
 #: plugins/translator/translatorlanguages.cpp:93
 #, kde-format
 msgid "Yiddish"
-msgstr "Yiddish"
+msgstr "Yidiş"
 
 #: plugins/translator/translatorplugin.cpp:76
 #, kde-format
 msgid "Set &Language"
-msgstr "Dil &Kümesi"
+msgstr "&Dil Ayarla"
 
 #: plugins/translator/translatorplugin.cpp:375
 #, kde-format
