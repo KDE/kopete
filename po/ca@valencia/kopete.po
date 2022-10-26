@@ -7555,7 +7555,7 @@ msgstr "-Filtre nou-"
 #: plugins/highlight/highlightpreferences.cpp:199
 #, kde-format
 msgid "Rename Filter"
-msgstr "Canvia el nom filtre"
+msgstr "Canvia el nom del filtre"
 
 #: plugins/highlight/highlightpreferences.cpp:199
 #, kde-format
