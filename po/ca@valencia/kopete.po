@@ -2150,7 +2150,7 @@ msgid ""
 "other windows."
 msgstr ""
 "Si ja hi ha una finestra de xat oberta per al remitent d'un missatge "
-"entrant, esta finestra es col·locarà a l'escriptori actual per davant de "
+"entrant, esta finestra es col·locarà en l'escriptori actual per davant de "
 "totes les altres finestres."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_raiseMessageWindow)
@@ -6275,7 +6275,7 @@ msgid ""
 "instead?</qt>"
 msgstr ""
 "<qt>Kopete no pot guardar la vostra contrasenya de forma segura en la vostra "
-"cartera; <br />voleu guardar-la en l'<b>insegur</b> fitxer de configuració?</"
+"cartera. <br />Voleu guardar-la en l'<b>insegur</b> fitxer de configuració?</"
 "qt>"
 
 #: libkopete/kopetepassword.cpp:294
@@ -21553,9 +21553,9 @@ msgid ""
 "start Kopete later than Skype, and Skype is configured not to show incoming "
 "messages."
 msgstr ""
-"Si açò està marcat, Kopete preguntarà Skype a l'entrada si té algun missatge "
-"que no s'haja mostrat i, si és així, els mostrarà. Açò és útil si inicieu "
-"Kopete després de Skype i Skype està configurat per a no mostrar els "
+"Si açò està marcat, Kopete preguntarà Skype en l'entrada si té algun "
+"missatge que no s'haja mostrat i, si és així, els mostrarà. Açò és útil si "
+"inicieu Kopete després de Skype i Skype està configurat per a no mostrar els "
 "missatges entrants."
 
 #. i18n: ectx: property (text), widget (QCheckBox, ScanCheck)
@@ -22425,7 +22425,7 @@ msgstr ""
 #: protocols/winpopup/ui/wpuserinfowidget.ui:103
 #, kde-format
 msgid "The operating system running on this contact's computer."
-msgstr "El sistema operatiu que s'està executant a l'ordinador del contacte."
+msgstr "El sistema operatiu que s'està executant en l'ordinador del contacte."
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel3)
 #: protocols/winpopup/ui/wpuserinfowidget.ui:106
@@ -22439,7 +22439,7 @@ msgstr "&Sistema operatiu:"
 #: protocols/winpopup/ui/wpuserinfowidget.ui:132
 #, kde-format
 msgid "The software running on this contact's computer."
-msgstr "El programari que s'està executant a l'ordinador del contacte."
+msgstr "El programari que s'està executant en l'ordinador del contacte."
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: protocols/winpopup/ui/wpuserinfowidget.ui:135
