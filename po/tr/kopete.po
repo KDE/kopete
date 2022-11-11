@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2022-10-12 01:13+0300\n"
+"PO-Revision-Date: 2022-11-10 21:23+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 22.08.1\n"
+"X-Generator: Lokalize 22.08.3\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -1235,24 +1235,23 @@ msgid ""
 "(<b>Disabled</b> if \"<b>Hide vertical scrollbar</b>\" option is selected "
 "above.)"
 msgstr ""
-"Dik kaydırma çubukları yer kapladığından, bu otomatik gizleme özelliğini "
-"ortaya çıkardık. Dik kaydırma çubuğu, farenizi bağlantı listesinin üzerine "
+"Dikey sarma çubukları yer kapladığından, bu otomatik gizleme özelliğini "
+"ortaya çıkardık. Dikey sarma çubuğu, farenizi bağlantı listesinin üzerine "
 "getirene kadar gözükmeyecektir.<br>\n"
-"(Eğer yukarıdaki \"<b>Dik kaydırma çubuğunu gizle</b>\" seçeneği seçiliyse "
+"(Eğer yukarıdaki \"<b>Dikey sarma çubuğunu gizle</b>\" seçeneği seçiliyse "
 "<b>devre dışıdır</b>.)"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_contactListAutoHideVScroll)
 #: kopete/config/appearance/appearanceconfig_advanced.ui:103
 #, kde-format
 msgid "Auto-hide vertical &scrollbar"
-msgstr "&Dikey kaydırma çubuğunu otomatik gizle"
+msgstr "&Dikey sarma çubuğunu otomatik gizle"
 
 #. i18n: ectx: property (whatsThis), widget (QSpinBox, kcfg_contactListAutoHideTimeout)
 #: kopete/config/appearance/appearanceconfig_advanced.ui:143
 #, kde-format
 msgid "The timeout value for both contact list and scrollbar auto-hiding."
-msgstr ""
-"Bağlantı listesi ve kaydırma çubuğu otomatik-gizlemeleri için süre değeri."
+msgstr "Bağlantı listesi ve sarma çubuğu otomatik gizleme için süre değeri."
 
 #. i18n: ectx: property (suffix), widget (QSpinBox, kcfg_contactListAutoHideTimeout)
 #: kopete/config/appearance/appearanceconfig_advanced.ui:146
@@ -1399,13 +1398,13 @@ msgstr "&Bağlantıları girintile"
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:262
 #, kde-format
 msgid "<b>Always</b> disables the vertical scrollbar"
-msgstr "<b>Her zaman</b> dikey kaydırma çubuğunu gizler"
+msgstr "<b>Her zaman</b> dikey sarma çubuğunu gizler"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_contactListHideVerticalScrollBar)
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:265
 #, kde-format
 msgid "&Hide vertical scrollbar"
-msgstr "&Dikey kaydırma çubuğunu gizle"
+msgstr "&Dikey sarma çubuğunu gizle"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_showIdentityIcons)
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:272
@@ -4684,7 +4683,7 @@ msgstr "Piksel sapma voltajı"
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:98
 #, kde-format
 msgid "Noise suppression (smoothing)"
-msgstr "Gürültü kaldırma (yumuşatma)"
+msgstr "Gürültü kaldırma (pürüzsüzleştirme)"
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:99
 #, kde-format
@@ -5409,7 +5408,7 @@ msgstr "Ağaç çizgilerini göstermezseniz."
 #: libkopete/kopeteappearancesettings.kcfg:150
 #, kde-format
 msgid "Hide the vertical scroll bar."
-msgstr "Dikey kaydırma çubuğunu gizle."
+msgstr "Dikey sarma çubuğunu gizle."
 
 #. i18n: ectx: label, entry, group (ContactList)
 #: libkopete/kopeteappearancesettings.kcfg:155
@@ -5482,8 +5481,7 @@ msgstr "Kişi listesini bir süre sonra otomatik olarak gizle."
 #, kde-format
 msgid "Auto-hide vertical scrollbar in contact list after a while."
 msgstr ""
-"Kişi listesindeki dikey kaydırma çubuğunu bir süre sonra otomatik olarak "
-"gizle."
+"Kişi listesindeki dikey sarma çubuğunu bir süre sonra otomatik olarak gizle."
 
 #. i18n: ectx: label, entry, group (ContactList)
 #: libkopete/kopeteappearancesettings.kcfg:228
@@ -5740,7 +5738,7 @@ msgstr "Şimdi uzaktayım, fakat geri geleceğim"
 #: libkopete/kopetebehaviorsettings.kcfg:179
 #, kde-format
 msgid "Enable smooth scrolling in contact list."
-msgstr "Kişi listesinde düz kaydırmayı etkinleştir."
+msgstr "Kişi listesinde pürüzsüz sarmayı etkinleştir."
 
 #. i18n: ectx: label, entry, group (ChatWindowSettings)
 #: libkopete/kopetebehaviorsettings.kcfg:186

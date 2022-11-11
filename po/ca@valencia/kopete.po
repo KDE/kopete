@@ -2013,7 +2013,7 @@ msgstr ""
 #: kopete/config/behavior/behaviorconfig_events.ui:110
 #, kde-format
 msgid "Button \"I&gnore\" in new message popups closes chat"
-msgstr "El botó «I&gnora» a les bambolles de missatges nous tanca el xat"
+msgstr "El botó «I&gnora» en les bambolles de missatge nou tanca el xat"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_queueOnlyHighlightedMessagesInGroupChats)
 #: kopete/config/behavior/behaviorconfig_events.ui:117
