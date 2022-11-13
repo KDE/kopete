@@ -1366,7 +1366,7 @@ msgstr "Vores"
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:172
 #, kde-format
 msgid "Rounded corners"
-msgstr "Cantonades arredonides"
+msgstr "Cantons arredonits"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_groupContactByGroup)
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:187
@@ -5414,7 +5414,7 @@ msgstr "Activa les vores de la foto del contacte."
 #: libkopete/kopeteappearancesettings.kcfg:135
 #, kde-format
 msgid "Round contact photo corners."
-msgstr "Arredonix les cantonades de les fotos dels contactes."
+msgstr "Arredonix els cantons de les fotos dels contactes."
 
 #. i18n: ectx: label, entry, group (ContactList)
 #: libkopete/kopeteappearancesettings.kcfg:140
