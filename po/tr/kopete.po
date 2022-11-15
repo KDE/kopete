@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2022-11-10 21:23+0300\n"
+"PO-Revision-Date: 2022-11-14 14:21+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -5331,7 +5331,7 @@ msgstr "<b>%1</b> kişisi sizi kişi listesine ekledi."
 #: libkopete/kopeteappearancesettings.kcfg:21
 #, kde-format
 msgid "Emitted when the contact list appearance has changed."
-msgstr "Kişi listesi görünümü değiştiğinde yayınlanır."
+msgstr "Kişi listesi görünüşü değiştiğinde yayınlanır."
 
 #. i18n: ectx: label, entry, group (Appearance)
 #: libkopete/kopeteappearancesettings.kcfg:27
