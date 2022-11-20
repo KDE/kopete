@@ -93,7 +93,6 @@ They are:
     2. QQ
     3. winpopup
     4. Bonjour
-    5. Skype
 
 Kopete will fail to build unless you either fix them or disable them
 in the protocols/CMakeLists.txt file in this repo.

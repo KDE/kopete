@@ -88,7 +88,6 @@ public:
                              << "MessengerProtocol"
                              << "WLMProtocol"
                              << "JabberProtocol"
-                             << "SkypeProtocol"
                              << "BonjourProtocol"
                              << "WPProtocol"
                              << "IRCProtocol"

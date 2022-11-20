@@ -9,7 +9,6 @@ option(WITH_jabber "Enable Kopete Jabber protocol" ON)
 option(WITH_libjingle "Enable Kopete Jabber libjingle support" ON)
 option(WITH_bonjour "Enable Kopete Bonjour protocol" ON)
 option(WITH_meanwhile "Enable Kopete meanwhile protocol" ON)
-option(WITH_skype "Enable Kopete Skype protocol" ON)
 
 # Disable jingle support because it is not working and libiris does not support it
 #if(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND WITH_JINGLE)
@@ -53,10 +52,6 @@ if(NOT WIN32)
 
 #  if(WITH_sms)
 #    add_subdirectory( sms )
-#  endif()
-  message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: WARNING: skype plugin disabled")
-#  if(NOT APPLE AND WITH_skype)
-#    add_subdirectory( skype )
 #  endif()
 endif()
 
