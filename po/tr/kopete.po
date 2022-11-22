@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2022-11-14 14:21+0300\n"
+"PO-Revision-Date: 2022-11-21 22:46+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -603,7 +603,7 @@ msgstr "Se&kmeler"
 #: plugins/otr/otrprefs.ui:23
 #, kde-format
 msgid "&Settings"
-msgstr "Aya&rlar"
+msgstr "Ayar&lar"
 
 #. i18n: ectx: ToolBar (mainToolBar)
 #: kopete/chatwindow/kopetechatwindow.rc:46
@@ -1772,7 +1772,7 @@ msgstr "Sohbet"
 #: kopete/config/behavior/behaviorconfig_chat.ui:20
 #, kde-format
 msgid "Show events in chat &window"
-msgstr "Soh&bet penceresinde olayları göster"
+msgstr "Sohbet &penceresinde olayları göster"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_highlightEnabled)
 #: kopete/config/behavior/behaviorconfig_chat.ui:33
