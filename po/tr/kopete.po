@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2022-11-24 17:04+0300\n"
+"PO-Revision-Date: 2022-12-03 19:56+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -7559,7 +7559,7 @@ msgstr "Düzenle..."
 #: plugins/highlight/highlightprefsbase.ui:191
 #, kde-format
 msgid "Case sensitive"
-msgstr "Büyük ve küçük harfe duyarlı"
+msgstr "BÜYÜK/küçük harf duyarlı"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_3)
 #: plugins/highlight/highlightprefsbase.ui:201
@@ -17027,7 +17027,7 @@ msgid ""
 "alphanumeric string (spaces allowed, not case sensitive)."
 msgstr ""
 "AIM kullanıcı hesabınız. Bu ad harf-sayı formunda olmalıdır (boşluk "
-"kullanabilirsiniz, büyük küçük harf ayırt edilmez)."
+"kullanabilirsiniz, BÜYÜK/küçük harf ayırt edilmez)."
 
 #. i18n: ectx: property (text), widget (QLabel, lblAccountId)
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:207
