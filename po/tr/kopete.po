@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2022-12-03 19:56+0300\n"
+"PO-Revision-Date: 2022-12-04 14:37+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -20583,7 +20583,7 @@ msgstr "Ses G/Ç hatası"
 #: protocols/skype/libskype/skype.cpp:512
 #, kde-format
 msgid "Problem with remote sound device"
-msgstr "Uzak ses cihazında sorun var"
+msgstr "Uzak ses aygıtında sorun var"
 
 #: protocols/skype/libskype/skype.cpp:515
 #, kde-format
