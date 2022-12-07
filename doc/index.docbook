@@ -714,7 +714,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 		</sect2>
 		<sect2 id="protocols-others">
 			<title>Other protocols</title>
-			<para>As well as the protocols named above, &kopete; has support for several other protocols.  In most cases, this is not enabled by default or an additional plugin must be installed.  Meanwhile, SMS, Skype and SILC are provided in this way.  However, the &kopete; team are not responsible for these protocols.</para>
+			<para>As well as the protocols named above, &kopete; has support for several other protocols.  In most cases, this is not enabled by default or an additional plugin must be installed.  Meanwhile, SMS and SILC are provided in this way.  However, the &kopete; team are not responsible for these protocols.</para>
 		</sect2>
 	</sect1>
 </chapter>
