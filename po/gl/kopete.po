@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-05-03 00:43+0000\n"
+"POT-Creation-Date: 2022-12-08 00:45+0000\n"
 "PO-Revision-Date: 2020-01-11 11:20+0100\n"
 "Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
@@ -38,7 +38,6 @@ msgstr "Aprendo rapidamente"
 #. i18n: ectx: property (text), widget (QTreeWidget, addresseeListView)
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListGroupSorting)
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListMetaContactSorting)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel1)
 #. i18n: ectx: property (text), widget (QTableWidget, listServers)
 #. i18n: ectx: property (text), widget (QTreeWidget, trServices)
 #: kopete/addaccountwizard/addaccountwizard.cpp:74
@@ -47,7 +46,6 @@ msgstr "Aprendo rapidamente"
 #: libkopete/ui/addressbookselectorwidget_base.ui:97
 #: protocols/jabber/ui/dlgjabberchooseserver.ui:57
 #: protocols/jabber/ui/dlgservices.ui:85
-#: protocols/skype/ui/skypecalldialogbase.ui:36
 #, kde-format
 msgid "Name"
 msgstr "Nome"
@@ -131,7 +129,6 @@ msgstr "1"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, AddAccountWizardPage2)
 #: kopete/addaccountwizard/addaccountwizardpage2.ui:13
-#: protocols/skype/skypecalldialog.cpp:168
 #, kde-format
 msgid "Finished"
 msgstr "Rematado"
@@ -428,10 +425,8 @@ msgstr "Vostede está agora marcado como %1."
 msgid "%2 is now %1."
 msgstr "%2 está agora %1."
 
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel1)
 #: kopete/chatwindow/kopetechatwindow.cpp:210
 #: kopete/chatwindow/kopetechatwindow.cpp:476
-#: protocols/skype/ui/skypecalldialogbase.ui:33
 #, kde-format
 msgid "Participants"
 msgstr "Participantes"
@@ -607,7 +602,6 @@ msgstr "&Configuración"
 #: kopete/chatwindow/kopetechatwindow.rc:46
 #: kopete/chatwindow/kopeteemailwindow.rc:29
 #: kopete/chatwindow/kopeterichtexteditpartfull.rc:25 kopete/kopeteui.rc:48
-#: protocols/skype/skypeui.rc:12
 #, kde-format
 msgid "Main Toolbar"
 msgstr "Barra de ferramentas principal"
@@ -1769,9 +1763,7 @@ msgid "Message:"
 msgstr "Mensaxe:"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, BehaviorConfig_Chat)
-#. i18n: ectx: property (text), widget (QPushButton, ChatButton)
 #: kopete/config/behavior/behaviorconfig_chat.ui:14
-#: protocols/skype/ui/skypecalldialogbase.ui:222
 #, kde-format
 msgid "Chat"
 msgstr "Conversar"
@@ -2356,7 +2348,6 @@ msgstr ""
 #: protocols/meanwhile/meanwhileprotocol.cpp:35
 #: protocols/oscar/aim/aimstatusmanager.cpp:67
 #: protocols/oscar/icq/icqstatusmanager.cpp:75 protocols/qq/qqprotocol.cpp:41
-#: protocols/skype/skypeaccount.cpp:929 protocols/skype/skypeprotocol.cpp:76
 #: protocols/sms/smsprotocol.cpp:40 protocols/winpopup/wpprotocol.cpp:59
 #, kde-format
 msgid "Offline"
@@ -2377,7 +2368,6 @@ msgstr "Sen conexión"
 #: protocols/meanwhile/meanwhileprotocol.cpp:40
 #: protocols/oscar/aim/aimstatusmanager.cpp:79
 #: protocols/oscar/icq/icqstatusmanager.cpp:87 protocols/qq/qqprotocol.cpp:37
-#: protocols/skype/skypeaccount.cpp:925 protocols/skype/skypeprotocol.cpp:77
 #: protocols/sms/smsprotocol.cpp:39 protocols/winpopup/wpaccount.cpp:170
 #: protocols/winpopup/wpprotocol.cpp:57
 #, kde-format
@@ -2398,7 +2388,6 @@ msgstr "En liña"
 #: protocols/meanwhile/meanwhileprotocol.cpp:44
 #: protocols/oscar/aim/aimstatusmanager.cpp:75
 #: protocols/oscar/icq/icqstatusmanager.cpp:83 protocols/qq/qqprotocol.cpp:39
-#: protocols/skype/skypeaccount.cpp:933 protocols/skype/skypeprotocol.cpp:79
 #: protocols/winpopup/wpaccount.cpp:176 protocols/winpopup/wpprotocol.cpp:58
 #, kde-format
 msgid "Away"
@@ -2429,7 +2418,6 @@ msgstr "Ocupado"
 #: protocols/oscar/aim/aimstatusmanager.cpp:85
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:812
 #: protocols/oscar/icq/icqstatusmanager.cpp:92
-#: protocols/skype/skypeaccount.cpp:945 protocols/skype/skypeprotocol.cpp:82
 #, kde-format
 msgid "Invisible"
 msgstr "Invisíbel"
@@ -3264,19 +3252,15 @@ msgid "Home phone:"
 msgstr "Teléfono da casa:"
 
 #. i18n: ectx: property (text), widget (QLabel, mLblWorkPhone)
-#. i18n: ectx: property (text), widget (QLabel, textLabel6)
 #: kopete/contactlist/kopeteaddrbookexportui.ui:66
-#: protocols/skype/ui/skypedetailsbase.ui:71
 #, kde-format
 msgid "Work phone:"
 msgstr "Teléfono do traballo:"
 
 #. i18n: ectx: property (text), widget (QLabel, mLblMobilePhone)
 #. i18n: ectx: property (text), widget (QLabel, mobileLabel)
-#. i18n: ectx: property (text), widget (QLabel, textLabel5)
 #: kopete/contactlist/kopeteaddrbookexportui.ui:76
 #: kopete/identity/identitydetailed.ui:45
-#: protocols/skype/ui/skypedetailsbase.ui:58
 #, kde-format
 msgid "Mobile phone:"
 msgstr "Teléfono móbil:"
@@ -3796,9 +3780,7 @@ msgid "E-mail: "
 msgstr "Correo electrónico: "
 
 #. i18n: ectx: property (text), widget (QLabel, phoneLabel)
-#. i18n: ectx: property (text), widget (QLabel, textLabel4)
 #: kopete/identity/identitydetailed.ui:32
-#: protocols/skype/ui/skypedetailsbase.ui:91
 #, kde-format
 msgid "Private phone:"
 msgstr "Teléfono persoal:"
@@ -3891,7 +3873,7 @@ msgstr "&Ficheiro"
 #: plugins/cryptography/cryptographyui.rc:5 plugins/history/historyui.rc:5
 #: plugins/history2/history2ui.rc:5 plugins/otr/otrui.rc:5
 #: plugins/statistics/statisticsui.rc:5 plugins/translator/translatorui.rc:5
-#: protocols/groupwise/ui/gwcustomstatus.ui:44 protocols/skype/skypeui.rc:5
+#: protocols/groupwise/ui/gwcustomstatus.ui:44
 #, kde-format
 msgid "&Edit"
 msgstr "&Editar"
@@ -5233,7 +5215,7 @@ msgstr ""
 #: libkopete/kabcpersistence.cpp:374 protocols/gadu/gadusession.cpp:213
 #: protocols/gadu/gadusession.cpp:225 protocols/gadu/gadusession.cpp:236
 #: protocols/gadu/gadusession.cpp:270 protocols/gadu/gadusession.cpp:283
-#: protocols/gadu/gadusession.cpp:302 protocols/skype/skypeaddcontact.cpp:68
+#: protocols/gadu/gadusession.cpp:302
 #, kde-format
 msgid "Not Connected"
 msgstr "Non conectado"
@@ -5312,7 +5294,7 @@ msgid "%2 <%1>"
 msgstr "%2 <%1>"
 
 #: libkopete/kopeteaccount.cpp:471 protocols/gadu/gaduaccount.cpp:384
-#: protocols/skype/skypeaccount.cpp:967 protocols/winpopup/wpaccount.cpp:185
+#: protocols/winpopup/wpaccount.cpp:185
 #, kde-format
 msgid "Properties"
 msgstr "Propiedades"
@@ -6245,7 +6227,6 @@ msgstr ""
 
 #: libkopete/kopeteonlinestatus.cpp:167 protocols/gadu/gaduprotocol.cpp:96
 #: protocols/groupwise/gwprotocol.cpp:69 protocols/jabber/jabberprotocol.cpp:74
-#: protocols/skype/skypecalldialog.cpp:215 protocols/skype/skypeprotocol.cpp:83
 #: protocols/sms/smsprotocol.cpp:41
 #, kde-format
 msgid "Connecting"
@@ -6260,7 +6241,6 @@ msgstr "Conectando"
 #: protocols/oscar/icq/icqprotocol.cpp:455
 #: protocols/oscar/icq/icqprotocol.cpp:534
 #: protocols/oscar/icq/icqstatusmanager.cpp:37
-#: protocols/skype/libskype/skype.cpp:405
 #, kde-format
 msgid "Unknown"
 msgstr "Descoñecido"
@@ -7235,7 +7215,6 @@ msgstr "&Notas"
 #: plugins/history/historychatui.rc:5 plugins/history2/history2chatui.rc:5
 #: plugins/latex/latexchatui.rc:5 plugins/nowlistening/nowlisteningchatui.rc:5
 #: plugins/otr/otrchatui.rc:4 plugins/translator/translatorchatui.rc:5
-#: protocols/skype/skypechatui.rc:5
 #, kde-format
 msgid "&Tools"
 msgstr "Ferramen&tas"
@@ -10674,7 +10653,6 @@ msgstr "Configuración da conta — Bonjour"
 msgid "B&asic Setup"
 msgstr "Configuración b&ásica"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox1)
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #. i18n: ectx: property (title), widget (QGroupBox, m_accountInfo)
 #. i18n: ectx: property (title), widget (QGroupBox)
@@ -10686,9 +10664,7 @@ msgstr "Configuración b&ásica"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:45
 #: protocols/meanwhile/ui/meanwhileeditaccount.ui:41
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:163
-#: protocols/qq/ui/qqeditaccountui.ui:63
-#: protocols/skype/ui/skypeeditaccountbase.ui:27
-#: protocols/sms/ui/smsactprefs.ui:71
+#: protocols/qq/ui/qqeditaccountui.ui:63 protocols/sms/ui/smsactprefs.ui:71
 #: protocols/winpopup/ui/wpeditaccountbase.ui:46
 #, kde-format
 msgid "Account Information"
@@ -10698,7 +10674,6 @@ msgstr "Información da conta"
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: protocols/bonjour/bonjouraccountpreferences.ui:77
 #: protocols/oscar/icq/ui/icqworkinfowidget.ui:34
-#: protocols/skype/ui/skypecalldialogbase.ui:39
 #, kde-format
 msgid "Name:"
 msgstr "Nome:"
@@ -11203,8 +11178,7 @@ msgstr ""
 msgid "Edit Contact's Properties"
 msgstr "Editar as propiedades do contacto"
 
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/gadu/gaduprotocol.cpp:56 protocols/skype/ui/skypedetailsbase.ui:50
+#: protocols/gadu/gaduprotocol.cpp:56
 #, kde-format
 msgid "Blocked"
 msgstr "Bloqueado"
@@ -12041,7 +12015,7 @@ msgstr "Localidade:"
 #. i18n: ectx: property (text), item, widget (QComboBox, uiGender)
 #: protocols/gadu/ui/gadueditaccountui.ui:645
 #: protocols/gadu/ui/gadusearch.ui:269 protocols/oscar/icq/icqprotocol.cpp:205
-#: protocols/qq/ui/qqvcard.ui:223 protocols/skype/skypecontact.cpp:236
+#: protocols/qq/ui/qqvcard.ui:223
 #, kde-format
 msgid "Female"
 msgstr "Muller"
@@ -12051,7 +12025,7 @@ msgstr "Muller"
 #. i18n: ectx: property (text), item, widget (QComboBox, uiGender)
 #: protocols/gadu/ui/gadueditaccountui.ui:650
 #: protocols/gadu/ui/gadusearch.ui:264 protocols/oscar/icq/icqprotocol.cpp:206
-#: protocols/qq/ui/qqvcard.ui:218 protocols/skype/skypecontact.cpp:234
+#: protocols/qq/ui/qqvcard.ui:218
 #, kde-format
 msgid "Male"
 msgstr "Varón"
@@ -12580,8 +12554,7 @@ msgstr "%1|Bloqueado"
 
 #: protocols/groupwise/gwmessagemanager.cpp:77
 #: protocols/jabber/jabbergroupchatmanager.cpp:42
-#: protocols/qq/qqchatsession.cpp:69 protocols/skype/skypechatsession.cpp:125
-#: protocols/skype/skypechatsession.cpp:163
+#: protocols/qq/qqchatsession.cpp:69
 #, kde-format
 msgid "&Invite"
 msgstr "Conv&idar"
@@ -12748,7 +12721,6 @@ msgid "Invalid password"
 msgstr "O contrasinal é incorrecto"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:40
-#: protocols/skype/libskype/skype.cpp:407
 #, kde-format
 msgid "User not found"
 msgstr "Non se atopou ese usuario"
@@ -13386,10 +13358,8 @@ msgstr "USER_ID"
 msgid "Change the display name used for this contact"
 msgstr "Cambiar o nome para mostrar que se usa para este contacto"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
 #. i18n: ectx: property (text), widget (QLabel, textLabel14)
 #: protocols/groupwise/ui/gwcontactprops.ui:78
-#: protocols/skype/ui/skypecalldialogbase.ui:122
 #, kde-format
 msgid "Status:"
 msgstr "Estado:"
@@ -14261,14 +14231,12 @@ msgctxt "a contact's online status in parenthesis."
 msgid " (%1)"
 msgstr " (%1)"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox3_2)
 #: protocols/jabber/jabbercontact.cpp:144
-#: protocols/skype/ui/skypeeditaccountbase.ui:319
 #, kde-format
 msgid "Authorization"
 msgstr "Autorización"
 
-#: protocols/jabber/jabbercontact.cpp:150 protocols/skype/skypecontact.cpp:106
+#: protocols/jabber/jabbercontact.cpp:150
 #, kde-format
 msgid "(Re)send Authorization To"
 msgstr "Enviarlle autorización"
@@ -14278,12 +14246,12 @@ msgstr "Enviarlle autorización"
 msgid "(Re)request Authorization From"
 msgstr "Solicitarlle autorización"
 
-#: protocols/jabber/jabbercontact.cpp:164 protocols/skype/skypecontact.cpp:111
+#: protocols/jabber/jabbercontact.cpp:164
 #, kde-format
 msgid "Remove Authorization From"
 msgstr "Retirarlle a autorización"
 
-#: protocols/jabber/jabbercontact.cpp:176 protocols/skype/skypecontact.cpp:101
+#: protocols/jabber/jabbercontact.cpp:176
 #, kde-format
 msgid "Call contact"
 msgstr "Chamar o contacto"
@@ -14301,7 +14269,6 @@ msgstr "Ceibe para conversar"
 #: protocols/jabber/jabbercontact.cpp:198
 #: protocols/oscar/aim/aimstatusmanager.cpp:69
 #: protocols/oscar/icq/icqstatusmanager.cpp:77
-#: protocols/skype/skypeaccount.cpp:941 protocols/skype/skypeprotocol.cpp:81
 #, kde-format
 msgid "Do Not Disturb"
 msgstr "Non amolar"
@@ -14701,10 +14668,8 @@ msgstr "Chamar con:"
 msgid "Call Status:"
 msgstr "Estado da chamada:"
 
-#. i18n: ectx: property (text), widget (QPushButton, AcceptButton)
 #. i18n: ectx: property (text), widget (QPushButton, acceptButton)
 #: protocols/jabber/libjinglecalldialog.ui:42
-#: protocols/skype/ui/skypecalldialogbase.ui:180
 #, kde-format
 msgid "Accept"
 msgstr "Aceptar"
@@ -15324,7 +15289,6 @@ msgstr "Configuración da conta — Jabber"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:39
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:41
 #: protocols/qq/ui/qqeditaccountui.ui:42
-#: protocols/skype/ui/skypeeditaccountbase.ui:21
 #, kde-format
 msgid "&Basic Setup"
 msgstr "Configuración b&ásica"
@@ -15977,9 +15941,7 @@ msgstr ""
 msgid "Register"
 msgstr "Rexistrar"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox1)
 #: protocols/jabber/ui/dlgsearch.cpp:54 protocols/jabber/ui/dlgsearch.cpp:55
-#: protocols/skype/ui/skypeaddcontactbase.ui:29
 #, kde-format
 msgid "Search"
 msgstr "Buscar"
@@ -16061,10 +16023,8 @@ msgstr "&Solicitar ao servidor"
 msgid "Node"
 msgstr "Nó"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
 #. i18n: ectx: property (text), widget (QLabel, lblName)
 #: protocols/jabber/ui/dlgvcard.ui:45 protocols/qq/ui/qqvcard.ui:164
-#: protocols/skype/ui/skypedetailsbase.ui:158
 #, kde-format
 msgid "Full name:"
 msgstr "Nome completo:"
@@ -16075,12 +16035,11 @@ msgstr "Nome completo:"
 msgid "Jabber ID:"
 msgstr "Identificador de Jabber:"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
 #. i18n: ectx: property (text), widget (QLabel, textLabel8)
 #. i18n: ectx: property (text), widget (QLabel, lblHomepage)
 #: protocols/jabber/ui/dlgvcard.ui:76
 #: protocols/oscar/icq/ui/icqworkinfowidget.ui:150
-#: protocols/qq/ui/qqvcard.ui:621 protocols/skype/ui/skypedetailsbase.ui:171
+#: protocols/qq/ui/qqvcard.ui:621
 #, kde-format
 msgid "Homepage:"
 msgstr "Páxina web:"
@@ -16945,16 +16904,15 @@ msgstr "Ocupado"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:73
 #: protocols/oscar/icq/icqstatusmanager.cpp:81
-#: protocols/skype/skypeaccount.cpp:937 protocols/skype/skypeprotocol.cpp:80
 #, kde-format
-msgid "Not Available"
-msgstr "Non dispoñíbel"
+msgid "Not A&vailable"
+msgstr "Non &dispoñíbel"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:73
 #: protocols/oscar/icq/icqstatusmanager.cpp:81
 #, kde-format
-msgid "Not A&vailable"
-msgstr "Non &dispoñíbel"
+msgid "Not Available"
+msgstr "Non dispoñíbel"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:77
 #: protocols/oscar/icq/icqstatusmanager.cpp:85
@@ -20582,1082 +20540,6 @@ msgstr "Cámara de %1"
 msgid "No webcam image received"
 msgstr "Non se reciben imaxes da cámara."
 
-#: protocols/skype/libskype/skype.cpp:256
-#, kde-format
-msgid "This version of Skype is too old, consider upgrading"
-msgstr "Esta versión de Skype é demasiado antiga. Considere anovala."
-
-#: protocols/skype/libskype/skype.cpp:290 protocols/skype/skypeaccount.cpp:1093
-#: protocols/skype/skypeaccount.cpp:1107 protocols/skype/skypeaccount.cpp:1129
-#: protocols/skype/skypeaccount.cpp:1134 protocols/skype/skypeaccount.cpp:1142
-#: protocols/skype/skypeaccount.cpp:1154 protocols/skype/skypeaccount.cpp:1159
-#: protocols/skype/skypeeditaccount.cpp:210
-#: protocols/skype/skypeeditaccount.cpp:225
-#: protocols/skype/skypeeditaccount.cpp:242
-#: protocols/skype/skypeeditaccount.cpp:250
-#, kde-format
-msgid "Skype protocol"
-msgstr "Protocolo Skype"
-
-#: protocols/skype/libskype/skype.cpp:409
-#, kde-format
-msgid "Does not have multi-user chat capability"
-msgstr "Non dispón de conversas entre varios usuarios"
-
-#: protocols/skype/libskype/skype.cpp:411
-#, kde-format
-msgid "Chat denied"
-msgstr "Conversa denegada"
-
-#: protocols/skype/libskype/skype.cpp:488
-#, kde-format
-msgid "Unknown error"
-msgstr "Erro descoñecido."
-
-#: protocols/skype/libskype/skype.cpp:491
-#, kde-format
-msgid "Misc error"
-msgstr "Erro diverso"
-
-#: protocols/skype/libskype/skype.cpp:494
-#, kde-format
-msgid "User or phone number does not exist"
-msgstr "Non existen o número ou o usuario"
-
-#: protocols/skype/libskype/skype.cpp:497
-#, kde-format
-msgid "User is offline"
-msgstr "Usuario desconectado"
-
-#: protocols/skype/libskype/skype.cpp:500
-#, kde-format
-msgid "No proxy found"
-msgstr "Non se atopou o proxy"
-
-#: protocols/skype/libskype/skype.cpp:503
-#, kde-format
-msgid "Session terminated"
-msgstr "A sesión terminou"
-
-#: protocols/skype/libskype/skype.cpp:506
-#, kde-format
-msgid "No common codec found"
-msgstr "Non se atopa codec común"
-
-#: protocols/skype/libskype/skype.cpp:509
-#, kde-format
-msgid "Sound I/O error"
-msgstr "Erro de E/S do son"
-
-#: protocols/skype/libskype/skype.cpp:512
-#, kde-format
-msgid "Problem with remote sound device"
-msgstr "Problemas co dispositivo remoto de son"
-
-#: protocols/skype/libskype/skype.cpp:515
-#, kde-format
-msgid "Call blocked by recipient"
-msgstr "Chamada bloqueada polo receptor"
-
-#: protocols/skype/libskype/skype.cpp:518
-#, kde-format
-msgid "Recipient not a friend"
-msgstr "Quen se chama non é un contacto"
-
-#: protocols/skype/libskype/skype.cpp:521
-#, kde-format
-msgid "User not authorized by recipient"
-msgstr "Usuario non autorizado polo receptor"
-
-#: protocols/skype/libskype/skype.cpp:524
-#, kde-format
-msgid "Sound recording error"
-msgstr "Produciuse un erro durante a gravación de son."
-
-#: protocols/skype/libskype/skype.cpp:820
-#, kde-format
-msgid "This version of Skype does not support adding users to chat."
-msgstr "Esta versión de Skype non permite engadir usuarios á conversa."
-
-#: protocols/skype/libskype/skype.cpp:820
-#, kde-format
-msgid "Skype Protocol"
-msgstr "Protocolo Skype"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:92
-#, kde-format
-msgid "Could not ping Skype"
-msgstr "Non se puido contactar con Skype"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:112
-#, kde-format
-msgid "Skype did not accept this application"
-msgstr "Skype non aceptou esta aplicación"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:123
-#, kde-format
-msgid "Skype API syntax error"
-msgstr "Erro de sintaxe na API de Skype"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:132
-#, kde-format
-msgid "Skype API not ready yet, wait a bit longer"
-msgstr "A API de Skype aínda non está lista, espere un pouco máis"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:178
-#, kde-format
-msgid "Cannot register Skype communication for Kopete on D-Bus"
-msgstr "Non se pode rexistrar a comunicación de Skype para Kopete en DBus"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:209
-#, kde-format
-msgid ""
-"Could not launch Skype.\n"
-"You need to install the original dynamic linked Skype version 2.0 binary "
-"from http://www.skype.com"
-msgstr ""
-"Non se puido iniciar o Skype.\n"
-"Ten que instalar o binario orixinal ligado dinamicamente da versión 2.0 do "
-"Skype desde http://.www.skype.com"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:216
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:324
-#, kde-format
-msgid ""
-"Could not find Skype.\n"
-"You need to install the original dynamic linked Skype version 2.0 binary "
-"from http://www.skype.com"
-msgstr ""
-"Non se puido atopar o Skype.\n"
-"Ten que instalar o binario orixinal ligado dinamicamente da versión 2.0 do "
-"Skype desde http://www.skype.com"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:263
-#, kde-format
-msgid ""
-"Could not ping Skype.\n"
-"Maybe Skype not running.\n"
-"Error while sending a message to Skype (%1)."
-msgstr ""
-"Non se puido contactar con Skype.\n"
-"Poida que non se estea a executar.\n"
-"Produciuse un erro ao enviar unha mensaxe a Skype (%1)."
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:265
-#, kde-format
-msgid "Error while sending a message to Skype (%1)."
-msgstr "Erro ao enviar a mensaxe a Skype (%1)."
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:273
-#, kde-format
-msgid ""
-"Could not ping Skype.\n"
-"You are logged out from Skype, please log in."
-msgstr ""
-"Non se puido contactar con Skype.\n"
-"Ten que identificarse no servizo."
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:326
-#, kde-format
-msgid "Please login to Skype first"
-msgstr "Primeiro acceda a Skype"
-
-#: protocols/skype/skypeaccount.cpp:921
-#, kde-format
-msgid "Skype (%1)"
-msgstr "Skype (%1)"
-
-#: protocols/skype/skypeaccount.cpp:949 protocols/skype/skypeprotocol.cpp:78
-#, kde-format
-msgid "Skype Me"
-msgstr "Fale comigo"
-
-#: protocols/skype/skypeaccount.cpp:955
-#, kde-format
-msgid "Make Test Call"
-msgstr "Facer unha chamada de proba"
-
-#: protocols/skype/skypeaccount.cpp:1093
-#, kde-format
-msgid "Cannot open info about user %1"
-msgstr "Non se pode abrir a información sobre o usuario %1"
-
-#: protocols/skype/skypeaccount.cpp:1107 protocols/skype/skypeaccount.cpp:1129
-#: protocols/skype/skypeaccount.cpp:1134 protocols/skype/skypeaccount.cpp:1159
-#, kde-format
-msgid "Unknown action from SkypeActionHandler"
-msgstr "A acción é descoñecida para SkypeActionHandler"
-
-#: protocols/skype/skypeaccount.cpp:1142
-#, kde-format
-msgid "Add contact from SkypeActionHandler is not supported yet"
-msgstr "Aínda non se permite engadir contactos de SkypeActionHandler"
-
-#: protocols/skype/skypeaccount.cpp:1154
-#, kde-format
-msgid "Send voicemail from SkypeActionHandler is not supported yet"
-msgstr "Aínda non se permite o correo con voz de SkypeActionHandler"
-
-#: protocols/skype/skypeaddcontact.cpp:68
-#, kde-format
-msgid "You must connect to Skype first."
-msgstr "Primeiro ten que se conectar en Skype."
-
-#: protocols/skype/skypeaddcontact.cpp:73
-#, kde-format
-msgid "You must write the contact's name."
-msgstr "Debe escribir o nome do contacto."
-
-#: protocols/skype/skypeaddcontact.cpp:73
-#: protocols/skype/skypeaddcontact.cpp:78
-#: protocols/skype/skypeaddcontact.cpp:83
-#: protocols/skype/skypeaddcontact.cpp:88
-#: protocols/skype/skypeeditaccount.cpp:123
-#, kde-format
-msgid "Wrong Information"
-msgstr "A información é errónea"
-
-#: protocols/skype/skypeaddcontact.cpp:78
-#, kde-format
-msgid ""
-"Contact echo123 is not needed. You can make test call in Skype protocol "
-"actions."
-msgstr ""
-"Non é necesario contactar 123. Pode facer unha chamada de proba nas acción "
-"do protocolo Skype."
-
-#: protocols/skype/skypeaddcontact.cpp:83
-#, kde-format
-msgid "This contact already exists in this account."
-msgstr "Xa existe un contacto con esa conta."
-
-#: protocols/skype/skypeaddcontact.cpp:88
-#, kde-format
-msgid "You cannot add yourself as a contact."
-msgstr "Non se pode engadir a si mesmo como contacto."
-
-#: protocols/skype/skypecalldialog.cpp:106
-#, kde-format
-msgid "Call with %1"
-msgstr "Chamar con %1"
-
-#: protocols/skype/skypecalldialog.cpp:138
-#, kde-format
-msgid "Canceled"
-msgstr "Cancelada"
-
-#: protocols/skype/skypecalldialog.cpp:145
-#, kde-format
-msgid "Other person is busy"
-msgstr "A outra persoa está ocupada"
-
-#: protocols/skype/skypecalldialog.cpp:152
-#, kde-format
-msgid "Refused"
-msgstr "Rexeitada"
-
-#: protocols/skype/skypecalldialog.cpp:159
-#, kde-format
-msgid "Call Back"
-msgstr "Devolver a chamada"
-
-#: protocols/skype/skypecalldialog.cpp:160
-#, kde-format
-msgid "Missed"
-msgstr "Perdida"
-
-#: protocols/skype/skypecalldialog.cpp:173
-#, kde-format
-msgid "Resume"
-msgstr "Continuar"
-
-#: protocols/skype/skypecalldialog.cpp:176
-#, kde-format
-msgid "On hold (local)"
-msgstr "Á espera (local)"
-
-#: protocols/skype/skypecalldialog.cpp:182
-#, kde-format
-msgid "On hold (remote)"
-msgstr "Á espera (remota)"
-
-#: protocols/skype/skypecalldialog.cpp:188
-#, kde-format
-msgid "On hold"
-msgstr "Á espera"
-
-#: protocols/skype/skypecalldialog.cpp:192
-#, kde-format
-msgid "Hold"
-msgstr "Á espera"
-
-#: protocols/skype/skypecalldialog.cpp:195
-#, kde-format
-msgid "In progress"
-msgstr "En progreso"
-
-#: protocols/skype/skypecalldialog.cpp:201
-#, kde-format
-msgid "Ringing"
-msgstr "Está a chamar"
-
-#: protocols/skype/skypecalldialog.cpp:209
-#, kde-format
-msgid "Failed"
-msgstr "Fallou"
-
-#: protocols/skype/skypecalldialog.cpp:221
-#, kde-format
-msgctxt ""
-"Early media means the media played before the call is established. For "
-"example it can be a calling tone or a waiting message such as all operators "
-"are busy."
-msgid "Early media (waiting for operator...)"
-msgstr "Datos anticipados (a agardar polo operador…)"
-
-#: protocols/skype/skypecalldialog.cpp:276
-#, kde-format
-msgid "Failed (%1)"
-msgstr "Fallou (%1)"
-
-#: protocols/skype/skypecalldialog.cpp:296
-#, kde-format
-msgid ""
-"%1 active\n"
-"%2 total"
-msgstr ""
-"%1 activo\n"
-"%2 total"
-
-#: protocols/skype/skypecalldialog.cpp:302
-#, kde-format
-msgid "Skypeout inactive"
-msgstr "Skypeout está inactivo"
-
-#: protocols/skype/skypechatsession.cpp:114
-#: protocols/skype/skypechatsession.cpp:155
-#: protocols/skype/skypeprotocol.cpp:105
-#, kde-format
-msgid "Call"
-msgstr "Chamar"
-
-#: protocols/skype/skypeconference.cpp:44
-#, kde-format
-msgid "Conference Call"
-msgstr "Conferencia"
-
-#: protocols/skype/skypecontact.cpp:116
-#, kde-format
-msgid "Block contact"
-msgstr "Bloquear este contacto"
-
-#: protocols/skype/skypedetails.cpp:70
-#, kde-format
-msgid "Details for User %1"
-msgstr "Información do usuario %1"
-
-#: protocols/skype/skypeeditaccount.cpp:123
-#, kde-format
-msgid "You can have only one skype account"
-msgstr "Só pode ter unha conta de skype"
-
-#: protocols/skype/skypeeditaccount.cpp:207
-#, kde-format
-msgid "Configure Skype client"
-msgstr "Configurar o cliente de Skype"
-
-#: protocols/skype/skypeeditaccount.cpp:207
-#, kde-format
-msgid "Please enter your skype user name"
-msgstr "Insira o nome de usuario de Skype"
-
-#: protocols/skype/skypeeditaccount.cpp:210
-#, kde-format
-msgid "You must enter your skype user name"
-msgstr "Debe inserir o nome de usuario de Skype"
-
-#: protocols/skype/skypeeditaccount.cpp:225
-#: protocols/skype/skypeeditaccount.cpp:242
-#, kde-format
-msgid "Cannot create/open file %1 for configuring the Skype client."
-msgstr ""
-"Non se pode crear ou abrir o ficheiro %1 para configurar o cliente de Skype."
-
-#: protocols/skype/skypeeditaccount.cpp:250
-#, kde-format
-msgid ""
-"Process has completed.\n"
-"Skype is now configured for Kopete.\n"
-"You must restart the Skype client for changes to take effect."
-msgstr ""
-"Completouse o proceso\n"
-"Skype está configurado agora para Kopete\n"
-"Ten que reiniciar o cliente de Skype para que os cambios xurdan efecto."
-
-#: protocols/skype/skypeprotocol.cpp:84
-#, kde-format
-msgid "Not in Skype list"
-msgstr "Non está na súa lista de Skype."
-
-#: protocols/skype/skypeprotocol.cpp:85
-#, kde-format
-msgid "Not authorized"
-msgstr "Non autorizado"
-
-#: protocols/skype/skypeprotocol.cpp:86
-#, kde-format
-msgid "SkypeOut contact"
-msgstr "Contacto de SkypeOut"
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeAddContactBase)
-#: protocols/skype/ui/skypeaddcontactbase.ui:6
-#, kde-format
-msgid "Add Skype Contact"
-msgstr "Engadir un contacto de Skype"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypeaddcontactbase.ui:14
-#, kde-format
-msgid "Skype name:"
-msgstr "Nome en Skype:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypeaddcontactbase.ui:35
-#, kde-format
-msgid "Sorry, but the search function is not yet implemented."
-msgstr "A función de busca aínda non está dispoñíbel."
-
-#. i18n: ectx: property (text), widget (QPushButton, SearchButton)
-#: protocols/skype/ui/skypeaddcontactbase.ui:69
-#, kde-format
-msgid "Se&arch"
-msgstr "Busc&ar"
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeCallDialogBase)
-#: protocols/skype/ui/skypecalldialogbase.ui:6
-#, kde-format
-msgid "Skype Call"
-msgstr "Chamada Skype"
-
-#. i18n: ectx: property (toolTip), widget (QLabel, NameLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:14
-#, kde-format
-msgid "Name(s) of Participant(s)"
-msgstr "Nome dos participantes"
-
-#. i18n: ectx: property (whatsThis), widget (QLabel, NameLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:17
-#, kde-format
-msgid ""
-"Name of the other participant in the call (or a list of names if it is a "
-"conference call.)"
-msgstr ""
-"Nome doutros participantes na chamada (unha lista de nomes se é unha "
-"conferencia)"
-
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel2)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel2)
-#. i18n: ectx: property (toolTip), widget (QLabel, TimeLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:52
-#: protocols/skype/ui/skypecalldialogbase.ui:55
-#: protocols/skype/ui/skypecalldialogbase.ui:90
-#, kde-format
-msgid "Total time elapsed."
-msgstr "Tempo total transcorrido."
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypecalldialogbase.ui:58
-#, kde-format
-msgid "Time:"
-msgstr "Hora:"
-
-#. i18n: ectx: property (toolTip), widget (QLabel, CreditLabel)
-#. i18n: ectx: property (whatsThis), widget (QLabel, CreditLabel)
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel3)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypecalldialogbase.ui:71
-#: protocols/skype/ui/skypecalldialogbase.ui:74
-#: protocols/skype/ui/skypecalldialogbase.ui:135
-#: protocols/skype/ui/skypecalldialogbase.ui:138
-#, kde-format
-msgid "SkypeOut credits left"
-msgstr "Crédito restante de SkyOut"
-
-#. i18n: ectx: property (whatsThis), widget (QLabel, TimeLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:93
-#, kde-format
-msgid ""
-"Total length of the call/<br />(i.e. both time speaking and time on hold.)"
-msgstr ""
-"Duración total da chamada/<br />(é dicir, tanto o tempo falado como en "
-"espera.)"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypecalldialogbase.ui:141
-#, kde-format
-msgid "SkypeOut credits:"
-msgstr "Créditos de SkypeOut:"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, AcceptButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:174
-#, kde-format
-msgid "Accept call"
-msgstr "Aceptar a chamada"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, AcceptButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:177
-#, kde-format
-msgid "Accept incoming call"
-msgstr "Aceptar todas as chamadas entrantes"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:190
-#, kde-format
-msgid "Finish the call"
-msgstr "Finalizar a chamada"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:193
-#, kde-format
-msgid "Terminate the call"
-msgstr "Terminar a chamada"
-
-#. i18n: ectx: property (text), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:196
-#, kde-format
-msgid "H&ang up"
-msgstr "Colg&ar"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:203
-#, kde-format
-msgid "Hold the call"
-msgstr "Pór a chamada en espera"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:206
-#, kde-format
-msgid "Interrupt the call for a moment and resume (or hang up) later."
-msgstr "Interromper a chamada polo momento e continuar despois."
-
-#. i18n: ectx: property (text), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:209
-#, kde-format
-msgid "H&old"
-msgstr "P&ór en espera"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, ChatButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:216
-#, kde-format
-msgid "Open chat to the person."
-msgstr "Abrirlle a conversa á persoa."
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, ChatButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:219
-#, kde-format
-msgid "Open chat to the person with whom you are talking."
-msgstr "Abrir unha conversa coa persoa coa que está a falar."
-
-#. i18n: ectx: property (text), widget (QPushButton, VideoButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:232
-#, kde-format
-msgid "Start/Stop Video"
-msgstr "Comezar/Para vídeo"
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeDetailsBase)
-#: protocols/skype/ui/skypedetailsbase.ui:6
-#, kde-format
-msgid "User's Details"
-msgstr "Información do usuario"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypedetailsbase.ui:12
-#, kde-format
-msgid "Skype ID:"
-msgstr "Identificador de Skype:"
-
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/skype/ui/skypedetailsbase.ui:40
-#, kde-format
-msgid "Authorized"
-msgstr "Autorizado"
-
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/skype/ui/skypedetailsbase.ui:45
-#, kde-format
-msgid "Not Authorized"
-msgstr "Non autorizado"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel7)
-#: protocols/skype/ui/skypedetailsbase.ui:104
-#, kde-format
-msgid "Is authorized:"
-msgstr "Está autorizado:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypedetailsbase.ui:131
-#, kde-format
-msgid "Display Name:"
-msgstr "Nome para mostrar:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_3)
-#: protocols/skype/ui/skypedetailsbase.ui:184
-#, kde-format
-msgid "Sex:"
-msgstr "Sexo:"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, excludeCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:35
-#, kde-format
-msgid "Check this if you do not want to connect with other protocols"
-msgstr "Marque isto se non se quere conectar con outros protocolos"
-
-#. i18n: ectx: property (text), widget (QCheckBox, excludeCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:38
-#, kde-format
-msgid "E&xclude from connection"
-msgstr "Ex&cluír da conexión"
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:66
-#, kde-format
-msgid "Important Note"
-msgstr "Nota importante"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:72
-#, kde-format
-msgid ""
-"The Skype plugin serves as a bridge to an externally running copy of Skype. "
-"This has some consequences on how it functions: you need an instance of "
-"Skype to be running, and only one Skype account can be used.<br /><br />Note "
-"that you need to install the original dynamic linked Skype version 2.0 or "
-"2.1 from <a href=\"http://www.skype.com\">http://www.skype.com</a><br /><br /"
-">This plugin will only work if the language in the Skype client set to "
-"English. Kopete shows notifications (incoming call, message, ...), so you "
-"can turn off the notifications in Skype."
-msgstr ""
-"O complemento de Skype serve de ponte a unha copia externa de Skype. É por "
-"iso que para que funcione necesita ter Skype aberto e só se pode empregar "
-"unha conta de Skype.<br /><br />Lembre que ten que instalar a versión 2.0 ou "
-"2.1 dinamicamente ligadas de Skype, que poderá obter de <a href=\"http://www."
-"skype.com\">http://www.skype.com</a>.<br /><br />Este complemento só "
-"funciona se o cliente de Skype está en inglés. Kopete mostra as "
-"notificacións (chamada entrante, mensaxe, etc.), polo que pode desactivar as "
-"notificacións en Skype."
-
-#. i18n: ectx: property (text), widget (QPushButton, configureSkypeClient)
-#: protocols/skype/ui/skypeeditaccountbase.ui:88
-#, kde-format
-msgid "Disable Skype notifications and set up English language in Skype client"
-msgstr ""
-"Desactivar as notificacións de Skype e poñer o cliente de Skype en inglés"
-
-#. i18n: ectx: attribute (title), widget (QWidget, launchTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:112
-#, kde-format
-msgid "Lau&nch"
-msgstr "&Iniciar"
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, LaunchGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:118
-#, kde-format
-msgid "You can set whether and when should kopete launch Skype."
-msgstr "Pode estabelecer cando e como Kopete inicia Skype."
-
-#. i18n: ectx: property (title), widget (QGroupBox, LaunchGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:121
-#, kde-format
-msgid "Launch Skype"
-msgstr "Iniciar Skype"
-
-#. i18n: ectx: property (text), widget (QRadioButton, LaunchNeededRadio)
-#: protocols/skype/ui/skypeeditaccountbase.ui:127
-#, kde-format
-msgid "When &not running"
-msgstr "Cando &non se estea a executar"
-
-#. i18n: ectx: property (text), widget (QRadioButton, LaunchNeverRadio)
-#: protocols/skype/ui/skypeeditaccountbase.ui:137
-#, kde-format
-msgid "N&ever"
-msgstr "N&unca"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypeeditaccountbase.ui:149
-#, kde-format
-msgid "Command to launch Skype:"
-msgstr "Orde para iniciar Skype:"
-
-#. i18n: ectx: property (text), widget (QLineEdit, CommandEdit)
-#: protocols/skype/ui/skypeeditaccountbase.ui:159
-#, kde-format
-msgid "skype"
-msgstr "skype"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:170
-#, kde-format
-msgid "Launch timeout:"
-msgstr "Tempo de espera de inicio:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_3)
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_5)
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:193
-#: protocols/skype/ui/skypeeditaccountbase.ui:252
-#: protocols/skype/ui/skypeeditaccountbase.ui:579
-#, kde-format
-msgid "s"
-msgstr "s"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:223
-#, kde-format
-msgid "Wait before trying to connect to Skype:"
-msgstr "Espere antes de intentar conectarse a Skype:"
-
-#. i18n: ectx: property (toolTip), widget (QSpinBox, WaitSpin)
-#. i18n: ectx: property (whatsThis), widget (QSpinBox, WaitSpin)
-#: protocols/skype/ui/skypeeditaccountbase.ui:233
-#: protocols/skype/ui/skypeeditaccountbase.ui:236
-#, kde-format
-msgid "trying"
-msgstr "intentándoo"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:280
-#, kde-format
-msgid ""
-"If you get error that Skype was not found, but in fact it is running, check "
-"the instructions at <a href=\"https://developer.skype.com/Docs/ApiDoc/"
-"Skype_API_on_Linux\">https://developer.skype.com/Docs/ApiDoc/"
-"Skype_API_on_Linux</a>.<br /><br />Note that only the dynamic linked Skype "
-"binary is supported."
-msgstr ""
-"Se se lle informa dun erro debido a que non se atopou Skype aínda cando "
-"estea a executarse, revise as instrucións de <a href=\"https://developer."
-"skype.com/Docs/ApiDoc/Skype_API_on_Linux\">https://developer.skype.com/Docs/"
-"ApiDoc/Skype_API_on_Linux</a>.<br /><br />Lembre que só o binario de Skype "
-"ligado dinamicamente é compatíbel."
-
-#. i18n: ectx: attribute (title), widget (QWidget, connectionTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:310
-#, kde-format
-msgid "C&onnection"
-msgstr "C&onexión"
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, groupBox3_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:316
-#, kde-format
-msgid ""
-"Each application that wants to use Skype must provide its name to it, and "
-"the user is asked whether to allow said application to access Skype.<br>By "
-"default, kopete provides kopete as its name, but if you suspect another "
-"application is accessing Skype with this name, you can change the name "
-"Kopete uses here, and then within Skype disallow applications that refer to "
-"themselves as kopete."
-msgstr ""
-"Cada aplicación que solicite usar Skype ten que fornecer o seu nome a\\ "
-"Skype, así que ao usuario váiselle preguntar se permite que esa aplicación "
-"acceda a Skype.<br>De maneira predeterminada, Kopete identifícase como "
-"«kopete» pero, se sospeita que outra aplicación está accedendo a Skype con "
-"este nome cambie o nome de Kopete aquí e denegue o acceso ás aplicacións que "
-"pretendan identificarse como «kopete»."
-
-#. i18n: ectx: property (text), widget (QCheckBox, AuthorCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:325
-#, kde-format
-msgid "&Non-standard authorization"
-msgstr "Autorización &non estándar"
-
-#. i18n: ectx: property (toolTip), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:342
-#, kde-format
-msgid "What bus do you want to use"
-msgstr "Bus que queira empregar"
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:345
-#, kde-format
-msgid ""
-"Which D-Bus do you want to use to connect to Skype?<br>Session: Your own, "
-"other people cannot use it (use --use-session-dbus to start Skype on that "
-"bus.)<br>System: Shared by all people on the same computer. This one is used "
-"by default by Skype.<br>You have to specify the same D-Bus used by Skype."
-msgstr ""
-"Que D-Bus quere empregar para se conectar con Skype?<br>Sesión: Para un "
-"mesmo, outras persoas non o poden empregar (use --use-session-dbus para "
-"iniciar Skype nese bus).<br>Sistema: compartir con outras persoas no mesmo "
-"computador. Isto é o que fai Skype de maneira predeterminada.<br>Ten que "
-"indicar o D-Bus que emprega Skype."
-
-#. i18n: ectx: property (title), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:348
-#, kde-format
-msgid "Bus"
-msgstr "Bus"
-
-#. i18n: ectx: property (text), widget (QRadioButton, radioButton4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:354
-#, kde-format
-msgid "Sessi&on"
-msgstr "&Sesión"
-
-#. i18n: ectx: property (text), widget (QRadioButton, radioButton5)
-#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/skype/ui/skypeeditaccountbase.ui:364
-#: protocols/winpopup/ui/wpeditaccountbase.ui:221
-#, kde-format
-msgid "S&ystem"
-msgstr "S&istema"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:374
-#, kde-format
-msgid ""
-"Note that Kopete will freeze while Skype asks you if it can allow Kopete to "
-"access it. This is normal, and if you allow it forever (check that \"Remember"
-"\" checkbox in Skype's dialog), it will not happen again.<br /><br />The "
-"'System Bus' option is not yet supported by Skype"
-msgstr ""
-"Teña en conta que Kopete detense mentres Skype lle pregunta se permite que "
-"Kopete acceda a el. Isto é normal e, no caso de que lle permita acceder para "
-"sempre —marcando a opción «Lembrar» no diálogo de Skype—, non volverá "
-"ocorrer.<br /><br />Skype aínda non engadiu a opción de «Bus do sistema»."
-
-#. i18n: ectx: attribute (title), widget (QWidget, activityTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:404
-#, kde-format
-msgid "&Activity"
-msgstr "&Actividade"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:410
-#, kde-format
-msgid "Show all incoming messages"
-msgstr "Mostrar todas as mensaxes recibidas"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:413
-#, kde-format
-msgid ""
-"This will show all incoming Skype messages. If this is off, they are showed "
-"only if the message belongs to chat that is started by kopete."
-msgstr ""
-"Isto mostra as mensaxes recibidas por Skype. No caso de as desactivar "
-"móstranse só se pertencen á conversa que comezou en Kopete."
-
-#. i18n: ectx: property (text), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:416
-#, kde-format
-msgid "Show all incoming &messages"
-msgstr "Mostrar todas as &mensaxes recibidas"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, MarkCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:426
-#, kde-format
-msgid ""
-"This will mark incoming messages as read, so if you have Skype set up not to "
-"automatically pop-up chats, it will not flash the exclamation icon."
-msgstr ""
-"Isto marca as mensaxes entrantes como lidas así que, se ten Skype "
-"configurado para non mostrar os avisos de conversa, non aparecerá a icona da "
-"exclamación."
-
-#. i18n: ectx: property (text), widget (QCheckBox, MarkCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:429
-#, kde-format
-msgid "Mar&k as read"
-msgstr "&Marcar como lido"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, ScanCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:439
-#, kde-format
-msgid ""
-"If this is checked, Kopete will ask Skype on login if it has any messages "
-"that have not been shown, and if so, will show them. This is useful if you "
-"start Kopete later than Skype, and Skype is configured not to show incoming "
-"messages."
-msgstr ""
-"Se isto está marcado, Kopete preguntaralle a Skype cando acceda se hai "
-"mensaxes que non se mostrasen. De as haber, móstraas. Isto resultaralle útil "
-"cando inicie Kopete antes que Skype e cando este estea configurado para non "
-"mostrar as mensaxes recibidas."
-
-#. i18n: ectx: property (text), widget (QCheckBox, ScanCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:442
-#, kde-format
-msgid "Scan f&or unread"
-msgstr "Buscar a&s non lidas"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:452
-#, kde-format
-msgid "Show call control window for all calls"
-msgstr "Mostrar a xanela de control de chamadas para todas as chamadas."
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:455
-#, kde-format
-msgid ""
-"This will show a call control window for every call (both incoming and "
-"outgoing). If it is off, you can call from Kopete, but you have to control "
-"that call from Skype."
-msgstr ""
-"Isto mostra o control de xanela para cada chamada, tanto entrantes como "
-"saíntes. Cando isto se desactiva pode seguir chamando desde Kopete pero ten "
-"que xestionar a chamada desde Skype."
-
-#. i18n: ectx: property (text), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:458
-#, kde-format
-msgid "S&how call control (this will also hide Skype client call dialog)"
-msgstr ""
-"&Mostrar o control de chamadas (isto tamén agocha o diálogo de chamadas do "
-"cliente de Skype)"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:486
-#, kde-format
-msgid "Auto close the call control window"
-msgstr "Pechar automaticamente a xanela de control de chamadas"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:489
-#, kde-format
-msgid ""
-"This will close the call control window automatically when the call finishes"
-msgstr ""
-"Isto pecha a xanela de control de chamadas automaticamente ao rematar as "
-"chamadas"
-
-#. i18n: ectx: property (text), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:492
-#, kde-format
-msgid "Autoc&lose"
-msgstr "&Peche automático"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:544
-#, kde-format
-msgid "Timeout:"
-msgstr "Tempo de espera:"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:607
-#, kde-format
-msgid ""
-"If this is enabled, Kopete keeps track of whether or not Skype is running."
-msgstr ""
-"Se escolle esta opción, Kopete fai un seguimento de se Skype está activo ou "
-"non."
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:610
-#, kde-format
-msgid ""
-"This keeps track of whether Skype is running. Turning this off only makes "
-"sense it you are trying to get non-flooded debug output."
-msgstr ""
-"Isto fai un seguemento de se Skype está a se executar ou non. Desactivar "
-"isto só ten sentido se está intentando obter unha saída de depuración non "
-"sobresaturada."
-
-#. i18n: ectx: property (text), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:613
-#, kde-format
-msgid "Pi&ng Skype"
-msgstr "Co&ntactar con Skype"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, LeaveCheck)
-#. i18n: ectx: property (text), widget (QCheckBox, LeaveCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:623
-#: protocols/skype/ui/skypeeditaccountbase.ui:629
-#, kde-format
-msgid "Do not leave a chat on window exit"
-msgstr "Non saír dunha conversa ao saír da xanela"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, LeaveCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:626
-#, kde-format
-msgid ""
-"Do not leave a chat when the chat window is closed. Makes a difference only "
-"with multi-user chats: if it is checked, you will continue receiving "
-"messages from that chat even after closing the window."
-msgstr ""
-"Non saír dunha conversa ao saír da xanela. Só resulta relevante nas "
-"conversas con máis de dous participantes, nas que —de estar marcada esta "
-"opción— seguirá a recibir as mensaxes do resto de participantes tras pechar "
-"a xanela."
-
-#. i18n: ectx: attribute (title), widget (QWidget, callsTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:656
-#, kde-format
-msgid "&Calls"
-msgstr "&Chamadas"
-
-#. i18n: ectx: property (text), widget (QCheckBox, StartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:662
-#, kde-format
-msgid "E&xecute before call"
-msgstr "E&xecutar antes de chamar"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:717
-#, kde-format
-msgid ""
-"This will wait before making/accepting the call for the command to finish."
-msgstr ""
-"Isto fai que se espere a que remate a orde antes de iniciar ou coller a "
-"chamada."
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:721
-#, kde-format
-msgid ""
-"This will wait for the command to finish before accepting/making the call."
-"<br>\n"
-"Note that kopete will freeze whilst waiting."
-msgstr ""
-"Isto fai que se espere pola orde para rematar antes de aceptar ou realizar a "
-"chamada.<br>\n"
-"Nótese que Kopete hase parar mentres espera."
-
-#. i18n: ectx: property (text), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:724
-#, kde-format
-msgid "Wait for fi&nish"
-msgstr "Esperar a a&cabar"
-
-#. i18n: ectx: property (text), widget (QCheckBox, EndCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:733
-#, kde-format
-msgid "Execute after call"
-msgstr "Executar despois de chamar"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, OnlyLastCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:791
-#, kde-format
-msgid ""
-"Usually this makes no difference, but if there are some other calls on hold, "
-"it is executed only for the most recently ended one."
-msgstr ""
-"Habitualmente isto non ten consecuencias pero se hai algunha outra chamada "
-"en espera só se executa para a chamada que se rematase de última."
-
-#. i18n: ectx: property (text), widget (QCheckBox, OnlyLastCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:794
-#, kde-format
-msgid "Onl&y for last call"
-msgstr "Só para a &última chamada"
-
-#. i18n: ectx: property (text), widget (QCheckBox, IncomingCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:803
-#, kde-format
-msgid "Execute on inco&ming call"
-msgstr "Executar coas &chamadas entrantes"
-
 #: protocols/sms/serviceloader.cpp:46
 #, kde-format
 msgid "Could not load service %1."
@@ -22278,6 +21160,12 @@ msgstr ""
 "«message command = _RUTA_A_/winpopup-send %s %m %t &» (substitúa _RUTA_A_ "
 "pola ruta real) á sección [global] do ficheiro «smb.conf»."
 
+#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
+#: protocols/winpopup/ui/wpeditaccountbase.ui:221
+#, kde-format
+msgid "S&ystem"
+msgstr "S&istema"
+
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_3)
 #: protocols/winpopup/ui/wpeditaccountbase.ui:233
 #, kde-format
@@ -22435,6 +21323,645 @@ msgstr "Fallou a configuración"
 #, kde-format
 msgid "User Info for %1"
 msgstr "Información de usuario para %1"
+
+#~ msgid "This version of Skype is too old, consider upgrading"
+#~ msgstr "Esta versión de Skype é demasiado antiga. Considere anovala."
+
+#~ msgid "Skype protocol"
+#~ msgstr "Protocolo Skype"
+
+#~ msgid "Does not have multi-user chat capability"
+#~ msgstr "Non dispón de conversas entre varios usuarios"
+
+#~ msgid "Chat denied"
+#~ msgstr "Conversa denegada"
+
+#~ msgid "Unknown error"
+#~ msgstr "Erro descoñecido."
+
+#~ msgid "Misc error"
+#~ msgstr "Erro diverso"
+
+#~ msgid "User or phone number does not exist"
+#~ msgstr "Non existen o número ou o usuario"
+
+#~ msgid "User is offline"
+#~ msgstr "Usuario desconectado"
+
+#~ msgid "No proxy found"
+#~ msgstr "Non se atopou o proxy"
+
+#~ msgid "Session terminated"
+#~ msgstr "A sesión terminou"
+
+#~ msgid "No common codec found"
+#~ msgstr "Non se atopa codec común"
+
+#~ msgid "Sound I/O error"
+#~ msgstr "Erro de E/S do son"
+
+#~ msgid "Problem with remote sound device"
+#~ msgstr "Problemas co dispositivo remoto de son"
+
+#~ msgid "Call blocked by recipient"
+#~ msgstr "Chamada bloqueada polo receptor"
+
+#~ msgid "Recipient not a friend"
+#~ msgstr "Quen se chama non é un contacto"
+
+#~ msgid "User not authorized by recipient"
+#~ msgstr "Usuario non autorizado polo receptor"
+
+#~ msgid "Sound recording error"
+#~ msgstr "Produciuse un erro durante a gravación de son."
+
+#~ msgid "This version of Skype does not support adding users to chat."
+#~ msgstr "Esta versión de Skype non permite engadir usuarios á conversa."
+
+#~ msgid "Skype Protocol"
+#~ msgstr "Protocolo Skype"
+
+#~ msgid "Could not ping Skype"
+#~ msgstr "Non se puido contactar con Skype"
+
+#~ msgid "Skype did not accept this application"
+#~ msgstr "Skype non aceptou esta aplicación"
+
+#~ msgid "Skype API syntax error"
+#~ msgstr "Erro de sintaxe na API de Skype"
+
+#~ msgid "Skype API not ready yet, wait a bit longer"
+#~ msgstr "A API de Skype aínda non está lista, espere un pouco máis"
+
+#~ msgid "Cannot register Skype communication for Kopete on D-Bus"
+#~ msgstr "Non se pode rexistrar a comunicación de Skype para Kopete en DBus"
+
+#~ msgid ""
+#~ "Could not launch Skype.\n"
+#~ "You need to install the original dynamic linked Skype version 2.0 binary "
+#~ "from http://www.skype.com"
+#~ msgstr ""
+#~ "Non se puido iniciar o Skype.\n"
+#~ "Ten que instalar o binario orixinal ligado dinamicamente da versión 2.0 "
+#~ "do Skype desde http://.www.skype.com"
+
+#~ msgid ""
+#~ "Could not find Skype.\n"
+#~ "You need to install the original dynamic linked Skype version 2.0 binary "
+#~ "from http://www.skype.com"
+#~ msgstr ""
+#~ "Non se puido atopar o Skype.\n"
+#~ "Ten que instalar o binario orixinal ligado dinamicamente da versión 2.0 "
+#~ "do Skype desde http://www.skype.com"
+
+#~ msgid ""
+#~ "Could not ping Skype.\n"
+#~ "Maybe Skype not running.\n"
+#~ "Error while sending a message to Skype (%1)."
+#~ msgstr ""
+#~ "Non se puido contactar con Skype.\n"
+#~ "Poida que non se estea a executar.\n"
+#~ "Produciuse un erro ao enviar unha mensaxe a Skype (%1)."
+
+#~ msgid "Error while sending a message to Skype (%1)."
+#~ msgstr "Erro ao enviar a mensaxe a Skype (%1)."
+
+#~ msgid ""
+#~ "Could not ping Skype.\n"
+#~ "You are logged out from Skype, please log in."
+#~ msgstr ""
+#~ "Non se puido contactar con Skype.\n"
+#~ "Ten que identificarse no servizo."
+
+#~ msgid "Please login to Skype first"
+#~ msgstr "Primeiro acceda a Skype"
+
+#~ msgid "Skype (%1)"
+#~ msgstr "Skype (%1)"
+
+#~ msgid "Skype Me"
+#~ msgstr "Fale comigo"
+
+#~ msgid "Make Test Call"
+#~ msgstr "Facer unha chamada de proba"
+
+#~ msgid "Cannot open info about user %1"
+#~ msgstr "Non se pode abrir a información sobre o usuario %1"
+
+#~ msgid "Unknown action from SkypeActionHandler"
+#~ msgstr "A acción é descoñecida para SkypeActionHandler"
+
+#~ msgid "Add contact from SkypeActionHandler is not supported yet"
+#~ msgstr "Aínda non se permite engadir contactos de SkypeActionHandler"
+
+#~ msgid "Send voicemail from SkypeActionHandler is not supported yet"
+#~ msgstr "Aínda non se permite o correo con voz de SkypeActionHandler"
+
+#~ msgid "You must connect to Skype first."
+#~ msgstr "Primeiro ten que se conectar en Skype."
+
+#~ msgid "You must write the contact's name."
+#~ msgstr "Debe escribir o nome do contacto."
+
+#~ msgid "Wrong Information"
+#~ msgstr "A información é errónea"
+
+#~ msgid ""
+#~ "Contact echo123 is not needed. You can make test call in Skype protocol "
+#~ "actions."
+#~ msgstr ""
+#~ "Non é necesario contactar 123. Pode facer unha chamada de proba nas "
+#~ "acción do protocolo Skype."
+
+#~ msgid "This contact already exists in this account."
+#~ msgstr "Xa existe un contacto con esa conta."
+
+#~ msgid "You cannot add yourself as a contact."
+#~ msgstr "Non se pode engadir a si mesmo como contacto."
+
+#~ msgid "Call with %1"
+#~ msgstr "Chamar con %1"
+
+#~ msgid "Canceled"
+#~ msgstr "Cancelada"
+
+#~ msgid "Other person is busy"
+#~ msgstr "A outra persoa está ocupada"
+
+#~ msgid "Refused"
+#~ msgstr "Rexeitada"
+
+#~ msgid "Call Back"
+#~ msgstr "Devolver a chamada"
+
+#~ msgid "Missed"
+#~ msgstr "Perdida"
+
+#~ msgid "Resume"
+#~ msgstr "Continuar"
+
+#~ msgid "On hold (local)"
+#~ msgstr "Á espera (local)"
+
+#~ msgid "On hold (remote)"
+#~ msgstr "Á espera (remota)"
+
+#~ msgid "On hold"
+#~ msgstr "Á espera"
+
+#~ msgid "Hold"
+#~ msgstr "Á espera"
+
+#~ msgid "In progress"
+#~ msgstr "En progreso"
+
+#~ msgid "Ringing"
+#~ msgstr "Está a chamar"
+
+#~ msgid "Failed"
+#~ msgstr "Fallou"
+
+#~ msgctxt ""
+#~ "Early media means the media played before the call is established. For "
+#~ "example it can be a calling tone or a waiting message such as all "
+#~ "operators are busy."
+#~ msgid "Early media (waiting for operator...)"
+#~ msgstr "Datos anticipados (a agardar polo operador…)"
+
+#~ msgid "Failed (%1)"
+#~ msgstr "Fallou (%1)"
+
+#~ msgid ""
+#~ "%1 active\n"
+#~ "%2 total"
+#~ msgstr ""
+#~ "%1 activo\n"
+#~ "%2 total"
+
+#~ msgid "Skypeout inactive"
+#~ msgstr "Skypeout está inactivo"
+
+#~ msgid "Call"
+#~ msgstr "Chamar"
+
+#~ msgid "Conference Call"
+#~ msgstr "Conferencia"
+
+#~ msgid "Block contact"
+#~ msgstr "Bloquear este contacto"
+
+#~ msgid "Details for User %1"
+#~ msgstr "Información do usuario %1"
+
+#~ msgid "You can have only one skype account"
+#~ msgstr "Só pode ter unha conta de skype"
+
+#~ msgid "Configure Skype client"
+#~ msgstr "Configurar o cliente de Skype"
+
+#~ msgid "Please enter your skype user name"
+#~ msgstr "Insira o nome de usuario de Skype"
+
+#~ msgid "You must enter your skype user name"
+#~ msgstr "Debe inserir o nome de usuario de Skype"
+
+#~ msgid "Cannot create/open file %1 for configuring the Skype client."
+#~ msgstr ""
+#~ "Non se pode crear ou abrir o ficheiro %1 para configurar o cliente de "
+#~ "Skype."
+
+#~ msgid ""
+#~ "Process has completed.\n"
+#~ "Skype is now configured for Kopete.\n"
+#~ "You must restart the Skype client for changes to take effect."
+#~ msgstr ""
+#~ "Completouse o proceso\n"
+#~ "Skype está configurado agora para Kopete\n"
+#~ "Ten que reiniciar o cliente de Skype para que os cambios xurdan efecto."
+
+#~ msgid "Not in Skype list"
+#~ msgstr "Non está na súa lista de Skype."
+
+#~ msgid "Not authorized"
+#~ msgstr "Non autorizado"
+
+#~ msgid "SkypeOut contact"
+#~ msgstr "Contacto de SkypeOut"
+
+#~ msgid "Add Skype Contact"
+#~ msgstr "Engadir un contacto de Skype"
+
+#~ msgid "Skype name:"
+#~ msgstr "Nome en Skype:"
+
+#~ msgid "Sorry, but the search function is not yet implemented."
+#~ msgstr "A función de busca aínda non está dispoñíbel."
+
+#~ msgid "Se&arch"
+#~ msgstr "Busc&ar"
+
+#~ msgid "Skype Call"
+#~ msgstr "Chamada Skype"
+
+#~ msgid "Name(s) of Participant(s)"
+#~ msgstr "Nome dos participantes"
+
+#~ msgid ""
+#~ "Name of the other participant in the call (or a list of names if it is a "
+#~ "conference call.)"
+#~ msgstr ""
+#~ "Nome doutros participantes na chamada (unha lista de nomes se é unha "
+#~ "conferencia)"
+
+#~ msgid "Total time elapsed."
+#~ msgstr "Tempo total transcorrido."
+
+#~ msgid "Time:"
+#~ msgstr "Hora:"
+
+#~ msgid "SkypeOut credits left"
+#~ msgstr "Crédito restante de SkyOut"
+
+#~ msgid ""
+#~ "Total length of the call/<br />(i.e. both time speaking and time on hold.)"
+#~ msgstr ""
+#~ "Duración total da chamada/<br />(é dicir, tanto o tempo falado como en "
+#~ "espera.)"
+
+#~ msgid "SkypeOut credits:"
+#~ msgstr "Créditos de SkypeOut:"
+
+#~ msgid "Accept call"
+#~ msgstr "Aceptar a chamada"
+
+#~ msgid "Accept incoming call"
+#~ msgstr "Aceptar todas as chamadas entrantes"
+
+#~ msgid "Finish the call"
+#~ msgstr "Finalizar a chamada"
+
+#~ msgid "Terminate the call"
+#~ msgstr "Terminar a chamada"
+
+#~ msgid "H&ang up"
+#~ msgstr "Colg&ar"
+
+#~ msgid "Hold the call"
+#~ msgstr "Pór a chamada en espera"
+
+#~ msgid "Interrupt the call for a moment and resume (or hang up) later."
+#~ msgstr "Interromper a chamada polo momento e continuar despois."
+
+#~ msgid "H&old"
+#~ msgstr "P&ór en espera"
+
+#~ msgid "Open chat to the person."
+#~ msgstr "Abrirlle a conversa á persoa."
+
+#~ msgid "Open chat to the person with whom you are talking."
+#~ msgstr "Abrir unha conversa coa persoa coa que está a falar."
+
+#~ msgid "Start/Stop Video"
+#~ msgstr "Comezar/Para vídeo"
+
+#~ msgid "User's Details"
+#~ msgstr "Información do usuario"
+
+#~ msgid "Skype ID:"
+#~ msgstr "Identificador de Skype:"
+
+#~ msgid "Authorized"
+#~ msgstr "Autorizado"
+
+#~ msgid "Not Authorized"
+#~ msgstr "Non autorizado"
+
+#~ msgid "Is authorized:"
+#~ msgstr "Está autorizado:"
+
+#~ msgid "Display Name:"
+#~ msgstr "Nome para mostrar:"
+
+#~ msgid "Sex:"
+#~ msgstr "Sexo:"
+
+#~ msgid "Check this if you do not want to connect with other protocols"
+#~ msgstr "Marque isto se non se quere conectar con outros protocolos"
+
+#~ msgid "E&xclude from connection"
+#~ msgstr "Ex&cluír da conexión"
+
+#~ msgid "Important Note"
+#~ msgstr "Nota importante"
+
+#~ msgid ""
+#~ "The Skype plugin serves as a bridge to an externally running copy of "
+#~ "Skype. This has some consequences on how it functions: you need an "
+#~ "instance of Skype to be running, and only one Skype account can be used."
+#~ "<br /><br />Note that you need to install the original dynamic linked "
+#~ "Skype version 2.0 or 2.1 from <a href=\"http://www.skype.com\">http://www."
+#~ "skype.com</a><br /><br />This plugin will only work if the language in "
+#~ "the Skype client set to English. Kopete shows notifications (incoming "
+#~ "call, message, ...), so you can turn off the notifications in Skype."
+#~ msgstr ""
+#~ "O complemento de Skype serve de ponte a unha copia externa de Skype. É "
+#~ "por iso que para que funcione necesita ter Skype aberto e só se pode "
+#~ "empregar unha conta de Skype.<br /><br />Lembre que ten que instalar a "
+#~ "versión 2.0 ou 2.1 dinamicamente ligadas de Skype, que poderá obter de <a "
+#~ "href=\"http://www.skype.com\">http://www.skype.com</a>.<br /><br />Este "
+#~ "complemento só funciona se o cliente de Skype está en inglés. Kopete "
+#~ "mostra as notificacións (chamada entrante, mensaxe, etc.), polo que pode "
+#~ "desactivar as notificacións en Skype."
+
+#~ msgid ""
+#~ "Disable Skype notifications and set up English language in Skype client"
+#~ msgstr ""
+#~ "Desactivar as notificacións de Skype e poñer o cliente de Skype en inglés"
+
+#~ msgid "Lau&nch"
+#~ msgstr "&Iniciar"
+
+#~ msgid "You can set whether and when should kopete launch Skype."
+#~ msgstr "Pode estabelecer cando e como Kopete inicia Skype."
+
+#~ msgid "Launch Skype"
+#~ msgstr "Iniciar Skype"
+
+#~ msgid "When &not running"
+#~ msgstr "Cando &non se estea a executar"
+
+#~ msgid "N&ever"
+#~ msgstr "N&unca"
+
+#~ msgid "Command to launch Skype:"
+#~ msgstr "Orde para iniciar Skype:"
+
+#~ msgid "skype"
+#~ msgstr "skype"
+
+#~ msgid "Launch timeout:"
+#~ msgstr "Tempo de espera de inicio:"
+
+#~ msgid "s"
+#~ msgstr "s"
+
+#~ msgid "Wait before trying to connect to Skype:"
+#~ msgstr "Espere antes de intentar conectarse a Skype:"
+
+#~ msgid "trying"
+#~ msgstr "intentándoo"
+
+#~ msgid ""
+#~ "If you get error that Skype was not found, but in fact it is running, "
+#~ "check the instructions at <a href=\"https://developer.skype.com/Docs/"
+#~ "ApiDoc/Skype_API_on_Linux\">https://developer.skype.com/Docs/ApiDoc/"
+#~ "Skype_API_on_Linux</a>.<br /><br />Note that only the dynamic linked "
+#~ "Skype binary is supported."
+#~ msgstr ""
+#~ "Se se lle informa dun erro debido a que non se atopou Skype aínda cando "
+#~ "estea a executarse, revise as instrucións de <a href=\"https://developer."
+#~ "skype.com/Docs/ApiDoc/Skype_API_on_Linux\">https://developer.skype.com/"
+#~ "Docs/ApiDoc/Skype_API_on_Linux</a>.<br /><br />Lembre que só o binario de "
+#~ "Skype ligado dinamicamente é compatíbel."
+
+#~ msgid "C&onnection"
+#~ msgstr "C&onexión"
+
+#~ msgid ""
+#~ "Each application that wants to use Skype must provide its name to it, and "
+#~ "the user is asked whether to allow said application to access Skype."
+#~ "<br>By default, kopete provides kopete as its name, but if you suspect "
+#~ "another application is accessing Skype with this name, you can change the "
+#~ "name Kopete uses here, and then within Skype disallow applications that "
+#~ "refer to themselves as kopete."
+#~ msgstr ""
+#~ "Cada aplicación que solicite usar Skype ten que fornecer o seu nome a\\ "
+#~ "Skype, así que ao usuario váiselle preguntar se permite que esa "
+#~ "aplicación acceda a Skype.<br>De maneira predeterminada, Kopete "
+#~ "identifícase como «kopete» pero, se sospeita que outra aplicación está "
+#~ "accedendo a Skype con este nome cambie o nome de Kopete aquí e denegue o "
+#~ "acceso ás aplicacións que pretendan identificarse como «kopete»."
+
+#~ msgid "&Non-standard authorization"
+#~ msgstr "Autorización &non estándar"
+
+#~ msgid "What bus do you want to use"
+#~ msgstr "Bus que queira empregar"
+
+#~ msgid ""
+#~ "Which D-Bus do you want to use to connect to Skype?<br>Session: Your own, "
+#~ "other people cannot use it (use --use-session-dbus to start Skype on that "
+#~ "bus.)<br>System: Shared by all people on the same computer. This one is "
+#~ "used by default by Skype.<br>You have to specify the same D-Bus used by "
+#~ "Skype."
+#~ msgstr ""
+#~ "Que D-Bus quere empregar para se conectar con Skype?<br>Sesión: Para un "
+#~ "mesmo, outras persoas non o poden empregar (use --use-session-dbus para "
+#~ "iniciar Skype nese bus).<br>Sistema: compartir con outras persoas no "
+#~ "mesmo computador. Isto é o que fai Skype de maneira predeterminada."
+#~ "<br>Ten que indicar o D-Bus que emprega Skype."
+
+#~ msgid "Bus"
+#~ msgstr "Bus"
+
+#~ msgid "Sessi&on"
+#~ msgstr "&Sesión"
+
+#~ msgid ""
+#~ "Note that Kopete will freeze while Skype asks you if it can allow Kopete "
+#~ "to access it. This is normal, and if you allow it forever (check that "
+#~ "\"Remember\" checkbox in Skype's dialog), it will not happen again.<br /"
+#~ "><br />The 'System Bus' option is not yet supported by Skype"
+#~ msgstr ""
+#~ "Teña en conta que Kopete detense mentres Skype lle pregunta se permite "
+#~ "que Kopete acceda a el. Isto é normal e, no caso de que lle permita "
+#~ "acceder para sempre —marcando a opción «Lembrar» no diálogo de Skype—, "
+#~ "non volverá ocorrer.<br /><br />Skype aínda non engadiu a opción de «Bus "
+#~ "do sistema»."
+
+#~ msgid "&Activity"
+#~ msgstr "&Actividade"
+
+#~ msgid "Show all incoming messages"
+#~ msgstr "Mostrar todas as mensaxes recibidas"
+
+#~ msgid ""
+#~ "This will show all incoming Skype messages. If this is off, they are "
+#~ "showed only if the message belongs to chat that is started by kopete."
+#~ msgstr ""
+#~ "Isto mostra as mensaxes recibidas por Skype. No caso de as desactivar "
+#~ "móstranse só se pertencen á conversa que comezou en Kopete."
+
+#~ msgid "Show all incoming &messages"
+#~ msgstr "Mostrar todas as &mensaxes recibidas"
+
+#~ msgid ""
+#~ "This will mark incoming messages as read, so if you have Skype set up not "
+#~ "to automatically pop-up chats, it will not flash the exclamation icon."
+#~ msgstr ""
+#~ "Isto marca as mensaxes entrantes como lidas así que, se ten Skype "
+#~ "configurado para non mostrar os avisos de conversa, non aparecerá a icona "
+#~ "da exclamación."
+
+#~ msgid "Mar&k as read"
+#~ msgstr "&Marcar como lido"
+
+#~ msgid ""
+#~ "If this is checked, Kopete will ask Skype on login if it has any messages "
+#~ "that have not been shown, and if so, will show them. This is useful if "
+#~ "you start Kopete later than Skype, and Skype is configured not to show "
+#~ "incoming messages."
+#~ msgstr ""
+#~ "Se isto está marcado, Kopete preguntaralle a Skype cando acceda se hai "
+#~ "mensaxes que non se mostrasen. De as haber, móstraas. Isto resultaralle "
+#~ "útil cando inicie Kopete antes que Skype e cando este estea configurado "
+#~ "para non mostrar as mensaxes recibidas."
+
+#~ msgid "Scan f&or unread"
+#~ msgstr "Buscar a&s non lidas"
+
+#~ msgid "Show call control window for all calls"
+#~ msgstr "Mostrar a xanela de control de chamadas para todas as chamadas."
+
+#~ msgid ""
+#~ "This will show a call control window for every call (both incoming and "
+#~ "outgoing). If it is off, you can call from Kopete, but you have to "
+#~ "control that call from Skype."
+#~ msgstr ""
+#~ "Isto mostra o control de xanela para cada chamada, tanto entrantes como "
+#~ "saíntes. Cando isto se desactiva pode seguir chamando desde Kopete pero "
+#~ "ten que xestionar a chamada desde Skype."
+
+#~ msgid "S&how call control (this will also hide Skype client call dialog)"
+#~ msgstr ""
+#~ "&Mostrar o control de chamadas (isto tamén agocha o diálogo de chamadas "
+#~ "do cliente de Skype)"
+
+#~ msgid "Auto close the call control window"
+#~ msgstr "Pechar automaticamente a xanela de control de chamadas"
+
+#~ msgid ""
+#~ "This will close the call control window automatically when the call "
+#~ "finishes"
+#~ msgstr ""
+#~ "Isto pecha a xanela de control de chamadas automaticamente ao rematar as "
+#~ "chamadas"
+
+#~ msgid "Autoc&lose"
+#~ msgstr "&Peche automático"
+
+#~ msgid "Timeout:"
+#~ msgstr "Tempo de espera:"
+
+#~ msgid ""
+#~ "If this is enabled, Kopete keeps track of whether or not Skype is running."
+#~ msgstr ""
+#~ "Se escolle esta opción, Kopete fai un seguimento de se Skype está activo "
+#~ "ou non."
+
+#~ msgid ""
+#~ "This keeps track of whether Skype is running. Turning this off only makes "
+#~ "sense it you are trying to get non-flooded debug output."
+#~ msgstr ""
+#~ "Isto fai un seguemento de se Skype está a se executar ou non. Desactivar "
+#~ "isto só ten sentido se está intentando obter unha saída de depuración non "
+#~ "sobresaturada."
+
+#~ msgid "Pi&ng Skype"
+#~ msgstr "Co&ntactar con Skype"
+
+#~ msgid "Do not leave a chat on window exit"
+#~ msgstr "Non saír dunha conversa ao saír da xanela"
+
+#~ msgid ""
+#~ "Do not leave a chat when the chat window is closed. Makes a difference "
+#~ "only with multi-user chats: if it is checked, you will continue receiving "
+#~ "messages from that chat even after closing the window."
+#~ msgstr ""
+#~ "Non saír dunha conversa ao saír da xanela. Só resulta relevante nas "
+#~ "conversas con máis de dous participantes, nas que —de estar marcada esta "
+#~ "opción— seguirá a recibir as mensaxes do resto de participantes tras "
+#~ "pechar a xanela."
+
+#~ msgid "&Calls"
+#~ msgstr "&Chamadas"
+
+#~ msgid "E&xecute before call"
+#~ msgstr "E&xecutar antes de chamar"
+
+#~ msgid ""
+#~ "This will wait before making/accepting the call for the command to finish."
+#~ msgstr ""
+#~ "Isto fai que se espere a que remate a orde antes de iniciar ou coller a "
+#~ "chamada."
+
+#~ msgid ""
+#~ "This will wait for the command to finish before accepting/making the call."
+#~ "<br>\n"
+#~ "Note that kopete will freeze whilst waiting."
+#~ msgstr ""
+#~ "Isto fai que se espere pola orde para rematar antes de aceptar ou "
+#~ "realizar a chamada.<br>\n"
+#~ "Nótese que Kopete hase parar mentres espera."
+
+#~ msgid "Wait for fi&nish"
+#~ msgstr "Esperar a a&cabar"
+
+#~ msgid "Execute after call"
+#~ msgstr "Executar despois de chamar"
+
+#~ msgid ""
+#~ "Usually this makes no difference, but if there are some other calls on "
+#~ "hold, it is executed only for the most recently ended one."
+#~ msgstr ""
+#~ "Habitualmente isto non ten consecuencias pero se hai algunha outra "
+#~ "chamada en espera só se executa para a chamada que se rematase de última."
+
+#~ msgid "Onl&y for last call"
+#~ msgstr "Só para a &última chamada"
+
+#~ msgid "Execute on inco&ming call"
+#~ msgstr "Executar coas &chamadas entrantes"
 
 #~ msgid "An error occurred while saving the address book entry."
 #~ msgstr "Produciuse un erro ao gardar a entrada no caderno de enderezos."

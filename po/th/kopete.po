@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-05-03 00:43+0000\n"
+"POT-Creation-Date: 2022-12-08 00:45+0000\n"
 "PO-Revision-Date: 2010-12-12 13:57+0700\n"
 "Last-Translator: Phuwanat Sakornsakolpat <narachai@gmail.com>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -27,7 +27,6 @@ msgstr "ฉันคือผู้ที่เรียนรู้ได้ร
 #. i18n: ectx: property (text), widget (QTreeWidget, addresseeListView)
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListGroupSorting)
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListMetaContactSorting)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel1)
 #. i18n: ectx: property (text), widget (QTableWidget, listServers)
 #. i18n: ectx: property (text), widget (QTreeWidget, trServices)
 #: kopete/addaccountwizard/addaccountwizard.cpp:74
@@ -36,7 +35,6 @@ msgstr "ฉันคือผู้ที่เรียนรู้ได้ร
 #: libkopete/ui/addressbookselectorwidget_base.ui:97
 #: protocols/jabber/ui/dlgjabberchooseserver.ui:57
 #: protocols/jabber/ui/dlgservices.ui:85
-#: protocols/skype/ui/skypecalldialogbase.ui:36
 #, kde-format
 msgid "Name"
 msgstr "ชื่อ"
@@ -120,7 +118,6 @@ msgstr "1"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, AddAccountWizardPage2)
 #: kopete/addaccountwizard/addaccountwizardpage2.ui:13
-#: protocols/skype/skypecalldialog.cpp:168
 #, kde-format
 msgid "Finished"
 msgstr "เสร็จสิ้น"
@@ -415,10 +412,8 @@ msgstr "คุณถูกปรับสถานะเป็น %1"
 msgid "%2 is now %1."
 msgstr "%2 ได้ %1"
 
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel1)
 #: kopete/chatwindow/kopetechatwindow.cpp:210
 #: kopete/chatwindow/kopetechatwindow.cpp:476
-#: protocols/skype/ui/skypecalldialogbase.ui:33
 #, kde-format
 msgid "Participants"
 msgstr "ผู้เข้าร่วม"
@@ -593,7 +588,6 @@ msgstr "&ตั้งค่า"
 #: kopete/chatwindow/kopetechatwindow.rc:46
 #: kopete/chatwindow/kopeteemailwindow.rc:29
 #: kopete/chatwindow/kopeterichtexteditpartfull.rc:25 kopete/kopeteui.rc:48
-#: protocols/skype/skypeui.rc:12
 #, kde-format
 msgid "Main Toolbar"
 msgstr "แถบเครื่องมือหลัก"
@@ -1726,9 +1720,7 @@ msgid "Message:"
 msgstr "ข้อความ:"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, BehaviorConfig_Chat)
-#. i18n: ectx: property (text), widget (QPushButton, ChatButton)
 #: kopete/config/behavior/behaviorconfig_chat.ui:14
-#: protocols/skype/ui/skypecalldialogbase.ui:222
 #, kde-format
 msgid "Chat"
 msgstr "สนทนา"
@@ -2264,7 +2256,6 @@ msgstr ""
 #: protocols/meanwhile/meanwhileprotocol.cpp:35
 #: protocols/oscar/aim/aimstatusmanager.cpp:67
 #: protocols/oscar/icq/icqstatusmanager.cpp:75 protocols/qq/qqprotocol.cpp:41
-#: protocols/skype/skypeaccount.cpp:929 protocols/skype/skypeprotocol.cpp:76
 #: protocols/sms/smsprotocol.cpp:40 protocols/winpopup/wpprotocol.cpp:59
 #, kde-format
 msgid "Offline"
@@ -2285,7 +2276,6 @@ msgstr "ไม่ได้เชื่อมต่อ"
 #: protocols/meanwhile/meanwhileprotocol.cpp:40
 #: protocols/oscar/aim/aimstatusmanager.cpp:79
 #: protocols/oscar/icq/icqstatusmanager.cpp:87 protocols/qq/qqprotocol.cpp:37
-#: protocols/skype/skypeaccount.cpp:925 protocols/skype/skypeprotocol.cpp:77
 #: protocols/sms/smsprotocol.cpp:39 protocols/winpopup/wpaccount.cpp:170
 #: protocols/winpopup/wpprotocol.cpp:57
 #, kde-format
@@ -2306,7 +2296,6 @@ msgstr "อยู่ในสาย"
 #: protocols/meanwhile/meanwhileprotocol.cpp:44
 #: protocols/oscar/aim/aimstatusmanager.cpp:75
 #: protocols/oscar/icq/icqstatusmanager.cpp:83 protocols/qq/qqprotocol.cpp:39
-#: protocols/skype/skypeaccount.cpp:933 protocols/skype/skypeprotocol.cpp:79
 #: protocols/winpopup/wpaccount.cpp:176 protocols/winpopup/wpprotocol.cpp:58
 #, kde-format
 msgid "Away"
@@ -2337,7 +2326,6 @@ msgstr "ไม่ว่าง"
 #: protocols/oscar/aim/aimstatusmanager.cpp:85
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:812
 #: protocols/oscar/icq/icqstatusmanager.cpp:92
-#: protocols/skype/skypeaccount.cpp:945 protocols/skype/skypeprotocol.cpp:82
 #, kde-format
 msgid "Invisible"
 msgstr "ไม่ปรากฎตัว"
@@ -3156,19 +3144,15 @@ msgid "Home phone:"
 msgstr "โทรศัพท์ที่บ้าน:"
 
 #. i18n: ectx: property (text), widget (QLabel, mLblWorkPhone)
-#. i18n: ectx: property (text), widget (QLabel, textLabel6)
 #: kopete/contactlist/kopeteaddrbookexportui.ui:66
-#: protocols/skype/ui/skypedetailsbase.ui:71
 #, kde-format
 msgid "Work phone:"
 msgstr "โทรศัพท์ที่ทำงาน:"
 
 #. i18n: ectx: property (text), widget (QLabel, mLblMobilePhone)
 #. i18n: ectx: property (text), widget (QLabel, mobileLabel)
-#. i18n: ectx: property (text), widget (QLabel, textLabel5)
 #: kopete/contactlist/kopeteaddrbookexportui.ui:76
 #: kopete/identity/identitydetailed.ui:45
-#: protocols/skype/ui/skypedetailsbase.ui:58
 #, kde-format
 msgid "Mobile phone:"
 msgstr "โทรศัพท์เคลื่อนที่:"
@@ -3692,9 +3676,7 @@ msgid "E-mail: "
 msgstr "อีเมล: "
 
 #. i18n: ectx: property (text), widget (QLabel, phoneLabel)
-#. i18n: ectx: property (text), widget (QLabel, textLabel4)
 #: kopete/identity/identitydetailed.ui:32
-#: protocols/skype/ui/skypedetailsbase.ui:91
 #, kde-format
 msgid "Private phone:"
 msgstr "โทรศัพท์ส่วนตัว:"
@@ -3787,7 +3769,7 @@ msgstr "แ&ฟ้ม"
 #: plugins/cryptography/cryptographyui.rc:5 plugins/history/historyui.rc:5
 #: plugins/history2/history2ui.rc:5 plugins/otr/otrui.rc:5
 #: plugins/statistics/statisticsui.rc:5 plugins/translator/translatorui.rc:5
-#: protocols/groupwise/ui/gwcustomstatus.ui:44 protocols/skype/skypeui.rc:5
+#: protocols/groupwise/ui/gwcustomstatus.ui:44
 #, kde-format
 msgid "&Edit"
 msgstr "แ&ก้ไข"
@@ -5120,7 +5102,7 @@ msgstr ""
 #: libkopete/kabcpersistence.cpp:374 protocols/gadu/gadusession.cpp:213
 #: protocols/gadu/gadusession.cpp:225 protocols/gadu/gadusession.cpp:236
 #: protocols/gadu/gadusession.cpp:270 protocols/gadu/gadusession.cpp:283
-#: protocols/gadu/gadusession.cpp:302 protocols/skype/skypeaddcontact.cpp:68
+#: protocols/gadu/gadusession.cpp:302
 #, kde-format
 msgid "Not Connected"
 msgstr "ไม่ได้เชื่อมต่อ"
@@ -5191,7 +5173,7 @@ msgid "%2 <%1>"
 msgstr "%2 <%1>"
 
 #: libkopete/kopeteaccount.cpp:471 protocols/gadu/gaduaccount.cpp:384
-#: protocols/skype/skypeaccount.cpp:967 protocols/winpopup/wpaccount.cpp:185
+#: protocols/winpopup/wpaccount.cpp:185
 #, kde-format
 msgid "Properties"
 msgstr "คุณสมบัติต่าง ๆ"
@@ -6124,7 +6106,6 @@ msgstr ""
 
 #: libkopete/kopeteonlinestatus.cpp:167 protocols/gadu/gaduprotocol.cpp:96
 #: protocols/groupwise/gwprotocol.cpp:69 protocols/jabber/jabberprotocol.cpp:74
-#: protocols/skype/skypecalldialog.cpp:215 protocols/skype/skypeprotocol.cpp:83
 #: protocols/sms/smsprotocol.cpp:41
 #, kde-format
 msgid "Connecting"
@@ -6139,7 +6120,6 @@ msgstr "กำลังเชื่อมต่อ"
 #: protocols/oscar/icq/icqprotocol.cpp:455
 #: protocols/oscar/icq/icqprotocol.cpp:534
 #: protocols/oscar/icq/icqstatusmanager.cpp:37
-#: protocols/skype/libskype/skype.cpp:405
 #, kde-format
 msgid "Unknown"
 msgstr "ไม่ทราบ"
@@ -7082,7 +7062,6 @@ msgstr "&บันทึกย่อ"
 #: plugins/history/historychatui.rc:5 plugins/history2/history2chatui.rc:5
 #: plugins/latex/latexchatui.rc:5 plugins/nowlistening/nowlisteningchatui.rc:5
 #: plugins/otr/otrchatui.rc:4 plugins/translator/translatorchatui.rc:5
-#: protocols/skype/skypechatui.rc:5
 #, kde-format
 msgid "&Tools"
 msgstr "เ&ครื่องมือ"
@@ -10443,7 +10422,6 @@ msgstr "ปรับแต่งบัญชีผู้ใช้ -  Bonjour"
 msgid "B&asic Setup"
 msgstr "ตั้งค่าพื้&นฐาน"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox1)
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #. i18n: ectx: property (title), widget (QGroupBox, m_accountInfo)
 #. i18n: ectx: property (title), widget (QGroupBox)
@@ -10455,9 +10433,7 @@ msgstr "ตั้งค่าพื้&นฐาน"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:45
 #: protocols/meanwhile/ui/meanwhileeditaccount.ui:41
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:163
-#: protocols/qq/ui/qqeditaccountui.ui:63
-#: protocols/skype/ui/skypeeditaccountbase.ui:27
-#: protocols/sms/ui/smsactprefs.ui:71
+#: protocols/qq/ui/qqeditaccountui.ui:63 protocols/sms/ui/smsactprefs.ui:71
 #: protocols/winpopup/ui/wpeditaccountbase.ui:46
 #, kde-format
 msgid "Account Information"
@@ -10467,7 +10443,6 @@ msgstr "ข้อมูลรายละเอียดของบัญชี
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: protocols/bonjour/bonjouraccountpreferences.ui:77
 #: protocols/oscar/icq/ui/icqworkinfowidget.ui:34
-#: protocols/skype/ui/skypecalldialogbase.ui:39
 #, kde-format
 msgid "Name:"
 msgstr "ชื่อ:"
@@ -10935,8 +10910,7 @@ msgstr ""
 msgid "Edit Contact's Properties"
 msgstr "แก้ไขคุณสมบัติของชื่อติดต่อ"
 
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/gadu/gaduprotocol.cpp:56 protocols/skype/ui/skypedetailsbase.ui:50
+#: protocols/gadu/gaduprotocol.cpp:56
 #, kde-format
 msgid "Blocked"
 msgstr "บล็อค"
@@ -11761,7 +11735,7 @@ msgstr "เมือง:"
 #. i18n: ectx: property (text), item, widget (QComboBox, uiGender)
 #: protocols/gadu/ui/gadueditaccountui.ui:645
 #: protocols/gadu/ui/gadusearch.ui:269 protocols/oscar/icq/icqprotocol.cpp:205
-#: protocols/qq/ui/qqvcard.ui:223 protocols/skype/skypecontact.cpp:236
+#: protocols/qq/ui/qqvcard.ui:223
 #, kde-format
 msgid "Female"
 msgstr "หญิง"
@@ -11771,7 +11745,7 @@ msgstr "หญิง"
 #. i18n: ectx: property (text), item, widget (QComboBox, uiGender)
 #: protocols/gadu/ui/gadueditaccountui.ui:650
 #: protocols/gadu/ui/gadusearch.ui:264 protocols/oscar/icq/icqprotocol.cpp:206
-#: protocols/qq/ui/qqvcard.ui:218 protocols/skype/skypecontact.cpp:234
+#: protocols/qq/ui/qqvcard.ui:218
 #, kde-format
 msgid "Male"
 msgstr "ชาย"
@@ -12285,8 +12259,7 @@ msgstr ""
 
 #: protocols/groupwise/gwmessagemanager.cpp:77
 #: protocols/jabber/jabbergroupchatmanager.cpp:42
-#: protocols/qq/qqchatsession.cpp:69 protocols/skype/skypechatsession.cpp:125
-#: protocols/skype/skypechatsession.cpp:163
+#: protocols/qq/qqchatsession.cpp:69
 #, kde-format
 msgid "&Invite"
 msgstr "เ&ชื้อเชิญ"
@@ -12449,7 +12422,6 @@ msgid "Invalid password"
 msgstr "รหัสผ่านใช้ไม่ได้หรือไม่ถูกต้อง"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:40
-#: protocols/skype/libskype/skype.cpp:407
 #, kde-format
 msgid "User not found"
 msgstr "ไม่พบผู้ใช้"
@@ -13073,10 +13045,8 @@ msgstr ""
 msgid "Change the display name used for this contact"
 msgstr "เปลี่ยนชื่อที่แสดงสำหรับใช้กับชื่อติดต่อนี้"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
 #. i18n: ectx: property (text), widget (QLabel, textLabel14)
 #: protocols/groupwise/ui/gwcontactprops.ui:78
-#: protocols/skype/ui/skypecalldialogbase.ui:122
 #, kde-format
 msgid "Status:"
 msgstr "สถานะ:"
@@ -13938,14 +13908,12 @@ msgctxt "a contact's online status in parenthesis."
 msgid " (%1)"
 msgstr " (%1)"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox3_2)
 #: protocols/jabber/jabbercontact.cpp:144
-#: protocols/skype/ui/skypeeditaccountbase.ui:319
 #, kde-format
 msgid "Authorization"
 msgstr "การอนุญาต"
 
-#: protocols/jabber/jabbercontact.cpp:150 protocols/skype/skypecontact.cpp:106
+#: protocols/jabber/jabbercontact.cpp:150
 #, kde-format
 msgid "(Re)send Authorization To"
 msgstr ""
@@ -13955,12 +13923,12 @@ msgstr ""
 msgid "(Re)request Authorization From"
 msgstr ""
 
-#: protocols/jabber/jabbercontact.cpp:164 protocols/skype/skypecontact.cpp:111
+#: protocols/jabber/jabbercontact.cpp:164
 #, kde-format
 msgid "Remove Authorization From"
 msgstr ""
 
-#: protocols/jabber/jabbercontact.cpp:176 protocols/skype/skypecontact.cpp:101
+#: protocols/jabber/jabbercontact.cpp:176
 #, kde-format
 msgid "Call contact"
 msgstr "โทรหาผู้ติดต่อ"
@@ -13978,7 +13946,6 @@ msgstr "พร้อมจะสนทนา"
 #: protocols/jabber/jabbercontact.cpp:198
 #: protocols/oscar/aim/aimstatusmanager.cpp:69
 #: protocols/oscar/icq/icqstatusmanager.cpp:77
-#: protocols/skype/skypeaccount.cpp:941 protocols/skype/skypeprotocol.cpp:81
 #, kde-format
 msgid "Do Not Disturb"
 msgstr "ห้ามรบกวน"
@@ -14371,10 +14338,8 @@ msgstr "ต่อสายไปยัง:"
 msgid "Call Status:"
 msgstr "สถานะการต่อสาย:"
 
-#. i18n: ectx: property (text), widget (QPushButton, AcceptButton)
 #. i18n: ectx: property (text), widget (QPushButton, acceptButton)
 #: protocols/jabber/libjinglecalldialog.ui:42
-#: protocols/skype/ui/skypecalldialogbase.ui:180
 #, kde-format
 msgid "Accept"
 msgstr "ยอมรับ"
@@ -14992,7 +14957,6 @@ msgstr "ปรับแต่งบัญชีผู้ใช้ - Jabber"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:39
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:41
 #: protocols/qq/ui/qqeditaccountui.ui:42
-#: protocols/skype/ui/skypeeditaccountbase.ui:21
 #, kde-format
 msgid "&Basic Setup"
 msgstr "ตั้งค่า&พื้นฐาน"
@@ -15622,9 +15586,7 @@ msgstr ""
 msgid "Register"
 msgstr "ลงทะเบียน"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox1)
 #: protocols/jabber/ui/dlgsearch.cpp:54 protocols/jabber/ui/dlgsearch.cpp:55
-#: protocols/skype/ui/skypeaddcontactbase.ui:29
 #, kde-format
 msgid "Search"
 msgstr "ค้นหา"
@@ -15706,10 +15668,8 @@ msgstr "ค้นหาเซิร์ฟเวอร์"
 msgid "Node"
 msgstr ""
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
 #. i18n: ectx: property (text), widget (QLabel, lblName)
 #: protocols/jabber/ui/dlgvcard.ui:45 protocols/qq/ui/qqvcard.ui:164
-#: protocols/skype/ui/skypedetailsbase.ui:158
 #, kde-format
 msgid "Full name:"
 msgstr "ชื่อเต็ม:"
@@ -15720,12 +15680,11 @@ msgstr "ชื่อเต็ม:"
 msgid "Jabber ID:"
 msgstr "ชื่อผู้ใช้ Jabber:"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
 #. i18n: ectx: property (text), widget (QLabel, textLabel8)
 #. i18n: ectx: property (text), widget (QLabel, lblHomepage)
 #: protocols/jabber/ui/dlgvcard.ui:76
 #: protocols/oscar/icq/ui/icqworkinfowidget.ui:150
-#: protocols/qq/ui/qqvcard.ui:621 protocols/skype/ui/skypedetailsbase.ui:171
+#: protocols/qq/ui/qqvcard.ui:621
 #, kde-format
 msgid "Homepage:"
 msgstr "หน้าเว็บหลัก:"
@@ -16583,15 +16542,14 @@ msgstr "กำลังยุ่งมาก"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:73
 #: protocols/oscar/icq/icqstatusmanager.cpp:81
-#: protocols/skype/skypeaccount.cpp:937 protocols/skype/skypeprotocol.cpp:80
 #, kde-format
-msgid "Not Available"
+msgid "Not A&vailable"
 msgstr "ไม่พร้อมพูดคุย"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:73
 #: protocols/oscar/icq/icqstatusmanager.cpp:81
 #, kde-format
-msgid "Not A&vailable"
+msgid "Not Available"
 msgstr "ไม่พร้อมพูดคุย"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:77
@@ -20146,1001 +20104,6 @@ msgstr "เว็บแคมสำหรับ %1"
 msgid "No webcam image received"
 msgstr "ไม่ได้รับภาพเว็บแคมใด ๆ"
 
-#: protocols/skype/libskype/skype.cpp:256
-#, kde-format
-msgid "This version of Skype is too old, consider upgrading"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:290 protocols/skype/skypeaccount.cpp:1093
-#: protocols/skype/skypeaccount.cpp:1107 protocols/skype/skypeaccount.cpp:1129
-#: protocols/skype/skypeaccount.cpp:1134 protocols/skype/skypeaccount.cpp:1142
-#: protocols/skype/skypeaccount.cpp:1154 protocols/skype/skypeaccount.cpp:1159
-#: protocols/skype/skypeeditaccount.cpp:210
-#: protocols/skype/skypeeditaccount.cpp:225
-#: protocols/skype/skypeeditaccount.cpp:242
-#: protocols/skype/skypeeditaccount.cpp:250
-#, kde-format
-msgid "Skype protocol"
-msgstr "โพรโทคอล Skype"
-
-#: protocols/skype/libskype/skype.cpp:409
-#, kde-format
-msgid "Does not have multi-user chat capability"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:411
-#, kde-format
-msgid "Chat denied"
-msgstr "การพูดคุยถูกปฏิเสธ"
-
-#: protocols/skype/libskype/skype.cpp:488
-#, kde-format
-msgid "Unknown error"
-msgstr "ไม่ทราบข้อผิดพลาด"
-
-#: protocols/skype/libskype/skype.cpp:491
-#, kde-format
-msgid "Misc error"
-msgstr "ผิดพลาดเบ็ดเตล็ด"
-
-#: protocols/skype/libskype/skype.cpp:494
-#, kde-format
-msgid "User or phone number does not exist"
-msgstr "ไม่มีผู้ติดต่อหรือหมายเลขโทรศัพท์นี้"
-
-#: protocols/skype/libskype/skype.cpp:497
-#, kde-format
-msgid "User is offline"
-msgstr "ผู้ใช้ออฟไลน์"
-
-#: protocols/skype/libskype/skype.cpp:500
-#, kde-format
-msgid "No proxy found"
-msgstr "ไม่พบพร็อกซี"
-
-#: protocols/skype/libskype/skype.cpp:503
-#, kde-format
-msgid "Session terminated"
-msgstr "วาระถูกยุติ"
-
-#: protocols/skype/libskype/skype.cpp:506
-#, kde-format
-msgid "No common codec found"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:509
-#, kde-format
-msgid "Sound I/O error"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:512
-#, kde-format
-msgid "Problem with remote sound device"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:515
-#, kde-format
-msgid "Call blocked by recipient"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:518
-#, kde-format
-msgid "Recipient not a friend"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:521
-#, kde-format
-msgid "User not authorized by recipient"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:524
-#, kde-format
-msgid "Sound recording error"
-msgstr "การบันทึกเสียงผิดพลาด"
-
-#: protocols/skype/libskype/skype.cpp:820
-#, kde-format
-msgid "This version of Skype does not support adding users to chat."
-msgstr "Skype รุ่นนี้ไม่สนับสนุนการเพิ่มผู้ใช้เพื่อพูดคุย"
-
-#: protocols/skype/libskype/skype.cpp:820
-#, kde-format
-msgid "Skype Protocol"
-msgstr "โพรโทคอล Skype"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:92
-#, kde-format
-msgid "Could not ping Skype"
-msgstr "ไม่สามารถ ping Skype ได้"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:112
-#, kde-format
-msgid "Skype did not accept this application"
-msgstr ""
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:123
-#, kde-format
-msgid "Skype API syntax error"
-msgstr ""
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:132
-#, kde-format
-msgid "Skype API not ready yet, wait a bit longer"
-msgstr ""
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:178
-#, kde-format
-msgid "Cannot register Skype communication for Kopete on D-Bus"
-msgstr ""
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:209
-#, kde-format
-msgid ""
-"Could not launch Skype.\n"
-"You need to install the original dynamic linked Skype version 2.0 binary "
-"from http://www.skype.com"
-msgstr ""
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:216
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:324
-#, kde-format
-msgid ""
-"Could not find Skype.\n"
-"You need to install the original dynamic linked Skype version 2.0 binary "
-"from http://www.skype.com"
-msgstr ""
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:263
-#, kde-format
-msgid ""
-"Could not ping Skype.\n"
-"Maybe Skype not running.\n"
-"Error while sending a message to Skype (%1)."
-msgstr ""
-"ไม่สามารถ ping Skype ได้\n"
-"อาจเป็นไปได้ว่า Skype ไม่ได้ทำงานอยู่\n"
-"เกิดข้อผิดพลาดระหว่างการส่งข้อความไปยัง Skype (%1)"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:265
-#, kde-format
-msgid "Error while sending a message to Skype (%1)."
-msgstr "เกิดข้อผิดพลาดระหว่างทำการส่งข้อความไปยัง Skype (%1)"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:273
-#, kde-format
-msgid ""
-"Could not ping Skype.\n"
-"You are logged out from Skype, please log in."
-msgstr ""
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:326
-#, kde-format
-msgid "Please login to Skype first"
-msgstr "โปรดเข้าสู่ระบบ Skype ก่อน"
-
-#: protocols/skype/skypeaccount.cpp:921
-#, kde-format
-msgid "Skype (%1)"
-msgstr "Skype (%1)"
-
-#: protocols/skype/skypeaccount.cpp:949 protocols/skype/skypeprotocol.cpp:78
-#, kde-format
-msgid "Skype Me"
-msgstr "Skype ฉัน"
-
-#: protocols/skype/skypeaccount.cpp:955
-#, kde-format
-msgid "Make Test Call"
-msgstr "ทดสอบการโทร"
-
-#: protocols/skype/skypeaccount.cpp:1093
-#, kde-format
-msgid "Cannot open info about user %1"
-msgstr ""
-
-#: protocols/skype/skypeaccount.cpp:1107 protocols/skype/skypeaccount.cpp:1129
-#: protocols/skype/skypeaccount.cpp:1134 protocols/skype/skypeaccount.cpp:1159
-#, kde-format
-msgid "Unknown action from SkypeActionHandler"
-msgstr ""
-
-#: protocols/skype/skypeaccount.cpp:1142
-#, kde-format
-msgid "Add contact from SkypeActionHandler is not supported yet"
-msgstr ""
-
-#: protocols/skype/skypeaccount.cpp:1154
-#, kde-format
-msgid "Send voicemail from SkypeActionHandler is not supported yet"
-msgstr ""
-
-#: protocols/skype/skypeaddcontact.cpp:68
-#, kde-format
-msgid "You must connect to Skype first."
-msgstr "คุณต้องเชื่อมต่อ Skype ก่อน"
-
-#: protocols/skype/skypeaddcontact.cpp:73
-#, kde-format
-msgid "You must write the contact's name."
-msgstr "คุณต้องเขียนชื่อผู้ติดต่อด้วย"
-
-#: protocols/skype/skypeaddcontact.cpp:73
-#: protocols/skype/skypeaddcontact.cpp:78
-#: protocols/skype/skypeaddcontact.cpp:83
-#: protocols/skype/skypeaddcontact.cpp:88
-#: protocols/skype/skypeeditaccount.cpp:123
-#, kde-format
-msgid "Wrong Information"
-msgstr "ข้อมูลไม่ถูกต้อง"
-
-#: protocols/skype/skypeaddcontact.cpp:78
-#, kde-format
-msgid ""
-"Contact echo123 is not needed. You can make test call in Skype protocol "
-"actions."
-msgstr ""
-
-#: protocols/skype/skypeaddcontact.cpp:83
-#, kde-format
-msgid "This contact already exists in this account."
-msgstr "มีรายชื่อผู้ติดต่อนี้อยู่แล้ว"
-
-#: protocols/skype/skypeaddcontact.cpp:88
-#, kde-format
-msgid "You cannot add yourself as a contact."
-msgstr "คุณไม่สามารถเพิ่มตัวเองในรายชื่อผู้ติดต่อ"
-
-#: protocols/skype/skypecalldialog.cpp:106
-#, kde-format
-msgid "Call with %1"
-msgstr ""
-
-#: protocols/skype/skypecalldialog.cpp:138
-#, kde-format
-msgid "Canceled"
-msgstr "ถูกยกเลิก"
-
-#: protocols/skype/skypecalldialog.cpp:145
-#, kde-format
-msgid "Other person is busy"
-msgstr "บุคคลอื่นยังไม่ว่าง"
-
-#: protocols/skype/skypecalldialog.cpp:152
-#, kde-format
-msgid "Refused"
-msgstr "ถูกปฏิเสธ"
-
-#: protocols/skype/skypecalldialog.cpp:159
-#, kde-format
-msgid "Call Back"
-msgstr ""
-
-#: protocols/skype/skypecalldialog.cpp:160
-#, kde-format
-msgid "Missed"
-msgstr "ถูกไม่ได้รับสาย"
-
-#: protocols/skype/skypecalldialog.cpp:173
-#, kde-format
-msgid "Resume"
-msgstr "กลับไปทำต่อ"
-
-#: protocols/skype/skypecalldialog.cpp:176
-#, kde-format
-msgid "On hold (local)"
-msgstr ""
-
-#: protocols/skype/skypecalldialog.cpp:182
-#, kde-format
-msgid "On hold (remote)"
-msgstr ""
-
-#: protocols/skype/skypecalldialog.cpp:188
-#, kde-format
-msgid "On hold"
-msgstr ""
-
-#: protocols/skype/skypecalldialog.cpp:192
-#, kde-format
-msgid "Hold"
-msgstr "ถือสาย"
-
-#: protocols/skype/skypecalldialog.cpp:195
-#, kde-format
-msgid "In progress"
-msgstr "อยู่ระหว่างดำเนินการ"
-
-#: protocols/skype/skypecalldialog.cpp:201
-#, kde-format
-msgid "Ringing"
-msgstr "มีสายเข้า"
-
-#: protocols/skype/skypecalldialog.cpp:209
-#, kde-format
-msgid "Failed"
-msgstr "ล้มเหลว"
-
-#: protocols/skype/skypecalldialog.cpp:221
-#, kde-format
-msgctxt ""
-"Early media means the media played before the call is established. For "
-"example it can be a calling tone or a waiting message such as all operators "
-"are busy."
-msgid "Early media (waiting for operator...)"
-msgstr ""
-
-#: protocols/skype/skypecalldialog.cpp:276
-#, kde-format
-msgid "Failed (%1)"
-msgstr "ล้มเหลว (%1)"
-
-#: protocols/skype/skypecalldialog.cpp:296
-#, kde-format
-msgid ""
-"%1 active\n"
-"%2 total"
-msgstr ""
-
-#: protocols/skype/skypecalldialog.cpp:302
-#, kde-format
-msgid "Skypeout inactive"
-msgstr ""
-
-#: protocols/skype/skypechatsession.cpp:114
-#: protocols/skype/skypechatsession.cpp:155
-#: protocols/skype/skypeprotocol.cpp:105
-#, kde-format
-msgid "Call"
-msgstr "โทร"
-
-#: protocols/skype/skypeconference.cpp:44
-#, kde-format
-msgid "Conference Call"
-msgstr "ประชุม"
-
-#: protocols/skype/skypecontact.cpp:116
-#, kde-format
-msgid "Block contact"
-msgstr "บล็อครายชื่อติดต่อ"
-
-#: protocols/skype/skypedetails.cpp:70
-#, kde-format
-msgid "Details for User %1"
-msgstr "รายละเอียดสำหรับผู้ใช้ %1"
-
-#: protocols/skype/skypeeditaccount.cpp:123
-#, kde-format
-msgid "You can have only one skype account"
-msgstr ""
-
-#: protocols/skype/skypeeditaccount.cpp:207
-#, kde-format
-msgid "Configure Skype client"
-msgstr "ปรับแต่งไคลเอนต์ Skype"
-
-#: protocols/skype/skypeeditaccount.cpp:207
-#, kde-format
-msgid "Please enter your skype user name"
-msgstr "โปรดใส่ชื่อผู้ใช้ Skype ของคุณ"
-
-#: protocols/skype/skypeeditaccount.cpp:210
-#, kde-format
-msgid "You must enter your skype user name"
-msgstr "คุณต้องป้อนชื่อผู้ใช้ skype"
-
-#: protocols/skype/skypeeditaccount.cpp:225
-#: protocols/skype/skypeeditaccount.cpp:242
-#, kde-format
-msgid "Cannot create/open file %1 for configuring the Skype client."
-msgstr ""
-
-#: protocols/skype/skypeeditaccount.cpp:250
-#, kde-format
-msgid ""
-"Process has completed.\n"
-"Skype is now configured for Kopete.\n"
-"You must restart the Skype client for changes to take effect."
-msgstr ""
-
-#: protocols/skype/skypeprotocol.cpp:84
-#, kde-format
-msgid "Not in Skype list"
-msgstr ""
-
-#: protocols/skype/skypeprotocol.cpp:85
-#, kde-format
-msgid "Not authorized"
-msgstr "ไม่ได้รับอนุญาตสิทธิ์"
-
-#: protocols/skype/skypeprotocol.cpp:86
-#, kde-format
-msgid "SkypeOut contact"
-msgstr "SkypeOut ผู้ติดต่อ"
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeAddContactBase)
-#: protocols/skype/ui/skypeaddcontactbase.ui:6
-#, kde-format
-msgid "Add Skype Contact"
-msgstr "เพิ่มรายชื่อติดต่อ Skype"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypeaddcontactbase.ui:14
-#, kde-format
-msgid "Skype name:"
-msgstr "ชื่อ Skype:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypeaddcontactbase.ui:35
-#, kde-format
-msgid "Sorry, but the search function is not yet implemented."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QPushButton, SearchButton)
-#: protocols/skype/ui/skypeaddcontactbase.ui:69
-#, kde-format
-msgid "Se&arch"
-msgstr "ค้&นหา"
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeCallDialogBase)
-#: protocols/skype/ui/skypecalldialogbase.ui:6
-#, kde-format
-msgid "Skype Call"
-msgstr "การโทร Skype"
-
-#. i18n: ectx: property (toolTip), widget (QLabel, NameLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:14
-#, kde-format
-msgid "Name(s) of Participant(s)"
-msgstr "ชื่อผู้เข้าร่วม"
-
-#. i18n: ectx: property (whatsThis), widget (QLabel, NameLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:17
-#, kde-format
-msgid ""
-"Name of the other participant in the call (or a list of names if it is a "
-"conference call.)"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel2)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel2)
-#. i18n: ectx: property (toolTip), widget (QLabel, TimeLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:52
-#: protocols/skype/ui/skypecalldialogbase.ui:55
-#: protocols/skype/ui/skypecalldialogbase.ui:90
-#, kde-format
-msgid "Total time elapsed."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypecalldialogbase.ui:58
-#, kde-format
-msgid "Time:"
-msgstr "เวลา:"
-
-#. i18n: ectx: property (toolTip), widget (QLabel, CreditLabel)
-#. i18n: ectx: property (whatsThis), widget (QLabel, CreditLabel)
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel3)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypecalldialogbase.ui:71
-#: protocols/skype/ui/skypecalldialogbase.ui:74
-#: protocols/skype/ui/skypecalldialogbase.ui:135
-#: protocols/skype/ui/skypecalldialogbase.ui:138
-#, kde-format
-msgid "SkypeOut credits left"
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QLabel, TimeLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:93
-#, kde-format
-msgid ""
-"Total length of the call/<br />(i.e. both time speaking and time on hold.)"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypecalldialogbase.ui:141
-#, kde-format
-msgid "SkypeOut credits:"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, AcceptButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:174
-#, kde-format
-msgid "Accept call"
-msgstr "รับสาย"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, AcceptButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:177
-#, kde-format
-msgid "Accept incoming call"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:190
-#, kde-format
-msgid "Finish the call"
-msgstr "วางสาย"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:193
-#, kde-format
-msgid "Terminate the call"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:196
-#, kde-format
-msgid "H&ang up"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:203
-#, kde-format
-msgid "Hold the call"
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:206
-#, kde-format
-msgid "Interrupt the call for a moment and resume (or hang up) later."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:209
-#, kde-format
-msgid "H&old"
-msgstr "ถือ&สาย"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, ChatButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:216
-#, kde-format
-msgid "Open chat to the person."
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, ChatButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:219
-#, kde-format
-msgid "Open chat to the person with whom you are talking."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QPushButton, VideoButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:232
-#, kde-format
-msgid "Start/Stop Video"
-msgstr ""
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeDetailsBase)
-#: protocols/skype/ui/skypedetailsbase.ui:6
-#, kde-format
-msgid "User's Details"
-msgstr "ข้อมูลผู้ใช้"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypedetailsbase.ui:12
-#, kde-format
-msgid "Skype ID:"
-msgstr "Skype ID:"
-
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/skype/ui/skypedetailsbase.ui:40
-#, kde-format
-msgid "Authorized"
-msgstr "ได้รับอนุญาตสิทธิ์แล้ว"
-
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/skype/ui/skypedetailsbase.ui:45
-#, kde-format
-msgid "Not Authorized"
-msgstr "ไม่ได้รับอนุญาตสิทธิ์"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel7)
-#: protocols/skype/ui/skypedetailsbase.ui:104
-#, kde-format
-msgid "Is authorized:"
-msgstr "ได้รับอนุญาตสิทธิ์แล้ว:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypedetailsbase.ui:131
-#, kde-format
-msgid "Display Name:"
-msgstr "ชื่อที่ใช้แสดง:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_3)
-#: protocols/skype/ui/skypedetailsbase.ui:184
-#, kde-format
-msgid "Sex:"
-msgstr "เพศ:"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, excludeCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:35
-#, kde-format
-msgid "Check this if you do not want to connect with other protocols"
-msgstr "กาเลือกตัวเลือกนี้ หากคุณไม่ต้องการที่เชื่อมต่อกับโพรโตคอลอื่น"
-
-#. i18n: ectx: property (text), widget (QCheckBox, excludeCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:38
-#, kde-format
-msgid "E&xclude from connection"
-msgstr "ไม่&รวมเข้ากับการเชื่อมต่อ"
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:66
-#, kde-format
-msgid "Important Note"
-msgstr "บันทึกสำคัญ"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:72
-#, kde-format
-msgid ""
-"The Skype plugin serves as a bridge to an externally running copy of Skype. "
-"This has some consequences on how it functions: you need an instance of "
-"Skype to be running, and only one Skype account can be used.<br /><br />Note "
-"that you need to install the original dynamic linked Skype version 2.0 or "
-"2.1 from <a href=\"http://www.skype.com\">http://www.skype.com</a><br /><br /"
-">This plugin will only work if the language in the Skype client set to "
-"English. Kopete shows notifications (incoming call, message, ...), so you "
-"can turn off the notifications in Skype."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QPushButton, configureSkypeClient)
-#: protocols/skype/ui/skypeeditaccountbase.ui:88
-#, kde-format
-msgid "Disable Skype notifications and set up English language in Skype client"
-msgstr ""
-
-#. i18n: ectx: attribute (title), widget (QWidget, launchTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:112
-#, kde-format
-msgid "Lau&nch"
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, LaunchGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:118
-#, kde-format
-msgid "You can set whether and when should kopete launch Skype."
-msgstr ""
-
-#. i18n: ectx: property (title), widget (QGroupBox, LaunchGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:121
-#, kde-format
-msgid "Launch Skype"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QRadioButton, LaunchNeededRadio)
-#: protocols/skype/ui/skypeeditaccountbase.ui:127
-#, kde-format
-msgid "When &not running"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QRadioButton, LaunchNeverRadio)
-#: protocols/skype/ui/skypeeditaccountbase.ui:137
-#, kde-format
-msgid "N&ever"
-msgstr "ไม่เ&ลย"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypeeditaccountbase.ui:149
-#, kde-format
-msgid "Command to launch Skype:"
-msgstr "คำสั่งที่จะเปิด Skype:"
-
-#. i18n: ectx: property (text), widget (QLineEdit, CommandEdit)
-#: protocols/skype/ui/skypeeditaccountbase.ui:159
-#, kde-format
-msgid "skype"
-msgstr "skype"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:170
-#, kde-format
-msgid "Launch timeout:"
-msgstr "ระยะหมดเวลาการเปิด:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_3)
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_5)
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:193
-#: protocols/skype/ui/skypeeditaccountbase.ui:252
-#: protocols/skype/ui/skypeeditaccountbase.ui:579
-#, kde-format
-msgid "s"
-msgstr "วินาที"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:223
-#, kde-format
-msgid "Wait before trying to connect to Skype:"
-msgstr "ระยเวลาคอยก่อนที่จะลองเชื่อมต่อ Skype ใหม่:"
-
-#. i18n: ectx: property (toolTip), widget (QSpinBox, WaitSpin)
-#. i18n: ectx: property (whatsThis), widget (QSpinBox, WaitSpin)
-#: protocols/skype/ui/skypeeditaccountbase.ui:233
-#: protocols/skype/ui/skypeeditaccountbase.ui:236
-#, kde-format
-msgid "trying"
-msgstr "กำลังลองใหม่"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:280
-#, kde-format
-msgid ""
-"If you get error that Skype was not found, but in fact it is running, check "
-"the instructions at <a href=\"https://developer.skype.com/Docs/ApiDoc/"
-"Skype_API_on_Linux\">https://developer.skype.com/Docs/ApiDoc/"
-"Skype_API_on_Linux</a>.<br /><br />Note that only the dynamic linked Skype "
-"binary is supported."
-msgstr ""
-
-#. i18n: ectx: attribute (title), widget (QWidget, connectionTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:310
-#, kde-format
-msgid "C&onnection"
-msgstr "การเ&ชื่อมต่อ"
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, groupBox3_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:316
-#, kde-format
-msgid ""
-"Each application that wants to use Skype must provide its name to it, and "
-"the user is asked whether to allow said application to access Skype.<br>By "
-"default, kopete provides kopete as its name, but if you suspect another "
-"application is accessing Skype with this name, you can change the name "
-"Kopete uses here, and then within Skype disallow applications that refer to "
-"themselves as kopete."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, AuthorCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:325
-#, kde-format
-msgid "&Non-standard authorization"
-msgstr "การอนุญาตที่ไม่&มาตรฐาน"
-
-#. i18n: ectx: property (toolTip), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:342
-#, kde-format
-msgid "What bus do you want to use"
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:345
-#, kde-format
-msgid ""
-"Which D-Bus do you want to use to connect to Skype?<br>Session: Your own, "
-"other people cannot use it (use --use-session-dbus to start Skype on that "
-"bus.)<br>System: Shared by all people on the same computer. This one is used "
-"by default by Skype.<br>You have to specify the same D-Bus used by Skype."
-msgstr ""
-
-#. i18n: ectx: property (title), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:348
-#, kde-format
-msgid "Bus"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QRadioButton, radioButton4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:354
-#, kde-format
-msgid "Sessi&on"
-msgstr "&วาระ"
-
-#. i18n: ectx: property (text), widget (QRadioButton, radioButton5)
-#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/skype/ui/skypeeditaccountbase.ui:364
-#: protocols/winpopup/ui/wpeditaccountbase.ui:221
-#, kde-format
-msgid "S&ystem"
-msgstr "ระบบ"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:374
-#, kde-format
-msgid ""
-"Note that Kopete will freeze while Skype asks you if it can allow Kopete to "
-"access it. This is normal, and if you allow it forever (check that \"Remember"
-"\" checkbox in Skype's dialog), it will not happen again.<br /><br />The "
-"'System Bus' option is not yet supported by Skype"
-msgstr ""
-
-#. i18n: ectx: attribute (title), widget (QWidget, activityTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:404
-#, kde-format
-msgid "&Activity"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:410
-#, kde-format
-msgid "Show all incoming messages"
-msgstr "แสดงข้อความที่ได้รับทั้งหมด"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:413
-#, kde-format
-msgid ""
-"This will show all incoming Skype messages. If this is off, they are showed "
-"only if the message belongs to chat that is started by kopete."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:416
-#, kde-format
-msgid "Show all incoming &messages"
-msgstr "แสดงข้อ&ความที่ได้รับทั้งหมด"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, MarkCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:426
-#, kde-format
-msgid ""
-"This will mark incoming messages as read, so if you have Skype set up not to "
-"automatically pop-up chats, it will not flash the exclamation icon."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, MarkCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:429
-#, kde-format
-msgid "Mar&k as read"
-msgstr "ทำเครื่องหมายว่าอ่า&นแล้ว"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, ScanCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:439
-#, kde-format
-msgid ""
-"If this is checked, Kopete will ask Skype on login if it has any messages "
-"that have not been shown, and if so, will show them. This is useful if you "
-"start Kopete later than Skype, and Skype is configured not to show incoming "
-"messages."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, ScanCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:442
-#, kde-format
-msgid "Scan f&or unread"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:452
-#, kde-format
-msgid "Show call control window for all calls"
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:455
-#, kde-format
-msgid ""
-"This will show a call control window for every call (both incoming and "
-"outgoing). If it is off, you can call from Kopete, but you have to control "
-"that call from Skype."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:458
-#, kde-format
-msgid "S&how call control (this will also hide Skype client call dialog)"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:486
-#, kde-format
-msgid "Auto close the call control window"
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:489
-#, kde-format
-msgid ""
-"This will close the call control window automatically when the call finishes"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:492
-#, kde-format
-msgid "Autoc&lose"
-msgstr "ปิ&ดอัตโนมัติ"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:544
-#, kde-format
-msgid "Timeout:"
-msgstr "หมดเวลา:"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:607
-#, kde-format
-msgid ""
-"If this is enabled, Kopete keeps track of whether or not Skype is running."
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:610
-#, kde-format
-msgid ""
-"This keeps track of whether Skype is running. Turning this off only makes "
-"sense it you are trying to get non-flooded debug output."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:613
-#, kde-format
-msgid "Pi&ng Skype"
-msgstr "Pi&ng Skype"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, LeaveCheck)
-#. i18n: ectx: property (text), widget (QCheckBox, LeaveCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:623
-#: protocols/skype/ui/skypeeditaccountbase.ui:629
-#, kde-format
-msgid "Do not leave a chat on window exit"
-msgstr "ห้ามทิ้งการสนทนาไว้เมื่อออกจากหน้าต่าง"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, LeaveCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:626
-#, kde-format
-msgid ""
-"Do not leave a chat when the chat window is closed. Makes a difference only "
-"with multi-user chats: if it is checked, you will continue receiving "
-"messages from that chat even after closing the window."
-msgstr ""
-
-#. i18n: ectx: attribute (title), widget (QWidget, callsTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:656
-#, kde-format
-msgid "&Calls"
-msgstr "การโ&ทร"
-
-#. i18n: ectx: property (text), widget (QCheckBox, StartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:662
-#, kde-format
-msgid "E&xecute before call"
-msgstr "ประมวลผลคำสั่งก่อ&นโทร"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:717
-#, kde-format
-msgid ""
-"This will wait before making/accepting the call for the command to finish."
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:721
-#, kde-format
-msgid ""
-"This will wait for the command to finish before accepting/making the call."
-"<br>\n"
-"Note that kopete will freeze whilst waiting."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:724
-#, kde-format
-msgid "Wait for fi&nish"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, EndCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:733
-#, kde-format
-msgid "Execute after call"
-msgstr "ประมวลผลคำสั่งหลังโทร"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, OnlyLastCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:791
-#, kde-format
-msgid ""
-"Usually this makes no difference, but if there are some other calls on hold, "
-"it is executed only for the most recently ended one."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, OnlyLastCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:794
-#, kde-format
-msgid "Onl&y for last call"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, IncomingCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:803
-#, kde-format
-msgid "Execute on inco&ming call"
-msgstr "ประมวลผลคำสั่งขณะมี&สายเข้า"
-
 #: protocols/sms/serviceloader.cpp:46
 #, kde-format
 msgid "Could not load service %1."
@@ -21726,6 +20689,12 @@ msgid ""
 "by the real path) to the [global] section in your smb.conf."
 msgstr ""
 
+#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
+#: protocols/winpopup/ui/wpeditaccountbase.ui:221
+#, kde-format
+msgid "S&ystem"
+msgstr "ระบบ"
+
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_3)
 #: protocols/winpopup/ui/wpeditaccountbase.ui:233
 #, kde-format
@@ -21882,6 +20851,258 @@ msgstr "การปรับแต่งค่าล้มเหลว"
 #, kde-format
 msgid "User Info for %1"
 msgstr "ข้อมูลผู้ใช้สำหรับ %1"
+
+#~ msgid "Skype protocol"
+#~ msgstr "โพรโทคอล Skype"
+
+#~ msgid "Chat denied"
+#~ msgstr "การพูดคุยถูกปฏิเสธ"
+
+#~ msgid "Unknown error"
+#~ msgstr "ไม่ทราบข้อผิดพลาด"
+
+#~ msgid "Misc error"
+#~ msgstr "ผิดพลาดเบ็ดเตล็ด"
+
+#~ msgid "User or phone number does not exist"
+#~ msgstr "ไม่มีผู้ติดต่อหรือหมายเลขโทรศัพท์นี้"
+
+#~ msgid "User is offline"
+#~ msgstr "ผู้ใช้ออฟไลน์"
+
+#~ msgid "No proxy found"
+#~ msgstr "ไม่พบพร็อกซี"
+
+#~ msgid "Session terminated"
+#~ msgstr "วาระถูกยุติ"
+
+#~ msgid "Sound recording error"
+#~ msgstr "การบันทึกเสียงผิดพลาด"
+
+#~ msgid "This version of Skype does not support adding users to chat."
+#~ msgstr "Skype รุ่นนี้ไม่สนับสนุนการเพิ่มผู้ใช้เพื่อพูดคุย"
+
+#~ msgid "Skype Protocol"
+#~ msgstr "โพรโทคอล Skype"
+
+#~ msgid "Could not ping Skype"
+#~ msgstr "ไม่สามารถ ping Skype ได้"
+
+#~ msgid ""
+#~ "Could not ping Skype.\n"
+#~ "Maybe Skype not running.\n"
+#~ "Error while sending a message to Skype (%1)."
+#~ msgstr ""
+#~ "ไม่สามารถ ping Skype ได้\n"
+#~ "อาจเป็นไปได้ว่า Skype ไม่ได้ทำงานอยู่\n"
+#~ "เกิดข้อผิดพลาดระหว่างการส่งข้อความไปยัง Skype (%1)"
+
+#~ msgid "Error while sending a message to Skype (%1)."
+#~ msgstr "เกิดข้อผิดพลาดระหว่างทำการส่งข้อความไปยัง Skype (%1)"
+
+#~ msgid "Please login to Skype first"
+#~ msgstr "โปรดเข้าสู่ระบบ Skype ก่อน"
+
+#~ msgid "Skype (%1)"
+#~ msgstr "Skype (%1)"
+
+#~ msgid "Skype Me"
+#~ msgstr "Skype ฉัน"
+
+#~ msgid "Make Test Call"
+#~ msgstr "ทดสอบการโทร"
+
+#~ msgid "You must connect to Skype first."
+#~ msgstr "คุณต้องเชื่อมต่อ Skype ก่อน"
+
+#~ msgid "You must write the contact's name."
+#~ msgstr "คุณต้องเขียนชื่อผู้ติดต่อด้วย"
+
+#~ msgid "Wrong Information"
+#~ msgstr "ข้อมูลไม่ถูกต้อง"
+
+#~ msgid "This contact already exists in this account."
+#~ msgstr "มีรายชื่อผู้ติดต่อนี้อยู่แล้ว"
+
+#~ msgid "You cannot add yourself as a contact."
+#~ msgstr "คุณไม่สามารถเพิ่มตัวเองในรายชื่อผู้ติดต่อ"
+
+#~ msgid "Canceled"
+#~ msgstr "ถูกยกเลิก"
+
+#~ msgid "Other person is busy"
+#~ msgstr "บุคคลอื่นยังไม่ว่าง"
+
+#~ msgid "Refused"
+#~ msgstr "ถูกปฏิเสธ"
+
+#~ msgid "Missed"
+#~ msgstr "ถูกไม่ได้รับสาย"
+
+#~ msgid "Resume"
+#~ msgstr "กลับไปทำต่อ"
+
+#~ msgid "Hold"
+#~ msgstr "ถือสาย"
+
+#~ msgid "In progress"
+#~ msgstr "อยู่ระหว่างดำเนินการ"
+
+#~ msgid "Ringing"
+#~ msgstr "มีสายเข้า"
+
+#~ msgid "Failed"
+#~ msgstr "ล้มเหลว"
+
+#~ msgid "Failed (%1)"
+#~ msgstr "ล้มเหลว (%1)"
+
+#~ msgid "Call"
+#~ msgstr "โทร"
+
+#~ msgid "Conference Call"
+#~ msgstr "ประชุม"
+
+#~ msgid "Block contact"
+#~ msgstr "บล็อครายชื่อติดต่อ"
+
+#~ msgid "Details for User %1"
+#~ msgstr "รายละเอียดสำหรับผู้ใช้ %1"
+
+#~ msgid "Configure Skype client"
+#~ msgstr "ปรับแต่งไคลเอนต์ Skype"
+
+#~ msgid "Please enter your skype user name"
+#~ msgstr "โปรดใส่ชื่อผู้ใช้ Skype ของคุณ"
+
+#~ msgid "You must enter your skype user name"
+#~ msgstr "คุณต้องป้อนชื่อผู้ใช้ skype"
+
+#~ msgid "Not authorized"
+#~ msgstr "ไม่ได้รับอนุญาตสิทธิ์"
+
+#~ msgid "SkypeOut contact"
+#~ msgstr "SkypeOut ผู้ติดต่อ"
+
+#~ msgid "Add Skype Contact"
+#~ msgstr "เพิ่มรายชื่อติดต่อ Skype"
+
+#~ msgid "Skype name:"
+#~ msgstr "ชื่อ Skype:"
+
+#~ msgid "Se&arch"
+#~ msgstr "ค้&นหา"
+
+#~ msgid "Skype Call"
+#~ msgstr "การโทร Skype"
+
+#~ msgid "Name(s) of Participant(s)"
+#~ msgstr "ชื่อผู้เข้าร่วม"
+
+#~ msgid "Time:"
+#~ msgstr "เวลา:"
+
+#~ msgid "Accept call"
+#~ msgstr "รับสาย"
+
+#~ msgid "Finish the call"
+#~ msgstr "วางสาย"
+
+#~ msgid "H&old"
+#~ msgstr "ถือ&สาย"
+
+#~ msgid "User's Details"
+#~ msgstr "ข้อมูลผู้ใช้"
+
+#~ msgid "Skype ID:"
+#~ msgstr "Skype ID:"
+
+#~ msgid "Authorized"
+#~ msgstr "ได้รับอนุญาตสิทธิ์แล้ว"
+
+#~ msgid "Not Authorized"
+#~ msgstr "ไม่ได้รับอนุญาตสิทธิ์"
+
+#~ msgid "Is authorized:"
+#~ msgstr "ได้รับอนุญาตสิทธิ์แล้ว:"
+
+#~ msgid "Display Name:"
+#~ msgstr "ชื่อที่ใช้แสดง:"
+
+#~ msgid "Sex:"
+#~ msgstr "เพศ:"
+
+#~ msgid "Check this if you do not want to connect with other protocols"
+#~ msgstr "กาเลือกตัวเลือกนี้ หากคุณไม่ต้องการที่เชื่อมต่อกับโพรโตคอลอื่น"
+
+#~ msgid "E&xclude from connection"
+#~ msgstr "ไม่&รวมเข้ากับการเชื่อมต่อ"
+
+#~ msgid "Important Note"
+#~ msgstr "บันทึกสำคัญ"
+
+#~ msgid "N&ever"
+#~ msgstr "ไม่เ&ลย"
+
+#~ msgid "Command to launch Skype:"
+#~ msgstr "คำสั่งที่จะเปิด Skype:"
+
+#~ msgid "skype"
+#~ msgstr "skype"
+
+#~ msgid "Launch timeout:"
+#~ msgstr "ระยะหมดเวลาการเปิด:"
+
+#~ msgid "s"
+#~ msgstr "วินาที"
+
+#~ msgid "Wait before trying to connect to Skype:"
+#~ msgstr "ระยเวลาคอยก่อนที่จะลองเชื่อมต่อ Skype ใหม่:"
+
+#~ msgid "trying"
+#~ msgstr "กำลังลองใหม่"
+
+#~ msgid "C&onnection"
+#~ msgstr "การเ&ชื่อมต่อ"
+
+#~ msgid "&Non-standard authorization"
+#~ msgstr "การอนุญาตที่ไม่&มาตรฐาน"
+
+#~ msgid "Sessi&on"
+#~ msgstr "&วาระ"
+
+#~ msgid "Show all incoming messages"
+#~ msgstr "แสดงข้อความที่ได้รับทั้งหมด"
+
+#~ msgid "Show all incoming &messages"
+#~ msgstr "แสดงข้อ&ความที่ได้รับทั้งหมด"
+
+#~ msgid "Mar&k as read"
+#~ msgstr "ทำเครื่องหมายว่าอ่า&นแล้ว"
+
+#~ msgid "Autoc&lose"
+#~ msgstr "ปิ&ดอัตโนมัติ"
+
+#~ msgid "Timeout:"
+#~ msgstr "หมดเวลา:"
+
+#~ msgid "Pi&ng Skype"
+#~ msgstr "Pi&ng Skype"
+
+#~ msgid "Do not leave a chat on window exit"
+#~ msgstr "ห้ามทิ้งการสนทนาไว้เมื่อออกจากหน้าต่าง"
+
+#~ msgid "&Calls"
+#~ msgstr "การโ&ทร"
+
+#~ msgid "E&xecute before call"
+#~ msgstr "ประมวลผลคำสั่งก่อ&นโทร"
+
+#~ msgid "Execute after call"
+#~ msgstr "ประมวลผลคำสั่งหลังโทร"
+
+#~ msgid "Execute on inco&ming call"
+#~ msgstr "ประมวลผลคำสั่งขณะมี&สายเข้า"
 
 #~ msgid "An error occurred while saving the address book entry."
 #~ msgstr "เกิดข้อผิดพลาดระหว่างทำการจัดเก็บรายการของสมุดที่อยู่"

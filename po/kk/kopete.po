@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-05-03 00:43+0000\n"
+"POT-Creation-Date: 2022-12-08 00:45+0000\n"
 "PO-Revision-Date: 2013-11-08 01:26+0600\n"
 "Last-Translator: Sairan Kikkarin <sairan@computer.org>\n"
 "Language-Team: Kazakh <kde-i18n-doc@kde.org>\n"
@@ -29,7 +29,6 @@ msgstr "Тез үйренушімің"
 #. i18n: ectx: property (text), widget (QTreeWidget, addresseeListView)
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListGroupSorting)
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListMetaContactSorting)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel1)
 #. i18n: ectx: property (text), widget (QTableWidget, listServers)
 #. i18n: ectx: property (text), widget (QTreeWidget, trServices)
 #: kopete/addaccountwizard/addaccountwizard.cpp:74
@@ -38,7 +37,6 @@ msgstr "Тез үйренушімің"
 #: libkopete/ui/addressbookselectorwidget_base.ui:97
 #: protocols/jabber/ui/dlgjabberchooseserver.ui:57
 #: protocols/jabber/ui/dlgservices.ui:85
-#: protocols/skype/ui/skypecalldialogbase.ui:36
 #, kde-format
 msgid "Name"
 msgstr "Атауы"
@@ -122,7 +120,6 @@ msgstr "1"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, AddAccountWizardPage2)
 #: kopete/addaccountwizard/addaccountwizardpage2.ui:13
-#: protocols/skype/skypecalldialog.cpp:168
 #, kde-format
 msgid "Finished"
 msgstr "Аяқталған"
@@ -419,10 +416,8 @@ msgstr "Мен %1 деп белгіленгенмін."
 msgid "%2 is now %1."
 msgstr "%2 енді %1."
 
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel1)
 #: kopete/chatwindow/kopetechatwindow.cpp:210
 #: kopete/chatwindow/kopetechatwindow.cpp:476
-#: protocols/skype/ui/skypecalldialogbase.ui:33
 #, kde-format
 msgid "Participants"
 msgstr "Қатысушылар"
@@ -597,7 +592,6 @@ msgstr "&Параметрлері"
 #: kopete/chatwindow/kopetechatwindow.rc:46
 #: kopete/chatwindow/kopeteemailwindow.rc:29
 #: kopete/chatwindow/kopeterichtexteditpartfull.rc:25 kopete/kopeteui.rc:48
-#: protocols/skype/skypeui.rc:12
 #, kde-format
 msgid "Main Toolbar"
 msgstr "Негізгі құралдар"
@@ -1751,9 +1745,7 @@ msgid "Message:"
 msgstr "Хабар:"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, BehaviorConfig_Chat)
-#. i18n: ectx: property (text), widget (QPushButton, ChatButton)
 #: kopete/config/behavior/behaviorconfig_chat.ui:14
-#: protocols/skype/ui/skypecalldialogbase.ui:222
 #, kde-format
 msgid "Chat"
 msgstr "Әңгіме"
@@ -2319,7 +2311,6 @@ msgstr ""
 #: protocols/meanwhile/meanwhileprotocol.cpp:35
 #: protocols/oscar/aim/aimstatusmanager.cpp:67
 #: protocols/oscar/icq/icqstatusmanager.cpp:75 protocols/qq/qqprotocol.cpp:41
-#: protocols/skype/skypeaccount.cpp:929 protocols/skype/skypeprotocol.cpp:76
 #: protocols/sms/smsprotocol.cpp:40 protocols/winpopup/wpprotocol.cpp:59
 #, kde-format
 msgid "Offline"
@@ -2340,7 +2331,6 @@ msgstr "Желіден тыс"
 #: protocols/meanwhile/meanwhileprotocol.cpp:40
 #: protocols/oscar/aim/aimstatusmanager.cpp:79
 #: protocols/oscar/icq/icqstatusmanager.cpp:87 protocols/qq/qqprotocol.cpp:37
-#: protocols/skype/skypeaccount.cpp:925 protocols/skype/skypeprotocol.cpp:77
 #: protocols/sms/smsprotocol.cpp:39 protocols/winpopup/wpaccount.cpp:170
 #: protocols/winpopup/wpprotocol.cpp:57
 #, kde-format
@@ -2361,7 +2351,6 @@ msgstr "Онлайн"
 #: protocols/meanwhile/meanwhileprotocol.cpp:44
 #: protocols/oscar/aim/aimstatusmanager.cpp:75
 #: protocols/oscar/icq/icqstatusmanager.cpp:83 protocols/qq/qqprotocol.cpp:39
-#: protocols/skype/skypeaccount.cpp:933 protocols/skype/skypeprotocol.cpp:79
 #: protocols/winpopup/wpaccount.cpp:176 protocols/winpopup/wpprotocol.cpp:58
 #, kde-format
 msgid "Away"
@@ -2392,7 +2381,6 @@ msgstr "Қолым тимейді"
 #: protocols/oscar/aim/aimstatusmanager.cpp:85
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:812
 #: protocols/oscar/icq/icqstatusmanager.cpp:92
-#: protocols/skype/skypeaccount.cpp:945 protocols/skype/skypeprotocol.cpp:82
 #, kde-format
 msgid "Invisible"
 msgstr "Көрінбейтін"
@@ -3216,19 +3204,15 @@ msgid "Home phone:"
 msgstr "Үй телефоны:"
 
 #. i18n: ectx: property (text), widget (QLabel, mLblWorkPhone)
-#. i18n: ectx: property (text), widget (QLabel, textLabel6)
 #: kopete/contactlist/kopeteaddrbookexportui.ui:66
-#: protocols/skype/ui/skypedetailsbase.ui:71
 #, kde-format
 msgid "Work phone:"
 msgstr "Жұмыс телефоны:"
 
 #. i18n: ectx: property (text), widget (QLabel, mLblMobilePhone)
 #. i18n: ectx: property (text), widget (QLabel, mobileLabel)
-#. i18n: ectx: property (text), widget (QLabel, textLabel5)
 #: kopete/contactlist/kopeteaddrbookexportui.ui:76
 #: kopete/identity/identitydetailed.ui:45
-#: protocols/skype/ui/skypedetailsbase.ui:58
 #, kde-format
 msgid "Mobile phone:"
 msgstr "Қалта телефоны:"
@@ -3750,9 +3734,7 @@ msgid "E-mail: "
 msgstr "Эл.пошта: "
 
 #. i18n: ectx: property (text), widget (QLabel, phoneLabel)
-#. i18n: ectx: property (text), widget (QLabel, textLabel4)
 #: kopete/identity/identitydetailed.ui:32
-#: protocols/skype/ui/skypedetailsbase.ui:91
 #, kde-format
 msgid "Private phone:"
 msgstr "Үй телефоны:"
@@ -3845,7 +3827,7 @@ msgstr "&Файл"
 #: plugins/cryptography/cryptographyui.rc:5 plugins/history/historyui.rc:5
 #: plugins/history2/history2ui.rc:5 plugins/otr/otrui.rc:5
 #: plugins/statistics/statisticsui.rc:5 plugins/translator/translatorui.rc:5
-#: protocols/groupwise/ui/gwcustomstatus.ui:44 protocols/skype/skypeui.rc:5
+#: protocols/groupwise/ui/gwcustomstatus.ui:44
 #, kde-format
 msgid "&Edit"
 msgstr "&Өңдеу"
@@ -5187,7 +5169,7 @@ msgstr ""
 #: libkopete/kabcpersistence.cpp:374 protocols/gadu/gadusession.cpp:213
 #: protocols/gadu/gadusession.cpp:225 protocols/gadu/gadusession.cpp:236
 #: protocols/gadu/gadusession.cpp:270 protocols/gadu/gadusession.cpp:283
-#: protocols/gadu/gadusession.cpp:302 protocols/skype/skypeaddcontact.cpp:68
+#: protocols/gadu/gadusession.cpp:302
 #, kde-format
 msgid "Not Connected"
 msgstr "Қосылмаған"
@@ -5268,7 +5250,7 @@ msgid "%2 <%1>"
 msgstr "%2 <%1>"
 
 #: libkopete/kopeteaccount.cpp:471 protocols/gadu/gaduaccount.cpp:384
-#: protocols/skype/skypeaccount.cpp:967 protocols/winpopup/wpaccount.cpp:185
+#: protocols/winpopup/wpaccount.cpp:185
 #, kde-format
 msgid "Properties"
 msgstr "Қасиеттері"
@@ -6192,7 +6174,6 @@ msgstr ""
 
 #: libkopete/kopeteonlinestatus.cpp:167 protocols/gadu/gaduprotocol.cpp:96
 #: protocols/groupwise/gwprotocol.cpp:69 protocols/jabber/jabberprotocol.cpp:74
-#: protocols/skype/skypecalldialog.cpp:215 protocols/skype/skypeprotocol.cpp:83
 #: protocols/sms/smsprotocol.cpp:41
 #, kde-format
 msgid "Connecting"
@@ -6207,7 +6188,6 @@ msgstr "Қосылуда"
 #: protocols/oscar/icq/icqprotocol.cpp:455
 #: protocols/oscar/icq/icqprotocol.cpp:534
 #: protocols/oscar/icq/icqstatusmanager.cpp:37
-#: protocols/skype/libskype/skype.cpp:405
 #, kde-format
 msgid "Unknown"
 msgstr "Беймәлім"
@@ -7175,7 +7155,6 @@ msgstr "&Жазбалар"
 #: plugins/history/historychatui.rc:5 plugins/history2/history2chatui.rc:5
 #: plugins/latex/latexchatui.rc:5 plugins/nowlistening/nowlisteningchatui.rc:5
 #: plugins/otr/otrchatui.rc:4 plugins/translator/translatorchatui.rc:5
-#: protocols/skype/skypechatui.rc:5
 #, kde-format
 msgid "&Tools"
 msgstr "Құ&ралдар"
@@ -10592,7 +10571,6 @@ msgstr "Тіркелгі параметрлері - Bonjour"
 msgid "B&asic Setup"
 msgstr "&Негізгі баптау"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox1)
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #. i18n: ectx: property (title), widget (QGroupBox, m_accountInfo)
 #. i18n: ectx: property (title), widget (QGroupBox)
@@ -10604,9 +10582,7 @@ msgstr "&Негізгі баптау"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:45
 #: protocols/meanwhile/ui/meanwhileeditaccount.ui:41
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:163
-#: protocols/qq/ui/qqeditaccountui.ui:63
-#: protocols/skype/ui/skypeeditaccountbase.ui:27
-#: protocols/sms/ui/smsactprefs.ui:71
+#: protocols/qq/ui/qqeditaccountui.ui:63 protocols/sms/ui/smsactprefs.ui:71
 #: protocols/winpopup/ui/wpeditaccountbase.ui:46
 #, kde-format
 msgid "Account Information"
@@ -10616,7 +10592,6 @@ msgstr "Тіркелгі мәліметі"
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: protocols/bonjour/bonjouraccountpreferences.ui:77
 #: protocols/oscar/icq/ui/icqworkinfowidget.ui:34
-#: protocols/skype/ui/skypecalldialogbase.ui:39
 #, kde-format
 msgid "Name:"
 msgstr "Аты:"
@@ -11117,8 +11092,7 @@ msgstr "<b>DCC сокетін іске қосу орындалмады: dcc іс
 msgid "Edit Contact's Properties"
 msgstr "Контакт қасиеттерін өңдеу"
 
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/gadu/gaduprotocol.cpp:56 protocols/skype/ui/skypedetailsbase.ui:50
+#: protocols/gadu/gaduprotocol.cpp:56
 #, kde-format
 msgid "Blocked"
 msgstr "Бұғатталған"
@@ -11954,7 +11928,7 @@ msgstr "Қаласы:"
 #. i18n: ectx: property (text), item, widget (QComboBox, uiGender)
 #: protocols/gadu/ui/gadueditaccountui.ui:645
 #: protocols/gadu/ui/gadusearch.ui:269 protocols/oscar/icq/icqprotocol.cpp:205
-#: protocols/qq/ui/qqvcard.ui:223 protocols/skype/skypecontact.cpp:236
+#: protocols/qq/ui/qqvcard.ui:223
 #, kde-format
 msgid "Female"
 msgstr "Әйел"
@@ -11964,7 +11938,7 @@ msgstr "Әйел"
 #. i18n: ectx: property (text), item, widget (QComboBox, uiGender)
 #: protocols/gadu/ui/gadueditaccountui.ui:650
 #: protocols/gadu/ui/gadusearch.ui:264 protocols/oscar/icq/icqprotocol.cpp:206
-#: protocols/qq/ui/qqvcard.ui:218 protocols/skype/skypecontact.cpp:234
+#: protocols/qq/ui/qqvcard.ui:218
 #, kde-format
 msgid "Male"
 msgstr "Ер"
@@ -12490,8 +12464,7 @@ msgstr "%1|Бұғатталған"
 
 #: protocols/groupwise/gwmessagemanager.cpp:77
 #: protocols/jabber/jabbergroupchatmanager.cpp:42
-#: protocols/qq/qqchatsession.cpp:69 protocols/skype/skypechatsession.cpp:125
-#: protocols/skype/skypechatsession.cpp:163
+#: protocols/qq/qqchatsession.cpp:69
 #, kde-format
 msgid "&Invite"
 msgstr "&Шақыру"
@@ -12658,7 +12631,6 @@ msgid "Invalid password"
 msgstr "Жарамсыз пароль"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:40
-#: protocols/skype/libskype/skype.cpp:407
 #, kde-format
 msgid "User not found"
 msgstr "Бұндай пайдаланушысы жоқ"
@@ -13289,10 +13261,8 @@ msgstr "USER_ID"
 msgid "Change the display name used for this contact"
 msgstr "Бұл контакттың атауын өзгерту"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
 #. i18n: ectx: property (text), widget (QLabel, textLabel14)
 #: protocols/groupwise/ui/gwcontactprops.ui:78
-#: protocols/skype/ui/skypecalldialogbase.ui:122
 #, kde-format
 msgid "Status:"
 msgstr "Күй-жайы:"
@@ -14156,14 +14126,12 @@ msgctxt "a contact's online status in parenthesis."
 msgid " (%1)"
 msgstr " (%1)"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox3_2)
 #: protocols/jabber/jabbercontact.cpp:144
-#: protocols/skype/ui/skypeeditaccountbase.ui:319
 #, kde-format
 msgid "Authorization"
 msgstr "Авторизация"
 
-#: protocols/jabber/jabbercontact.cpp:150 protocols/skype/skypecontact.cpp:106
+#: protocols/jabber/jabbercontact.cpp:150
 #, kde-format
 msgid "(Re)send Authorization To"
 msgstr "Келесіге авторизацияңызды (қайта) жіберу"
@@ -14173,12 +14141,12 @@ msgstr "Келесіге авторизацияңызды (қайта) жібе�
 msgid "(Re)request Authorization From"
 msgstr "Келесіден авторизациясын (қайта) сұрау"
 
-#: protocols/jabber/jabbercontact.cpp:164 protocols/skype/skypecontact.cpp:111
+#: protocols/jabber/jabbercontact.cpp:164
 #, kde-format
 msgid "Remove Authorization From"
 msgstr "Келесіден авторизацияны өшіру"
 
-#: protocols/jabber/jabbercontact.cpp:176 protocols/skype/skypecontact.cpp:101
+#: protocols/jabber/jabbercontact.cpp:176
 #, kde-format
 msgid "Call contact"
 msgstr "Контактты шақыру"
@@ -14196,7 +14164,6 @@ msgstr "Әңгімеге дайын"
 #: protocols/jabber/jabbercontact.cpp:198
 #: protocols/oscar/aim/aimstatusmanager.cpp:69
 #: protocols/oscar/icq/icqstatusmanager.cpp:77
-#: protocols/skype/skypeaccount.cpp:941 protocols/skype/skypeprotocol.cpp:81
 #, kde-format
 msgid "Do Not Disturb"
 msgstr "Әурелемеңіз"
@@ -14595,10 +14562,8 @@ msgstr "Кімді шақыру:"
 msgid "Call Status:"
 msgstr "Шақырудың күй-жайы:"
 
-#. i18n: ectx: property (text), widget (QPushButton, AcceptButton)
 #. i18n: ectx: property (text), widget (QPushButton, acceptButton)
 #: protocols/jabber/libjinglecalldialog.ui:42
-#: protocols/skype/ui/skypecalldialogbase.ui:180
 #, kde-format
 msgid "Accept"
 msgstr "Қабылдау"
@@ -15213,7 +15178,6 @@ msgstr "Тіркелгі параметрлері  - Jabber"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:39
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:41
 #: protocols/qq/ui/qqeditaccountui.ui:42
-#: protocols/skype/ui/skypeeditaccountbase.ui:21
 #, kde-format
 msgid "&Basic Setup"
 msgstr "&Негізгі баптау"
@@ -15859,9 +15823,7 @@ msgstr ""
 msgid "Register"
 msgstr "Тіркеу"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox1)
 #: protocols/jabber/ui/dlgsearch.cpp:54 protocols/jabber/ui/dlgsearch.cpp:55
-#: protocols/skype/ui/skypeaddcontactbase.ui:29
 #, kde-format
 msgid "Search"
 msgstr "Іздеу"
@@ -15943,10 +15905,8 @@ msgstr "&Серверге сұрау салу"
 msgid "Node"
 msgstr "Түйіні"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
 #. i18n: ectx: property (text), widget (QLabel, lblName)
 #: protocols/jabber/ui/dlgvcard.ui:45 protocols/qq/ui/qqvcard.ui:164
-#: protocols/skype/ui/skypedetailsbase.ui:158
 #, kde-format
 msgid "Full name:"
 msgstr "Толық аты:"
@@ -15957,12 +15917,11 @@ msgstr "Толық аты:"
 msgid "Jabber ID:"
 msgstr "Jabber ID:"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
 #. i18n: ectx: property (text), widget (QLabel, textLabel8)
 #. i18n: ectx: property (text), widget (QLabel, lblHomepage)
 #: protocols/jabber/ui/dlgvcard.ui:76
 #: protocols/oscar/icq/ui/icqworkinfowidget.ui:150
-#: protocols/qq/ui/qqvcard.ui:621 protocols/skype/ui/skypedetailsbase.ui:171
+#: protocols/qq/ui/qqvcard.ui:621
 #, kde-format
 msgid "Homepage:"
 msgstr "Мекен парақшасы:"
@@ -16825,16 +16784,15 @@ msgstr "Бос емес"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:73
 #: protocols/oscar/icq/icqstatusmanager.cpp:81
-#: protocols/skype/skypeaccount.cpp:937 protocols/skype/skypeprotocol.cpp:80
 #, kde-format
-msgid "Not Available"
-msgstr "Қол жеткізбеуде"
+msgid "Not A&vailable"
+msgstr "Қол ж&еткізбеуде"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:73
 #: protocols/oscar/icq/icqstatusmanager.cpp:81
 #, kde-format
-msgid "Not A&vailable"
-msgstr "Қол ж&еткізбеуде"
+msgid "Not Available"
+msgstr "Қол жеткізбеуде"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:77
 #: protocols/oscar/icq/icqstatusmanager.cpp:85
@@ -20434,1066 +20392,6 @@ msgstr "%1 үшін веб-камера"
 msgid "No webcam image received"
 msgstr "Веб-камерадан сурет түсіріліп келмеді"
 
-#: protocols/skype/libskype/skype.cpp:256
-#, kde-format
-msgid "This version of Skype is too old, consider upgrading"
-msgstr "Бұл өте ескі Skype нұсқасы, жаңартып алсаңыз қайтеді"
-
-#: protocols/skype/libskype/skype.cpp:290 protocols/skype/skypeaccount.cpp:1093
-#: protocols/skype/skypeaccount.cpp:1107 protocols/skype/skypeaccount.cpp:1129
-#: protocols/skype/skypeaccount.cpp:1134 protocols/skype/skypeaccount.cpp:1142
-#: protocols/skype/skypeaccount.cpp:1154 protocols/skype/skypeaccount.cpp:1159
-#: protocols/skype/skypeeditaccount.cpp:210
-#: protocols/skype/skypeeditaccount.cpp:225
-#: protocols/skype/skypeeditaccount.cpp:242
-#: protocols/skype/skypeeditaccount.cpp:250
-#, kde-format
-msgid "Skype protocol"
-msgstr "Skype протоколы"
-
-#: protocols/skype/libskype/skype.cpp:409
-#, kde-format
-msgid "Does not have multi-user chat capability"
-msgstr "Көп жақты әңгіменің мүмкіндігі жоқ"
-
-#: protocols/skype/libskype/skype.cpp:411
-#, kde-format
-msgid "Chat denied"
-msgstr "Әңгіме болмады"
-
-#: protocols/skype/libskype/skype.cpp:488
-#, kde-format
-msgid "Unknown error"
-msgstr "Беймәлім қате."
-
-#: protocols/skype/libskype/skype.cpp:491
-#, kde-format
-msgid "Misc error"
-msgstr "Бір қате"
-
-#: protocols/skype/libskype/skype.cpp:494
-#, kde-format
-msgid "User or phone number does not exist"
-msgstr "Бұндай пайдаланушы не телефон нөмірі жоқ"
-
-#: protocols/skype/libskype/skype.cpp:497
-#, kde-format
-msgid "User is offline"
-msgstr "Пайдаланушы желіден тыс"
-
-#: protocols/skype/libskype/skype.cpp:500
-#, kde-format
-msgid "No proxy found"
-msgstr "Прокси табылмады"
-
-#: protocols/skype/libskype/skype.cpp:503
-#, kde-format
-msgid "Session terminated"
-msgstr "Сеанс доғарылды"
-
-#: protocols/skype/libskype/skype.cpp:506
-#, kde-format
-msgid "No common codec found"
-msgstr "Ортақ кодек табылмады"
-
-#: protocols/skype/libskype/skype.cpp:509
-#, kde-format
-msgid "Sound I/O error"
-msgstr "Дыбыс Е/Ш қатесі"
-
-#: protocols/skype/libskype/skype.cpp:512
-#, kde-format
-msgid "Problem with remote sound device"
-msgstr "Қашықтағы дыбыстық құрылғы мәселесі"
-
-#: protocols/skype/libskype/skype.cpp:515
-#, kde-format
-msgid "Call blocked by recipient"
-msgstr "Қабылдаушы шақыруды бұғаттаған"
-
-#: protocols/skype/libskype/skype.cpp:518
-#, kde-format
-msgid "Recipient not a friend"
-msgstr "Қабылдаушы дос емес"
-
-#: protocols/skype/libskype/skype.cpp:521
-#, kde-format
-msgid "User not authorized by recipient"
-msgstr "Қабылдаушы пайдаланушыны қабыл етпеді"
-
-#: protocols/skype/libskype/skype.cpp:524
-#, kde-format
-msgid "Sound recording error"
-msgstr "Дыбысты жазып алу қатесі"
-
-#: protocols/skype/libskype/skype.cpp:820
-#, kde-format
-msgid "This version of Skype does not support adding users to chat."
-msgstr "Skyp-тың бұл нұсқасы әңгімеге қосылуды істемейді."
-
-#: protocols/skype/libskype/skype.cpp:820
-#, kde-format
-msgid "Skype Protocol"
-msgstr "Skype протоколыl"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:92
-#, kde-format
-msgid "Could not ping Skype"
-msgstr "Skype жауап бермейді"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:112
-#, kde-format
-msgid "Skype did not accept this application"
-msgstr "Skype бұл қолданбаны қабыл етпейді"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:123
-#, kde-format
-msgid "Skype API syntax error"
-msgstr "Skype API синтаксис қатесі"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:132
-#, kde-format
-msgid "Skype API not ready yet, wait a bit longer"
-msgstr "Skype API әлі дайын емес, ұзақтау күте тұрыңыз"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:178
-#, kde-format
-msgid "Cannot register Skype communication for Kopete on D-Bus"
-msgstr "Skype байланысы D-Bus-дегі Kopete-ті тіркемейді"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:209
-#, kde-format
-msgid ""
-"Could not launch Skype.\n"
-"You need to install the original dynamic linked Skype version 2.0 binary "
-"from http://www.skype.com"
-msgstr ""
-"Skype жегілмейді.\n"
-"Динамикалық жинақталған шын Skype (нұсқасы 2.0) бинарлық файлын http://www."
-"skype.com сайтынан алып орнатыңыз"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:216
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:324
-#, kde-format
-msgid ""
-"Could not find Skype.\n"
-"You need to install the original dynamic linked Skype version 2.0 binary "
-"from http://www.skype.com"
-msgstr ""
-"Skype табылмады.\n"
-"Динамикалық жинақталған шын Skype (нұсқасы 2.0) бинарлық файлын http://www."
-"skype.com сайтынан алып орнатыңыз"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:263
-#, kde-format
-msgid ""
-"Could not ping Skype.\n"
-"Maybe Skype not running.\n"
-"Error while sending a message to Skype (%1)."
-msgstr ""
-"Skype жауап бермейді.\n"
-"Мүмкін Skype жегілмеген шығар.\n"
-"Skype-қа (%1) хабарлама жібергенде қате орын алды."
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:265
-#, kde-format
-msgid "Error while sending a message to Skype (%1)."
-msgstr "Skype-қа (%1) хабарлама жібергенде қате орын алды."
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:273
-#, kde-format
-msgid ""
-"Could not ping Skype.\n"
-"You are logged out from Skype, please log in."
-msgstr ""
-"Skype жауап бермейді.\n"
-"Skype жүйесіне кірген жоқсыз, алдымен кіріңіз."
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:326
-#, kde-format
-msgid "Please login to Skype first"
-msgstr "Алдымен Skype жүйесіне кіріңіз"
-
-#: protocols/skype/skypeaccount.cpp:921
-#, kde-format
-msgid "Skype (%1)"
-msgstr "Skype (%1)"
-
-#: protocols/skype/skypeaccount.cpp:949 protocols/skype/skypeprotocol.cpp:78
-#, kde-format
-msgid "Skype Me"
-msgstr "Маған Skype ет"
-
-#: protocols/skype/skypeaccount.cpp:955
-#, kde-format
-msgid "Make Test Call"
-msgstr "Сынақ қоңырау соғу"
-
-#: protocols/skype/skypeaccount.cpp:1093
-#, kde-format
-msgid "Cannot open info about user %1"
-msgstr "%1 пайдаланушысы туралы мәлімет ашылмады"
-
-#: protocols/skype/skypeaccount.cpp:1107 protocols/skype/skypeaccount.cpp:1129
-#: protocols/skype/skypeaccount.cpp:1134 protocols/skype/skypeaccount.cpp:1159
-#, kde-format
-msgid "Unknown action from SkypeActionHandler"
-msgstr "SkypeActionHandler дегеннен беймәлім әрекет"
-
-#: protocols/skype/skypeaccount.cpp:1142
-#, kde-format
-msgid "Add contact from SkypeActionHandler is not supported yet"
-msgstr "SkypeActionHandler дегеннен контактты қосу әлі іске асырылмаған"
-
-#: protocols/skype/skypeaccount.cpp:1154
-#, kde-format
-msgid "Send voicemail from SkypeActionHandler is not supported yet"
-msgstr "SkypeActionHandler дегеннен даусты пошта жіберу әлі іске асырылмаған"
-
-#: protocols/skype/skypeaddcontact.cpp:68
-#, kde-format
-msgid "You must connect to Skype first."
-msgstr "Алдымен Skype-пен байланысу керек."
-
-#: protocols/skype/skypeaddcontact.cpp:73
-#, kde-format
-msgid "You must write the contact's name."
-msgstr "Контакттың атауын жазуыңыз керек."
-
-#: protocols/skype/skypeaddcontact.cpp:73
-#: protocols/skype/skypeaddcontact.cpp:78
-#: protocols/skype/skypeaddcontact.cpp:83
-#: protocols/skype/skypeaddcontact.cpp:88
-#: protocols/skype/skypeeditaccount.cpp:123
-#, kde-format
-msgid "Wrong Information"
-msgstr "Қате мәлімет"
-
-#: protocols/skype/skypeaddcontact.cpp:78
-#, kde-format
-msgid ""
-"Contact echo123 is not needed. You can make test call in Skype protocol "
-"actions."
-msgstr ""
-"echo123 контакты керегі жоқ. Сынап көру үшін Skype.протоколының әрекеті бар."
-
-#: protocols/skype/skypeaddcontact.cpp:83
-#, kde-format
-msgid "This contact already exists in this account."
-msgstr "Бұл тіркелгіде бұндай контакт бар екен."
-
-#: protocols/skype/skypeaddcontact.cpp:88
-#, kde-format
-msgid "You cannot add yourself as a contact."
-msgstr "Өзіңізді контакт ретінде қосуға болмайды."
-
-#: protocols/skype/skypecalldialog.cpp:106
-#, kde-format
-msgid "Call with %1"
-msgstr "%1 дегенге қоңырау соғу"
-
-#: protocols/skype/skypecalldialog.cpp:138
-#, kde-format
-msgid "Canceled"
-msgstr "Бас тарту"
-
-#: protocols/skype/skypecalldialog.cpp:145
-#, kde-format
-msgid "Other person is busy"
-msgstr "Қарсы жақ бос емес"
-
-#: protocols/skype/skypecalldialog.cpp:152
-#, kde-format
-msgid "Refused"
-msgstr "Айныған"
-
-#: protocols/skype/skypecalldialog.cpp:159
-#, kde-format
-msgid "Call Back"
-msgstr "Қарсы шақыруы"
-
-#: protocols/skype/skypecalldialog.cpp:160
-#, kde-format
-msgid "Missed"
-msgstr "Елемеген"
-
-#: protocols/skype/skypecalldialog.cpp:173
-#, kde-format
-msgid "Resume"
-msgstr "Жалғастыру"
-
-#: protocols/skype/skypecalldialog.cpp:176
-#, kde-format
-msgid "On hold (local)"
-msgstr "Тыңдап тұр (жергілікті)"
-
-#: protocols/skype/skypecalldialog.cpp:182
-#, kde-format
-msgid "On hold (remote)"
-msgstr "Тыңдап тұр (қашықта)"
-
-#: protocols/skype/skypecalldialog.cpp:188
-#, kde-format
-msgid "On hold"
-msgstr "Тыңдап тұр"
-
-#: protocols/skype/skypecalldialog.cpp:192
-#, kde-format
-msgid "Hold"
-msgstr "Тыңдау"
-
-#: protocols/skype/skypecalldialog.cpp:195
-#, kde-format
-msgid "In progress"
-msgstr "Барыста"
-
-#: protocols/skype/skypecalldialog.cpp:201
-#, kde-format
-msgid "Ringing"
-msgstr "Қоңырау"
-
-#: protocols/skype/skypecalldialog.cpp:209
-#, kde-format
-msgid "Failed"
-msgstr "Болмады"
-
-#: protocols/skype/skypecalldialog.cpp:221
-#, kde-format
-msgctxt ""
-"Early media means the media played before the call is established. For "
-"example it can be a calling tone or a waiting message such as all operators "
-"are busy."
-msgid "Early media (waiting for operator...)"
-msgstr "Алдындағы әуен (операторды күту...)"
-
-#: protocols/skype/skypecalldialog.cpp:276
-#, kde-format
-msgid "Failed (%1)"
-msgstr "Болмады (%1)"
-
-#: protocols/skype/skypecalldialog.cpp:296
-#, kde-format
-msgid ""
-"%1 active\n"
-"%2 total"
-msgstr ""
-"%1 белсенді\n"
-"%2 жалпы"
-
-#: protocols/skype/skypecalldialog.cpp:302
-#, kde-format
-msgid "Skypeout inactive"
-msgstr "Skypeout белсенді емес"
-
-#: protocols/skype/skypechatsession.cpp:114
-#: protocols/skype/skypechatsession.cpp:155
-#: protocols/skype/skypeprotocol.cpp:105
-#, kde-format
-msgid "Call"
-msgstr "Шақыру"
-
-#: protocols/skype/skypeconference.cpp:44
-#, kde-format
-msgid "Conference Call"
-msgstr "Маслихатқа шақыру"
-
-#: protocols/skype/skypecontact.cpp:116
-#, kde-format
-msgid "Block contact"
-msgstr "Контактты бұғаттау"
-
-#: protocols/skype/skypedetails.cpp:70
-#, kde-format
-msgid "Details for User %1"
-msgstr "%1 пайдаланушысы туралы егжей-тегжейі"
-
-#: protocols/skype/skypeeditaccount.cpp:123
-#, kde-format
-msgid "You can have only one skype account"
-msgstr "Жалғыз Skype тиркелгісіне ие бола аласыз"
-
-#: protocols/skype/skypeeditaccount.cpp:207
-#, kde-format
-msgid "Configure Skype client"
-msgstr "Skype клиентін баптау"
-
-#: protocols/skype/skypeeditaccount.cpp:207
-#, kde-format
-msgid "Please enter your skype user name"
-msgstr "Skype пайдаланушы атауыңызды келіріңіз"
-
-#: protocols/skype/skypeeditaccount.cpp:210
-#, kde-format
-msgid "You must enter your skype user name"
-msgstr "Skype пайдаланушы атауыңызды келтіру керек"
-
-#: protocols/skype/skypeeditaccount.cpp:225
-#: protocols/skype/skypeeditaccount.cpp:242
-#, kde-format
-msgid "Cannot create/open file %1 for configuring the Skype client."
-msgstr "Skype клиентін баптау үшін керек %1 файлы құрылмады/ашылмады."
-
-#: protocols/skype/skypeeditaccount.cpp:250
-#, kde-format
-msgid ""
-"Process has completed.\n"
-"Skype is now configured for Kopete.\n"
-"You must restart the Skype client for changes to take effect."
-msgstr ""
-"Процесс бітті.\n"
-"Skype жүйесі Kopete үшін бапталды.\n"
-"Өзгерістер күшіне ену үшін Skype клиентін қайта жегу керек."
-
-#: protocols/skype/skypeprotocol.cpp:84
-#, kde-format
-msgid "Not in Skype list"
-msgstr "Skype тізімінде жоқ"
-
-#: protocols/skype/skypeprotocol.cpp:85
-#, kde-format
-msgid "Not authorized"
-msgstr "Құптауы жоқ"
-
-#: protocols/skype/skypeprotocol.cpp:86
-#, kde-format
-msgid "SkypeOut contact"
-msgstr "SkypeOut контакты"
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeAddContactBase)
-#: protocols/skype/ui/skypeaddcontactbase.ui:6
-#, kde-format
-msgid "Add Skype Contact"
-msgstr "Skype контактын қосу"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypeaddcontactbase.ui:14
-#, kde-format
-msgid "Skype name:"
-msgstr "Skype-тағы атауы:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypeaddcontactbase.ui:35
-#, kde-format
-msgid "Sorry, but the search function is not yet implemented."
-msgstr "Кешіріңіз, іздеу мүмкіндігі әлі іске асырылмаған."
-
-#. i18n: ectx: property (text), widget (QPushButton, SearchButton)
-#: protocols/skype/ui/skypeaddcontactbase.ui:69
-#, kde-format
-msgid "Se&arch"
-msgstr "Ізд&естіру"
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeCallDialogBase)
-#: protocols/skype/ui/skypecalldialogbase.ui:6
-#, kde-format
-msgid "Skype Call"
-msgstr "Skype қоңырауы"
-
-#. i18n: ectx: property (toolTip), widget (QLabel, NameLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:14
-#, kde-format
-msgid "Name(s) of Participant(s)"
-msgstr "Қатысушы(лары)ның атау(лар)ы"
-
-#. i18n: ectx: property (whatsThis), widget (QLabel, NameLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:17
-#, kde-format
-msgid ""
-"Name of the other participant in the call (or a list of names if it is a "
-"conference call.)"
-msgstr "Қатысушының атауы (немесе, маслихат болса, атаулар тізімі)."
-
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel2)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel2)
-#. i18n: ectx: property (toolTip), widget (QLabel, TimeLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:52
-#: protocols/skype/ui/skypecalldialogbase.ui:55
-#: protocols/skype/ui/skypecalldialogbase.ui:90
-#, kde-format
-msgid "Total time elapsed."
-msgstr "Жалпы өткен уақыты."
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypecalldialogbase.ui:58
-#, kde-format
-msgid "Time:"
-msgstr "Уақыты:"
-
-#. i18n: ectx: property (toolTip), widget (QLabel, CreditLabel)
-#. i18n: ectx: property (whatsThis), widget (QLabel, CreditLabel)
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel3)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypecalldialogbase.ui:71
-#: protocols/skype/ui/skypecalldialogbase.ui:74
-#: protocols/skype/ui/skypecalldialogbase.ui:135
-#: protocols/skype/ui/skypecalldialogbase.ui:138
-#, kde-format
-msgid "SkypeOut credits left"
-msgstr "Қалған SkypeOut кредиттері"
-
-#. i18n: ectx: property (whatsThis), widget (QLabel, TimeLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:93
-#, kde-format
-msgid ""
-"Total length of the call/<br />(i.e. both time speaking and time on hold.)"
-msgstr "Жалпы әңгіменің ұзындығы.<br />(яғни сөйлеу мен тыңдау уақыты)"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypecalldialogbase.ui:141
-#, kde-format
-msgid "SkypeOut credits:"
-msgstr "SkypeOut кредиттері:"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, AcceptButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:174
-#, kde-format
-msgid "Accept call"
-msgstr "Қоңырауды қабылдау"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, AcceptButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:177
-#, kde-format
-msgid "Accept incoming call"
-msgstr "Кіріс қоңырау шақыруын қабылдау"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:190
-#, kde-format
-msgid "Finish the call"
-msgstr "Сөйлесуді аяқтау"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:193
-#, kde-format
-msgid "Terminate the call"
-msgstr "Сөйлесуді доғару"
-
-#. i18n: ectx: property (text), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:196
-#, kde-format
-msgid "H&ang up"
-msgstr "Тұтқаны қ&ою"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:203
-#, kde-format
-msgid "Hold the call"
-msgstr "Тыңдап тұру"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:206
-#, kde-format
-msgid "Interrupt the call for a moment and resume (or hang up) later."
-msgstr "Сөйлесуді бір мезгілге үзіп жалғастыру (не тұтқасын қою)"
-
-#. i18n: ectx: property (text), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:209
-#, kde-format
-msgid "H&old"
-msgstr "Т&ыңдап тұру"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, ChatButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:216
-#, kde-format
-msgid "Open chat to the person."
-msgstr "Осымен чатты ашу."
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, ChatButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:219
-#, kde-format
-msgid "Open chat to the person with whom you are talking."
-msgstr "Сөйлесіп тұрғанымен чат-әңгімені ашу."
-
-#. i18n: ectx: property (text), widget (QPushButton, VideoButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:232
-#, kde-format
-msgid "Start/Stop Video"
-msgstr "Видеоны айдау/тоқтату"
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeDetailsBase)
-#: protocols/skype/ui/skypedetailsbase.ui:6
-#, kde-format
-msgid "User's Details"
-msgstr "Пайдаланушының егжей-тегжейлері"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypedetailsbase.ui:12
-#, kde-format
-msgid "Skype ID:"
-msgstr "Skype ID-і:"
-
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/skype/ui/skypedetailsbase.ui:40
-#, kde-format
-msgid "Authorized"
-msgstr "Рұқсат берілген"
-
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/skype/ui/skypedetailsbase.ui:45
-#, kde-format
-msgid "Not Authorized"
-msgstr "Рұқсат берілмеген"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel7)
-#: protocols/skype/ui/skypedetailsbase.ui:104
-#, kde-format
-msgid "Is authorized:"
-msgstr "Неге рұқсат берілген:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypedetailsbase.ui:131
-#, kde-format
-msgid "Display Name:"
-msgstr "Жазылатын атауы:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_3)
-#: protocols/skype/ui/skypedetailsbase.ui:184
-#, kde-format
-msgid "Sex:"
-msgstr "Жынысы:"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, excludeCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:35
-#, kde-format
-msgid "Check this if you do not want to connect with other protocols"
-msgstr "Басқа протоколды қаласаңыз осы белгіні қойыңыз"
-
-#. i18n: ectx: property (text), widget (QCheckBox, excludeCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:38
-#, kde-format
-msgid "E&xclude from connection"
-msgstr "Қосылатындардан алып &тасталсын"
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:66
-#, kde-format
-msgid "Important Note"
-msgstr "Маңызды ескертпе"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:72
-#, kde-format
-msgid ""
-"The Skype plugin serves as a bridge to an externally running copy of Skype. "
-"This has some consequences on how it functions: you need an instance of "
-"Skype to be running, and only one Skype account can be used.<br /><br />Note "
-"that you need to install the original dynamic linked Skype version 2.0 or "
-"2.1 from <a href=\"http://www.skype.com\">http://www.skype.com</a><br /><br /"
-">This plugin will only work if the language in the Skype client set to "
-"English. Kopete shows notifications (incoming call, message, ...), so you "
-"can turn off the notifications in Skype."
-msgstr ""
-"Skype плагині бөлек жегілген Skype бағдарламасына көпір қызметін етеді. Бұл "
-"жағдайының келесі шартары бар: айтқандай, Skype данасы орындалуда болу "
-"керек, және Skype-тың жалғыз ғана тіркелгісін пайдалану керек.<br /><br /> "
-"<a href=\"http://www.skype.com\">http://www.skype.com</a> сайтынан алынған "
-"шын Skype-тың динамикалық жинақталған 2.0 не 2.1-нұсқасы орнатылғаны қажет "
-"from  <br /><br /> Бұл плагині Skype клиентінің тілі ағылшын деп орнатылса "
-"ғана істейді. Kopete құлақтандыруларын (келген шақыру, хабарлама, ...) өзі "
-"көрсетеді, сондықтан, Skype-тың құлақтандыруларын бұғаттап тастауға болады."
-
-#. i18n: ectx: property (text), widget (QPushButton, configureSkypeClient)
-#: protocols/skype/ui/skypeeditaccountbase.ui:88
-#, kde-format
-msgid "Disable Skype notifications and set up English language in Skype client"
-msgstr "Skype құлақтандырулары болмасын және клиентінің тілі ағылшын болсын"
-
-#. i18n: ectx: attribute (title), widget (QWidget, launchTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:112
-#, kde-format
-msgid "Lau&nch"
-msgstr "Же&гу"
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, LaunchGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:118
-#, kde-format
-msgid "You can set whether and when should kopete launch Skype."
-msgstr "Kopete Skype-ты жегсін бе, және оны қашан істейтінін баптай аласыз."
-
-#. i18n: ectx: property (title), widget (QGroupBox, LaunchGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:121
-#, kde-format
-msgid "Launch Skype"
-msgstr "Skype-ты жегу"
-
-#. i18n: ectx: property (text), widget (QRadioButton, LaunchNeededRadio)
-#: protocols/skype/ui/skypeeditaccountbase.ui:127
-#, kde-format
-msgid "When &not running"
-msgstr "Әлі жегіл&месе"
-
-#. i18n: ectx: property (text), widget (QRadioButton, LaunchNeverRadio)
-#: protocols/skype/ui/skypeeditaccountbase.ui:137
-#, kde-format
-msgid "N&ever"
-msgstr "Е&шқашанда"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypeeditaccountbase.ui:149
-#, kde-format
-msgid "Command to launch Skype:"
-msgstr "Skype-ты жегу командасы:"
-
-#. i18n: ectx: property (text), widget (QLineEdit, CommandEdit)
-#: protocols/skype/ui/skypeeditaccountbase.ui:159
-#, kde-format
-msgid "skype"
-msgstr "skype"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:170
-#, kde-format
-msgid "Launch timeout:"
-msgstr "Жегуді күту уақыты:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_3)
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_5)
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:193
-#: protocols/skype/ui/skypeeditaccountbase.ui:252
-#: protocols/skype/ui/skypeeditaccountbase.ui:579
-#, kde-format
-msgid "s"
-msgstr "сек"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:223
-#, kde-format
-msgid "Wait before trying to connect to Skype:"
-msgstr "Skype-пен байланысу алдында күту уақыты:"
-
-#. i18n: ectx: property (toolTip), widget (QSpinBox, WaitSpin)
-#. i18n: ectx: property (whatsThis), widget (QSpinBox, WaitSpin)
-#: protocols/skype/ui/skypeeditaccountbase.ui:233
-#: protocols/skype/ui/skypeeditaccountbase.ui:236
-#, kde-format
-msgid "trying"
-msgstr "байланыс ету"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:280
-#, kde-format
-msgid ""
-"If you get error that Skype was not found, but in fact it is running, check "
-"the instructions at <a href=\"https://developer.skype.com/Docs/ApiDoc/"
-"Skype_API_on_Linux\">https://developer.skype.com/Docs/ApiDoc/"
-"Skype_API_on_Linux</a>.<br /><br />Note that only the dynamic linked Skype "
-"binary is supported."
-msgstr ""
-"Skype жегілгеніне қарамастан, ол табылған жоқ деген қатеге тап босаңыз, "
-"мынадан нұсқау алыңыз: <a href=\"https://developer.skype.com/Docs/ApiDoc/"
-"Skype_API_on_Linux\">https://developer.skype.com/Docs/ApiDoc/"
-"Skype_API_on_Linux</a>.<br /><br />Тек динамакалық жинақталған Skype керек "
-"екенін ескеріңіз."
-
-#. i18n: ectx: attribute (title), widget (QWidget, connectionTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:310
-#, kde-format
-msgid "C&onnection"
-msgstr "Қ&осылым"
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, groupBox3_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:316
-#, kde-format
-msgid ""
-"Each application that wants to use Skype must provide its name to it, and "
-"the user is asked whether to allow said application to access Skype.<br>By "
-"default, kopete provides kopete as its name, but if you suspect another "
-"application is accessing Skype with this name, you can change the name "
-"Kopete uses here, and then within Skype disallow applications that refer to "
-"themselves as kopete."
-msgstr ""
-"Әрбір Skype-ты пайдаланбақ бағдарламасы, өзінің атын келтіріп, Skype-пен "
-"қатынауға рұқсат сұрауға тиіс.<br>Бұндайда, әдетте, kopete өзін kopete деп "
-"таныстырады. бірақ егерде басқа бір бағдарлама өзін kopete деп таныстырып, "
-"қатынап жатыр деп күдіктенсеңіз, бұндағыны өзгертіп, басқа бағдарламаларға "
-"kopete атымен жамылып Skype-ты пайдалануға жол кесе аласыз."
-
-#. i18n: ectx: property (text), widget (QCheckBox, AuthorCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:325
-#, kde-format
-msgid "&Non-standard authorization"
-msgstr "Стандарттан &тыс құптау"
-
-#. i18n: ectx: property (toolTip), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:342
-#, kde-format
-msgid "What bus do you want to use"
-msgstr "Қай шинасын қолдануды қалайсыз"
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:345
-#, kde-format
-msgid ""
-"Which D-Bus do you want to use to connect to Skype?<br>Session: Your own, "
-"other people cannot use it (use --use-session-dbus to start Skype on that "
-"bus.)<br>System: Shared by all people on the same computer. This one is used "
-"by default by Skype.<br>You have to specify the same D-Bus used by Skype."
-msgstr ""
-"Skype-пен байланысу үшін қай D-Bus пайдаланылады?<br>Сеанс: Меншікті, "
-"басқалар оны пайдалана алмайды (бл шинада Skype-ты жегу үшін оны --use-"
-"session-dbus параметрімен жегу керек.)<br>Жүйе: компьютердегі барлық "
-"пайдаланушыларына ортақ. Әдетте Skype осыны пайдаланады.<br>Skype "
-"пайдаланатын D-Bus шинасын таңдаңыз."
-
-#. i18n: ectx: property (title), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:348
-#, kde-format
-msgid "Bus"
-msgstr "Шина"
-
-#. i18n: ectx: property (text), widget (QRadioButton, radioButton4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:354
-#, kde-format
-msgid "Sessi&on"
-msgstr "&Сеанс"
-
-#. i18n: ectx: property (text), widget (QRadioButton, radioButton5)
-#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/skype/ui/skypeeditaccountbase.ui:364
-#: protocols/winpopup/ui/wpeditaccountbase.ui:221
-#, kde-format
-msgid "S&ystem"
-msgstr "&Жүйе"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:374
-#, kde-format
-msgid ""
-"Note that Kopete will freeze while Skype asks you if it can allow Kopete to "
-"access it. This is normal, and if you allow it forever (check that \"Remember"
-"\" checkbox in Skype's dialog), it will not happen again.<br /><br />The "
-"'System Bus' option is not yet supported by Skype"
-msgstr ""
-"Skype бағдарламасы Kopete-ке қатынауды рұқсат етуді сұраған кезде ол "
-"(Kopete) тоқтап қалады. Бұл қалыпты жағдай, егерде (Skype диалогында "
-"\"Жаттап алынсын\" деген белгі көзін белгілеп) оны тұрақты қылсаңыз, ол "
-"қайталана береді.<br /><br />'Жүйе шинасы' деген параметрі әлі Skype-та іске "
-"асырылмаған"
-
-#. i18n: ectx: attribute (title), widget (QWidget, activityTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:404
-#, kde-format
-msgid "&Activity"
-msgstr "&Белсенділік"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:410
-#, kde-format
-msgid "Show all incoming messages"
-msgstr "Барлық кіріс хабарламалар көрсетілсін"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:413
-#, kde-format
-msgid ""
-"This will show all incoming Skype messages. If this is off, they are showed "
-"only if the message belongs to chat that is started by kopete."
-msgstr ""
-"Барлық кіріс хабарламаларды көрсету. Әйтпесе, тек қана басталған әңгіме "
-"бөлмесінің хабарлары көрсетіледі."
-
-#. i18n: ectx: property (text), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:416
-#, kde-format
-msgid "Show all incoming &messages"
-msgstr "Барлық кіріс &хабарламалар көрсетілсін"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, MarkCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:426
-#, kde-format
-msgid ""
-"This will mark incoming messages as read, so if you have Skype set up not to "
-"automatically pop-up chats, it will not flash the exclamation icon."
-msgstr ""
-"Барлық кіріс хабарламалар оқылған деп белгіленеді, сондықтан Skype автоматты "
-"тұрде әңгімені бастайтын қылып бапталмаса, хабар келген сайын жыплықтаған "
-"леп таңбашасы болмайды."
-
-#. i18n: ectx: property (text), widget (QCheckBox, MarkCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:429
-#, kde-format
-msgid "Mar&k as read"
-msgstr "Оқылған деп белгіленсін"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, ScanCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:439
-#, kde-format
-msgid ""
-"If this is checked, Kopete will ask Skype on login if it has any messages "
-"that have not been shown, and if so, will show them. This is useful if you "
-"start Kopete later than Skype, and Skype is configured not to show incoming "
-"messages."
-msgstr ""
-"Бұл белгі қойылса, Kopete ісіне кіріскенде Skype-тан көрсетілмеген "
-"хабарламалар бар ма деп сұрап, ббар болса оларды көрсетеді. Бұл қасиет "
-"Kopete Skype-тан кейін жегілгенде және Skype келген хабарларды көрсетпейтін "
-"қылып бапталғанда пайдалы."
-
-#. i18n: ectx: property (text), widget (QCheckBox, ScanCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:442
-#, kde-format
-msgid "Scan f&or unread"
-msgstr "Оқылмағанды қ&арастыру"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:452
-#, kde-format
-msgid "Show call control window for all calls"
-msgstr "Бүкіл шақыруда оны басқару терезесі ашылсын"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:455
-#, kde-format
-msgid ""
-"This will show a call control window for every call (both incoming and "
-"outgoing). If it is off, you can call from Kopete, but you have to control "
-"that call from Skype."
-msgstr ""
-"Бұның көмегімен барлық  (кіріс те, шығыс те) шақыру қоңырауы соққанда "
-"шақыруды басқару терезесі ашылады. Әйтпесе, Kopete арқылы қоңырау соғып, оны "
-"Skype арқылы басқара аласыз.."
-
-#. i18n: ectx: property (text), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:458
-#, kde-format
-msgid "S&how call control (this will also hide Skype client call dialog)"
-msgstr ""
-"Шақыруды басқару к&өрсетілсін (Skype клиенттің шақыру диалогын жасырады)"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:486
-#, kde-format
-msgid "Auto close the call control window"
-msgstr "Шақыруды басқару терезесі автожабылсын"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:489
-#, kde-format
-msgid ""
-"This will close the call control window automatically when the call finishes"
-msgstr ""
-"Бұл қоңырау соққан соң шақыруды басқару терезесін автоматты түрде жабуы"
-
-#. i18n: ectx: property (text), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:492
-#, kde-format
-msgid "Autoc&lose"
-msgstr "Авто&жабылсын"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:544
-#, kde-format
-msgid "Timeout:"
-msgstr "Күту уақыты:"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:607
-#, kde-format
-msgid ""
-"If this is enabled, Kopete keeps track of whether or not Skype is running."
-msgstr "Белгісі қойылса, Kopete Skype-тың жегілгенін байқап отырады."
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:610
-#, kde-format
-msgid ""
-"This keeps track of whether Skype is running. Turning this off only makes "
-"sense it you are trying to get non-flooded debug output."
-msgstr ""
-"Kopete-тан Skype-тың жегілгенін байқап отыруы. Оны байқамау, тек жөндеуге "
-"мәлімет жинау мақсатты көздегенде мәнсіз емес деп табылады."
-
-#. i18n: ectx: property (text), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:613
-#, kde-format
-msgid "Pi&ng Skype"
-msgstr "Skype-ты &байқау"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, LeaveCheck)
-#. i18n: ectx: property (text), widget (QCheckBox, LeaveCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:623
-#: protocols/skype/ui/skypeeditaccountbase.ui:629
-#, kde-format
-msgid "Do not leave a chat on window exit"
-msgstr "Терезесін жапқанда әңгіме үзілмесін"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, LeaveCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:626
-#, kde-format
-msgid ""
-"Do not leave a chat when the chat window is closed. Makes a difference only "
-"with multi-user chats: if it is checked, you will continue receiving "
-"messages from that chat even after closing the window."
-msgstr ""
-"Терезесін жапқанда әңгімесін үзбеу. Тек көп жақты әңгіме үшін мағыналы: "
-"белгісі қойылса, терезесі жабылғаннан кейін де хабарламалары қабылдана "
-"береді."
-
-#. i18n: ectx: attribute (title), widget (QWidget, callsTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:656
-#, kde-format
-msgid "&Calls"
-msgstr "Қ&оңырау соғу"
-
-#. i18n: ectx: property (text), widget (QCheckBox, StartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:662
-#, kde-format
-msgid "E&xecute before call"
-msgstr "Қ&оңырау соғудың алдында орындау"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:717
-#, kde-format
-msgid ""
-"This will wait before making/accepting the call for the command to finish."
-msgstr "Қоңырауды соғу/қабылдаудың алдында осы команданың орындауын күту."
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:721
-#, kde-format
-msgid ""
-"This will wait for the command to finish before accepting/making the call."
-"<br>\n"
-"Note that kopete will freeze whilst waiting."
-msgstr ""
-"Қоңырауды соғу/қабылдаудың алдында осы команданың орындауын күту.<br>\n"
-"Күткен кезде Kopete тоқтап қалады."
-
-#. i18n: ectx: property (text), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:724
-#, kde-format
-msgid "Wait for fi&nish"
-msgstr "А&яқтағанын күту"
-
-#. i18n: ectx: property (text), widget (QCheckBox, EndCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:733
-#, kde-format
-msgid "Execute after call"
-msgstr "Қоңырау соғудан кейін орындау"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, OnlyLastCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:791
-#, kde-format
-msgid ""
-"Usually this makes no difference, but if there are some other calls on hold, "
-"it is executed only for the most recently ended one."
-msgstr ""
-"Әдетте ешбір өзгеріс енгізбейді, тек қана бірнеше әңгіме болып жатса, бұл ең "
-"жуырда аяқталған үшін орындалады."
-
-#. i18n: ectx: property (text), widget (QCheckBox, OnlyLastCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:794
-#, kde-format
-msgid "Onl&y for last call"
-msgstr "Т&ек соңғысы үшін"
-
-#. i18n: ectx: property (text), widget (QCheckBox, IncomingCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:803
-#, kde-format
-msgid "Execute on inco&ming call"
-msgstr "К&іріс қоңырау соғуда орындалады"
-
 #: protocols/sms/serviceloader.cpp:46
 #, kde-format
 msgid "Could not load service %1."
@@ -22096,6 +20994,12 @@ msgstr ""
 "'message command = _PATH_TO_/winpopup-send %s %m %t &' дегенді (_PATH_TO_ "
 "дегеннін орнына шын жолын келтіріп) қосып қойғаны жөн болар."
 
+#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
+#: protocols/winpopup/ui/wpeditaccountbase.ui:221
+#, kde-format
+msgid "S&ystem"
+msgstr "&Жүйе"
+
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_3)
 #: protocols/winpopup/ui/wpeditaccountbase.ui:233
 #, kde-format
@@ -22252,6 +21156,631 @@ msgstr "Баптау қатесі"
 #, kde-format
 msgid "User Info for %1"
 msgstr "%1 деген қатынасушының мәліметі"
+
+#~ msgid "This version of Skype is too old, consider upgrading"
+#~ msgstr "Бұл өте ескі Skype нұсқасы, жаңартып алсаңыз қайтеді"
+
+#~ msgid "Skype protocol"
+#~ msgstr "Skype протоколы"
+
+#~ msgid "Does not have multi-user chat capability"
+#~ msgstr "Көп жақты әңгіменің мүмкіндігі жоқ"
+
+#~ msgid "Chat denied"
+#~ msgstr "Әңгіме болмады"
+
+#~ msgid "Unknown error"
+#~ msgstr "Беймәлім қате."
+
+#~ msgid "Misc error"
+#~ msgstr "Бір қате"
+
+#~ msgid "User or phone number does not exist"
+#~ msgstr "Бұндай пайдаланушы не телефон нөмірі жоқ"
+
+#~ msgid "User is offline"
+#~ msgstr "Пайдаланушы желіден тыс"
+
+#~ msgid "No proxy found"
+#~ msgstr "Прокси табылмады"
+
+#~ msgid "Session terminated"
+#~ msgstr "Сеанс доғарылды"
+
+#~ msgid "No common codec found"
+#~ msgstr "Ортақ кодек табылмады"
+
+#~ msgid "Sound I/O error"
+#~ msgstr "Дыбыс Е/Ш қатесі"
+
+#~ msgid "Problem with remote sound device"
+#~ msgstr "Қашықтағы дыбыстық құрылғы мәселесі"
+
+#~ msgid "Call blocked by recipient"
+#~ msgstr "Қабылдаушы шақыруды бұғаттаған"
+
+#~ msgid "Recipient not a friend"
+#~ msgstr "Қабылдаушы дос емес"
+
+#~ msgid "User not authorized by recipient"
+#~ msgstr "Қабылдаушы пайдаланушыны қабыл етпеді"
+
+#~ msgid "Sound recording error"
+#~ msgstr "Дыбысты жазып алу қатесі"
+
+#~ msgid "This version of Skype does not support adding users to chat."
+#~ msgstr "Skyp-тың бұл нұсқасы әңгімеге қосылуды істемейді."
+
+#~ msgid "Skype Protocol"
+#~ msgstr "Skype протоколыl"
+
+#~ msgid "Could not ping Skype"
+#~ msgstr "Skype жауап бермейді"
+
+#~ msgid "Skype did not accept this application"
+#~ msgstr "Skype бұл қолданбаны қабыл етпейді"
+
+#~ msgid "Skype API syntax error"
+#~ msgstr "Skype API синтаксис қатесі"
+
+#~ msgid "Skype API not ready yet, wait a bit longer"
+#~ msgstr "Skype API әлі дайын емес, ұзақтау күте тұрыңыз"
+
+#~ msgid "Cannot register Skype communication for Kopete on D-Bus"
+#~ msgstr "Skype байланысы D-Bus-дегі Kopete-ті тіркемейді"
+
+#~ msgid ""
+#~ "Could not launch Skype.\n"
+#~ "You need to install the original dynamic linked Skype version 2.0 binary "
+#~ "from http://www.skype.com"
+#~ msgstr ""
+#~ "Skype жегілмейді.\n"
+#~ "Динамикалық жинақталған шын Skype (нұсқасы 2.0) бинарлық файлын http://"
+#~ "www.skype.com сайтынан алып орнатыңыз"
+
+#~ msgid ""
+#~ "Could not find Skype.\n"
+#~ "You need to install the original dynamic linked Skype version 2.0 binary "
+#~ "from http://www.skype.com"
+#~ msgstr ""
+#~ "Skype табылмады.\n"
+#~ "Динамикалық жинақталған шын Skype (нұсқасы 2.0) бинарлық файлын http://"
+#~ "www.skype.com сайтынан алып орнатыңыз"
+
+#~ msgid ""
+#~ "Could not ping Skype.\n"
+#~ "Maybe Skype not running.\n"
+#~ "Error while sending a message to Skype (%1)."
+#~ msgstr ""
+#~ "Skype жауап бермейді.\n"
+#~ "Мүмкін Skype жегілмеген шығар.\n"
+#~ "Skype-қа (%1) хабарлама жібергенде қате орын алды."
+
+#~ msgid "Error while sending a message to Skype (%1)."
+#~ msgstr "Skype-қа (%1) хабарлама жібергенде қате орын алды."
+
+#~ msgid ""
+#~ "Could not ping Skype.\n"
+#~ "You are logged out from Skype, please log in."
+#~ msgstr ""
+#~ "Skype жауап бермейді.\n"
+#~ "Skype жүйесіне кірген жоқсыз, алдымен кіріңіз."
+
+#~ msgid "Please login to Skype first"
+#~ msgstr "Алдымен Skype жүйесіне кіріңіз"
+
+#~ msgid "Skype (%1)"
+#~ msgstr "Skype (%1)"
+
+#~ msgid "Skype Me"
+#~ msgstr "Маған Skype ет"
+
+#~ msgid "Make Test Call"
+#~ msgstr "Сынақ қоңырау соғу"
+
+#~ msgid "Cannot open info about user %1"
+#~ msgstr "%1 пайдаланушысы туралы мәлімет ашылмады"
+
+#~ msgid "Unknown action from SkypeActionHandler"
+#~ msgstr "SkypeActionHandler дегеннен беймәлім әрекет"
+
+#~ msgid "Add contact from SkypeActionHandler is not supported yet"
+#~ msgstr "SkypeActionHandler дегеннен контактты қосу әлі іске асырылмаған"
+
+#~ msgid "Send voicemail from SkypeActionHandler is not supported yet"
+#~ msgstr ""
+#~ "SkypeActionHandler дегеннен даусты пошта жіберу әлі іске асырылмаған"
+
+#~ msgid "You must connect to Skype first."
+#~ msgstr "Алдымен Skype-пен байланысу керек."
+
+#~ msgid "You must write the contact's name."
+#~ msgstr "Контакттың атауын жазуыңыз керек."
+
+#~ msgid "Wrong Information"
+#~ msgstr "Қате мәлімет"
+
+#~ msgid ""
+#~ "Contact echo123 is not needed. You can make test call in Skype protocol "
+#~ "actions."
+#~ msgstr ""
+#~ "echo123 контакты керегі жоқ. Сынап көру үшін Skype.протоколының әрекеті "
+#~ "бар."
+
+#~ msgid "This contact already exists in this account."
+#~ msgstr "Бұл тіркелгіде бұндай контакт бар екен."
+
+#~ msgid "You cannot add yourself as a contact."
+#~ msgstr "Өзіңізді контакт ретінде қосуға болмайды."
+
+#~ msgid "Call with %1"
+#~ msgstr "%1 дегенге қоңырау соғу"
+
+#~ msgid "Canceled"
+#~ msgstr "Бас тарту"
+
+#~ msgid "Other person is busy"
+#~ msgstr "Қарсы жақ бос емес"
+
+#~ msgid "Refused"
+#~ msgstr "Айныған"
+
+#~ msgid "Call Back"
+#~ msgstr "Қарсы шақыруы"
+
+#~ msgid "Missed"
+#~ msgstr "Елемеген"
+
+#~ msgid "Resume"
+#~ msgstr "Жалғастыру"
+
+#~ msgid "On hold (local)"
+#~ msgstr "Тыңдап тұр (жергілікті)"
+
+#~ msgid "On hold (remote)"
+#~ msgstr "Тыңдап тұр (қашықта)"
+
+#~ msgid "On hold"
+#~ msgstr "Тыңдап тұр"
+
+#~ msgid "Hold"
+#~ msgstr "Тыңдау"
+
+#~ msgid "In progress"
+#~ msgstr "Барыста"
+
+#~ msgid "Ringing"
+#~ msgstr "Қоңырау"
+
+#~ msgid "Failed"
+#~ msgstr "Болмады"
+
+#~ msgctxt ""
+#~ "Early media means the media played before the call is established. For "
+#~ "example it can be a calling tone or a waiting message such as all "
+#~ "operators are busy."
+#~ msgid "Early media (waiting for operator...)"
+#~ msgstr "Алдындағы әуен (операторды күту...)"
+
+#~ msgid "Failed (%1)"
+#~ msgstr "Болмады (%1)"
+
+#~ msgid ""
+#~ "%1 active\n"
+#~ "%2 total"
+#~ msgstr ""
+#~ "%1 белсенді\n"
+#~ "%2 жалпы"
+
+#~ msgid "Skypeout inactive"
+#~ msgstr "Skypeout белсенді емес"
+
+#~ msgid "Call"
+#~ msgstr "Шақыру"
+
+#~ msgid "Conference Call"
+#~ msgstr "Маслихатқа шақыру"
+
+#~ msgid "Block contact"
+#~ msgstr "Контактты бұғаттау"
+
+#~ msgid "Details for User %1"
+#~ msgstr "%1 пайдаланушысы туралы егжей-тегжейі"
+
+#~ msgid "You can have only one skype account"
+#~ msgstr "Жалғыз Skype тиркелгісіне ие бола аласыз"
+
+#~ msgid "Configure Skype client"
+#~ msgstr "Skype клиентін баптау"
+
+#~ msgid "Please enter your skype user name"
+#~ msgstr "Skype пайдаланушы атауыңызды келіріңіз"
+
+#~ msgid "You must enter your skype user name"
+#~ msgstr "Skype пайдаланушы атауыңызды келтіру керек"
+
+#~ msgid "Cannot create/open file %1 for configuring the Skype client."
+#~ msgstr "Skype клиентін баптау үшін керек %1 файлы құрылмады/ашылмады."
+
+#~ msgid ""
+#~ "Process has completed.\n"
+#~ "Skype is now configured for Kopete.\n"
+#~ "You must restart the Skype client for changes to take effect."
+#~ msgstr ""
+#~ "Процесс бітті.\n"
+#~ "Skype жүйесі Kopete үшін бапталды.\n"
+#~ "Өзгерістер күшіне ену үшін Skype клиентін қайта жегу керек."
+
+#~ msgid "Not in Skype list"
+#~ msgstr "Skype тізімінде жоқ"
+
+#~ msgid "Not authorized"
+#~ msgstr "Құптауы жоқ"
+
+#~ msgid "SkypeOut contact"
+#~ msgstr "SkypeOut контакты"
+
+#~ msgid "Add Skype Contact"
+#~ msgstr "Skype контактын қосу"
+
+#~ msgid "Skype name:"
+#~ msgstr "Skype-тағы атауы:"
+
+#~ msgid "Sorry, but the search function is not yet implemented."
+#~ msgstr "Кешіріңіз, іздеу мүмкіндігі әлі іске асырылмаған."
+
+#~ msgid "Se&arch"
+#~ msgstr "Ізд&естіру"
+
+#~ msgid "Skype Call"
+#~ msgstr "Skype қоңырауы"
+
+#~ msgid "Name(s) of Participant(s)"
+#~ msgstr "Қатысушы(лары)ның атау(лар)ы"
+
+#~ msgid ""
+#~ "Name of the other participant in the call (or a list of names if it is a "
+#~ "conference call.)"
+#~ msgstr "Қатысушының атауы (немесе, маслихат болса, атаулар тізімі)."
+
+#~ msgid "Total time elapsed."
+#~ msgstr "Жалпы өткен уақыты."
+
+#~ msgid "Time:"
+#~ msgstr "Уақыты:"
+
+#~ msgid "SkypeOut credits left"
+#~ msgstr "Қалған SkypeOut кредиттері"
+
+#~ msgid ""
+#~ "Total length of the call/<br />(i.e. both time speaking and time on hold.)"
+#~ msgstr "Жалпы әңгіменің ұзындығы.<br />(яғни сөйлеу мен тыңдау уақыты)"
+
+#~ msgid "SkypeOut credits:"
+#~ msgstr "SkypeOut кредиттері:"
+
+#~ msgid "Accept call"
+#~ msgstr "Қоңырауды қабылдау"
+
+#~ msgid "Accept incoming call"
+#~ msgstr "Кіріс қоңырау шақыруын қабылдау"
+
+#~ msgid "Finish the call"
+#~ msgstr "Сөйлесуді аяқтау"
+
+#~ msgid "Terminate the call"
+#~ msgstr "Сөйлесуді доғару"
+
+#~ msgid "H&ang up"
+#~ msgstr "Тұтқаны қ&ою"
+
+#~ msgid "Hold the call"
+#~ msgstr "Тыңдап тұру"
+
+#~ msgid "Interrupt the call for a moment and resume (or hang up) later."
+#~ msgstr "Сөйлесуді бір мезгілге үзіп жалғастыру (не тұтқасын қою)"
+
+#~ msgid "H&old"
+#~ msgstr "Т&ыңдап тұру"
+
+#~ msgid "Open chat to the person."
+#~ msgstr "Осымен чатты ашу."
+
+#~ msgid "Open chat to the person with whom you are talking."
+#~ msgstr "Сөйлесіп тұрғанымен чат-әңгімені ашу."
+
+#~ msgid "Start/Stop Video"
+#~ msgstr "Видеоны айдау/тоқтату"
+
+#~ msgid "User's Details"
+#~ msgstr "Пайдаланушының егжей-тегжейлері"
+
+#~ msgid "Skype ID:"
+#~ msgstr "Skype ID-і:"
+
+#~ msgid "Authorized"
+#~ msgstr "Рұқсат берілген"
+
+#~ msgid "Not Authorized"
+#~ msgstr "Рұқсат берілмеген"
+
+#~ msgid "Is authorized:"
+#~ msgstr "Неге рұқсат берілген:"
+
+#~ msgid "Display Name:"
+#~ msgstr "Жазылатын атауы:"
+
+#~ msgid "Sex:"
+#~ msgstr "Жынысы:"
+
+#~ msgid "Check this if you do not want to connect with other protocols"
+#~ msgstr "Басқа протоколды қаласаңыз осы белгіні қойыңыз"
+
+#~ msgid "E&xclude from connection"
+#~ msgstr "Қосылатындардан алып &тасталсын"
+
+#~ msgid "Important Note"
+#~ msgstr "Маңызды ескертпе"
+
+#~ msgid ""
+#~ "The Skype plugin serves as a bridge to an externally running copy of "
+#~ "Skype. This has some consequences on how it functions: you need an "
+#~ "instance of Skype to be running, and only one Skype account can be used."
+#~ "<br /><br />Note that you need to install the original dynamic linked "
+#~ "Skype version 2.0 or 2.1 from <a href=\"http://www.skype.com\">http://www."
+#~ "skype.com</a><br /><br />This plugin will only work if the language in "
+#~ "the Skype client set to English. Kopete shows notifications (incoming "
+#~ "call, message, ...), so you can turn off the notifications in Skype."
+#~ msgstr ""
+#~ "Skype плагині бөлек жегілген Skype бағдарламасына көпір қызметін етеді. "
+#~ "Бұл жағдайының келесі шартары бар: айтқандай, Skype данасы орындалуда "
+#~ "болу керек, және Skype-тың жалғыз ғана тіркелгісін пайдалану керек.<br /"
+#~ "><br /> <a href=\"http://www.skype.com\">http://www.skype.com</a> "
+#~ "сайтынан алынған шын Skype-тың динамикалық жинақталған 2.0 не 2.1-нұсқасы "
+#~ "орнатылғаны қажет from  <br /><br /> Бұл плагині Skype клиентінің тілі "
+#~ "ағылшын деп орнатылса ғана істейді. Kopete құлақтандыруларын (келген "
+#~ "шақыру, хабарлама, ...) өзі көрсетеді, сондықтан, Skype-тың "
+#~ "құлақтандыруларын бұғаттап тастауға болады."
+
+#~ msgid ""
+#~ "Disable Skype notifications and set up English language in Skype client"
+#~ msgstr "Skype құлақтандырулары болмасын және клиентінің тілі ағылшын болсын"
+
+#~ msgid "Lau&nch"
+#~ msgstr "Же&гу"
+
+#~ msgid "You can set whether and when should kopete launch Skype."
+#~ msgstr "Kopete Skype-ты жегсін бе, және оны қашан істейтінін баптай аласыз."
+
+#~ msgid "Launch Skype"
+#~ msgstr "Skype-ты жегу"
+
+#~ msgid "When &not running"
+#~ msgstr "Әлі жегіл&месе"
+
+#~ msgid "N&ever"
+#~ msgstr "Е&шқашанда"
+
+#~ msgid "Command to launch Skype:"
+#~ msgstr "Skype-ты жегу командасы:"
+
+#~ msgid "skype"
+#~ msgstr "skype"
+
+#~ msgid "Launch timeout:"
+#~ msgstr "Жегуді күту уақыты:"
+
+#~ msgid "s"
+#~ msgstr "сек"
+
+#~ msgid "Wait before trying to connect to Skype:"
+#~ msgstr "Skype-пен байланысу алдында күту уақыты:"
+
+#~ msgid "trying"
+#~ msgstr "байланыс ету"
+
+#~ msgid ""
+#~ "If you get error that Skype was not found, but in fact it is running, "
+#~ "check the instructions at <a href=\"https://developer.skype.com/Docs/"
+#~ "ApiDoc/Skype_API_on_Linux\">https://developer.skype.com/Docs/ApiDoc/"
+#~ "Skype_API_on_Linux</a>.<br /><br />Note that only the dynamic linked "
+#~ "Skype binary is supported."
+#~ msgstr ""
+#~ "Skype жегілгеніне қарамастан, ол табылған жоқ деген қатеге тап босаңыз, "
+#~ "мынадан нұсқау алыңыз: <a href=\"https://developer.skype.com/Docs/ApiDoc/"
+#~ "Skype_API_on_Linux\">https://developer.skype.com/Docs/ApiDoc/"
+#~ "Skype_API_on_Linux</a>.<br /><br />Тек динамакалық жинақталған Skype "
+#~ "керек екенін ескеріңіз."
+
+#~ msgid "C&onnection"
+#~ msgstr "Қ&осылым"
+
+#~ msgid ""
+#~ "Each application that wants to use Skype must provide its name to it, and "
+#~ "the user is asked whether to allow said application to access Skype."
+#~ "<br>By default, kopete provides kopete as its name, but if you suspect "
+#~ "another application is accessing Skype with this name, you can change the "
+#~ "name Kopete uses here, and then within Skype disallow applications that "
+#~ "refer to themselves as kopete."
+#~ msgstr ""
+#~ "Әрбір Skype-ты пайдаланбақ бағдарламасы, өзінің атын келтіріп, Skype-пен "
+#~ "қатынауға рұқсат сұрауға тиіс.<br>Бұндайда, әдетте, kopete өзін kopete "
+#~ "деп таныстырады. бірақ егерде басқа бір бағдарлама өзін kopete деп "
+#~ "таныстырып, қатынап жатыр деп күдіктенсеңіз, бұндағыны өзгертіп, басқа "
+#~ "бағдарламаларға kopete атымен жамылып Skype-ты пайдалануға жол кесе "
+#~ "аласыз."
+
+#~ msgid "&Non-standard authorization"
+#~ msgstr "Стандарттан &тыс құптау"
+
+#~ msgid "What bus do you want to use"
+#~ msgstr "Қай шинасын қолдануды қалайсыз"
+
+#~ msgid ""
+#~ "Which D-Bus do you want to use to connect to Skype?<br>Session: Your own, "
+#~ "other people cannot use it (use --use-session-dbus to start Skype on that "
+#~ "bus.)<br>System: Shared by all people on the same computer. This one is "
+#~ "used by default by Skype.<br>You have to specify the same D-Bus used by "
+#~ "Skype."
+#~ msgstr ""
+#~ "Skype-пен байланысу үшін қай D-Bus пайдаланылады?<br>Сеанс: Меншікті, "
+#~ "басқалар оны пайдалана алмайды (бл шинада Skype-ты жегу үшін оны --use-"
+#~ "session-dbus параметрімен жегу керек.)<br>Жүйе: компьютердегі барлық "
+#~ "пайдаланушыларына ортақ. Әдетте Skype осыны пайдаланады.<br>Skype "
+#~ "пайдаланатын D-Bus шинасын таңдаңыз."
+
+#~ msgid "Bus"
+#~ msgstr "Шина"
+
+#~ msgid "Sessi&on"
+#~ msgstr "&Сеанс"
+
+#~ msgid ""
+#~ "Note that Kopete will freeze while Skype asks you if it can allow Kopete "
+#~ "to access it. This is normal, and if you allow it forever (check that "
+#~ "\"Remember\" checkbox in Skype's dialog), it will not happen again.<br /"
+#~ "><br />The 'System Bus' option is not yet supported by Skype"
+#~ msgstr ""
+#~ "Skype бағдарламасы Kopete-ке қатынауды рұқсат етуді сұраған кезде ол "
+#~ "(Kopete) тоқтап қалады. Бұл қалыпты жағдай, егерде (Skype диалогында "
+#~ "\"Жаттап алынсын\" деген белгі көзін белгілеп) оны тұрақты қылсаңыз, ол "
+#~ "қайталана береді.<br /><br />'Жүйе шинасы' деген параметрі әлі Skype-та "
+#~ "іске асырылмаған"
+
+#~ msgid "&Activity"
+#~ msgstr "&Белсенділік"
+
+#~ msgid "Show all incoming messages"
+#~ msgstr "Барлық кіріс хабарламалар көрсетілсін"
+
+#~ msgid ""
+#~ "This will show all incoming Skype messages. If this is off, they are "
+#~ "showed only if the message belongs to chat that is started by kopete."
+#~ msgstr ""
+#~ "Барлық кіріс хабарламаларды көрсету. Әйтпесе, тек қана басталған әңгіме "
+#~ "бөлмесінің хабарлары көрсетіледі."
+
+#~ msgid "Show all incoming &messages"
+#~ msgstr "Барлық кіріс &хабарламалар көрсетілсін"
+
+#~ msgid ""
+#~ "This will mark incoming messages as read, so if you have Skype set up not "
+#~ "to automatically pop-up chats, it will not flash the exclamation icon."
+#~ msgstr ""
+#~ "Барлық кіріс хабарламалар оқылған деп белгіленеді, сондықтан Skype "
+#~ "автоматты тұрде әңгімені бастайтын қылып бапталмаса, хабар келген сайын "
+#~ "жыплықтаған леп таңбашасы болмайды."
+
+#~ msgid "Mar&k as read"
+#~ msgstr "Оқылған деп белгіленсін"
+
+#~ msgid ""
+#~ "If this is checked, Kopete will ask Skype on login if it has any messages "
+#~ "that have not been shown, and if so, will show them. This is useful if "
+#~ "you start Kopete later than Skype, and Skype is configured not to show "
+#~ "incoming messages."
+#~ msgstr ""
+#~ "Бұл белгі қойылса, Kopete ісіне кіріскенде Skype-тан көрсетілмеген "
+#~ "хабарламалар бар ма деп сұрап, ббар болса оларды көрсетеді. Бұл қасиет "
+#~ "Kopete Skype-тан кейін жегілгенде және Skype келген хабарларды "
+#~ "көрсетпейтін қылып бапталғанда пайдалы."
+
+#~ msgid "Scan f&or unread"
+#~ msgstr "Оқылмағанды қ&арастыру"
+
+#~ msgid "Show call control window for all calls"
+#~ msgstr "Бүкіл шақыруда оны басқару терезесі ашылсын"
+
+#~ msgid ""
+#~ "This will show a call control window for every call (both incoming and "
+#~ "outgoing). If it is off, you can call from Kopete, but you have to "
+#~ "control that call from Skype."
+#~ msgstr ""
+#~ "Бұның көмегімен барлық  (кіріс те, шығыс те) шақыру қоңырауы соққанда "
+#~ "шақыруды басқару терезесі ашылады. Әйтпесе, Kopete арқылы қоңырау соғып, "
+#~ "оны Skype арқылы басқара аласыз.."
+
+#~ msgid "S&how call control (this will also hide Skype client call dialog)"
+#~ msgstr ""
+#~ "Шақыруды басқару к&өрсетілсін (Skype клиенттің шақыру диалогын жасырады)"
+
+#~ msgid "Auto close the call control window"
+#~ msgstr "Шақыруды басқару терезесі автожабылсын"
+
+#~ msgid ""
+#~ "This will close the call control window automatically when the call "
+#~ "finishes"
+#~ msgstr ""
+#~ "Бұл қоңырау соққан соң шақыруды басқару терезесін автоматты түрде жабуы"
+
+#~ msgid "Autoc&lose"
+#~ msgstr "Авто&жабылсын"
+
+#~ msgid "Timeout:"
+#~ msgstr "Күту уақыты:"
+
+#~ msgid ""
+#~ "If this is enabled, Kopete keeps track of whether or not Skype is running."
+#~ msgstr "Белгісі қойылса, Kopete Skype-тың жегілгенін байқап отырады."
+
+#~ msgid ""
+#~ "This keeps track of whether Skype is running. Turning this off only makes "
+#~ "sense it you are trying to get non-flooded debug output."
+#~ msgstr ""
+#~ "Kopete-тан Skype-тың жегілгенін байқап отыруы. Оны байқамау, тек жөндеуге "
+#~ "мәлімет жинау мақсатты көздегенде мәнсіз емес деп табылады."
+
+#~ msgid "Pi&ng Skype"
+#~ msgstr "Skype-ты &байқау"
+
+#~ msgid "Do not leave a chat on window exit"
+#~ msgstr "Терезесін жапқанда әңгіме үзілмесін"
+
+#~ msgid ""
+#~ "Do not leave a chat when the chat window is closed. Makes a difference "
+#~ "only with multi-user chats: if it is checked, you will continue receiving "
+#~ "messages from that chat even after closing the window."
+#~ msgstr ""
+#~ "Терезесін жапқанда әңгімесін үзбеу. Тек көп жақты әңгіме үшін мағыналы: "
+#~ "белгісі қойылса, терезесі жабылғаннан кейін де хабарламалары қабылдана "
+#~ "береді."
+
+#~ msgid "&Calls"
+#~ msgstr "Қ&оңырау соғу"
+
+#~ msgid "E&xecute before call"
+#~ msgstr "Қ&оңырау соғудың алдында орындау"
+
+#~ msgid ""
+#~ "This will wait before making/accepting the call for the command to finish."
+#~ msgstr "Қоңырауды соғу/қабылдаудың алдында осы команданың орындауын күту."
+
+#~ msgid ""
+#~ "This will wait for the command to finish before accepting/making the call."
+#~ "<br>\n"
+#~ "Note that kopete will freeze whilst waiting."
+#~ msgstr ""
+#~ "Қоңырауды соғу/қабылдаудың алдында осы команданың орындауын күту.<br>\n"
+#~ "Күткен кезде Kopete тоқтап қалады."
+
+#~ msgid "Wait for fi&nish"
+#~ msgstr "А&яқтағанын күту"
+
+#~ msgid "Execute after call"
+#~ msgstr "Қоңырау соғудан кейін орындау"
+
+#~ msgid ""
+#~ "Usually this makes no difference, but if there are some other calls on "
+#~ "hold, it is executed only for the most recently ended one."
+#~ msgstr ""
+#~ "Әдетте ешбір өзгеріс енгізбейді, тек қана бірнеше әңгіме болып жатса, бұл "
+#~ "ең жуырда аяқталған үшін орындалады."
+
+#~ msgid "Onl&y for last call"
+#~ msgstr "Т&ек соңғысы үшін"
+
+#~ msgid "Execute on inco&ming call"
+#~ msgstr "К&іріс қоңырау соғуда орындалады"
 
 #~ msgid "An error occurred while saving the address book entry."
 #~ msgstr "Адрестік кітапшаға жазуды сақтағанда қате пайда болды."

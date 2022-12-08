@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-05-03 00:43+0000\n"
+"POT-Creation-Date: 2022-12-08 00:45+0000\n"
 "PO-Revision-Date: 2010-05-18 19:58+0300\n"
 "Last-Translator: Maris Nartiss <maris.kde@gmail.com>\n"
 "Language-Team: Latvian\n"
@@ -32,7 +32,6 @@ msgstr "Ātri mācos"
 #. i18n: ectx: property (text), widget (QTreeWidget, addresseeListView)
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListGroupSorting)
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListMetaContactSorting)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel1)
 #. i18n: ectx: property (text), widget (QTableWidget, listServers)
 #. i18n: ectx: property (text), widget (QTreeWidget, trServices)
 #: kopete/addaccountwizard/addaccountwizard.cpp:74
@@ -41,7 +40,6 @@ msgstr "Ātri mācos"
 #: libkopete/ui/addressbookselectorwidget_base.ui:97
 #: protocols/jabber/ui/dlgjabberchooseserver.ui:57
 #: protocols/jabber/ui/dlgservices.ui:85
-#: protocols/skype/ui/skypecalldialogbase.ui:36
 #, kde-format
 msgid "Name"
 msgstr "Nosaukums"
@@ -126,7 +124,6 @@ msgstr "1"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, AddAccountWizardPage2)
 #: kopete/addaccountwizard/addaccountwizardpage2.ui:13
-#: protocols/skype/skypecalldialog.cpp:168
 #, kde-format
 msgid "Finished"
 msgstr "Pabeigts"
@@ -426,10 +423,8 @@ msgstr "Jūsu statuss: %1."
 msgid "%2 is now %1."
 msgstr "%2: %1."
 
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel1)
 #: kopete/chatwindow/kopetechatwindow.cpp:210
 #: kopete/chatwindow/kopetechatwindow.cpp:476
-#: protocols/skype/ui/skypecalldialogbase.ui:33
 #, kde-format
 msgid "Participants"
 msgstr "Dalībnieki"
@@ -604,7 +599,6 @@ msgstr "&Iestatījumi"
 #: kopete/chatwindow/kopetechatwindow.rc:46
 #: kopete/chatwindow/kopeteemailwindow.rc:29
 #: kopete/chatwindow/kopeterichtexteditpartfull.rc:25 kopete/kopeteui.rc:48
-#: protocols/skype/skypeui.rc:12
 #, kde-format
 msgid "Main Toolbar"
 msgstr "Galvenā rīkjosla"
@@ -1758,9 +1752,7 @@ msgid "Message:"
 msgstr "Paziņojums:"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, BehaviorConfig_Chat)
-#. i18n: ectx: property (text), widget (QPushButton, ChatButton)
 #: kopete/config/behavior/behaviorconfig_chat.ui:14
-#: protocols/skype/ui/skypecalldialogbase.ui:222
 #, kde-format
 msgid "Chat"
 msgstr "Saruna"
@@ -2317,7 +2309,6 @@ msgstr ""
 #: protocols/meanwhile/meanwhileprotocol.cpp:35
 #: protocols/oscar/aim/aimstatusmanager.cpp:67
 #: protocols/oscar/icq/icqstatusmanager.cpp:75 protocols/qq/qqprotocol.cpp:41
-#: protocols/skype/skypeaccount.cpp:929 protocols/skype/skypeprotocol.cpp:76
 #: protocols/sms/smsprotocol.cpp:40 protocols/winpopup/wpprotocol.cpp:59
 #, kde-format
 msgid "Offline"
@@ -2338,7 +2329,6 @@ msgstr "Atsaistē"
 #: protocols/meanwhile/meanwhileprotocol.cpp:40
 #: protocols/oscar/aim/aimstatusmanager.cpp:79
 #: protocols/oscar/icq/icqstatusmanager.cpp:87 protocols/qq/qqprotocol.cpp:37
-#: protocols/skype/skypeaccount.cpp:925 protocols/skype/skypeprotocol.cpp:77
 #: protocols/sms/smsprotocol.cpp:39 protocols/winpopup/wpaccount.cpp:170
 #: protocols/winpopup/wpprotocol.cpp:57
 #, kde-format
@@ -2359,7 +2349,6 @@ msgstr "Tiešsaistē"
 #: protocols/meanwhile/meanwhileprotocol.cpp:44
 #: protocols/oscar/aim/aimstatusmanager.cpp:75
 #: protocols/oscar/icq/icqstatusmanager.cpp:83 protocols/qq/qqprotocol.cpp:39
-#: protocols/skype/skypeaccount.cpp:933 protocols/skype/skypeprotocol.cpp:79
 #: protocols/winpopup/wpaccount.cpp:176 protocols/winpopup/wpprotocol.cpp:58
 #, kde-format
 msgid "Away"
@@ -2390,7 +2379,6 @@ msgstr "Aizņemts"
 #: protocols/oscar/aim/aimstatusmanager.cpp:85
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:812
 #: protocols/oscar/icq/icqstatusmanager.cpp:92
-#: protocols/skype/skypeaccount.cpp:945 protocols/skype/skypeprotocol.cpp:82
 #, kde-format
 msgid "Invisible"
 msgstr "Neredzams"
@@ -3220,19 +3208,15 @@ msgid "Home phone:"
 msgstr "Mājas tālrunis:"
 
 #. i18n: ectx: property (text), widget (QLabel, mLblWorkPhone)
-#. i18n: ectx: property (text), widget (QLabel, textLabel6)
 #: kopete/contactlist/kopeteaddrbookexportui.ui:66
-#: protocols/skype/ui/skypedetailsbase.ui:71
 #, kde-format
 msgid "Work phone:"
 msgstr "Darba tālrunis:"
 
 #. i18n: ectx: property (text), widget (QLabel, mLblMobilePhone)
 #. i18n: ectx: property (text), widget (QLabel, mobileLabel)
-#. i18n: ectx: property (text), widget (QLabel, textLabel5)
 #: kopete/contactlist/kopeteaddrbookexportui.ui:76
 #: kopete/identity/identitydetailed.ui:45
-#: protocols/skype/ui/skypedetailsbase.ui:58
 #, kde-format
 msgid "Mobile phone:"
 msgstr "Mobilais tālrunis:"
@@ -3761,9 +3745,7 @@ msgid "E-mail: "
 msgstr "E-pasts:"
 
 #. i18n: ectx: property (text), widget (QLabel, phoneLabel)
-#. i18n: ectx: property (text), widget (QLabel, textLabel4)
 #: kopete/identity/identitydetailed.ui:32
-#: protocols/skype/ui/skypedetailsbase.ui:91
 #, kde-format
 msgid "Private phone:"
 msgstr "Mājas tālrunis:"
@@ -3856,7 +3838,7 @@ msgstr "&Fails"
 #: plugins/cryptography/cryptographyui.rc:5 plugins/history/historyui.rc:5
 #: plugins/history2/history2ui.rc:5 plugins/otr/otrui.rc:5
 #: plugins/statistics/statisticsui.rc:5 plugins/translator/translatorui.rc:5
-#: protocols/groupwise/ui/gwcustomstatus.ui:44 protocols/skype/skypeui.rc:5
+#: protocols/groupwise/ui/gwcustomstatus.ui:44
 #, kde-format
 msgid "&Edit"
 msgstr "&Labot"
@@ -5258,7 +5240,7 @@ msgstr ""
 #: libkopete/kabcpersistence.cpp:374 protocols/gadu/gadusession.cpp:213
 #: protocols/gadu/gadusession.cpp:225 protocols/gadu/gadusession.cpp:236
 #: protocols/gadu/gadusession.cpp:270 protocols/gadu/gadusession.cpp:283
-#: protocols/gadu/gadusession.cpp:302 protocols/skype/skypeaddcontact.cpp:68
+#: protocols/gadu/gadusession.cpp:302
 #, kde-format
 msgid "Not Connected"
 msgstr "Atsaistē"
@@ -5337,7 +5319,7 @@ msgid "%2 <%1>"
 msgstr "%2 <%1>"
 
 #: libkopete/kopeteaccount.cpp:471 protocols/gadu/gaduaccount.cpp:384
-#: protocols/skype/skypeaccount.cpp:967 protocols/winpopup/wpaccount.cpp:185
+#: protocols/winpopup/wpaccount.cpp:185
 #, kde-format
 msgid "Properties"
 msgstr "Īpašības"
@@ -6274,7 +6256,6 @@ msgstr ""
 
 #: libkopete/kopeteonlinestatus.cpp:167 protocols/gadu/gaduprotocol.cpp:96
 #: protocols/groupwise/gwprotocol.cpp:69 protocols/jabber/jabberprotocol.cpp:74
-#: protocols/skype/skypecalldialog.cpp:215 protocols/skype/skypeprotocol.cpp:83
 #: protocols/sms/smsprotocol.cpp:41
 #, kde-format
 msgid "Connecting"
@@ -6289,7 +6270,6 @@ msgstr "Pieslēgšanās"
 #: protocols/oscar/icq/icqprotocol.cpp:455
 #: protocols/oscar/icq/icqprotocol.cpp:534
 #: protocols/oscar/icq/icqstatusmanager.cpp:37
-#: protocols/skype/libskype/skype.cpp:405
 #, kde-format
 msgid "Unknown"
 msgstr "Nezināms"
@@ -7259,7 +7239,6 @@ msgstr "&Piezīmes"
 #: plugins/history/historychatui.rc:5 plugins/history2/history2chatui.rc:5
 #: plugins/latex/latexchatui.rc:5 plugins/nowlistening/nowlisteningchatui.rc:5
 #: plugins/otr/otrchatui.rc:4 plugins/translator/translatorchatui.rc:5
-#: protocols/skype/skypechatui.rc:5
 #, kde-format
 msgid "&Tools"
 msgstr "&Rīki"
@@ -10746,7 +10725,6 @@ msgstr "Konta parametri - Bonjour"
 msgid "B&asic Setup"
 msgstr "P&amatiestatījumi"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox1)
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #. i18n: ectx: property (title), widget (QGroupBox, m_accountInfo)
 #. i18n: ectx: property (title), widget (QGroupBox)
@@ -10758,9 +10736,7 @@ msgstr "P&amatiestatījumi"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:45
 #: protocols/meanwhile/ui/meanwhileeditaccount.ui:41
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:163
-#: protocols/qq/ui/qqeditaccountui.ui:63
-#: protocols/skype/ui/skypeeditaccountbase.ui:27
-#: protocols/sms/ui/smsactprefs.ui:71
+#: protocols/qq/ui/qqeditaccountui.ui:63 protocols/sms/ui/smsactprefs.ui:71
 #: protocols/winpopup/ui/wpeditaccountbase.ui:46
 #, kde-format
 msgid "Account Information"
@@ -10770,7 +10746,6 @@ msgstr "Konta informācija"
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: protocols/bonjour/bonjouraccountpreferences.ui:77
 #: protocols/oscar/icq/ui/icqworkinfowidget.ui:34
-#: protocols/skype/ui/skypecalldialogbase.ui:39
 #, kde-format
 msgid "Name:"
 msgstr "Vārds:"
@@ -11272,8 +11247,7 @@ msgstr "<b>Neizdevās sākt klausīties uz DCC ligzdu; dcc tagad nedarbojas.</b>
 msgid "Edit Contact's Properties"
 msgstr "Rediģēt kontakta īpašības"
 
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/gadu/gaduprotocol.cpp:56 protocols/skype/ui/skypedetailsbase.ui:50
+#: protocols/gadu/gaduprotocol.cpp:56
 #, kde-format
 msgid "Blocked"
 msgstr "Bloķēts"
@@ -12109,7 +12083,7 @@ msgstr "Pilsēta:"
 #. i18n: ectx: property (text), item, widget (QComboBox, uiGender)
 #: protocols/gadu/ui/gadueditaccountui.ui:645
 #: protocols/gadu/ui/gadusearch.ui:269 protocols/oscar/icq/icqprotocol.cpp:205
-#: protocols/qq/ui/qqvcard.ui:223 protocols/skype/skypecontact.cpp:236
+#: protocols/qq/ui/qqvcard.ui:223
 #, kde-format
 msgid "Female"
 msgstr "Sieviete"
@@ -12119,7 +12093,7 @@ msgstr "Sieviete"
 #. i18n: ectx: property (text), item, widget (QComboBox, uiGender)
 #: protocols/gadu/ui/gadueditaccountui.ui:650
 #: protocols/gadu/ui/gadusearch.ui:264 protocols/oscar/icq/icqprotocol.cpp:206
-#: protocols/qq/ui/qqvcard.ui:218 protocols/skype/skypecontact.cpp:234
+#: protocols/qq/ui/qqvcard.ui:218
 #, kde-format
 msgid "Male"
 msgstr "Vīrietis"
@@ -12644,8 +12618,7 @@ msgstr "%1|Bloķēts"
 
 #: protocols/groupwise/gwmessagemanager.cpp:77
 #: protocols/jabber/jabbergroupchatmanager.cpp:42
-#: protocols/qq/qqchatsession.cpp:69 protocols/skype/skypechatsession.cpp:125
-#: protocols/skype/skypechatsession.cpp:163
+#: protocols/qq/qqchatsession.cpp:69
 #, kde-format
 msgid "&Invite"
 msgstr "&Ielūgt"
@@ -12815,7 +12788,6 @@ msgid "Invalid password"
 msgstr "Nepareiza parole"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:40
-#: protocols/skype/libskype/skype.cpp:407
 #, kde-format
 msgid "User not found"
 msgstr "Lietotājs nav atrasts"
@@ -13442,10 +13414,8 @@ msgstr "USER_ID"
 msgid "Change the display name used for this contact"
 msgstr "Mainīt šī kontakta attēlojamo vārdu"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
 #. i18n: ectx: property (text), widget (QLabel, textLabel14)
 #: protocols/groupwise/ui/gwcontactprops.ui:78
-#: protocols/skype/ui/skypecalldialogbase.ui:122
 #, kde-format
 msgid "Status:"
 msgstr "Statuss:"
@@ -14327,14 +14297,12 @@ msgctxt "a contact's online status in parenthesis."
 msgid " (%1)"
 msgstr " (%1)"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox3_2)
 #: protocols/jabber/jabbercontact.cpp:144
-#: protocols/skype/ui/skypeeditaccountbase.ui:319
 #, kde-format
 msgid "Authorization"
 msgstr "Autorizācija"
 
-#: protocols/jabber/jabbercontact.cpp:150 protocols/skype/skypecontact.cpp:106
+#: protocols/jabber/jabbercontact.cpp:150
 #, kde-format
 msgid "(Re)send Authorization To"
 msgstr "(Pār)sūtīt autorizāciju uz"
@@ -14344,12 +14312,12 @@ msgstr "(Pār)sūtīt autorizāciju uz"
 msgid "(Re)request Authorization From"
 msgstr "(Pār)pieprasīt autorizāciju no"
 
-#: protocols/jabber/jabbercontact.cpp:164 protocols/skype/skypecontact.cpp:111
+#: protocols/jabber/jabbercontact.cpp:164
 #, kde-format
 msgid "Remove Authorization From"
 msgstr "Noņemt autorizāciju no"
 
-#: protocols/jabber/jabbercontact.cpp:176 protocols/skype/skypecontact.cpp:101
+#: protocols/jabber/jabbercontact.cpp:176
 #, kde-format
 msgid "Call contact"
 msgstr "Zvanīt kontaktam"
@@ -14367,7 +14335,6 @@ msgstr "Pieejams sarunai"
 #: protocols/jabber/jabbercontact.cpp:198
 #: protocols/oscar/aim/aimstatusmanager.cpp:69
 #: protocols/oscar/icq/icqstatusmanager.cpp:77
-#: protocols/skype/skypeaccount.cpp:941 protocols/skype/skypeprotocol.cpp:81
 #, kde-format
 msgid "Do Not Disturb"
 msgstr "Netraucēt"
@@ -14769,10 +14736,8 @@ msgstr "Zvana ar:"
 msgid "Call Status:"
 msgstr "Zvana statuss:"
 
-#. i18n: ectx: property (text), widget (QPushButton, AcceptButton)
 #. i18n: ectx: property (text), widget (QPushButton, acceptButton)
 #: protocols/jabber/libjinglecalldialog.ui:42
-#: protocols/skype/ui/skypecalldialogbase.ui:180
 #, kde-format
 msgid "Accept"
 msgstr "Pieņemt"
@@ -15392,7 +15357,6 @@ msgstr "Jabber konta parametri"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:39
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:41
 #: protocols/qq/ui/qqeditaccountui.ui:42
-#: protocols/skype/ui/skypeeditaccountbase.ui:21
 #, kde-format
 msgid "&Basic Setup"
 msgstr "&Pamatiestatījumi"
@@ -16042,9 +16006,7 @@ msgstr ""
 msgid "Register"
 msgstr "Reģistrēt"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox1)
 #: protocols/jabber/ui/dlgsearch.cpp:54 protocols/jabber/ui/dlgsearch.cpp:55
-#: protocols/skype/ui/skypeaddcontactbase.ui:29
 #, kde-format
 msgid "Search"
 msgstr "Meklēt"
@@ -16126,10 +16088,8 @@ msgstr "Nosūtīt serverim &pieprasījumu"
 msgid "Node"
 msgstr "Mezgls"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
 #. i18n: ectx: property (text), widget (QLabel, lblName)
 #: protocols/jabber/ui/dlgvcard.ui:45 protocols/qq/ui/qqvcard.ui:164
-#: protocols/skype/ui/skypedetailsbase.ui:158
 #, kde-format
 msgid "Full name:"
 msgstr "Pilns vārds:"
@@ -16140,12 +16100,11 @@ msgstr "Pilns vārds:"
 msgid "Jabber ID:"
 msgstr "Jabber ID:"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
 #. i18n: ectx: property (text), widget (QLabel, textLabel8)
 #. i18n: ectx: property (text), widget (QLabel, lblHomepage)
 #: protocols/jabber/ui/dlgvcard.ui:76
 #: protocols/oscar/icq/ui/icqworkinfowidget.ui:150
-#: protocols/qq/ui/qqvcard.ui:621 protocols/skype/ui/skypedetailsbase.ui:171
+#: protocols/qq/ui/qqvcard.ui:621
 #, kde-format
 msgid "Homepage:"
 msgstr "Tīmekļa vietne:"
@@ -17011,16 +16970,15 @@ msgstr "Aizņemts"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:73
 #: protocols/oscar/icq/icqstatusmanager.cpp:81
-#: protocols/skype/skypeaccount.cpp:937 protocols/skype/skypeprotocol.cpp:80
 #, kde-format
-msgid "Not Available"
-msgstr "Nav pieejams"
+msgid "Not A&vailable"
+msgstr "Na&v pieejams"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:73
 #: protocols/oscar/icq/icqstatusmanager.cpp:81
 #, kde-format
-msgid "Not A&vailable"
-msgstr "Na&v pieejams"
+msgid "Not Available"
+msgstr "Nav pieejams"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:77
 #: protocols/oscar/icq/icqstatusmanager.cpp:85
@@ -20630,1071 +20588,6 @@ msgstr "%1 tīmekļa kamera"
 msgid "No webcam image received"
 msgstr "Nav attēla no tīmekļa kameras"
 
-#: protocols/skype/libskype/skype.cpp:256
-#, kde-format
-msgid "This version of Skype is too old, consider upgrading"
-msgstr "Šī Skype versija ir pārāk veca, apsveriet iespēju to atjaunināt"
-
-#: protocols/skype/libskype/skype.cpp:290 protocols/skype/skypeaccount.cpp:1093
-#: protocols/skype/skypeaccount.cpp:1107 protocols/skype/skypeaccount.cpp:1129
-#: protocols/skype/skypeaccount.cpp:1134 protocols/skype/skypeaccount.cpp:1142
-#: protocols/skype/skypeaccount.cpp:1154 protocols/skype/skypeaccount.cpp:1159
-#: protocols/skype/skypeeditaccount.cpp:210
-#: protocols/skype/skypeeditaccount.cpp:225
-#: protocols/skype/skypeeditaccount.cpp:242
-#: protocols/skype/skypeeditaccount.cpp:250
-#, kde-format
-msgid "Skype protocol"
-msgstr "Skype protokols"
-
-#: protocols/skype/libskype/skype.cpp:409
-#, kde-format
-msgid "Does not have multi-user chat capability"
-msgstr "Nav daudzlietotāju sarunu iespējas"
-
-#: protocols/skype/libskype/skype.cpp:411
-#, kde-format
-msgid "Chat denied"
-msgstr "Saruna liegta"
-
-#: protocols/skype/libskype/skype.cpp:488
-#, kde-format
-msgid "Unknown error"
-msgstr "Nezināma kļūda"
-
-#: protocols/skype/libskype/skype.cpp:491
-#, kde-format
-msgid "Misc error"
-msgstr "Kļūda"
-
-#: protocols/skype/libskype/skype.cpp:494
-#, kde-format
-msgid "User or phone number does not exist"
-msgstr "Lietotājs vai tālruņa numurs nepastāv"
-
-#: protocols/skype/libskype/skype.cpp:497
-#, kde-format
-msgid "User is offline"
-msgstr "Lietotājs ir atsaistē"
-
-#: protocols/skype/libskype/skype.cpp:500
-#, kde-format
-msgid "No proxy found"
-msgstr "Starpniekserveris nav atrasts"
-
-#: protocols/skype/libskype/skype.cpp:503
-#, kde-format
-msgid "Session terminated"
-msgstr "Sesija pārtraukta"
-
-#: protocols/skype/libskype/skype.cpp:506
-#, kde-format
-msgid "No common codec found"
-msgstr "Nav atrasts neviens parastais kodeks"
-
-#: protocols/skype/libskype/skype.cpp:509
-#, kde-format
-msgid "Sound I/O error"
-msgstr "Skaņas I/O kļūda"
-
-#: protocols/skype/libskype/skype.cpp:512
-#, kde-format
-msgid "Problem with remote sound device"
-msgstr "Problēma ar attālināto skaņas ierīci"
-
-#: protocols/skype/libskype/skype.cpp:515
-#, kde-format
-msgid "Call blocked by recipient"
-msgstr "Zvanu bloķēja saņēmējs"
-
-#: protocols/skype/libskype/skype.cpp:518
-#, kde-format
-msgid "Recipient not a friend"
-msgstr "Saņēmējs nav draugs"
-
-#: protocols/skype/libskype/skype.cpp:521
-#, kde-format
-msgid "User not authorized by recipient"
-msgstr "Saņēmējs nav autorizējis lietotāju"
-
-#: protocols/skype/libskype/skype.cpp:524
-#, kde-format
-msgid "Sound recording error"
-msgstr "Skaņas ierakstīšanas kļūda"
-
-#: protocols/skype/libskype/skype.cpp:820
-#, kde-format
-msgid "This version of Skype does not support adding users to chat."
-msgstr "Šī Skype versija neatbalsta lietotāju pievienošanu sarunai"
-
-#: protocols/skype/libskype/skype.cpp:820
-#, kde-format
-msgid "Skype Protocol"
-msgstr "Skype protokols"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:92
-#, kde-format
-msgid "Could not ping Skype"
-msgstr "Neizdevās 'pingot' Skype"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:112
-#, kde-format
-msgid "Skype did not accept this application"
-msgstr "Skype nepieņēma šo programmu"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:123
-#, kde-format
-msgid "Skype API syntax error"
-msgstr "Skype API sintakses kļūda"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:132
-#, kde-format
-msgid "Skype API not ready yet, wait a bit longer"
-msgstr "Skype API vēl nav gatavs, vēl nedaudz uzgaidiet"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:178
-#, kde-format
-msgid "Cannot register Skype communication for Kopete on D-Bus"
-msgstr "Neizdevās reģistrēt Skype komunikāciju ar Kopete iekš D-Bus"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:209
-#, kde-format
-msgid ""
-"Could not launch Skype.\n"
-"You need to install the original dynamic linked Skype version 2.0 binary "
-"from http://www.skype.com"
-msgstr ""
-"Neizdevās palaist Skype.\n"
-"Jums nepieciešams instalēt oriģinālo dinamiski saistīto Skype versiju 2.0 no "
-"http://www.skype.com"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:216
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:324
-#, kde-format
-msgid ""
-"Could not find Skype.\n"
-"You need to install the original dynamic linked Skype version 2.0 binary "
-"from http://www.skype.com"
-msgstr ""
-"Neizdevās atrast Skype.\n"
-"Jums nepieciešams instalēt oriģinālo dinamiski saistīto Skype versiju 2.0 no "
-"http://www.skype.com"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:263
-#, kde-format
-msgid ""
-"Could not ping Skype.\n"
-"Maybe Skype not running.\n"
-"Error while sending a message to Skype (%1)."
-msgstr ""
-"Neizdevās 'pingot' Skype.\n"
-"Iepējams, Skype nav palaists.\n"
-"Kļūda sūtot ziņojumu uz Skype (%1)."
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:265
-#, kde-format
-msgid "Error while sending a message to Skype (%1)."
-msgstr "Kļūda sūtot ziņojumu uz Skype (%1)."
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:273
-#, kde-format
-msgid ""
-"Could not ping Skype.\n"
-"You are logged out from Skype, please log in."
-msgstr ""
-"Neizdevās 'pingot' Skype.\n"
-"Jūs neesat pieslēdzies Skype, lūdzu, pieslēdzieties."
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:326
-#, kde-format
-msgid "Please login to Skype first"
-msgstr "Lūdzu, vispirms pieslēdzieties Skype"
-
-#: protocols/skype/skypeaccount.cpp:921
-#, kde-format
-msgid "Skype (%1)"
-msgstr "Skype (%1)"
-
-#: protocols/skype/skypeaccount.cpp:949 protocols/skype/skypeprotocol.cpp:78
-#, kde-format
-msgid "Skype Me"
-msgstr "Skype man"
-
-#: protocols/skype/skypeaccount.cpp:955
-#, kde-format
-msgid "Make Test Call"
-msgstr "Veikt izmēģinājuma zvanu"
-
-#: protocols/skype/skypeaccount.cpp:1093
-#, kde-format
-msgid "Cannot open info about user %1"
-msgstr "Neizdevās atvērt informāciju par lietotāju %1"
-
-#: protocols/skype/skypeaccount.cpp:1107 protocols/skype/skypeaccount.cpp:1129
-#: protocols/skype/skypeaccount.cpp:1134 protocols/skype/skypeaccount.cpp:1159
-#, kde-format
-msgid "Unknown action from SkypeActionHandler"
-msgstr "Nezināma darbība no SkypeActionHandler"
-
-#: protocols/skype/skypeaccount.cpp:1142
-#, kde-format
-msgid "Add contact from SkypeActionHandler is not supported yet"
-msgstr "Kontakta pievienošana no SkypeActionHandler vēl nav atbalstīta"
-
-#: protocols/skype/skypeaccount.cpp:1154
-#, kde-format
-msgid "Send voicemail from SkypeActionHandler is not supported yet"
-msgstr "Balss pasta sūtīšana no SkypeActionHandler vēl nav atbalstīta"
-
-#: protocols/skype/skypeaddcontact.cpp:68
-#, kde-format
-msgid "You must connect to Skype first."
-msgstr "Jums vispirms jāpieslēdzas Skype"
-
-#: protocols/skype/skypeaddcontact.cpp:73
-#, kde-format
-msgid "You must write the contact's name."
-msgstr "Jums jāieraksta kontakta vārds."
-
-#: protocols/skype/skypeaddcontact.cpp:73
-#: protocols/skype/skypeaddcontact.cpp:78
-#: protocols/skype/skypeaddcontact.cpp:83
-#: protocols/skype/skypeaddcontact.cpp:88
-#: protocols/skype/skypeeditaccount.cpp:123
-#, kde-format
-msgid "Wrong Information"
-msgstr "Nepareiza informācija"
-
-#: protocols/skype/skypeaddcontact.cpp:78
-#, kde-format
-msgid ""
-"Contact echo123 is not needed. You can make test call in Skype protocol "
-"actions."
-msgstr ""
-"Kontakts echo123 nav vajadzīgs. Pārbaudes zvanu varat veikt Skype protokola "
-"darbībās."
-
-#: protocols/skype/skypeaddcontact.cpp:83
-#, kde-format
-msgid "This contact already exists in this account."
-msgstr "Šis kontakts šajā kontā jau pastāv."
-
-#: protocols/skype/skypeaddcontact.cpp:88
-#, kde-format
-msgid "You cannot add yourself as a contact."
-msgstr "Jūs nevarat pievienot sevi kā kontaktu."
-
-#: protocols/skype/skypecalldialog.cpp:106
-#, kde-format
-msgid "Call with %1"
-msgstr "Zvanīt ar %1"
-
-#: protocols/skype/skypecalldialog.cpp:138
-#, kde-format
-msgid "Canceled"
-msgstr "Atcelts"
-
-#: protocols/skype/skypecalldialog.cpp:145
-#, kde-format
-msgid "Other person is busy"
-msgstr "Otra persona ir aizņemta"
-
-#: protocols/skype/skypecalldialog.cpp:152
-#, kde-format
-msgid "Refused"
-msgstr "Atteikts"
-
-#: protocols/skype/skypecalldialog.cpp:159
-#, kde-format
-msgid "Call Back"
-msgstr "Atzvanīt"
-
-#: protocols/skype/skypecalldialog.cpp:160
-#, kde-format
-msgid "Missed"
-msgstr "Nokavēts"
-
-#: protocols/skype/skypecalldialog.cpp:173
-#, kde-format
-msgid "Resume"
-msgstr "Atsākt"
-
-#: protocols/skype/skypecalldialog.cpp:176
-#, kde-format
-msgid "On hold (local)"
-msgstr "Apturēts (vietējais)"
-
-#: protocols/skype/skypecalldialog.cpp:182
-#, kde-format
-msgid "On hold (remote)"
-msgstr "Apturēts (attālinātais)"
-
-#: protocols/skype/skypecalldialog.cpp:188
-#, kde-format
-msgid "On hold"
-msgstr "Apturēts"
-
-#: protocols/skype/skypecalldialog.cpp:192
-#, kde-format
-msgid "Hold"
-msgstr "Aizturēt"
-
-#: protocols/skype/skypecalldialog.cpp:195
-#, kde-format
-msgid "In progress"
-msgstr "Notiek"
-
-#: protocols/skype/skypecalldialog.cpp:201
-#, kde-format
-msgid "Ringing"
-msgstr "Zvana"
-
-#: protocols/skype/skypecalldialog.cpp:209
-#, kde-format
-msgid "Failed"
-msgstr "Neizdevās"
-
-#: protocols/skype/skypecalldialog.cpp:221
-#, kde-format
-msgctxt ""
-"Early media means the media played before the call is established. For "
-"example it can be a calling tone or a waiting message such as all operators "
-"are busy."
-msgid "Early media (waiting for operator...)"
-msgstr "Multivide (gaida operatoru...)"
-
-#: protocols/skype/skypecalldialog.cpp:276
-#, kde-format
-msgid "Failed (%1)"
-msgstr "Neizdevās (%1)"
-
-#: protocols/skype/skypecalldialog.cpp:296
-#, kde-format
-msgid ""
-"%1 active\n"
-"%2 total"
-msgstr ""
-"%1 aktīvs\n"
-"%2 kopā"
-
-#: protocols/skype/skypecalldialog.cpp:302
-#, kde-format
-msgid "Skypeout inactive"
-msgstr "Skypeout neaktīvs"
-
-#: protocols/skype/skypechatsession.cpp:114
-#: protocols/skype/skypechatsession.cpp:155
-#: protocols/skype/skypeprotocol.cpp:105
-#, kde-format
-msgid "Call"
-msgstr "Zvanīt"
-
-#: protocols/skype/skypeconference.cpp:44
-#, kde-format
-msgid "Conference Call"
-msgstr "Konferences zvans"
-
-#: protocols/skype/skypecontact.cpp:116
-#, kde-format
-msgid "Block contact"
-msgstr "Bloķēt kontaktu"
-
-#: protocols/skype/skypedetails.cpp:70
-#, kde-format
-msgid "Details for User %1"
-msgstr "Lietotāja %1 detaļas"
-
-#: protocols/skype/skypeeditaccount.cpp:123
-#, kde-format
-msgid "You can have only one skype account"
-msgstr "Jums var būt tikai viens Skype konts"
-
-#: protocols/skype/skypeeditaccount.cpp:207
-#, kde-format
-msgid "Configure Skype client"
-msgstr "Konfigurēt Skype klientu"
-
-#: protocols/skype/skypeeditaccount.cpp:207
-#, kde-format
-msgid "Please enter your skype user name"
-msgstr "Lūdzu, ievadiet jūsu Skype lietotājvārdu"
-
-#: protocols/skype/skypeeditaccount.cpp:210
-#, kde-format
-msgid "You must enter your skype user name"
-msgstr "Jums jāievada jūsu Skype lietotājvārds"
-
-#: protocols/skype/skypeeditaccount.cpp:225
-#: protocols/skype/skypeeditaccount.cpp:242
-#, kde-format
-msgid "Cannot create/open file %1 for configuring the Skype client."
-msgstr "Neizdevās izveidot/atvērt failu %1 Skype klienta konfigurēšanai"
-
-#: protocols/skype/skypeeditaccount.cpp:250
-#, kde-format
-msgid ""
-"Process has completed.\n"
-"Skype is now configured for Kopete.\n"
-"You must restart the Skype client for changes to take effect."
-msgstr ""
-"Process pabeigts.\n"
-"Skype tagad ir konfigurēts lietošanai Kopete.\n"
-"Jums jāpārstartē Skype klients, lai izmaiņas stātos spēkā."
-
-#: protocols/skype/skypeprotocol.cpp:84
-#, kde-format
-msgid "Not in Skype list"
-msgstr "Nav Skype sarakstā"
-
-#: protocols/skype/skypeprotocol.cpp:85
-#, kde-format
-msgid "Not authorized"
-msgstr "Nav autorizēts"
-
-#: protocols/skype/skypeprotocol.cpp:86
-#, kde-format
-msgid "SkypeOut contact"
-msgstr "SkypeOut kontakts"
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeAddContactBase)
-#: protocols/skype/ui/skypeaddcontactbase.ui:6
-#, kde-format
-msgid "Add Skype Contact"
-msgstr "Pievienot Skype kontaktu"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypeaddcontactbase.ui:14
-#, kde-format
-msgid "Skype name:"
-msgstr "Skype vārds:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypeaddcontactbase.ui:35
-#, kde-format
-msgid "Sorry, but the search function is not yet implemented."
-msgstr "Atvainojiet, meklēšanas funkcija vēl nav izstrādāta."
-
-#. i18n: ectx: property (text), widget (QPushButton, SearchButton)
-#: protocols/skype/ui/skypeaddcontactbase.ui:69
-#, kde-format
-msgid "Se&arch"
-msgstr "&Meklēt"
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeCallDialogBase)
-#: protocols/skype/ui/skypecalldialogbase.ui:6
-#, kde-format
-msgid "Skype Call"
-msgstr "Skype zvans"
-
-#. i18n: ectx: property (toolTip), widget (QLabel, NameLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:14
-#, kde-format
-msgid "Name(s) of Participant(s)"
-msgstr "Dalībnieku vārdi"
-
-#. i18n: ectx: property (whatsThis), widget (QLabel, NameLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:17
-#, kde-format
-msgid ""
-"Name of the other participant in the call (or a list of names if it is a "
-"conference call.)"
-msgstr ""
-"Otra sarunas dalībnieka vārds vai vārdu saraksts, ja tas ir konferences "
-"zvans."
-
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel2)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel2)
-#. i18n: ectx: property (toolTip), widget (QLabel, TimeLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:52
-#: protocols/skype/ui/skypecalldialogbase.ui:55
-#: protocols/skype/ui/skypecalldialogbase.ui:90
-#, kde-format
-msgid "Total time elapsed."
-msgstr "Zvana ilgums. "
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypecalldialogbase.ui:58
-#, kde-format
-msgid "Time:"
-msgstr "Laiks:"
-
-#. i18n: ectx: property (toolTip), widget (QLabel, CreditLabel)
-#. i18n: ectx: property (whatsThis), widget (QLabel, CreditLabel)
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel3)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypecalldialogbase.ui:71
-#: protocols/skype/ui/skypecalldialogbase.ui:74
-#: protocols/skype/ui/skypecalldialogbase.ui:135
-#: protocols/skype/ui/skypecalldialogbase.ui:138
-#, kde-format
-msgid "SkypeOut credits left"
-msgstr "SkypeOut kredīta atlikums:"
-
-#. i18n: ectx: property (whatsThis), widget (QLabel, TimeLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:93
-#, kde-format
-msgid ""
-"Total length of the call/<br />(i.e. both time speaking and time on hold.)"
-msgstr "Kopējais zvana ilgums /<br /> (saruna un gaidīšana)."
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypecalldialogbase.ui:141
-#, kde-format
-msgid "SkypeOut credits:"
-msgstr "SkypeOut kredīts:"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, AcceptButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:174
-#, kde-format
-msgid "Accept call"
-msgstr "Atbildēt"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, AcceptButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:177
-#, kde-format
-msgid "Accept incoming call"
-msgstr "Atbildēt"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:190
-#, kde-format
-msgid "Finish the call"
-msgstr "Nolikt klausuli"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:193
-#, kde-format
-msgid "Terminate the call"
-msgstr "Pārtraukt zvanu"
-
-#. i18n: ectx: property (text), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:196
-#, kde-format
-msgid "H&ang up"
-msgstr "Nolikt kl&ausuli"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:203
-#, kde-format
-msgid "Hold the call"
-msgstr "Aizturēt zvanu"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:206
-#, kde-format
-msgid "Interrupt the call for a moment and resume (or hang up) later."
-msgstr "Uz brīdi aizturēt zvanu un vēlāk atjaunot sarunu vai nolikt klausuli."
-
-#. i18n: ectx: property (text), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:209
-#, kde-format
-msgid "H&old"
-msgstr "Aiz&turēt"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, ChatButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:216
-#, kde-format
-msgid "Open chat to the person."
-msgstr "Uzsākt tērzēšanu ar sarunbiedru."
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, ChatButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:219
-#, kde-format
-msgid "Open chat to the person with whom you are talking."
-msgstr "Uzsākt tērzēšanu ar personu, ar kuru šobrīd sarunājaties."
-
-#. i18n: ectx: property (text), widget (QPushButton, VideoButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:232
-#, kde-format
-msgid "Start/Stop Video"
-msgstr "Sākt/Apturēt video"
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeDetailsBase)
-#: protocols/skype/ui/skypedetailsbase.ui:6
-#, kde-format
-msgid "User's Details"
-msgstr "Lietotāja informācija"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypedetailsbase.ui:12
-#, kde-format
-msgid "Skype ID:"
-msgstr "Skype ID:"
-
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/skype/ui/skypedetailsbase.ui:40
-#, kde-format
-msgid "Authorized"
-msgstr "Autorizēts"
-
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/skype/ui/skypedetailsbase.ui:45
-#, kde-format
-msgid "Not Authorized"
-msgstr "Neautorizēts"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel7)
-#: protocols/skype/ui/skypedetailsbase.ui:104
-#, kde-format
-msgid "Is authorized:"
-msgstr "Ir autorizēts:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypedetailsbase.ui:131
-#, kde-format
-msgid "Display Name:"
-msgstr "Attēlojamais vārds:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_3)
-#: protocols/skype/ui/skypedetailsbase.ui:184
-#, kde-format
-msgid "Sex:"
-msgstr "Dzimums:"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, excludeCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:35
-#, kde-format
-msgid "Check this if you do not want to connect with other protocols"
-msgstr "Atzīmējiet, ja nevēlaties pieslēgties citiem protokoliem"
-
-#. i18n: ectx: property (text), widget (QCheckBox, excludeCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:38
-#, kde-format
-msgid "E&xclude from connection"
-msgstr "Nep&ieslēgt"
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:66
-#, kde-format
-msgid "Important Note"
-msgstr "Svarīga ziņa"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:72
-#, kde-format
-msgid ""
-"The Skype plugin serves as a bridge to an externally running copy of Skype. "
-"This has some consequences on how it functions: you need an instance of "
-"Skype to be running, and only one Skype account can be used.<br /><br />Note "
-"that you need to install the original dynamic linked Skype version 2.0 or "
-"2.1 from <a href=\"http://www.skype.com\">http://www.skype.com</a><br /><br /"
-">This plugin will only work if the language in the Skype client set to "
-"English. Kopete shows notifications (incoming call, message, ...), so you "
-"can turn off the notifications in Skype."
-msgstr ""
-"Skype spraudnis nodrošina savienojumu ar ārēju Skype aplikāciju, kas "
-"ierobežo šā spraudņa iespējas. Jābūt atvērtai Skype instancei, turklāt varat "
-"izmantot tikai vienu Skype kontu.<br /><br />Lūdzu, instalējiet oriģinālo "
-"Skype 2.0 vai 2.1, kas atrodams vietnē <a href=\"http://www.skype.com"
-"\">http://www.skype.com</a><br /><br /> Šis spraudnis darbosies tikai tad, "
-"ja Skype klienta valoda būs iestatīta uz angļu. Kopete rāda paziņojumus "
-"(ienākošais zvans, ziņojums, ...), tādēļ Skype klientā varat tos izslēgt."
-
-#. i18n: ectx: property (text), widget (QPushButton, configureSkypeClient)
-#: protocols/skype/ui/skypeeditaccountbase.ui:88
-#, kde-format
-msgid "Disable Skype notifications and set up English language in Skype client"
-msgstr "Atslēgt Skype paziņojumus un iestatīt Skype klienta valodu uz angļu"
-
-#. i18n: ectx: attribute (title), widget (QWidget, launchTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:112
-#, kde-format
-msgid "Lau&nch"
-msgstr "&Startēt"
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, LaunchGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:118
-#, kde-format
-msgid "You can set whether and when should kopete launch Skype."
-msgstr ""
-"Varat noteikt, vai un kādos gadījumos Kopete uzsāk jaunu Skype aplikācijas "
-"instanci."
-
-#. i18n: ectx: property (title), widget (QGroupBox, LaunchGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:121
-#, kde-format
-msgid "Launch Skype"
-msgstr "Uzsākt Skype sesiju"
-
-#. i18n: ectx: property (text), widget (QRadioButton, LaunchNeededRadio)
-#: protocols/skype/ui/skypeeditaccountbase.ui:127
-#, kde-format
-msgid "When &not running"
-msgstr "Ja nav atvērta &neviena Skype instance"
-
-#. i18n: ectx: property (text), widget (QRadioButton, LaunchNeverRadio)
-#: protocols/skype/ui/skypeeditaccountbase.ui:137
-#, kde-format
-msgid "N&ever"
-msgstr "N&ekad"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypeeditaccountbase.ui:149
-#, kde-format
-msgid "Command to launch Skype:"
-msgstr "Komanda Skype aplikācijas startēšanai"
-
-#. i18n: ectx: property (text), widget (QLineEdit, CommandEdit)
-#: protocols/skype/ui/skypeeditaccountbase.ui:159
-#, kde-format
-msgid "skype"
-msgstr "skype"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:170
-#, kde-format
-msgid "Launch timeout:"
-msgstr "Startēšanas noilgums:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_3)
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_5)
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:193
-#: protocols/skype/ui/skypeeditaccountbase.ui:252
-#: protocols/skype/ui/skypeeditaccountbase.ui:579
-#, kde-format
-msgid "s"
-msgstr "s"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:223
-#, kde-format
-msgid "Wait before trying to connect to Skype:"
-msgstr "Aizture pirms pieslēgšanās Skype instancei:"
-
-#. i18n: ectx: property (toolTip), widget (QSpinBox, WaitSpin)
-#. i18n: ectx: property (whatsThis), widget (QSpinBox, WaitSpin)
-#: protocols/skype/ui/skypeeditaccountbase.ui:233
-#: protocols/skype/ui/skypeeditaccountbase.ui:236
-#, kde-format
-msgid "trying"
-msgstr "mēģina"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:280
-#, kde-format
-msgid ""
-"If you get error that Skype was not found, but in fact it is running, check "
-"the instructions at <a href=\"https://developer.skype.com/Docs/ApiDoc/"
-"Skype_API_on_Linux\">https://developer.skype.com/Docs/ApiDoc/"
-"Skype_API_on_Linux</a>.<br /><br />Note that only the dynamic linked Skype "
-"binary is supported."
-msgstr ""
-"Ja saņemat kļūdas paziņojumu, ka Skype nav pieejams, taču skaidri zināt, ka "
-"aplikācija darbojas, apskatiet ieteikumus vietnē <a href=\"https://developer."
-"skype.com/Docs/ApiDoc/Skype_API_on_Linux\">https://developer.skype.com/Docs/"
-"ApiDoc/Skype_API_on_Linux</a>. <br /><br />Ievērojiet, ka tiek atbalstīta "
-"tikai dinamiski kompilēta Skype versija."
-
-#. i18n: ectx: attribute (title), widget (QWidget, connectionTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:310
-#, kde-format
-msgid "C&onnection"
-msgstr "&Pieslēgums"
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, groupBox3_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:316
-#, kde-format
-msgid ""
-"Each application that wants to use Skype must provide its name to it, and "
-"the user is asked whether to allow said application to access Skype.<br>By "
-"default, kopete provides kopete as its name, but if you suspect another "
-"application is accessing Skype with this name, you can change the name "
-"Kopete uses here, and then within Skype disallow applications that refer to "
-"themselves as kopete."
-msgstr ""
-"Ikvienai aplikācijai, kas izmanto Skype, jānorāda tam savs nosaukums. "
-"Lietotājam tad tiek vaicāts, vai atļaut šai aplikācijai pieeju Skype."
-"<br>Parasti Kopete paziņo Skype savu nosaukumu,  taču, ja cita programma ar "
-"šādu vārdu jau ir pieslēgta Skype sesijai, Kopete var pieslēgties arī citu "
-"nosaukumu. Pēc tam ieteicams Skype aplikācijā bloķēt viltvārdi."
-
-#. i18n: ectx: property (text), widget (QCheckBox, AuthorCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:325
-#, kde-format
-msgid "&Non-standard authorization"
-msgstr "&Nestandarta autorizācija"
-
-#. i18n: ectx: property (toolTip), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:342
-#, kde-format
-msgid "What bus do you want to use"
-msgstr "Izmantotais D-Bus pieslēgums"
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:345
-#, kde-format
-msgid ""
-"Which D-Bus do you want to use to connect to Skype?<br>Session: Your own, "
-"other people cannot use it (use --use-session-dbus to start Skype on that "
-"bus.)<br>System: Shared by all people on the same computer. This one is used "
-"by default by Skype.<br>You have to specify the same D-Bus used by Skype."
-msgstr ""
-"Kādu D-Bus pieslēgumu vēlaties izmantot savienojumam ar Skype?<br> Sesijas "
-"pieslēgums: individuāls, citiem lietotājiem tas nebūs pieejams (startējiet "
-"Skype ar atslēgu --use-session-dbus).<br> Sistēmas pieslēgums: koplietojams "
-"ar visiem datora lietotājiem. Šo pieslēguma tipu Skype izmanto pēc "
-"noklusējuma.<br> Jums jānorāda tas pats D-Bus pieslēgums, kuru izmanto Skype."
-
-#. i18n: ectx: property (title), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:348
-#, kde-format
-msgid "Bus"
-msgstr "Kopne"
-
-#. i18n: ectx: property (text), widget (QRadioButton, radioButton4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:354
-#, kde-format
-msgid "Sessi&on"
-msgstr "&Sesija"
-
-#. i18n: ectx: property (text), widget (QRadioButton, radioButton5)
-#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/skype/ui/skypeeditaccountbase.ui:364
-#: protocols/winpopup/ui/wpeditaccountbase.ui:221
-#, kde-format
-msgid "S&ystem"
-msgstr "S&istēma"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:374
-#, kde-format
-msgid ""
-"Note that Kopete will freeze while Skype asks you if it can allow Kopete to "
-"access it. This is normal, and if you allow it forever (check that \"Remember"
-"\" checkbox in Skype's dialog), it will not happen again.<br /><br />The "
-"'System Bus' option is not yet supported by Skype"
-msgstr ""
-"Ievērojiet, ka Kopere 'sasals', kamēr Skype jums jautās, vai atļaut "
-"piekļuvi. Tas ir normāli, un, ja atļausiet to uz visiem laikiem (atzīmējiet "
-"rūtiņu \"Atcerēties\" Skype dialoglogā), tas vairs nenotiks.<br /><br /> "
-"Opcija 'Sistēmas kopne' vēl nav atbalstīta Skype klientā"
-
-#. i18n: ectx: attribute (title), widget (QWidget, activityTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:404
-#, kde-format
-msgid "&Activity"
-msgstr "&Aktivitāte"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:410
-#, kde-format
-msgid "Show all incoming messages"
-msgstr "Rādīt visus ienākošos ziņojumus"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:413
-#, kde-format
-msgid ""
-"This will show all incoming Skype messages. If this is off, they are showed "
-"only if the message belongs to chat that is started by kopete."
-msgstr ""
-"Tiks rādīti visi ienākošie ziņojumi. Ja tas ir izslēgts, tie tiks rādīti "
-"tikai tad, ja ziņojums pieder sarunai, kas tika palaista no Kopete."
-
-#. i18n: ectx: property (text), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:416
-#, kde-format
-msgid "Show all incoming &messages"
-msgstr "Rādīt visus ienākošos ziņoju&mus"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, MarkCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:426
-#, kde-format
-msgid ""
-"This will mark incoming messages as read, so if you have Skype set up not to "
-"automatically pop-up chats, it will not flash the exclamation icon."
-msgstr ""
-"Ienākošie ziņojumi tiks atzīmēti kā izlasīti, tādējādi, ja neesat iestatījis "
-"Skype automātiski rādīt sarunas uzlecošajos logos, netiks rādīta mirgojoša "
-"izsaukuma zīmes ikona."
-
-#. i18n: ectx: property (text), widget (QCheckBox, MarkCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:429
-#, kde-format
-msgid "Mar&k as read"
-msgstr "Atzīmēt &kā izlasītu"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, ScanCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:439
-#, kde-format
-msgid ""
-"If this is checked, Kopete will ask Skype on login if it has any messages "
-"that have not been shown, and if so, will show them. This is useful if you "
-"start Kopete later than Skype, and Skype is configured not to show incoming "
-"messages."
-msgstr ""
-"Ja šis ir atzīmēts, Kopete piesakoties Skype klientam jautās, vai tam ir "
-"jebkādi ziņojumi, kas nav rādīti, un, ja ir, parādīs tos. Tas ir noderīgi, "
-"ja Kopete tiek palaista vēlāk nekā Skype, un Skype ir konfigurēts nerādīt "
-"ienākošās ziņas."
-
-#. i18n: ectx: property (text), widget (QCheckBox, ScanCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:442
-#, kde-format
-msgid "Scan f&or unread"
-msgstr "Meklēt &nelasītās"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:452
-#, kde-format
-msgid "Show call control window for all calls"
-msgstr "Rādīt zvanu kontroles logu visiem zvaniem"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:455
-#, kde-format
-msgid ""
-"This will show a call control window for every call (both incoming and "
-"outgoing). If it is off, you can call from Kopete, but you have to control "
-"that call from Skype."
-msgstr ""
-"Zvanu kontroles logs tiks rādīts katram zvanam (gan ienākošjiem, gan "
-"izejošajiem). Ja šis ir izslēgts, varēsiet zvanīt no Kopete, bet zvans būs "
-"jākontrolē no Skype."
-
-#. i18n: ectx: property (text), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:458
-#, kde-format
-msgid "S&how call control (this will also hide Skype client call dialog)"
-msgstr "Rādīt &zvanu kontroli (tiks arī paslēpts Skype klienta dialoglogs)"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:486
-#, kde-format
-msgid "Auto close the call control window"
-msgstr "Automātiski aizvērt zvanu kontroles logu"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:489
-#, kde-format
-msgid ""
-"This will close the call control window automatically when the call finishes"
-msgstr ""
-"Zvanu kontroles logs tiks aizvērts automātiski, kad tiek pabeigts zvans"
-
-#. i18n: ectx: property (text), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:492
-#, kde-format
-msgid "Autoc&lose"
-msgstr "Automātiskā aiz&vēršana"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:544
-#, kde-format
-msgid "Timeout:"
-msgstr "Noildze:"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:607
-#, kde-format
-msgid ""
-"If this is enabled, Kopete keeps track of whether or not Skype is running."
-msgstr "Ja šis ir ieslēgts, Kopete vēros, vai Skype ir vai nav palaists."
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:610
-#, kde-format
-msgid ""
-"This keeps track of whether Skype is running. Turning this off only makes "
-"sense it you are trying to get non-flooded debug output."
-msgstr ""
-"Tiek novērots, vai Skype ir palaists. Izslēgt šo ir jēga tikai tad, ja jūs "
-"mēģiniet panākt 'nepārplūdinātu' atkļūdošanas izvadi."
-
-#. i18n: ectx: property (text), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:613
-#, kde-format
-msgid "Pi&ng Skype"
-msgstr "Skype p&ings (ehotests)"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, LeaveCheck)
-#. i18n: ectx: property (text), widget (QCheckBox, LeaveCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:623
-#: protocols/skype/ui/skypeeditaccountbase.ui:629
-#, kde-format
-msgid "Do not leave a chat on window exit"
-msgstr "Aizverot logu, nepamest sarunu"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, LeaveCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:626
-#, kde-format
-msgid ""
-"Do not leave a chat when the chat window is closed. Makes a difference only "
-"with multi-user chats: if it is checked, you will continue receiving "
-"messages from that chat even after closing the window."
-msgstr ""
-"Nepamest sarunu, ja tās logs ir aizvērts. Opcija nozīmīga tikai "
-"daudzlietotāju sarunā: ja opcija ir atzīmēta, turpināsiet saņemt šīs sarunas "
-"ziņas arī pēc loga aizvēršanas."
-
-#. i18n: ectx: attribute (title), widget (QWidget, callsTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:656
-#, kde-format
-msgid "&Calls"
-msgstr "&Zvani"
-
-#. i18n: ectx: property (text), widget (QCheckBox, StartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:662
-#, kde-format
-msgid "E&xecute before call"
-msgstr "Izpi&ldīt pirms zvana"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:717
-#, kde-format
-msgid ""
-"This will wait before making/accepting the call for the command to finish."
-msgstr ""
-"Pirms zvana uzsākšanas / atbildēšanas tiek gaidīta komandas izpildes "
-"pabeigšana."
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:721
-#, kde-format
-msgid ""
-"This will wait for the command to finish before accepting/making the call."
-"<br>\n"
-"Note that kopete will freeze whilst waiting."
-msgstr ""
-"Pirms zvana uzsākšanas vai atbildēšanas tiks gaidīta komandas izpildes "
-"pabeigšana.<br>\n"
-"Šajā laikā Kopete uz brīdi tiks apturēta. "
-
-#. i18n: ectx: property (text), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:724
-#, kde-format
-msgid "Wait for fi&nish"
-msgstr "&Gaidīt izpildes pabeigšanu"
-
-#. i18n: ectx: property (text), widget (QCheckBox, EndCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:733
-#, kde-format
-msgid "Execute after call"
-msgstr "Izpildīt pēc zvana"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, OnlyLastCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:791
-#, kde-format
-msgid ""
-"Usually this makes no difference, but if there are some other calls on hold, "
-"it is executed only for the most recently ended one."
-msgstr ""
-"Parasti neradīs nekādu atšķirību, bet, ja tiek gaidīts uz vairākiem citiem "
-"zvaniem, tas tiks izpildīts tikai pēc nesenākā pabeigšanas."
-
-#. i18n: ectx: property (text), widget (QCheckBox, OnlyLastCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:794
-#, kde-format
-msgid "Onl&y for last call"
-msgstr "&Tikai pēdējam zvanam"
-
-#. i18n: ectx: property (text), widget (QCheckBox, IncomingCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:803
-#, kde-format
-msgid "Execute on inco&ming call"
-msgstr "Izpi&ldīt, ja ir ienākošs zvans"
-
 #: protocols/sms/serviceloader.cpp:46
 #, kde-format
 msgid "Could not load service %1."
@@ -22301,6 +21194,12 @@ msgstr ""
 "'message command = _PATH_TO_/winpopup-send %s %m %t &' (aizstājiet _PATH_TO_ "
 "ar atbilstošu kataloga ceļu) faila smb.conf sadaļā  [global]."
 
+#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
+#: protocols/winpopup/ui/wpeditaccountbase.ui:221
+#, kde-format
+msgid "S&ystem"
+msgstr "S&istēma"
+
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_3)
 #: protocols/winpopup/ui/wpeditaccountbase.ui:233
 #, kde-format
@@ -22457,6 +21356,635 @@ msgstr "Konfigurācija neizdevās"
 #, kde-format
 msgid "User Info for %1"
 msgstr "%1 lietotāja informācija"
+
+#~ msgid "This version of Skype is too old, consider upgrading"
+#~ msgstr "Šī Skype versija ir pārāk veca, apsveriet iespēju to atjaunināt"
+
+#~ msgid "Skype protocol"
+#~ msgstr "Skype protokols"
+
+#~ msgid "Does not have multi-user chat capability"
+#~ msgstr "Nav daudzlietotāju sarunu iespējas"
+
+#~ msgid "Chat denied"
+#~ msgstr "Saruna liegta"
+
+#~ msgid "Unknown error"
+#~ msgstr "Nezināma kļūda"
+
+#~ msgid "Misc error"
+#~ msgstr "Kļūda"
+
+#~ msgid "User or phone number does not exist"
+#~ msgstr "Lietotājs vai tālruņa numurs nepastāv"
+
+#~ msgid "User is offline"
+#~ msgstr "Lietotājs ir atsaistē"
+
+#~ msgid "No proxy found"
+#~ msgstr "Starpniekserveris nav atrasts"
+
+#~ msgid "Session terminated"
+#~ msgstr "Sesija pārtraukta"
+
+#~ msgid "No common codec found"
+#~ msgstr "Nav atrasts neviens parastais kodeks"
+
+#~ msgid "Sound I/O error"
+#~ msgstr "Skaņas I/O kļūda"
+
+#~ msgid "Problem with remote sound device"
+#~ msgstr "Problēma ar attālināto skaņas ierīci"
+
+#~ msgid "Call blocked by recipient"
+#~ msgstr "Zvanu bloķēja saņēmējs"
+
+#~ msgid "Recipient not a friend"
+#~ msgstr "Saņēmējs nav draugs"
+
+#~ msgid "User not authorized by recipient"
+#~ msgstr "Saņēmējs nav autorizējis lietotāju"
+
+#~ msgid "Sound recording error"
+#~ msgstr "Skaņas ierakstīšanas kļūda"
+
+#~ msgid "This version of Skype does not support adding users to chat."
+#~ msgstr "Šī Skype versija neatbalsta lietotāju pievienošanu sarunai"
+
+#~ msgid "Skype Protocol"
+#~ msgstr "Skype protokols"
+
+#~ msgid "Could not ping Skype"
+#~ msgstr "Neizdevās 'pingot' Skype"
+
+#~ msgid "Skype did not accept this application"
+#~ msgstr "Skype nepieņēma šo programmu"
+
+#~ msgid "Skype API syntax error"
+#~ msgstr "Skype API sintakses kļūda"
+
+#~ msgid "Skype API not ready yet, wait a bit longer"
+#~ msgstr "Skype API vēl nav gatavs, vēl nedaudz uzgaidiet"
+
+#~ msgid "Cannot register Skype communication for Kopete on D-Bus"
+#~ msgstr "Neizdevās reģistrēt Skype komunikāciju ar Kopete iekš D-Bus"
+
+#~ msgid ""
+#~ "Could not launch Skype.\n"
+#~ "You need to install the original dynamic linked Skype version 2.0 binary "
+#~ "from http://www.skype.com"
+#~ msgstr ""
+#~ "Neizdevās palaist Skype.\n"
+#~ "Jums nepieciešams instalēt oriģinālo dinamiski saistīto Skype versiju 2.0 "
+#~ "no http://www.skype.com"
+
+#~ msgid ""
+#~ "Could not find Skype.\n"
+#~ "You need to install the original dynamic linked Skype version 2.0 binary "
+#~ "from http://www.skype.com"
+#~ msgstr ""
+#~ "Neizdevās atrast Skype.\n"
+#~ "Jums nepieciešams instalēt oriģinālo dinamiski saistīto Skype versiju 2.0 "
+#~ "no http://www.skype.com"
+
+#~ msgid ""
+#~ "Could not ping Skype.\n"
+#~ "Maybe Skype not running.\n"
+#~ "Error while sending a message to Skype (%1)."
+#~ msgstr ""
+#~ "Neizdevās 'pingot' Skype.\n"
+#~ "Iepējams, Skype nav palaists.\n"
+#~ "Kļūda sūtot ziņojumu uz Skype (%1)."
+
+#~ msgid "Error while sending a message to Skype (%1)."
+#~ msgstr "Kļūda sūtot ziņojumu uz Skype (%1)."
+
+#~ msgid ""
+#~ "Could not ping Skype.\n"
+#~ "You are logged out from Skype, please log in."
+#~ msgstr ""
+#~ "Neizdevās 'pingot' Skype.\n"
+#~ "Jūs neesat pieslēdzies Skype, lūdzu, pieslēdzieties."
+
+#~ msgid "Please login to Skype first"
+#~ msgstr "Lūdzu, vispirms pieslēdzieties Skype"
+
+#~ msgid "Skype (%1)"
+#~ msgstr "Skype (%1)"
+
+#~ msgid "Skype Me"
+#~ msgstr "Skype man"
+
+#~ msgid "Make Test Call"
+#~ msgstr "Veikt izmēģinājuma zvanu"
+
+#~ msgid "Cannot open info about user %1"
+#~ msgstr "Neizdevās atvērt informāciju par lietotāju %1"
+
+#~ msgid "Unknown action from SkypeActionHandler"
+#~ msgstr "Nezināma darbība no SkypeActionHandler"
+
+#~ msgid "Add contact from SkypeActionHandler is not supported yet"
+#~ msgstr "Kontakta pievienošana no SkypeActionHandler vēl nav atbalstīta"
+
+#~ msgid "Send voicemail from SkypeActionHandler is not supported yet"
+#~ msgstr "Balss pasta sūtīšana no SkypeActionHandler vēl nav atbalstīta"
+
+#~ msgid "You must connect to Skype first."
+#~ msgstr "Jums vispirms jāpieslēdzas Skype"
+
+#~ msgid "You must write the contact's name."
+#~ msgstr "Jums jāieraksta kontakta vārds."
+
+#~ msgid "Wrong Information"
+#~ msgstr "Nepareiza informācija"
+
+#~ msgid ""
+#~ "Contact echo123 is not needed. You can make test call in Skype protocol "
+#~ "actions."
+#~ msgstr ""
+#~ "Kontakts echo123 nav vajadzīgs. Pārbaudes zvanu varat veikt Skype "
+#~ "protokola darbībās."
+
+#~ msgid "This contact already exists in this account."
+#~ msgstr "Šis kontakts šajā kontā jau pastāv."
+
+#~ msgid "You cannot add yourself as a contact."
+#~ msgstr "Jūs nevarat pievienot sevi kā kontaktu."
+
+#~ msgid "Call with %1"
+#~ msgstr "Zvanīt ar %1"
+
+#~ msgid "Canceled"
+#~ msgstr "Atcelts"
+
+#~ msgid "Other person is busy"
+#~ msgstr "Otra persona ir aizņemta"
+
+#~ msgid "Refused"
+#~ msgstr "Atteikts"
+
+#~ msgid "Call Back"
+#~ msgstr "Atzvanīt"
+
+#~ msgid "Missed"
+#~ msgstr "Nokavēts"
+
+#~ msgid "Resume"
+#~ msgstr "Atsākt"
+
+#~ msgid "On hold (local)"
+#~ msgstr "Apturēts (vietējais)"
+
+#~ msgid "On hold (remote)"
+#~ msgstr "Apturēts (attālinātais)"
+
+#~ msgid "On hold"
+#~ msgstr "Apturēts"
+
+#~ msgid "Hold"
+#~ msgstr "Aizturēt"
+
+#~ msgid "In progress"
+#~ msgstr "Notiek"
+
+#~ msgid "Ringing"
+#~ msgstr "Zvana"
+
+#~ msgid "Failed"
+#~ msgstr "Neizdevās"
+
+#~ msgctxt ""
+#~ "Early media means the media played before the call is established. For "
+#~ "example it can be a calling tone or a waiting message such as all "
+#~ "operators are busy."
+#~ msgid "Early media (waiting for operator...)"
+#~ msgstr "Multivide (gaida operatoru...)"
+
+#~ msgid "Failed (%1)"
+#~ msgstr "Neizdevās (%1)"
+
+#~ msgid ""
+#~ "%1 active\n"
+#~ "%2 total"
+#~ msgstr ""
+#~ "%1 aktīvs\n"
+#~ "%2 kopā"
+
+#~ msgid "Skypeout inactive"
+#~ msgstr "Skypeout neaktīvs"
+
+#~ msgid "Call"
+#~ msgstr "Zvanīt"
+
+#~ msgid "Conference Call"
+#~ msgstr "Konferences zvans"
+
+#~ msgid "Block contact"
+#~ msgstr "Bloķēt kontaktu"
+
+#~ msgid "Details for User %1"
+#~ msgstr "Lietotāja %1 detaļas"
+
+#~ msgid "You can have only one skype account"
+#~ msgstr "Jums var būt tikai viens Skype konts"
+
+#~ msgid "Configure Skype client"
+#~ msgstr "Konfigurēt Skype klientu"
+
+#~ msgid "Please enter your skype user name"
+#~ msgstr "Lūdzu, ievadiet jūsu Skype lietotājvārdu"
+
+#~ msgid "You must enter your skype user name"
+#~ msgstr "Jums jāievada jūsu Skype lietotājvārds"
+
+#~ msgid "Cannot create/open file %1 for configuring the Skype client."
+#~ msgstr "Neizdevās izveidot/atvērt failu %1 Skype klienta konfigurēšanai"
+
+#~ msgid ""
+#~ "Process has completed.\n"
+#~ "Skype is now configured for Kopete.\n"
+#~ "You must restart the Skype client for changes to take effect."
+#~ msgstr ""
+#~ "Process pabeigts.\n"
+#~ "Skype tagad ir konfigurēts lietošanai Kopete.\n"
+#~ "Jums jāpārstartē Skype klients, lai izmaiņas stātos spēkā."
+
+#~ msgid "Not in Skype list"
+#~ msgstr "Nav Skype sarakstā"
+
+#~ msgid "Not authorized"
+#~ msgstr "Nav autorizēts"
+
+#~ msgid "SkypeOut contact"
+#~ msgstr "SkypeOut kontakts"
+
+#~ msgid "Add Skype Contact"
+#~ msgstr "Pievienot Skype kontaktu"
+
+#~ msgid "Skype name:"
+#~ msgstr "Skype vārds:"
+
+#~ msgid "Sorry, but the search function is not yet implemented."
+#~ msgstr "Atvainojiet, meklēšanas funkcija vēl nav izstrādāta."
+
+#~ msgid "Se&arch"
+#~ msgstr "&Meklēt"
+
+#~ msgid "Skype Call"
+#~ msgstr "Skype zvans"
+
+#~ msgid "Name(s) of Participant(s)"
+#~ msgstr "Dalībnieku vārdi"
+
+#~ msgid ""
+#~ "Name of the other participant in the call (or a list of names if it is a "
+#~ "conference call.)"
+#~ msgstr ""
+#~ "Otra sarunas dalībnieka vārds vai vārdu saraksts, ja tas ir konferences "
+#~ "zvans."
+
+#~ msgid "Total time elapsed."
+#~ msgstr "Zvana ilgums. "
+
+#~ msgid "Time:"
+#~ msgstr "Laiks:"
+
+#~ msgid "SkypeOut credits left"
+#~ msgstr "SkypeOut kredīta atlikums:"
+
+#~ msgid ""
+#~ "Total length of the call/<br />(i.e. both time speaking and time on hold.)"
+#~ msgstr "Kopējais zvana ilgums /<br /> (saruna un gaidīšana)."
+
+#~ msgid "SkypeOut credits:"
+#~ msgstr "SkypeOut kredīts:"
+
+#~ msgid "Accept call"
+#~ msgstr "Atbildēt"
+
+#~ msgid "Accept incoming call"
+#~ msgstr "Atbildēt"
+
+#~ msgid "Finish the call"
+#~ msgstr "Nolikt klausuli"
+
+#~ msgid "Terminate the call"
+#~ msgstr "Pārtraukt zvanu"
+
+#~ msgid "H&ang up"
+#~ msgstr "Nolikt kl&ausuli"
+
+#~ msgid "Hold the call"
+#~ msgstr "Aizturēt zvanu"
+
+#~ msgid "Interrupt the call for a moment and resume (or hang up) later."
+#~ msgstr ""
+#~ "Uz brīdi aizturēt zvanu un vēlāk atjaunot sarunu vai nolikt klausuli."
+
+#~ msgid "H&old"
+#~ msgstr "Aiz&turēt"
+
+#~ msgid "Open chat to the person."
+#~ msgstr "Uzsākt tērzēšanu ar sarunbiedru."
+
+#~ msgid "Open chat to the person with whom you are talking."
+#~ msgstr "Uzsākt tērzēšanu ar personu, ar kuru šobrīd sarunājaties."
+
+#~ msgid "Start/Stop Video"
+#~ msgstr "Sākt/Apturēt video"
+
+#~ msgid "User's Details"
+#~ msgstr "Lietotāja informācija"
+
+#~ msgid "Skype ID:"
+#~ msgstr "Skype ID:"
+
+#~ msgid "Authorized"
+#~ msgstr "Autorizēts"
+
+#~ msgid "Not Authorized"
+#~ msgstr "Neautorizēts"
+
+#~ msgid "Is authorized:"
+#~ msgstr "Ir autorizēts:"
+
+#~ msgid "Display Name:"
+#~ msgstr "Attēlojamais vārds:"
+
+#~ msgid "Sex:"
+#~ msgstr "Dzimums:"
+
+#~ msgid "Check this if you do not want to connect with other protocols"
+#~ msgstr "Atzīmējiet, ja nevēlaties pieslēgties citiem protokoliem"
+
+#~ msgid "E&xclude from connection"
+#~ msgstr "Nep&ieslēgt"
+
+#~ msgid "Important Note"
+#~ msgstr "Svarīga ziņa"
+
+#~ msgid ""
+#~ "The Skype plugin serves as a bridge to an externally running copy of "
+#~ "Skype. This has some consequences on how it functions: you need an "
+#~ "instance of Skype to be running, and only one Skype account can be used."
+#~ "<br /><br />Note that you need to install the original dynamic linked "
+#~ "Skype version 2.0 or 2.1 from <a href=\"http://www.skype.com\">http://www."
+#~ "skype.com</a><br /><br />This plugin will only work if the language in "
+#~ "the Skype client set to English. Kopete shows notifications (incoming "
+#~ "call, message, ...), so you can turn off the notifications in Skype."
+#~ msgstr ""
+#~ "Skype spraudnis nodrošina savienojumu ar ārēju Skype aplikāciju, kas "
+#~ "ierobežo šā spraudņa iespējas. Jābūt atvērtai Skype instancei, turklāt "
+#~ "varat izmantot tikai vienu Skype kontu.<br /><br />Lūdzu, instalējiet "
+#~ "oriģinālo Skype 2.0 vai 2.1, kas atrodams vietnē <a href=\"http://www."
+#~ "skype.com\">http://www.skype.com</a><br /><br /> Šis spraudnis darbosies "
+#~ "tikai tad, ja Skype klienta valoda būs iestatīta uz angļu. Kopete rāda "
+#~ "paziņojumus (ienākošais zvans, ziņojums, ...), tādēļ Skype klientā varat "
+#~ "tos izslēgt."
+
+#~ msgid ""
+#~ "Disable Skype notifications and set up English language in Skype client"
+#~ msgstr "Atslēgt Skype paziņojumus un iestatīt Skype klienta valodu uz angļu"
+
+#~ msgid "Lau&nch"
+#~ msgstr "&Startēt"
+
+#~ msgid "You can set whether and when should kopete launch Skype."
+#~ msgstr ""
+#~ "Varat noteikt, vai un kādos gadījumos Kopete uzsāk jaunu Skype "
+#~ "aplikācijas instanci."
+
+#~ msgid "Launch Skype"
+#~ msgstr "Uzsākt Skype sesiju"
+
+#~ msgid "When &not running"
+#~ msgstr "Ja nav atvērta &neviena Skype instance"
+
+#~ msgid "N&ever"
+#~ msgstr "N&ekad"
+
+#~ msgid "Command to launch Skype:"
+#~ msgstr "Komanda Skype aplikācijas startēšanai"
+
+#~ msgid "skype"
+#~ msgstr "skype"
+
+#~ msgid "Launch timeout:"
+#~ msgstr "Startēšanas noilgums:"
+
+#~ msgid "s"
+#~ msgstr "s"
+
+#~ msgid "Wait before trying to connect to Skype:"
+#~ msgstr "Aizture pirms pieslēgšanās Skype instancei:"
+
+#~ msgid "trying"
+#~ msgstr "mēģina"
+
+#~ msgid ""
+#~ "If you get error that Skype was not found, but in fact it is running, "
+#~ "check the instructions at <a href=\"https://developer.skype.com/Docs/"
+#~ "ApiDoc/Skype_API_on_Linux\">https://developer.skype.com/Docs/ApiDoc/"
+#~ "Skype_API_on_Linux</a>.<br /><br />Note that only the dynamic linked "
+#~ "Skype binary is supported."
+#~ msgstr ""
+#~ "Ja saņemat kļūdas paziņojumu, ka Skype nav pieejams, taču skaidri zināt, "
+#~ "ka aplikācija darbojas, apskatiet ieteikumus vietnē <a href=\"https://"
+#~ "developer.skype.com/Docs/ApiDoc/Skype_API_on_Linux\">https://developer."
+#~ "skype.com/Docs/ApiDoc/Skype_API_on_Linux</a>. <br /><br />Ievērojiet, ka "
+#~ "tiek atbalstīta tikai dinamiski kompilēta Skype versija."
+
+#~ msgid "C&onnection"
+#~ msgstr "&Pieslēgums"
+
+#~ msgid ""
+#~ "Each application that wants to use Skype must provide its name to it, and "
+#~ "the user is asked whether to allow said application to access Skype."
+#~ "<br>By default, kopete provides kopete as its name, but if you suspect "
+#~ "another application is accessing Skype with this name, you can change the "
+#~ "name Kopete uses here, and then within Skype disallow applications that "
+#~ "refer to themselves as kopete."
+#~ msgstr ""
+#~ "Ikvienai aplikācijai, kas izmanto Skype, jānorāda tam savs nosaukums. "
+#~ "Lietotājam tad tiek vaicāts, vai atļaut šai aplikācijai pieeju Skype."
+#~ "<br>Parasti Kopete paziņo Skype savu nosaukumu,  taču, ja cita programma "
+#~ "ar šādu vārdu jau ir pieslēgta Skype sesijai, Kopete var pieslēgties arī "
+#~ "citu nosaukumu. Pēc tam ieteicams Skype aplikācijā bloķēt viltvārdi."
+
+#~ msgid "&Non-standard authorization"
+#~ msgstr "&Nestandarta autorizācija"
+
+#~ msgid "What bus do you want to use"
+#~ msgstr "Izmantotais D-Bus pieslēgums"
+
+#~ msgid ""
+#~ "Which D-Bus do you want to use to connect to Skype?<br>Session: Your own, "
+#~ "other people cannot use it (use --use-session-dbus to start Skype on that "
+#~ "bus.)<br>System: Shared by all people on the same computer. This one is "
+#~ "used by default by Skype.<br>You have to specify the same D-Bus used by "
+#~ "Skype."
+#~ msgstr ""
+#~ "Kādu D-Bus pieslēgumu vēlaties izmantot savienojumam ar Skype?<br> "
+#~ "Sesijas pieslēgums: individuāls, citiem lietotājiem tas nebūs pieejams "
+#~ "(startējiet Skype ar atslēgu --use-session-dbus).<br> Sistēmas "
+#~ "pieslēgums: koplietojams ar visiem datora lietotājiem. Šo pieslēguma tipu "
+#~ "Skype izmanto pēc noklusējuma.<br> Jums jānorāda tas pats D-Bus "
+#~ "pieslēgums, kuru izmanto Skype."
+
+#~ msgid "Bus"
+#~ msgstr "Kopne"
+
+#~ msgid "Sessi&on"
+#~ msgstr "&Sesija"
+
+#~ msgid ""
+#~ "Note that Kopete will freeze while Skype asks you if it can allow Kopete "
+#~ "to access it. This is normal, and if you allow it forever (check that "
+#~ "\"Remember\" checkbox in Skype's dialog), it will not happen again.<br /"
+#~ "><br />The 'System Bus' option is not yet supported by Skype"
+#~ msgstr ""
+#~ "Ievērojiet, ka Kopere 'sasals', kamēr Skype jums jautās, vai atļaut "
+#~ "piekļuvi. Tas ir normāli, un, ja atļausiet to uz visiem laikiem "
+#~ "(atzīmējiet rūtiņu \"Atcerēties\" Skype dialoglogā), tas vairs nenotiks."
+#~ "<br /><br /> Opcija 'Sistēmas kopne' vēl nav atbalstīta Skype klientā"
+
+#~ msgid "&Activity"
+#~ msgstr "&Aktivitāte"
+
+#~ msgid "Show all incoming messages"
+#~ msgstr "Rādīt visus ienākošos ziņojumus"
+
+#~ msgid ""
+#~ "This will show all incoming Skype messages. If this is off, they are "
+#~ "showed only if the message belongs to chat that is started by kopete."
+#~ msgstr ""
+#~ "Tiks rādīti visi ienākošie ziņojumi. Ja tas ir izslēgts, tie tiks rādīti "
+#~ "tikai tad, ja ziņojums pieder sarunai, kas tika palaista no Kopete."
+
+#~ msgid "Show all incoming &messages"
+#~ msgstr "Rādīt visus ienākošos ziņoju&mus"
+
+#~ msgid ""
+#~ "This will mark incoming messages as read, so if you have Skype set up not "
+#~ "to automatically pop-up chats, it will not flash the exclamation icon."
+#~ msgstr ""
+#~ "Ienākošie ziņojumi tiks atzīmēti kā izlasīti, tādējādi, ja neesat "
+#~ "iestatījis Skype automātiski rādīt sarunas uzlecošajos logos, netiks "
+#~ "rādīta mirgojoša izsaukuma zīmes ikona."
+
+#~ msgid "Mar&k as read"
+#~ msgstr "Atzīmēt &kā izlasītu"
+
+#~ msgid ""
+#~ "If this is checked, Kopete will ask Skype on login if it has any messages "
+#~ "that have not been shown, and if so, will show them. This is useful if "
+#~ "you start Kopete later than Skype, and Skype is configured not to show "
+#~ "incoming messages."
+#~ msgstr ""
+#~ "Ja šis ir atzīmēts, Kopete piesakoties Skype klientam jautās, vai tam ir "
+#~ "jebkādi ziņojumi, kas nav rādīti, un, ja ir, parādīs tos. Tas ir "
+#~ "noderīgi, ja Kopete tiek palaista vēlāk nekā Skype, un Skype ir "
+#~ "konfigurēts nerādīt ienākošās ziņas."
+
+#~ msgid "Scan f&or unread"
+#~ msgstr "Meklēt &nelasītās"
+
+#~ msgid "Show call control window for all calls"
+#~ msgstr "Rādīt zvanu kontroles logu visiem zvaniem"
+
+#~ msgid ""
+#~ "This will show a call control window for every call (both incoming and "
+#~ "outgoing). If it is off, you can call from Kopete, but you have to "
+#~ "control that call from Skype."
+#~ msgstr ""
+#~ "Zvanu kontroles logs tiks rādīts katram zvanam (gan ienākošjiem, gan "
+#~ "izejošajiem). Ja šis ir izslēgts, varēsiet zvanīt no Kopete, bet zvans "
+#~ "būs jākontrolē no Skype."
+
+#~ msgid "S&how call control (this will also hide Skype client call dialog)"
+#~ msgstr "Rādīt &zvanu kontroli (tiks arī paslēpts Skype klienta dialoglogs)"
+
+#~ msgid "Auto close the call control window"
+#~ msgstr "Automātiski aizvērt zvanu kontroles logu"
+
+#~ msgid ""
+#~ "This will close the call control window automatically when the call "
+#~ "finishes"
+#~ msgstr ""
+#~ "Zvanu kontroles logs tiks aizvērts automātiski, kad tiek pabeigts zvans"
+
+#~ msgid "Autoc&lose"
+#~ msgstr "Automātiskā aiz&vēršana"
+
+#~ msgid "Timeout:"
+#~ msgstr "Noildze:"
+
+#~ msgid ""
+#~ "If this is enabled, Kopete keeps track of whether or not Skype is running."
+#~ msgstr "Ja šis ir ieslēgts, Kopete vēros, vai Skype ir vai nav palaists."
+
+#~ msgid ""
+#~ "This keeps track of whether Skype is running. Turning this off only makes "
+#~ "sense it you are trying to get non-flooded debug output."
+#~ msgstr ""
+#~ "Tiek novērots, vai Skype ir palaists. Izslēgt šo ir jēga tikai tad, ja "
+#~ "jūs mēģiniet panākt 'nepārplūdinātu' atkļūdošanas izvadi."
+
+#~ msgid "Pi&ng Skype"
+#~ msgstr "Skype p&ings (ehotests)"
+
+#~ msgid "Do not leave a chat on window exit"
+#~ msgstr "Aizverot logu, nepamest sarunu"
+
+#~ msgid ""
+#~ "Do not leave a chat when the chat window is closed. Makes a difference "
+#~ "only with multi-user chats: if it is checked, you will continue receiving "
+#~ "messages from that chat even after closing the window."
+#~ msgstr ""
+#~ "Nepamest sarunu, ja tās logs ir aizvērts. Opcija nozīmīga tikai "
+#~ "daudzlietotāju sarunā: ja opcija ir atzīmēta, turpināsiet saņemt šīs "
+#~ "sarunas ziņas arī pēc loga aizvēršanas."
+
+#~ msgid "&Calls"
+#~ msgstr "&Zvani"
+
+#~ msgid "E&xecute before call"
+#~ msgstr "Izpi&ldīt pirms zvana"
+
+#~ msgid ""
+#~ "This will wait before making/accepting the call for the command to finish."
+#~ msgstr ""
+#~ "Pirms zvana uzsākšanas / atbildēšanas tiek gaidīta komandas izpildes "
+#~ "pabeigšana."
+
+#~ msgid ""
+#~ "This will wait for the command to finish before accepting/making the call."
+#~ "<br>\n"
+#~ "Note that kopete will freeze whilst waiting."
+#~ msgstr ""
+#~ "Pirms zvana uzsākšanas vai atbildēšanas tiks gaidīta komandas izpildes "
+#~ "pabeigšana.<br>\n"
+#~ "Šajā laikā Kopete uz brīdi tiks apturēta. "
+
+#~ msgid "Wait for fi&nish"
+#~ msgstr "&Gaidīt izpildes pabeigšanu"
+
+#~ msgid "Execute after call"
+#~ msgstr "Izpildīt pēc zvana"
+
+#~ msgid ""
+#~ "Usually this makes no difference, but if there are some other calls on "
+#~ "hold, it is executed only for the most recently ended one."
+#~ msgstr ""
+#~ "Parasti neradīs nekādu atšķirību, bet, ja tiek gaidīts uz vairākiem "
+#~ "citiem zvaniem, tas tiks izpildīts tikai pēc nesenākā pabeigšanas."
+
+#~ msgid "Onl&y for last call"
+#~ msgstr "&Tikai pēdējam zvanam"
+
+#~ msgid "Execute on inco&ming call"
+#~ msgstr "Izpi&ldīt, ja ir ienākošs zvans"
 
 #~ msgid "An error occurred while saving the address book entry."
 #~ msgstr "Gadījusies kļūda, saglabājot adrešu grāmatas ierakstu."

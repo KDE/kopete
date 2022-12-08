@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-05-03 00:43+0000\n"
+"POT-Creation-Date: 2022-12-08 00:45+0000\n"
 "PO-Revision-Date: 2022-05-06 06:45+0200\n"
 "Last-Translator: Phu Hung Nguyen <phu.nguyen@kdemail.net>\n"
 "Language-Team: Vietnamese <kde-l10n-vi@kde.org>\n"
@@ -28,7 +28,6 @@ msgstr "Tôi là một người học nhanh"
 #. i18n: ectx: property (text), widget (QTreeWidget, addresseeListView)
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListGroupSorting)
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListMetaContactSorting)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel1)
 #. i18n: ectx: property (text), widget (QTableWidget, listServers)
 #. i18n: ectx: property (text), widget (QTreeWidget, trServices)
 #: kopete/addaccountwizard/addaccountwizard.cpp:74
@@ -37,7 +36,6 @@ msgstr "Tôi là một người học nhanh"
 #: libkopete/ui/addressbookselectorwidget_base.ui:97
 #: protocols/jabber/ui/dlgjabberchooseserver.ui:57
 #: protocols/jabber/ui/dlgservices.ui:85
-#: protocols/skype/ui/skypecalldialogbase.ui:36
 #, kde-format
 msgid "Name"
 msgstr "Tên"
@@ -122,7 +120,6 @@ msgstr "1"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, AddAccountWizardPage2)
 #: kopete/addaccountwizard/addaccountwizardpage2.ui:13
-#: protocols/skype/skypecalldialog.cpp:168
 #, kde-format
 msgid "Finished"
 msgstr "Xong"
@@ -430,10 +427,8 @@ msgstr "Bạn giờ có nhãn %1."
 msgid "%2 is now %1."
 msgstr "%2 giờ là %1."
 
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel1)
 #: kopete/chatwindow/kopetechatwindow.cpp:210
 #: kopete/chatwindow/kopetechatwindow.cpp:476
-#: protocols/skype/ui/skypecalldialogbase.ui:33
 #, fuzzy, kde-format
 #| msgid "Parties"
 msgid "Participants"
@@ -615,7 +610,6 @@ msgstr "Thiết &lập"
 #: kopete/chatwindow/kopetechatwindow.rc:46
 #: kopete/chatwindow/kopeteemailwindow.rc:29
 #: kopete/chatwindow/kopeterichtexteditpartfull.rc:25 kopete/kopeteui.rc:48
-#: protocols/skype/skypeui.rc:12
 #, kde-format
 msgid "Main Toolbar"
 msgstr "Thanh công cụ chính"
@@ -1804,9 +1798,7 @@ msgid "Message:"
 msgstr "Tin nhắn:"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, BehaviorConfig_Chat)
-#. i18n: ectx: property (text), widget (QPushButton, ChatButton)
 #: kopete/config/behavior/behaviorconfig_chat.ui:14
-#: protocols/skype/ui/skypecalldialogbase.ui:222
 #, kde-format
 msgid "Chat"
 msgstr "Trò chuyện"
@@ -2403,7 +2395,6 @@ msgstr ""
 #: protocols/meanwhile/meanwhileprotocol.cpp:35
 #: protocols/oscar/aim/aimstatusmanager.cpp:67
 #: protocols/oscar/icq/icqstatusmanager.cpp:75 protocols/qq/qqprotocol.cpp:41
-#: protocols/skype/skypeaccount.cpp:929 protocols/skype/skypeprotocol.cpp:76
 #: protocols/sms/smsprotocol.cpp:40 protocols/winpopup/wpprotocol.cpp:59
 #, kde-format
 msgid "Offline"
@@ -2424,7 +2415,6 @@ msgstr "Ngoại tuyến"
 #: protocols/meanwhile/meanwhileprotocol.cpp:40
 #: protocols/oscar/aim/aimstatusmanager.cpp:79
 #: protocols/oscar/icq/icqstatusmanager.cpp:87 protocols/qq/qqprotocol.cpp:37
-#: protocols/skype/skypeaccount.cpp:925 protocols/skype/skypeprotocol.cpp:77
 #: protocols/sms/smsprotocol.cpp:39 protocols/winpopup/wpaccount.cpp:170
 #: protocols/winpopup/wpprotocol.cpp:57
 #, kde-format
@@ -2445,7 +2435,6 @@ msgstr "Trực tuyến"
 #: protocols/meanwhile/meanwhileprotocol.cpp:44
 #: protocols/oscar/aim/aimstatusmanager.cpp:75
 #: protocols/oscar/icq/icqstatusmanager.cpp:83 protocols/qq/qqprotocol.cpp:39
-#: protocols/skype/skypeaccount.cpp:933 protocols/skype/skypeprotocol.cpp:79
 #: protocols/winpopup/wpaccount.cpp:176 protocols/winpopup/wpprotocol.cpp:58
 #, kde-format
 msgid "Away"
@@ -2476,7 +2465,6 @@ msgstr "Bận"
 #: protocols/oscar/aim/aimstatusmanager.cpp:85
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:812
 #: protocols/oscar/icq/icqstatusmanager.cpp:92
-#: protocols/skype/skypeaccount.cpp:945 protocols/skype/skypeprotocol.cpp:82
 #, kde-format
 msgid "Invisible"
 msgstr "Vô hình"
@@ -3371,19 +3359,15 @@ msgid "Home phone:"
 msgstr "Điện thoại ở nhà:"
 
 #. i18n: ectx: property (text), widget (QLabel, mLblWorkPhone)
-#. i18n: ectx: property (text), widget (QLabel, textLabel6)
 #: kopete/contactlist/kopeteaddrbookexportui.ui:66
-#: protocols/skype/ui/skypedetailsbase.ui:71
 #, kde-format
 msgid "Work phone:"
 msgstr "Điện thoại chỗ làm:"
 
 #. i18n: ectx: property (text), widget (QLabel, mLblMobilePhone)
 #. i18n: ectx: property (text), widget (QLabel, mobileLabel)
-#. i18n: ectx: property (text), widget (QLabel, textLabel5)
 #: kopete/contactlist/kopeteaddrbookexportui.ui:76
 #: kopete/identity/identitydetailed.ui:45
-#: protocols/skype/ui/skypedetailsbase.ui:58
 #, kde-format
 msgid "Mobile phone:"
 msgstr "Điện thoại di động"
@@ -3919,9 +3903,7 @@ msgid "E-mail: "
 msgstr "Thư điện tử :"
 
 #. i18n: ectx: property (text), widget (QLabel, phoneLabel)
-#. i18n: ectx: property (text), widget (QLabel, textLabel4)
 #: kopete/identity/identitydetailed.ui:32
-#: protocols/skype/ui/skypedetailsbase.ui:91
 #, fuzzy, kde-format
 #| msgid "Private Phone"
 msgid "Private phone:"
@@ -4024,7 +4006,7 @@ msgstr "&Tệp"
 #: plugins/cryptography/cryptographyui.rc:5 plugins/history/historyui.rc:5
 #: plugins/history2/history2ui.rc:5 plugins/otr/otrui.rc:5
 #: plugins/statistics/statisticsui.rc:5 plugins/translator/translatorui.rc:5
-#: protocols/groupwise/ui/gwcustomstatus.ui:44 protocols/skype/skypeui.rc:5
+#: protocols/groupwise/ui/gwcustomstatus.ui:44
 #, kde-format
 msgid "&Edit"
 msgstr "&Sửa"
@@ -5450,7 +5432,7 @@ msgstr ""
 #: libkopete/kabcpersistence.cpp:374 protocols/gadu/gadusession.cpp:213
 #: protocols/gadu/gadusession.cpp:225 protocols/gadu/gadusession.cpp:236
 #: protocols/gadu/gadusession.cpp:270 protocols/gadu/gadusession.cpp:283
-#: protocols/gadu/gadusession.cpp:302 protocols/skype/skypeaddcontact.cpp:68
+#: protocols/gadu/gadusession.cpp:302
 #, kde-format
 msgid "Not Connected"
 msgstr "Chưa kết nối"
@@ -5530,7 +5512,7 @@ msgid "%2 <%1>"
 msgstr "%2 <%1>"
 
 #: libkopete/kopeteaccount.cpp:471 protocols/gadu/gaduaccount.cpp:384
-#: protocols/skype/skypeaccount.cpp:967 protocols/winpopup/wpaccount.cpp:185
+#: protocols/winpopup/wpaccount.cpp:185
 #, kde-format
 msgid "Properties"
 msgstr "Thuộc tính"
@@ -6539,7 +6521,6 @@ msgstr ""
 
 #: libkopete/kopeteonlinestatus.cpp:167 protocols/gadu/gaduprotocol.cpp:96
 #: protocols/groupwise/gwprotocol.cpp:69 protocols/jabber/jabberprotocol.cpp:74
-#: protocols/skype/skypecalldialog.cpp:215 protocols/skype/skypeprotocol.cpp:83
 #: protocols/sms/smsprotocol.cpp:41
 #, kde-format
 msgid "Connecting"
@@ -6554,7 +6535,6 @@ msgstr "Đang kết nối"
 #: protocols/oscar/icq/icqprotocol.cpp:455
 #: protocols/oscar/icq/icqprotocol.cpp:534
 #: protocols/oscar/icq/icqstatusmanager.cpp:37
-#: protocols/skype/libskype/skype.cpp:405
 #, kde-format
 msgid "Unknown"
 msgstr "Không rõ"
@@ -7557,7 +7537,6 @@ msgstr "&Ghi chú"
 #: plugins/history/historychatui.rc:5 plugins/history2/history2chatui.rc:5
 #: plugins/latex/latexchatui.rc:5 plugins/nowlistening/nowlisteningchatui.rc:5
 #: plugins/otr/otrchatui.rc:4 plugins/translator/translatorchatui.rc:5
-#: protocols/skype/skypechatui.rc:5
 #, kde-format
 msgid "&Tools"
 msgstr "&Công cụ"
@@ -11181,7 +11160,6 @@ msgstr "Các thiết lập danh khoản — Yahoo"
 msgid "B&asic Setup"
 msgstr "Cài đặ&t cơ bản"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox1)
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #. i18n: ectx: property (title), widget (QGroupBox, m_accountInfo)
 #. i18n: ectx: property (title), widget (QGroupBox)
@@ -11193,9 +11171,7 @@ msgstr "Cài đặ&t cơ bản"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:45
 #: protocols/meanwhile/ui/meanwhileeditaccount.ui:41
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:163
-#: protocols/qq/ui/qqeditaccountui.ui:63
-#: protocols/skype/ui/skypeeditaccountbase.ui:27
-#: protocols/sms/ui/smsactprefs.ui:71
+#: protocols/qq/ui/qqeditaccountui.ui:63 protocols/sms/ui/smsactprefs.ui:71
 #: protocols/winpopup/ui/wpeditaccountbase.ui:46
 #, kde-format
 msgid "Account Information"
@@ -11205,7 +11181,6 @@ msgstr "Thông tin danh khoản"
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: protocols/bonjour/bonjouraccountpreferences.ui:77
 #: protocols/oscar/icq/ui/icqworkinfowidget.ui:34
-#: protocols/skype/ui/skypecalldialogbase.ui:39
 #, kde-format
 msgid "Name:"
 msgstr "Tên:"
@@ -11689,8 +11664,7 @@ msgstr ""
 msgid "Edit Contact's Properties"
 msgstr "Sửa thuột tính của liên hệ"
 
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/gadu/gaduprotocol.cpp:56 protocols/skype/ui/skypedetailsbase.ui:50
+#: protocols/gadu/gaduprotocol.cpp:56
 #, kde-format
 msgid "Blocked"
 msgstr "Bị chặn"
@@ -12549,7 +12523,7 @@ msgstr "TP:"
 #. i18n: ectx: property (text), item, widget (QComboBox, uiGender)
 #: protocols/gadu/ui/gadueditaccountui.ui:645
 #: protocols/gadu/ui/gadusearch.ui:269 protocols/oscar/icq/icqprotocol.cpp:205
-#: protocols/qq/ui/qqvcard.ui:223 protocols/skype/skypecontact.cpp:236
+#: protocols/qq/ui/qqvcard.ui:223
 #, kde-format
 msgid "Female"
 msgstr "Nữ"
@@ -12559,7 +12533,7 @@ msgstr "Nữ"
 #. i18n: ectx: property (text), item, widget (QComboBox, uiGender)
 #: protocols/gadu/ui/gadueditaccountui.ui:650
 #: protocols/gadu/ui/gadusearch.ui:264 protocols/oscar/icq/icqprotocol.cpp:206
-#: protocols/qq/ui/qqvcard.ui:218 protocols/skype/skypecontact.cpp:234
+#: protocols/qq/ui/qqvcard.ui:218
 #, kde-format
 msgid "Male"
 msgstr "Nam"
@@ -13092,8 +13066,7 @@ msgstr "%1|Bị chặn"
 
 #: protocols/groupwise/gwmessagemanager.cpp:77
 #: protocols/jabber/jabbergroupchatmanager.cpp:42
-#: protocols/qq/qqchatsession.cpp:69 protocols/skype/skypechatsession.cpp:125
-#: protocols/skype/skypechatsession.cpp:163
+#: protocols/qq/qqchatsession.cpp:69
 #, kde-format
 msgid "&Invite"
 msgstr "Mờ&i"
@@ -13265,7 +13238,6 @@ msgid "Invalid password"
 msgstr "Người dùng không hợp lệ."
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:40
-#: protocols/skype/libskype/skype.cpp:407
 #, fuzzy, kde-format
 #| msgid "Host not found."
 msgid "User not found"
@@ -13926,10 +13898,8 @@ msgstr "USER_ID"
 msgid "Change the display name used for this contact"
 msgstr "Thay đổi tên hiển thị dùng cho liên hệ này"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
 #. i18n: ectx: property (text), widget (QLabel, textLabel14)
 #: protocols/groupwise/ui/gwcontactprops.ui:78
-#: protocols/skype/ui/skypecalldialogbase.ui:122
 #, kde-format
 msgid "Status:"
 msgstr "Trạng thái:"
@@ -14842,14 +14812,12 @@ msgctxt "a contact's online status in parenthesis."
 msgid " (%1)"
 msgstr " (%1)"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox3_2)
 #: protocols/jabber/jabbercontact.cpp:144
-#: protocols/skype/ui/skypeeditaccountbase.ui:319
 #, kde-format
 msgid "Authorization"
 msgstr "Sự cho phép"
 
-#: protocols/jabber/jabbercontact.cpp:150 protocols/skype/skypecontact.cpp:106
+#: protocols/jabber/jabbercontact.cpp:150
 #, kde-format
 msgid "(Re)send Authorization To"
 msgstr "Gửi (lại) sự cho phép cho"
@@ -14859,12 +14827,12 @@ msgstr "Gửi (lại) sự cho phép cho"
 msgid "(Re)request Authorization From"
 msgstr "Yêu cầu (lại) sự cho phép từ"
 
-#: protocols/jabber/jabbercontact.cpp:164 protocols/skype/skypecontact.cpp:111
+#: protocols/jabber/jabbercontact.cpp:164
 #, kde-format
 msgid "Remove Authorization From"
 msgstr "Bỏ sự cho phép ra"
 
-#: protocols/jabber/jabbercontact.cpp:176 protocols/skype/skypecontact.cpp:101
+#: protocols/jabber/jabbercontact.cpp:176
 #, fuzzy, kde-format
 #| msgid "Contact"
 msgid "Call contact"
@@ -14883,7 +14851,6 @@ msgstr "Rảnh để trò chuyện"
 #: protocols/jabber/jabbercontact.cpp:198
 #: protocols/oscar/aim/aimstatusmanager.cpp:69
 #: protocols/oscar/icq/icqstatusmanager.cpp:77
-#: protocols/skype/skypeaccount.cpp:941 protocols/skype/skypeprotocol.cpp:81
 #, kde-format
 msgid "Do Not Disturb"
 msgstr "Đừng làm phiền"
@@ -15309,10 +15276,8 @@ msgstr ""
 msgid "Call Status:"
 msgstr "Trạng thái:"
 
-#. i18n: ectx: property (text), widget (QPushButton, AcceptButton)
 #. i18n: ectx: property (text), widget (QPushButton, acceptButton)
 #: protocols/jabber/libjinglecalldialog.ui:42
-#: protocols/skype/ui/skypecalldialogbase.ui:180
 #, kde-format
 msgid "Accept"
 msgstr "Chấp nhận"
@@ -15971,7 +15936,6 @@ msgstr "Các thiết lập danh khoản — Jabber"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:39
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:41
 #: protocols/qq/ui/qqeditaccountui.ui:42
-#: protocols/skype/ui/skypeeditaccountbase.ui:21
 #, kde-format
 msgid "&Basic Setup"
 msgstr "Cài đặt cơ &bản"
@@ -16662,9 +16626,7 @@ msgstr ""
 msgid "Register"
 msgstr "Đăng kí"
 
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox1)
 #: protocols/jabber/ui/dlgsearch.cpp:54 protocols/jabber/ui/dlgsearch.cpp:55
-#: protocols/skype/ui/skypeaddcontactbase.ui:29
 #, fuzzy, kde-format
 #| msgid "Search:"
 msgid "Search"
@@ -16753,10 +16715,8 @@ msgstr "Truy &vấn máy chủ"
 msgid "Node"
 msgstr "Nút"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
 #. i18n: ectx: property (text), widget (QLabel, lblName)
 #: protocols/jabber/ui/dlgvcard.ui:45 protocols/qq/ui/qqvcard.ui:164
-#: protocols/skype/ui/skypedetailsbase.ui:158
 #, kde-format
 msgid "Full name:"
 msgstr "Họ tên:"
@@ -16767,12 +16727,11 @@ msgstr "Họ tên:"
 msgid "Jabber ID:"
 msgstr "ID Jabber:"
 
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
 #. i18n: ectx: property (text), widget (QLabel, textLabel8)
 #. i18n: ectx: property (text), widget (QLabel, lblHomepage)
 #: protocols/jabber/ui/dlgvcard.ui:76
 #: protocols/oscar/icq/ui/icqworkinfowidget.ui:150
-#: protocols/qq/ui/qqvcard.ui:621 protocols/skype/ui/skypedetailsbase.ui:171
+#: protocols/qq/ui/qqvcard.ui:621
 #, kde-format
 msgid "Homepage:"
 msgstr "Trang chủ :"
@@ -17673,16 +17632,15 @@ msgstr "Bận"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:73
 #: protocols/oscar/icq/icqstatusmanager.cpp:81
-#: protocols/skype/skypeaccount.cpp:937 protocols/skype/skypeprotocol.cpp:80
 #, kde-format
-msgid "Not Available"
-msgstr "Không sẵn sàng"
+msgid "Not A&vailable"
+msgstr "Không &sẵn sàng"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:73
 #: protocols/oscar/icq/icqstatusmanager.cpp:81
 #, kde-format
-msgid "Not A&vailable"
-msgstr "Không &sẵn sàng"
+msgid "Not Available"
+msgstr "Không sẵn sàng"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:77
 #: protocols/oscar/icq/icqstatusmanager.cpp:85
@@ -21392,1086 +21350,6 @@ msgstr "Máy ảnh Mạng cho %1"
 msgid "No webcam image received"
 msgstr "Chưa nhận ảnh từ máy ảnh Mạng"
 
-#: protocols/skype/libskype/skype.cpp:256
-#, kde-format
-msgid "This version of Skype is too old, consider upgrading"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:290 protocols/skype/skypeaccount.cpp:1093
-#: protocols/skype/skypeaccount.cpp:1107 protocols/skype/skypeaccount.cpp:1129
-#: protocols/skype/skypeaccount.cpp:1134 protocols/skype/skypeaccount.cpp:1142
-#: protocols/skype/skypeaccount.cpp:1154 protocols/skype/skypeaccount.cpp:1159
-#: protocols/skype/skypeeditaccount.cpp:210
-#: protocols/skype/skypeeditaccount.cpp:225
-#: protocols/skype/skypeeditaccount.cpp:242
-#: protocols/skype/skypeeditaccount.cpp:250
-#, fuzzy, kde-format
-#| msgid "For protocols:"
-msgid "Skype protocol"
-msgstr "Cho giao thức:"
-
-#: protocols/skype/libskype/skype.cpp:409
-#, kde-format
-msgid "Does not have multi-user chat capability"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:411
-#, fuzzy, kde-format
-#| msgid "connected"
-msgid "Chat denied"
-msgstr "có kết nối"
-
-#: protocols/skype/libskype/skype.cpp:488
-#, fuzzy, kde-format
-#| msgid "Unknown error."
-msgid "Unknown error"
-msgstr "Lỗi không rõ."
-
-#: protocols/skype/libskype/skype.cpp:491
-#, fuzzy, kde-format
-#| msgid "error"
-msgid "Misc error"
-msgstr "lỗi"
-
-#: protocols/skype/libskype/skype.cpp:494
-#, kde-format
-msgid "User or phone number does not exist"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:497
-#, fuzzy, kde-format
-#| msgid "User Profile"
-msgid "User is offline"
-msgstr "Hồ sơ người dùng"
-
-#: protocols/skype/libskype/skype.cpp:500
-#, fuzzy, kde-format
-#| msgid "Host not found."
-msgid "No proxy found"
-msgstr "Không tìm thấy máy."
-
-#: protocols/skype/libskype/skype.cpp:503
-#, fuzzy, kde-format
-#| msgid "Session terminated."
-msgid "Session terminated"
-msgstr "Buổi hợp bị chấm dứt."
-
-#: protocols/skype/libskype/skype.cpp:506
-#, kde-format
-msgid "No common codec found"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:509
-#, kde-format
-msgid "Sound I/O error"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:512
-#, kde-format
-msgid "Problem with remote sound device"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:515
-#, kde-format
-msgid "Call blocked by recipient"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:518
-#, kde-format
-msgid "Recipient not a friend"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:521
-#, kde-format
-msgid "User not authorized by recipient"
-msgstr ""
-
-#: protocols/skype/libskype/skype.cpp:524
-#, fuzzy, kde-format
-#| msgid "Connecting error."
-msgid "Sound recording error"
-msgstr "Lỗi kết nối."
-
-#: protocols/skype/libskype/skype.cpp:820
-#, fuzzy, kde-format
-#| msgid "This protocol does not currently support adding accounts."
-msgid "This version of Skype does not support adding users to chat."
-msgstr "Giao thức này hiện thời không hỗ trợ khả năng thêm danh khoản."
-
-#: protocols/skype/libskype/skype.cpp:820
-#, fuzzy, kde-format
-#| msgid "Protocol"
-msgid "Skype Protocol"
-msgstr "Giao thức"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:92
-#, fuzzy, kde-format
-#| msgid "Chat could not be joined"
-msgid "Could not ping Skype"
-msgstr "Không thể vào trò chuyện"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:112
-#, kde-format
-msgid "Skype did not accept this application"
-msgstr ""
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:123
-#, kde-format
-msgid "Skype API syntax error"
-msgstr ""
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:132
-#, kde-format
-msgid "Skype API not ready yet, wait a bit longer"
-msgstr "API của Skype chưa sẵn sàng, hãy chờ thêm một chút"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:178
-#, kde-format
-msgid "Cannot register Skype communication for Kopete on D-Bus"
-msgstr ""
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:209
-#, kde-format
-msgid ""
-"Could not launch Skype.\n"
-"You need to install the original dynamic linked Skype version 2.0 binary "
-"from http://www.skype.com"
-msgstr ""
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:216
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:324
-#, kde-format
-msgid ""
-"Could not find Skype.\n"
-"You need to install the original dynamic linked Skype version 2.0 binary "
-"from http://www.skype.com"
-msgstr ""
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:263
-#, fuzzy, kde-format
-#| msgid "An error occurred sending the message"
-msgid ""
-"Could not ping Skype.\n"
-"Maybe Skype not running.\n"
-"Error while sending a message to Skype (%1)."
-msgstr "Gặp lỗi khi gửi tin nhắn"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:265
-#, fuzzy, kde-format
-#| msgid "An error occurred sending the message"
-msgid "Error while sending a message to Skype (%1)."
-msgstr "Gặp lỗi khi gửi tin nhắn"
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:273
-#, kde-format
-msgid ""
-"Could not ping Skype.\n"
-"You are logged out from Skype, please log in."
-msgstr ""
-
-#: protocols/skype/libskype/skypedbus/skypeconnection.cpp:326
-#, fuzzy, kde-format
-#| msgid "Please connect first."
-msgid "Please login to Skype first"
-msgstr "Hãy kết nối trước."
-
-#: protocols/skype/skypeaccount.cpp:921
-#, fuzzy, kde-format
-#| msgid "Skype"
-msgid "Skype (%1)"
-msgstr "Skype"
-
-#: protocols/skype/skypeaccount.cpp:949 protocols/skype/skypeprotocol.cpp:78
-#, fuzzy, kde-format
-#| msgid "Skype"
-msgid "Skype Me"
-msgstr "Skype"
-
-#: protocols/skype/skypeaccount.cpp:955
-#, fuzzy, kde-format
-#| msgid "Make Meta Contact"
-msgid "Make Test Call"
-msgstr "Làm siêu liên lạc"
-
-#: protocols/skype/skypeaccount.cpp:1093
-#, kde-format
-msgid "Cannot open info about user %1"
-msgstr ""
-
-#: protocols/skype/skypeaccount.cpp:1107 protocols/skype/skypeaccount.cpp:1129
-#: protocols/skype/skypeaccount.cpp:1134 protocols/skype/skypeaccount.cpp:1159
-#, kde-format
-msgid "Unknown action from SkypeActionHandler"
-msgstr ""
-
-#: protocols/skype/skypeaccount.cpp:1142
-#, kde-format
-msgid "Add contact from SkypeActionHandler is not supported yet"
-msgstr ""
-
-#: protocols/skype/skypeaccount.cpp:1154
-#, kde-format
-msgid "Send voicemail from SkypeActionHandler is not supported yet"
-msgstr ""
-
-#: protocols/skype/skypeaddcontact.cpp:68
-#, fuzzy, kde-format
-#| msgid "You must be connected to delete a contact."
-msgid "You must connect to Skype first."
-msgstr "Bạn cần phải có kết nối hoạt động để xoá liên lạc."
-
-#: protocols/skype/skypeaddcontact.cpp:73
-#, fuzzy, kde-format
-#| msgid "Could not write contact list to a file."
-msgid "You must write the contact's name."
-msgstr "Không thể ghi danh bạ vào tệp."
-
-#: protocols/skype/skypeaddcontact.cpp:73
-#: protocols/skype/skypeaddcontact.cpp:78
-#: protocols/skype/skypeaddcontact.cpp:83
-#: protocols/skype/skypeaddcontact.cpp:88
-#: protocols/skype/skypeeditaccount.cpp:123
-#, fuzzy, kde-format
-#| msgid "Work Information"
-msgid "Wrong Information"
-msgstr "Thông tin về chỗ làm"
-
-#: protocols/skype/skypeaddcontact.cpp:78
-#, kde-format
-msgid ""
-"Contact echo123 is not needed. You can make test call in Skype protocol "
-"actions."
-msgstr ""
-
-#: protocols/skype/skypeaddcontact.cpp:83
-#, fuzzy, kde-format
-#| msgid "The user %1 is already in this chat."
-msgid "This contact already exists in this account."
-msgstr "Người dùng %1 đã vào cuộc trò chuyện này."
-
-#: protocols/skype/skypeaddcontact.cpp:88
-#, fuzzy, kde-format
-#| msgid "You must be connected to add a contact."
-msgid "You cannot add yourself as a contact."
-msgstr "Bạn cần phải có kết nối hoạt động để thêm liên hệ."
-
-#: protocols/skype/skypecalldialog.cpp:106
-#, kde-format
-msgid "Call with %1"
-msgstr ""
-
-#: protocols/skype/skypecalldialog.cpp:138
-#, fuzzy, kde-format
-#| msgid "&Cancel"
-msgid "Canceled"
-msgstr "&Thôi"
-
-#: protocols/skype/skypecalldialog.cpp:145
-#, fuzzy, kde-format
-#| msgid "Server is Busy"
-msgid "Other person is busy"
-msgstr "Máy chủ còn bận"
-
-#: protocols/skype/skypecalldialog.cpp:152
-#, fuzzy, kde-format
-#| msgid "&Refuse"
-msgid "Refused"
-msgstr "&Từ chối"
-
-#: protocols/skype/skypecalldialog.cpp:159
-#, kde-format
-msgid "Call Back"
-msgstr ""
-
-#: protocols/skype/skypecalldialog.cpp:160
-#, fuzzy, kde-format
-#| msgid "Message"
-msgid "Missed"
-msgstr "Tin nhắn"
-
-#: protocols/skype/skypecalldialog.cpp:173
-#, fuzzy, kde-format
-#| msgid "&Resume"
-msgid "Resume"
-msgstr "Tiếp tục &lại"
-
-#: protocols/skype/skypecalldialog.cpp:176
-#, kde-format
-msgid "On hold (local)"
-msgstr ""
-
-#: protocols/skype/skypecalldialog.cpp:182
-#, kde-format
-msgid "On hold (remote)"
-msgstr ""
-
-#: protocols/skype/skypecalldialog.cpp:188
-#, kde-format
-msgid "On hold"
-msgstr ""
-
-#: protocols/skype/skypecalldialog.cpp:192
-#, fuzzy, kde-format
-#| msgid "&Bold"
-msgid "Hold"
-msgstr "Đậ&m"
-
-#: protocols/skype/skypecalldialog.cpp:195
-#, fuzzy, kde-format
-#| msgid "Session in progress."
-msgid "In progress"
-msgstr "Buổi hợp đang chạy."
-
-#: protocols/skype/skypecalldialog.cpp:201
-#, fuzzy, kde-format
-#| msgid "Religion"
-msgid "Ringing"
-msgstr "Tôn giáo"
-
-#: protocols/skype/skypecalldialog.cpp:209
-#, fuzzy, kde-format
-#| msgid "&File"
-msgid "Failed"
-msgstr "&Tệp"
-
-#: protocols/skype/skypecalldialog.cpp:221
-#, kde-format
-msgctxt ""
-"Early media means the media played before the call is established. For "
-"example it can be a calling tone or a waiting message such as all operators "
-"are busy."
-msgid "Early media (waiting for operator...)"
-msgstr "Phương tiện phát sớm (đang chờ nhà cung cấp...)"
-
-#: protocols/skype/skypecalldialog.cpp:276
-#, fuzzy, kde-format
-#| msgctxt "a contact's online status in parenthesis."
-#| msgid " (%1)"
-msgid "Failed (%1)"
-msgstr " (%1)"
-
-#: protocols/skype/skypecalldialog.cpp:296
-#, kde-format
-msgid ""
-"%1 active\n"
-"%2 total"
-msgstr ""
-
-#: protocols/skype/skypecalldialog.cpp:302
-#, kde-format
-msgid "Skypeout inactive"
-msgstr ""
-
-#: protocols/skype/skypechatsession.cpp:114
-#: protocols/skype/skypechatsession.cpp:155
-#: protocols/skype/skypeprotocol.cpp:105
-#, fuzzy, kde-format
-#| msgid "Cell:"
-msgid "Call"
-msgstr "Di động:"
-
-#: protocols/skype/skypeconference.cpp:44
-#, fuzzy, kde-format
-#| msgid "Conference Members"
-msgid "Conference Call"
-msgstr "Thành viên hội thảo"
-
-#: protocols/skype/skypecontact.cpp:116
-#, fuzzy, kde-format
-#| msgid "&Block Contact"
-msgid "Block contact"
-msgstr "&Chặn liên hệ"
-
-#: protocols/skype/skypedetails.cpp:70
-#, fuzzy, kde-format
-#| msgid "Warn User %1?"
-msgid "Details for User %1"
-msgstr "Cảnh báo người dùng %1?"
-
-#: protocols/skype/skypeeditaccount.cpp:123
-#, kde-format
-msgid "You can have only one skype account"
-msgstr ""
-
-#: protocols/skype/skypeeditaccount.cpp:207
-#, fuzzy, kde-format
-#| msgid "Not in your contact list"
-msgid "Configure Skype client"
-msgstr "Không trong danh sách liên lạc"
-
-#: protocols/skype/skypeeditaccount.cpp:207
-#, fuzzy, kde-format
-#| msgid "Please enter your away reason:"
-msgid "Please enter your skype user name"
-msgstr "Hãy nhập lí do vắng mặt của bạn:"
-
-#: protocols/skype/skypeeditaccount.cpp:210
-#, fuzzy, kde-format
-#| msgid "You must enter a valid AOL screen name."
-msgid "You must enter your skype user name"
-msgstr "Bạn phải nhập vào một tên màn hình AOL hợp lệ."
-
-#: protocols/skype/skypeeditaccount.cpp:225
-#: protocols/skype/skypeeditaccount.cpp:242
-#, kde-format
-msgid "Cannot create/open file %1 for configuring the Skype client."
-msgstr ""
-
-#: protocols/skype/skypeeditaccount.cpp:250
-#, kde-format
-msgid ""
-"Process has completed.\n"
-"Skype is now configured for Kopete.\n"
-"You must restart the Skype client for changes to take effect."
-msgstr ""
-
-#: protocols/skype/skypeprotocol.cpp:84
-#, fuzzy, kde-format
-#| msgid "Not in your contact list"
-msgid "Not in Skype list"
-msgstr "Không trong danh sách liên lạc"
-
-#: protocols/skype/skypeprotocol.cpp:85
-#, fuzzy, kde-format
-#| msgid "Not at home"
-msgid "Not authorized"
-msgstr "Không ở nhà"
-
-#: protocols/skype/skypeprotocol.cpp:86
-#, fuzzy, kde-format
-#| msgid "Select Contact"
-msgid "SkypeOut contact"
-msgstr "Chọn liên hệ"
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeAddContactBase)
-#: protocols/skype/ui/skypeaddcontactbase.ui:6
-#, fuzzy, kde-format
-#| msgid "Add Contact"
-msgid "Add Skype Contact"
-msgstr "Thêm liên hệ"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypeaddcontactbase.ui:14
-#, fuzzy, kde-format
-#| msgid "Screen name:"
-msgid "Skype name:"
-msgstr "Tên màn hình:"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypeaddcontactbase.ui:35
-#, kde-format
-msgid "Sorry, but the search function is not yet implemented."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QPushButton, SearchButton)
-#: protocols/skype/ui/skypeaddcontactbase.ui:69
-#, kde-format
-msgid "Se&arch"
-msgstr "Tìm &kiếm"
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeCallDialogBase)
-#: protocols/skype/ui/skypecalldialogbase.ui:6
-#, fuzzy, kde-format
-#| msgid "Skype"
-msgid "Skype Call"
-msgstr "Skype"
-
-#. i18n: ectx: property (toolTip), widget (QLabel, NameLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:14
-#, fuzzy, kde-format
-#| msgid "Parties"
-msgid "Name(s) of Participant(s)"
-msgstr "Tiệc"
-
-#. i18n: ectx: property (whatsThis), widget (QLabel, NameLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:17
-#, kde-format
-msgid ""
-"Name of the other participant in the call (or a list of names if it is a "
-"conference call.)"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel2)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel2)
-#. i18n: ectx: property (toolTip), widget (QLabel, TimeLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:52
-#: protocols/skype/ui/skypecalldialogbase.ui:55
-#: protocols/skype/ui/skypecalldialogbase.ui:90
-#, kde-format
-msgid "Total time elapsed."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypecalldialogbase.ui:58
-#, fuzzy, kde-format
-#| msgid "Time :"
-msgid "Time:"
-msgstr "Giờ :"
-
-#. i18n: ectx: property (toolTip), widget (QLabel, CreditLabel)
-#. i18n: ectx: property (whatsThis), widget (QLabel, CreditLabel)
-#. i18n: ectx: property (toolTip), widget (QLabel, textLabel3)
-#. i18n: ectx: property (whatsThis), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypecalldialogbase.ui:71
-#: protocols/skype/ui/skypecalldialogbase.ui:74
-#: protocols/skype/ui/skypecalldialogbase.ui:135
-#: protocols/skype/ui/skypecalldialogbase.ui:138
-#, kde-format
-msgid "SkypeOut credits left"
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QLabel, TimeLabel)
-#: protocols/skype/ui/skypecalldialogbase.ui:93
-#, kde-format
-msgid ""
-"Total length of the call/<br />(i.e. both time speaking and time on hold.)"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypecalldialogbase.ui:141
-#, kde-format
-msgid "SkypeOut credits:"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, AcceptButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:174
-#, fuzzy, kde-format
-#| msgid "Accept"
-msgid "Accept call"
-msgstr "Chấp nhận"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, AcceptButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:177
-#, kde-format
-msgid "Accept incoming call"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:190
-#, kde-format
-msgid "Finish the call"
-msgstr "Kết thúc cuộc gọi"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:193
-#, fuzzy, kde-format
-#| msgid "Termi&nate"
-msgid "Terminate the call"
-msgstr "Chấm &dứt"
-
-#. i18n: ectx: property (text), widget (QPushButton, HangButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:196
-#, kde-format
-msgid "H&ang up"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:203
-#, fuzzy, kde-format
-#| msgid "Voice call"
-msgid "Hold the call"
-msgstr "Gọi tiếng nói"
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:206
-#, kde-format
-msgid "Interrupt the call for a moment and resume (or hang up) later."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QPushButton, HoldButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:209
-#, fuzzy, kde-format
-#| msgid "&Bold"
-msgid "H&old"
-msgstr "Đậ&m"
-
-#. i18n: ectx: property (toolTip), widget (QPushButton, ChatButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:216
-#, kde-format
-msgid "Open chat to the person."
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QPushButton, ChatButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:219
-#, fuzzy, kde-format
-#| msgid ""
-#| "Please enter the email address of the person with whom you want to chat:"
-msgid "Open chat to the person with whom you are talking."
-msgstr "Hãy nhập địa chỉ thư điện tử của người với họ bạn muốn trò chuyện:"
-
-#. i18n: ectx: property (text), widget (QPushButton, VideoButton)
-#: protocols/skype/ui/skypecalldialogbase.ui:232
-#, kde-format
-msgid "Start/Stop Video"
-msgstr ""
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, SkypeDetailsBase)
-#: protocols/skype/ui/skypedetailsbase.ui:6
-#, fuzzy, kde-format
-#| msgid "Detai&ls"
-msgid "User's Details"
-msgstr "Ch&i tiết"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypedetailsbase.ui:12
-#, fuzzy, kde-format
-#| msgid "Skype"
-msgid "Skype ID:"
-msgstr "Skype"
-
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/skype/ui/skypedetailsbase.ui:40
-#, fuzzy, kde-format
-#| msgid "Author"
-msgid "Authorized"
-msgstr "Tác giả"
-
-#. i18n: ectx: property (text), item, widget (QComboBox, authorCombo)
-#: protocols/skype/ui/skypedetailsbase.ui:45
-#, fuzzy, kde-format
-#| msgid "Author"
-msgid "Not Authorized"
-msgstr "Tác giả"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel7)
-#: protocols/skype/ui/skypedetailsbase.ui:104
-#, fuzzy, kde-format
-#| msgid "Author"
-msgid "Is authorized:"
-msgstr "Tác giả"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypedetailsbase.ui:131
-#, fuzzy, kde-format
-#| msgid "Display Name"
-msgid "Display Name:"
-msgstr "Tên hiển thị"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_3)
-#: protocols/skype/ui/skypedetailsbase.ui:184
-#, fuzzy, kde-format
-#| msgid "Size:"
-msgid "Sex:"
-msgstr "Cỡ :"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, excludeCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:35
-#, fuzzy, kde-format
-#| msgid ""
-#| "Check this box if you want to always send notifications to your contacts."
-msgid "Check this if you do not want to connect with other protocols"
-msgstr "Bật tuỳ chọn này nếu lúc nào bạn cũng muốn gửi thông báo cho liên lạc."
-
-#. i18n: ectx: property (text), widget (QCheckBox, excludeCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:38
-#, fuzzy, kde-format
-#| msgid "E&xclude from connect all"
-msgid "E&xclude from connection"
-msgstr "L&oại trừ ra Kết nối tất cả"
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:66
-#, fuzzy, kde-format
-#| msgid "Contact Notes"
-msgid "Important Note"
-msgstr "Ghi chú liên lạc"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:72
-#, kde-format
-msgid ""
-"The Skype plugin serves as a bridge to an externally running copy of Skype. "
-"This has some consequences on how it functions: you need an instance of "
-"Skype to be running, and only one Skype account can be used.<br /><br />Note "
-"that you need to install the original dynamic linked Skype version 2.0 or "
-"2.1 from <a href=\"http://www.skype.com\">http://www.skype.com</a><br /><br /"
-">This plugin will only work if the language in the Skype client set to "
-"English. Kopete shows notifications (incoming call, message, ...), so you "
-"can turn off the notifications in Skype."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QPushButton, configureSkypeClient)
-#: protocols/skype/ui/skypeeditaccountbase.ui:88
-#, kde-format
-msgid "Disable Skype notifications and set up English language in Skype client"
-msgstr ""
-
-#. i18n: ectx: attribute (title), widget (QWidget, launchTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:112
-#, kde-format
-msgid "Lau&nch"
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, LaunchGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:118
-#, kde-format
-msgid "You can set whether and when should kopete launch Skype."
-msgstr ""
-
-#. i18n: ectx: property (title), widget (QGroupBox, LaunchGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:121
-#, kde-format
-msgid "Launch Skype"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QRadioButton, LaunchNeededRadio)
-#: protocols/skype/ui/skypeeditaccountbase.ui:127
-#, kde-format
-msgid "When &not running"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QRadioButton, LaunchNeverRadio)
-#: protocols/skype/ui/skypeeditaccountbase.ui:137
-#, fuzzy, kde-format
-#| msgid "Never"
-msgid "N&ever"
-msgstr "Không bao giờ"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1)
-#: protocols/skype/ui/skypeeditaccountbase.ui:149
-#, fuzzy, kde-format
-#| msgid "Chat could not be joined"
-msgid "Command to launch Skype:"
-msgstr "Không thể vào trò chuyện"
-
-#. i18n: ectx: property (text), widget (QLineEdit, CommandEdit)
-#: protocols/skype/ui/skypeeditaccountbase.ui:159
-#, fuzzy, kde-format
-#| msgid "Skype"
-msgid "skype"
-msgstr "Skype"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:170
-#, fuzzy, kde-format
-#| msgid "timeout"
-msgid "Launch timeout:"
-msgstr "quá giờ"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_3)
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_5)
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:193
-#: protocols/skype/ui/skypeeditaccountbase.ui:252
-#: protocols/skype/ui/skypeeditaccountbase.ui:579
-#, kde-format
-msgid "s"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2_4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:223
-#, kde-format
-msgid "Wait before trying to connect to Skype:"
-msgstr "Chờ trước khi thử kết nối đến Skype:"
-
-#. i18n: ectx: property (toolTip), widget (QSpinBox, WaitSpin)
-#. i18n: ectx: property (whatsThis), widget (QSpinBox, WaitSpin)
-#: protocols/skype/ui/skypeeditaccountbase.ui:233
-#: protocols/skype/ui/skypeeditaccountbase.ui:236
-#, fuzzy, kde-format
-#| msgid "Clothing"
-msgid "trying"
-msgstr "Quần áo"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:280
-#, kde-format
-msgid ""
-"If you get error that Skype was not found, but in fact it is running, check "
-"the instructions at <a href=\"https://developer.skype.com/Docs/ApiDoc/"
-"Skype_API_on_Linux\">https://developer.skype.com/Docs/ApiDoc/"
-"Skype_API_on_Linux</a>.<br /><br />Note that only the dynamic linked Skype "
-"binary is supported."
-msgstr ""
-
-#. i18n: ectx: attribute (title), widget (QWidget, connectionTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:310
-#, kde-format
-msgid "C&onnection"
-msgstr "Kết nố&i"
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, groupBox3_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:316
-#, kde-format
-msgid ""
-"Each application that wants to use Skype must provide its name to it, and "
-"the user is asked whether to allow said application to access Skype.<br>By "
-"default, kopete provides kopete as its name, but if you suspect another "
-"application is accessing Skype with this name, you can change the name "
-"Kopete uses here, and then within Skype disallow applications that refer to "
-"themselves as kopete."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, AuthorCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:325
-#, fuzzy, kde-format
-#| msgid "&Grant authorization"
-msgid "&Non-standard authorization"
-msgstr "uỷ &quyền"
-
-#. i18n: ectx: property (toolTip), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:342
-#, kde-format
-msgid "What bus do you want to use"
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:345
-#, kde-format
-msgid ""
-"Which D-Bus do you want to use to connect to Skype?<br>Session: Your own, "
-"other people cannot use it (use --use-session-dbus to start Skype on that "
-"bus.)<br>System: Shared by all people on the same computer. This one is used "
-"by default by Skype.<br>You have to specify the same D-Bus used by Skype."
-msgstr ""
-
-#. i18n: ectx: property (title), widget (QGroupBox, BusGroup)
-#: protocols/skype/ui/skypeeditaccountbase.ui:348
-#, fuzzy, kde-format
-#| msgid "Busy"
-msgid "Bus"
-msgstr "Bận"
-
-#. i18n: ectx: property (text), widget (QRadioButton, radioButton4)
-#: protocols/skype/ui/skypeeditaccountbase.ui:354
-#, fuzzy, kde-format
-#| msgid "Version"
-msgid "Sessi&on"
-msgstr "Phiên bản"
-
-#. i18n: ectx: property (text), widget (QRadioButton, radioButton5)
-#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/skype/ui/skypeeditaccountbase.ui:364
-#: protocols/winpopup/ui/wpeditaccountbase.ui:221
-#, kde-format
-msgid "S&ystem"
-msgstr "Hệ thốn&g"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_2)
-#: protocols/skype/ui/skypeeditaccountbase.ui:374
-#, kde-format
-msgid ""
-"Note that Kopete will freeze while Skype asks you if it can allow Kopete to "
-"access it. This is normal, and if you allow it forever (check that \"Remember"
-"\" checkbox in Skype's dialog), it will not happen again.<br /><br />The "
-"'System Bus' option is not yet supported by Skype"
-msgstr ""
-
-#. i18n: ectx: attribute (title), widget (QWidget, activityTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:404
-#, kde-format
-msgid "&Activity"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:410
-#, fuzzy, kde-format
-#| msgid "Show a bubble on an incoming message"
-msgid "Show all incoming messages"
-msgstr "Hiện bóng khi tin nhắn gửi đến"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:413
-#, kde-format
-msgid ""
-"This will show all incoming Skype messages. If this is off, they are showed "
-"only if the message belongs to chat that is started by kopete."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, HitchCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:416
-#, fuzzy, kde-format
-#| msgid "Show a bubble on an incoming message"
-msgid "Show all incoming &messages"
-msgstr "Hiện bóng khi tin nhắn gửi đến"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, MarkCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:426
-#, kde-format
-msgid ""
-"This will mark incoming messages as read, so if you have Skype set up not to "
-"automatically pop-up chats, it will not flash the exclamation icon."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, MarkCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:429
-#, fuzzy, kde-format
-#| msgid "Married"
-msgid "Mar&k as read"
-msgstr "Có vợ/chồng"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, ScanCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:439
-#, kde-format
-msgid ""
-"If this is checked, Kopete will ask Skype on login if it has any messages "
-"that have not been shown, and if so, will show them. This is useful if you "
-"start Kopete later than Skype, and Skype is configured not to show incoming "
-"messages."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, ScanCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:442
-#, kde-format
-msgid "Scan f&or unread"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:452
-#, kde-format
-msgid "Show call control window for all calls"
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:455
-#, kde-format
-msgid ""
-"This will show a call control window for every call (both incoming and "
-"outgoing). If it is off, you can call from Kopete, but you have to control "
-"that call from Skype."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, CallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:458
-#, kde-format
-msgid "S&how call control (this will also hide Skype client call dialog)"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:486
-#, kde-format
-msgid "Auto close the call control window"
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:489
-#, kde-format
-msgid ""
-"This will close the call control window automatically when the call finishes"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, AutoCloseCallCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:492
-#, fuzzy, kde-format
-#| msgid "&Close"
-msgid "Autoc&lose"
-msgstr "Đón&g"
-
-#. i18n: ectx: property (text), widget (QLabel, textLabel1_3)
-#: protocols/skype/ui/skypeeditaccountbase.ui:544
-#, fuzzy, kde-format
-#| msgid "Timeout"
-msgid "Timeout:"
-msgstr "Quá giờ"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:607
-#, kde-format
-msgid ""
-"If this is enabled, Kopete keeps track of whether or not Skype is running."
-msgstr ""
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:610
-#, kde-format
-msgid ""
-"This keeps track of whether Skype is running. Turning this off only makes "
-"sense it you are trying to get non-flooded debug output."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, PingsCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:613
-#, fuzzy, kde-format
-#| msgid "Skype"
-msgid "Pi&ng Skype"
-msgstr "Skype"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, LeaveCheck)
-#. i18n: ectx: property (text), widget (QCheckBox, LeaveCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:623
-#: protocols/skype/ui/skypeeditaccountbase.ui:629
-#, fuzzy, kde-format
-#| msgid "Show events in chat &window"
-msgid "Do not leave a chat on window exit"
-msgstr "Hiện sự &kiện trong cửa sổ trò chuyện"
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, LeaveCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:626
-#, kde-format
-msgid ""
-"Do not leave a chat when the chat window is closed. Makes a difference only "
-"with multi-user chats: if it is checked, you will continue receiving "
-"messages from that chat even after closing the window."
-msgstr ""
-
-#. i18n: ectx: attribute (title), widget (QWidget, callsTab)
-#: protocols/skype/ui/skypeeditaccountbase.ui:656
-#, fuzzy, kde-format
-#| msgid "&Close"
-msgid "&Calls"
-msgstr "Đón&g"
-
-#. i18n: ectx: property (text), widget (QCheckBox, StartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:662
-#, fuzzy, kde-format
-#| msgid "E&xclude from connect all"
-msgid "E&xecute before call"
-msgstr "L&oại trừ ra Kết nối tất cả"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:717
-#, kde-format
-msgid ""
-"This will wait before making/accepting the call for the command to finish."
-msgstr ""
-"Việc này sẽ chờ cho lệnh kết thúc trước khi thực hiện / chấp nhận cuộc gọi."
-
-#. i18n: ectx: property (whatsThis), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:721
-#, kde-format
-msgid ""
-"This will wait for the command to finish before accepting/making the call."
-"<br>\n"
-"Note that kopete will freeze whilst waiting."
-msgstr ""
-"Việc này sẽ chờ cho lệnh kết thúc trước khi chấp nhận / thực hiện cuộc gọi. "
-"<br>\n"
-"Lưu ý rằng kopete sẽ treo khi đang chờ."
-
-#. i18n: ectx: property (text), widget (QCheckBox, WaitForStartCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:724
-#, kde-format
-msgid "Wait for fi&nish"
-msgstr "Chờ &kết thúc"
-
-#. i18n: ectx: property (text), widget (QCheckBox, EndCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:733
-#, fuzzy, kde-format
-#| msgid "E&xclude from connect all"
-msgid "Execute after call"
-msgstr "L&oại trừ ra Kết nối tất cả"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, OnlyLastCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:791
-#, kde-format
-msgid ""
-"Usually this makes no difference, but if there are some other calls on hold, "
-"it is executed only for the most recently ended one."
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, OnlyLastCallCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:794
-#, kde-format
-msgid "Onl&y for last call"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, IncomingCommandCheck)
-#: protocols/skype/ui/skypeeditaccountbase.ui:803
-#, fuzzy, kde-format
-#| msgid "E&xclude from connect all"
-msgid "Execute on inco&ming call"
-msgstr "L&oại trừ ra Kết nối tất cả"
-
 #: protocols/sms/serviceloader.cpp:46
 #, kde-format
 msgid "Could not load service %1."
@@ -23125,6 +22003,12 @@ msgstr ""
 "(thay thế đường dẫn thật) vào phần toàn cục [global] của tệp cấu hình « smb."
 "conf »."
 
+#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
+#: protocols/winpopup/ui/wpeditaccountbase.ui:221
+#, kde-format
+msgid "S&ystem"
+msgstr "Hệ thốn&g"
+
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_3)
 #: protocols/winpopup/ui/wpeditaccountbase.ui:233
 #, kde-format
@@ -23287,3 +22171,455 @@ msgstr "Lỗi cấu hình"
 #, kde-format
 msgid "User Info for %1"
 msgstr "Thông tin người dùng cho %1"
+
+#, fuzzy
+#~| msgid "For protocols:"
+#~ msgid "Skype protocol"
+#~ msgstr "Cho giao thức:"
+
+#, fuzzy
+#~| msgid "connected"
+#~ msgid "Chat denied"
+#~ msgstr "có kết nối"
+
+#, fuzzy
+#~| msgid "Unknown error."
+#~ msgid "Unknown error"
+#~ msgstr "Lỗi không rõ."
+
+#, fuzzy
+#~| msgid "error"
+#~ msgid "Misc error"
+#~ msgstr "lỗi"
+
+#, fuzzy
+#~| msgid "User Profile"
+#~ msgid "User is offline"
+#~ msgstr "Hồ sơ người dùng"
+
+#, fuzzy
+#~| msgid "Host not found."
+#~ msgid "No proxy found"
+#~ msgstr "Không tìm thấy máy."
+
+#, fuzzy
+#~| msgid "Session terminated."
+#~ msgid "Session terminated"
+#~ msgstr "Buổi hợp bị chấm dứt."
+
+#, fuzzy
+#~| msgid "Connecting error."
+#~ msgid "Sound recording error"
+#~ msgstr "Lỗi kết nối."
+
+#, fuzzy
+#~| msgid "This protocol does not currently support adding accounts."
+#~ msgid "This version of Skype does not support adding users to chat."
+#~ msgstr "Giao thức này hiện thời không hỗ trợ khả năng thêm danh khoản."
+
+#, fuzzy
+#~| msgid "Protocol"
+#~ msgid "Skype Protocol"
+#~ msgstr "Giao thức"
+
+#, fuzzy
+#~| msgid "Chat could not be joined"
+#~ msgid "Could not ping Skype"
+#~ msgstr "Không thể vào trò chuyện"
+
+#~ msgid "Skype API not ready yet, wait a bit longer"
+#~ msgstr "API của Skype chưa sẵn sàng, hãy chờ thêm một chút"
+
+#, fuzzy
+#~| msgid "An error occurred sending the message"
+#~ msgid ""
+#~ "Could not ping Skype.\n"
+#~ "Maybe Skype not running.\n"
+#~ "Error while sending a message to Skype (%1)."
+#~ msgstr "Gặp lỗi khi gửi tin nhắn"
+
+#, fuzzy
+#~| msgid "An error occurred sending the message"
+#~ msgid "Error while sending a message to Skype (%1)."
+#~ msgstr "Gặp lỗi khi gửi tin nhắn"
+
+#, fuzzy
+#~| msgid "Please connect first."
+#~ msgid "Please login to Skype first"
+#~ msgstr "Hãy kết nối trước."
+
+#, fuzzy
+#~| msgid "Skype"
+#~ msgid "Skype (%1)"
+#~ msgstr "Skype"
+
+#, fuzzy
+#~| msgid "Skype"
+#~ msgid "Skype Me"
+#~ msgstr "Skype"
+
+#, fuzzy
+#~| msgid "Make Meta Contact"
+#~ msgid "Make Test Call"
+#~ msgstr "Làm siêu liên lạc"
+
+#, fuzzy
+#~| msgid "You must be connected to delete a contact."
+#~ msgid "You must connect to Skype first."
+#~ msgstr "Bạn cần phải có kết nối hoạt động để xoá liên lạc."
+
+#, fuzzy
+#~| msgid "Could not write contact list to a file."
+#~ msgid "You must write the contact's name."
+#~ msgstr "Không thể ghi danh bạ vào tệp."
+
+#, fuzzy
+#~| msgid "Work Information"
+#~ msgid "Wrong Information"
+#~ msgstr "Thông tin về chỗ làm"
+
+#, fuzzy
+#~| msgid "The user %1 is already in this chat."
+#~ msgid "This contact already exists in this account."
+#~ msgstr "Người dùng %1 đã vào cuộc trò chuyện này."
+
+#, fuzzy
+#~| msgid "You must be connected to add a contact."
+#~ msgid "You cannot add yourself as a contact."
+#~ msgstr "Bạn cần phải có kết nối hoạt động để thêm liên hệ."
+
+#, fuzzy
+#~| msgid "&Cancel"
+#~ msgid "Canceled"
+#~ msgstr "&Thôi"
+
+#, fuzzy
+#~| msgid "Server is Busy"
+#~ msgid "Other person is busy"
+#~ msgstr "Máy chủ còn bận"
+
+#, fuzzy
+#~| msgid "&Refuse"
+#~ msgid "Refused"
+#~ msgstr "&Từ chối"
+
+#, fuzzy
+#~| msgid "Message"
+#~ msgid "Missed"
+#~ msgstr "Tin nhắn"
+
+#, fuzzy
+#~| msgid "&Resume"
+#~ msgid "Resume"
+#~ msgstr "Tiếp tục &lại"
+
+#, fuzzy
+#~| msgid "&Bold"
+#~ msgid "Hold"
+#~ msgstr "Đậ&m"
+
+#, fuzzy
+#~| msgid "Session in progress."
+#~ msgid "In progress"
+#~ msgstr "Buổi hợp đang chạy."
+
+#, fuzzy
+#~| msgid "Religion"
+#~ msgid "Ringing"
+#~ msgstr "Tôn giáo"
+
+#, fuzzy
+#~| msgid "&File"
+#~ msgid "Failed"
+#~ msgstr "&Tệp"
+
+#~ msgctxt ""
+#~ "Early media means the media played before the call is established. For "
+#~ "example it can be a calling tone or a waiting message such as all "
+#~ "operators are busy."
+#~ msgid "Early media (waiting for operator...)"
+#~ msgstr "Phương tiện phát sớm (đang chờ nhà cung cấp...)"
+
+#, fuzzy
+#~| msgctxt "a contact's online status in parenthesis."
+#~| msgid " (%1)"
+#~ msgid "Failed (%1)"
+#~ msgstr " (%1)"
+
+#, fuzzy
+#~| msgid "Cell:"
+#~ msgid "Call"
+#~ msgstr "Di động:"
+
+#, fuzzy
+#~| msgid "Conference Members"
+#~ msgid "Conference Call"
+#~ msgstr "Thành viên hội thảo"
+
+#, fuzzy
+#~| msgid "&Block Contact"
+#~ msgid "Block contact"
+#~ msgstr "&Chặn liên hệ"
+
+#, fuzzy
+#~| msgid "Warn User %1?"
+#~ msgid "Details for User %1"
+#~ msgstr "Cảnh báo người dùng %1?"
+
+#, fuzzy
+#~| msgid "Not in your contact list"
+#~ msgid "Configure Skype client"
+#~ msgstr "Không trong danh sách liên lạc"
+
+#, fuzzy
+#~| msgid "Please enter your away reason:"
+#~ msgid "Please enter your skype user name"
+#~ msgstr "Hãy nhập lí do vắng mặt của bạn:"
+
+#, fuzzy
+#~| msgid "You must enter a valid AOL screen name."
+#~ msgid "You must enter your skype user name"
+#~ msgstr "Bạn phải nhập vào một tên màn hình AOL hợp lệ."
+
+#, fuzzy
+#~| msgid "Not in your contact list"
+#~ msgid "Not in Skype list"
+#~ msgstr "Không trong danh sách liên lạc"
+
+#, fuzzy
+#~| msgid "Not at home"
+#~ msgid "Not authorized"
+#~ msgstr "Không ở nhà"
+
+#, fuzzy
+#~| msgid "Select Contact"
+#~ msgid "SkypeOut contact"
+#~ msgstr "Chọn liên hệ"
+
+#, fuzzy
+#~| msgid "Add Contact"
+#~ msgid "Add Skype Contact"
+#~ msgstr "Thêm liên hệ"
+
+#, fuzzy
+#~| msgid "Screen name:"
+#~ msgid "Skype name:"
+#~ msgstr "Tên màn hình:"
+
+#~ msgid "Se&arch"
+#~ msgstr "Tìm &kiếm"
+
+#, fuzzy
+#~| msgid "Skype"
+#~ msgid "Skype Call"
+#~ msgstr "Skype"
+
+#, fuzzy
+#~| msgid "Parties"
+#~ msgid "Name(s) of Participant(s)"
+#~ msgstr "Tiệc"
+
+#, fuzzy
+#~| msgid "Time :"
+#~ msgid "Time:"
+#~ msgstr "Giờ :"
+
+#, fuzzy
+#~| msgid "Accept"
+#~ msgid "Accept call"
+#~ msgstr "Chấp nhận"
+
+#~ msgid "Finish the call"
+#~ msgstr "Kết thúc cuộc gọi"
+
+#, fuzzy
+#~| msgid "Termi&nate"
+#~ msgid "Terminate the call"
+#~ msgstr "Chấm &dứt"
+
+#, fuzzy
+#~| msgid "Voice call"
+#~ msgid "Hold the call"
+#~ msgstr "Gọi tiếng nói"
+
+#, fuzzy
+#~| msgid "&Bold"
+#~ msgid "H&old"
+#~ msgstr "Đậ&m"
+
+#, fuzzy
+#~| msgid ""
+#~| "Please enter the email address of the person with whom you want to chat:"
+#~ msgid "Open chat to the person with whom you are talking."
+#~ msgstr "Hãy nhập địa chỉ thư điện tử của người với họ bạn muốn trò chuyện:"
+
+#, fuzzy
+#~| msgid "Detai&ls"
+#~ msgid "User's Details"
+#~ msgstr "Ch&i tiết"
+
+#, fuzzy
+#~| msgid "Skype"
+#~ msgid "Skype ID:"
+#~ msgstr "Skype"
+
+#, fuzzy
+#~| msgid "Author"
+#~ msgid "Authorized"
+#~ msgstr "Tác giả"
+
+#, fuzzy
+#~| msgid "Author"
+#~ msgid "Not Authorized"
+#~ msgstr "Tác giả"
+
+#, fuzzy
+#~| msgid "Author"
+#~ msgid "Is authorized:"
+#~ msgstr "Tác giả"
+
+#, fuzzy
+#~| msgid "Display Name"
+#~ msgid "Display Name:"
+#~ msgstr "Tên hiển thị"
+
+#, fuzzy
+#~| msgid "Size:"
+#~ msgid "Sex:"
+#~ msgstr "Cỡ :"
+
+#, fuzzy
+#~| msgid ""
+#~| "Check this box if you want to always send notifications to your contacts."
+#~ msgid "Check this if you do not want to connect with other protocols"
+#~ msgstr ""
+#~ "Bật tuỳ chọn này nếu lúc nào bạn cũng muốn gửi thông báo cho liên lạc."
+
+#, fuzzy
+#~| msgid "E&xclude from connect all"
+#~ msgid "E&xclude from connection"
+#~ msgstr "L&oại trừ ra Kết nối tất cả"
+
+#, fuzzy
+#~| msgid "Contact Notes"
+#~ msgid "Important Note"
+#~ msgstr "Ghi chú liên lạc"
+
+#, fuzzy
+#~| msgid "Never"
+#~ msgid "N&ever"
+#~ msgstr "Không bao giờ"
+
+#, fuzzy
+#~| msgid "Chat could not be joined"
+#~ msgid "Command to launch Skype:"
+#~ msgstr "Không thể vào trò chuyện"
+
+#, fuzzy
+#~| msgid "Skype"
+#~ msgid "skype"
+#~ msgstr "Skype"
+
+#, fuzzy
+#~| msgid "timeout"
+#~ msgid "Launch timeout:"
+#~ msgstr "quá giờ"
+
+#~ msgid "Wait before trying to connect to Skype:"
+#~ msgstr "Chờ trước khi thử kết nối đến Skype:"
+
+#, fuzzy
+#~| msgid "Clothing"
+#~ msgid "trying"
+#~ msgstr "Quần áo"
+
+#~ msgid "C&onnection"
+#~ msgstr "Kết nố&i"
+
+#, fuzzy
+#~| msgid "&Grant authorization"
+#~ msgid "&Non-standard authorization"
+#~ msgstr "uỷ &quyền"
+
+#, fuzzy
+#~| msgid "Busy"
+#~ msgid "Bus"
+#~ msgstr "Bận"
+
+#, fuzzy
+#~| msgid "Version"
+#~ msgid "Sessi&on"
+#~ msgstr "Phiên bản"
+
+#, fuzzy
+#~| msgid "Show a bubble on an incoming message"
+#~ msgid "Show all incoming messages"
+#~ msgstr "Hiện bóng khi tin nhắn gửi đến"
+
+#, fuzzy
+#~| msgid "Show a bubble on an incoming message"
+#~ msgid "Show all incoming &messages"
+#~ msgstr "Hiện bóng khi tin nhắn gửi đến"
+
+#, fuzzy
+#~| msgid "Married"
+#~ msgid "Mar&k as read"
+#~ msgstr "Có vợ/chồng"
+
+#, fuzzy
+#~| msgid "&Close"
+#~ msgid "Autoc&lose"
+#~ msgstr "Đón&g"
+
+#, fuzzy
+#~| msgid "Timeout"
+#~ msgid "Timeout:"
+#~ msgstr "Quá giờ"
+
+#, fuzzy
+#~| msgid "Skype"
+#~ msgid "Pi&ng Skype"
+#~ msgstr "Skype"
+
+#, fuzzy
+#~| msgid "Show events in chat &window"
+#~ msgid "Do not leave a chat on window exit"
+#~ msgstr "Hiện sự &kiện trong cửa sổ trò chuyện"
+
+#, fuzzy
+#~| msgid "&Close"
+#~ msgid "&Calls"
+#~ msgstr "Đón&g"
+
+#, fuzzy
+#~| msgid "E&xclude from connect all"
+#~ msgid "E&xecute before call"
+#~ msgstr "L&oại trừ ra Kết nối tất cả"
+
+#~ msgid ""
+#~ "This will wait before making/accepting the call for the command to finish."
+#~ msgstr ""
+#~ "Việc này sẽ chờ cho lệnh kết thúc trước khi thực hiện / chấp nhận cuộc "
+#~ "gọi."
+
+#~ msgid ""
+#~ "This will wait for the command to finish before accepting/making the call."
+#~ "<br>\n"
+#~ "Note that kopete will freeze whilst waiting."
+#~ msgstr ""
+#~ "Việc này sẽ chờ cho lệnh kết thúc trước khi chấp nhận / thực hiện cuộc "
+#~ "gọi. <br>\n"
+#~ "Lưu ý rằng kopete sẽ treo khi đang chờ."
+
+#~ msgid "Wait for fi&nish"
+#~ msgstr "Chờ &kết thúc"
+
+#, fuzzy
+#~| msgid "E&xclude from connect all"
+#~ msgid "Execute after call"
+#~ msgstr "L&oại trừ ra Kết nối tất cả"
+
+#, fuzzy
+#~| msgid "E&xclude from connect all"
+#~ msgid "Execute on inco&ming call"
+#~ msgstr "L&oại trừ ra Kết nối tất cả"
