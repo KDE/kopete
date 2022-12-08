@@ -5513,7 +5513,7 @@ msgstr ""
 #: libkopete/kopeteappearancesettings.kcfg:228
 #, kde-format
 msgid "Auto-hide timeout"
-msgstr "Temps d'espera per ocultar automàticament"
+msgstr "Temps d'espera per a ocultar automàticament"
 
 #. i18n: ectx: label, entry, group (ContactList)
 #: libkopete/kopeteappearancesettings.kcfg:235
@@ -9141,7 +9141,7 @@ msgstr "Sense empremta digital"
 #: plugins/otr/otrprefs.ui:110
 #, kde-format
 msgid "Default OTR Policy"
-msgstr "Política d'OTR per defecte"
+msgstr "Política predeterminada d'OTR"
 
 #. i18n: ectx: property (toolTip), widget (QRadioButton, kcfg_rbAlways)
 #: plugins/otr/otrprefs.ui:116
@@ -9825,7 +9825,7 @@ msgstr "M4júsCu13s 3sb0RRajad3s"
 #: plugins/translator/translatorconfig.kcfg:10
 #, kde-format
 msgid "Default native language"
-msgstr "Idioma natiu per defecte"
+msgstr "Idioma natiu predeterminat"
 
 #. i18n: ectx: label, entry (Service), group (Translator plugin)
 #: plugins/translator/translatorconfig.kcfg:15
@@ -10225,7 +10225,7 @@ msgstr "Servei de traducció:"
 #: plugins/translator/translatorprefsbase.ui:78
 #, kde-format
 msgid "Default native language:"
-msgstr "Idioma natiu per defecte:"
+msgstr "Idioma natiu predeterminat:"
 
 #. i18n: ectx: property (title), widget (QGroupBox, IncomingMessages)
 #: plugins/translator/translatorprefsbase.ui:100
@@ -12880,7 +12880,7 @@ msgstr "S'ha produït un error de protocol del servidor"
 #: protocols/groupwise/libgroupwise/gwerror.cpp:91
 #, kde-format
 msgid "Conversation invitation error"
-msgstr "S'ha produït un error d'invitació a la conversa"
+msgstr "S'ha produït un error d'invitació en la conversa"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:94
 #, kde-format
@@ -16454,7 +16454,7 @@ msgstr "Configuració"
 #: protocols/jabber/ui/privacy.ui:89
 #, kde-format
 msgid "Default list (all sessions):"
-msgstr "Llista per defecte (totes les sessions):"
+msgstr "Llista predeterminada (totes les sessions):"
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: protocols/jabber/ui/privacy.ui:96
@@ -17352,7 +17352,7 @@ msgstr "T&emps d'espera (s):"
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:692
 #, kde-format
 msgid "Default to the following &encoding for messages:"
-msgstr "Co&dificació per defecte per als missatges següents:"
+msgstr "Co&dificació predeterminada per als missatges següents:"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_4)
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:663
