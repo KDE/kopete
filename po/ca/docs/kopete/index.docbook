@@ -1389,7 +1389,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 <para
 >Hi ha estils de tercers disponibles a la <ulink url="https://store.kde.org/"
 >KDE Store</ulink
->. El &kopete; 0.12 ara permet estils de l'Adium (un programa de &im; del &Mac; OS X). Així que podeu descarregar estils d'Adium aquí: <ulink url="http://www.adiumxtras.com/"
+>. El &kopete; 0.12 ara permet estils de l'Adium (un programa de &im; del &Mac; OS X). Així que podeu descarregar estils de l'Adium aquí: <ulink url="http://www.adiumxtras.com/"
 >Adium Xtras</ulink
 > i seleccioneu Estils de Visualització de Missatges (Message View Styles).</para>
 <para
@@ -1615,7 +1615,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 			<title
 >Altres protocols</title>
 			<para
->Com amb els altres protocols anomenats més amunt, el &kopete; és compatible amb molts altres protocols. En la majoria de casos, aquest no està habilitat per defecte o s'hi ha d'instal·lar un connector addicional. Mentrestant, SMS, Skype i SILC es proporcionen d'aquesta manera. No obstant això, l'equip del &kopete; no és responsable d'aquests protocols.</para>
+>Com amb els altres protocols anomenats més amunt, el &kopete; és compatible amb molts altres protocols. En la majoria de casos, aquest no està habilitat per defecte o s'hi ha d'instal·lar un connector addicional. Mentrestant, SMS i SILC es proporcionen d'aquesta manera. No obstant això, l'equip del &kopete; no és responsable d'aquests protocols.</para>
 		</sect2>
 	</sect1>
 </chapter>
@@ -1638,10 +1638,10 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 </sect2-->
 <sect2 id="plugins-auto-replace">
 <title
->Autoreemplaçament</title>
+>Substitució automàtica</title>
 <para
 ><guilabel
->Autoreemplaçament</guilabel
+>Substitució automàtica</guilabel
 > us permet de corregir paraules que freqüentment es teclegen malament o desa el teclejat de paraules usant abreviacions.</para>
 </sect2>
 <sect2 id="plugins-bookmarks">

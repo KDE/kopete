@@ -1640,7 +1640,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 			<title
 >Otros protocolos</title>
 			<para
->Al igual que los protocolos mencionados anteriormente, &kopete; admite varios protocolos más. En la mayor parte de los casos, no están activados de forma predeterminada y deben activarse complementos adicionales. SMS, Skype y SILC se suministran de esta forma. Sin embargo, el equipo de &kopete; no es responsable de estos protocolos.</para>
+>Al igual que los protocolos mencionados anteriormente, &kopete; admite varios protocolos más. En la mayor parte de los casos, no están activados de forma predeterminada y deben activarse complementos adicionales. SMS y SILC se suministran de esta forma. Sin embargo, el equipo de &kopete; no es responsable de estos protocolos.</para>
 		</sect2>
 	</sect1>
 </chapter>
