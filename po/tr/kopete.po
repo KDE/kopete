@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2022-12-04 14:37+0300\n"
+"PO-Revision-Date: 2022-12-10 18:41+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -785,7 +785,7 @@ msgstr "&Metin Rengi..."
 #: kopete/chatwindow/kopeteemailwindow.cpp:247
 #, kde-format
 msgid "Set &Background Color..."
-msgstr "A&rkaplan Rengi..."
+msgstr "A&rka Plan Rengini Ayarla..."
 
 #: kopete/chatwindow/kopeteemailwindow.cpp:277
 #, kde-format
@@ -2753,7 +2753,7 @@ msgstr "Vurgulanmış iletiler için arka plan rengi"
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:192
 #, kde-format
 msgid "Highlight bac&kground:"
-msgstr "Ar&kaplan vurgusu:"
+msgstr "&Vurgu arka planı:"
 
 #. i18n: ectx: property (toolTip), widget (QLabel, textLabel1_3)
 #. i18n: ectx: property (whatsThis), widget (QLabel, textLabel1_3)
@@ -8115,13 +8115,13 @@ msgstr "Geçmişi içe aktar"
 #: plugins/latex/latexconfig.kcfg:11
 #, kde-format
 msgid "Horizontal Rendering Resolution (DPI)."
-msgstr "Yatay İşleme Çözünürlüğü (DPI)."
+msgstr "Yatay Sunum Çözünürlüğü (DPI)."
 
 #. i18n: ectx: label, entry (VerticalDPI), group (Latex Plugin)
 #: plugins/latex/latexconfig.kcfg:15
 #, kde-format
 msgid "Vertical Rendering Resolution (DPI)."
-msgstr "Dikey İşleme Çözünürlüğü (DPI)."
+msgstr "Dikey Sunum Çözünürlüğü (DPI)."
 
 #. i18n: ectx: label, entry (LatexIncludeFile), group (Latex Plugin)
 #: plugins/latex/latexconfig.kcfg:19
@@ -8162,7 +8162,7 @@ msgid ""
 "package manager."
 msgstr ""
 "Magick 'dönüştürme' uygulaması bulunamadı.\n"
-"convert LaTeX formüllerini gösterebilmek için gereklidir.\n"
+"convert LaTeX formüllerini sunabilmek için gereklidir.\n"
 "Lütfen www.imagemagick.org adresinden veya dağıtımınızın paket "
 "yöneticisinden doğru paketi alın."
 
@@ -8177,10 +8177,10 @@ msgid ""
 "order to work."
 msgstr ""
 "KopeteTex eklentisi Kopete'nin sohbet penceresinde LaTeX formüllerini "
-"işletebilmesine izin verir. Gönderici formülü iki $ işareti arasına "
-"almalıdır. Örn: $$formül$$\n"
+"sunabilmesine izin verir. Gönderici formülü iki $ işareti arasına almalıdır. "
+"Örn: $$formül$$\n"
 "Bu eklentinin çalışabilmesi için ImageMagick dönüştürme programının kurulu "
-"olmasını gerekir."
+"olması gerekir."
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #: plugins/latex/latexprefsbase.ui:44
@@ -8198,7 +8198,7 @@ msgstr "LaTeX içerme dosyası:"
 #: plugins/latex/latexprefsbase.ui:68
 #, kde-format
 msgid "Rendering resolution (DPI):"
-msgstr "Çözünürlük (DPI):"
+msgstr "Sunum çözünürlüğü (DPI):"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel3)
 #: plugins/latex/latexprefsbase.ui:78
