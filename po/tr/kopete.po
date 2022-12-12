@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2022-12-10 18:41+0300\n"
+"PO-Revision-Date: 2022-12-11 20:38+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 22.08.3\n"
+"X-Generator: Lokalize 22.12.0\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -9396,13 +9396,13 @@ msgstr "İçeriğe Göre Süz (birden çok sözcüğü virgüllerle ayırın)"
 #: plugins/privacy/privacydialog.ui:242
 #, kde-format
 msgid "Drop messages that contain all of the following words:"
-msgstr "Aşağıdaki tüm kelimelerin geçtiği iletileri bırak:"
+msgstr "Aşağıdaki tüm sözcüklerin geçtiği iletileri bırak:"
 
 #. i18n: ectx: property (text), widget (QCheckBox, chkDropAtLeastOne)
 #: plugins/privacy/privacydialog.ui:249
 #, kde-format
 msgid "Drop messages that contain at least one of the following words:"
-msgstr "Aşağıdaki kelimelerden en az birinin geçtiği iletileri bırak:"
+msgstr "Aşağıdaki sözcüklerden en az birinin geçtiği iletileri bırak:"
 
 #: plugins/privacy/privacyguiclient.cpp:50 plugins/privacy/privacyplugin.cpp:57
 #, kde-format
@@ -9427,7 +9427,7 @@ msgstr ""
 msgid ""
 "A message from %1 was dropped, because this contact is on your blacklist."
 msgstr ""
-"%1 kişisinden gelen ileti düştü çünkü bu kişi sizin kara listenizde "
+"%1 kişisinden gelen ileti düştü; çünkü bu kişi sizin kara listenizde "
 "bulunuyor."
 
 #: plugins/privacy/privacyplugin.cpp:179
@@ -9436,22 +9436,22 @@ msgid ""
 "A message from %1 was dropped, because this contact is not on your contact "
 "list."
 msgstr ""
-"%1 kişisinden gelen ileti düştü çünkü bu kişi sizin kişi listenizde "
+"%1 kişisinden gelen ileti düştü; çünkü bu kişi sizin kişi listenizde "
 "bulunmuyor."
 
 #: plugins/privacy/privacyplugin.cpp:196
 #, kde-format
 msgid "A message from %1 was dropped, because it contained a blacklisted word."
 msgstr ""
-"%1 kişisinden gelen ileti düştü çünkü iletide kara listeye alınmış bir "
-"kelime geçiyordu."
+"%1 kişisinden gelen ileti bırakıldı; çünkü iletide kara listeye alınmış bir "
+"sözcük geçiyordu."
 
 #: plugins/privacy/privacyplugin.cpp:219
 #, kde-format
 msgid "A message from %1 was dropped, because it contained blacklisted words."
 msgstr ""
-"%1 kişisinden gelen ileti düştü çünkü bu iletide kara listeye alınmış "
-"kelimeler geçiyordu."
+"%1 kişisinden gelen ileti düştü; çünkü bu iletide kara listeye alınmış "
+"sözcükler geçiyordu."
 
 #: plugins/privacy/privacypreferences.cpp:168
 #, kde-format
@@ -9737,7 +9737,7 @@ msgstr "Her mektubun rengini değiştir"
 #: plugins/texteffect/texteffectprefs.ui:168
 #, kde-format
 msgid "Change color every word"
-msgstr "Her kelimenin rengini değiştir"
+msgstr "Her sözcüğün rengini değiştir"
 
 #. i18n: ectx: attribute (title), widget (QWidget, tab)
 #: plugins/texteffect/texteffectprefs.ui:176
@@ -9829,7 +9829,7 @@ msgstr "Dil bul"
 #: plugins/translator/translatorlanguages.cpp:35
 #, kde-format
 msgid "Afrikaans"
-msgstr "Afrika Dili"
+msgstr "Afrikaanca"
 
 #: plugins/translator/translatorlanguages.cpp:36
 #, kde-format
@@ -9850,17 +9850,17 @@ msgstr "Ermenice"
 #: plugins/translator/translatorlanguages.cpp:40
 #, kde-format
 msgid "Azerbaijani"
-msgstr "Azerbeycanca"
+msgstr "Azerbaycanca"
 
 #: plugins/translator/translatorlanguages.cpp:41
 #, kde-format
 msgid "Basque"
-msgstr "Bask Dili"
+msgstr "Baskça"
 
 #: plugins/translator/translatorlanguages.cpp:42
 #, kde-format
 msgid "Belarusian"
-msgstr "Belarus Dili"
+msgstr "Beyaz Rusça"
 
 #: plugins/translator/translatorlanguages.cpp:43
 #, kde-format
@@ -9897,13 +9897,13 @@ msgstr "Çekçe"
 #: plugins/translator/translatorlanguages.cpp:49
 #, kde-format
 msgid "Danish"
-msgstr "Danimarkaca"
+msgstr "Danca"
 
 #: plugins/translator/translatorlanguages.cpp:50
 #: plugins/translator/translatorlanguages.cpp:98
 #, kde-format
 msgid "Dutch"
-msgstr "Flamanca"
+msgstr "Hollandaca"
 
 #: plugins/translator/translatorlanguages.cpp:51
 #: plugins/translator/translatorlanguages.cpp:97
@@ -9914,7 +9914,7 @@ msgstr "İngilizce"
 #: plugins/translator/translatorlanguages.cpp:52
 #, kde-format
 msgid "Estonian"
-msgstr "Estonya Dili"
+msgstr "Estonca"
 
 #: plugins/translator/translatorlanguages.cpp:53
 #, kde-format
@@ -9935,7 +9935,7 @@ msgstr "Fransızca"
 #: plugins/translator/translatorlanguages.cpp:56
 #, kde-format
 msgid "Galician"
-msgstr "Galce"
+msgstr "Galiçyaca"
 
 #: plugins/translator/translatorlanguages.cpp:57
 #, kde-format
@@ -9982,12 +9982,12 @@ msgstr "İzlandaca"
 #: plugins/translator/translatorlanguages.cpp:65
 #, kde-format
 msgid "Indonesian"
-msgstr "Endonezya Dili"
+msgstr "Endonezce"
 
 #: plugins/translator/translatorlanguages.cpp:66
 #, kde-format
 msgid "Irish"
-msgstr "İrlanda Dili"
+msgstr "İrlandaca"
 
 #: plugins/translator/translatorlanguages.cpp:67
 #: plugins/translator/translatorlanguages.cpp:102
@@ -10010,7 +10010,7 @@ msgstr "Korece"
 #: plugins/translator/translatorlanguages.cpp:70
 #, kde-format
 msgid "Latvian"
-msgstr "Letonyaca"
+msgstr "Letonca"
 
 #: plugins/translator/translatorlanguages.cpp:71
 #, kde-format
@@ -10056,7 +10056,7 @@ msgstr "Portekizce"
 #: plugins/translator/translatorlanguages.cpp:79
 #, kde-format
 msgid "Romanian"
-msgstr "Romence"
+msgstr "Rumence"
 
 #: plugins/translator/translatorlanguages.cpp:80
 #: plugins/translator/translatorlanguages.cpp:106
@@ -17693,7 +17693,7 @@ msgstr "Farsça"
 #: protocols/oscar/icq/icqprotocol.cpp:521
 #, kde-format
 msgid "Punjabi"
-msgstr "Punjabi"
+msgstr "Pencapça"
 
 #. i18n("Chamorro")
 #. i18n("Mongolian")
@@ -17939,7 +17939,7 @@ msgstr "IBM 866"
 #: protocols/oscar/oscarencodingselectiondialog.cpp:83
 #, kde-format
 msgid "TIS-620 Thai"
-msgstr "TIS-620 Thai"
+msgstr "TIS-620 Tay"
 
 #: protocols/oscar/icq/icqprotocol.cpp:587
 #: protocols/oscar/oscarencodingselectiondialog.cpp:85
