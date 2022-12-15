@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-08 00:45+0000\n"
-"PO-Revision-Date: 2022-10-04 05:51+0200\n"
+"PO-Revision-Date: 2022-12-14 18:12+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -276,7 +276,7 @@ msgstr ""
 #: kopete/chatwindow/kopeteemailwindow.cpp:477
 #, kde-format
 msgid "Unread Message"
-msgstr ""
+msgstr "წაუკითხავი შეტყობინება"
 
 #: kopete/chatwindow/chatview.cpp:261
 #, kde-format
@@ -598,7 +598,7 @@ msgstr "სტატუსი"
 #: kopete/chatwindow/kopeterichtexteditpartfull.rc:33
 #, kde-format
 msgid "Format Toolbar"
-msgstr ""
+msgstr "ფორმატირების ზოლი"
 
 #. i18n: ectx: label
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:14
@@ -742,7 +742,7 @@ msgstr "ტექსტის &ფერის დაყენება..."
 #: kopete/chatwindow/kopeteemailwindow.cpp:247
 #, kde-format
 msgid "Set &Background Color..."
-msgstr ""
+msgstr "&ფონის ფერის დაყენება...."
 
 #: kopete/chatwindow/kopeteemailwindow.cpp:277
 #, kde-format
@@ -776,7 +776,7 @@ msgstr "პასუხი"
 #: kopete/chatwindow/kopeteemoticonaction.cpp:70
 #, kde-format
 msgid "Add Smiley"
-msgstr ""
+msgstr "სიცილაკის დამატება"
 
 #. i18n: ectx: Menu (format)
 #: kopete/chatwindow/kopeterichtexteditpartfull.rc:4
@@ -813,7 +813,7 @@ msgstr "ანგარიშის პარამეტრების შე�
 #: kopete/config/accounts/kopeteaccountconfig.cpp:315
 #, kde-format
 msgid "Are you sure you want to remove the account \"%1\"?"
-msgstr ""
+msgstr "დარწმუნებული ბრძანდებით, რომ გნებავთ ამ ანგარიშის (\"%1\") წაშლა?"
 
 #: kopete/config/accounts/kopeteaccountconfig.cpp:316
 #, kde-format
@@ -1233,7 +1233,7 @@ msgstr ""
 #: kopete/config/appearance/appearanceconfig_colors.ui:58
 #, kde-format
 msgid "Small font:"
-msgstr ""
+msgstr "პატარა ფონტი:"
 
 #. i18n: ectx: property (title), widget (KButtonGroup, kbuttongroup)
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
@@ -2465,12 +2465,12 @@ msgctxt ""
 "This special UTF-8 string is to test if the style supports Right-to-Left "
 "language display."
 msgid "הודעות טקסט"
-msgstr ""
+msgstr "הודעות טקסט"
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:679
 #, kde-format
 msgid "Bye"
-msgstr ""
+msgstr "ნახვამდის"
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:755
 #, kde-format
@@ -2793,7 +2793,7 @@ msgstr "უმოქმედო"
 #: kopete/config/status/statusconfig_manager.cpp:74
 #, kde-format
 msgid "Do Not Change"
-msgstr ""
+msgstr "არ შეცვალო"
 
 #: kopete/config/status/statusconfig_manager.cpp:111
 #, kde-format
@@ -2967,7 +2967,7 @@ msgstr "არჩიეთ მისამართების წიგნი"
 #: plugins/privacy/contactselectorwidget_base.ui:21
 #, kde-format
 msgid "Select Contact"
-msgstr ""
+msgstr "აირჩიეთ კონტაქტი"
 
 #: kopete/contactlist/kabcexport.cpp:94
 #, kde-format
@@ -3033,7 +3033,7 @@ msgstr ""
 #: kopete/contactlist/kopeteaddrbookexport.cpp:195
 #, kde-format
 msgid "Export"
-msgstr ""
+msgstr "გატანა"
 
 #: kopete/contactlist/kopeteaddrbookexport.cpp:196
 #, kde-format
@@ -3062,13 +3062,13 @@ msgstr "სახელი:"
 #: kopete/contactlist/kopeteaddrbookexportui.ui:47
 #, kde-format
 msgid "Home phone:"
-msgstr ""
+msgstr "სახლის ტელეფონი:"
 
 #. i18n: ectx: property (text), widget (QLabel, mLblWorkPhone)
 #: kopete/contactlist/kopeteaddrbookexportui.ui:66
 #, kde-format
 msgid "Work phone:"
-msgstr ""
+msgstr "სამსახურის ნომერი:"
 
 #. i18n: ectx: property (text), widget (QLabel, mLblMobilePhone)
 #. i18n: ectx: property (text), widget (QLabel, mobileLabel)
@@ -3076,7 +3076,7 @@ msgstr ""
 #: kopete/identity/identitydetailed.ui:45
 #, kde-format
 msgid "Mobile phone:"
-msgstr ""
+msgstr "მობილური ტელეფონი:"
 
 #. i18n: ectx: property (text), widget (QLabel, mLblUrl)
 #: kopete/contactlist/kopeteaddrbookexportui.ui:86
@@ -3114,12 +3114,12 @@ msgstr "ახალი ჯგუფის შექმნა..."
 #: kopete/contactlist/kopetecontactlistview.cpp:174
 #, kde-format
 msgid "&Move To"
-msgstr ""
+msgstr "&გადატანა"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:177
 #, kde-format
 msgid "&Copy To"
-msgstr ""
+msgstr "&გადაკოპირება"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:181
 #, kde-format
@@ -3141,12 +3141,12 @@ msgstr "გადარქმევა"
 #: kopete/contactlist/kopetecontactlistview.cpp:200 kopete/kopetewindow.cpp:416
 #, kde-format
 msgid "&Add Contact"
-msgstr ""
+msgstr "კონტაქტის &დამატება"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:202
 #, kde-format
 msgid "Select Account"
-msgstr ""
+msgstr "აირჩიეთ ანგარიში"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:204
 #, kde-format
@@ -3245,7 +3245,7 @@ msgstr ""
 #: kopete/contactlist/kopetecontactlistview.cpp:840
 #, kde-format
 msgid "Rename Group"
-msgstr ""
+msgstr "ჯგუფის სახელის გადარქემვა"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:841
 #, kde-format
@@ -3537,7 +3537,7 @@ msgstr ""
 #: kopete/groupkabcselectorwidget.ui:31
 #, kde-format
 msgid "&Group:"
-msgstr ""
+msgstr "&ჯგუფი:"
 
 #. i18n: ectx: property (text), widget (QLabel, kabcLabel)
 #: kopete/groupkabcselectorwidget.ui:44
@@ -3698,7 +3698,7 @@ msgstr ""
 #: kopete/kopeteui.rc:73
 #, kde-format
 msgid "&Groups"
-msgstr ""
+msgstr "&ჯგუფები"
 
 #: kopete/kopetewindow.cpp:122
 #, kde-format
@@ -3862,7 +3862,7 @@ msgstr "Laurent Montel"
 #: kopete/main.cpp:49
 #, kde-format
 msgid "Porting to KF5"
-msgstr ""
+msgstr "KF5-ზე პორტი"
 
 #: kopete/main.cpp:50
 #, kde-format
@@ -4044,7 +4044,7 @@ msgstr ""
 #: kopete/main.cpp:70
 #, kde-format
 msgid "Charles Connell"
-msgstr ""
+msgstr "Charles Connell"
 
 #: kopete/main.cpp:71
 #, kde-format
@@ -4129,7 +4129,7 @@ msgstr ""
 #: kopete/main.cpp:80
 #, kde-format
 msgid "Olaf Lueg"
-msgstr ""
+msgstr "Olaf Lueg"
 
 #: kopete/main.cpp:80
 #, kde-format
@@ -4139,7 +4139,7 @@ msgstr ""
 #: kopete/main.cpp:81
 #, kde-format
 msgid "Chetan Reddy"
-msgstr ""
+msgstr "Chetan Reddy"
 
 #: kopete/main.cpp:81 kopete/main.cpp:83 kopete/main.cpp:84 kopete/main.cpp:85
 #: kopete/main.cpp:86 kopete/main.cpp:89 kopete/main.cpp:92
@@ -4150,7 +4150,7 @@ msgstr ""
 #: kopete/main.cpp:82
 #, kde-format
 msgid "Nick Betcher"
-msgstr ""
+msgstr "Nick Betcher"
 
 #: kopete/main.cpp:82
 #, kde-format
@@ -4165,17 +4165,17 @@ msgstr "Ryan Cumming"
 #: kopete/main.cpp:84
 #, kde-format
 msgid "Stefan Gehn"
-msgstr ""
+msgstr "Stefan Gehn"
 
 #: kopete/main.cpp:85
 #, kde-format
 msgid "Martijn Klingens"
-msgstr ""
+msgstr "Martijn Klingens"
 
 #: kopete/main.cpp:86
 #, kde-format
 msgid "Andres Krapf"
-msgstr ""
+msgstr "Andres Krapf"
 
 #: kopete/main.cpp:87
 #, kde-format
@@ -4200,12 +4200,12 @@ msgstr ""
 #: kopete/main.cpp:89
 #, kde-format
 msgid "Richard Stellingwerff"
-msgstr ""
+msgstr "Richard Stellingwerff"
 
 #: kopete/main.cpp:90
 #, kde-format
 msgid "Daniel Stone"
-msgstr ""
+msgstr "Daniel Stone"
 
 #: kopete/main.cpp:90
 #, kde-format
@@ -4215,7 +4215,7 @@ msgstr ""
 #: kopete/main.cpp:91
 #, kde-format
 msgid "Chris TenHarmsel"
-msgstr ""
+msgstr "Chris TenHarmsel"
 
 #: kopete/main.cpp:91
 #, kde-format
@@ -4225,12 +4225,12 @@ msgstr ""
 #: kopete/main.cpp:92
 #, kde-format
 msgid "Hendrik vom Lehn"
-msgstr ""
+msgstr "Hendrik vom Lehn"
 
 #: kopete/main.cpp:93
 #, kde-format
 msgid "Gav Wood"
-msgstr ""
+msgstr "Gav Wood"
 
 #: kopete/main.cpp:93
 #, kde-format
@@ -5001,7 +5001,7 @@ msgstr "დაკავშირებული არაა"
 #: protocols/oscar/icq/icqprotocol.cpp:107
 #, kde-format
 msgid "Choose Account"
-msgstr ""
+msgstr "აირჩიეთ ანგარიში"
 
 #: libkopete/kabcpersistence.cpp:407
 #, kde-format
@@ -5805,7 +5805,7 @@ msgstr "%3სთ %2წთ %1წმ"
 #, no-c-format, kde-format
 msgctxt "<minutes>m <seconds>s"
 msgid "%2m %1s"
-msgstr ""
+msgstr "%2წთ %1წმ"
 
 #: libkopete/kopeteglobal.cpp:118
 #, kde-format
@@ -5893,7 +5893,7 @@ msgstr ""
 #: libkopete/kopetegroup.cpp:54
 #, kde-format
 msgid "Offline Users"
-msgstr ""
+msgstr "გათიშული მომხმარებლები"
 
 #: libkopete/kopeteidentity.cpp:157
 #, kde-format
@@ -6115,7 +6115,7 @@ msgstr ""
 #: libkopete/kopetetransfermanager.cpp:569
 #, kde-format
 msgid "Overwrite File"
-msgstr ""
+msgstr "ფაილის ჩანაცვლება"
 
 #: libkopete/kopetetransfermanager.cpp:576
 #: libkopete/kopetetransfermanager.cpp:604
@@ -6267,7 +6267,7 @@ msgstr ""
 #: libkopete/ui/addressbooklinkwidget_base.ui:59
 #, kde-format
 msgid "C&hange..."
-msgstr ""
+msgstr "&შეცვლა..."
 
 #. i18n: ectx: property (text), widget (QTreeWidget, addresseeListView)
 #: libkopete/ui/addressbookselectorwidget.cpp:77
@@ -6344,7 +6344,7 @@ msgstr ""
 #: libkopete/ui/avatarwebcamdialog.cpp:62
 #, kde-format
 msgid "Take a photo"
-msgstr ""
+msgstr "სურათის გადაღება"
 
 #: libkopete/ui/contactaddednotifydialog.cpp:54
 #, kde-format
@@ -6510,7 +6510,7 @@ msgstr ""
 #: libkopete/ui/kopetestdaction.cpp:94
 #, kde-format
 msgid "Send &File..."
-msgstr ""
+msgstr "ფაილის &გაგზავნა…"
 
 #: libkopete/ui/kopetestdaction.cpp:99
 #, kde-format
@@ -6540,7 +6540,7 @@ msgstr ""
 #: libkopete/ui/kopetestdaction.cpp:136
 #, kde-format
 msgid "&Block Contact"
-msgstr ""
+msgstr "&კონტაქტის დაბლოკვა"
 
 #: libkopete/ui/kopetestdaction.cpp:141
 #, kde-format
@@ -6872,7 +6872,7 @@ msgstr ""
 #: plugins/contactnotes/contactnotesplugin.cpp:45
 #, kde-format
 msgid "&Notes"
-msgstr ""
+msgstr "&შენიშვნები"
 
 #. i18n: ectx: Menu (tools)
 #: plugins/cryptography/cryptographychatui.rc:5
@@ -7101,7 +7101,7 @@ msgstr ""
 #, kde-format
 msgctxt "@action:button"
 msgid "Export"
-msgstr ""
+msgstr "გატანა"
 
 #: plugins/cryptography/exportkeys.cpp:41
 #, kde-format
@@ -7182,7 +7182,7 @@ msgstr "სახელის გადარქმევა..."
 #: plugins/highlight/highlightprefsbase.ui:96
 #, kde-format
 msgid "Criteria"
-msgstr ""
+msgstr "კრიტერიუმი"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: plugins/highlight/highlightprefsbase.ui:123
@@ -7679,7 +7679,7 @@ msgstr ""
 #: plugins/history/historyviewer.ui:83 plugins/history2/history2viewer.ui:83
 #, kde-format
 msgid "All Messages"
-msgstr ""
+msgstr "ყველა შეტყობინება"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, messageFilterBox)
 #: plugins/history/historyviewer.ui:88 plugins/history2/history2viewer.ui:88
@@ -8095,7 +8095,7 @@ msgstr ""
 #: plugins/otr/authenticationwizard.cpp:112
 #, kde-format
 msgid "Shared Secret"
-msgstr ""
+msgstr "გაზიარებული საიდუმლო ფრაზა"
 
 #: plugins/otr/authenticationwizard.cpp:113
 #, kde-format
@@ -8138,7 +8138,7 @@ msgstr ""
 #, kde-format
 msgctxt "@title"
 msgid "Shared Secret"
-msgstr ""
+msgstr "გაზიარებული საიდუმლო ფრაზა"
 
 #: plugins/otr/authenticationwizard.cpp:178
 #, kde-format
@@ -8176,13 +8176,13 @@ msgstr ""
 #, kde-format
 msgctxt "@item:inlistbox ...verified that"
 msgid "I have not"
-msgstr ""
+msgstr "არ მაქვს"
 
 #: plugins/otr/authenticationwizard.cpp:205
 #, kde-format
 msgctxt "@item:inlistbox ...verified that"
 msgid "I have"
-msgstr ""
+msgstr "მაქვს"
 
 #: plugins/otr/authenticationwizard.cpp:214
 #, kde-format
@@ -8773,7 +8773,7 @@ msgstr "ორივე მიმართულებით"
 #: plugins/pipes/pipesdelegate.cpp:45 plugins/pipes/pipesdelegate.cpp:169
 #, kde-format
 msgid "HTML Message Body"
-msgstr ""
+msgstr "HTML შეტყობინების სხეული"
 
 #: plugins/pipes/pipesdelegate.cpp:46 plugins/pipes/pipesdelegate.cpp:171
 #, kde-format
@@ -8921,7 +8921,7 @@ msgstr ""
 #: plugins/privacy/privacydialog.ui:99
 #, kde-format
 msgid "Blacklist:"
-msgstr ""
+msgstr "შავი სია:"
 
 #. i18n: ectx: property (text), widget (QRadioButton, radioAllowAll)
 #: plugins/privacy/privacydialog.ui:125
@@ -9341,7 +9341,7 @@ msgstr "თარგმნა"
 #: plugins/translator/translatorlanguages.cpp:34
 #, kde-format
 msgid "Detect language"
-msgstr ""
+msgstr "ნაგულისხმები ენა"
 
 #: plugins/translator/translatorlanguages.cpp:35
 #, kde-format
@@ -10955,7 +10955,7 @@ msgstr ""
 #: protocols/gadu/ui/gaduadd.ui:180
 #, kde-format
 msgid "&Email address:"
-msgstr ""
+msgstr "&ელფოსტის მისამართი:"
 
 #. i18n: ectx: property (text), widget (QLabel)
 #. i18n: ectx: property (text), widget (QLabel, TextLabel1_4_2)
@@ -11440,13 +11440,13 @@ msgstr ""
 #: protocols/qq/ui/qqeditaccountui.ui:389
 #, kde-format
 msgid "po&rt:"
-msgstr ""
+msgstr "&პორტი:"
 
 #. i18n: ectx: property (text), widget (KRestrictedLine, ipAddress)
 #: protocols/gadu/ui/gadueditaccountui.ui:787
 #, kde-format
 msgid "0.0.0.0"
-msgstr ""
+msgstr "0.0.0.0"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, GaduRegisterAccountUI)
 #: protocols/gadu/ui/gaduregisteraccountui.ui:13
@@ -11578,7 +11578,7 @@ msgstr ""
 #: protocols/gadu/ui/gadusearch.ui:140 protocols/jabber/ui/dlgchatjoin.ui:16
 #, kde-format
 msgid "Nick:"
-msgstr ""
+msgstr "&მეტსახელი:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1_2_2a)
 #: protocols/gadu/ui/gadusearch.ui:164
@@ -11707,7 +11707,7 @@ msgstr ""
 #: protocols/groupwise/gwaccount.cpp:761 protocols/jabber/jabberaccount.cpp:518
 #, kde-format
 msgid "The signature is invalid."
-msgstr ""
+msgstr "ხელმოწერა არასწორია."
 
 #: protocols/groupwise/gwaccount.cpp:765 protocols/jabber/jabberaccount.cpp:522
 #, kde-format
@@ -11882,7 +11882,7 @@ msgstr ""
 #: protocols/groupwise/gwcontact.cpp:160 protocols/qq/qqcontact.cpp:137
 #, kde-format
 msgid "Unblock User"
-msgstr ""
+msgstr "მომხმარებლის განბლოკვა"
 
 #: protocols/groupwise/gwcontact.cpp:160 protocols/qq/qqcontact.cpp:137
 #, kde-format
@@ -12051,7 +12051,7 @@ msgstr "მხარდაუჭერელია"
 #: protocols/groupwise/libgroupwise/gwerror.cpp:34
 #, kde-format
 msgid "Password expired"
-msgstr ""
+msgstr "პაროლი ვადაგასულია"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:37
 #, kde-format
@@ -12729,7 +12729,7 @@ msgstr ""
 #: protocols/groupwise/ui/gwcontactsearch.ui:43
 #, kde-format
 msgid "&User ID"
-msgstr ""
+msgstr "&მომხმარებლის ID"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel4)
 #: protocols/groupwise/ui/gwcontactsearch.ui:56
@@ -12783,7 +12783,7 @@ msgstr ""
 #: protocols/groupwise/ui/gwcontactsearch.ui:214
 #, kde-format
 msgid "equals"
-msgstr ""
+msgstr "უდრის"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel2)
 #: protocols/groupwise/ui/gwcontactsearch.ui:148
@@ -12952,7 +12952,7 @@ msgstr ""
 #: protocols/groupwise/ui/gwshowinvitation.ui:87
 #, kde-format
 msgid "Contact Name"
-msgstr ""
+msgstr "კონტაქტის სახელი"
 
 #. i18n: ectx: property (text), widget (QLabel, message)
 #: protocols/groupwise/ui/gwshowinvitation.ui:105
@@ -12987,7 +12987,7 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:234
 #, kde-format
 msgid "Services..."
-msgstr ""
+msgstr "სერვისები..."
 
 #: protocols/jabber/jabberaccount.cpp:241
 #: protocols/jabber/ui/dlgxmppconsole.cpp:32
@@ -13078,7 +13078,7 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:842
 #, kde-format
 msgid "Internal server error."
-msgstr ""
+msgstr "სერვერის შიდა შეცდომა."
 
 #: protocols/jabber/jabberaccount.cpp:845
 #, kde-format
@@ -13098,17 +13098,17 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:856
 #, kde-format
 msgid "Resource constraint."
-msgstr ""
+msgstr "რესურსების შეზღუდვა."
 
 #: protocols/jabber/jabberaccount.cpp:860
 #, kde-format
 msgid "System shutdown."
-msgstr ""
+msgstr "სისტემის გამორთვა."
 
 #: protocols/jabber/jabberaccount.cpp:863
 #, kde-format
 msgid "Unknown reason."
-msgstr ""
+msgstr "უცნობი მიზეზი."
 
 #: protocols/jabber/jabberaccount.cpp:867
 #, kde-format
@@ -13138,12 +13138,12 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:887
 #, kde-format
 msgid "Network failure."
-msgstr ""
+msgstr "ქსელის შეცდომა."
 
 #: protocols/jabber/jabberaccount.cpp:890
 #, kde-format
 msgid "Socket timed out."
-msgstr ""
+msgstr "სოკეტის მოლოდინის დრო ამოიწურა."
 
 #: protocols/jabber/jabberaccount.cpp:893
 #, kde-format
@@ -13163,7 +13163,7 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:909
 #, kde-format
 msgid "Unknown host."
-msgstr ""
+msgstr "უცნობი ჰოსტი."
 
 #: protocols/jabber/jabberaccount.cpp:913
 #, kde-format
@@ -13240,22 +13240,22 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:965
 #, kde-format
 msgid "Invalid user ID."
-msgstr ""
+msgstr "მომხმარებლის ID არასწორია."
 
 #: protocols/jabber/jabberaccount.cpp:968
 #, kde-format
 msgid "Invalid mechanism."
-msgstr ""
+msgstr "არასწორი მექანიზმი."
 
 #: protocols/jabber/jabberaccount.cpp:971
 #, kde-format
 msgid "Invalid realm."
-msgstr ""
+msgstr "არასწორი რეალმი."
 
 #: protocols/jabber/jabberaccount.cpp:974
 #, kde-format
 msgid "Mechanism too weak."
-msgstr ""
+msgstr "მექანიზმი ძალიან სუსტია."
 
 #: protocols/jabber/jabberaccount.cpp:977
 #, kde-format
@@ -13295,7 +13295,7 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:1014
 #, kde-format
 msgid "The resource is already in use."
-msgstr ""
+msgstr "რესურსი უკვე გამოიყენება."
 
 #: protocols/jabber/jabberaccount.cpp:1021
 #, kde-format
@@ -13533,7 +13533,7 @@ msgstr ""
 #: protocols/jabber/jabbercontact.cpp:144
 #, kde-format
 msgid "Authorization"
-msgstr ""
+msgstr "ავტორიზაცია"
 
 #: protocols/jabber/jabbercontact.cpp:150
 #, kde-format
@@ -13558,12 +13558,12 @@ msgstr ""
 #: protocols/jabber/jabbercontact.cpp:185
 #, kde-format
 msgid "Set Availability"
-msgstr ""
+msgstr "ხელმისაწვდომობის დაყენება"
 
 #: protocols/jabber/jabbercontact.cpp:195
 #, kde-format
 msgid "Free to Chat"
-msgstr ""
+msgstr "სასაუბროდ თავისუფალი"
 
 #: protocols/jabber/jabbercontact.cpp:198
 #: protocols/oscar/aim/aimstatusmanager.cpp:69
@@ -13822,7 +13822,7 @@ msgstr ""
 #: protocols/jabber/jabberprotocol.cpp:110
 #, kde-format
 msgid "Home Country"
-msgstr ""
+msgstr "საწყისი ქვეყანა"
 
 #: protocols/jabber/jabberprotocol.cpp:111
 #, kde-format
@@ -14366,7 +14366,7 @@ msgstr "წინა"
 #: protocols/oscar/icq/ui/icqchangepassword.ui:30
 #, kde-format
 msgid "Current password:"
-msgstr ""
+msgstr "Მიმდინარე პაროლი:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel2)
 #. i18n: ectx: property (text), widget (QLabel, textLabel3)
@@ -15055,7 +15055,7 @@ msgstr ""
 #: protocols/jabber/ui/dlgjabberregisteraccount.ui:173
 #, kde-format
 msgid "&Repeat password:"
-msgstr ""
+msgstr "&გაიმეორეთ პაროლი:"
 
 #. i18n: ectx: property (text), widget (QLabel, lblPort)
 #: protocols/jabber/ui/dlgjabberregisteraccount.ui:222
@@ -15310,7 +15310,7 @@ msgstr ""
 #: protocols/jabber/ui/dlgvcard.ui:285 protocols/jabber/ui/dlgvcard.ui:385
 #, kde-format
 msgid "Postal code:"
-msgstr ""
+msgstr "საფოსტო კოდი:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel9)
 #. i18n: ectx: property (text), widget (QLabel, textLabel3_2)
@@ -15461,7 +15461,7 @@ msgstr ""
 #: protocols/jabber/ui/jabberchooseserver.cpp:52
 #, kde-format
 msgid "Retrieving server list..."
-msgstr ""
+msgstr "სერვერების სიის მიღება..."
 
 #: protocols/jabber/ui/jabberchooseserver.cpp:120
 #, kde-format
@@ -15583,7 +15583,7 @@ msgstr ""
 #: protocols/jabber/ui/privacy.ui:151
 #, kde-format
 msgid "List:"
-msgstr ""
+msgstr "სია:"
 
 #. i18n: ectx: property (text), widget (QPushButton, pb_newList)
 #: protocols/jabber/ui/privacy.ui:178
@@ -15666,7 +15666,7 @@ msgstr ""
 #: protocols/jabber/ui/privacydlg.cpp:310
 #, kde-format
 msgid "New List"
-msgstr ""
+msgstr "ახალი სია"
 
 #: protocols/jabber/ui/privacydlg.cpp:310
 #, kde-format
@@ -16517,7 +16517,7 @@ msgstr ""
 #: protocols/oscar/aim/ui/aiminfobase.ui:118
 #, kde-format
 msgid "Online since:"
-msgstr ""
+msgstr "ონლაინ დრო:"
 
 #. i18n: ectx: property (text), widget (QLabel, lblAwayMessage)
 #: protocols/oscar/aim/ui/aiminfobase.ui:138
@@ -16886,7 +16886,7 @@ msgstr ""
 #: protocols/oscar/icq/icqprotocol.cpp:525
 #, kde-format
 msgid "Taiwanese"
-msgstr ""
+msgstr "ტაივანური"
 
 #. i18n("Macedonian")
 #. i18n("Sindhi")
@@ -17162,7 +17162,7 @@ msgstr ""
 #: protocols/oscar/icq/icqprotocol.cpp:605
 #, kde-format
 msgid "Separated"
-msgstr ""
+msgstr "განშორებული"
 
 #: protocols/oscar/icq/icqprotocol.cpp:606
 #, kde-format
@@ -17295,7 +17295,7 @@ msgstr ""
 #: protocols/oscar/icq/icqprotocol.cpp:679
 #, kde-format
 msgid "Government"
-msgstr ""
+msgstr "მთავრობა"
 
 #: protocols/oscar/icq/icqprotocol.cpp:638
 #, kde-format
@@ -17325,7 +17325,7 @@ msgstr "სივრცე"
 #: protocols/oscar/icq/icqprotocol.cpp:643
 #, kde-format
 msgid "Clothing"
-msgstr ""
+msgstr "ტანსაცმელი"
 
 #: protocols/oscar/icq/icqprotocol.cpp:644
 #, kde-format
@@ -17501,7 +17501,7 @@ msgstr ""
 #: protocols/oscar/icq/icqprotocol.cpp:734
 #, kde-format
 msgid "Military"
-msgstr ""
+msgstr "სამხედრო"
 
 #: protocols/oscar/icq/icqprotocol.cpp:688
 #, kde-format
@@ -18309,7 +18309,7 @@ msgstr ""
 #: protocols/oscar/icq/ui/icqsearchbase.ui:41
 #, kde-format
 msgid "&Nickname:"
-msgstr ""
+msgstr "&მეტსახელი:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel3)
 #. i18n: ectx: property (text), widget (QLabel, firstNameLabel)
@@ -18593,7 +18593,7 @@ msgstr ""
 #: protocols/oscar/icq/ui/icqsearchbase.ui:284
 #, kde-format
 msgid "User Info"
-msgstr ""
+msgstr "ინფორმაცია მომხმარებელზე"
 
 #: protocols/oscar/icq/ui/icqsearchdialog.cpp:46
 #, kde-format
@@ -19544,7 +19544,7 @@ msgstr "სასწორი"
 #: protocols/qq/ui/qqvcard.ui:705
 #, kde-format
 msgid "Scorpio"
-msgstr ""
+msgstr "მორიელი"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, cbHoroscope)
 #: protocols/qq/ui/qqvcard.ui:710
@@ -19556,7 +19556,7 @@ msgstr "მშვილდოსანი"
 #: protocols/qq/ui/qqvcard.ui:715
 #, kde-format
 msgid "Capricorn"
-msgstr ""
+msgstr "თხის რქა"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, cbHoroscope)
 #: protocols/qq/ui/qqvcard.ui:720
@@ -19680,7 +19680,7 @@ msgstr ""
 #: protocols/sms/services/smssend.cpp:179
 #, kde-format
 msgid "%1 Settings"
-msgstr ""
+msgstr "%1-ის მორგება"
 
 #: protocols/sms/services/smssend.cpp:238
 #, kde-format
@@ -20351,6 +20351,12 @@ msgstr ""
 #~ msgid "Call"
 #~ msgstr "დარეკვა"
 
+#~ msgid "Conference Call"
+#~ msgstr "საკონფერენციო ზარი"
+
+#~ msgid "Block contact"
+#~ msgstr "კონტაქტის დაბლოკვა"
+
 #~ msgid "Not authorized"
 #~ msgstr "საჭიროა ავტორიზაცია"
 
@@ -20368,6 +20374,9 @@ msgstr ""
 
 #~ msgid "Bus"
 #~ msgstr "მატარებელი"
+
+#~ msgid "&Activity"
+#~ msgstr "&აქტივობა"
 
 #~ msgid "Timeout:"
 #~ msgstr "ხანგრძლივობა:"
