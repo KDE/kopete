@@ -1097,7 +1097,7 @@ msgstr "Identitats"
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:191
 #, kde-format
 msgid "Add a new identity"
-msgstr "Afig una nova identitat"
+msgstr "Afig una identitat nova"
 
 #. i18n: ectx: property (text), widget (QPushButton, mButtonIdentityAdd)
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:194
@@ -1109,7 +1109,7 @@ msgstr "Afig una i&dentitat..."
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:201
 #, kde-format
 msgid "Create a new identity based on an existing one"
-msgstr "Crea una nova identitat basada en una altra ja existent"
+msgstr "Crea una identitat nova basada en una altra ja existent"
 
 #. i18n: ectx: property (toolTip), widget (QPushButton, mButtonIdentityRemove)
 #. i18n: ectx: property (whatsThis), widget (QPushButton, mButtonIdentityRemove)
