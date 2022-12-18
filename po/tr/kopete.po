@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2022-12-11 20:38+0300\n"
+"PO-Revision-Date: 2022-12-17 18:59+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -2673,7 +2673,7 @@ msgstr ""
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:104
 #, kde-format
 msgid "Base &font:"
-msgstr "Temel yazı &tipi:"
+msgstr "Temel yazı&tipi:"
 
 #. i18n: ectx: property (whatsThis), widget (QRadioButton, radioButton)
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:43
@@ -7816,7 +7816,7 @@ msgid ""
 "Are you sure you want to continue?"
 msgstr ""
 "Pidgin uygulamasından geçmiş günlükleri zaten içe aktardınız. Bu işlemi iki "
-"kere yaparsanız her ileti iki kere içeri aktarılır.\n"
+"kere yaparsanız her ileti iki kere içe aktarılır.\n"
 "Sürdürmek istediğinize emin misiniz?"
 
 #: plugins/history/historyimport.cpp:273
@@ -7938,7 +7938,7 @@ msgstr "Geçmiş Eklentisi"
 #: plugins/history/historyplugin.cpp:75
 #, kde-format
 msgid "Import && Convert"
-msgstr "İçeri Aktar ve Dönüştür"
+msgstr "İçe Aktar ve Dönüştür"
 
 #: plugins/history/historyplugin.cpp:75
 #, kde-format
@@ -9634,7 +9634,8 @@ msgstr ""
 #: plugins/statistics/statisticsdialog.cpp:475
 #, kde-format
 msgid "Between %1 and %2, %3 was visible for %4% of the hour."
-msgstr "%1 ile %2 arasında, %3 kişisi saatin %​%4 kadarında görünür durumdaydı."
+msgstr ""
+"%1 ile %2 arasında, %3 kişisi saatin %​%4 kadarında görünür durumdaydı."
 
 #: plugins/statistics/statisticsdialog.cpp:485
 #, kde-format
