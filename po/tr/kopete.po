@@ -9634,8 +9634,7 @@ msgstr ""
 #: plugins/statistics/statisticsdialog.cpp:475
 #, kde-format
 msgid "Between %1 and %2, %3 was visible for %4% of the hour."
-msgstr ""
-"%1 ile %2 arasında, %3 kişisi saatin %​%4 kadarında görünür durumdaydı."
+msgstr "%1 ile %2 arasında, %3 kişisi saatin %​%4 kadarında görünür durumdaydı."
 
 #: plugins/statistics/statisticsdialog.cpp:485
 #, kde-format
