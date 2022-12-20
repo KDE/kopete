@@ -128,7 +128,6 @@ set(kopete_LIB_SRCS
     kopeteaddedinfoevent.cpp
     kopetesockettimeoutwatcher.cpp
     # REMOVED FOR NOW
-    #   connectionmanager.cpp
     #   managedconnectionaccount.cpp
 
     )

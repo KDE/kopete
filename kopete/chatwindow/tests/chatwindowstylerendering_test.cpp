@@ -186,8 +186,6 @@ void ChatWindowStyleRendering_Test::allTests()
     // change user data dir to avoid messing with user's .kde dir
     setenv("KDEHOME", QFile::encodeName(QDir::homePath() + "/.kopete-unittest"), true);
 
-    //KApplication::disableAutoDcopRegistration();
-    //KCmdLineArgs::init(argc,argv,"testkopetemessage", 0, KLocalizedString(), 0, KLocalizedString());
     KApplication app;
 
     chatPart = new ChatMessagePart(d->fakeChatSession, 0, 0);
