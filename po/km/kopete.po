@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-12-08 00:45+0000\n"
+"POT-Creation-Date: 2022-12-26 00:53+0000\n"
 "PO-Revision-Date: 2012-06-08 15:03+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer\n"
@@ -5020,47 +5020,6 @@ msgstr "ឧបករណ៍​បំភ្លឺ ១"
 #, kde-format
 msgid "Illuminator 2"
 msgstr "ឧបករណ៍​បំភ្លឺ ២"
-
-#: libkopete/connectionmanager.cpp:159
-#, kde-format
-msgid ""
-"A network connection was disconnected.  The application is now in offline "
-"mode.  Do you want the application to resume network operations when the "
-"network is available again?"
-msgstr ""
-"ការ​តភ្ជាប់​បណ្ដាញ​ត្រូវ​បាន​ផ្ដាច់​ហើយ ។ ពេល​នេះ​កម្មវិធី​កំពុង​តែ​ស្ថិត​នៅ​ក្នុង​របៀប​ក្រៅ​បណ្ដាញ ។ តើ​អ្នក​ចង់​ឲ្យ​"
-"កម្មវិធី​បន្ត​ប្រតិបត្តិការ​បណ្ដាញ ពេល​ដែល​មាន​បណ្ដាញ​ម្ដង​ទៀត​ឬ​ទេ ?"
-
-#: libkopete/connectionmanager.cpp:160
-#, kde-format
-msgid "This application is currently in offline mode.  Do you want to connect?"
-msgstr "កម្មវិធី​នេះ​កំពុង​ស្ថិត​ក្នុង​របៀប​ក្រៅ​បណ្តាញ ។ តើ​អ្នក​ចង់​ភ្ជាប់​ឬ ?"
-
-#: libkopete/connectionmanager.cpp:162
-#, kde-format
-msgid ""
-"This application is currently in offline mode.  Do you want to connect in "
-"order to carry out this operation?"
-msgstr "កម្មវិធី​នេះ​កំពុង​ស្ថិត​ក្នុង​របៀប​ក្រៅ​បណ្តាញ ។ តើ​អ្នក​ចង់​ភ្ជាប់ ដើម្បី​អនុវត្ត​ប្រតិបត្តិការ​នេះ​ឬ ?"
-
-#: libkopete/connectionmanager.cpp:163
-#, kde-format
-msgid "Leave Offline Mode?"
-msgstr "ចេញ​ពី​របៀប​ក្រៅ​បណ្តាញ ?"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Connect"
-msgstr "តភ្ជាប់​"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Stay Offline"
-msgstr "នៅ​ក្រៅ​បណ្ដាញ"
 
 #: libkopete/contactlist/xmlcontactstorage.cpp:128
 #, kde-format
@@ -15030,6 +14989,18 @@ msgstr ""
 "អ្នក​ត្រូវ​តែ​តភ្ជាប់​គណនី​របស់​អ្នក​សិន មុន​នឹង​អាច​ប្ដូរ​ពាក្យសម្ងាត់ ។ តើ​អ្នក​ចង់​សាកល្បង​តភ្ជាប់​ឥឡូវ​ឬ ?"
 
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Connect"
+msgstr "តភ្ជាប់​"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Stay Offline"
+msgstr "នៅ​ក្រៅ​បណ្ដាញ"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:129
 #, kde-format
 msgid "Jabber Password Change"
@@ -21066,6 +21037,27 @@ msgstr "ការ​​កំណត់​រចនាសម្ព័ន្ធ​
 #, kde-format
 msgid "User Info for %1"
 msgstr "ព័ត៌មាន​អ្នក​ប្រើ​សម្រាប់ %1"
+
+#~ msgid ""
+#~ "A network connection was disconnected.  The application is now in offline "
+#~ "mode.  Do you want the application to resume network operations when the "
+#~ "network is available again?"
+#~ msgstr ""
+#~ "ការ​តភ្ជាប់​បណ្ដាញ​ត្រូវ​បាន​ផ្ដាច់​ហើយ ។ ពេល​នេះ​កម្មវិធី​កំពុង​តែ​ស្ថិត​នៅ​ក្នុង​របៀប​ក្រៅ​បណ្ដាញ ។ តើ​អ្នក​"
+#~ "ចង់​ឲ្យ​កម្មវិធី​បន្ត​ប្រតិបត្តិការ​បណ្ដាញ ពេល​ដែល​មាន​បណ្ដាញ​ម្ដង​ទៀត​ឬ​ទេ ?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect?"
+#~ msgstr "កម្មវិធី​នេះ​កំពុង​ស្ថិត​ក្នុង​របៀប​ក្រៅ​បណ្តាញ ។ តើ​អ្នក​ចង់​ភ្ជាប់​ឬ ?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect in "
+#~ "order to carry out this operation?"
+#~ msgstr ""
+#~ "កម្មវិធី​នេះ​កំពុង​ស្ថិត​ក្នុង​របៀប​ក្រៅ​បណ្តាញ ។ តើ​អ្នក​ចង់​ភ្ជាប់ ដើម្បី​អនុវត្ត​ប្រតិបត្តិការ​នេះ​ឬ ?"
+
+#~ msgid "Leave Offline Mode?"
+#~ msgstr "ចេញ​ពី​របៀប​ក្រៅ​បណ្តាញ ?"
 
 #~ msgid "This version of Skype is too old, consider upgrading"
 #~ msgstr "កំណែ​របស់ Skype គឺ​កំណែ​ចាស់ សូម​ធ្វើ​បច្ចុប្បន្នភាព"

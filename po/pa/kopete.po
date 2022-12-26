@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-12-08 00:45+0000\n"
+"POT-Creation-Date: 2022-12-26 00:53+0000\n"
 "PO-Revision-Date: 2013-02-09 16:35+0000\n"
 "Last-Translator: A S Alam <aalam@users.sf.net>\n"
 "Language-Team: Punjabi/Panjabi <punjabi-users@lists.sf.net>\n"
@@ -5000,49 +5000,6 @@ msgstr ""
 #, kde-format
 msgid "Illuminator 2"
 msgstr ""
-
-#: libkopete/connectionmanager.cpp:159
-#, kde-format
-msgid ""
-"A network connection was disconnected.  The application is now in offline "
-"mode.  Do you want the application to resume network operations when the "
-"network is available again?"
-msgstr ""
-"ਇੱਕ ਨੈੱਟਵਰਕ ਕੁਨੈਕਸ਼ਨ ਬੰਦ ਹੋ ਗਿਆ ਸੀ।  ਐਪਲੀਕੇਸ਼ਨ ਹੁਣ ਆਫਲਾਈਨ ਮੋਡ 'ਚ ਹੈ।  ਕੀ ਤੁਸੀਂ ਚਾਹੁੰਦੇ ਹੋ ਕਿ "
-"ਨੈੱਟਵਰਕ ਮੁੜ-ਉਪਲੱਬਧ ਹੋਣ ਉੱਤੇ ਐਪਲੀਕੇਸ਼ਨ ਨੈੱਟਵਰਕ ਓਪਰੇਸ਼ਨ ਮੁੜ ਸ਼ੁਰੂ ਕਰੇ?"
-
-#: libkopete/connectionmanager.cpp:160
-#, kde-format
-msgid "This application is currently in offline mode.  Do you want to connect?"
-msgstr "ਇਹ ਐਪਲੀਕੇਸ਼ਨ ਹੁਣ ਆਫਲਾਈਨ ਮੋਡ ਚ ਹੈ।  ਕੀ ਤੁਸੀਂ ਕੁਨੈਕਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
-
-#: libkopete/connectionmanager.cpp:162
-#, kde-format
-msgid ""
-"This application is currently in offline mode.  Do you want to connect in "
-"order to carry out this operation?"
-msgstr ""
-"ਇਹ ਐਪਲੀਕੇਸ਼ਨ ਇਸ ਸਮੇਂ ਆਫਲਾਈਨ ਮੋਡ ਨਾਲ ਚੱਲ ਰਿਹਾ ਹੈ।  ਕੀ ਤੁਸੀਂ ਇਹ ਓਪਰੇਸ਼ਨ ਕਰਨ ਲਈ ਕੁਨੈਕਟ ਕਰਨਾ "
-"ਚਾਹੁੰਦੇ ਹੋ?"
-
-#: libkopete/connectionmanager.cpp:163
-#, kde-format
-msgid "Leave Offline Mode?"
-msgstr "ਕੀ ਆਫਲਾਈਨ ਮੋਡ ਛੱਡਣਾ ਹੈ?"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Connect"
-msgstr "ਕੁਨੈਕਟ ਕਰੋ"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Stay Offline"
-msgstr "ਆਫਲਾਈਨ ਰਹੋ"
 
 #: libkopete/contactlist/xmlcontactstorage.cpp:128
 #, kde-format
@@ -14776,6 +14733,18 @@ msgid ""
 msgstr ""
 
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Connect"
+msgstr "ਕੁਨੈਕਟ ਕਰੋ"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Stay Offline"
+msgstr "ਆਫਲਾਈਨ ਰਹੋ"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:129
 #, kde-format
 msgid "Jabber Password Change"
@@ -20646,6 +20615,28 @@ msgstr "ਸੰਰਚਨਾ ਫੇਲ੍ਹ ਹੋਈ"
 #, kde-format
 msgid "User Info for %1"
 msgstr "%1 ਲਈ ਯੂਜ਼ਰ ਜਾਣਕਾਰੀ"
+
+#~ msgid ""
+#~ "A network connection was disconnected.  The application is now in offline "
+#~ "mode.  Do you want the application to resume network operations when the "
+#~ "network is available again?"
+#~ msgstr ""
+#~ "ਇੱਕ ਨੈੱਟਵਰਕ ਕੁਨੈਕਸ਼ਨ ਬੰਦ ਹੋ ਗਿਆ ਸੀ।  ਐਪਲੀਕੇਸ਼ਨ ਹੁਣ ਆਫਲਾਈਨ ਮੋਡ 'ਚ ਹੈ।  ਕੀ ਤੁਸੀਂ ਚਾਹੁੰਦੇ ਹੋ ਕਿ "
+#~ "ਨੈੱਟਵਰਕ ਮੁੜ-ਉਪਲੱਬਧ ਹੋਣ ਉੱਤੇ ਐਪਲੀਕੇਸ਼ਨ ਨੈੱਟਵਰਕ ਓਪਰੇਸ਼ਨ ਮੁੜ ਸ਼ੁਰੂ ਕਰੇ?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect?"
+#~ msgstr "ਇਹ ਐਪਲੀਕੇਸ਼ਨ ਹੁਣ ਆਫਲਾਈਨ ਮੋਡ ਚ ਹੈ।  ਕੀ ਤੁਸੀਂ ਕੁਨੈਕਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect in "
+#~ "order to carry out this operation?"
+#~ msgstr ""
+#~ "ਇਹ ਐਪਲੀਕੇਸ਼ਨ ਇਸ ਸਮੇਂ ਆਫਲਾਈਨ ਮੋਡ ਨਾਲ ਚੱਲ ਰਿਹਾ ਹੈ।  ਕੀ ਤੁਸੀਂ ਇਹ ਓਪਰੇਸ਼ਨ ਕਰਨ ਲਈ ਕੁਨੈਕਟ "
+#~ "ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
+
+#~ msgid "Leave Offline Mode?"
+#~ msgstr "ਕੀ ਆਫਲਾਈਨ ਮੋਡ ਛੱਡਣਾ ਹੈ?"
 
 #~ msgid "Skype protocol"
 #~ msgstr "ਸਕਾਈਪੀ ਪਰੋਟੋਕਾਲ"

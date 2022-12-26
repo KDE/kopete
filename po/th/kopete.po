@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-12-08 00:45+0000\n"
+"POT-Creation-Date: 2022-12-26 00:53+0000\n"
 "PO-Revision-Date: 2010-12-12 13:57+0700\n"
 "Last-Translator: Phuwanat Sakornsakolpat <narachai@gmail.com>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -4998,47 +4998,6 @@ msgstr ""
 #, kde-format
 msgid "Illuminator 2"
 msgstr ""
-
-#: libkopete/connectionmanager.cpp:159
-#, kde-format
-msgid ""
-"A network connection was disconnected.  The application is now in offline "
-"mode.  Do you want the application to resume network operations when the "
-"network is available again?"
-msgstr ""
-"การติดต่อกับเครือข่ายถูกตัด โปรแกรมจึงอยู่ในโหมดตัดสาย "
-"คุณต้องการจะให้โปรแกรมทำงานต่อเมื่อเครือข่าย ติดขึ้นมาอีกครั้งหรือไม่ ?"
-
-#: libkopete/connectionmanager.cpp:160
-#, kde-format
-msgid "This application is currently in offline mode.  Do you want to connect?"
-msgstr "โปรแกรมนี้อยู่ในโหมดตัดสาย คุณต้องการจะต่อสายหรือไม่ ?"
-
-#: libkopete/connectionmanager.cpp:162
-#, kde-format
-msgid ""
-"This application is currently in offline mode.  Do you want to connect in "
-"order to carry out this operation?"
-msgstr "โปรแกรมนี้อยู่ในโหมดตัดสายอยู่ในปัจจุบัน คุณต้องการที่จะต่อสายเพื่อทำงานต่อหรือไม่ ?"
-
-#: libkopete/connectionmanager.cpp:163
-#, kde-format
-msgid "Leave Offline Mode?"
-msgstr "ปล่อยให้อยู่ในโหมดไม่ได้เชื่อมต่อหรือไม่ ?"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Connect"
-msgstr "ต่อสาย"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Stay Offline"
-msgstr "อยู่ในโหมดไม่ได้เชื่อมต่อ"
 
 #: libkopete/contactlist/xmlcontactstorage.cpp:128
 #, kde-format
@@ -14892,6 +14851,18 @@ msgstr ""
 "คุณต้องการจะลองเชื่อมต่อเดี๋ยวนี้หรือไม่ ?"
 
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Connect"
+msgstr "ต่อสาย"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Stay Offline"
+msgstr "อยู่ในโหมดไม่ได้เชื่อมต่อ"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:129
 #, kde-format
 msgid "Jabber Password Change"
@@ -20851,6 +20822,26 @@ msgstr "การปรับแต่งค่าล้มเหลว"
 #, kde-format
 msgid "User Info for %1"
 msgstr "ข้อมูลผู้ใช้สำหรับ %1"
+
+#~ msgid ""
+#~ "A network connection was disconnected.  The application is now in offline "
+#~ "mode.  Do you want the application to resume network operations when the "
+#~ "network is available again?"
+#~ msgstr ""
+#~ "การติดต่อกับเครือข่ายถูกตัด โปรแกรมจึงอยู่ในโหมดตัดสาย "
+#~ "คุณต้องการจะให้โปรแกรมทำงานต่อเมื่อเครือข่าย ติดขึ้นมาอีกครั้งหรือไม่ ?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect?"
+#~ msgstr "โปรแกรมนี้อยู่ในโหมดตัดสาย คุณต้องการจะต่อสายหรือไม่ ?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect in "
+#~ "order to carry out this operation?"
+#~ msgstr "โปรแกรมนี้อยู่ในโหมดตัดสายอยู่ในปัจจุบัน คุณต้องการที่จะต่อสายเพื่อทำงานต่อหรือไม่ ?"
+
+#~ msgid "Leave Offline Mode?"
+#~ msgstr "ปล่อยให้อยู่ในโหมดไม่ได้เชื่อมต่อหรือไม่ ?"
 
 #~ msgid "Skype protocol"
 #~ msgstr "โพรโทคอล Skype"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: KDE 4.3\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-12-08 00:45+0000\n"
+"POT-Creation-Date: 2022-12-26 00:53+0000\n"
 "PO-Revision-Date: 2014-07-24 21:59+0200\n"
 "Last-Translator: Balázs Úr <urbalazs@gmail.com>\n"
 "Language-Team: Hungarian <kde-l10n-hu@kde.org>\n"
@@ -5082,48 +5082,6 @@ msgstr "Illuminator 1"
 #, kde-format
 msgid "Illuminator 2"
 msgstr "Illuminator 2"
-
-#: libkopete/connectionmanager.cpp:159
-#, kde-format
-msgid ""
-"A network connection was disconnected.  The application is now in offline "
-"mode.  Do you want the application to resume network operations when the "
-"network is available again?"
-msgstr ""
-"Egy hálózati kapcsolat bezáródott. Az alkalmazás offline állapotúvá vált. Az "
-"alkalmazás folytassa a hálózati működést, ha a hálózati kapcsolat helyreáll?"
-
-#: libkopete/connectionmanager.cpp:160
-#, kde-format
-msgid "This application is currently in offline mode.  Do you want to connect?"
-msgstr "Az alkalmazás most offline állapotú. Szeretne csatlakozni?"
-
-#: libkopete/connectionmanager.cpp:162
-#, kde-format
-msgid ""
-"This application is currently in offline mode.  Do you want to connect in "
-"order to carry out this operation?"
-msgstr ""
-"Az alkalmazás offline állapotú. Szeretne csatlakozni a művelet elvégzéséhez?"
-
-#: libkopete/connectionmanager.cpp:163
-#, kde-format
-msgid "Leave Offline Mode?"
-msgstr "Ki szeretne lépni &offline módból?"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Connect"
-msgstr "Csatlakozás"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Stay Offline"
-msgstr "Kapcsolat nélkül"
 
 #: libkopete/contactlist/xmlcontactstorage.cpp:128
 #, kde-format
@@ -15225,6 +15183,18 @@ msgstr ""
 "tenni most?"
 
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Connect"
+msgstr "Csatlakozás"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Stay Offline"
+msgstr "Kapcsolat nélkül"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:129
 #, kde-format
 msgid "Jabber Password Change"
@@ -21349,6 +21319,29 @@ msgstr "A beállítás sikertelen"
 #, kde-format
 msgid "User Info for %1"
 msgstr "Felhasználó információk: %1"
+
+#~ msgid ""
+#~ "A network connection was disconnected.  The application is now in offline "
+#~ "mode.  Do you want the application to resume network operations when the "
+#~ "network is available again?"
+#~ msgstr ""
+#~ "Egy hálózati kapcsolat bezáródott. Az alkalmazás offline állapotúvá vált. "
+#~ "Az alkalmazás folytassa a hálózati működést, ha a hálózati kapcsolat "
+#~ "helyreáll?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect?"
+#~ msgstr "Az alkalmazás most offline állapotú. Szeretne csatlakozni?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect in "
+#~ "order to carry out this operation?"
+#~ msgstr ""
+#~ "Az alkalmazás offline állapotú. Szeretne csatlakozni a művelet "
+#~ "elvégzéséhez?"
+
+#~ msgid "Leave Offline Mode?"
+#~ msgstr "Ki szeretne lépni &offline módból?"
 
 #~ msgid "This version of Skype is too old, consider upgrading"
 #~ msgstr "A telepített Skype túl régi változatú, célszerű frissíteni"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-12-08 00:45+0000\n"
+"POT-Creation-Date: 2022-12-26 00:53+0000\n"
 "PO-Revision-Date: 2020-06-09 12:15+0200\n"
 "Last-Translator: Matjaž Jeran <matjaz.jeran@amis.net>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
@@ -5061,50 +5061,6 @@ msgstr "1. osvetljevalnik"
 #, kde-format
 msgid "Illuminator 2"
 msgstr "2. osvetljevalnik"
-
-#: libkopete/connectionmanager.cpp:159
-#, kde-format
-msgid ""
-"A network connection was disconnected.  The application is now in offline "
-"mode.  Do you want the application to resume network operations when the "
-"network is available again?"
-msgstr ""
-"Omrežna povezava je bila prekinjena. Program je sedaj v načinu brez "
-"povezave. Ali želite, da program nadaljuje omrežna opravila, ko bo omrežje "
-"spet na voljo?"
-
-#: libkopete/connectionmanager.cpp:160
-#, kde-format
-msgid "This application is currently in offline mode.  Do you want to connect?"
-msgstr "Ta program je trenutno v načinu brez povezave. Ali se želite povezati?"
-
-#: libkopete/connectionmanager.cpp:162
-#, kde-format
-msgid ""
-"This application is currently in offline mode.  Do you want to connect in "
-"order to carry out this operation?"
-msgstr ""
-"Ta program je trenutno v načinu brez povezave. Ali se želite povezati, da "
-"lahko nadaljujete s tem opravilom?"
-
-#: libkopete/connectionmanager.cpp:163
-#, kde-format
-msgid "Leave Offline Mode?"
-msgstr "Zapustim način brez povezave?"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Connect"
-msgstr "Poveži se"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Stay Offline"
-msgstr "Ostani brez povezave"
 
 #: libkopete/contactlist/xmlcontactstorage.cpp:128
 #, kde-format
@@ -15161,6 +15117,18 @@ msgstr ""
 "vzpostaviti povezavo?"
 
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Connect"
+msgstr "Poveži se"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Stay Offline"
+msgstr "Ostani brez povezave"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:129
 #, kde-format
 msgid "Jabber Password Change"
@@ -21224,6 +21192,30 @@ msgstr "Nastavitve niso uspele"
 #, kde-format
 msgid "User Info for %1"
 msgstr "Podatki o uporabniku %1"
+
+#~ msgid ""
+#~ "A network connection was disconnected.  The application is now in offline "
+#~ "mode.  Do you want the application to resume network operations when the "
+#~ "network is available again?"
+#~ msgstr ""
+#~ "Omrežna povezava je bila prekinjena. Program je sedaj v načinu brez "
+#~ "povezave. Ali želite, da program nadaljuje omrežna opravila, ko bo "
+#~ "omrežje spet na voljo?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect?"
+#~ msgstr ""
+#~ "Ta program je trenutno v načinu brez povezave. Ali se želite povezati?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect in "
+#~ "order to carry out this operation?"
+#~ msgstr ""
+#~ "Ta program je trenutno v načinu brez povezave. Ali se želite povezati, da "
+#~ "lahko nadaljujete s tem opravilom?"
+
+#~ msgid "Leave Offline Mode?"
+#~ msgstr "Zapustim način brez povezave?"
 
 #~ msgid "This version of Skype is too old, consider upgrading"
 #~ msgstr "Ta različica Skypa je prestara. Razmislite o nadgradnji"

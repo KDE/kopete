@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-12-08 00:45+0000\n"
+"POT-Creation-Date: 2022-12-26 00:53+0000\n"
 "PO-Revision-Date: 2020-04-30 11:33+0300\n"
 "Last-Translator: Marek Laane <qiilaq69@gmail.com>\n"
 "Language-Team: Estonian <kde-et@lists.linux.ee>\n"
@@ -5046,49 +5046,6 @@ msgstr "Illumineerija 1"
 #, kde-format
 msgid "Illuminator 2"
 msgstr "Illumineerija 2"
-
-#: libkopete/connectionmanager.cpp:159
-#, kde-format
-msgid ""
-"A network connection was disconnected.  The application is now in offline "
-"mode.  Do you want the application to resume network operations when the "
-"network is available again?"
-msgstr ""
-"Võrguühendus on katkestatud. Rakendus töötab nüüd võrguta režiimis. Kas "
-"soovid, et rakendus taastaks võrgutoimingud, kui võrk tagasi ilmub?"
-
-#: libkopete/connectionmanager.cpp:160
-#, kde-format
-msgid "This application is currently in offline mode.  Do you want to connect?"
-msgstr "Rakendus töötab praegu võrguta režiimis. Kas soovid luua ühenduse?"
-
-#: libkopete/connectionmanager.cpp:162
-#, kde-format
-msgid ""
-"This application is currently in offline mode.  Do you want to connect in "
-"order to carry out this operation?"
-msgstr ""
-"Rakendus töötab praegu võrguta režiimis. Kas soovid toimingu teostamiseks "
-"luua ühenduse?"
-
-#: libkopete/connectionmanager.cpp:163
-#, kde-format
-msgid "Leave Offline Mode?"
-msgstr "Kas lahkuda võrguta režiimist?"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Connect"
-msgstr "Ühenda"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Stay Offline"
-msgstr "Jää võrguta režiimi"
 
 #: libkopete/contactlist/xmlcontactstorage.cpp:128
 #, kde-format
@@ -15097,6 +15054,18 @@ msgstr ""
 "luua?"
 
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Connect"
+msgstr "Ühenda"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Stay Offline"
+msgstr "Jää võrguta režiimi"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:129
 #, kde-format
 msgid "Jabber Password Change"
@@ -21145,6 +21114,28 @@ msgstr "Seadistamine nurjus"
 #, kde-format
 msgid "User Info for %1"
 msgstr "Kasutaja %1 info"
+
+#~ msgid ""
+#~ "A network connection was disconnected.  The application is now in offline "
+#~ "mode.  Do you want the application to resume network operations when the "
+#~ "network is available again?"
+#~ msgstr ""
+#~ "Võrguühendus on katkestatud. Rakendus töötab nüüd võrguta režiimis. Kas "
+#~ "soovid, et rakendus taastaks võrgutoimingud, kui võrk tagasi ilmub?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect?"
+#~ msgstr "Rakendus töötab praegu võrguta režiimis. Kas soovid luua ühenduse?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect in "
+#~ "order to carry out this operation?"
+#~ msgstr ""
+#~ "Rakendus töötab praegu võrguta režiimis. Kas soovid toimingu teostamiseks "
+#~ "luua ühenduse?"
+
+#~ msgid "Leave Offline Mode?"
+#~ msgstr "Kas lahkuda võrguta režiimist?"
 
 #~ msgid "This version of Skype is too old, consider upgrading"
 #~ msgstr "Skype'i versioon on liiga vana, seda tasuks uuendada"

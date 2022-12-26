@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-12-08 00:45+0000\n"
+"POT-Creation-Date: 2022-12-26 00:53+0000\n"
 "PO-Revision-Date: 2022-05-15 22:35+0200\n"
 "Last-Translator: Shinjo Park <kde@peremen.name>\n"
 "Language-Team: Korean <kde-kr@kde.org>\n"
@@ -5022,49 +5022,6 @@ msgstr "발광체 1"
 #, kde-format
 msgid "Illuminator 2"
 msgstr "발광체 2"
-
-#: libkopete/connectionmanager.cpp:159
-#, kde-format
-msgid ""
-"A network connection was disconnected.  The application is now in offline "
-"mode.  Do you want the application to resume network operations when the "
-"network is available again?"
-msgstr ""
-"네트워크 연결이 끊겼습니다. 프로그램은 이제 오프라인 모드입니다. 네트워크를 "
-"다시 사용할 수 있을 때 네트워크 작업을 다시 시작하시겠습니까?"
-
-#: libkopete/connectionmanager.cpp:160
-#, kde-format
-msgid "This application is currently in offline mode.  Do you want to connect?"
-msgstr "이 프로그램은 현재 오프라인 모드입니다. 연결하시겠습니까?"
-
-#: libkopete/connectionmanager.cpp:162
-#, kde-format
-msgid ""
-"This application is currently in offline mode.  Do you want to connect in "
-"order to carry out this operation?"
-msgstr ""
-"이 프로그램은 현재 오프라인 모드입니다. 이 동작을 할 수 있도록 연결하시겠습니"
-"까?"
-
-#: libkopete/connectionmanager.cpp:163
-#, kde-format
-msgid "Leave Offline Mode?"
-msgstr "오프라인 모드에서 벗어나시겠습니까?"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Connect"
-msgstr "접속"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Stay Offline"
-msgstr "오프라인 유지"
 
 #: libkopete/contactlist/xmlcontactstorage.cpp:128
 #, kde-format
@@ -14991,6 +14948,18 @@ msgid ""
 msgstr "암호를 바꾸려면 연결해야 합니다. 지금 연결하시겠습니까?"
 
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Connect"
+msgstr "접속"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Stay Offline"
+msgstr "오프라인 유지"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:129
 #, kde-format
 msgid "Jabber Password Change"
@@ -20997,6 +20966,28 @@ msgstr "설정 실패"
 #, kde-format
 msgid "User Info for %1"
 msgstr "%1의 사용자 정보"
+
+#~ msgid ""
+#~ "A network connection was disconnected.  The application is now in offline "
+#~ "mode.  Do you want the application to resume network operations when the "
+#~ "network is available again?"
+#~ msgstr ""
+#~ "네트워크 연결이 끊겼습니다. 프로그램은 이제 오프라인 모드입니다. 네트워크"
+#~ "를 다시 사용할 수 있을 때 네트워크 작업을 다시 시작하시겠습니까?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect?"
+#~ msgstr "이 프로그램은 현재 오프라인 모드입니다. 연결하시겠습니까?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect in "
+#~ "order to carry out this operation?"
+#~ msgstr ""
+#~ "이 프로그램은 현재 오프라인 모드입니다. 이 동작을 할 수 있도록 연결하시겠"
+#~ "습니까?"
+
+#~ msgid "Leave Offline Mode?"
+#~ msgstr "오프라인 모드에서 벗어나시겠습니까?"
 
 #~ msgid "This version of Skype is too old, consider upgrading"
 #~ msgstr "Skype 버전이 너무 오래되었습니다. 업그레이드를 추천합니다"

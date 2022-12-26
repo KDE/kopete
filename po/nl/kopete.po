@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-12-08 00:45+0000\n"
+"POT-Creation-Date: 2022-12-26 00:53+0000\n"
 "PO-Revision-Date: 2022-12-14 11:28+0100\n"
 "Last-Translator: Freek de Kruijf <freekdekruijf@kde.nl>\n"
 "Language-Team: \n"
@@ -5105,50 +5105,6 @@ msgstr "Verlichting 1"
 #, kde-format
 msgid "Illuminator 2"
 msgstr "Verlichting 2"
-
-#: libkopete/connectionmanager.cpp:159
-#, kde-format
-msgid ""
-"A network connection was disconnected.  The application is now in offline "
-"mode.  Do you want the application to resume network operations when the "
-"network is available again?"
-msgstr ""
-"De netwerkverbinding is verbroken. Het programma is nu offline. Wilt  dat "
-"het programma verder gaat met netwerkoperaties als het netwerk weer "
-"beschikbaar is?"
-
-#: libkopete/connectionmanager.cpp:160
-#, kde-format
-msgid "This application is currently in offline mode.  Do you want to connect?"
-msgstr "Dit programma is momenteel offline. Wilt u verbinding maken?"
-
-#: libkopete/connectionmanager.cpp:162
-#, kde-format
-msgid ""
-"This application is currently in offline mode.  Do you want to connect in "
-"order to carry out this operation?"
-msgstr ""
-"Dit programma is momenteel offline. Wilt u verbinding maken om de operatie "
-"uit te voeren?"
-
-#: libkopete/connectionmanager.cpp:163
-#, kde-format
-msgid "Leave Offline Mode?"
-msgstr "Online gaan?"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Connect"
-msgstr "Verbinden"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Stay Offline"
-msgstr "Offline blijven"
 
 #: libkopete/contactlist/xmlcontactstorage.cpp:128
 #, kde-format
@@ -15305,6 +15261,18 @@ msgstr ""
 "gewijzigd. Wilt u nu verbinding maken?"
 
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Connect"
+msgstr "Verbinden"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Stay Offline"
+msgstr "Offline blijven"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:129
 #, kde-format
 msgid "Jabber Password Change"
@@ -21438,6 +21406,29 @@ msgstr "Configuratie is mislukt"
 #, kde-format
 msgid "User Info for %1"
 msgstr "Gebruikersinfo van %1"
+
+#~ msgid ""
+#~ "A network connection was disconnected.  The application is now in offline "
+#~ "mode.  Do you want the application to resume network operations when the "
+#~ "network is available again?"
+#~ msgstr ""
+#~ "De netwerkverbinding is verbroken. Het programma is nu offline. Wilt  dat "
+#~ "het programma verder gaat met netwerkoperaties als het netwerk weer "
+#~ "beschikbaar is?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect?"
+#~ msgstr "Dit programma is momenteel offline. Wilt u verbinding maken?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect in "
+#~ "order to carry out this operation?"
+#~ msgstr ""
+#~ "Dit programma is momenteel offline. Wilt u verbinding maken om de "
+#~ "operatie uit te voeren?"
+
+#~ msgid "Leave Offline Mode?"
+#~ msgstr "Online gaan?"
 
 #~ msgid "This version of Skype is too old, consider upgrading"
 #~ msgstr "Deze versie van Skype is te oud, denk na over opwaarderen"

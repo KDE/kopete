@@ -24,7 +24,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-12-08 00:45+0000\n"
+"POT-Creation-Date: 2022-12-26 00:53+0000\n"
 "PO-Revision-Date: 2021-10-26 14:52-0300\n"
 "Last-Translator: Luiz Fernando Ranghetti <elchevive@opensuse.org>\n"
 "Language-Team: Portuguese <kde-i18n-pt_BR@kde.org>\n"
@@ -5113,50 +5113,6 @@ msgstr "Iluminador 1"
 #, kde-format
 msgid "Illuminator 2"
 msgstr "Iluminador 2"
-
-#: libkopete/connectionmanager.cpp:159
-#, kde-format
-msgid ""
-"A network connection was disconnected.  The application is now in offline "
-"mode.  Do you want the application to resume network operations when the "
-"network is available again?"
-msgstr ""
-"Uma conexão de rede foi encerrada. O Kopete está em modo desconectado agora. "
-"Deseja que as operações de rede sejam restabelecidas quando uma conexão "
-"estiver disponível novamente?"
-
-#: libkopete/connectionmanager.cpp:160
-#, kde-format
-msgid "This application is currently in offline mode.  Do you want to connect?"
-msgstr "O aplicativo está no modo desconectado. Deseja conectar-se?"
-
-#: libkopete/connectionmanager.cpp:162
-#, kde-format
-msgid ""
-"This application is currently in offline mode.  Do you want to connect in "
-"order to carry out this operation?"
-msgstr ""
-"O aplicativo está no modo desconectado. Deseja se conectar para executar "
-"essa operação?"
-
-#: libkopete/connectionmanager.cpp:163
-#, kde-format
-msgid "Leave Offline Mode?"
-msgstr "Sair do modo desconectado?"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Connect"
-msgstr "Conectar"
-
-#: libkopete/connectionmanager.cpp:164
-#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
-#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
-#, kde-format
-msgid "Stay Offline"
-msgstr "Permanecer desconectado"
 
 #: libkopete/contactlist/xmlcontactstorage.cpp:128
 #, kde-format
@@ -15265,6 +15221,18 @@ msgstr ""
 "conectar-se agora?"
 
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Connect"
+msgstr "Conectar"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
+#: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:53
+#, kde-format
+msgid "Stay Offline"
+msgstr "Permanecer desconectado"
+
+#: protocols/jabber/ui/dlgjabberchangepassword.cpp:89
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:129
 #, kde-format
 msgid "Jabber Password Change"
@@ -21375,6 +21343,29 @@ msgstr "Configuração Falhou"
 #, kde-format
 msgid "User Info for %1"
 msgstr "Informação do usuário %1"
+
+#~ msgid ""
+#~ "A network connection was disconnected.  The application is now in offline "
+#~ "mode.  Do you want the application to resume network operations when the "
+#~ "network is available again?"
+#~ msgstr ""
+#~ "Uma conexão de rede foi encerrada. O Kopete está em modo desconectado "
+#~ "agora. Deseja que as operações de rede sejam restabelecidas quando uma "
+#~ "conexão estiver disponível novamente?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect?"
+#~ msgstr "O aplicativo está no modo desconectado. Deseja conectar-se?"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect in "
+#~ "order to carry out this operation?"
+#~ msgstr ""
+#~ "O aplicativo está no modo desconectado. Deseja se conectar para executar "
+#~ "essa operação?"
+
+#~ msgid "Leave Offline Mode?"
+#~ msgstr "Sair do modo desconectado?"
 
 #~ msgid "This version of Skype is too old, consider upgrading"
 #~ msgstr "Esta versão do Skype é muito antiga, atualize-a"
