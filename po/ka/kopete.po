@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2022-12-14 18:12+0100\n"
+"PO-Revision-Date: 2022-12-28 05:55+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -77,18 +77,18 @@ msgstr ""
 #: kopete/addaccountwizard/addaccountwizard.cpp:172
 #, kde-format
 msgid "Cannot load the %1 protocol plugin."
-msgstr ""
+msgstr "%1 პროტოკოლის დამატების ჩატვირთვის შეცდომა."
 
 #: kopete/addaccountwizard/addaccountwizard.cpp:173
 #: kopete/addaccountwizard/addaccountwizard.cpp:181
 #, kde-format
 msgid "Error While Adding Account"
-msgstr ""
+msgstr "შეცდომა ანგარიშის დამატებისას"
 
 #: kopete/addaccountwizard/addaccountwizard.cpp:180
 #, kde-format
 msgid "This protocol does not currently support adding accounts."
-msgstr ""
+msgstr "პროტოკოლს ანგარიშების დამატების მხარდაჭერა არ გააჩნია."
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, AddAccountWizardPage1)
 #: kopete/addaccountwizard/addaccountwizardpage1.ui:19
@@ -424,68 +424,68 @@ msgstr "ფაილის გაგზავნა…"
 #: kopete/chatwindow/kopetechatwindow.cpp:393
 #, kde-format
 msgid "Close All Chats"
-msgstr ""
+msgstr "ყველა ჩატის დახურვა"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:398
 #, kde-format
 msgid "&Activate Next Active Tab"
-msgstr ""
+msgstr "&შემდეგი აქტიური ჩანართის გააქტიურება"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:404
 #, kde-format
 msgid "&Activate Next Tab"
-msgstr ""
+msgstr "&შემდეგი ჩანართის გააქტიურება"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:410
 #, kde-format
 msgid "&Activate Previous Tab"
-msgstr ""
+msgstr "&წინა ჩანართის გააქტიურება"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:418
 #, kde-format
 msgid "Nic&k Completion"
-msgstr ""
+msgstr "&მეტსახელის დასრულება"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:422
 #, kde-format
 msgid "&Detach Chat"
-msgstr ""
+msgstr "&ჩატის მოხსნა"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:427
 #, kde-format
 msgid "Close &All But This Tab"
-msgstr ""
+msgstr "&ამის გარდა ყველა ცანართის დახურვა"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:432
 #, kde-format
 msgid "&Move Tab to Window"
-msgstr ""
+msgstr "&ჩანართს ფანჯარაში გადატანა"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:439
 #, kde-format
 msgid "&Tab Placement"
-msgstr ""
+msgstr "&ჩანართის მდებარეობა"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:452
 #, kde-format
 msgid "Previous History"
-msgstr ""
+msgstr "წინა ისტორია"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:457
 #, kde-format
 msgid "Next History"
-msgstr ""
+msgstr "შემდეგი ისტორია"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:469
 #: kopete/chatwindow/kopeterichtextwidget.cpp:177
 #, kde-format
 msgid "Automatic Spell Checking"
-msgstr ""
+msgstr "მართლწერის ავტომატური შემოწმება"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:475
 #, kde-format
 msgid "Show Participants"
-msgstr ""
+msgstr "მონაწილეების ჩვენება"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:485
 #, kde-format
@@ -496,7 +496,7 @@ msgstr "&კონტაქტები"
 #: kopete/chatwindow/kopeteemailwindow.cpp:280
 #, kde-format
 msgid "Toolbar Animation"
-msgstr ""
+msgstr "ხელსაწყოთა ზოლის ანიმაცია"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:684
 #, kde-format
@@ -576,7 +576,7 @@ msgstr "ხელსაწყოთა მთავარი ზოლი"
 #: kopete/chatwindow/kopetechatwindow.rc:51
 #, kde-format
 msgid "Chat Toolbar"
-msgstr ""
+msgstr "ჩატის ხელსაწყოების ზოლი"
 
 #. i18n: ectx: ToolBar (statusToolBar)
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListMetaContactSorting)
@@ -676,28 +676,28 @@ msgstr ""
 #: libkopete/kopeteappearancesettings.kcfg:55
 #, kde-format
 msgid "Chat text color."
-msgstr ""
+msgstr "ჩატის ტექსტის ფერი."
 
 #. i18n: ectx: label, entry, group (Appearance)
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:73
 #: libkopete/kopeteappearancesettings.kcfg:60
 #, kde-format
 msgid "Chat background color."
-msgstr ""
+msgstr "ჩატის ფონის ფერი."
 
 #. i18n: ectx: label, entry, group (Appearance)
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:78
 #: libkopete/kopeteappearancesettings.kcfg:65
 #, kde-format
 msgid "Chat link color."
-msgstr ""
+msgstr "ჩატის ბმულის ფერი."
 
 #. i18n: ectx: label, entry, group (Appearance)
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:83
 #: libkopete/kopeteappearancesettings.kcfg:75
 #, kde-format
 msgid "Chat font."
-msgstr ""
+msgstr "ჩატის ფონტი."
 
 #: kopete/chatwindow/kopetechatwindowstyle.cpp:373
 #, kde-format
@@ -747,19 +747,19 @@ msgstr "&ფონის ფერის დაყენება...."
 #: kopete/chatwindow/kopeteemailwindow.cpp:277
 #, kde-format
 msgid "Spacer for Animation"
-msgstr ""
+msgstr "ადგილი ანიმაციისთვის"
 
 #: kopete/chatwindow/kopeteemailwindow.cpp:391
 #, kde-format
 msgid "(%1) Next >>"
-msgstr ""
+msgstr "(%1) შემდეგი >>"
 
 #: kopete/chatwindow/kopeteemailwindow.cpp:472
 #: kopete/chatwindow/kopeteemailwindow.cpp:478
 #: kopete/chatwindow/kopeteemailwindow.cpp:484
 #, kde-format
 msgid "Cl&ose Chat"
-msgstr ""
+msgstr "&ჩატის დახურვა"
 
 #: kopete/chatwindow/kopeteemailwindow.cpp:505
 #: kopete/chatwindow/kopeteemailwindow.cpp:523
@@ -793,12 +793,12 @@ msgstr "&სწორება"
 #: kopete/chatwindow/kopeterichtextwidget.cpp:170
 #, kde-format
 msgid "Input auto-resize"
-msgstr ""
+msgstr "შეყვანის ზომის ავტომატური შეცვლა"
 
 #: kopete/chatwindow/kopeterichtextwidget.cpp:185
 #, kde-format
 msgid "Enable &Rich Text"
-msgstr ""
+msgstr "&მდიდარი ტექსტის ჩართვა"
 
 #: kopete/chatwindow/kopeterichtextwidget.cpp:195
 #, kde-format
@@ -862,21 +862,21 @@ msgstr ""
 #: kopete/config/accounts/kopeteaccountconfig.cpp:536
 #, kde-format
 msgid "&Add Account..."
-msgstr ""
+msgstr "&ანგარიშის დამატება..."
 
 #. i18n: ectx: property (text), widget (QPushButton, mButtonAccountModify)
 #: kopete/config/accounts/kopeteaccountconfig.cpp:544
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:136
 #, kde-format
 msgid "&Modify Account..."
-msgstr ""
+msgstr "&ანგარიშის შეცვლა..."
 
 #. i18n: ectx: property (text), widget (QPushButton, mButtonAccountRemove)
 #: kopete/config/accounts/kopeteaccountconfig.cpp:552
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:123
 #, kde-format
 msgid "&Remove Account"
-msgstr ""
+msgstr "ანგარიშის &წაშლა"
 
 #: kopete/config/accounts/kopeteaccountconfig.cpp:561
 #, kde-format
@@ -888,42 +888,42 @@ msgstr ""
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:162
 #, kde-format
 msgid "Set C&olor..."
-msgstr ""
+msgstr "&ფერის დაყენება..."
 
 #: kopete/config/accounts/kopeteaccountconfig.cpp:573
 #, kde-format
 msgid "Add &Identity..."
-msgstr ""
+msgstr "იდენტიფიკატორის &დაყენება..."
 
 #. i18n: ectx: property (text), widget (QPushButton, mButtonIdentityCopy)
 #: kopete/config/accounts/kopeteaccountconfig.cpp:581
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:204
 #, kde-format
 msgid "&Copy Identity..."
-msgstr ""
+msgstr "&იდენტიფიკატორის კოპირება..."
 
 #. i18n: ectx: property (text), widget (QPushButton, mButtonIdentityModify)
 #: kopete/config/accounts/kopeteaccountconfig.cpp:589
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:230
 #, kde-format
 msgid "M&odify Identity..."
-msgstr ""
+msgstr "იდენტიფიკატორის &შეცვლა..."
 
 #: kopete/config/accounts/kopeteaccountconfig.cpp:597
 #, kde-format
 msgid "R&emove Identity"
-msgstr ""
+msgstr "იდენტიფიკატორის &წაშლა"
 
 #: kopete/config/accounts/kopeteaccountconfig.cpp:605
 #, kde-format
 msgid "Set &Default"
-msgstr ""
+msgstr "&ნაგულისხმებად დაყენება"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, KopeteAccountConfigBase)
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:15
 #, kde-format
 msgid "Manage Accounts"
-msgstr ""
+msgstr "ანგარიშების მართვა"
 
 #. i18n: ectx: property (whatsThis), widget (AccountTreeWidget, mAccountList)
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:35
@@ -1550,7 +1550,7 @@ msgstr "შეყვანა:"
 msgctxt ""
 "Label of a combo box containing video standards like PAL-B, NTSC-M, etc"
 msgid "Standard:"
-msgstr ""
+msgstr "სტანდარტული:"
 
 #. i18n: ectx: property (toolTip), widget (KComboBox, mDeviceKComboBox)
 #: kopete/config/avdevice/avdeviceconfig_videodevice.ui:190
@@ -1580,7 +1580,7 @@ msgstr "ჩოჩიები"
 #: kopete/config/avdevice/avdeviceconfig_videodevice.ui:270
 #, kde-format
 msgid "Optio&ns"
-msgstr ""
+msgstr "&მორგება"
 
 #. i18n: ectx: attribute (title), widget (QWidget, actionsTab)
 #: kopete/config/avdevice/avdeviceconfig_videodevice.ui:319
@@ -1606,7 +1606,7 @@ msgstr "&მოვლენები"
 #: kopete/config/behavior/behaviorconfig.cpp:71
 #, kde-format
 msgid "A&way Settings"
-msgstr ""
+msgstr "&გასულობის მორგება"
 
 #: kopete/config/behavior/behaviorconfig.cpp:76
 #, kde-format
