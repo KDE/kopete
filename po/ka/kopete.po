@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2022-12-29 10:13+0100\n"
+"PO-Revision-Date: 2022-12-30 07:24+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -828,7 +828,7 @@ msgstr ""
 #: kopete/config/accounts/kopeteaccountconfig.cpp:331
 #, kde-format
 msgid "Remove Identity"
-msgstr ""
+msgstr "იდენტიფიკატორის წაშლა"
 
 #: kopete/config/accounts/kopeteaccountconfig.cpp:339
 #, kde-format
@@ -3649,7 +3649,7 @@ msgstr "მეტსახელი:"
 #: kopete/identity/identitystatusbase.ui:73
 #, kde-format
 msgid "Identity Name"
-msgstr ""
+msgstr "იდენტიფიკატორის სახელი"
 
 #: kopete/identity/identitystatuswidget.cpp:207
 #: kopete/identity/identitystatuswidget.cpp:243
@@ -7531,7 +7531,7 @@ msgstr ""
 #: plugins/history/historyplugin.cpp:75
 #, kde-format
 msgid "History Plugin"
-msgstr ""
+msgstr "ისტორიის დამატება"
 
 #: plugins/history/historyplugin.cpp:75
 #, kde-format
@@ -7687,7 +7687,7 @@ msgstr ""
 #: plugins/history2/history2plugin.cpp:47
 #, kde-format
 msgid "History2"
-msgstr ""
+msgstr "ისტორია2"
 
 #. i18n: ectx: property (whatsThis), widget (QPushButton, import2)
 #: plugins/history2/history2prefsui.ui:150
@@ -11282,13 +11282,13 @@ msgstr ""
 #: protocols/gadu/ui/gadueditaccountui.ui:482
 #, kde-format
 msgid "Maiden name:"
-msgstr ""
+msgstr "ქალიშვილობის სახელი:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1_5_3_2_4_3)
 #: protocols/gadu/ui/gadueditaccountui.ui:489
 #, kde-format
 msgid "City of origin:"
-msgstr ""
+msgstr "წარმოშობის ქალაქი:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1_5_3_2_4_2)
 #: protocols/gadu/ui/gadueditaccountui.ui:524
@@ -11318,7 +11318,7 @@ msgstr "გვარი:"
 #: protocols/gadu/ui/gadueditaccountui.ui:577
 #, kde-format
 msgid "Your nickname:"
-msgstr ""
+msgstr "მეტსახელი:"
 
 #. i18n: ectx: property (text), widget (QLabel, lblGender)
 #. i18n: ectx: property (text), widget (QLabel, textLabel1_4a)
@@ -11327,13 +11327,13 @@ msgstr ""
 #: protocols/gadu/ui/gadusearch.ui:242 protocols/qq/ui/qqvcard.ui:210
 #, kde-format
 msgid "Gender:"
-msgstr ""
+msgstr "სქესი:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1_5_3_2_2)
 #: protocols/gadu/ui/gadueditaccountui.ui:591
 #, kde-format
 msgid "Year of birth:"
-msgstr ""
+msgstr "დაბადების წელი:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel3)
 #. i18n: ectx: property (text), widget (QLabel, textLabel2_2)
@@ -11375,7 +11375,7 @@ msgstr "მამრობითი"
 #: protocols/gadu/ui/gadueditaccountui.ui:680
 #, kde-format
 msgid "&File Transfer"
-msgstr ""
+msgstr "&ფაილის მიმოცვლა"
 
 #. i18n: ectx: property (title), widget (QGroupBox, dcc)
 #: protocols/gadu/ui/gadueditaccountui.ui:692
@@ -13731,62 +13731,62 @@ msgstr ""
 #: protocols/jabber/jabberprotocol.cpp:98
 #, kde-format
 msgid "Work Street"
-msgstr ""
+msgstr "სამსახურის ქუჩა"
 
 #: protocols/jabber/jabberprotocol.cpp:99
 #, kde-format
 msgid "Work Extra Address"
-msgstr ""
+msgstr "სამსახურის დამატებითი მისამართი"
 
 #: protocols/jabber/jabberprotocol.cpp:100
 #, kde-format
 msgid "Work PO Box"
-msgstr ""
+msgstr "სამსახურის საფოსტო ყუთი"
 
 #: protocols/jabber/jabberprotocol.cpp:101
 #, kde-format
 msgid "Work City"
-msgstr ""
+msgstr "სამსახურის ქალაქი"
 
 #: protocols/jabber/jabberprotocol.cpp:102
 #, kde-format
 msgid "Work Postal Code"
-msgstr ""
+msgstr "სამსახურის საფოსტო კოდი"
 
 #: protocols/jabber/jabberprotocol.cpp:103
 #, kde-format
 msgid "Work Country"
-msgstr ""
+msgstr "სამსახურის ქვეყანა"
 
 #: protocols/jabber/jabberprotocol.cpp:104
 #, kde-format
 msgid "Work Email Address"
-msgstr ""
+msgstr "სამსახურის ელფოსტის მისამართი"
 
 #: protocols/jabber/jabberprotocol.cpp:105
 #, kde-format
 msgid "Home Street"
-msgstr ""
+msgstr "სახლის ქუჩა"
 
 #: protocols/jabber/jabberprotocol.cpp:106
 #, kde-format
 msgid "Home Extra Address"
-msgstr ""
+msgstr "სახლის დამატებითი მისამართი"
 
 #: protocols/jabber/jabberprotocol.cpp:107
 #, kde-format
 msgid "Home PO Box"
-msgstr ""
+msgstr "სახლის საფოსტო ყუთი"
 
 #: protocols/jabber/jabberprotocol.cpp:108
 #, kde-format
 msgid "Home City"
-msgstr ""
+msgstr "სახლის ქალაქი"
 
 #: protocols/jabber/jabberprotocol.cpp:109
 #, kde-format
 msgid "Home Postal Code"
-msgstr ""
+msgstr "სახლის საფოსტო კოდი"
 
 #: protocols/jabber/jabberprotocol.cpp:110
 #, kde-format
@@ -20257,7 +20257,7 @@ msgstr ""
 #: protocols/winpopup/wpeditaccount.cpp:114
 #, kde-format
 msgid "WinPopup"
-msgstr ""
+msgstr "WinPopup"
 
 #: protocols/winpopup/wpaddcontact.cpp:102
 #, kde-format
