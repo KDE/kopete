@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2022-12-28 05:55+0100\n"
+"PO-Revision-Date: 2022-12-29 10:13+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -348,7 +348,7 @@ msgstr ""
 #: kopete/chatwindow/chatview.cpp:522
 #, kde-format
 msgid "%1 is now known as %2"
-msgstr ""
+msgstr "%1 ახლა ცნობილია, როგორც %2"
 
 #: kopete/chatwindow/chatview.cpp:537
 #, kde-format
@@ -1040,7 +1040,7 @@ msgstr ""
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:185
 #, kde-format
 msgid "Identities"
-msgstr ""
+msgstr "იდენტიფიკატორები"
 
 #. i18n: ectx: property (toolTip), widget (QPushButton, mButtonIdentityAdd)
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:191
@@ -2654,7 +2654,7 @@ msgstr ""
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:20
 #, kde-format
 msgid "Chat Window Appearance"
-msgstr ""
+msgstr "ჩატის ფანჯრის გარეგნობა"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:34
@@ -4989,7 +4989,7 @@ msgstr ""
 #: libkopete/kopeteaccount.cpp:217
 #, kde-format
 msgid "You have been disconnected"
-msgstr ""
+msgstr "შეერთება გაწყდა"
 
 #: libkopete/kopeteaccount.cpp:217
 #, kde-format
@@ -6823,7 +6823,7 @@ msgstr ""
 #: protocols/oscar/icq/ui/icqotherinfowidget.ui:132
 #, kde-format
 msgid "Contact Notes"
-msgstr ""
+msgstr "კონტაქტის შენიშვნები"
 
 #: plugins/contactnotes/contactnotesedit.cpp:54
 #, kde-format
@@ -8030,7 +8030,7 @@ msgstr ""
 #: plugins/otr/authenticationwizard.cpp:55
 #, kde-format
 msgid "Checking if answers match..."
-msgstr ""
+msgstr "პასუხების დამთხვევის შემოწმება..."
 
 #: plugins/otr/authenticationwizard.cpp:82
 #, kde-format
@@ -8046,12 +8046,12 @@ msgstr "დახურვა"
 #, kde-format
 msgctxt "@title"
 msgid "Select authentication method"
-msgstr ""
+msgstr "აირჩიეთ ავთენტიკაციის მეთოდი"
 
 #: plugins/otr/authenticationwizard.cpp:111
 #, kde-format
 msgid "Question and Answer"
-msgstr ""
+msgstr "კითხვა და პასუხი"
 
 #: plugins/otr/authenticationwizard.cpp:112
 #, kde-format
@@ -8061,13 +8061,13 @@ msgstr "გაზიარებული საიდუმლო ფრაზ�
 #: plugins/otr/authenticationwizard.cpp:113
 #, kde-format
 msgid "Manual fingerprint verification"
-msgstr ""
+msgstr "ანაბეჭდის ხელით გადამოწმება"
 
 #: plugins/otr/authenticationwizard.cpp:143
 #, kde-format
 msgctxt "@title"
 msgid "Question and Answer"
-msgstr ""
+msgstr "კითხვა და პასუხი"
 
 #: plugins/otr/authenticationwizard.cpp:145
 #, kde-format
@@ -8079,7 +8079,7 @@ msgstr ""
 #, kde-format
 msgctxt "@info"
 msgid "Enter the answer to your question:"
-msgstr ""
+msgstr "შეიყვანეთ პასუხი თქვენი კითხვისთვის:"
 
 #: plugins/otr/authenticationwizard.cpp:153
 #, kde-format
@@ -8123,7 +8123,7 @@ msgstr ""
 #, kde-format
 msgctxt "@title"
 msgid "Manual Verification"
-msgstr ""
+msgstr "ხელით გადამოწმება"
 
 #: plugins/otr/authenticationwizard.cpp:198
 #, kde-format
@@ -8172,6 +8172,8 @@ msgid ""
 "<b>%1</b> has successfully authenticated you. You may want to authenticate "
 "this contact as well by asking your own question."
 msgstr ""
+"<b>%1</b> -მა ავთენტიკაცია წარმატებით გაგატარათ. შეიძლება თქვენც გნებავთ "
+"მისი ავთენტიკაცია, თქვენი კითხვის დასმით.."
 
 #: plugins/otr/authenticationwizard.cpp:346
 #: protocols/groupwise/libgroupwise/gwerror.cpp:106
@@ -8190,7 +8192,7 @@ msgstr ""
 #: plugins/otr/authenticationwizard.cpp:367
 #, kde-format
 msgid "Authentication aborted"
-msgstr ""
+msgstr "ავთენტიკაცია გაუქმდა"
 
 #: plugins/otr/authenticationwizard.cpp:368
 #, kde-format
@@ -8225,7 +8227,7 @@ msgstr ""
 #, kde-format
 msgctxt "@title"
 msgid "Authenticating contact..."
-msgstr ""
+msgstr "კონტაქტის ავთენტიკაცია..."
 
 #. i18n: ectx: label, entry (rbAlways), group (Policy)
 #: plugins/otr/kopete_otr.kcfg:9
@@ -8238,13 +8240,15 @@ msgstr ""
 #, kde-format
 msgid "Automatically encrypt messages if the other side supports OTR"
 msgstr ""
+"თუ მეორე მხარეს OTR-ის მხარდაჭერა გააჩნია, შეტყობინებები ავტომატურად "
+"დაიშიფრება"
 
 #. i18n: ectx: property (toolTip), widget (QRadioButton, kcfg_rbManual)
 #. i18n: ectx: label, entry (rbManual), group (Policy)
 #: plugins/otr/kopete_otr.kcfg:17 plugins/otr/otrprefs.ui:129
 #, kde-format
 msgid "Encrypt messages if the other side requests an OTR connection"
-msgstr ""
+msgstr "შეტყობინებები დაიშიფრება, თუ მეორე მხარეს OTR-ის მხარდაჭერა გააჩნია"
 
 #. i18n: ectx: label, entry (rbNever), group (Policy)
 #: plugins/otr/kopete_otr.kcfg:21
@@ -8364,6 +8368,8 @@ msgid ""
 "%1 has already closed his/her private connection to you. Your message was "
 "not sent. Either end your private conversation, or restart it."
 msgstr ""
+"%1-მა თქვენამდე შეერთება უკვე დახურა. შეტყობინება არ გაგზავნიდა. ან "
+"დაასრულეთ ეს საუბარი, ან თავიდან დაიწყეთ ის."
 
 #: plugins/otr/otrlchatinterface.cpp:441
 #, kde-format
@@ -8559,11 +8565,13 @@ msgid ""
 "Please contact %1 via another secure way and verify that the following "
 "fingerprint is correct:"
 msgstr ""
+"დაუკავშირდით %1-ს დაცული არხით და გადაამოწმეთ, სწორია თუ არა შემდეგი "
+"ანაბეჭდები:"
 
 #: plugins/otr/otrpreferences.cpp:164
 #, kde-format
 msgid "Are you sure you want to trust this fingerprint?"
-msgstr ""
+msgstr "დარწმუნებული ბრძანდებით, რომ ენდობით ამ ანაბეჭდს?"
 
 #: plugins/otr/otrpreferences.cpp:165
 #, kde-format
@@ -8711,7 +8719,7 @@ msgstr "გთხოვთ, მოითმინოთ"
 #: plugins/otr/privkeypopup.ui:32
 #, kde-format
 msgid "Please wait while generating the private key"
-msgstr ""
+msgstr "მოითმინეთ, მიმდინარეობს პირადი გასაღების გენერაცია"
 
 #: plugins/pipes/pipesdelegate.cpp:37
 #, kde-format
@@ -12477,7 +12485,7 @@ msgstr "შემქმნელი:"
 #: protocols/oscar/icq/ui/xtrazicqstatusui.ui:51
 #, kde-format
 msgid "Description:"
-msgstr ""
+msgstr "აღწერა:"
 
 #. i18n: ectx: property (toolTip), widget (QLineEdit, createdOn)
 #: protocols/groupwise/ui/gwchatprops.ui:246
@@ -14717,7 +14725,7 @@ msgstr ""
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:585
 #, kde-format
 msgid "P&riority:"
-msgstr ""
+msgstr "&პრიორიტეტი:"
 
 #. i18n: ectx: property (toolTip), widget (QSpinBox, mPriority)
 #. i18n: ectx: property (whatsThis), widget (QSpinBox, mPriority)
@@ -19347,7 +19355,7 @@ msgstr "სურათი"
 #: protocols/qq/ui/qqvcard.ui:138
 #, kde-format
 msgid "QQ ID:"
-msgstr ""
+msgstr "QQ ID:"
 
 #. i18n: ectx: property (text), widget (QLabel, lblAge)
 #: protocols/qq/ui/qqvcard.ui:184
@@ -19373,7 +19381,7 @@ msgstr "ხელმოწერა :"
 #: protocols/qq/ui/qqvcard.ui:379
 #, kde-format
 msgid "Zip code:"
-msgstr ""
+msgstr "საფოსტო ინდექსი:"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #: protocols/qq/ui/qqvcard.ui:421
@@ -19385,7 +19393,7 @@ msgstr "ტელეფონის ნომრები"
 #: protocols/qq/ui/qqvcard.ui:476
 #, kde-format
 msgid "QQ:"
-msgstr ""
+msgstr "QQ:"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, cbZodiac)
 #: protocols/qq/ui/qqvcard.ui:553
@@ -19469,7 +19477,7 @@ msgstr ""
 #: protocols/qq/ui/qqvcard.ui:642
 #, kde-format
 msgid "Zodiac:"
-msgstr ""
+msgstr "ზოდიაქო:"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, cbHoroscope)
 #: protocols/qq/ui/qqvcard.ui:670
@@ -19547,7 +19555,7 @@ msgstr "თევზები"
 #: protocols/qq/ui/qqvcard.ui:733
 #, kde-format
 msgid "Horoscope:"
-msgstr ""
+msgstr "ჰოროსკოპი:"
 
 #. i18n: ectx: property (text), widget (QLabel, lblIntroduction)
 #: protocols/qq/ui/qqvcard.ui:817
