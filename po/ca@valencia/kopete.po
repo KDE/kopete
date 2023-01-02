@@ -2189,9 +2189,9 @@ msgid ""
 "has the same effect."
 msgstr ""
 "De manera predeterminada, la icona de la safata del sistema indica els "
-"missatges entrants nous amb una animació. Un clic en la icona amb el botó "
-"esquerre o mitjà del ratolí obrirà el missatge a una finestra nova de xat. "
-"Té el mateix efecte que prémer el botó «Veure» en la bambolla."
+"missatges entrants nous amb una animació. Un clic damunt de la icona amb el "
+"botó esquerre o mitjà del ratolí obrirà el missatge a una finestra nova de "
+"xat. Té el mateix efecte que prémer el botó «Veure» en la bambolla."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_showSystemTray)
 #: kopete/config/behavior/behaviorconfig_general.ui:32
@@ -3176,7 +3176,7 @@ msgid ""
 "This wizard helps you export instant messaging contacts to the KDE address "
 "book."
 msgstr ""
-"Este assistent vos ajudarà a exportar els contactes del missatger a la "
+"Este assistent vos ajudarà a exportar els contactes del missatger cap a la "
 "llibreta d'adreces de KDE."
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
@@ -3216,7 +3216,7 @@ msgstr "<No establida>"
 #: kopete/contactlist/kopeteaddrbookexport.cpp:189
 #, kde-format
 msgid "Export to Address Book"
-msgstr "Exporta a la llibreta d'adreces"
+msgstr "Exporta cap a la llibreta d'adreces"
 
 #: kopete/contactlist/kopeteaddrbookexport.cpp:195
 #, kde-format
@@ -3405,7 +3405,7 @@ msgstr "Mou el contacte"
 #, kde-format
 msgid "There is no email address set for this contact in the KDE address book."
 msgstr ""
-"No hi ha cap adreça de correu establida per a este contacte a la llista "
+"No hi ha cap adreça de correu establida per a este contacte en la llista "
 "d'adreces de KDE."
 
 #: kopete/contactlist/kopetecontactlistview.cpp:546
@@ -3600,7 +3600,7 @@ msgstr "Enllaç cap a la llibreta d'adreces"
 #: kopete/contactlist/kopetemetalvipropswidget.ui:91
 #, kde-format
 msgid "Export contact's details to the KDE Address Book"
-msgstr "Exporta els detalls dels contactes a la llibreta d'adreces de KDE"
+msgstr "Exporta els detalls dels contactes cap a la llibreta d'adreces de KDE"
 
 #. i18n: ectx: property (text), widget (QPushButton, btnExportKABC)
 #: kopete/contactlist/kopetemetalvipropswidget.ui:94
@@ -4795,7 +4795,7 @@ msgstr "Control de guany de luminància"
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:119
 #, kde-format
 msgid "VTR Time Constant"
-msgstr "Constant de temps de l'enregistrador de cinta de vídeo"
+msgstr "Constant de temps del gravador de cinta de vídeo"
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:120
 #, kde-format
@@ -7268,7 +7268,7 @@ msgstr "Signatura dels missatges"
 #, kde-format
 msgctxt "@action toggle action"
 msgid "Export Contacts' Keys to Address Book"
-msgstr "Exporta les claus dels contactes a la llibreta d'adreces"
+msgstr "Exporta les claus dels contactes cap a la llibreta d'adreces"
 
 #: plugins/cryptography/cryptographyguiclient.cpp:110
 #, kde-format
@@ -7340,7 +7340,7 @@ msgstr "&Seleccioneu la clau pública..."
 #, kde-format
 msgctxt "@action"
 msgid "&Export Public Keys To Address Book..."
-msgstr "&Exporta les claus públiques a la llibreta d'adreces..."
+msgstr "&Exporta les claus públiques cap a la llibreta d'adreces..."
 
 #: plugins/cryptography/cryptographyplugin.cpp:378
 #, kde-format
@@ -7499,7 +7499,7 @@ msgstr "Exporta"
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Export checked keys to address book"
-msgstr "Exporta les claus marcades a la llibreta d'adreces"
+msgstr "Exporta les claus marcades cap a la llibreta d'adreces"
 
 #: plugins/cryptography/exportkeys.cpp:75
 #, kde-format
@@ -7532,7 +7532,7 @@ msgid ""
 "to the address book."
 msgstr ""
 "Activeu la casella al costat del nom i la clau de cada usuari del qual "
-"vulgueu exportar a la llibreta d'adreces."
+"vulgueu exportar cap a la llibreta d'adreces."
 
 #. i18n: ectx: property (toolTip), widget (QListWidget, keyList)
 #: plugins/cryptography/kabckeyselectorbase.ui:27
@@ -13350,7 +13350,7 @@ msgstr "Permisos d'accés per a usuaris determinats"
 #: protocols/groupwise/ui/gwchatprops.ui:406
 #, kde-format
 msgid "Add a new ACL entry"
-msgstr "Afig una nova entrada ACL"
+msgstr "Afig una entrada nova ACL"
 
 #. i18n: ectx: property (toolTip), widget (QPushButton, editAcl)
 #: protocols/groupwise/ui/gwchatprops.ui:413
