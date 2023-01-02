@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2022-12-30 07:24+0100\n"
+"PO-Revision-Date: 2023-01-01 07:41+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -3495,7 +3495,7 @@ msgstr ""
 #: protocols/groupwise/ui/gwaddui.ui:119
 #, kde-format
 msgid "Ad&vanced"
-msgstr ""
+msgstr "დამა&ტებითი"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, chkUseCustomIcons)
 #: kopete/contactlist/kopetemetalvipropswidget.ui:386
@@ -18624,7 +18624,7 @@ msgstr "დიახ"
 #: protocols/oscar/icq/ui/icqsearchdialog.cpp:280
 #, kde-format
 msgid "No"
-msgstr ""
+msgstr "არა"
 
 #: protocols/oscar/icq/ui/icquserinfowidget.cpp:97
 #, kde-format
@@ -18779,12 +18779,12 @@ msgstr ""
 #: protocols/oscar/liboscar/tasks/filetransfertask.cpp:296
 #, kde-format
 msgid "file is empty: "
-msgstr ""
+msgstr "ფაილი ცარიელია: "
 
 #: protocols/oscar/liboscar/tasks/filetransfertask.cpp:554
 #, kde-format
 msgid "Bad Request"
-msgstr ""
+msgstr "ცუდი მოთხოვნა"
 
 #: protocols/oscar/liboscar/tasks/filetransfertask.cpp:557
 #, kde-format
@@ -18799,7 +18799,7 @@ msgstr ""
 #: protocols/oscar/liboscar/tasks/filetransfertask.cpp:563
 #, kde-format
 msgid "Unknown Error: "
-msgstr ""
+msgstr "უცნობი შეცდომა: "
 
 #: protocols/oscar/liboscar/tasks/filetransfertask.cpp:665
 #, kde-format
@@ -20190,7 +20190,7 @@ msgstr ""
 #: protocols/winpopup/ui/wpuserinfowidget.ui:44
 #, kde-format
 msgid "Computer Name"
-msgstr ""
+msgstr "კომპიუტერის სახელი"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel2_2)
 #: protocols/winpopup/ui/wpuserinfowidget.ui:51
