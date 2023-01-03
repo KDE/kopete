@@ -1640,7 +1640,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 			<title
 >Altri protocolli</title>
 			<para
->Come per i protocolli citati, &kopete; fornisce supporto per molti altri protocolli. In molti casi, questi non sono preconfigurati oppure necessitano di estensioni aggiuntive. In questa forma sono forniti Meanwhile, SMS, Skype e SILC. Comunque il team di &kopete; non è responsabile per questi protocolli.</para>
+>Come per i protocolli citati, &kopete; fornisce supporto per molti altri protocolli. In molti casi, questi non sono preconfigurati oppure necessitano di estensioni aggiuntive. In questa forma sono forniti Meanwhile, SMS e SILC. Comunque il team di &kopete; non è responsabile per questi protocolli.</para>
 		</sect2>
 	</sect1>
 </chapter>

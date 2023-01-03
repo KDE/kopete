@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-01-01 07:41+0100\n"
+"PO-Revision-Date: 2023-01-02 07:04+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -337,13 +337,13 @@ msgstr[1] ""
 #: kopete/chatwindow/chatview.cpp:455
 #, kde-format
 msgid "%1 is typing a message"
-msgstr ""
+msgstr "%1 კრეფს შეტყობინებას"
 
 #: kopete/chatwindow/chatview.cpp:458
 #, kde-format
 msgctxt "%1 is a list of names"
 msgid "%1 are typing a message"
-msgstr ""
+msgstr "%1 კრეფს შეტყობინებას"
 
 #: kopete/chatwindow/chatview.cpp:522
 #, kde-format
@@ -354,43 +354,43 @@ msgstr "%1 ახლა ცნობილია, როგორც %2"
 #, kde-format
 msgctxt "%1 is a contact's name"
 msgid "%1 deleted status message"
-msgstr ""
+msgstr "%1-მა წაშალა სტატუსის შეტყობინება"
 
 #: kopete/chatwindow/chatview.cpp:546
 #, kde-format
 msgctxt "%1 is a contact's name"
 msgid "%1 changed status message: %2"
-msgstr ""
+msgstr "%1-მა სტატუსის შეტყობინება %2-ზე შეცვალა"
 
 #: kopete/chatwindow/chatview.cpp:564
 #, kde-format
 msgid "%1 has joined the chat."
-msgstr ""
+msgstr "%1 შეუერთდა ჩატს."
 
 #: kopete/chatwindow/chatview.cpp:587
 #, kde-format
 msgid "%1 status message is %2"
-msgstr ""
+msgstr "%1-ის სტატუსის შეტყობინებაა %2"
 
 #: kopete/chatwindow/chatview.cpp:618
 #, kde-format
 msgid "%1 has left the chat."
-msgstr ""
+msgstr "%1 გავიდა ჩატიდან."
 
 #: kopete/chatwindow/chatview.cpp:620
 #, kde-format
 msgid "%1 has left the chat (%2)."
-msgstr ""
+msgstr "%1 გავიდა ჩატიდან (%2)."
 
 #: kopete/chatwindow/chatview.cpp:725
 #, kde-format
 msgid "You are now marked as %1."
-msgstr ""
+msgstr "ახლა მონიშნული ხართ, როგორც %1."
 
 #: kopete/chatwindow/chatview.cpp:735
 #, kde-format
 msgid "%2 is now %1."
-msgstr ""
+msgstr "%1 ახლა %2-ა."
 
 #: kopete/chatwindow/kopetechatwindow.cpp:210
 #: kopete/chatwindow/kopetechatwindow.cpp:476
@@ -414,7 +414,7 @@ msgstr "მზადაა."
 #: kopete/chatwindow/kopeteemailwindow.cpp:223
 #, kde-format
 msgid "&Send Message"
-msgstr ""
+msgstr "&შეტყობინების გაგზავნა"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:385
 #, kde-format
@@ -1096,7 +1096,7 @@ msgstr ""
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:240
 #, kde-format
 msgid "&Set Default"
-msgstr ""
+msgstr "&ნაგულისხმების დაყენება"
 
 #: kopete/config/appearance/appearanceconfig.cpp:108
 #, kde-format
@@ -1107,7 +1107,7 @@ msgstr "კონტაქტების სია"
 #: kopete/config/chatwindow/chatwindowconfig.cpp:264
 #, kde-format
 msgid "Colors && Fonts"
-msgstr ""
+msgstr "ფერები და ფონტები"
 
 #: kopete/config/appearance/appearanceconfig.cpp:123
 #, kde-format
@@ -14131,7 +14131,7 @@ msgstr ""
 #: protocols/jabber/tasks/mood.cpp:149
 #, kde-format
 msgid "Interested"
-msgstr ""
+msgstr "დაინტერესებულია"
 
 #: protocols/jabber/tasks/mood.cpp:151
 #, kde-format
