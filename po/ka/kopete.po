@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-01-02 07:04+0100\n"
+"PO-Revision-Date: 2023-01-03 09:19+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -1255,7 +1255,7 @@ msgstr ""
 #: kopete/config/appearance/appearanceconfig_colors.ui:132
 #, kde-format
 msgid "&Group names:"
-msgstr ""
+msgstr "&ჯგუფის სახელები:"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, AppearanceConfig_ContactList)
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:14
@@ -1267,7 +1267,7 @@ msgstr ""
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:28
 #, kde-format
 msgid "Group sorting:"
-msgstr ""
+msgstr "ჯგუფის დალაგება:"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListGroupSorting)
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListMetaContactSorting)
@@ -1281,7 +1281,7 @@ msgstr "ხელით"
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:74
 #, kde-format
 msgid "Contact sorting:"
-msgstr ""
+msgstr "კონტაქტების დალაგება:"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_contactListIconMode)
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:114
@@ -1611,19 +1611,19 @@ msgstr "&გასულობის მორგება"
 #: kopete/config/behavior/behaviorconfig.cpp:76
 #, kde-format
 msgid "Cha&t"
-msgstr ""
+msgstr "&ჩატი"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_2)
 #: kopete/config/behavior/behaviorconfig_away.ui:17
 #, kde-format
 msgid "Auto Away"
-msgstr ""
+msgstr "გასული მდგომარეობის ავტომატური დაყენება"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_useAutoAway)
 #: kopete/config/behavior/behaviorconfig_away.ui:23
 #, kde-format
 msgid "&Use auto away"
-msgstr ""
+msgstr "გასული მდგომარეობის ავტომატური დაყენების &გამოყენება"
 
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #: kopete/config/behavior/behaviorconfig_away.ui:41
@@ -1721,13 +1721,13 @@ msgstr ""
 #: kopete/config/behavior/behaviorconfig_chat.ui:66
 #, kde-format
 msgid "&Always show tabs"
-msgstr ""
+msgstr "ჩანართების &ყოველთვის ჩვენება"
 
 #. i18n: ectx: property (title), widget (QGroupBox, interfaceGroup)
 #: kopete/config/behavior/behaviorconfig_chat.ui:73
 #, kde-format
 msgid "&Interface Preference"
-msgstr ""
+msgstr "&ინტერფეისის მორგება"
 
 #. i18n: ectx: property (title), widget (QGroupBox, chatWindowGroup)
 #: kopete/config/behavior/behaviorconfig_chat.ui:85
