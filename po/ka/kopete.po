@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-01-03 09:19+0100\n"
+"PO-Revision-Date: 2023-01-04 07:14+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -296,7 +296,7 @@ msgstr ""
 #: kopete/chatwindow/kopeteemailwindow.cpp:471
 #, kde-format
 msgid "Closing Group Chat"
-msgstr ""
+msgstr "ჯგუფური ჩატის დახურვა"
 
 #: kopete/chatwindow/chatview.cpp:358 kopete/chatwindow/chatview.cpp:364
 #: kopete/chatwindow/chatview.cpp:370
@@ -325,14 +325,14 @@ msgstr ""
 #: kopete/chatwindow/kopeteemailwindow.cpp:483
 #, kde-format
 msgid "Message in Transit"
-msgstr ""
+msgstr "მიმდინარეობს შეტყობინების გადაცემა"
 
 #: kopete/chatwindow/chatview.cpp:408
 #, kde-format
 msgid "One other person in the chat"
 msgid_plural "%1 other people in the chat"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ჩატში კიდევ 1 პირია"
+msgstr[1] "ჩატში კიდევ %1 პირია"
 
 #: kopete/chatwindow/chatview.cpp:455
 #, kde-format
