@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-01-04 07:14+0100\n"
+"PO-Revision-Date: 2023-01-05 05:30+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -1352,17 +1352,17 @@ msgstr ""
 #: kopete/config/appearance/contactlistlayouteditwidget.cpp:44
 #, kde-format
 msgid "Show Icon"
-msgstr ""
+msgstr "ხატულის ჩვენება"
 
 #: kopete/config/appearance/contactlistlayoutwidget.cpp:152
 #, kde-format
 msgid "Unsaved data?"
-msgstr ""
+msgstr "შეუნახავი მონაცემები?"
 
 #: kopete/config/appearance/contactlistlayoutwidget.cpp:164
 #, kde-format
 msgid "Reserved Layout Name"
-msgstr ""
+msgstr "განლაგების რეზერვირებული სახელი"
 
 #: kopete/config/appearance/contactlistlayoutwidget.cpp:165
 #, kde-format
@@ -1418,7 +1418,7 @@ msgstr "გადახედვა"
 #: kopete/config/appearance/contactlisttoken.cpp:45
 #, kde-format
 msgid "Optimal width"
-msgstr ""
+msgstr "ოპტიმალური სიგანე"
 
 #: kopete/config/appearance/contactlisttoken.cpp:53
 #, kde-format
@@ -2275,17 +2275,17 @@ msgstr "უხილავია"
 #: kopete/config/chatwindow/chatwindowconfig.cpp:206
 #, kde-format
 msgid "&Style"
-msgstr ""
+msgstr "&სტილი"
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:250
 #, kde-format
 msgid "&Emoticons"
-msgstr ""
+msgstr "&ემოციები"
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:386
 #, kde-format
 msgid "(No Variant)"
-msgstr ""
+msgstr "(ვარიანტის გარეშე)"
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:443
 #, kde-format

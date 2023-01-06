@@ -1,364 +1,271 @@
 <!-- Kopete Handbook, Menus Chapter copyright 2003 Will Stephenson.  Licensed under the GNU Free Documentation License -->
 <chapter id="menus">
-<title
->Menüeinträge</title>
+<title>Menu Entries</title>
 
-<para
->Die einzelnen Menüeinträge sind unten beschrieben. Falls eine Tastenkombination existiert, die die entsprechende Funktion ausführt, wird die Standardkombination neben dem Menüeintrag aufgeführt.</para>
+<para>Each menu item is discussed below. When there is a keyboard shortcut that
+performs a menu item function, the default shortcut is listed with the menu item.</para>
 <sect1 id="menus-contactlist">
-<title
->Fenstermenü der Kontaktliste</title>
+<title>The Contact List Window's Menus</title>
 <sect2 id="menus-contactlist-file">
-<title
->Das Menü Datei</title>
+<title>File Menu</title>
 
 <variablelist>
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Datei</guimenu
-> <guisubmenu
->Status setzen</guisubmenu
-><guimenuitem
-> Online</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>File</guimenu>
+<guisubmenu>Set Status</guisubmenu>
+<guimenuitem>Online</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Mit allen Zugängen Online gehen</para>
+<para>Go online with all accounts</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Datei</guimenu
-> <guisubmenu
->Status setzen</guisubmenu
-> <guimenuitem
->Abwesend</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>File</guimenu>
+<guisubmenu>Set Status</guisubmenu>
+<guimenuitem>Away</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Alle Online-Zugänge auf den Status Abwesend setzen</para>
+<para>Set all connected accounts away</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Datei</guimenu
-> <guisubmenu
->Status</guisubmenu
-> <guimenuitem
->Offline</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>File</guimenu>
+<guisubmenu>Set Status</guisubmenu>
+<guimenuitem>Offline</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Mit allen Zugängen Offline gehen</para>
+<para>Set all accounts offline</para>
 </listitem>
 </varlistentry>
 <!--FIXME missing Set Status Invisible, Busy, Edit Messages, Edit Statuses-->
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Datei</guimenu
-> <guimenuitem
->Kontakt hinzufügen ...</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>File</guimenu>
+<guimenuitem>Add Contact...</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Dies startet den Assistent zum Hinzufügen von Kontakten, mit dem Sie einen neuen Kontakt zu Ihrer Liste hinzufügen können.</para>
+<para>This displays the Add Contact Wizard, which allows you to add a new contact to your list</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Datei</guimenu
-> <guimenuitem
->Neue Gruppe erstellen ...</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>File</guimenu>
+<guimenuitem>Create New Group...</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Fragt nach einem Gruppennamen und fügt diesen zur Kontaktliste hinzu.</para>
+<para>Prompts you for the new group's name and adds it to the contact list.</para>
 </listitem>
 </varlistentry>
 <!--FIXME missing Export Contacts-->
 <varlistentry>
 <term>
-<menuchoice
-><shortcut
-><keycombo action="simul"
->&Ctrl;<keycap
->Q</keycap
-></keycombo
-> </shortcut
-><guimenu
->Datei</guimenu
-><guimenuitem
->Beenden</guimenuitem
-> </menuchoice>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo>
+</shortcut>
+<guimenu>File</guimenu>
+<guimenuitem>Quit</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Trennt die Verbindungen zu allen &im;-Diensten und beendet das Programm.</para>
+<para>Disconnects you from all &im; systems, closes all the windows and exits the application.</para>
 </listitem>
 </varlistentry>
 
 </variablelist>
 </sect2>
 <sect2 id="menus-contactlist-edit">
-<title
->Das Menü Bearbeiten</title>
+<title>Edit Menu</title>
 <variablelist>
 <!--FIXME not in Edit menu
 <varlistentry>
 <term>
 <menuchoice>
-<shortcut
-><keycombo action="simul"
->&Ctrl;<keycap
->Z</keycap
-></keycombo>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>Z</keycap></keycombo>
 </shortcut>
-<guimenu
->Edit</guimenu>
-<guimenuitem
->Undo</guimenuitem>
+<guimenu>Edit</guimenu>
+<guimenuitem>Undo</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
-<para
->Reverts the last change that was made to the contact list.</para>
+<para>Reverts the last change that was made to the contact list.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
 <menuchoice>
-<shortcut
-><keycombo action="simul"
->&Ctrl;&Shift;<keycap
->Z</keycap
-></keycombo>
+<shortcut><keycombo action="simul">&Ctrl;&Shift;<keycap>Z</keycap></keycombo>
 </shortcut>
-<guimenu
->Edit</guimenu>
-<guimenuitem
->Redo</guimenuitem>
+<guimenu>Edit</guimenu>
+<guimenuitem>Redo</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
-<para
->Reverts the last change that was made to the contact list by <guimenu
->Edit</guimenu
-><guimenuitem
->Undo</guimenuitem
-></para>
+<para>Reverts the last change that was made to the contact list by <guimenu>Edit</guimenu><guimenuitem>Undo</guimenuitem></para>
 </listitem>
 </varlistentry>
 -->
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Bearbeiten</guimenu
-><guimenuitem
->Einzelne Nachricht senden ...</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Send Single Message...</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Öffnet ein Fenster ähnlich einem E-Mail-Fenster, um an den ausgewählten Kontakt eine Nachricht zu schicken.</para>
+<para>Opens an email-style message window with the selected contact, to send a single message.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Bearbeiten</guimenu
-><guimenuitem
->Chat starten ...</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Start Chat...</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Öffnet ein Chatfenster, um mit dem ausgewählten Kontakt eine Unterhaltung zu beginnen.</para>
+<para>Opens a chat window with the selected contact, to have a conversation.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Bearbeiten</guimenu
-> <guimenuitem
->Datei senden ...</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Send File...</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Öffnet einen Dateiauswahldialog zur Auswahl einer Datei, die an den ausgewählten Kontakt gesendet wird, falls der &im;-Dienst dieses unterstützt.</para>
+<para>If supported by the &im; system, this opens a file selector to choose a file to send to the selected contact.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Bearbeiten</guimenu
-> <guisubmenu
->Verschieben nach</guisubmenu
-> </menuchoice>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guisubmenu>Move To</guisubmenu>
+</menuchoice>
 </term>
 <listitem>
-<para
->Dieser Menüeintrag ist nur aktiviert, wenn ein Kontakt ausgewählt ist, damit verschieben Sie den Kontakt in die Gruppe, die Sie aus dem Untermenü auswählen können.</para>
+<para>(Enabled when a contact is selected) Choose another group from the sub-menu, and the contact will move to that group.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Bearbeiten</guimenu
-> <guisubmenu
->Kopieren nach</guisubmenu
-> </menuchoice>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guisubmenu>Copy To</guisubmenu>
+</menuchoice>
 </term>
 <listitem>
-<para
->Dieser Menüeintrag ist nur aktiviert, wenn ein Kontakt ausgewählt ist. Dies kopiert den Kontakt in die Gruppe, die Sie aus dem Untermenü auswählen können. Falls der &im;-Dienst erlaubt, Kontakte in mehr als einer Gruppe zu haben, werden die Daten auf dem Server automatisch aktualisiert.</para>
+<para>(Enabled when a contact is selected) Choose a group from the sub-menu, and the contact will be copied to group.  &im; systems that allow contacts to be in more than one group on the server contact list will be updated accordingly.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Bearbeiten</guimenu
-><guisubmenu
->Kontakt hinzufügen</guisubmenu
-> </menuchoice>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guisubmenu>Add Contact...</guisubmenu>
+</menuchoice>
 </term>
 <listitem>
-<para
->Dieser Menüeintrag ist nur aktiviert, wenn ein Kontakt ausgewählt ist. Wählen Sie einen weiteren Zugang aus dem Untermenü, um zu diesem Kontakt einen weiteren Nachrichtendienst hinzuzufügen.</para>
+<para>(Enabled when a contact is selected) Choose another account from the submenu, and you can add another way to message that person using that account.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Bearbeiten</guimenu
-> <guimenuitem
->Zu Kontaktliste hinzufügen</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Add to Your Contact List...</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Dieser Menüeintrag ist nur aktiviert, wenn ein Kontakt ausgewählt ist. Manchmal erhalten Sie Nachrichten von Personen, die noch nicht in der Kontaktliste stehen. In diesem Fall erzeugt &kopete; einen temporären Eintrag. Diese Funktion fügt den Kontakt dauerhaft zur Kontaktliste hinzu.</para>
+<para>(Enabled when a contact is selected) Sometimes people will message you who aren't on your contact list already.  In this case, &kopete; creates a temporary entry for them, but to keep them on your contact list, use this function.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><shortcut
-><keycombo
-><keycap
->Entf</keycap
-></keycombo
-> </shortcut
-> <guimenu
->Bearbeiten</guimenu
-> <guimenuitem
->Kontakt löschen</guimenuitem
-> </menuchoice>
+<menuchoice>
+<shortcut><keycombo><keycap>Del</keycap></keycombo>
+</shortcut>
+<guimenu>Edit</guimenu>
+<guimenuitem>Delete Contact</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Dieser Menüeintrag ist nur aktiviert, wenn ein Kontakt ausgewählt ist. Damit wird ein Kontakt aus der Kontaktliste gelöscht.</para>
+<para>(Enabled when a contact is selected) Removes a contact from the contact list entirely.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><shortcut
-><keycombo
-><keycap
->F2</keycap
-></keycombo
-></shortcut
-> <guimenu
->Bearbeiten</guimenu
-> <guimenuitem
->Umbenennen</guimenuitem
-> </menuchoice>
+<menuchoice>
+<shortcut><keycombo><keycap>F2</keycap></keycombo></shortcut>
+<guimenu>Edit</guimenu>
+<guimenuitem>Rename</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Dieser Menüeintrag ist nur aktiviert, wenn ein Kontakt ausgewählt ist. Der Kontakt in der Kontaktliste wird umbenannt. Danach ändert sich der Kontaktlisteneintrag nicht mehr automatisch, wenn der Kontakt seinen Spitznamen ändert. Das kann über den Eigenschaftendialog wieder eingeschaltet werden.</para>
+<para>(Enabled when a contact is selected) Renames the contact on the contact list.  If you do this, the contact list entry will no longer change if the contact changes their display name remotely.  You can re-enable this using the contact's Properties dialog.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Bearbeiten</guimenu
-> <guimenuitem
->Eigenschaften</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Properties</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->In diesem Dialog können Sie benutzerdefinierte Symbole für den Kontakt wählen und dessen Namen ändern.</para>
-<para
->Sie können den &kde;-Adressbucheintrag ändern, mit dem ein Kontakt verknüpft ist.</para>
+<para>The Properties dialog lets you choose custom icons for the selected item, and change its name.</para>
+<para>For contacts, you can change the &kde; Address Book entry that they are associated with.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Bearbeiten</guimenu
-><guimenuitem
->Gruppe entfernen</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Remove Group</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Dieser Menüeintrag ist nur aktiviert, wenn eine Gruppe ausgewählt ist. Damit wird eine Gruppe aus der Kontaktliste entfernt. Alle Kontakte der Gruppe werden in die oberste Ebene verschoben.</para>
+<para>(Enabled when a group is selected) Removes a group from the contact list entirely.  Any contacts that are only in this group are moved to the top level.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Bearbeiten</guimenu
-><guimenuitem
->Gruppe umbenennen</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Rename Group</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Benennt die Gruppe um. Dieser Menüeintrag ist nur aktiviert, wenn eine Gruppe ausgewählt ist. </para>
+<para>(Enabled when a group is selected) Renames the group.</para>
 </listitem>
 </varlistentry>
 
@@ -366,305 +273,211 @@
 
 </sect2>
 <sect2 id="menus-settings">
-<title
->Das Menü Einstellungen</title>
-<para
->&kopete; hat das bekannten &kde;-Menü <guimenu
->Einstellungen</guimenu
-> aus den <ulink url="help:/fundamentals/menus.html#menus-settings"
->&kde;-Grundlagen</ulink
-> mit zusätzlichen Einträgen:</para>
+<title>Settings Menu</title>
+<para>&kopete; has a default &kde; Settings menu as described in the 
+<ulink url="help:/fundamentals/menus.html#menus-settings">&kde; Fundamentals</ulink> 
+with additional entries:</para>
 
 <variablelist>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Einstellungen</guimenu
-> <guimenuitem
->Offline-Benutzer anzeigen</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guimenuitem>Show Offline Users</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Blendet die Kontakte, die aktuelle Offline sind, ein/aus. Sie werden sichtbar, sobald Sie Online gehen.</para>
+<para>This shows/hides contacts who are currently offline.  They will become visible when they go online again.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><shortcut
-><keycombo action="simul"
->&Ctrl;<keycap
->G</keycap
-> </keycombo
-></shortcut
-><guimenu
->Einstellungen</guimenu
-> <guimenuitem
-> Anzeige leerer Gruppen</guimenuitem
-> </menuchoice>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>G</keycap></keycombo>
+</shortcut>
+<guimenu>Settings</guimenu>
+<guimenuitem>Show Empty Groups</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Blendet Gruppen ein/aus, die keine Mitglieder haben bzw. deren Mitglieder alle Offline und ausgeblendet sind (siehe weiter oben).</para>
+<para>This shows/hides groups which do not have any members, or where all the members are offline and hidden (see above).</para>
 </listitem>
 </varlistentry>
 
-<varlistentry
-><!--FIXME no global Shortcuts dialog, it is the app shortcuts dialog-->
+<varlistentry><!--FIXME no global Shortcuts dialog, it is the app shortcuts dialog-->
 <term>
-<menuchoice
-><guimenu
->Einstellungen</guimenu
-> <guimenuitem
->Globale Kurzbefehle einrichten ...</guimenuitem
-> </menuchoice>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guimenuitem>Configure Global Shortcuts...</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Zeigt den &kde;-Standarddialog zur Festlegung der globalen Tastenzuordnungen an. Dort können Zuordnungen festgelegt werden, die in jedem Programm unter &kde; aktiv sind.</para>
+<para>Displays the &kde; standard Configure Global Shortcuts dialog, where you can change keyboard shortcuts that work all the time under &kde;.</para>
 </listitem>
 </varlistentry>
 
 </variablelist>
 </sect2>
 <sect2 id="menus-help">
-<title
->Das Menü Hilfe</title>
-<para
->Das Kontaktlistenfenster benutzt die bekannten &kde;-Einträge im Menü <guimenu
->Hilfe</guimenu
->, weitere Informationen dazu finden Sie im Abschnitt über das Menü <ulink url="help:/fundamentals/menus.html#menus-help"
->Hilfe</ulink
-> der &kde;-Grundlagen. </para>
+<title>Help Menu</title>
+<para>
+The contact list window has the common &kde; Help menu items, for more information read the section about the <ulink url="help:/fundamentals/menus.html#menus-help">Help Menu</ulink> of the &kde; Fundamentals.
+</para>
 </sect2>
-</sect1
->  <!-- menus-contactlist -->
+</sect1>  <!-- menus-contactlist -->
 
 <sect1 id="menus-chatwindow">
-<title
->Die Menüs des Chatfensters</title>
+<title>The Chat Window's Menus</title>
 <sect2 id="menus-chatwindow-chat">
-<title
->Das Menü Chat</title>
+<title>Chat Menu</title>
 <variablelist>
 <varlistentry>
 <term>
-<menuchoice
-><shortcut
-><keycap
->Eingabe</keycap
-> </shortcut
-> <guimenu
->Chat</guimenu
-> <guimenuitem
->Nachricht senden</guimenuitem
-> </menuchoice>
+<menuchoice>
+<shortcut><keycap>Return</keycap>
+</shortcut>
+<guimenu>Chat</guimenu>
+<guimenuitem>Send Message</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Sendet eine Nachricht.</para>
+<para>Sends a message.</para>
 </listitem>
 </varlistentry>
 <!--FIXME Send File missing-->
 <varlistentry>
 <term>
-<menuchoice
-><shortcut
-><keycombo action="simul"
->&Ctrl;<keycap
->S</keycap
-></keycombo
-> </shortcut
-><guimenu
->Chat</guimenu
-><guimenuitem
->Speichern</guimenuitem
-> </menuchoice>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>S</keycap></keycombo>
+</shortcut>
+<guimenu>Chat</guimenu>
+<guimenuitem>Save</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Speichert den Inhalt des Chats in einer Datei.</para>
+<para>Saves the content of the chat to a file.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><shortcut
-><keycombo action="simul"
->&Ctrl;<keycap
-></keycap
-></keycombo
-> </shortcut
-><guimenu
->Chat</guimenu
-> <guimenuitem
->Drucken ...</guimenuitem
-> </menuchoice>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>P</keycap></keycombo>
+</shortcut>
+<guimenu>Chat</guimenu>
+<guimenuitem>Print...</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Druckt eine Kopie des Chats aus.</para>
+<para>Prints off a hard copy of the chat.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Chat</guimenu
-><guisubmenu
->Kontakte</guisubmenu
-> </menuchoice>
+<menuchoice>
+<guimenu>Chat</guimenu>
+<guisubmenu>Contacts</guisubmenu>
+</menuchoice>
 </term>
 <listitem>
-<para
->Dieses Menü listet alle Personen im Chat auf. Sie finden hier für jeden Kontakt die gleichen Menüeinträge, die auch über die <mousebutton
->rechten</mousebutton
-> Maustaste in der Kontaktliste zur Verfügung stehen. Damit können Sie kontaktspezifische Aktionen wie <quote
->Datei senden</quote
->, <quote
->Benutzerinfo anzeigen</quote
-> oder einen <quote
->Kontakt blockieren</quote
-> durchführen.</para>
+<para>This menu lists all the people in the chat.  You have access to the same contact menu you get by <mousebutton>right</mousebutton>-clicking a contact's name in the Contact List, allowing you to perform contact specific actions such as sending them a file, viewing their user info or blocking them.</para>
 </listitem>
 </varlistentry>
 <!--FIXME Commands missing-->
 <!--FIXME Close All But This Tab missing-->
 <varlistentry>
 <term>
-<menuchoice
-><shortcut
-><keycombo action="simul"
->&Ctrl;<keycap
->W</keycap
-></keycombo
-> </shortcut
-><guimenu
->Chat</guimenu
-><guimenuitem
->Schließen</guimenuitem
-> </menuchoice>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>W</keycap></keycombo>
+</shortcut>
+<guimenu>Chat</guimenu>
+<guimenuitem>Close</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Schließt den aktuellen Chat. Falls in anderen Karteikarten des Fensters noch Chats laufen, bleibt das Fenster offen.</para>
+<para>Closes the current chat.  If there are chats taking place in other tabs in this window, the window will stay open.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><shortcut
-><keycombo action="simul"
->&Ctrl;<keycap
->Q</keycap
-></keycombo
-> </shortcut
-><guimenu
->Chat</guimenu
-> <guimenuitem
->Beenden</guimenuitem
-> </menuchoice>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo>
+</shortcut>
+<guimenu>Chat</guimenu>
+<guimenuitem>Quit</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Beendet alle Chats in diesem Fenster.</para>
+<para>Closes all chats taking place in this window.</para>
 </listitem>
 </varlistentry>
 </variablelist>
 </sect2>
 <sect2 id="menus-chatwindow-edit">
-<title
->Das Menü Bearbeiten</title>
+<title>Edit Menu</title>
 <variablelist>
 <varlistentry>
 <term>
-<menuchoice
-><shortcut
-><keycombo action="simul"
->&Ctrl;<keycap
->X</keycap
-></keycombo
-></shortcut
-> <guimenu
->Bearbeiten</guimenu
-> <guimenuitem
->Ausschneiden</guimenuitem
-> </menuchoice>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>X</keycap></keycombo></shortcut>
+<guimenu>Edit</guimenu>
+<guimenuitem>Cut</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Text ausschneiden funktioniert analog zu einem Textverarbeitungsprogramm. Der ausgewählte Text wird entfernt und in die Zwischenablage gestellt.Sie können außerdem einen Textabschnitt auswählen und mit dem Mauszeiger an eine neue Stelle ziehen.</para>
+<para>Cutting text works as with most editors: the selected text is
+removed and put into the clipboard. Note that you can also select text and
+drag it to a new position.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><shortcut
-><keycombo action="simul"
->&Ctrl;<keycap
->C</keycap
-></keycombo
-></shortcut
-> <guimenu
->Bearbeiten</guimenu
-> <guimenuitem
->Kopieren</guimenuitem
-> </menuchoice>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>C</keycap></keycombo>
+</shortcut>
+<guimenu>Edit</guimenu>
+<guimenuitem>Copy</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Text kopieren funktioniert analog zu einem Textverarbeitungsprogramm. Der ausgewählte Text wird in die Zwischenablage kopiert. Alternativ können Sie einen Textabschnitt auswählen und bei gedrückter &Ctrl;-Taste mit der Maus an eine neue Stelle ziehen, um ihn zu kopieren.</para>
+<para>Copying text works as with most editors: the selected text is copied to the clipboard.
+Note that you can also select text while holding the &Ctrl; key, and drag it to a new
+position to copy it.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><shortcut
-><keycombo action="simul"
->&Ctrl;<keycap
->V</keycap
-></keycombo
-></shortcut
-> <guimenu
->Bearbeiten</guimenu
-> <guimenuitem
->Einfügen</guimenuitem
-> </menuchoice>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>V</keycap></keycombo></shortcut>
+<guimenu>Edit</guimenu>
+<guimenuitem>Paste</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Text einfügen arbeitet analog zu den meisten Texteditoren: Der Text aus der Zwischenablage wird an der aktuellen Cursor-Position in den Text eingefügt.</para>
+<para>Pasting works the same as with most editors: the text from the
+clipboard is pasted at the current cursor position.</para>
 </listitem>
 </varlistentry>
 </variablelist>
 </sect2>
 <sect2 id="menus-chatwindow-format">
-<title
->Das Menü Format</title>
+<title>Format Menu</title>
 <variablelist>
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Format</guimenu
-><guisubmenu
->Smiley hinzufügen</guisubmenu
-> </menuchoice>
+<menuchoice>
+<guimenu>Format</guimenu>
+<guisubmenu>Add Smiley</guisubmenu>
+</menuchoice>
 </term>
 <listitem>
-<para
->In diesem Menü sind alle Smileys/Emoticons des aktuellen Satzes enthalten. Den Symbolsatz können Sie im <link linkend="configuring-appearance-emoticons"
->Einrichtungsdialog von Kopete</link
-> ändern.</para>
+<para>This menu contains all the smileys/emoticons that the current emoticon scheme includes.  You can change the scheme <link linkend="configuring-appearance-emoticons">in the Configure Kopete Dialog</link>.</para>
 </listitem>
 </varlistentry>
 <!--FIXME Alignment missing-->
@@ -672,191 +485,145 @@
 <varlistentry>
 <term>
 <menuchoice>
-<guimenu
->Format</guimenu>
-<guimenuitem
->Text Color...</guimenuitem>
+<guimenu>Format</guimenu>
+<guimenuitem>Text Color...</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
-<para
->Opens a color selector that modifies the text color.</para>
+<para>Opens a color selector that modifies the text color.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
 <menuchoice>
-<guimenu
->Format</guimenu>
-<guimenuitem
->Background Color...</guimenuitem>
+<guimenu>Format</guimenu>
+<guimenuitem>Background Color...</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
-<para
->Opens a color selector that modifies the background color.</para>
+<para>Opens a color selector that modifies the background color.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
 <menuchoice>
-<guimenu
->Format</guimenu>
-<guisubmenu
->Font</guisubmenu>
+<guimenu>Format</guimenu>
+<guisubmenu>Font</guisubmenu>
 </menuchoice>
 </term>
 <listitem>
-<para
->This menu allows you to change the font used in the chat.</para>
+<para>This menu allows you to change the font used in the chat.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
 <menuchoice>
-<guimenu
->Format</guimenu>
-<guisubmenu
->Font Size</guisubmenu>
+<guimenu>Format</guimenu>
+<guisubmenu>Font Size</guisubmenu>
 </menuchoice>
 </term>
 <listitem>
-<para
->This menu allows you to change the font size used in the chat.</para>
+<para>This menu allows you to change the font size used in the chat.</para>
 </listitem>
 </varlistentry>
 -->
 </variablelist>
 </sect2>
 <sect2 id="menus-chatwindow-tabs">
-<title
->Das Menü Unterfenster</title>
+<title>Tabs Menu</title>
 <variablelist>
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Unterfenster</guimenu
-><guisubmenu
->Platzierung</guisubmenu
-> </menuchoice>
+<menuchoice>
+<guimenu>Tabs</guimenu>
+<guisubmenu>Tab Placement</guisubmenu>
+</menuchoice>
 </term>
 <listitem>
-<para
->Hier können Sie festlegen, ob die Unterfenster oberhalb oder unterhalb des Chatfensters erscheinen.</para>
+<para>This menu allows you to change whether tabs appear at the top or the bottom of the chat view.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><shortcut
-><keycombo action="simul"
->&Ctrl;&Shift;<keycap
->B</keycap
-></keycombo
-> </shortcut
-><guimenu
->Unterfenster</guimenu
-><guimenuitem
->Chat verselbstständigen</guimenuitem
-> </menuchoice>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;&Shift;<keycap>B</keycap></keycombo>
+</shortcut>
+<guimenu>Tabs</guimenu>
+<guimenuitem>Detach Chat</guimenuitem>
+</menuchoice>
 </term>
 <listitem>
-<para
->Koppelt den aktuellen Chat in ein eigenes Fenster ab.</para>
+<para>Separates the current chat into its own window.</para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Unterfenster</guimenu
-> <guisubmenu
->Verschieben in Fenster</guisubmenu
-> </menuchoice>
+<menuchoice>
+<guimenu>Tabs</guimenu>
+<guisubmenu>Move Tab to Window</guisubmenu>
+</menuchoice>
 </term>
 <listitem>
-<para
->Mit diesem Menü können Chats zwischen Fenstern verschoben werden. Wählen Sie das Fenster im Menü, in das der Chat verschoben werden soll.</para>
+<para>You can move chats between windows using this menu.  Choose the chat window the tab should move to from the menu.</para>
 </listitem>
 </varlistentry>
 <!--FIXME Activate Previous Tab, Activate Next Tab,  Activate Next Active Tab missing-->
 </variablelist>
 </sect2>
 <sect2 id="menus-chatwindow-tools">
-<title
->Das Menü Extras</title>
-<para
->Dieses Menü enthält die Einträge, die durch geladene Module hinzugefügt wurden. Genauere Informationen finden Sie im <link linkend="plugins"
->Kapitel Module</link
->.</para>
+<title>Tools Menu</title>
+<para>This menu contains items added by the plugins you have loaded.  See the <link linkend="plugins">plugins chapter</link> for details.</para>
 </sect2>
 <sect2 id="menus-chatwindow-settings">
-<title
->Das Menü Einstellungen</title>
-<para
->&kopete; hat das bekannten &kde;-Menü <guimenu
->Einstellungen</guimenu
-> aus den <ulink url="help:/fundamentals/menus.html#menus-settings"
->&kde;-Grundlagen</ulink
-> mit zusätzlichen Einträgen:</para>
+<title>Settings Menu</title>
+<para>&kopete; has a default &kde; Settings menu as described in the 
+<ulink url="help:/fundamentals/menus.html#menus-settings">&kde; Fundamentals</ulink> 
+with additional entries:</para>
 
 <variablelist>
 
 <varlistentry>
 <term>
-<menuchoice
-><guimenu
->Einstellungen</guimenu
-> <guisubmenu
->Teilnehmer anzeigen</guisubmenu
-> </menuchoice>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guisubmenu>Show Participants</guisubmenu>
+</menuchoice>
 </term>
 <listitem>
-<para
->Hier wird eingestellt, ob die Teilnehmerliste des Chats auf der linken oder rechten Seite angezeigt wird.</para>
+<para>This menu controls whether the Participants list appears on the right of the Chat View.</para>
 </listitem>
 </varlistentry>
 
 </variablelist>
 </sect2>
 <sect2 id="menus-chatwindow-help">
-<title
->Das Menü Hilfe</title>
-<para
->Das Chat-Fenster benutzt die bekannten &kde;-Einträge im Menü <guimenu
->Hilfe</guimenu
->, weitere Informationen dazu finden Sie im Abschnitt über das Menü <ulink url="help:/fundamentals/menus.html#menus-help"
->Hilfe</ulink
-> der &kde;-Grundlagen. </para>
+<title>Help Menu</title>
+<para>
+The chat window has the common &kde; Help menu items, for more information read the section about the <ulink url="help:/fundamentals/menus.html#menus-help">Help Menu</ulink> of the &kde; Fundamentals.
+</para>
 
 </sect2>
 <!--
 <varlistentry>
 <term>
 <menuchoice>
-<guimenu
->Chat</guimenu>
-<guimenuitem
-></guimenuitem>
+<guimenu>Chat</guimenu>
+<guimenuitem></guimenuitem>
 </menuchoice>
 </term>
 <listitem>
-<para
-></para>
+<para></para>
 </listitem>
 </varlistentry>
 
 -->
-</sect1
-> <!-- menus-chatwindow -->
-</chapter
-> <!-- menus -->
+</sect1> <!-- menus-chatwindow -->
+</chapter> <!-- menus -->
 <!--
 CHAT
 Send Message
