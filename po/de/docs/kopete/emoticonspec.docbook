@@ -1,104 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <appendix id="kopete-emoticons">
 <appendixinfo>
-    <title>Emoticons Specification</title>
-    <releaseinfo>Version 0.1</releaseinfo>
-    <date>2005-01-07</date>
+    <title
+>Emoticons-Spezifikation</title>
+    <releaseinfo
+>Version 0.1</releaseinfo>
+    <date
+>2005-01-07</date>
     <authorgroup>
-      <author>
-	<firstname>Olivier</firstname>
-	<surname>Goffart</surname>
-	<affiliation>
-	  <address>
-	    <email>ogoffart@tiscalinet.be</email>
+      <author
+><firstname
+>Olivier</firstname
+> <surname
+>Goffart</surname
+> <affiliation
+> <address
+> <email
+>ogoffart@tiscalinet.be</email>
 	  </address>
 	</affiliation>
       </author>
     </authorgroup>
   </appendixinfo>
 
-<title>Emoticons</title>
+<title
+>Emoticons</title>
 
   <sect1 id="introduction-emoticons">
-    <title>Introduction</title>
-    <para>
-      This DRAFT document defines how to make a theme of emoticons typically used
-		in instant messaging applications
-    </para>
-    <para>
-      The basic scheme is very simple. The theme consists in one sub directory which
-		contains all the pictures and an &XML; file that gives each picture ASCII symbols.
-		A .directory file might be used.
-    </para>
+    <title
+>Einführung</title>
+    <para
+>In diesem vorläufigen Dokument wird definiert, wie ein typisches Design mit Emoticons für Instant-Messaging-Programme erstellt wird. </para>
+    <para
+>Das grundlegende Schema ist sehr einfach. Ein Design besteht aus einem Unterordner, der alle Bilder und eine &XML;-Datei mit ASCII-Symbolen für jedes Bild. Eine Datei mit der Erweiterung „.directory“ kann verwendet werden. </para>
   <sect2 id="location">
-    <title>File locations</title>
-    <para>
-      Files involved in this specification are located according to the "desktop
-      base directory specification" which can be found on <ulink
-      url="http://www.freedesktop.org/standards/">www.freedesktop.org</ulink>.
-    </para>
-    <para>
-		All the files of the theme must be placed in a sub directory of
-		 <varname>$XDG_DATA_DIRS</varname>/emoticons/
-		 The name of the directory must be equal to the name of the theme.
-		 That directory <emphasis>must</emphasis> contains a file called <varname>emoticons.xml</varname>
-		 the format of that file is described below.
-	</para>
-	<para>
-		  The theme directory may also contain a .directory file which contains
-		  translations of the theme name and/or an icon for that theme.
-	</para>
+    <title
+>Speicherorte der Dateien</title>
+    <para
+>Die Dateien dieser Spezifikation werden entsprechend dem Standard von <ulink url="http://www.freedesktop.org/standards/"
+>www.freedesktop.org</ulink
+> gespeichert. </para>
+    <para
+>Alle Dateien eines Designs müssen in einem Unterordner von <filename
+>$XDG_DATA_DIRS/emoticons/</filename
+> gespeichert werden. Dieser Ordner muss den gleichen Namen wie das Design haben. Dieser Ordner <emphasis
+>muss</emphasis
+> einen Datei mit dem Namen <filename
+>emoticons.xml</filename
+> enthalten. Das Format dieser Datei wird im folgenden beschrieben. </para>
+	<para
+>Der Designordner kann auch eine Datei „.desktop“ mit Übersetzungen des Designnamens oder einem Symbol für das Design enthalten. </para>
   </sect2>
   <sect2 id="emoticons-map-format">
-    <title>Format of the emoticons.xml file</title>
-    <para>
-      Emoticon map files must be well-formed XML files.
-		Implementations should ignore unknown tag or unknown attributes.
-    </para>
+    <title
+>Format der Datei emoticons.xml</title>
+    <para
+>Emoticon-Dateien dürfen nur wohlgeformtes XML enthalten. Implementierungen sollten unbekannte Tags und Attribute ignorieren. </para>
     <sect3 id="emoticons-map-elements">
-      <title>Elements</title>
+      <title
+>Elemente</title>
       <para>
         <variablelist>
           <varlistentry>
-					<term>&lt;messaging-emoticon-map&gt; [version="0.1"]</term>
+					<term
+>&lt;messaging-emoticon-map&gt; [version="0.1"]</term>
             <listitem>
-              <para>
-						 The root element is &lt;messaging-emoticon-map&gt;
-						 all other elements are contained by it.
-              </para>
+              <para
+>Das Basiselement ist &lt;messaging-emoticon-map&gt;, alle anderen Elemente sind darin enthalten. </para>
             </listitem>
           </varlistentry>
           <varlistentry>
-            <term>&lt;emoticon file="..."&gt;</term>
+            <term
+>&lt;emoticon file="..."&gt;</term>
             <listitem>
-              <para>
-						This element represents one emoticon.
-						The attribute file is the name of the image file which must be in the same directory.
-						The extension may be omitted. In that case, the implementation look in that directory
-						for a file with the same name in a supported format.
-              </para>
-				  <para>
-						 There are no order for emoticon in the map.
-						 But the first icon in the map is generally used to identify the theme graphically.
-						 By convention the this SHOULD be :-)
-				  </para>
+              <para
+>Diese Element repräsentiert ein Emoticon, Die Attributdatei ist der Name der Bilddatei, die sich im selben Ordner befinden muss. Die Erweiterung kann ausgelassen werden. In disem Fall wird in diesem Ordner nach einer Datei mit dem gleichen Namen in einem unterstützten Format gesucht. </para>
+				  <para
+>Es gibt keine Reihenfolge für die Emoticons in der Datei. Aber das erste Symbol wird benutzt, um das Design grafisch zu identifizieren. </para>
             </listitem>
           </varlistentry>
           <varlistentry>
-            <term>&lt;string&gt;</term>
+            <term
+>&lt;string&gt;</term>
             <listitem>
-              <para>
-                This element may only appear below &lt;emoticon&gt;.
-					 It represents the ASCII string which will be matched in the text,
-					 and replaced by the image specified by the file attribute of the emoticon.
-              </para>
-				  <para>
-						 There may be several strings per emoticon.
-				  </para>
-				  <para>
-						 There is no order for string inside an emoticon. But the first one SHOULD be
-						 the default one, and will be taken if there is a GUI selector.
-				  </para>
+              <para
+>Dieses Element darf nur nach dem Element &lt;emoticon&gt; eingefügt werden. Es repräsentiert die ASCII-Zeichenfolge, mit dem der Text übereinstimmt. Es wird durch das Bild ersetzt, das durch das Dateiattribut des Emoticons ersetzt. </para>
+				  <para
+>Es dürfen mehrere Zeichenfolgen je Emoticon vorhanden sein. </para>
+				  <para
+>Es gibt keine Reihenfolge für Zeichenfolgen in einem Emoticon. Der erste Eintag sollte als Standard verwendet, wenn eine Auswahl in einer grafischen Bedienungsoberfläche möglich ist. </para>
             </listitem>
           </varlistentry>
 	    </variablelist>
@@ -107,45 +97,44 @@
   </sect2>
 
   <sect2 id="img-format">
-    <title>Format of the image.</title>
-    <para>
-		All images SHOULD be in a supported format :  PNG, GIF or MNG.
-    </para>
+    <title
+>Format der Bilder.</title>
+    <para
+>Alle Bilder sollten in einem der unterstützten Formate PNG, GIF oder MNG vorliegen. </para>
   </sect2>
 
   <sect2 id="implementation">
-    <title>Implementations notes</title>
+    <title
+>Hinweise zur Implementierung</title>
 	 <sect3 id="impl-parser">
-	  <title>Emoticon parser</title>
-    <para>
-		There are no real recommendation how to parse emoticons. But
-		an emoticon with a longer string should have the priority over one with a shorter string.
-		(Example: if both :-() and :-( are in a theme, the picture for the first one should be used
-			when :-() is encountered)
-    </para>
+	  <title
+>Einlesen einer Emoticon-Datei</title>
+    <para
+>Es gibt keine Empfehlung, wie Emoticons eingelesen werden sollen. Jedoch sollte ein Emoticon mit einer längeren Zeichenfolge Priorität vor einem Emoticon mit einer kürzeren Zeichenfolge haben. Wenn es zum Beispiel „:-()“ und „:-(“ in einem Design gibt, sollte das Bild für das erste Element verwendet werden, wenn „:-()“ eingelesen wird. </para>
 </sect3>
 </sect2>
 
 <sect2 id="example">
-	  <title>Example</title>
+	  <title
+>Beispiel</title>
 	  <para>
-			 <programlisting>
-&lt;messaging-emoticon-map&gt;
-	&lt;emoticon file="smile.png"&gt;
-			&lt;string&gt;:-)&lt;/string&gt;
-			&lt;string&gt;:)&lt;/string&gt;
-			&lt;string&gt;:o)&lt;/string&gt;
-	&lt;/emoticon&gt;
+			 <programlisting
+>&lt;messaging-emoticon-map&gt;
+        &lt;emoticon file="smile.png"&gt;
+                        &lt;string&gt;:-)&lt;/string&gt;
+                        &lt;string&gt;:)&lt;/string&gt;
+                        &lt;string&gt;:o)&lt;/string&gt;
+        &lt;/emoticon&gt;
 
-	&lt;emoticon file="wink.png"&gt;
-			&lt;string&gt;;-)&lt;/string&gt;
-			&lt;string&gt;;)&lt;/string&gt;
-	&lt;/emoticon&gt;
+        &lt;emoticon file="wink.png"&gt;
+                        &lt;string&gt;;-)&lt;/string&gt;
+                        &lt;string&gt;;)&lt;/string&gt;
+        &lt;/emoticon&gt;
 
-	&lt;emoticon file="unhappy.png"&gt;
-			&lt;string&gt;:-(&lt;/string&gt;
-			&lt;string&gt;:(&lt;/string&gt;
-	&lt;/emoticon&gt;
+        &lt;emoticon file="unhappy.png"&gt;
+                        &lt;string&gt;:-(&lt;/string&gt;
+                        &lt;string&gt;:(&lt;/string&gt;
+        &lt;/emoticon&gt;
 &lt;/messaging-emoticon-map&gt;
 
  </programlisting>
@@ -153,7 +142,8 @@
 </sect2>
 
 <!--sect2 id="todo">
-	  <title>TODO</title>
+	  <title
+>TODO</title>
 	  <para>
 			 A DTD of the XML file
 	  </para>

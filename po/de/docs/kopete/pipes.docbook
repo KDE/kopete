@@ -1,107 +1,272 @@
-<!-- Copyright (c) 2008 by Charles Connell <charles@connells.org> -->
+<!-- Copyright (c) 2008 by Charles Connell <charles@connells.org
+> -->
 <!-- Licensed under the GNU Free Documentation License  -->
 
 <appendix id="pipes">
-<title>&kopete; Pipes Plugin Implementation Guide</title>
-<para>
-Beginning with &kopete; 1.0, &kopete; ships with a plugin called Pipes. Pipes allows you to pipe incoming or outgoing messages through an external script or executable. An incoming message will be piped through the executable before it reaches your chat window, while outgoing messages will be piped through the executable before they are sent over the internet. Pipes can receive text in one of three forms:
-<variablelist>
-<varlistentry>
-<term>Plain text body</term>
-<listitem><para>The body of the message, in plain &ascii; text</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>&HTML; text body</term>
-<listitem><para>The body of the message, in &HTML;, as it would be if your chat peer had sent HTML to you, which will be rendered in the chat window</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>&XML; full message</term>
-<listitem><para>An &XML; document that describes all the characteristics of the message, including the &HTML; body.</para></listitem>
-</varlistentry>
-</variablelist>
-This document describes the specifics of the &XML; format, and how to write a program that can handle it.
-</para>
+<title
+>Handbuch zur Implementierung für das Modul Umleitung</title>
+<para
+>Ab Version 1.0 enthält &kopete; ein Modul namens Umleitung. Mit diesem Modul können ein- oder ausgehende Nachrichten durch ein externes Skript oder Programm geleitet werden. Durch das Programm geleitet werden alle eingehen Nachrichten, ehe sie das Chatfenster erreichen und alle ausgehenden Nachrichten, ehe sie ins Internet geschickt werden. Für Umleitungen gibt es drei verschiedene Format für den Text: <variablelist
+> <varlistentry
+> <term
+>Unformatierter Text</term
+> <listitem
+><para
+>Die eigentliche Nachricht im &ascii;-Textformat</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>&HTML;-Text</term
+> <listitem
+><para
+>Die eigentliche Nachricht im &HTML;-Format, die für die Anzeige im Chatfenster gerendert wird</para
+></listitem
+> </varlistentry
+> <varlistentry
+> <term
+>Vollständige &XML;-Nachricht</term
+> <listitem
+><para
+>Ein &XML;-Dokument mit einer vollständigen Beschreibung der Nachricht einschließlich des &HTML;-Textteils</para
+></listitem
+> </varlistentry
+> </variablelist
+>Dieses Dokument beschreibt die Besonderheiten des &XML;-Formats und gibt Hinweise, wie ein Programm zur Bearbeitung dieses Formats zu schreiben ist. </para>
 
 <sect1 id="xml-output">
-<title>&XML; Output</title>
-<para>
-Here's an example of what a program will receive in its standard input stream:
-<literallayout>
-&lt;?xml version="1.0" encoding="ISO-8859-1"?>
+<title
+>&XML;-Ausgabe</title>
+<para
+>Ein Beispiel für den Datenstrom, den ein Programm auf der Standardeingabe empfängt: <literallayout>
+&lt;?xml version=<quote
+>1.0</quote
+> encoding=<quote
+>ISO-8859-1</quote
+>?>
 &lt;message subject=""
-	route="outbound"
-	importance="1"
-	formattedTimestamp="11:06:46 am"
-	timestamp="Sat Dec 1 11:06:46 2007"
-	type="normal"
-	mainContactId="spacemonkey1234"
-	time="11:06 am" >
-	&lt;from>
-		&lt;contact contactId="tdurden"
-			protocolIcon="aim_protocol"
-			userPhoto="/home/kde-devel/.kde4/share/apps/kopete/oscarpictures/tdurden.jpg" >
-			&lt;contactDisplayName dir="ltr" text="tdurden" />
-			&lt;metaContactDisplayName dir="ltr"
-				text="Tyler" />
-		&lt;/contact>
-	&lt;/from>
-	&lt;to>
-		&lt;contact contactId="spacemonkey1234"
-			protocolIcon="aim_protocol"
-			userPhoto="/home/kde-devel/.kde4/share/apps/kopete/avatars/User/7e542903e0ac7519a7496e85f5a5b99d.png" >
-			&lt;contactDisplayName dir="ltr" text="spacemonkey1234" />
-			&lt;metaContactDisplayName dir="ltr" text="Robert Paulson" />
-		&lt;/contact>
-		&lt;/to>
-	&lt;body dir="ltr"
-		bgcolor="#000000"
-		color="#000000" >
-		&amp;lt;span style=" color:#000000;">hey&amp;lt;/span>&lt;/body>
+        route=<quote
+>outbound</quote>
+        importance=<quote
+>1</quote>
+        formattedTimestamp=<quote
+>11:06:46 am</quote>
+        timestamp=<quote
+>Sat Dec 1 11:06:46 2007</quote>
+        type=<quote
+>normal</quote>
+        mainContactId=<quote
+>spacemonkey1234</quote>
+        time=<quote
+>11:06 am</quote
+> >
+        &lt;from>
+                &lt;contact contactId=<quote
+>tdurden</quote>
+                        protocolIcon=<quote
+>aim_protocol</quote>
+                        userPhoto=<quote
+>/home/kde-devel/.kde4/share/apps/kopete/oscarpictures/tdurden.jpg</quote
+> >
+                        &lt;contactDisplayName dir=<quote
+>ltr</quote
+> text=<quote
+>tdurden</quote
+> />
+                        &lt;metaContactDisplayName dir=<quote
+>ltr</quote>
+                                text=<quote
+>Tyler</quote
+> />
+                &lt;/contact>
+        &lt;/from>
+        &lt;to>
+                &lt;contact contactId=<quote
+>spacemonkey1234</quote>
+                        protocolIcon=<quote
+>aim_protocol</quote>
+                        userPhoto=<quote
+>/home/kde-devel/.kde4/share/apps/kopete/avatars/User/7e542903e0ac7519a7496e85f5a5b99d.png</quote
+> >
+                        &lt;contactDisplayName dir=<quote
+>ltr</quote
+> text=<quote
+>spacemonkey1234</quote
+> />
+                        &lt;metaContactDisplayName dir=<quote
+>ltr</quote
+> text=<quote
+>Robert Paulson</quote
+> />
+                &lt;/contact>
+                &lt;/to>
+        &lt;body dir=<quote
+>ltr</quote>
+                bgcolor=<quote
+>#000000</quote>
+                color=<quote
+>#000000</quote
+> >
+                &amp;lt;span style=<quote
+> color:#000000;</quote
+>
+>hey&amp;lt;/span
+>&lt;/body>
 &lt;/message>
-</literallayout>
-
-This &XML; is loosely based on the XSD used for chatstyles found at <ulink url="http://kopete.kde.org/files/kopetemessage.xsd">the Kopete website</ulink>. This code represents one message.
-There are a few things to note:
-<itemizedlist>
-<listitem><para>The "timestamp" attribute in the "message" element is in ISO 8601 standard format.</para></listitem>
-<listitem><para>The "protocolIcon" attribute in the "contact" element is chosen like this:
-<orderedlist>
-<listitem><para>If the Contact object has the photo property set, that path is used.</para></listitem>
-<listitem><para>If not, the Contact's MetaContact is asked for a picture path, and that is used regardless of being null or not.</para></listitem>
+</literallayout
+> Diese Daten im &XML;-Format basieren mehr oder weniger auf der XSD für Chatstile von der <ulink url="http://kopete.kde.org/files/kopetemessage.xsd"
+>Kopete Webseite</ulink
+>. Dieser Quelltext stellt eine Nachricht dar. Es gibt einige Dinge zu beachten: <itemizedlist>
+<listitem
+><para
+>Das Attribut <quote
+>timestamp</quote
+> im Element <quote
+>message</quote
+> hat das Standardformat der ISO 8601.</para
+></listitem>
+<listitem
+><para
+>Das Attribut <quote
+>protocolIcon</quote
+> im Element <quote
+>contact</quote
+> wird folgendermaßen bestimmt: <orderedlist>
+<listitem
+><para
+>Ist für das Kontaktobjekt das Attribut <quote
+>userPhoto</quote
+> gesetzt, wird dieses verwendet.</para
+></listitem>
+<listitem
+><para
+>Fehlt das Attribut, wird der Pfad zu einem Bild des Metakontakts für diesen Kontakt verwendet, unabhängig davon, ob dieser Pfad existiert.</para
+></listitem>
 </orderedlist>
-</para></listitem>
-<listitem><para>The "color" and "bgcolor" attributes in the "body" element are empty strings if they are not set in Kopete. They are in web color format.</para></listitem>
-<listitem><para>The content inside the "body" element has "&lt;" escaped, so it is not confused with the actual &XML; structure. Obviously, to correctly interpret the body as HTML, one would have to convert the "&amp;lt;"s to "&lt;"s.</para></listitem>
+</para
+></listitem>
+<listitem
+><para
+>Die Attribute „color“ und „bgcolor“ im Element „body“ sind leere Zeichenfolgen, sofern in Kopete kein Wert eingesetzt wurde. Dieser Wert hat das Format für Webfarben.</para
+></listitem>
+<listitem
+><para
+>Im Text innerhalb des Elements „body“ ist das Zeichen „&lt;“ maskiert, da das unmaskierte Zeichen für die &XML;-Struktur verwendet wird. Um den Text korrekt als HTML zu interpretieren, muss „&amp;lt;“ in „&lt;“ umgewandelt werden.</para
+></listitem>
 </itemizedlist>
 </para>
 </sect1>
 
 <sect1 id="xml-input">
-<title>&XML; Input</title>
-<para>
-Your program will receive &XML; in its standard input stream, it will have the opportunity to modify it, and then it must hand it back to &kopete; by way of its standard output stream. If your program modifies the following elements, the internal knowledge that &kopete; has of the message will be modified to reflect your changes.
-<itemizedlist>
-<listitem><para>"message" attribute "timestamp" but not other time attributes</para></listitem>
-<listitem><para>"message" attribute "subject"</para></listitem>
-<listitem><para>"message" attribute "type"</para></listitem>
-<listitem><para>"message" attribute "importance"</para></listitem>
-<listitem><para>"body" attribute "color". This is usually set to a web color number, but can be set to a name. The names defined by <ulink url="http://www.w3.org/TR/SVG/types.html#ColorKeywords">SVG</ulink> are accepted by QColor in Qt 4, so they are the only names that may be used.</para></listitem>
-<listitem><para>"body" attribute "bgcolor" &mdash; same behaviour as "color"</para></listitem>
-<listitem><para>content of element "body"</para></listitem>
-</itemizedlist>
-If you modify elements or their attributes not mentioned above, your changes to those elements will have no effect.
-</para>
+<title
+>&XML;-Eingabe</title>
+<para
+>Ihr Programm empfängt &XML;-Daten auf der Standardeingabe, kann sie bearbeiten und die Daten wieder auf der Standardausgabe an &kopete; übergeben. Wenn Ihr Programm folgende Elemente verändert, wird das von &kopete; verarbeitet: <itemizedlist
+> <listitem
+><para
+>Attribut „timestamp“ im Element „message“, aber keine anderen Attribute für Datum</para
+></listitem
+> <listitem
+><para
+>Attribut „subject“ im Element „message“</para
+></listitem
+> <listitem
+><para
+>Attribut „type“ im Element „message“</para
+></listitem
+> <listitem
+><para
+>Attribut „importance“ im Element „message“</para
+></listitem
+> <listitem
+><para
+>Attribut „color“ im Element „body“. Dieses Attribut enthält normalerweise die Nummer einer Webfarbe, es können aber auch Namen für Farben benutzt werden. <ulink url="http://www.w3.org/TR/SVG/types.html#ColorKeywords"
+>SVG</ulink
+>-Namen werden von der Funktion QColor in Qt 4 korrekt verarbeitet, daher sollten nur diese Bezeichnungen verwendet werden.</para
+></listitem
+> <listitem
+><para
+>„body“ Attribut „bgcolor“ im Element „body“ &mdash; hier gelten die gleichen Regeln wie für das Attribut „color“</para
+></listitem
+> <listitem
+><para
+>Inhalt des Elements „body“</para
+></listitem
+> </itemizedlist
+> Die Veränderung von hier nicht genannten Elementen und ihrer Attribute werden von Kopete nicht berücksichtigt und verworfen. </para>
 </sect1>
 
 <sect1 id="acceptable-values">
-<title>Acceptable Values</title>
-<para>
-Some attributes have certain acceptable values. The Pipes plugin's output will always have legal values. If your program chooses to change these attributes, they must remain legal. If not, &kopete;'s behavior is undefined.
-<variablelist>
-<varlistentry><term>Attribute "route" in element "message"</term><listitem><para>Must be "inbound", "outbound", or "internal"</para></listitem></varlistentry>
-<varlistentry><term>Attribute "type" in element "message"</term><listitem><para>Must be "action" or "normal"</para></listitem></varlistentry>
-<varlistentry><term>Attribute "importance" in element "message"</term><listitem><para>Must be "0" for low, "1" for normal, and "2" for high</para></listitem></varlistentry>
-<varlistentry><term>Attribute "dir" in many elements</term><listitem><para>Must be "ltr" for left-to-right or "rtl" for right-to-left</para></listitem></varlistentry>
+<title
+>Zulässige Werte</title>
+<para
+>Für einige Attribute sind nur bestimmte Werte erlaubt. In der Ausgabe des Moduls „Umleitung“ sind nur zulässige Werte enthalten. Wenn diese Werte im Programm geändert werden, müssen sie immer noch gültig bleiben. Anderfalls ist das Verhalten von &kopete; nicht definiert. <variablelist>
+<varlistentry
+><term
+>Attribut <quote
+>route</quote
+> im Element <quote
+>message</quote
+></term
+><listitem
+><para
+>Zulässige Werte: <quote
+>inbound</quote
+>, <quote
+>outbound</quote
+>, oder <quote
+>internal</quote
+></para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Attribute <quote
+>type</quote
+> im Element <quote
+>message</quote
+></term
+><listitem
+><para
+>Zulässige Werte: <quote
+>action</quote
+> oder <quote
+>normal</quote
+></para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Attribut <quote
+>importance</quote
+> im Element <quote
+>message</quote
+></term
+><listitem
+><para
+>Zulässige Werte: <quote
+>0</quote
+> für niedrig, <quote
+>1</quote
+> für normal und <quote
+>2</quote
+> für hoch</para
+></listitem
+></varlistentry>
+<varlistentry
+><term
+>Attribut <quote
+>dir</quote
+> in vielen Elementen</term
+><listitem
+><para
+>Zulässige Werte: <quote
+>ltr</quote
+> für Schriften, die von links nach rechts geschrieben werden und <quote
+>rtl</quote
+> für Schriften, die von rechts nach links geschrieben werden</para
+></listitem
+></varlistentry>
 </variablelist>
 </para>
 </sect1>

@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-01-05 05:30+0100\n"
+"PO-Revision-Date: 2023-01-06 06:44+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -149,12 +149,14 @@ msgid ""
 "Use &custom color\n"
 "for account:"
 msgstr ""
+"&ფერის ხელით მითითება\n"
+"ანგარიშისთვის:"
 
 #. i18n: ectx: property (toolTip), widget (KColorButton, mColorButton)
 #: kopete/addaccountwizard/addaccountwizardpage2.ui:88
 #, kde-format
 msgid "Account custom color selector"
-msgstr ""
+msgstr "ანგარიშის ფერის ხელით მითითება"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, mConnectNow)
 #: kopete/addaccountwizard/addaccountwizardpage2.ui:139
@@ -2092,13 +2094,13 @@ msgstr ""
 #: kopete/config/behavior/behaviorconfig_general.ui:58
 #, kde-format
 msgid "Message Handling"
-msgstr ""
+msgstr "შეტყობინებების დამშავება"
 
 #. i18n: ectx: property (toolTip), widget (QRadioButton, mInstantMessageOpeningChk)
 #: kopete/config/behavior/behaviorconfig_general.ui:64
 #, kde-format
 msgid "Instantly open incoming messages"
-msgstr ""
+msgstr "შემოსული შეტყობინებების დაუყოვნებლივი გახსნა"
 
 #. i18n: ectx: property (whatsThis), widget (QRadioButton, mInstantMessageOpeningChk)
 #: kopete/config/behavior/behaviorconfig_general.ui:67
@@ -2113,7 +2115,7 @@ msgstr ""
 #: kopete/config/behavior/behaviorconfig_general.ui:70
 #, kde-format
 msgid "Open messages instantl&y"
-msgstr ""
+msgstr "შეტყობინებების &დაუყოვნებლივი გახსნა"
 
 #. i18n: ectx: property (toolTip), widget (QRadioButton, kcfg_useMessageQueue)
 #: kopete/config/behavior/behaviorconfig_general.ui:77
@@ -2322,7 +2324,7 @@ msgstr ""
 #: kopete/config/chatwindow/chatwindowconfig.cpp:460
 #, kde-format
 msgid "Invalid Style"
-msgstr ""
+msgstr "არასწორი სტილი"
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:463
 #, kde-format
@@ -2369,7 +2371,7 @@ msgstr ""
 #, kde-format
 msgctxt "This is the myself preview contact nickname"
 msgid "Myself"
-msgstr ""
+msgstr "მე"
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:590
 #, kde-format
@@ -2508,13 +2510,13 @@ msgstr ""
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:104
 #, kde-format
 msgid "Base &font:"
-msgstr ""
+msgstr "საბაზისო &ფონტი:"
 
 #. i18n: ectx: property (whatsThis), widget (QRadioButton, radioButton)
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:43
 #, kde-format
 msgid "Use normal screen font"
-msgstr ""
+msgstr "ეკრანის ნორმალური ფონტის გამოყენება"
 
 #. i18n: ectx: property (text), widget (QRadioButton, radioButton)
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:46
@@ -2526,7 +2528,7 @@ msgstr "სისტემური ფონტის გამოყენე�
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:53
 #, kde-format
 msgid "Use custom font:"
-msgstr ""
+msgstr "ფონტის ხელით მითითება:"
 
 #. i18n: ectx: property (toolTip), widget (QLabel, textLabel3)
 #. i18n: ectx: property (whatsThis), widget (QLabel, textLabel3)
@@ -2538,13 +2540,13 @@ msgstr ""
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:117
 #, kde-format
 msgid "The color of normal text"
-msgstr ""
+msgstr "ნორმალური ტექსტის ფერი"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel2)
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:127
 #, kde-format
 msgid "&Highlight foreground:"
-msgstr ""
+msgstr "წინა პლანის &გამოკვეთა:"
 
 #. i18n: ectx: property (toolTip), widget (KColorButton, kcfg_highlightForegroundColor)
 #. i18n: ectx: property (whatsThis), widget (KColorButton, kcfg_highlightForegroundColor)
@@ -2606,7 +2608,7 @@ msgstr ""
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:221
 #, kde-format
 msgid "&Link color:"
-msgstr ""
+msgstr "&ბმულის ფერი:"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_2)
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:254
@@ -2696,13 +2698,13 @@ msgstr ""
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:127
 #, kde-format
 msgid "&Get New..."
-msgstr ""
+msgstr "&ახლის მიღება…"
 
 #. i18n: ectx: property (text), widget (QPushButton, installButton)
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:140
 #, kde-format
 msgid "&Install..."
-msgstr ""
+msgstr "&დაყენება..."
 
 #. i18n: ectx: property (text), widget (QPushButton, deleteButton)
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:153
@@ -2715,29 +2717,29 @@ msgstr "&წაშლა"
 #: kopete/config/chatwindow/chatwindowconfig_tab.ui:17
 #, kde-format
 msgid "For each tab"
-msgstr ""
+msgstr "თითოეული ჩანართისთვის"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_ShowContactName)
 #: kopete/config/chatwindow/chatwindowconfig_tab.ui:23
 #, kde-format
 msgid "Show contact name"
-msgstr ""
+msgstr "კონტაქტის სახელის ჩვენება"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_HoverClose)
 #: kopete/config/chatwindow/chatwindowconfig_tab.ui:33
 #, kde-format
 msgid "Show close button"
-msgstr ""
+msgstr "დახურვის ღილაკის ჩვენება"
 
 #: kopete/config/plugins/kopetepluginconfig.cpp:53
 #, kde-format
 msgid "General Plugins"
-msgstr ""
+msgstr "ზოგადი დამატებები"
 
 #: kopete/config/status/statusconfig.cpp:43
 #, kde-format
 msgid "&Manager"
-msgstr ""
+msgstr "&მმართველი"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #: kopete/config/status/statusconfig_general.ui:17
@@ -3224,7 +3226,7 @@ msgstr ""
 #: kopete/contactlist/kopetecontactlistview.cpp:832
 #, kde-format
 msgid "Rename Contact"
-msgstr ""
+msgstr "კონტაქტის სახელის გადარქმევა"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:833
 #: libkopete/kopetecontact.cpp:510
@@ -3240,7 +3242,7 @@ msgstr ""
 #: kopete/contactlist/kopetecontactlistview.cpp:837
 #, kde-format
 msgid "&Add Subcontact"
-msgstr ""
+msgstr "ქვეკონტაქტის &დამატება"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:840
 #, kde-format
@@ -3388,7 +3390,7 @@ msgstr "ხმოვანი ფაილის არჩევა"
 #: kopete/contactlist/kopetemetalvipropswidget.ui:47
 #, kde-format
 msgid "Address Book Link"
-msgstr ""
+msgstr "მისამართების წიგნის ბმული"
 
 #. i18n: ectx: property (toolTip), widget (QPushButton, btnExportKABC)
 #: kopete/contactlist/kopetemetalvipropswidget.ui:91
@@ -3432,7 +3434,7 @@ msgstr ""
 #: kopete/contactlist/kopetemetalvipropswidget.ui:265
 #, kde-format
 msgid "From contact:"
-msgstr ""
+msgstr "კონტაქტისგან:"
 
 #. i18n: ectx: property (toolTip), widget (QComboBox, cmbAccountName)
 #. i18n: ectx: property (toolTip), widget (QComboBox, cmbAccountPhoto)
@@ -3452,7 +3454,7 @@ msgstr ""
 #: kopete/contactlist/kopetemetalvipropswidget.ui:213
 #, kde-format
 msgid "Photo Source"
-msgstr ""
+msgstr "ფოტო წყარო"
 
 #. i18n: ectx: property (text), widget (QRadioButton, radioPhotoKABC)
 #: kopete/contactlist/kopetemetalvipropswidget.ui:219
@@ -3531,7 +3533,7 @@ msgstr ""
 #: kopete/contactlist/kopetemetalvipropswidget.ui:463
 #, kde-format
 msgid "Un&known:"
-msgstr ""
+msgstr "&უცნობი:"
 
 #. i18n: ectx: property (text), widget (QLabel, groupLabel)
 #: kopete/groupkabcselectorwidget.ui:31
@@ -3575,7 +3577,7 @@ msgstr "იდენტიფიკაცია"
 #: kopete/identity/identitydetailed.ui:13
 #, kde-format
 msgid "Detailed Info"
-msgstr ""
+msgstr "დეტალური ინფორმაცია"
 
 #. i18n: ectx: property (text), widget (QLabel, emailLabel)
 #: kopete/identity/identitydetailed.ui:19
@@ -3587,24 +3589,24 @@ msgstr "ელფოსტა: "
 #: kopete/identity/identitydetailed.ui:32
 #, kde-format
 msgid "Private phone:"
-msgstr ""
+msgstr "პირადი ტელეფონი:"
 
 #: kopete/identity/identitydialog.cpp:38 kopete/identity/identitydialog.cpp:44
 #, kde-format
 msgid "Identity Information"
-msgstr ""
+msgstr "იდენტიფიკაციის მონაცემები"
 
 #. i18n: ectx: property (text), widget (QLabel, photo)
 #: kopete/identity/identitydialog.cpp:56 kopete/identity/identitydialog.cpp:156
 #: kopete/identity/identitygeneral.ui:39
 #, kde-format
 msgid "No Photo"
-msgstr ""
+msgstr "სურათის გარეშე"
 
 #: kopete/identity/identitydialog.cpp:64
 #, kde-format
 msgid "General Information"
-msgstr ""
+msgstr "ზოგადი ინფორმაცია"
 
 #: kopete/identity/identitydialog.cpp:69
 #, kde-format
@@ -3622,19 +3624,19 @@ msgstr "ზოგადი ინფორმაცია"
 #: kopete/identity/identitygeneral.ui:73
 #, kde-format
 msgid "Select Photo"
-msgstr ""
+msgstr "აირჩიეთ სურათი"
 
 #. i18n: ectx: property (toolTip), widget (QToolButton, clearPhoto)
 #: kopete/identity/identitygeneral.ui:86
 #, kde-format
 msgid "Clear Photo"
-msgstr ""
+msgstr "სურათის გასუფთავება"
 
 #. i18n: ectx: property (text), widget (QLabel, labelLabel)
 #: kopete/identity/identitygeneral.ui:127
 #, kde-format
 msgid "Show as:"
-msgstr ""
+msgstr "ჩვენება, როგორც:"
 
 #. i18n: ectx: property (text), widget (QLabel, nickNameLabel)
 #. i18n: ectx: property (text), widget (QLabel, lblNickName)
@@ -3656,7 +3658,7 @@ msgstr "იდენტიფიკატორის სახელი"
 #, kde-format
 msgctxt "Button to open account configuration widget"
 msgid "Click to add an account"
-msgstr ""
+msgstr "ანგარიშის დასამატებლად დააწკაპუნეთ"
 
 #: kopete/infoeventwidget.cpp:234 plugins/otr/authenticationwizard.cpp:85
 #, kde-format
@@ -3686,13 +3688,13 @@ msgstr "&ჩასწორება"
 #: kopete/kopeteui.rc:55
 #, kde-format
 msgid "Quick Search Bar"
-msgstr ""
+msgstr "სწრაფი ძებნის ზოლი"
 
 #. i18n: ectx: Menu (contact_popup_actions)
 #: kopete/kopeteui.rc:66
 #, kde-format
 msgid "&Other Actions"
-msgstr ""
+msgstr "&სხვა ქმედებები"
 
 #. i18n: ectx: Menu (contact_popup_groups)
 #: kopete/kopeteui.rc:73
@@ -3720,20 +3722,20 @@ msgstr ""
 #: protocols/oscar/icq/icqstatusmanager.cpp:83 protocols/qq/qqprotocol.cpp:39
 #, kde-format
 msgid "&Away"
-msgstr ""
+msgstr "&გასული"
 
 #. i18n: ectx: property (text), widget (QRadioButton, awayButton_)
 #: kopete/kopetewindow.cpp:439 protocols/gadu/ui/gaduawayui.ui:84
 #: protocols/groupwise/gwprotocol.cpp:55
 #, kde-format
 msgid "&Busy"
-msgstr ""
+msgstr "&დაკავებული"
 
 #. i18n: ectx: property (text), widget (QRadioButton, invisibleButton_)
 #: kopete/kopetewindow.cpp:443 protocols/gadu/ui/gaduawayui.ui:100
 #, kde-format
 msgid "&Invisible"
-msgstr ""
+msgstr "&უხილავი"
 
 #: kopete/kopetewindow.cpp:447 protocols/gadu/gaduprotocol.cpp:88
 #: protocols/gadu/gaduprotocol.cpp:93
@@ -3744,7 +3746,7 @@ msgstr "&Online"
 #: kopete/kopetewindow.cpp:451
 #, kde-format
 msgid "&Set Status"
-msgstr ""
+msgstr "&სტატუსის დაყენება"
 
 #: kopete/kopetewindow.cpp:479
 #, kde-format
@@ -3754,7 +3756,7 @@ msgstr ""
 #: kopete/kopetewindow.cpp:488
 #, kde-format
 msgid "Show &All"
-msgstr ""
+msgstr "&ყველას ჩვენება"
 
 #: kopete/kopetewindow.cpp:493
 #, kde-format
@@ -3769,7 +3771,7 @@ msgstr ""
 #: kopete/kopetewindow.cpp:519
 #, kde-format
 msgid "Read Message"
-msgstr ""
+msgstr "შეტყობინების წაკითხვა"
 
 #: kopete/kopetewindow.cpp:523
 #, kde-format
@@ -3819,13 +3821,13 @@ msgstr ""
 #, kde-format
 msgctxt "@label:textbox formatted status title"
 msgid "<b>Status&nbsp;Title:</b>&nbsp;%1"
-msgstr ""
+msgstr "<b>სტატუსის&nbsp;სათაური:</b>&nbsp;%1"
 
 #: kopete/kopetewindow.cpp:1364 libkopete/kopetecontact.cpp:688
 #, kde-format
 msgctxt "@label:textbox formatted status message"
 msgid "<br /><b>Status&nbsp;Message:</b>&nbsp;%1"
-msgstr ""
+msgstr "<br /><b>სტატუსის&nbsp;შეტყობინება:</b>&nbsp;%1"
 
 #: kopete/main.cpp:33
 #, kde-format
@@ -15141,7 +15143,7 @@ msgstr "რესგისტრაცია"
 #: protocols/jabber/ui/dlgsearch.cpp:54 protocols/jabber/ui/dlgsearch.cpp:55
 #, kde-format
 msgid "Search"
-msgstr ""
+msgstr "ძიება"
 
 #: protocols/jabber/ui/dlgsearch.cpp:61
 #, kde-format
