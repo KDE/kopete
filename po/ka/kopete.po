@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-01-06 06:44+0100\n"
+"PO-Revision-Date: 2023-01-07 07:46+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -7543,7 +7543,7 @@ msgstr ""
 #: plugins/history/historyplugin.cpp:75
 #, kde-format
 msgid "Do Not Import"
-msgstr ""
+msgstr "არ შემოიტანო"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #: plugins/history/historyprefsui.ui:32 plugins/history2/history2prefsui.ui:24
@@ -10183,7 +10183,7 @@ msgstr "გასული"
 #, kde-format
 msgctxt "This Means the User is Away"
 msgid "&Away"
-msgstr ""
+msgstr "&გასული"
 
 #. i18n: ectx: property (text), widget (QRadioButton, offlineButton_)
 #: protocols/bonjour/bonjourprotocol.cpp:44 protocols/gadu/gaduprotocol.cpp:60
@@ -13499,7 +13499,7 @@ msgstr ""
 #, kde-format
 msgctxt "a contact's online status in parenthesis."
 msgid " (%1)"
-msgstr ""
+msgstr " (%1)"
 
 #: protocols/jabber/jabbercontact.cpp:144
 #, kde-format
@@ -13661,7 +13661,7 @@ msgstr ""
 #: protocols/jabber/jabberprotocol.cpp:71
 #, kde-format
 msgid "Do not Disturb"
-msgstr ""
+msgstr "არ შემაწუხო"
 
 #. i18n: ectx: property (text), item, widget (KComboBox, cb_type)
 #: protocols/jabber/jabberprotocol.cpp:85
@@ -13832,7 +13832,7 @@ msgstr ""
 #: protocols/jabber/jabberprotocol.cpp:486
 #, kde-format
 msgid "Do Not Remove"
-msgstr ""
+msgstr "არ წაშალო"
 
 #: protocols/jabber/jabberprotocol.cpp:509
 #, kde-format
@@ -13953,7 +13953,7 @@ msgstr "გათიშვა"
 #: protocols/jabber/ui/privacyruledlg.cpp:134
 #, kde-format
 msgid "None"
-msgstr ""
+msgstr "არაფერი"
 
 #: protocols/jabber/tasks/mood.cpp:79
 #, kde-format
@@ -15032,7 +15032,7 @@ msgstr ""
 #: protocols/jabber/ui/dlgjabberregisteraccount.ui:137
 #, kde-format
 msgid "Pass&word:"
-msgstr ""
+msgstr "&პაროლი:"
 
 #. i18n: ectx: property (text), widget (QLabel, lblPasswordVerify)
 #: protocols/jabber/ui/dlgjabberregisteraccount.ui:173
@@ -15060,17 +15060,17 @@ msgstr "სერვისები"
 #: protocols/jabber/ui/dlgjabberservices.cpp:70
 #, kde-format
 msgid "Register..."
-msgstr ""
+msgstr "რეგისტრაცია..."
 
 #: protocols/jabber/ui/dlgjabberservices.cpp:72
 #, kde-format
 msgid "Search..."
-msgstr ""
+msgstr "ძებნა..."
 
 #: protocols/jabber/ui/dlgjabberservices.cpp:74
 #, kde-format
 msgid "Execute..."
-msgstr ""
+msgstr "გაშვება..."
 
 #: protocols/jabber/ui/dlgjabbervcard.cpp:65
 #, kde-format
@@ -15196,7 +15196,7 @@ msgstr "ბოლო"
 #: protocols/jabber/ui/dlgsearch.cpp:198
 #, kde-format
 msgid "e-mail"
-msgstr ""
+msgstr "ელფოსტა"
 
 #. i18n: ectx: property (title), widget (QGroupBox, dynamicForm)
 #: protocols/jabber/ui/dlgsearch.ui:38
@@ -17682,7 +17682,7 @@ msgstr ""
 #, kde-format
 msgctxt "@item icq xtraz status"
 msgid "angry"
-msgstr ""
+msgstr "გაბრაზებული"
 
 #: protocols/oscar/icq/icqstatusmanager.cpp:145
 #, kde-format
@@ -17694,7 +17694,7 @@ msgstr "აბაზანა"
 #, kde-format
 msgctxt "@item icq xtraz status"
 msgid "tired"
-msgstr ""
+msgstr "დაღლილი"
 
 #: protocols/oscar/icq/icqstatusmanager.cpp:147
 #, kde-format
@@ -17736,7 +17736,7 @@ msgstr ""
 #, kde-format
 msgctxt "@item icq xtraz status"
 msgid "coffee"
-msgstr ""
+msgstr "ყავა"
 
 #: protocols/oscar/icq/icqstatusmanager.cpp:154
 #, kde-format
@@ -17790,7 +17790,7 @@ msgstr ""
 #, kde-format
 msgctxt "@item icq xtraz status"
 msgid "sick"
-msgstr ""
+msgstr "ავადმყოფი"
 
 #: protocols/oscar/icq/icqstatusmanager.cpp:163
 #, kde-format
@@ -18464,7 +18464,7 @@ msgstr ""
 #: protocols/oscar/icq/ui/icqorgaffinfowidget.ui:31
 #, kde-format
 msgid "Organization Type"
-msgstr ""
+msgstr "ორგანიზაციის ტიპი"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_2)
 #: protocols/oscar/icq/ui/icqorgaffinfowidget.ui:88
@@ -18512,13 +18512,13 @@ msgstr ""
 #: protocols/oscar/icq/ui/icqsearchbase.ui:119
 #, kde-format
 msgid "Lan&guage:"
-msgstr ""
+msgstr "&ენა:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel11)
 #: protocols/oscar/icq/ui/icqsearchbase.ui:132
 #, kde-format
 msgid "C&ountry:"
-msgstr ""
+msgstr "&ქვეყანა:"
 
 #. i18n: ectx: property (text), widget (QCheckBox, onlyOnline)
 #: protocols/oscar/icq/ui/icqsearchbase.ui:145
@@ -18530,7 +18530,7 @@ msgstr ""
 #: protocols/oscar/icq/ui/icqsearchbase.ui:169
 #, kde-format
 msgid "UIN Search"
-msgstr ""
+msgstr "UIN -ით ძებნა"
 
 #. i18n: ectx: property (whatsThis), widget (QTreeView, searchResults)
 #: protocols/oscar/icq/ui/icqsearchbase.ui:221
@@ -20142,7 +20142,7 @@ msgstr ""
 #: protocols/winpopup/ui/wpeditaccountbase.ui:221
 #, kde-format
 msgid "S&ystem"
-msgstr ""
+msgstr "&სისტემა"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_3)
 #: protocols/winpopup/ui/wpeditaccountbase.ui:233
