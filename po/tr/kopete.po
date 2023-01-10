@@ -13,13 +13,13 @@
 # H. İbrahim Güngör <ibrahim@pardus.org.tr>, 2010, 2011.
 # Ozan Çağlayan <ozan@pardus.org.tr>, 2011.
 # Volkan Gezer <volkangezer@gmail.com>, 2013, 2014.
-# Emir SARI <emir_sari@icloud.com>, 2022.
+# Emir SARI <emir_sari@icloud.com>, 2022, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2022-12-17 18:59+0300\n"
+"PO-Revision-Date: 2023-01-09 20:23+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -7211,9 +7211,10 @@ msgid_plural ""
 "encrypted messages to them:\n"
 "%2"
 msgstr[0] ""
-"%2 kişisine şifreli ileti gönderebilmek için bir ortak anahtar seçmelisiniz."
+"Bu kişiye şifreli iletiler göndermek üzere %2 için bir genel anahtar "
+"seçmelisiniz."
 msgstr[1] ""
-"Aşağıdaki üst kişilere şifreli ileti gönderebilmek için bir ortak anahtar "
+"Aşağıdaki üst kişilere şifreli ileti göndermek için bir genel anahtar "
 "seçmelisiniz:\n"
 "%2"
 
@@ -7221,20 +7222,20 @@ msgstr[1] ""
 #, kde-format
 msgid "Missing public key"
 msgid_plural "Missing public keys"
-msgstr[0] "Eksik ortak anahtar"
-msgstr[1] "Eksik ortak anahtarlar"
+msgstr[0] "Eksik genel anahtar"
+msgstr[1] "Eksik genel anahtarlar"
 
 #: plugins/cryptography/cryptographyplugin.cpp:93
 #, kde-format
 msgctxt "@action"
 msgid "&Select Public Key..."
-msgstr "&Ortak Anahtar Seç..."
+msgstr "&Genel Anahtar Seç..."
 
 #: plugins/cryptography/cryptographyplugin.cpp:99
 #, kde-format
 msgctxt "@action"
 msgid "&Export Public Keys To Address Book..."
-msgstr "&Ortak Anahtarları Adres Defterine Aktar..."
+msgstr "&Genel Anahtarları Adres Defterine Aktar..."
 
 #: plugins/cryptography/cryptographyplugin.cpp:378
 #, kde-format
@@ -7274,7 +7275,7 @@ msgstr "Anonim Anahtar Seç"
 #: plugins/cryptography/cryptographyplugin.cpp:434
 #, kde-format
 msgid "Public Keys Found"
-msgstr "Bulunan Ortak Anahtarlar"
+msgstr "Bulunan Genel Anahtarlar"
 
 #: plugins/cryptography/cryptographyplugin.cpp:437
 #, kde-format
@@ -7353,13 +7354,13 @@ msgstr ""
 #: plugins/cryptography/cryptographyselectuserkey.cpp:49
 #, kde-format
 msgid "Select public key"
-msgstr "Ortak anahtarı seçin"
+msgstr "Genel anahtar seç"
 
 #: plugins/cryptography/cryptographyselectuserkey.cpp:52
 #, kde-format
 msgctxt "@label:chooser"
 msgid "Select public key for %1"
-msgstr "%1 için ortak anahtar seçin"
+msgstr "%1 için genel anahtar seçin"
 
 #. i18n: ectx: label, entry, group (Cryptography Plugin)
 #: plugins/cryptography/cryptographysettings.kcfg:12
@@ -8038,7 +8039,7 @@ msgstr "Geçmiş2"
 #: plugins/history2/history2prefsui.ui:150
 #, kde-format
 msgid "Import history from other kopete history plugin, pidgin,.."
-msgstr "Geçmişi diğer Kopete geçmiş eklentisinden, Pidgin'den aktar..."
+msgstr "Geçmişi diğer Kopete geçmiş eklentisinden, Pidgin'den aktar,.."
 
 #. i18n: ectx: property (text), widget (QPushButton, import2)
 #: plugins/history2/history2prefsui.ui:153
@@ -10063,7 +10064,7 @@ msgstr "Galce"
 #: plugins/translator/translatorlanguages.cpp:93
 #, kde-format
 msgid "Yiddish"
-msgstr "Yidiş"
+msgstr "Yidçe"
 
 #: plugins/translator/translatorplugin.cpp:76
 #, kde-format
@@ -21222,670 +21223,4 @@ msgstr "Yapılandırma Başarısız"
 #: protocols/winpopup/wpuserinfo.cpp:50
 #, kde-format
 msgid "User Info for %1"
-msgstr "%1 için Kullanıcı Bilgisi"
-
-#~ msgid ""
-#~ "A network connection was disconnected.  The application is now in offline "
-#~ "mode.  Do you want the application to resume network operations when the "
-#~ "network is available again?"
-#~ msgstr ""
-#~ "Bir ağ bağlantısı kapatıldı. Uygulama şu an çevrimdışı durumda. Ağ "
-#~ "bağlantısı yeniden sağlandığında uygulamanın ağ işlemlerini sürdürmesini "
-#~ "ister misiniz?"
-
-#~ msgid ""
-#~ "This application is currently in offline mode.  Do you want to connect?"
-#~ msgstr "Uygulama şimdi çevrimdışı durumda. Bağlanmak ister misiniz?"
-
-#~ msgid ""
-#~ "This application is currently in offline mode.  Do you want to connect in "
-#~ "order to carry out this operation?"
-#~ msgstr ""
-#~ "Uygulama şimdi çevrimdışı durumda. Bu işlemi yürütmek için bağlanmak "
-#~ "ister misiniz?"
-
-#~ msgid "Leave Offline Mode?"
-#~ msgstr "Çevrimdışı durumdan çıkılsın mı?"
-
-#~ msgid "This version of Skype is too old, consider upgrading"
-#~ msgstr "Skype sürümü çok eski, yükseltme yapmanız önerilir"
-
-#~ msgid "Skype protocol"
-#~ msgstr "Skype protokol"
-
-#~ msgid "Does not have multi-user chat capability"
-#~ msgstr "Çok kullanıcılı sohbet özelliği yok"
-
-#~ msgid "Chat denied"
-#~ msgstr "Sohbet reddedildi"
-
-#~ msgid "Unknown error"
-#~ msgstr "Bilinmeyen hata"
-
-#~ msgid "Misc error"
-#~ msgstr "Çeşitli hatalar"
-
-#~ msgid "User or phone number does not exist"
-#~ msgstr "Kullanıcı veya telefon numarası mevcut değil"
-
-#~ msgid "User is offline"
-#~ msgstr "Kullanıcı çevrimdışı"
-
-#~ msgid "No proxy found"
-#~ msgstr "Vekil sunucu bulunamadı"
-
-#~ msgid "Session terminated"
-#~ msgstr "Oturum sonlandırıldı"
-
-#~ msgid "No common codec found"
-#~ msgstr "Ortak kodlayıcı bulunamadı"
-
-#~ msgid "Sound I/O error"
-#~ msgstr "Ses G/Ç hatası"
-
-#~ msgid "Problem with remote sound device"
-#~ msgstr "Uzak ses aygıtında sorun var"
-
-#~ msgid "Call blocked by recipient"
-#~ msgstr "Çağrı alıcı tarafından engellendi"
-
-#~ msgid "Recipient not a friend"
-#~ msgstr "Alıcı arkadaşınız değil"
-
-#~ msgid "User not authorized by recipient"
-#~ msgstr "Kullanıcı alıcı tarafından yetkilendirilmemiş"
-
-#~ msgid "Sound recording error"
-#~ msgstr "Ses kayıt hatası"
-
-#~ msgid "This version of Skype does not support adding users to chat."
-#~ msgstr ""
-#~ "Skype hizmetinin bu sürümü sohbete kullanıcı eklemeyi desteklemiyor."
-
-#~ msgid "Skype Protocol"
-#~ msgstr "Skype Protokolü"
-
-#~ msgid "Could not ping Skype"
-#~ msgstr "Skype hizmetine ping atılamıyor"
-
-#~ msgid "Skype did not accept this application"
-#~ msgstr "Skype bu uygulamayı kabul etmedi"
-
-#~ msgid "Skype API syntax error"
-#~ msgstr "Skype API söz dizimi hatası"
-
-#~ msgid "Skype API not ready yet, wait a bit longer"
-#~ msgstr "Skype API henüz hazır değil, bir süre daha bekleyin"
-
-#~ msgid "Cannot register Skype communication for Kopete on D-Bus"
-#~ msgstr ""
-#~ "Kopete için Skype iletişim mekanizması D-Bus üzerinden kaydedilemedi"
-
-#~ msgid ""
-#~ "Could not launch Skype.\n"
-#~ "You need to install the original dynamic linked Skype version 2.0 binary "
-#~ "from http://www.skype.com"
-#~ msgstr ""
-#~ "Skype çalıştırılamadı.\n"
-#~ "Orijinal dinamik bağlantılı Skype sürüm 2.0 ikili dosyasını, http://www."
-#~ "skype.com adresinden kurmanız gerekiyor"
-
-#~ msgid ""
-#~ "Could not find Skype.\n"
-#~ "You need to install the original dynamic linked Skype version 2.0 binary "
-#~ "from http://www.skype.com"
-#~ msgstr ""
-#~ "Skype bulunamadı.\n"
-#~ "Orijinal dinamik bağlantılı Skype sürüm 2.0 ikili dosyasını http://www."
-#~ "skype.com adresinden yüklemeniz gerekiyor"
-
-#~ msgid ""
-#~ "Could not ping Skype.\n"
-#~ "Maybe Skype not running.\n"
-#~ "Error while sending a message to Skype (%1)."
-#~ msgstr ""
-#~ "Skype'a ping atılamadı.\n"
-#~ "Skype çalışmıyor olabilir.\n"
-#~ "Skype'a ileti gönderilirken hata oluştu (%1)."
-
-#~ msgid "Error while sending a message to Skype (%1)."
-#~ msgstr "Skype'a ileti gönderirken hata oluştu (%1)."
-
-#~ msgid ""
-#~ "Could not ping Skype.\n"
-#~ "You are logged out from Skype, please log in."
-#~ msgstr ""
-#~ "Skype'a ping atılamadı.\n"
-#~ "Skype'a bağlı değilsiniz, lütfen bağlanın."
-
-#~ msgid "Please login to Skype first"
-#~ msgstr "Lütfen önce Skype hizmetinde oturum açınız"
-
-#~ msgid "Skype (%1)"
-#~ msgstr "Skype (%1)"
-
-#~ msgid "Skype Me"
-#~ msgstr "Bana Skype at "
-
-#~ msgid "Make Test Call"
-#~ msgstr "Test Araması Yap"
-
-#~ msgid "Cannot open info about user %1"
-#~ msgstr "%1 kullanıcısı hakkındaki bilgiler açılamıyor"
-
-#~ msgid "Unknown action from SkypeActionHandler"
-#~ msgstr "SkypeActionHandler ögesinden bilinmeyen eylem"
-
-#~ msgid "Add contact from SkypeActionHandler is not supported yet"
-#~ msgstr "SkypeActionHandler'den kişi ekleme işlemi şu anda desteklenmiyor"
-
-#~ msgid "Send voicemail from SkypeActionHandler is not supported yet"
-#~ msgstr ""
-#~ "SkypeActionHandler'den sesli posta gönderme işlemi şu anda desteklenmiyor"
-
-#~ msgid "You must connect to Skype first."
-#~ msgstr "Önce Skype hizmetine bağlanmalısınız."
-
-#~ msgid "You must write the contact's name."
-#~ msgstr "Bir kişinin adını yazmalısınız."
-
-#~ msgid "Wrong Information"
-#~ msgstr "Yanlış Bilgi"
-
-#~ msgid ""
-#~ "Contact echo123 is not needed. You can make test call in Skype protocol "
-#~ "actions."
-#~ msgstr ""
-#~ "echo123 kişisine gerek yok. Skype protokol olaylarında sınama araması "
-#~ "yapabilirsiniz."
-
-#~ msgid "This contact already exists in this account."
-#~ msgstr "Bu kişi bu hesap için zaten var."
-
-#~ msgid "You cannot add yourself as a contact."
-#~ msgstr "Kendinizi kendi kişi listenize ekleyemezsiniz."
-
-#~ msgid "Call with %1"
-#~ msgstr "%1 kişisini ara"
-
-#~ msgid "Canceled"
-#~ msgstr "İptal Edildi"
-
-#~ msgid "Other person is busy"
-#~ msgstr "Diğer kişi meşgul"
-
-#~ msgid "Refused"
-#~ msgstr "Reddedildi"
-
-#~ msgid "Call Back"
-#~ msgstr "Geri arama yap"
-
-#~ msgid "Missed"
-#~ msgstr "Yanlış"
-
-#~ msgid "Resume"
-#~ msgstr "Sürdür"
-
-#~ msgid "On hold (local)"
-#~ msgstr "Beklemede (yerel)"
-
-#~ msgid "On hold (remote)"
-#~ msgstr "Beklemede (uzak)"
-
-#~ msgid "On hold"
-#~ msgstr "Beklemede"
-
-#~ msgid "Hold"
-#~ msgstr "Beklet"
-
-#~ msgid "In progress"
-#~ msgstr "Sürüyor"
-
-#~ msgid "Ringing"
-#~ msgstr "Çalıyor"
-
-#~ msgid "Failed"
-#~ msgstr "Başarısız"
-
-#~ msgctxt ""
-#~ "Early media means the media played before the call is established. For "
-#~ "example it can be a calling tone or a waiting message such as all "
-#~ "operators are busy."
-#~ msgid "Early media (waiting for operator...)"
-#~ msgstr "Önceki ortam (operatörü bekliyor...)"
-
-#~ msgid "Failed (%1)"
-#~ msgstr "Başarısız (%1)"
-
-#~ msgid ""
-#~ "%1 active\n"
-#~ "%2 total"
-#~ msgstr ""
-#~ "%1 etkin\n"
-#~ "%2 toplam"
-
-#~ msgid "Skypeout inactive"
-#~ msgstr "Skypeout etkin değil"
-
-#~ msgid "Call"
-#~ msgstr "Arama"
-
-#~ msgid "Conference Call"
-#~ msgstr "Konferans Görüşmesi"
-
-#~ msgid "Block contact"
-#~ msgstr "Kişiyi engelle"
-
-#~ msgid "Details for User %1"
-#~ msgstr "%1 Kullanıcısının Detayları"
-
-#~ msgid "You can have only one skype account"
-#~ msgstr "Yalnızca bir adet Skype hesabınız olabilir"
-
-#~ msgid "Configure Skype client"
-#~ msgstr "Skype İstemcisini Yapılandır"
-
-#~ msgid "Please enter your skype user name"
-#~ msgstr "Lütfen skype kullanıcı adınızı girin"
-
-#~ msgid "You must enter your skype user name"
-#~ msgstr "Skype kullanıcı adını girmelisiniz"
-
-#~ msgid "Cannot create/open file %1 for configuring the Skype client."
-#~ msgstr ""
-#~ "Skype istemcisini yapılandırmak için %1 dosyası oluşturulamadı/açılamadı."
-
-#~ msgid ""
-#~ "Process has completed.\n"
-#~ "Skype is now configured for Kopete.\n"
-#~ "You must restart the Skype client for changes to take effect."
-#~ msgstr ""
-#~ "Süreç tamamlandı.\n"
-#~ "Skype Kopete için yapılandırıldı.\n"
-#~ "Ayarların etkinleştirilebilmesi için Skype istemcisini yeniden "
-#~ "başlatmalısınız."
-
-#~ msgid "Not in Skype list"
-#~ msgstr "Skype listesinde değil"
-
-#~ msgid "Not authorized"
-#~ msgstr "Yetkili değil"
-
-#~ msgid "SkypeOut contact"
-#~ msgstr "SkypeOut bağlantısı"
-
-#~ msgid "Add Skype Contact"
-#~ msgstr "Skype Kişisi Ekle"
-
-#~ msgid "Skype name:"
-#~ msgstr "Skype adı:"
-
-#~ msgid "Sorry, but the search function is not yet implemented."
-#~ msgstr "Üzgünüz, arama işlevi henüz tamamlanmadı."
-
-#~ msgid "Se&arch"
-#~ msgstr "&Ara"
-
-#~ msgid "Skype Call"
-#~ msgstr "Skype Araması"
-
-#~ msgid "Name(s) of Participant(s)"
-#~ msgstr "Katılımcıların Adları"
-
-#~ msgid ""
-#~ "Name of the other participant in the call (or a list of names if it is a "
-#~ "conference call.)"
-#~ msgstr ""
-#~ "Aramada diğer katılımcının adı (veya bir konferans araması ise bir adlar "
-#~ "listesi)"
-
-#~ msgid "Total time elapsed."
-#~ msgstr "Kullanılan toplam zaman."
-
-#~ msgid "Time:"
-#~ msgstr "Zaman:"
-
-#~ msgid "SkypeOut credits left"
-#~ msgstr "Kalan SkypeOut kredisi"
-
-#~ msgid ""
-#~ "Total length of the call/<br />(i.e. both time speaking and time on hold.)"
-#~ msgstr ""
-#~ "Aramanın toplam uzunluğu /<br />(yani konuşulan ve beklemede olan süre)"
-
-#~ msgid "SkypeOut credits:"
-#~ msgstr "SkypeOut kredisi:"
-
-#~ msgid "Accept call"
-#~ msgstr "Aramayı kabul et"
-
-#~ msgid "Accept incoming call"
-#~ msgstr "Gelen aramayı kabul et"
-
-#~ msgid "Finish the call"
-#~ msgstr "Aramayı sonlandır"
-
-#~ msgid "Terminate the call"
-#~ msgstr "Aramayı sonlandır"
-
-#~ msgid "H&ang up"
-#~ msgstr "K&apat"
-
-#~ msgid "Hold the call"
-#~ msgstr "Aramayı beklet"
-
-#~ msgid "Interrupt the call for a moment and resume (or hang up) later."
-#~ msgstr "Aramaya bir süre ara ver ve sonra sürdür (veya kapat)."
-
-#~ msgid "H&old"
-#~ msgstr "&Beklet"
-
-#~ msgid "Open chat to the person."
-#~ msgstr "Kişiyle sohbet başlat."
-
-#~ msgid "Open chat to the person with whom you are talking."
-#~ msgstr "Konuştuğunuz kişiyle açık sohbet başlatın."
-
-#~ msgid "Start/Stop Video"
-#~ msgstr "Videoyu Başlat/Durdur"
-
-#~ msgid "User's Details"
-#~ msgstr "Kullanıcının Detayları"
-
-#~ msgid "Skype ID:"
-#~ msgstr "Skype ID:"
-
-#~ msgid "Authorized"
-#~ msgstr "Yetkili"
-
-#~ msgid "Not Authorized"
-#~ msgstr "Yetkili Değil"
-
-#~ msgid "Is authorized:"
-#~ msgstr "Yetkili:"
-
-#~ msgid "Display Name:"
-#~ msgstr "Görünen Ad:"
-
-#~ msgid "Sex:"
-#~ msgstr "Cinsiyet:"
-
-#~ msgid "Check this if you do not want to connect with other protocols"
-#~ msgstr "Diğer protokollere de bağlanmak istiyorsanız bunu işaretleyin"
-
-#~ msgid "E&xclude from connection"
-#~ msgstr "Bağlantıdan h&ariç tut"
-
-#~ msgid "Important Note"
-#~ msgstr "Önemli Not"
-
-#~ msgid ""
-#~ "The Skype plugin serves as a bridge to an externally running copy of "
-#~ "Skype. This has some consequences on how it functions: you need an "
-#~ "instance of Skype to be running, and only one Skype account can be used."
-#~ "<br /><br />Note that you need to install the original dynamic linked "
-#~ "Skype version 2.0 or 2.1 from <a href=\"http://www.skype.com\">http://www."
-#~ "skype.com</a><br /><br />This plugin will only work if the language in "
-#~ "the Skype client set to English. Kopete shows notifications (incoming "
-#~ "call, message, ...), so you can turn off the notifications in Skype."
-#~ msgstr ""
-#~ "Skype eklentisi, Skype'nin dışarıdan yürütülen bir kopyasına bir köprü "
-#~ "vazifesi görmektedir. Dolayısıyla nasıl çalışacağına dair bazı sonuçlar "
-#~ "vardır: Bir Skype oturumunun çalışması gerekir ve yalnızca bir Skype "
-#~ "hesabı kullanılabilir.<br /><br /><a href=\"http://www.skype.com\">http://"
-#~ "www.skype.com</a><br /><br />adresinden orijinal dinamik bağlantılı Skype "
-#~ "sürüm 2.0 sürümünü kurmanız gerektiğine dikkat edin. Bu eklenti yalnızca "
-#~ "Skype istemcisinin dili İngilizce olarak ayarlanmışsa çalışır. Kopete "
-#~ "bildirimleri gösterir. Bu nedenle Skype bildirimlerini kapatabilirsiniz."
-
-#~ msgid ""
-#~ "Disable Skype notifications and set up English language in Skype client"
-#~ msgstr ""
-#~ "Skype bildirimlerini devre dışı bırak ve Skype istemcisinin dilini "
-#~ "İngilizce olarak ayarla"
-
-#~ msgid "Lau&nch"
-#~ msgstr "Çalıştı&r"
-
-#~ msgid "You can set whether and when should kopete launch Skype."
-#~ msgstr ""
-#~ "Kopete'nin Skype'yi açıp açmayacağını ve ne zaman yapacağını "
-#~ "ayarlayabilirsiniz."
-
-#~ msgid "Launch Skype"
-#~ msgstr "Skype Uygulamasını Başlat"
-
-#~ msgid "When &not running"
-#~ msgstr "Çalış&mıyorken"
-
-#~ msgid "N&ever"
-#~ msgstr "&Asla"
-
-#~ msgid "Command to launch Skype:"
-#~ msgstr "Skype uygulamasını çalıştırma komutu:"
-
-#~ msgid "skype"
-#~ msgstr "skype"
-
-#~ msgid "Launch timeout:"
-#~ msgstr "Çalıştırma zaman aşımı:"
-
-#~ msgid "s"
-#~ msgstr "s"
-
-#~ msgid "Wait before trying to connect to Skype:"
-#~ msgstr "Skype'ye bağlanmaya çalışmadan önce bekleyin:"
-
-#~ msgid "trying"
-#~ msgstr "deneniyor"
-
-#~ msgid ""
-#~ "If you get error that Skype was not found, but in fact it is running, "
-#~ "check the instructions at <a href=\"https://developer.skype.com/Docs/"
-#~ "ApiDoc/Skype_API_on_Linux\">https://developer.skype.com/Docs/ApiDoc/"
-#~ "Skype_API_on_Linux</a>.<br /><br />Note that only the dynamic linked "
-#~ "Skype binary is supported."
-#~ msgstr ""
-#~ "Skype'nin aslında çalışıyor iken bulunamadığına dair bir hata iletisi "
-#~ "alıyorsanız <a href=\"https://developer.skype.com/Docs/ApiDoc/"
-#~ "Skype_API_on_Linux\">https://developer.skype.com/Docs/ApiDoc/"
-#~ "Skype_API_on_Linux</a> adresindeki bilgilere bakın.<br /><br />Yalnızca "
-#~ "dinamik bağlantılı Skype ikili dosyalarının desteklendiğine dikkat edin."
-
-#~ msgid "C&onnection"
-#~ msgstr "&Bağlantı"
-
-#~ msgid ""
-#~ "Each application that wants to use Skype must provide its name to it, and "
-#~ "the user is asked whether to allow said application to access Skype."
-#~ "<br>By default, kopete provides kopete as its name, but if you suspect "
-#~ "another application is accessing Skype with this name, you can change the "
-#~ "name Kopete uses here, and then within Skype disallow applications that "
-#~ "refer to themselves as kopete."
-#~ msgstr ""
-#~ "Skype'ı kullanmak isteyen her uygulama, ona bir ad atamalıdır ve "
-#~ "kullanıcının Skype'a erişmek için belirtilen uygulamalara izin verip "
-#~ "vermeyeceği sorulmaktadır.<br>Öntanımlı ayar olarak, Kopete, kopete adını "
-#~ "atar; ancak başka bir uygulamanın Skypeıe bu adla eriştiğinden kuşku "
-#~ "duyuyorsanız burada Kopete'nin kullandığı adını değiştirebilirsiniz ve "
-#~ "sonra kendilerini kopete olarak tanıtan uygulamaları Skype içinden "
-#~ "kapatabilirsiniz."
-
-#~ msgid "&Non-standard authorization"
-#~ msgstr "&Standart olmayan yetkilendirme"
-
-#~ msgid "What bus do you want to use"
-#~ msgstr "Hangi yolu kullanmak istiyorsunuz"
-
-#~ msgid ""
-#~ "Which D-Bus do you want to use to connect to Skype?<br>Session: Your own, "
-#~ "other people cannot use it (use --use-session-dbus to start Skype on that "
-#~ "bus.)<br>System: Shared by all people on the same computer. This one is "
-#~ "used by default by Skype.<br>You have to specify the same D-Bus used by "
-#~ "Skype."
-#~ msgstr ""
-#~ "Skype'ye bağlanmak için hangi D-yolunu kullanmak istiyorsunuz?<br>Oturum: "
-#~ "Sizin, başka kişiler kullanamaz (bu yol üzerinde Skype'yi çalıştırmak "
-#~ "için --use-session-dbus ifadesini kullanınız.)<br>Sistem:Aynı "
-#~ "bilgisayarda bütün kişiler tarafından paylaşılır. Bu Skype tarafından "
-#~ "öntanımlı ayar olarak kullanılır. <br>Skype tarafından kullanılan aynı D-"
-#~ "yolunu belirtmeniz gerekmektedir."
-
-#~ msgid "Bus"
-#~ msgstr "Yol"
-
-#~ msgid "Sessi&on"
-#~ msgstr "O&turum"
-
-#~ msgid ""
-#~ "Note that Kopete will freeze while Skype asks you if it can allow Kopete "
-#~ "to access it. This is normal, and if you allow it forever (check that "
-#~ "\"Remember\" checkbox in Skype's dialog), it will not happen again.<br /"
-#~ "><br />The 'System Bus' option is not yet supported by Skype"
-#~ msgstr ""
-#~ "Skype, Kopete'ye erişim izni verebilmek için size sorarken Kopete'nin "
-#~ "durdurulacağını unutmayın.  Bu normaldir ve sonsuza kadar izin verirseniz "
-#~ "(Skype iletişim penceresindeki \"Hatırla\" onay kutusunu tıklatın), bir "
-#~ "daha yinelenmeyecektir.<br /><br />'Sistem Yolu' seçeneği Skype "
-#~ "tarafından henüz desteklenmemektedir"
-
-#~ msgid "&Activity"
-#~ msgstr "&Etkinlik"
-
-#~ msgid "Show all incoming messages"
-#~ msgstr "Alınan tüm iletileri göster"
-
-#~ msgid ""
-#~ "This will show all incoming Skype messages. If this is off, they are "
-#~ "showed only if the message belongs to chat that is started by kopete."
-#~ msgstr ""
-#~ "Bu, bütün gelen Skype iletilerini gösterecektir. Eğer kapalı konumdaysa "
-#~ "yalnızca Kopete tarafından başlatılan bir sohbete ait ise gösterilecektir."
-
-#~ msgid "Show all incoming &messages"
-#~ msgstr "&Alınan tüm iletileri göster"
-
-#~ msgid ""
-#~ "This will mark incoming messages as read, so if you have Skype set up not "
-#~ "to automatically pop-up chats, it will not flash the exclamation icon."
-#~ msgstr ""
-#~ "Bu gelen iletileri okunmuş olarak işaretleyecektir, dolayısıyla Skype'yi "
-#~ "otomatik olarak iletileri pop-up penceresinde göstermemeye ayarlarsanız "
-#~ "ünlem simgesi yanıp sönmeyecektir."
-
-#~ msgid "Mar&k as read"
-#~ msgstr "&Okunmuş olarak işaretle"
-
-#~ msgid ""
-#~ "If this is checked, Kopete will ask Skype on login if it has any messages "
-#~ "that have not been shown, and if so, will show them. This is useful if "
-#~ "you start Kopete later than Skype, and Skype is configured not to show "
-#~ "incoming messages."
-#~ msgstr ""
-#~ "Bu seçenek işaretlenirse Kopete Skype'ye açılışta gösterilmemiş ileti "
-#~ "olup olmadığını soracaktır ve eğer var ise bunları gösterecektir. Bu "
-#~ "seçenek, Kopete'yi Skype'den sonra başlatıyorsanız ve Skype gelen "
-#~ "iletileri gösterecek şekilde ayarlanmamış ise oldukça kullanışlıdır."
-
-#~ msgid "Scan f&or unread"
-#~ msgstr "Okunmamış i&letileri tara"
-
-#~ msgid "Show call control window for all calls"
-#~ msgstr "Bütün aramalar için arama denetim penceresini göster"
-
-#~ msgid ""
-#~ "This will show a call control window for every call (both incoming and "
-#~ "outgoing). If it is off, you can call from Kopete, but you have to "
-#~ "control that call from Skype."
-#~ msgstr ""
-#~ "Bu bütün aramalar için (gelen ve giden) bir arama denetim penceresi "
-#~ "gösterecektir. Kapalı durumda ise Kopete'den çağırabilirsiniz; ancak bu "
-#~ "aramayı Skype'den denetlemek zorunda kalırsınız."
-
-#~ msgid "S&how call control (this will also hide Skype client call dialog)"
-#~ msgstr ""
-#~ "&Tüm denetimleri göster (bu aynı zamanda Skype arama penceresini de "
-#~ "gizler)"
-
-#~ msgid "Auto close the call control window"
-#~ msgstr "Arama denetim penceresini otomatik olarak kapat"
-
-#~ msgid ""
-#~ "This will close the call control window automatically when the call "
-#~ "finishes"
-#~ msgstr ""
-#~ "Bu seçenek, arama bittiğinde arama denetim penceresini otomatik olarak "
-#~ "kapatır"
-
-#~ msgid "Autoc&lose"
-#~ msgstr "Otomatik &kapat"
-
-#~ msgid "Timeout:"
-#~ msgstr "Zaman Aşımı:"
-
-#~ msgid ""
-#~ "If this is enabled, Kopete keeps track of whether or not Skype is running."
-#~ msgstr ""
-#~ "Bu seçenek işaretlenirse Kopete Skype'nin çalışıp çalışmadığını izler."
-
-#~ msgid ""
-#~ "This keeps track of whether Skype is running. Turning this off only makes "
-#~ "sense it you are trying to get non-flooded debug output."
-#~ msgstr ""
-#~ "Bu Skype'nin çalışıp çalışmadığının denetimi için kullanılır. Bunu "
-#~ "kapatmanız, yalnızca taşmasız ayıklama çıktısı almaya çalışıyorsanız bir "
-#~ "anlam ifade eder."
-
-#~ msgid "Pi&ng Skype"
-#~ msgstr "Skype'ye Pi&ng at"
-
-#~ msgid "Do not leave a chat on window exit"
-#~ msgstr "Pencereden çıkıldığında sohbetten çıkma"
-
-#~ msgid ""
-#~ "Do not leave a chat when the chat window is closed. Makes a difference "
-#~ "only with multi-user chats: if it is checked, you will continue receiving "
-#~ "messages from that chat even after closing the window."
-#~ msgstr ""
-#~ "Sohbet penceresinden çıkıldığı zaman bir sohbetten ayrılma. Yalnızca çok "
-#~ "kullanıcılı sohbetlerde bir farka neden olur: Seçilmemiş durumdaysa "
-#~ "pencereyi kapatmanız halinde bile ileti almayı sürdürürsünüz."
-
-#~ msgid "&Calls"
-#~ msgstr "&Aramalar"
-
-#~ msgid "E&xecute before call"
-#~ msgstr "&Aramadan önce çalıştır"
-
-#~ msgid ""
-#~ "This will wait before making/accepting the call for the command to finish."
-#~ msgstr ""
-#~ "Bu seçenek, aramayı yapmadan/kabul etmeden önce komutun bitmesini bekler."
-
-#~ msgid ""
-#~ "This will wait for the command to finish before accepting/making the call."
-#~ "<br>\n"
-#~ "Note that kopete will freeze whilst waiting."
-#~ msgstr ""
-#~ "Bu seçenek, aramayı kabul etmeden/yapmadan önce komutun bitmesini bekler."
-#~ "<br>\n"
-#~ "Kopete'nin beklerken donacağını unutmayın."
-
-#~ msgid "Wait for fi&nish"
-#~ msgstr "Bi&tmesini bekle"
-
-#~ msgid "Execute after call"
-#~ msgstr "Aramadan sonra çalıştır"
-
-#~ msgid ""
-#~ "Usually this makes no difference, but if there are some other calls on "
-#~ "hold, it is executed only for the most recently ended one."
-#~ msgstr ""
-#~ "Genellikle bu bir fark doğurmaz; ancak bekletilen başka aramalar varsa "
-#~ "yalnızca en son biten arama için çalıştırılır."
-
-#~ msgid "Onl&y for last call"
-#~ msgstr "Sad&ece son arama için"
-
-#~ msgid "Execute on inco&ming call"
-#~ msgstr "&Gelen çağrılarda çalıştır"
+msgstr "%1 Kullanıcı Bilgisi"
