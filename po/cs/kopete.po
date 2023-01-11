@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-01-04 14:53+0100\n"
+"PO-Revision-Date: 2023-01-05 11:32+0100\n"
 "Last-Translator: Vit Pelcak <vit@pelcak.org>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
 "Language: cs\n"
@@ -14157,7 +14157,7 @@ msgstr "Narozeniny"
 #: protocols/jabber/jabberprotocol.cpp:92
 #, kde-format
 msgid "Timezone"
-msgstr "Časová zóna"
+msgstr "Časové pásmo"
 
 #: protocols/jabber/jabberprotocol.cpp:93
 #, kde-format
@@ -15770,7 +15770,7 @@ msgstr "Narozeniny:"
 #: protocols/jabber/ui/dlgvcard.ui:127
 #, kde-format
 msgid "Timezone:"
-msgstr "Časová zóna:"
+msgstr "Časové pásmo:"
 
 #. i18n: ectx: property (text), widget (QPushButton, btnSelectPhoto)
 #: protocols/jabber/ui/dlgvcard.ui:212
@@ -18913,7 +18913,7 @@ msgstr "Rodinný stav:"
 #: protocols/oscar/icq/ui/icqgeneralinfo.ui:190
 #, kde-format
 msgid "&Timezone:"
-msgstr "Č&asová zóna:"
+msgstr "Č&asové pásmo:"
 
 #. i18n: ectx: property (text), widget (QLabel, birthdayDayLabel)
 #: protocols/oscar/icq/ui/icqgeneralinfo.ui:214
