@@ -962,7 +962,7 @@ msgstr "Es&tablix per defecte"
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:15
 #, kde-format
 msgid "Manage Accounts"
-msgstr "Gestió dels comptes"
+msgstr "Gestioneu els comptes"
 
 #. i18n: ectx: property (whatsThis), widget (AccountTreeWidget, mAccountList)
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:35
@@ -3800,7 +3800,7 @@ msgstr "Telèfon privat:"
 #: kopete/identity/identitydialog.cpp:38 kopete/identity/identitydialog.cpp:44
 #, kde-format
 msgid "Identity Information"
-msgstr "Configuració de la identitat"
+msgstr "Configureu la identitat"
 
 #. i18n: ectx: property (text), widget (QLabel, photo)
 #: kopete/identity/identitydialog.cpp:56 kopete/identity/identitydialog.cpp:156
@@ -15530,7 +15530,7 @@ msgstr "Utilitza l'autenticació X-OAuth2"
 #: protocols/jabber/ui/dlgxoauth2.ui:12
 #, kde-format
 msgid "Manage X-OAuth2 tokens"
-msgstr "Gestió dels testimonis X-OAuth2"
+msgstr "Gestioneu els testimonis X-OAuth2"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_5)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:502
@@ -21034,7 +21034,7 @@ msgstr "Podeu tindre només un compte de Skype"
 #: protocols/skype/skypeeditaccount.cpp:207
 #, kde-format
 msgid "Configure Skype client"
-msgstr "Configuració del client Skype"
+msgstr "Configureu el client Skype"
 
 #: protocols/skype/skypeeditaccount.cpp:207
 #, kde-format
