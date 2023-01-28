@@ -20945,27 +20945,3 @@ msgstr "Настройването беше неуспешно"
 #, kde-format
 msgid "User Info for %1"
 msgstr "Информация за потребител %1"
-
-#~ msgid ""
-#~ "A network connection was disconnected.  The application is now in offline "
-#~ "mode.  Do you want the application to resume network operations when the "
-#~ "network is available again?"
-#~ msgstr ""
-#~ "Връзката прекъсна. В момента програмата е без връзка с мрежата. Искате ли "
-#~ "да бъде установена такава когато проблемът се оправи?"
-
-#~ msgid ""
-#~ "This application is currently in offline mode.  Do you want to connect?"
-#~ msgstr ""
-#~ "В момента програмата е без връзка с мрежата. Искате ли да бъде установена "
-#~ "такава?"
-
-#~ msgid ""
-#~ "This application is currently in offline mode.  Do you want to connect in "
-#~ "order to carry out this operation?"
-#~ msgstr ""
-#~ "В момента програмата е без връзка с мрежата. Искате ли да бъде установена "
-#~ "такава с цел да бъде извършена заявената операция?"
-
-#~ msgid "Leave Offline Mode?"
-#~ msgstr "Оставяне в режим без връзка?"
