@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-01-18 22:41+0300\n"
+"PO-Revision-Date: 2023-01-31 01:18+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -2477,7 +2477,7 @@ msgstr "Kurulum Başarılı Oldu"
 #, kde-format
 msgid ""
 "An unknown error occurred while trying to install the chat window style."
-msgstr "Sohbet penceresi biçimi yüklenirken bir hata oluştu."
+msgstr "Sohbet penceresi biçemi kurulurken bir hata oluştu."
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:467
 #, kde-format
@@ -20448,7 +20448,7 @@ msgstr "%1 hizmeti yüklenemedi."
 #: protocols/sms/serviceloader.cpp:47
 #, kde-format
 msgid "Error Loading Service"
-msgstr "Servis Yükleme Hatası"
+msgstr "Hizmet Yükleme Hatası"
 
 #: protocols/sms/services/gsmlib.cpp:438
 #, kde-format
@@ -20851,7 +20851,7 @@ msgid ""
 msgstr ""
 "%1 çalışma dizini yok.\n"
 "Henüz herhangi bir şey (samba) ayarlamadıysanız\n"
-"Samba'ya Yükle (Yapılandır...-> Hesap -> Düzenle)\n"
+"Samba'ya Kur (Yapılandır...-> Hesap -> Düzenle)\n"
 "yolunu takip edin.\n"
 "Dizin oluşturulsun mu? (yönetici parolası gerekebilir)"
 
@@ -21019,7 +21019,7 @@ msgstr "&Makine adı:"
 #: protocols/winpopup/ui/wpeditaccountbase.ui:95
 #, kde-format
 msgid "Install support into Samba to enable this service."
-msgstr "Bu hizmeti kullanabilmek için Samba'ya destek yükleyin."
+msgstr "Bu hizmeti kullanabilmek için desteği Samba'ya kurun."
 
 #. i18n: ectx: property (text), widget (QPushButton, doInstallSamba)
 #: protocols/winpopup/ui/wpeditaccountbase.ui:98
