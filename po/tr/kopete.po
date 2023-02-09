@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-02-04 13:32+0300\n"
+"PO-Revision-Date: 2023-02-08 19:57+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 22.12.1\n"
+"X-Generator: Lokalize 22.12.2\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -13578,7 +13578,7 @@ msgstr "Jabber Dosya Aktarım Yöneticisi Çalıştırılamadı"
 #: protocols/jabber/jabberaccount.cpp:221
 #, kde-format
 msgid "Join Groupchat..."
-msgstr "Grup Sohbete Giriş Yap..."
+msgstr "Grup Sohbete Katıl..."
 
 #: protocols/jabber/jabberaccount.cpp:234
 #, kde-format
@@ -13815,7 +13815,7 @@ msgstr "Bir Taşıyıcı Katman Güvenliği (TLS) hatası var: %1"
 #: protocols/jabber/jabberaccount.cpp:950
 #, kde-format
 msgid "Login failed with unknown reason."
-msgstr "Bilinmeyen bir nedenle giriş başarısız."
+msgstr "Bilinmeyen bir nedenle oturum açma başarısız."
 
 #: protocols/jabber/jabberaccount.cpp:953
 #, kde-format
