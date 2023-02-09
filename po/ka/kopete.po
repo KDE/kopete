@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2023-01-12 10:04+0100\n"
+"PO-Revision-Date: 2023-02-08 12:07+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -1054,7 +1054,7 @@ msgstr "იდენტიფიკატორები"
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:191
 #, kde-format
 msgid "Add a new identity"
-msgstr ""
+msgstr "ახალი იდენტიფიკატორის დამატება"
 
 #. i18n: ectx: property (text), widget (QPushButton, mButtonIdentityAdd)
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:194
@@ -2716,7 +2716,7 @@ msgstr "&ახლის მიღება…"
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:140
 #, kde-format
 msgid "&Install..."
-msgstr ""
+msgstr "&დაყენება..."
 
 #. i18n: ectx: property (text), widget (QPushButton, deleteButton)
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:153
@@ -2868,7 +2868,7 @@ msgstr "სათაური"
 #: kopete/contactlist/contactlistlayoutmanager.cpp:60
 #, kde-format
 msgid "Placeholder"
-msgstr ""
+msgstr "შემავსებელი"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_2)
 #: kopete/contactlist/contactlistlayoutmanager.cpp:61
@@ -4165,7 +4165,7 @@ msgstr "Chetan Reddy"
 #: kopete/main.cpp:86 kopete/main.cpp:89 kopete/main.cpp:92
 #, kde-format
 msgid "Former developer"
-msgstr ""
+msgstr "ყოფილი პროგრამისტი"
 
 #: kopete/main.cpp:82
 #, kde-format
@@ -4709,7 +4709,7 @@ msgstr ""
 #: libkopete/avdevice/videodevice.cpp:3687
 #, kde-format
 msgid "Brightness"
-msgstr "სიკა_შკაშე"
+msgstr "სიკაშკაშე"
 
 #: libkopete/avdevice/videodevice.cpp:128
 #: libkopete/avdevice/videodevice.cpp:3693
@@ -4726,7 +4726,7 @@ msgstr "ფერი"
 #: libkopete/avdevice/videodevice.cpp:3689
 #, kde-format
 msgid "Contrast"
-msgstr "კონ_ტრასტი"
+msgstr "კონტრასტი"
 
 #: libkopete/avdevice/videodevice.cpp:137
 #, kde-format
@@ -6343,7 +6343,7 @@ msgstr ""
 #: libkopete/ui/avatarselectorwidget.cpp:139
 #, kde-format
 msgid "No Avatar"
-msgstr ""
+msgstr "ავატარის გარეშე"
 
 #. i18n: ectx: property (text), widget (QPushButton, buttonAddAvatar)
 #: libkopete/ui/avatarselectorwidget.ui:76
@@ -7475,7 +7475,7 @@ msgstr "შენახვა"
 #: plugins/history2/history2import.cpp:331
 #, kde-format
 msgid "Are You Sure?"
-msgstr ""
+msgstr "დარწმუნებული ბრძანდებით?"
 
 #: plugins/history/historyimport.cpp:263
 #: plugins/history2/history2import.cpp:332
@@ -10372,7 +10372,7 @@ msgstr ""
 #: protocols/gadu/gaduaccount.cpp:1044
 #, kde-format
 msgid "Unable to create temporary file."
-msgstr ""
+msgstr "დროებითი ფაილის შექმნის შეცდომა."
 
 #: protocols/gadu/gaduaccount.cpp:1044 protocols/gadu/gaduaccount.cpp:1057
 #, kde-format
@@ -10804,7 +10804,7 @@ msgstr ""
 #: protocols/gadu/gadusession.cpp:623
 #, kde-format
 msgid "parsing data"
-msgstr ""
+msgstr "მონაცემების დამუშავება"
 
 #: protocols/gadu/gadusession.cpp:625
 #, kde-format
@@ -11654,7 +11654,7 @@ msgstr ""
 #: protocols/groupwise/gwaccount.cpp:85
 #, kde-format
 msgid "&Join Channel..."
-msgstr ""
+msgstr "&არხზე შესვლა..."
 
 #: protocols/groupwise/gwaccount.cpp:88
 #, kde-format
@@ -12413,7 +12413,7 @@ msgstr ""
 #: protocols/groupwise/ui/gwaddui.ui:39
 #, kde-format
 msgid "&Basic"
-msgstr ""
+msgstr "&საბაზისო"
 
 #. i18n: ectx: property (title), widget (QGroupBox, bg_addMethod)
 #: protocols/groupwise/ui/gwaddui.ui:60
@@ -12775,7 +12775,7 @@ msgstr "&მომხმარებლის ID"
 #: protocols/groupwise/ui/gwcontactsearch.ui:56
 #, kde-format
 msgid "&Title"
-msgstr ""
+msgstr "&სათაური"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel5)
 #: protocols/groupwise/ui/gwcontactsearch.ui:75
@@ -13245,7 +13245,7 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:936
 #, kde-format
 msgid "Failed to establish a secure connection."
-msgstr ""
+msgstr "დაცული მიერთების დამყარების შეცდომა."
 
 #: protocols/jabber/jabberaccount.cpp:943
 #, kde-format
@@ -16190,7 +16190,7 @@ msgstr ""
 #: protocols/oscar/aim/aimuserinfo.cpp:90
 #, kde-format
 msgid "&Save Profile"
-msgstr ""
+msgstr "&პროფილის შენახვა"
 
 #: protocols/oscar/aim/aimuserinfo.cpp:114
 #, kde-format
@@ -16519,7 +16519,7 @@ msgstr ""
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:746
 #, kde-format
 msgid "Visible"
-msgstr "_ხილული"
+msgstr "ხილული"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel2)
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:770
@@ -17255,7 +17255,7 @@ msgstr "კულტურა"
 #: protocols/oscar/icq/icqprotocol.cpp:619
 #, kde-format
 msgid "Fitness"
-msgstr ""
+msgstr "ფიტნესი"
 
 #: protocols/oscar/icq/icqprotocol.cpp:620 protocols/oscar/oscarcontact.cpp:263
 #, kde-format
@@ -17387,7 +17387,7 @@ msgstr ""
 #: protocols/oscar/icq/icqprotocol.cpp:645
 #, kde-format
 msgid "Women"
-msgstr ""
+msgstr "ქალები"
 
 #: protocols/oscar/icq/icqprotocol.cpp:646
 #, kde-format
@@ -18308,7 +18308,7 @@ msgstr ""
 #, kde-format
 msgctxt "@title:tab"
 msgid "Visible"
-msgstr "_ხილული"
+msgstr "ხილული"
 
 #. i18n: ectx: attribute (title), widget (QWidget, tabInvisible)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:795
@@ -18834,7 +18834,7 @@ msgstr ""
 #: protocols/oscar/icq/ui/xtrazicqstatusui.ui:28
 #, kde-format
 msgid "Icon:"
-msgstr "_ხატულა:"
+msgstr "ხატულა:"
 
 #. i18n: ectx: property (text), widget (QCheckBox, checkAppend)
 #: protocols/oscar/icq/ui/xtrazicqstatusui.ui:77
