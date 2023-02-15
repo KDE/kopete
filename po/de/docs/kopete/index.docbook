@@ -1640,7 +1640,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 			<title
 >Weitere Protokolle</title>
 			<para
->Zusätzlich zu den oben genannten Protokollen unterstützt &kopete; noch weitere Protokolle. Diese sind in der Voreinstellung entweder nicht aktiviert oder es müssen zusätzliche Module installiert werden, dies gilt für die Protokolle SMS, Skype and SILC. Die Unterstützung für diese Protokolle kommt nicht vom Kopete-Team. </para>
+>Zusätzlich zu den oben genannten Protokollen unterstützt &kopete; noch weitere Protokolle. Diese sind in der Voreinstellung entweder nicht aktiviert oder es müssen zusätzliche Module installiert werden, dies gilt für die Protokolle SMS and SILC. Die Unterstützung für diese Protokolle kommt nicht vom Kopete-Team. </para>
 		</sect2>
 	</sect1>
 </chapter>
