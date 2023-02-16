@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: kdeorg\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-02-07 11:02\n"
+"PO-Revision-Date: 2023-02-15 11:04\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -2067,8 +2067,8 @@ msgid ""
 "message this window will be put on the current desktop and in front of all "
 "other windows."
 msgstr ""
-"如果已经打开了对应收到消息发送方的聊天窗口，此窗口会被自动升到当前桌面上所有"
-"其他窗口之前。"
+"如果已经打开了对应收到消息发送方的聊天窗口，此窗口会被自动提升到当前桌面上所"
+"有其他窗口之前。"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_raiseMessageWindow)
 #: kopete/config/behavior/behaviorconfig_events.ui:185
@@ -12298,7 +12298,7 @@ msgstr "自动回复消息"
 #: protocols/groupwise/gwprotocol.cpp:74
 #, kde-format
 msgid "Common Name"
-msgstr "通用名"
+msgstr "通用名称"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:28
 #, kde-format
