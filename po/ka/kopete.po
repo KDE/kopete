@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-05-03 00:43+0000\n"
-"PO-Revision-Date: 2023-02-08 12:07+0100\n"
+"PO-Revision-Date: 2023-02-18 07:52+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -3132,12 +3132,12 @@ msgstr "ახალი ჯგუფის შექმნა..."
 #: kopete/contactlist/kopetecontactlistview.cpp:174
 #, kde-format
 msgid "&Move To"
-msgstr ""
+msgstr "&გადატანა"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:177
 #, kde-format
 msgid "&Copy To"
-msgstr ""
+msgstr "&გადაკოპირება"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:181
 #, kde-format
@@ -3555,7 +3555,7 @@ msgstr "&უცნობი:"
 #: kopete/groupkabcselectorwidget.ui:31
 #, kde-format
 msgid "&Group:"
-msgstr ""
+msgstr "&ჯგუფი:"
 
 #. i18n: ectx: property (text), widget (QLabel, kabcLabel)
 #: kopete/groupkabcselectorwidget.ui:44
@@ -4998,7 +4998,7 @@ msgstr "გამოყენება"
 #: libkopete/kabcpersistence.cpp:351 protocols/gadu/ui/gadueditaccountui.ui:389
 #, kde-format
 msgid "Do Not Use"
-msgstr ""
+msgstr "არ გამოიყენო"
 
 #: libkopete/kabcpersistence.cpp:372
 #, kde-format
@@ -11718,17 +11718,17 @@ msgstr ""
 #: protocols/groupwise/gwaccount.cpp:735 protocols/jabber/jabberaccount.cpp:492
 #, kde-format
 msgid "The host name does not match the one in the certificate."
-msgstr ""
+msgstr "ჰოსტის სახელი სერტიფიკატისას არ ემთხვევა."
 
 #: protocols/groupwise/gwaccount.cpp:739 protocols/jabber/jabberaccount.cpp:496
 #, kde-format
 msgid "The certificate is invalid."
-msgstr ""
+msgstr "სერტიფიკატი არასწორია."
 
 #: protocols/groupwise/gwaccount.cpp:743 protocols/jabber/jabberaccount.cpp:500
 #, kde-format
 msgid "No certificate was presented."
-msgstr ""
+msgstr "სერტიფიკატის გარეშე."
 
 #: protocols/groupwise/gwaccount.cpp:753 protocols/jabber/jabberaccount.cpp:510
 #, kde-format
@@ -11738,7 +11738,7 @@ msgstr ""
 #: protocols/groupwise/gwaccount.cpp:757 protocols/jabber/jabberaccount.cpp:514
 #, kde-format
 msgid "The certificate is not trusted."
-msgstr ""
+msgstr "სერტიფიკატი სანდო არაა."
 
 #: protocols/groupwise/gwaccount.cpp:761 protocols/jabber/jabberaccount.cpp:518
 #, kde-format
@@ -11748,17 +11748,17 @@ msgstr "ხელმოწერა არასწორია."
 #: protocols/groupwise/gwaccount.cpp:765 protocols/jabber/jabberaccount.cpp:522
 #, kde-format
 msgid "The Certificate Authority is invalid."
-msgstr ""
+msgstr "სერტიფიკატის გამცემი არასწორია."
 
 #: protocols/groupwise/gwaccount.cpp:769 protocols/jabber/jabberaccount.cpp:526
 #, kde-format
 msgid "Invalid certificate purpose."
-msgstr ""
+msgstr "სერტიფიკატის არასწორი დანიშნულება."
 
 #: protocols/groupwise/gwaccount.cpp:773 protocols/jabber/jabberaccount.cpp:530
 #, kde-format
 msgid "The certificate is self-signed."
-msgstr ""
+msgstr "სერტიფიკატი თვითხელოწერილია."
 
 #: protocols/groupwise/gwaccount.cpp:777 protocols/jabber/jabberaccount.cpp:534
 #, kde-format
@@ -11768,7 +11768,7 @@ msgstr "სერტიფიკატი გაუქმებულია."
 #: protocols/groupwise/gwaccount.cpp:781 protocols/jabber/jabberaccount.cpp:538
 #, kde-format
 msgid "Maximum certificate chain length was exceeded."
-msgstr ""
+msgstr "გადაჭარბებულია სერტიფიკატის ჯაჭვის მაქსიმალური სიგრძე."
 
 #: protocols/groupwise/gwaccount.cpp:785 protocols/jabber/jabberaccount.cpp:542
 #, kde-format
@@ -11778,12 +11778,12 @@ msgstr "სერტიფიკატი ვადაგასულია."
 #: protocols/groupwise/gwaccount.cpp:789 protocols/jabber/jabberaccount.cpp:546
 #, kde-format
 msgid "The Certificate Authority has expired."
-msgstr ""
+msgstr "სერტიფიკატის გამომცემის ვადა ამოწურულია."
 
 #: protocols/groupwise/gwaccount.cpp:793 protocols/jabber/jabberaccount.cpp:550
 #, kde-format
 msgid "Validity is unknown."
-msgstr ""
+msgstr "გადამოწმება შეუძლებელია."
 
 #: protocols/groupwise/gwaccount.cpp:804 protocols/jabber/jabberaccount.cpp:561
 #, kde-format
@@ -13050,7 +13050,7 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:318
 #, kde-format
 msgid "Please connect first."
-msgstr ""
+msgstr "ჯერ საჭიროა,დ აუკავშირდეთ."
 
 #: protocols/jabber/jabberaccount.cpp:318
 #: protocols/jabber/ui/dlgjabberchatjoin.cpp:143
@@ -13059,7 +13059,7 @@ msgstr ""
 #: protocols/jabber/ui/dlgregister.cpp:73 protocols/jabber/ui/dlgsearch.cpp:84
 #, kde-format
 msgid "Jabber Error"
-msgstr ""
+msgstr "Jabber-ის შეცდომა"
 
 #: protocols/jabber/jabberaccount.cpp:452
 #, kde-format
@@ -13072,12 +13072,12 @@ msgstr ""
 #: protocols/jabber/ui/jabberregisteraccount.cpp:294
 #, kde-format
 msgid "Jabber SSL Error"
-msgstr ""
+msgstr "Jabber-ის SSL შეცდომა"
 
 #: protocols/jabber/jabberaccount.cpp:579
 #, kde-format
 msgid "Jabber Connection Certificate Problem"
-msgstr ""
+msgstr "სერტიფიკატის შეცდომა Jabber-თან მიერთებისას"
 
 #: protocols/jabber/jabberaccount.cpp:613
 #, kde-format
@@ -13088,7 +13088,7 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:614
 #, kde-format
 msgid "Jabber Connection Error"
-msgstr ""
+msgstr "Jabber-თან მიერთების პრობლემა"
 
 #: protocols/jabber/jabberaccount.cpp:820
 #, kde-format
@@ -13103,7 +13103,7 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:832
 #, kde-format
 msgid "Generic stream error."
-msgstr ""
+msgstr "ნაკადის ზოგადი შეცდომა."
 
 #: protocols/jabber/jabberaccount.cpp:836
 #, kde-format
@@ -13113,7 +13113,7 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:839
 #, kde-format
 msgid "The stream timed out."
-msgstr ""
+msgstr "ნაკადის მოლოდინის ვადა ამოიწურა."
 
 #: protocols/jabber/jabberaccount.cpp:842
 #, kde-format
@@ -13163,12 +13163,12 @@ msgstr "ჰოსტი ნაპოვნი არაა."
 #: protocols/jabber/jabberaccount.cpp:878
 #, kde-format
 msgid "Address is already in use."
-msgstr ""
+msgstr "მისამართი უკვე გამოიყენება."
 
 #: protocols/jabber/jabberaccount.cpp:881
 #, kde-format
 msgid "Connection refused."
-msgstr ""
+msgstr "დაკავშირება უარყოფილია."
 
 #: protocols/jabber/jabberaccount.cpp:884
 #, kde-format
@@ -13618,7 +13618,7 @@ msgstr "არ შემაწუხო"
 #: protocols/jabber/jabbercontact.cpp:203
 #, kde-format
 msgid "Select Resource"
-msgstr ""
+msgstr "აირჩიეთ რესურსი"
 
 #: protocols/jabber/jabbercontact.cpp:220
 #, kde-format
@@ -13661,18 +13661,18 @@ msgstr ""
 #: protocols/jabber/jabbercontact.cpp:345
 #, kde-format
 msgid "Message has been displayed"
-msgstr ""
+msgstr "შეტყობინება ნაჩვენებია"
 
 #: protocols/jabber/jabbercontact.cpp:348
 #: protocols/jabber/jabbercontact.cpp:376
 #, kde-format
 msgid "Message has been delivered"
-msgstr ""
+msgstr "შეტყობინება მიტანილია"
 
 #: protocols/jabber/jabbercontact.cpp:357
 #, kde-format
 msgid "Message stored on the server, contact offline"
-msgstr ""
+msgstr "შეტყობინება სერვერზე იქნა შენახული. მომხმარებელი გათიშულია"
 
 #: protocols/jabber/jabbercontact.cpp:365
 #, kde-format
@@ -14027,7 +14027,7 @@ msgstr "გათიშვა"
 #: protocols/jabber/ui/privacyruledlg.cpp:134
 #, kde-format
 msgid "None"
-msgstr ""
+msgstr "არა_ფერი"
 
 #: protocols/jabber/tasks/mood.cpp:79
 #, kde-format
