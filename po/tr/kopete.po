@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-02-08 19:57+0300\n"
+"PO-Revision-Date: 2023-02-20 17:30+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -4647,7 +4647,7 @@ msgstr "Bant Süzgeci"
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:92
 #, kde-format
 msgid "rgb gamma"
-msgstr "RGB gama"
+msgstr "KYM gama"
 
 #. i18n: Reset Level
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:94
