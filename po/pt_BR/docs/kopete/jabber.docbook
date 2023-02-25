@@ -748,7 +748,7 @@
 >. A primeira aba, o <guilabel
 >Estilo</guilabel
 >, pode ser usada para definir uma aparência diferente da padrão. Você também pode instalar os seus próprios estilos ou baixar novos da Internet, clicando em <guilabel
->Obter novos...</guilabel
+>Baixar novos...</guilabel
 >. Quando você inserir um <ulink url="http://pt.wikipedia.org/wiki/Emoticon"
 >Emoticon</ulink
 > durante uma conversa, o &kopete; irá convertê-lo para um emoticon gráfico por padrão. Para desabilitar este recurso ou usar outro conjunto de emoticons, vá para a aba <guilabel
@@ -866,7 +866,7 @@
 ></listitem>
 <listitem
 ><para
->A próxima possibilidade é uma frase-senha secreta que o seu parceiro precisa saber (você pode considerar dar-lhe essa senha através de outro canal de comunicação seguro, &eg; telefone). </para
+>A próxima possibilidade é uma senha secreta que o seu parceiro precisa saber (você pode considerar dar-lhe essa senha através de outro canal de comunicação seguro, &eg; telefone). </para
 ></listitem>
 <listitem
 ><para

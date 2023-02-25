@@ -73,8 +73,8 @@
 >&lt;/body>
 &lt;/message>
 </literallayout
-> Este &XML; baseia-se de certa forma no XSD usado para os estilos de conversação disponíveis na <ulink url="http://kopete.kde.org/files/kopetemessage.xsd"
->página Web do Kopete</ulink
+> Este &XML; baseia-se de certa forma no XSD usado para os estilos de conversação disponíveis no <ulink url="http://kopete.kde.org/files/kopetemessage.xsd"
+>site do Kopete</ulink
 >. Este código representa uma mensagem. Existem algumas notas a fazer: <itemizedlist>
 <listitem
 ><para
