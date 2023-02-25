@@ -1668,7 +1668,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 			<title
 >Outros protocolos</title>
 			<para
->Assim como os protocolos indicados acima, o &kopete; possui suporte para diversos outros protocolos. Na maioria dos casos, eles não estão ativados por padrão ou necessitam da instalação de plugins adicionais. Entretanto, fornece-se o suporte para o SMS, o Skype e o SILC neste contexto. Contudo, a equipe do &kopete; não se responsabiliza por estes protocolos.</para>
+>As well as the protocols named above, &kopete; has support for several other protocols. In most cases, this is not enabled by default or an additional plugin must be installed. Meanwhile, SMS and SILC are provided in this way. However, the &kopete; team are not responsible for these protocols.</para>
 		</sect2>
 	</sect1>
 </chapter>
@@ -2066,7 +2066,7 @@ scripting
 <title
 >Estatísticas</title>
 <para
->Este plugin usa uma base de dados para reunir informações sobre os padrões de atividade dos seus contatos. Você poderá usar isto para ver se um contato está normalmente online, por exemplo.</para>
+>Este plugin usa um banco de dados para reunir informações sobre os padrões de atividade dos seus contatos. Você poderá usar isto para ver se um contato está normalmente online, por exemplo.</para>
 </sect2>
 <sect2 id="plugins-text-effect">
 <title
@@ -2279,7 +2279,7 @@ in konsole "khelpcenter khelpcenter:kioslaves" works-->
 >kbuildsycoca4</application
 > manualmente, após a instalação do &kopete;. O <application
 >kbuildsycoca4</application
-> atualiza a base de dados do plugin. Ele é executado após a instalação de novos programas que usam os plugins, mas é possível que o comando <command
+> atualiza o banco de dados do plugin. Ele é executado após a instalação de novos programas que usam os plugins, mas é possível que o comando <command
 >kopete</command
 > seja executado para executar o &kopete; antes que a atualização seja concluída.</para>
 </answer>
@@ -2347,7 +2347,7 @@ in konsole "khelpcenter khelpcenter:kioslaves" works-->
 </question>
 <answer
 ><para
->Entre no <ulink url="http://bugs.kde.org"
+>Entre no <ulink url="https://bugs.kde.org"
 >Sistema de Rastreamento de Erros do &kde;</ulink
 > e crie um pedido de nova funcionalidade (wishlist) para o aplicativo kopete. Por favor, escreva com bastante detalhe e clareza. No entanto, isso NÃO garante que essa funcionalidade será adicionada a alguma versão, mas permite-nos considerá-la.</para>
 </answer>
@@ -2359,7 +2359,7 @@ in konsole "khelpcenter khelpcenter:kioslaves" works-->
 </question>
 <answer
 ><para
->Por favor, relate-nos esse erro através do <ulink url="http://bugs.kde.org"
+>Por favor, relate-nos esse erro através do <ulink url="https://bugs.kde.org"
 >Sistema de Rastreamento de Erros do &kde;</ulink
 >, criando um relatório de erro para o aplicativo 'kopete'. Os relatórios só serão aceitos se estiverem escritos em inglês, forem suficientemente detalhados e, caso esteja envolvido com alguma finalização inesperada, tiverem um backtrace (o texto na aba <guilabel
 >Backtrace</guilabel
@@ -2379,8 +2379,8 @@ in konsole "khelpcenter khelpcenter:kioslaves" works-->
 >qca-tls</application
 > (e, eventualmente, o <application
 >qca-ossl</application
->) ou baixe o plugin a partir da <ulink url="http://delta.affinix.com/qca"
->página Web</ulink
+>) ou baixe o plugin a partir do <ulink url="http://delta.affinix.com/qca"
+>site</ulink
 >. Lembre-se de que você só precisa instalar o plugin <application
 >qca-tls</application
 > e <emphasis
