@@ -11323,7 +11323,7 @@ msgstr "이메일 주소(&E):"
 #: protocols/sms/ui/smsuserprefs.ui:70
 #, kde-format
 msgid "&Telephone number:"
-msgstr "전화 번호(&T):"
+msgstr "전화번호(&T):"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, notAFriend_)
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, notAFriend_)
@@ -13063,7 +13063,7 @@ msgstr "대화 상대 속성"
 #: protocols/groupwise/ui/gwcontactproperties.cpp:113
 #, kde-format
 msgid "Telephone Number"
-msgstr "전화 번호"
+msgstr "전화번호"
 
 #: protocols/groupwise/ui/gwcontactproperties.cpp:115
 #, kde-format
@@ -15874,7 +15874,7 @@ msgstr "직급:"
 #: protocols/jabber/ui/dlgvcard.ui:487
 #, kde-format
 msgid "Phone &Numbers"
-msgstr "전화 번호(&N)"
+msgstr "전화번호(&N)"
 
 #. i18n: ectx: property (text), widget (QLabel, lblPhoneHome)
 #: protocols/jabber/ui/dlgvcard.ui:493 protocols/qq/ui/qqvcard.ui:462
@@ -20514,7 +20514,7 @@ msgid ""
 "Without this option, you will only be able to use SMS for accounts within "
 "your country."
 msgstr ""
-"전화 번호 국제화를 사용하려면 선택하십시오. 이 설정을 사용하지 않으면 현재 살"
+"전화번호 국제화를 사용하려면 선택하십시오. 이 설정을 사용하지 않으면 현재 살"
 "고 있는 나라 안에서만 메시지를 보낼 수 있습니다."
 
 #. i18n: ectx: property (text), widget (QLabel)
