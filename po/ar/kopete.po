@@ -3107,7 +3107,7 @@ msgstr "لم يتم العثور على مصدر دفتر العناوين قا�
 #: kopete/contactlist/kabcexport.cpp:95
 #, kde-format
 msgid "Add or enable one using the KDE System Settings."
-msgstr "أضف أو فعّل عند استخدام مركز تحكم كدي."
+msgstr "أضف أو فعّل عند استخدام مركز تحكم كِيدِي."
 
 #: kopete/contactlist/kabcexport.cpp:107
 #, kde-format
@@ -3121,7 +3121,7 @@ msgid ""
 "This wizard helps you export instant messaging contacts to the KDE address "
 "book."
 msgstr ""
-"هذا المعالج يساعدك في تصدير مراسلي المراسلة الفورية إلى دليل عناوين كدي."
+"هذا المعالج يساعدك في تصدير مراسلي المراسلة الفورية إلى دليل عناوين كِيدِي."
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #: kopete/contactlist/kabcexport_page1.ui:32
@@ -3133,7 +3133,7 @@ msgstr "ان&تقِ دفتر العناوين"
 #: kopete/contactlist/kabcexport_page2.ui:22
 #, kde-format
 msgid "Selected contacts will be added to the KDE address book."
-msgstr "المراسلون المنتقون سوف يضافون إلى دفتر عناوين كدي."
+msgstr "المراسلون المنتقون سوف يضافون إلى دفتر عناوين كِيدِي."
 
 #. i18n: ectx: property (text), widget (QPushButton, btnSelectAll)
 #: kopete/contactlist/kabcexport_page2.ui:49
@@ -3340,7 +3340,7 @@ msgstr "انقل المتراسل"
 #: kopete/contactlist/kopetecontactlistview.cpp:546
 #, kde-format
 msgid "There is no email address set for this contact in the KDE address book."
-msgstr "لا يوجد عنوان بريد إلكتروني مضبوط لهذا المراسل في دفتر عناوين كدي."
+msgstr "لا يوجد عنوان بريد إلكتروني مضبوط لهذا المراسل في دفتر عناوين كِيدِي."
 
 #: kopete/contactlist/kopetecontactlistview.cpp:546
 #, kde-format
@@ -3353,7 +3353,7 @@ msgid ""
 "This contact was not found in the KDE address book. Check that a contact is "
 "selected in the properties dialog."
 msgstr ""
-"هذا المراسل غير موجود في دفتر عناوين كدي. تحقق أن المراسل مُنتقى في حواء "
+"هذا المراسل غير موجود في دفتر عناوين كِيدِي. تحقق أن المراسل مُنتقى في حواء "
 "الخصائص."
 
 #: kopete/contactlist/kopetecontactlistview.cpp:550
@@ -3534,7 +3534,7 @@ msgstr "وصلة دفتر عناوين"
 #: kopete/contactlist/kopetemetalvipropswidget.ui:91
 #, kde-format
 msgid "Export contact's details to the KDE Address Book"
-msgstr "صدّر تفاصيل المراسلين إلى دفتر عناوين كدي"
+msgstr "صدّر تفاصيل المراسلين إلى دفتر عناوين كِيدِي"
 
 #. i18n: ectx: property (text), widget (QPushButton, btnExportKABC)
 #: kopete/contactlist/kopetemetalvipropswidget.ui:94
@@ -3546,7 +3546,7 @@ msgstr "&صدّر تفاصيلا..."
 #: kopete/contactlist/kopetemetalvipropswidget.ui:120
 #, kde-format
 msgid "Import contacts from the KDE Address Book"
-msgstr "اسورد مراسلين من دفتر عناوين كدي"
+msgstr "اسورد مراسلين من دفتر عناوين كِيدِي"
 
 #. i18n: ectx: property (text), widget (QPushButton, btnImportKABC)
 #: kopete/contactlist/kopetemetalvipropswidget.ui:123
@@ -3974,7 +3974,7 @@ msgstr "<br /><b>رسالة&nbsp;الحالة:</b>&nbsp;%1"
 #: kopete/main.cpp:33
 #, kde-format
 msgid "Kopete, the KDE Instant Messenger"
-msgstr "كوبيت، مراسل كدي الفوري"
+msgstr "كوبيت، مراسل كِيدِي الفوري"
 
 #: kopete/main.cpp:45
 #, fuzzy, kde-format
@@ -5114,7 +5114,7 @@ msgstr "<qt>\"%1\" غير مدعوم بواسطة كوبيت.</qt>"
 #: libkopete/kabcpersistence.cpp:306
 #, kde-format
 msgid "Could Not Sync with KDE Address Book"
-msgstr "تعذرت المزامنة مع دليل عناوين كدي"
+msgstr "تعذرت المزامنة مع دليل عناوين كِيدِي"
 
 #: libkopete/kabcpersistence.cpp:349
 #, kde-format
@@ -6462,7 +6462,7 @@ msgstr "اقتران دفتر العناوين"
 #: libkopete/ui/addressbooklinkwidget_base.ui:30
 #, kde-format
 msgid "The KDE Address Book entry associated with this Kopete Contact"
-msgstr "مدخلة دليل عناوين كدي مربوطة مع مراسل كوبيت هذا"
+msgstr "مدخلة دليل عناوين كِيدِي مربوطة مع مراسل كوبيت هذا"
 
 #. i18n: ectx: property (toolTip), widget (QPushButton, btnClear)
 #. i18n: ectx: property (text), widget (QPushButton, btnClearBlackList)
@@ -7156,7 +7156,7 @@ msgstr "و&قع رسالة"
 #, fuzzy, kde-format
 msgctxt "@action toggle action"
 msgid "Export Contacts' Keys to Address Book"
-msgstr "صدّر تفاصيل المراسلين إلى دفتر عناوين كدي"
+msgstr "صدّر تفاصيل المراسلين إلى دفتر عناوين كِيدِي"
 
 #: plugins/cryptography/cryptographyguiclient.cpp:110
 #, fuzzy, kde-format
@@ -7247,7 +7247,7 @@ msgctxt "@info"
 msgid ""
 "Cryptography plugin has found an encryption key for %1 (%2) in your KDE "
 "address book. Do you want to use key %3 as this contact's public key? "
-msgstr "ملحق بوصة كدي إلى ث "
+msgstr "ملحق بوصة كِيدِي إلى ث "
 
 #: plugins/cryptography/cryptographyplugin.cpp:424
 #, fuzzy, kde-format
@@ -7265,7 +7265,7 @@ msgctxt "@info"
 msgid ""
 "Cryptography plugin has found multiple encryption keys for %1 (%2) in your "
 "KDE address book. To use one of these keys, select it and choose OK."
-msgstr "ملحق بوصة كدي إلى من و موافق."
+msgstr "ملحق بوصة كِيدِي إلى من و موافق."
 
 #: plugins/cryptography/cryptographypreferences.cpp:43
 #, kde-format
@@ -10513,13 +10513,13 @@ msgstr "الاسم:"
 #: protocols/bonjour/bonjouraccountpreferences.ui:84
 #, kde-format
 msgid "kde-devel"
-msgstr "مطور-كدي"
+msgstr "مطور-كِيدِي"
 
 #. i18n: ectx: property (text), widget (QLineEdit, kcfg_firstName)
 #: protocols/bonjour/bonjouraccountpreferences.ui:98
 #, kde-format
 msgid "KDE"
-msgstr "كدي"
+msgstr "كِيدِي"
 
 #. i18n: ectx: property (text), widget (QLabel, label_4)
 #: protocols/bonjour/bonjouraccountpreferences.ui:105
@@ -23910,7 +23910,7 @@ msgstr "معلومات المستخدم ل%1"
 #~ "email address is stored. Check that a contact is selected in the "
 #~ "properties dialog."
 #~ msgstr ""
-#~ "هذا المراسل غير مربوط مع مدخلة دفتر عناوين كدي، حيث يحفظ عنوان البريد "
+#~ "هذا المراسل غير مربوط مع مدخلة دفتر عناوين كِيدِي، حيث يحفظ عنوان البريد "
 #~ "الإلكرتوني. تحقق أن المراسل مُنتقى في حوار الخصائص."
 
 #~ msgid "<qt>Would you like to add this contact to your contact list?</qt>"
