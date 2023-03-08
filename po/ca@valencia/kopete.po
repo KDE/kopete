@@ -10593,7 +10593,7 @@ msgstr "Utilitza un dels &meus noms MI"
 #: plugins/webpresence/webpresenceprefs.ui:209
 #, kde-format
 msgid "Include &IM addresses"
-msgstr "Incloure adreces &MI"
+msgstr "Inclou les adreces de &MI"
 
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_showAnotherName)
 #: plugins/webpresence/webpresenceprefs.ui:216
