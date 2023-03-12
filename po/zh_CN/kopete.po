@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: kdeorg\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-02-24 12:43\n"
+"PO-Revision-Date: 2023-03-11 04:55\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -14,8 +14,8 @@ msgstr ""
 "X-Crowdin-Project: kdeorg\n"
 "X-Crowdin-Project-ID: 269464\n"
 "X-Crowdin-Language: zh-CN\n"
-"X-Crowdin-File: /kf5-trunk/messages/kopete/kopete.pot\n"
-"X-Crowdin-File-ID: 6832\n"
+"X-Crowdin-File: /kf5-stable/messages/kopete/kopete.pot\n"
+"X-Crowdin-File-ID: 7043\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -20754,3 +20754,627 @@ msgstr "配置失败"
 #, kde-format
 msgid "User Info for %1"
 msgstr "%1 的用户信息"
+
+#~ msgid ""
+#~ "A network connection was disconnected.  The application is now in offline "
+#~ "mode.  Do you want the application to resume network operations when the "
+#~ "network is available again?"
+#~ msgstr ""
+#~ "网络连接已经断开。应用程序现在转入离线模式。您是否希望程序在网络连通之后恢"
+#~ "复网络操作？"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect?"
+#~ msgstr "此应用程序目前处在离线模式。您是否想要连接？"
+
+#~ msgid ""
+#~ "This application is currently in offline mode.  Do you want to connect in "
+#~ "order to carry out this operation?"
+#~ msgstr "此应用程序目前处在离线模式。您是否想要连接以便执行此操作？"
+
+#~ msgid "Leave Offline Mode?"
+#~ msgstr "离开离线模式吗？"
+
+#~ msgid "This version of Skype is too old, consider upgrading"
+#~ msgstr "Skype 的版本太旧了，请升级"
+
+#~ msgid "Skype protocol"
+#~ msgstr "Skype 协议"
+
+#~ msgid "Does not have multi-user chat capability"
+#~ msgstr "不支持多用户聊天"
+
+#~ msgid "Chat denied"
+#~ msgstr "聊天被拒绝"
+
+#~ msgid "Unknown error"
+#~ msgstr "未知的错误"
+
+#~ msgid "Misc error"
+#~ msgstr "其他错误"
+
+#~ msgid "User or phone number does not exist"
+#~ msgstr "用户或电话号码不存在"
+
+#~ msgid "User is offline"
+#~ msgstr "用户离线"
+
+#~ msgid "No proxy found"
+#~ msgstr "未找到代理"
+
+#~ msgid "Session terminated"
+#~ msgstr "会话已中断"
+
+#~ msgid "No common codec found"
+#~ msgstr "未找到通用编解码器"
+
+#~ msgid "Sound I/O error"
+#~ msgstr "声音输入输出错误"
+
+#~ msgid "Problem with remote sound device"
+#~ msgstr "远程声音设备有问题"
+
+#~ msgid "Call blocked by recipient"
+#~ msgstr "呼叫被接受者屏蔽"
+
+#~ msgid "Recipient not a friend"
+#~ msgstr "接受者不是好友"
+
+#~ msgid "User not authorized by recipient"
+#~ msgstr "用户未由接受者认证"
+
+#~ msgid "Sound recording error"
+#~ msgstr "声音录制错误"
+
+#~ msgid "This version of Skype does not support adding users to chat."
+#~ msgstr "此版本 Skype 不支持向聊天添加用户。"
+
+#~ msgid "Skype Protocol"
+#~ msgstr "Skype 协议"
+
+#~ msgid "Could not ping Skype"
+#~ msgstr "无法检查 Skype 连通性"
+
+#~ msgid "Skype did not accept this application"
+#~ msgstr "Skype 不接受此应用程序"
+
+#~ msgid "Skype API syntax error"
+#~ msgstr "Skype API 语法错误"
+
+#~ msgid "Skype API not ready yet, wait a bit longer"
+#~ msgstr "Skype API 未就绪，得多等一会儿"
+
+#~ msgid "Cannot register Skype communication for Kopete on D-Bus"
+#~ msgstr "无法在 D-Bus 消息总线上为 Kopete 注册 Skype 通讯"
+
+#~ msgid ""
+#~ "Could not launch Skype.\n"
+#~ "You need to install the original dynamic linked Skype version 2.0 binary "
+#~ "from http://www.skype.com"
+#~ msgstr ""
+#~ "无法执行 Skype。\n"
+#~ "您需要从 http://www.skype.com 安装 Skype 2.0 动态链接版"
+
+#~ msgid ""
+#~ "Could not find Skype.\n"
+#~ "You need to install the original dynamic linked Skype version 2.0 binary "
+#~ "from http://www.skype.com"
+#~ msgstr ""
+#~ "找不到 Skype。\n"
+#~ "您需要从 http://www.skype.com 安装 Skype 2.0 动态链接版"
+
+#~ msgid ""
+#~ "Could not ping Skype.\n"
+#~ "Maybe Skype not running.\n"
+#~ "Error while sending a message to Skype (%1)."
+#~ msgstr ""
+#~ "无法检查 Skype 连通性\n"
+#~ "可能 Skype 未运行。\n"
+#~ "向 Skype (%1) 发送消息时出错。"
+
+#~ msgid "Error while sending a message to Skype (%1)."
+#~ msgstr "向 Skype (%1) 发送消息时出错。"
+
+#~ msgid ""
+#~ "Could not ping Skype.\n"
+#~ "You are logged out from Skype, please log in."
+#~ msgstr ""
+#~ "无法检查 Skype 连通性。\n"
+#~ "您已从 Skype 注销，请登录。"
+
+#~ msgid "Please login to Skype first"
+#~ msgstr "请先登录 Skype"
+
+#~ msgid "Skype (%1)"
+#~ msgstr "Skype (%1)"
+
+#~ msgid "Skype Me"
+#~ msgstr "欢迎聊天"
+
+#~ msgid "Make Test Call"
+#~ msgstr "进行测试呼叫"
+
+#~ msgid "Cannot open info about user %1"
+#~ msgstr "无法打开用户 %1 的信息"
+
+#~ msgid "Unknown action from SkypeActionHandler"
+#~ msgstr "出现来自 SkypeActionHandler 框架的未知操作"
+
+#~ msgid "Add contact from SkypeActionHandler is not supported yet"
+#~ msgstr "尚不支持通过 SkypeActionHandler 框架添加联系人"
+
+#~ msgid "Send voicemail from SkypeActionHandler is not supported yet"
+#~ msgstr "尚不支持通过 SkypeActionHandler 框架发送语音邮件"
+
+#~ msgid "You must connect to Skype first."
+#~ msgstr "您必须先连接到 Skype。"
+
+#~ msgid "You must write the contact's name."
+#~ msgstr "您必须写出联系人的姓名。"
+
+#~ msgid "Wrong Information"
+#~ msgstr "错误的信息"
+
+#~ msgid ""
+#~ "Contact echo123 is not needed. You can make test call in Skype protocol "
+#~ "actions."
+#~ msgstr "不需要联系 echo123。您可以在 Skype 协议操作中进行测试呼叫。"
+
+#~ msgid "This contact already exists in this account."
+#~ msgstr "此联系人已经在此账户中了。"
+
+#~ msgid "You cannot add yourself as a contact."
+#~ msgstr "您不能添加您自己为联系人。"
+
+#~ msgid "Call with %1"
+#~ msgstr "以 %1 呼叫"
+
+#~ msgid "Canceled"
+#~ msgstr "已取消"
+
+#~ msgid "Other person is busy"
+#~ msgstr "其他人忙碌"
+
+#~ msgid "Refused"
+#~ msgstr "已拒绝"
+
+#~ msgid "Call Back"
+#~ msgstr "回拨"
+
+#~ msgid "Missed"
+#~ msgstr "未接"
+
+#~ msgid "Resume"
+#~ msgstr "继续"
+
+#~ msgid "On hold (local)"
+#~ msgstr "暂停 (本地)"
+
+#~ msgid "On hold (remote)"
+#~ msgstr "暂停 (远程)"
+
+#~ msgid "On hold"
+#~ msgstr "暂停"
+
+#~ msgid "Hold"
+#~ msgstr "暂停"
+
+#~ msgid "In progress"
+#~ msgstr "进行中"
+
+#~ msgid "Ringing"
+#~ msgstr "响铃中"
+
+#~ msgid "Failed"
+#~ msgstr "已失败"
+
+#~ msgctxt ""
+#~ "Early media means the media played before the call is established. For "
+#~ "example it can be a calling tone or a waiting message such as all "
+#~ "operators are busy."
+#~ msgid "Early media (waiting for operator...)"
+#~ msgstr "播放较早的媒体 (等待连通中...)"
+
+#~ msgid "Failed (%1)"
+#~ msgstr "已失败 (%1)"
+
+#~ msgid ""
+#~ "%1 active\n"
+#~ "%2 total"
+#~ msgstr ""
+#~ "活动 %1\n"
+#~ "总共 %2"
+
+#~ msgid "Skypeout inactive"
+#~ msgstr "Skypeout 非活动"
+
+#~ msgid "Call"
+#~ msgstr "呼叫"
+
+#~ msgid "Conference Call"
+#~ msgstr "电话会议"
+
+#~ msgid "Block contact"
+#~ msgstr "屏蔽联系人"
+
+#~ msgid "Details for User %1"
+#~ msgstr "用户 %1 的详情"
+
+#~ msgid "You can have only one skype account"
+#~ msgstr "您只能有一个 skype 账户"
+
+#~ msgid "Configure Skype client"
+#~ msgstr "配置 Skype 客户端"
+
+#~ msgid "Please enter your skype user name"
+#~ msgstr "请输入您的 skype 用户名"
+
+#~ msgid "You must enter your skype user name"
+#~ msgstr "您必须输入自己的 skype 用户名"
+
+#~ msgid "Cannot create/open file %1 for configuring the Skype client."
+#~ msgstr "配置 Skype 客户端时无法创建/打开文件 %1。"
+
+#~ msgid ""
+#~ "Process has completed.\n"
+#~ "Skype is now configured for Kopete.\n"
+#~ "You must restart the Skype client for changes to take effect."
+#~ msgstr ""
+#~ "处理完毕。\n"
+#~ "Skype 已经为 Kopete 配置就绪。\n"
+#~ "您必须重新启动 Skype 客户端以使更改生效。"
+
+#~ msgid "Not in Skype list"
+#~ msgstr "不在 Skype 列表中"
+
+#~ msgid "Not authorized"
+#~ msgstr "未认证"
+
+#~ msgid "SkypeOut contact"
+#~ msgstr "SkypeOut 联系人"
+
+#~ msgid "Add Skype Contact"
+#~ msgstr "添加 Skype 联系人"
+
+#~ msgid "Skype name:"
+#~ msgstr "Skype 用户名："
+
+#~ msgid "Sorry, but the search function is not yet implemented."
+#~ msgstr "抱歉，搜索功能尚未实现。"
+
+#~ msgid "Se&arch"
+#~ msgstr "搜索(&A)"
+
+#~ msgid "Skype Call"
+#~ msgstr "Skype 呼叫"
+
+#~ msgid "Name(s) of Participant(s)"
+#~ msgstr "与会者姓名"
+
+#~ msgid ""
+#~ "Name of the other participant in the call (or a list of names if it is a "
+#~ "conference call.)"
+#~ msgstr "呼叫的其他与会者的姓名(如果是会议，则为姓名列表)。"
+
+#~ msgid "Total time elapsed."
+#~ msgstr "总用时。"
+
+#~ msgid "Time:"
+#~ msgstr "时间："
+
+#~ msgid "SkypeOut credits left"
+#~ msgstr "SkypeOut 点卡余时"
+
+#~ msgid ""
+#~ "Total length of the call/<br />(i.e. both time speaking and time on hold.)"
+#~ msgstr "呼叫的总用时<br />(包括对话时间和暂停时间。)"
+
+#~ msgid "SkypeOut credits:"
+#~ msgstr "SkypeOut 点卡："
+
+#~ msgid "Accept call"
+#~ msgstr "接受呼叫"
+
+#~ msgid "Accept incoming call"
+#~ msgstr "接受传入呼叫"
+
+#~ msgid "Finish the call"
+#~ msgstr "完成呼叫"
+
+#~ msgid "Terminate the call"
+#~ msgstr "中断呼叫"
+
+#~ msgid "H&ang up"
+#~ msgstr "挂断(&A)"
+
+#~ msgid "Hold the call"
+#~ msgstr "暂停呼叫"
+
+#~ msgid "Interrupt the call for a moment and resume (or hang up) later."
+#~ msgstr "暂停呼叫一段时间，稍候再恢复或挂断。"
+
+#~ msgid "H&old"
+#~ msgstr "暂停(&O)"
+
+#~ msgid "Open chat to the person."
+#~ msgstr "打开与对方的聊天会话。"
+
+#~ msgid "Open chat to the person with whom you are talking."
+#~ msgstr "打开与您正交谈的用户的聊天会话。"
+
+#~ msgid "Start/Stop Video"
+#~ msgstr "开始/停止视频"
+
+#~ msgid "User's Details"
+#~ msgstr "用户详情"
+
+#~ msgid "Skype ID:"
+#~ msgstr "Skype ID："
+
+#~ msgid "Authorized"
+#~ msgstr "已认证"
+
+#~ msgid "Not Authorized"
+#~ msgstr "未授权"
+
+#~ msgid "Is authorized:"
+#~ msgstr "是否认证："
+
+#~ msgid "Display Name:"
+#~ msgstr "显示名:"
+
+#~ msgid "Sex:"
+#~ msgstr "性:"
+
+#~ msgid "Check this if you do not want to connect with other protocols"
+#~ msgstr "如果您不想使用其他协议连接，请选中此项"
+
+#~ msgid "E&xclude from connection"
+#~ msgstr "从连接中排除(&X)"
+
+#~ msgid "Important Note"
+#~ msgstr "重要提示"
+
+#~ msgid ""
+#~ "The Skype plugin serves as a bridge to an externally running copy of "
+#~ "Skype. This has some consequences on how it functions: you need an "
+#~ "instance of Skype to be running, and only one Skype account can be used."
+#~ "<br /><br />Note that you need to install the original dynamic linked "
+#~ "Skype version 2.0 or 2.1 from <a href=\"http://www.skype.com\">http://www."
+#~ "skype.com</a><br /><br />This plugin will only work if the language in "
+#~ "the Skype client set to English. Kopete shows notifications (incoming "
+#~ "call, message, ...), so you can turn off the notifications in Skype."
+#~ msgstr ""
+#~ "Skype 插件会和外部的 Skype 程序副本之间建立连接桥，为使其正常工作有一点很"
+#~ "重要：您需要一个正在运行的 Skype 进程，且只能使用一个 Skype 账户。<br /"
+#~ "><br />注意，您需要安装 <a href=\"http://www.skype.com\">http://www.skype."
+#~ "com</a> 网站上原始的 Skype 2.0/2.1 动态链接二进制版本<br /><br />此插件只"
+#~ "能在您的客户端语言为英语的环境中工作。此外 Kopete 会接管 Skype 的消息提醒"
+#~ "(如收到呼叫和消息时)机制，所以请在 Skype 中关闭提醒功能。"
+
+#~ msgid ""
+#~ "Disable Skype notifications and set up English language in Skype client"
+#~ msgstr "禁用 Skype 通知，并设置 Skype 客户端为英语环境"
+
+#~ msgid "Lau&nch"
+#~ msgstr "启动(&N)"
+
+#~ msgid "You can set whether and when should kopete launch Skype."
+#~ msgstr "您可以设置是否由 kopete 来启动 Skype，以及何时启动。"
+
+#~ msgid "Launch Skype"
+#~ msgstr "启动 Skype"
+
+#~ msgid "When &not running"
+#~ msgstr "未运行时(&N)"
+
+#~ msgid "N&ever"
+#~ msgstr "从不(&E)"
+
+#~ msgid "Command to launch Skype:"
+#~ msgstr "Skype 启动命令："
+
+#~ msgid "skype"
+#~ msgstr "skype"
+
+#~ msgid "Launch timeout:"
+#~ msgstr "启动超时："
+
+#~ msgid "s"
+#~ msgstr "s"
+
+#~ msgid "Wait before trying to connect to Skype:"
+#~ msgstr "尝试连接到 Skype 前等待："
+
+#~ msgid "trying"
+#~ msgstr "尝试中"
+
+#~ msgid ""
+#~ "If you get error that Skype was not found, but in fact it is running, "
+#~ "check the instructions at <a href=\"https://developer.skype.com/Docs/"
+#~ "ApiDoc/Skype_API_on_Linux\">https://developer.skype.com/Docs/ApiDoc/"
+#~ "Skype_API_on_Linux</a>.<br /><br />Note that only the dynamic linked "
+#~ "Skype binary is supported."
+#~ msgstr ""
+#~ "如果您收到找不到 Skype 的错误信息，但 Skype 确实已经在运行，请参阅<a href="
+#~ "\"https://developer.skype.com/Docs/ApiDoc/Skype_API_on_Linux\">https://"
+#~ "developer.skype.com/Docs/ApiDoc/Skype_API_on_Linux</a> 上的说明。<br /"
+#~ "><br />请注意 Kopete 仅支持动态链接的 Skype 二进制版本。"
+
+#~ msgid "C&onnection"
+#~ msgstr "连接(&O)"
+
+#~ msgid ""
+#~ "Each application that wants to use Skype must provide its name to it, and "
+#~ "the user is asked whether to allow said application to access Skype."
+#~ "<br>By default, kopete provides kopete as its name, but if you suspect "
+#~ "another application is accessing Skype with this name, you can change the "
+#~ "name Kopete uses here, and then within Skype disallow applications that "
+#~ "refer to themselves as kopete."
+#~ msgstr ""
+#~ "每个要调用 Skype 的程序都必须向其提供自己的名称，且 Skype 会向用户确认调用"
+#~ "许可。<br>默认时，kopete 会以“kopete”作为提供给 Skype 的名称，但如果您猜测"
+#~ "已有其他程序占用此名称，可以在此更改 kopete 提供的名称，并在 Skype 内设置"
+#~ "禁止其他程序使用 koepte 作为提供的名称。"
+
+#~ msgid "&Non-standard authorization"
+#~ msgstr "非标准认证(&N)"
+
+#~ msgid "What bus do you want to use"
+#~ msgstr "想要使用哪条消息总线"
+
+#~ msgid ""
+#~ "Which D-Bus do you want to use to connect to Skype?<br>Session: Your own, "
+#~ "other people cannot use it (use --use-session-dbus to start Skype on that "
+#~ "bus.)<br>System: Shared by all people on the same computer. This one is "
+#~ "used by default by Skype.<br>You have to specify the same D-Bus used by "
+#~ "Skype."
+#~ msgstr ""
+#~ "您想要 D-Bus 使用哪条消息总线连接到 Skype？<br>会话：只有您自己可以使用(使"
+#~ "用 --use-session-dbus 选项启动 Skype 即可)。<br>系统：由本计算机上的所有用"
+#~ "户共享。这是 Skype 默认使用的消息总线。<br>您必须指定和 Skype 所用的相同"
+#~ "的 D-Bus 消息总线。"
+
+#~ msgid "Bus"
+#~ msgstr "Bus"
+
+#~ msgid "Sessi&on"
+#~ msgstr "会话(&O)"
+
+#~ msgid ""
+#~ "Note that Kopete will freeze while Skype asks you if it can allow Kopete "
+#~ "to access it. This is normal, and if you allow it forever (check that "
+#~ "\"Remember\" checkbox in Skype's dialog), it will not happen again.<br /"
+#~ "><br />The 'System Bus' option is not yet supported by Skype"
+#~ msgstr ""
+#~ "注意，在 Skype 询问您是否允许 Kopete 的访问时，Kopete 程序会暂时冻结，如果"
+#~ "您设定了永远允许(在 Skype 对话框里选择记住访问)，则此现象不会再出现。<br /"
+#~ "><br />Skype 目前还不支持“系统总线”选项"
+
+#~ msgid "&Activity"
+#~ msgstr "&动态"
+
+#~ msgid "Show all incoming messages"
+#~ msgstr "显示全部收到的消息"
+
+#~ msgid ""
+#~ "This will show all incoming Skype messages. If this is off, they are "
+#~ "showed only if the message belongs to chat that is started by kopete."
+#~ msgstr ""
+#~ "这将显示所有 Skype 收到的消息。如果不选中此项，只有由 kopete 启动的聊天里"
+#~ "的消息才会被显示。"
+
+#~ msgid "Show all incoming &messages"
+#~ msgstr "显示全部收到的消息(&M)"
+
+#~ msgid ""
+#~ "This will mark incoming messages as read, so if you have Skype set up not "
+#~ "to automatically pop-up chats, it will not flash the exclamation icon."
+#~ msgstr ""
+#~ "这将把收到的消息标记为已读，如果您在 Skype 中设置了不自动弹出对话消息，通"
+#~ "知图标也会因此不再闪烁。"
+
+#~ msgid "Mar&k as read"
+#~ msgstr "标为已读(&K)"
+
+#~ msgid ""
+#~ "If this is checked, Kopete will ask Skype on login if it has any messages "
+#~ "that have not been shown, and if so, will show them. This is useful if "
+#~ "you start Kopete later than Skype, and Skype is configured not to show "
+#~ "incoming messages."
+#~ msgstr ""
+#~ "如果选中此项，Kopete 登录时会向 Skype 查询尚未显示的消息，如果有则显示。如"
+#~ "果您是在启动 Skype 后再启动 Kopete，且 Skype 被配置为不显示收到的消息，此"
+#~ "选项很有用。"
+
+#~ msgid "Scan f&or unread"
+#~ msgstr "查找未读项(&O)"
+
+#~ msgid "Show call control window for all calls"
+#~ msgstr "为全部呼叫显示呼叫控制"
+
+#~ msgid ""
+#~ "This will show a call control window for every call (both incoming and "
+#~ "outgoing). If it is off, you can call from Kopete, but you have to "
+#~ "control that call from Skype."
+#~ msgstr ""
+#~ "这将对每个呼叫 (对内和对外的) 显示呼叫控制窗口。如果不启用此项，您仍然可以"
+#~ "从 Kopete 发起呼叫，但必须在 Skype 中控制此呼叫。"
+
+#~ msgid "S&how call control (this will also hide Skype client call dialog)"
+#~ msgstr "显示呼叫控制(将隐藏 Skype 客户端的呼叫对话框)(&H)"
+
+#~ msgid "Auto close the call control window"
+#~ msgstr "自动关闭呼叫控制窗口"
+
+#~ msgid ""
+#~ "This will close the call control window automatically when the call "
+#~ "finishes"
+#~ msgstr "当呼叫完成时，将自动关系呼叫控制窗口"
+
+#~ msgid "Autoc&lose"
+#~ msgstr "自动关闭(&L)"
+
+#~ msgid "Timeout:"
+#~ msgstr "超时："
+
+#~ msgid ""
+#~ "If this is enabled, Kopete keeps track of whether or not Skype is running."
+#~ msgstr "如果启用，Kopete 将保持跟踪 Skype 是否运行。"
+
+#~ msgid ""
+#~ "This keeps track of whether Skype is running. Turning this off only makes "
+#~ "sense it you are trying to get non-flooded debug output."
+#~ msgstr ""
+#~ "追踪 Skype 的运行状态。如果您不想获得海量的调试输出，可以关闭此选项。"
+
+#~ msgid "Pi&ng Skype"
+#~ msgstr "检查 Skype 连通性(&N)"
+
+#~ msgid "Do not leave a chat on window exit"
+#~ msgstr "窗口退出时不保留聊天会话"
+
+#~ msgid ""
+#~ "Do not leave a chat when the chat window is closed. Makes a difference "
+#~ "only with multi-user chats: if it is checked, you will continue receiving "
+#~ "messages from that chat even after closing the window."
+#~ msgstr ""
+#~ "关闭聊天窗口时不留下消息，只在和多人聊天中有用：如果选中此项，当您关闭窗口"
+#~ "以后还会继续收到来自已关闭窗口的消息。"
+
+#~ msgid "&Calls"
+#~ msgstr "&调用"
+
+#~ msgid "E&xecute before call"
+#~ msgstr "呼叫前执行(&X)"
+
+#~ msgid ""
+#~ "This will wait before making/accepting the call for the command to finish."
+#~ msgstr "接受呼叫之前要执行的命令。"
+
+#~ msgid ""
+#~ "This will wait for the command to finish before accepting/making the call."
+#~ "<br>\n"
+#~ "Note that kopete will freeze whilst waiting."
+#~ msgstr ""
+#~ "这将在接受呼叫前，让程序先等待特定命令执行完成。<br>\n"
+#~ "注意在等待期间，kopete 程序会停止。"
+
+#~ msgid "Wait for fi&nish"
+#~ msgstr "等待结束(&N)"
+
+#~ msgid "Execute after call"
+#~ msgstr "呼叫后执行"
+
+#~ msgid ""
+#~ "Usually this makes no difference, but if there are some other calls on "
+#~ "hold, it is executed only for the most recently ended one."
+#~ msgstr ""
+#~ "通常没有什么意义，但如果有其他呼叫处于暂停状态时，命令只会在最近结束的呼叫"
+#~ "后执行。"
+
+#~ msgid "Onl&y for last call"
+#~ msgstr "只对最后的呼叫(&Y)"
+
+#~ msgid "Execute on inco&ming call"
+#~ msgstr "接受呼叫时执行(&M)"
