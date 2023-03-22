@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-03-16 12:01+0300\n"
+"PO-Revision-Date: 2023-03-21 19:56+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -8230,7 +8230,7 @@ msgstr "Belirtilen ortam oynatıcısını kullan."
 #: plugins/nowlistening/nowlisteningconfig.kcfg:51
 #, kde-format
 msgid "Selected Media Player for source of listening advertising."
-msgstr "Şimdi dinleniyor kaynağı için seçili Ortam Yürütücüsü."
+msgstr "Şimdi dinleniyor kaynağı için seçili ortam oynatıcı."
 
 #: plugins/nowlistening/nowlisteningguiclient.cpp:41
 #, kde-format
@@ -8243,7 +8243,7 @@ msgid ""
 "None of the supported media players (Amarok, KsCD, JuK, Kaffeine, Quod "
 "Libet, or Qmmp) are playing anything."
 msgstr ""
-"Desteklenen ortam yürütücülerden (Amarok, KsCD, JuK, Kaffeine, Quod Libet "
+"Desteklenen ortam oynatıcılardan (Amarok, KsCD, JuK, Kaffeine, Quod Libet "
 "veya Qmmp) hiçbiri bir şey çalmıyor."
 
 #: plugins/nowlistening/nowlisteningguiclient.cpp:68
@@ -8266,8 +8266,8 @@ msgid ""
 "Now Listening for Kopete - it would tell you what I am listening to, if I "
 "was listening to something on a supported media player."
 msgstr ""
-"Kopete için Şimdi Dinlenen - desteklenen bir ortam yürütücüsünde bir şeyler "
-"dinliyorsam, ne dinlemekte olduğumu söyler."
+"Kopete için Şimdi Dinleniyor - desteklenen bir ortam oynatıcıda bir şeyler "
+"dinliyorsam ne dinlemekte olduğumu söyler."
 
 #: plugins/nowlistening/nowlisteningplugin.cpp:439
 #, kde-format
