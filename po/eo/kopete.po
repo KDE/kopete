@@ -1,13 +1,14 @@
 # Translation of kopete into esperanto.
-#
+# Copyright (C) 2009 Free Software Foundation, Inc.
 # Axel Rousseau <axel@esperanto-jeunes.org>, 2009.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2009-11-23 21:41+0100\n"
-"Last-Translator: Axel Rousseau <axel@esperanto-jeunes.org>\n"
+"PO-Revision-Date: 2023-03-22 19:14+0100\n"
+"Last-Translator: Oliver Kellogg <okellogg@users.sourceforge.net>\n"
 "Language-Team: Esperanto <kde-i18n-doc@kde.org>\n"
 "Language: eo\n"
 "MIME-Version: 1.0\n"
@@ -476,10 +477,9 @@ msgstr ""
 
 #: kopete/chatwindow/kopetechatwindow.cpp:469
 #: kopete/chatwindow/kopeterichtextwidget.cpp:177
-#, fuzzy, kde-format
-#| msgid "A&utomatic end of line detection"
+#, kde-format
 msgid "Automatic Spell Checking"
-msgstr "Aŭtomata ekkono de linifino"
+msgstr ""
 
 #: kopete/chatwindow/kopetechatwindow.cpp:475
 #, kde-format
@@ -595,9 +595,9 @@ msgstr "Stato"
 #. i18n: ectx: ToolBar (formatToolBar)
 #: kopete/chatwindow/kopetechatwindow.rc:67
 #: kopete/chatwindow/kopeterichtexteditpartfull.rc:33
-#, fuzzy, kde-format
+#, kde-format
 msgid "Format Toolbar"
-msgstr "Nova libro"
+msgstr ""
 
 #. i18n: ectx: label
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:14
@@ -1043,10 +1043,9 @@ msgstr ""
 
 #. i18n: ectx: property (toolTip), widget (QPushButton, mButtonIdentityAdd)
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:191
-#, fuzzy, kde-format
-#| msgid "&Sender identity:"
+#, kde-format
 msgid "Add a new identity"
-msgstr "&Sendantula identeco:"
+msgstr ""
 
 #. i18n: ectx: property (text), widget (QPushButton, mButtonIdentityAdd)
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:194
@@ -1360,10 +1359,9 @@ msgid "Unsaved data?"
 msgstr ""
 
 #: kopete/config/appearance/contactlistlayoutwidget.cpp:164
-#, fuzzy, kde-format
-#| msgid "Current Playlist"
+#, kde-format
 msgid "Reserved Layout Name"
-msgstr "Aktuala ludlisto"
+msgstr ""
 
 #: kopete/config/appearance/contactlistlayoutwidget.cpp:165
 #, kde-format
@@ -1573,10 +1571,9 @@ msgstr ""
 
 #. i18n: ectx: attribute (title), widget (QWidget, controlsTab)
 #: kopete/config/avdevice/avdeviceconfig_videodevice.ui:244
-#, fuzzy, kde-format
-#| msgid "Styles"
+#, kde-format
 msgid "Sliders"
-msgstr "Stiloj"
+msgstr ""
 
 #. i18n: ectx: attribute (title), widget (QWidget, optionsTab)
 #: kopete/config/avdevice/avdeviceconfig_videodevice.ui:270
@@ -1808,9 +1805,9 @@ msgstr ""
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, BehaviorConfig_Events)
 #: kopete/config/behavior/behaviorconfig_events.ui:14
-#, fuzzy, kde-format
+#, kde-format
 msgid "Events"
-msgstr "Eventoj:"
+msgstr ""
 
 #. i18n: ectx: property (title), widget (QGroupBox, notifyGroupBox)
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_8)
@@ -2044,10 +2041,9 @@ msgstr "Ĝeneralo"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #: kopete/config/behavior/behaviorconfig_general.ui:20
-#, fuzzy, kde-format
-#| msgid "System &Tray"
+#, kde-format
 msgid "System Tray"
-msgstr "&Taskopleto"
+msgstr "Sistempleto"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_showSystemTray)
 #: kopete/config/behavior/behaviorconfig_general.ui:26
@@ -2919,14 +2915,12 @@ msgid "%1 (%2)"
 msgstr "%1 (%2)"
 
 #: kopete/contactlist/contactlistmodel.cpp:517
-#, fuzzy, kde-format
-#| msgctxt "Translators: format: '<nickname> (<online status>)'"
-#| msgid "%1 (%2)"
+#, kde-format
 msgctxt "%1 is display name, %2 is status and %3 is status message"
 msgid ""
 "%1 (%2)\n"
 "%3"
-msgstr "%1 (%2)"
+msgstr ""
 
 #: kopete/contactlist/contactlistmodel.cpp:686
 #, kde-format
@@ -2957,10 +2951,9 @@ msgid "%1 (%2/%3)"
 msgstr "%1 (%2/%3)"
 
 #: kopete/contactlist/kabcexport.cpp:59
-#, fuzzy, kde-format
-#| msgid "Address Book"
+#, kde-format
 msgid "Select Address Book"
-msgstr "Adresaro"
+msgstr ""
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, MetaContactSelectorWidget_Base)
 #. i18n: ectx: property (windowTitle), widget (QWidget, AddressBookSelectorWidget_Base)
@@ -3199,10 +3192,9 @@ msgid "Account %1 is offline. Do you really want to move this metacontact?"
 msgstr ""
 
 #: kopete/contactlist/kopetecontactlistview.cpp:441
-#, fuzzy, kde-format
-#| msgid "Remove Contact"
+#, kde-format
 msgid "Move contact"
-msgstr "Forigi kontakton"
+msgstr ""
 
 #: kopete/contactlist/kopetecontactlistview.cpp:546
 #, kde-format
@@ -3227,10 +3219,9 @@ msgid "Not Found in Address Book"
 msgstr ""
 
 #: kopete/contactlist/kopetecontactlistview.cpp:832
-#, fuzzy, kde-format
-#| msgid "Remove Contact"
+#, kde-format
 msgid "Rename Contact"
-msgstr "Forigi kontakton"
+msgstr ""
 
 #: kopete/contactlist/kopetecontactlistview.cpp:833
 #: libkopete/kopetecontact.cpp:510
@@ -3249,10 +3240,9 @@ msgid "&Add Subcontact"
 msgstr ""
 
 #: kopete/contactlist/kopetecontactlistview.cpp:840
-#, fuzzy, kde-format
-#| msgid "Remove Group"
+#, kde-format
 msgid "Rename Group"
-msgstr "Elpreni grupon"
+msgstr ""
 
 #: kopete/contactlist/kopetecontactlistview.cpp:841
 #, kde-format
@@ -3352,16 +3342,14 @@ msgid "Sync KABC..."
 msgstr ""
 
 #: kopete/contactlist/kopetelviprops.cpp:293
-#, fuzzy, kde-format
-#| msgid "Last name:"
+#, kde-format
 msgid "(custom name)"
-msgstr "Familinomo:"
+msgstr ""
 
 #: kopete/contactlist/kopetelviprops.cpp:300
-#, fuzzy, kde-format
-#| msgid "Nickname:"
+#, kde-format
 msgid "(nick name)"
-msgstr "Kromnomo:"
+msgstr ""
 
 #: kopete/contactlist/kopetelviprops.cpp:307
 #, kde-format
@@ -3369,9 +3357,9 @@ msgid "(formatted name)"
 msgstr ""
 
 #: kopete/contactlist/kopetelviprops.cpp:314
-#, fuzzy, kde-format
+#, kde-format
 msgid "(contact id)"
-msgstr "Kalkulu"
+msgstr ""
 
 #: kopete/contactlist/kopetelviprops.cpp:404
 #, kde-format
@@ -3389,10 +3377,9 @@ msgid "No Change"
 msgstr "Neniu ŝanĝo"
 
 #: kopete/contactlist/kopetelviprops.cpp:604
-#, fuzzy, kde-format
-#| msgid "Send &File..."
+#, kde-format
 msgid "Select Sound File"
-msgstr "Sendu &dosieron"
+msgstr ""
 
 #. i18n: ectx: property (title), widget (QGroupBox, grpAddressbook)
 #: kopete/contactlist/kopetemetalvipropswidget.ui:47
@@ -3814,13 +3801,7 @@ msgid "Docking in System Tray"
 msgstr "Fiksigu en sistemfako"
 
 #: kopete/kopetewindow.cpp:1146
-#, fuzzy, kde-format
-#| msgctxt ""
-#| "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</"
-#| "i>)</nobr><br />"
-#| msgid ""
-#| "<nobr><img src=\"kopete-account-icon:%3:%4\" /> <b>%1:</b> %2 (<i>%5</"
-#| "i>)</nobr><br />"
+#, kde-format
 msgctxt ""
 "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</"
 "i>)</nobr><br />"
@@ -3828,8 +3809,6 @@ msgid ""
 "<nobr><img src=\"%3\" width=\"16\" height=\"16\" /> <b>%1:</b> %2 (<i>%4</"
 "i>)</nobr><br />"
 msgstr ""
-"<nobr><img src=\"kopete-account-icon:%3:%4\" /> <b>%1:</b> %2 (<i>%5</i>)</"
-"nobr><br />"
 
 #: kopete/kopetewindow.cpp:1361
 #, kde-format
@@ -4311,16 +4290,14 @@ msgid "C&lear"
 msgstr "For&viŝi"
 
 #: kopete/statusmenu/kopetestatuseditaction.cpp:131
-#, fuzzy, kde-format
-#| msgid "Message"
+#, kde-format
 msgid "Edit Message"
-msgstr "Mesaĝo"
+msgstr ""
 
 #: kopete/statusmenu/kopetestatusrootaction.cpp:164
-#, fuzzy, kde-format
-#| msgid "Edit..."
+#, kde-format
 msgid "Edit Message..."
-msgstr "Redakti..."
+msgstr ""
 
 #: kopete/statusmenu/kopetestatusrootaction.cpp:168
 #: protocols/oscar/icq/icqaccount.cpp:195
@@ -4346,17 +4323,15 @@ msgid "GPIO"
 msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:37
-#, fuzzy, kde-format
-#| msgid "Direction"
+#, kde-format
 msgid "Flicker Reduction"
-msgstr "Direkto"
+msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:38
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:151
-#, fuzzy, kde-format
-#| msgid "&Format"
+#, kde-format
 msgid "Framerate"
-msgstr "&Formatu"
+msgstr ""
 
 #. i18n: USB Isochronous Interface
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:40
@@ -4366,10 +4341,9 @@ msgstr ""
 
 #. i18n: Selection of combinations of light sources
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:42
-#, fuzzy, kde-format
-#| msgid "Right"
+#, kde-format
 msgid "Lights"
-msgstr "Dekstra"
+msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:43
 #, kde-format
@@ -4396,10 +4370,9 @@ msgstr ""
 
 #. i18n: Luminance Decimation Filter
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:52
-#, fuzzy, kde-format
-#| msgid "Authentication failed"
+#, kde-format
 msgid "luma decimation filter"
-msgstr "Aŭtentigo malsukcesis"
+msgstr ""
 
 #. i18n: Analog/Digital Conversion Crush (!!! aGc is a typo !!! => aDc)
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:54
@@ -4427,10 +4400,9 @@ msgstr ""
 
 #. i18n: U-V Gain Ratio (NOT Ultra Violet !)
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:62
-#, fuzzy, kde-format
-#| msgid "Saturation:"
+#, kde-format
 msgid "uv ratio"
-msgstr "Saturo:"
+msgstr ""
 
 #. i18n: Full Luminance Range
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:64
@@ -4440,16 +4412,14 @@ msgstr ""
 
 #. i18n: Luminance Coring Level (=> Improves SNR (Signat-to-Noise-Ratio) by HF filtering)
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:66
-#, fuzzy, kde-format
-#| msgid "Formatting"
+#, kde-format
 msgid "coring"
-msgstr "Formatado"
+msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:67
-#, fuzzy, kde-format
-#| msgid "Internet"
+#, kde-format
 msgid "Invert"
-msgstr "Interreto"
+msgstr ""
 
 #. i18n: Y Offset Odd Field
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:69
@@ -4465,10 +4435,9 @@ msgstr ""
 
 #. i18n: Green Balance
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:73
-#, fuzzy, kde-format
-#| msgid "Cancel"
+#, kde-format
 msgid "green balance"
-msgstr "Rezigni"
+msgstr ""
 
 #. i18n: Digital/Analog Converter Magnitude
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:85
@@ -4512,10 +4481,9 @@ msgid "Minimum Clock Divider"
 msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:100
-#, fuzzy, kde-format
-#| msgid "Effects"
+#, kde-format
 msgid "Webcam Effects"
-msgstr "Efektoj"
+msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:101
 #, kde-format
@@ -4554,16 +4522,14 @@ msgid "Maximum Exposure Time"
 msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:109
-#, fuzzy, kde-format
-#| msgid "Saturation:"
+#, kde-format
 msgid "Red Saturation"
-msgstr "Saturo:"
+msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:110
-#, fuzzy, kde-format
-#| msgid "Saturation:"
+#, kde-format
 msgid "Blue Saturation"
-msgstr "Saturo:"
+msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:111
 #, kde-format
@@ -4594,10 +4560,9 @@ msgstr ""
 
 #. i18n: Video Tape Recorder Time Constant
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:119
-#, fuzzy, kde-format
-#| msgid "Remove Contact"
+#, kde-format
 msgid "VTR Time Constant"
-msgstr "Forigi kontakton"
+msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:120
 #, kde-format
@@ -4610,10 +4575,9 @@ msgid "Vertical Noise Reduction"
 msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:122
-#, fuzzy, kde-format
-#| msgid "%1 Settings"
+#, kde-format
 msgid "Save User Settings"
-msgstr "%1 agordo"
+msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:123
 #, kde-format
@@ -4633,16 +4597,14 @@ msgstr "Koloromoduso"
 
 #. i18n: Auto Contour
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:128
-#, fuzzy, kde-format
-#| msgid "Country"
+#, kde-format
 msgid "Auto contour"
-msgstr "Lando"
+msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:129
-#, fuzzy, kde-format
-#| msgid "Country"
+#, kde-format
 msgid "Contour"
-msgstr "Lando"
+msgstr ""
 
 #. i18n: Backlight Compensation
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:131
@@ -4652,17 +4614,15 @@ msgstr ""
 
 #. i18n: Flicker Suppression
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:133
-#, fuzzy, kde-format
-#| msgid "Direction"
+#, kde-format
 msgid "Flickerless"
-msgstr "Direkto"
+msgstr ""
 
 #. i18n: Noise Reduction
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:135
-#, fuzzy, kde-format
-#| msgid "Direction"
+#, kde-format
 msgid "Noise reduction"
-msgstr "Direkto"
+msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:136
 #, kde-format
@@ -4670,17 +4630,15 @@ msgid "Compression Target"
 msgstr ""
 
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:137
-#, fuzzy, kde-format
-#| msgid "Color"
+#, kde-format
 msgid "Color Filter"
-msgstr "Koloro"
+msgstr ""
 
 #. i18n: Transaction Time (msec)
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:139
-#, fuzzy, kde-format
-#| msgid "Translate"
+#, kde-format
 msgid "Transaction time (msec)"
-msgstr "Traduki"
+msgstr ""
 
 #. i18n: "Buffers per Transaction"
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:141
@@ -4724,17 +4682,15 @@ msgstr ""
 
 #: libkopete/avdevice/videodevice.cpp:125
 #: libkopete/avdevice/videodevice.cpp:3687
-#, fuzzy, kde-format
-#| msgid "Brightness:"
+#, kde-format
 msgid "Brightness"
-msgstr "Brileco:"
+msgstr "Brileco"
 
 #: libkopete/avdevice/videodevice.cpp:128
 #: libkopete/avdevice/videodevice.cpp:3693
-#, fuzzy, kde-format
-#| msgid "Hue:"
+#, kde-format
 msgid "Hue"
-msgstr "Nuanco:"
+msgstr "Nuanco"
 
 #: libkopete/avdevice/videodevice.cpp:131
 #, kde-format
@@ -4743,16 +4699,14 @@ msgstr "Koloro"
 
 #: libkopete/avdevice/videodevice.cpp:134
 #: libkopete/avdevice/videodevice.cpp:3689
-#, fuzzy, kde-format
-#| msgid "Contrast:"
+#, kde-format
 msgid "Contrast"
-msgstr "Kontrasto:"
+msgstr "Kontrasto"
 
 #: libkopete/avdevice/videodevice.cpp:137
-#, fuzzy, kde-format
-#| msgid "Brightness:"
+#, kde-format
 msgid "Whiteness"
-msgstr "Brileco:"
+msgstr ""
 
 #: libkopete/avdevice/videodevice.cpp:152
 #, kde-format
@@ -4760,10 +4714,9 @@ msgid "Automatic Brightness/Contrast Correction"
 msgstr ""
 
 #: libkopete/avdevice/videodevice.cpp:155
-#, fuzzy, kde-format
-#| msgid "A&utomatic end of line detection"
+#, kde-format
 msgid "Automatic Color Correction"
-msgstr "Aŭtomata ekkono de linifino"
+msgstr ""
 
 #: libkopete/avdevice/videodevice.cpp:159
 #: libkopete/avdevice/videodevice.cpp:3729
@@ -4810,10 +4763,9 @@ msgid "Mute"
 msgstr "Muta"
 
 #: libkopete/avdevice/videodevice.cpp:3705
-#, fuzzy, kde-format
-#| msgid "Business"
+#, kde-format
 msgid "Loudness"
-msgstr "Laboro"
+msgstr ""
 
 #: libkopete/avdevice/videodevice.cpp:3708
 #, kde-format
@@ -4846,22 +4798,19 @@ msgid "Gamma"
 msgstr "Gamo"
 
 #: libkopete/avdevice/videodevice.cpp:3721
-#, fuzzy, kde-format
-#| msgid "Export"
+#, kde-format
 msgid "Exposure"
-msgstr "Eksporti"
+msgstr ""
 
 #: libkopete/avdevice/videodevice.cpp:3723
-#, fuzzy, kde-format
-#| msgid "A&utomatic end of line detection"
+#, kde-format
 msgid "Automatic Gain"
-msgstr "Aŭtomata ekkono de linifino"
+msgstr ""
 
 #: libkopete/avdevice/videodevice.cpp:3725
-#, fuzzy, kde-format
-#| msgid "Germany"
+#, kde-format
 msgid "Gain"
-msgstr "Germanio"
+msgstr ""
 
 #: libkopete/avdevice/videodevice.cpp:3732
 #, kde-format
@@ -4909,28 +4858,24 @@ msgid "Color Killer"
 msgstr ""
 
 #: libkopete/avdevice/videodevice.cpp:3756
-#, fuzzy, kde-format
-#| msgid "Effects"
+#, kde-format
 msgid "Color Effects"
-msgstr "Efektoj"
+msgstr ""
 
 #: libkopete/avdevice/videodevice.cpp:3760
-#, fuzzy, kde-format
-#| msgid "State"
+#, kde-format
 msgid "Rotate"
-msgstr "Stato"
+msgstr ""
 
 #: libkopete/avdevice/videodevice.cpp:3762
-#, fuzzy, kde-format
-#| msgid "&Background color:"
+#, kde-format
 msgid "Background color"
-msgstr "&Fonkoloro:"
+msgstr "Fonkoloro"
 
 #: libkopete/avdevice/videodevice.cpp:3766
-#, fuzzy, kde-format
-#| msgid "A&utomatic end of line detection"
+#, kde-format
 msgid "Chroma Gain"
-msgstr "Aŭtomata ekkono de linifino"
+msgstr ""
 
 #: libkopete/avdevice/videodevice.cpp:3770
 #, kde-format
@@ -5882,10 +5827,9 @@ msgid "Nick Name"
 msgstr "Kromnomo"
 
 #: libkopete/kopeteglobal.cpp:202
-#, fuzzy, kde-format
-#| msgid "Common Name"
+#, kde-format
 msgid "Custom Name"
-msgstr "Komuna nomo"
+msgstr ""
 
 #: libkopete/kopeteglobal.cpp:208
 #, kde-format
@@ -5903,10 +5847,9 @@ msgid "Not in your contact list"
 msgstr ""
 
 #: libkopete/kopetegroup.cpp:54
-#, fuzzy, kde-format
-#| msgid "Offline"
+#, kde-format
 msgid "Offline Users"
-msgstr "Senkonekta"
+msgstr ""
 
 #: libkopete/kopeteidentity.cpp:157
 #, kde-format
@@ -5968,10 +5911,9 @@ msgstr ""
 #: libkopete/kopeteonlinestatus.cpp:167 protocols/gadu/gaduprotocol.cpp:96
 #: protocols/groupwise/gwprotocol.cpp:69 protocols/jabber/jabberprotocol.cpp:74
 #: protocols/sms/smsprotocol.cpp:41
-#, fuzzy, kde-format
-#| msgid "Connections"
+#, kde-format
 msgid "Connecting"
-msgstr "Konektoj"
+msgstr ""
 
 #: libkopete/kopeteonlinestatus.cpp:177
 #: plugins/translator/translatorlanguages.cpp:33
@@ -6849,10 +6791,9 @@ msgstr "&Teksto:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel2)
 #: plugins/autoreplace/autoreplaceprefs.ui:202
-#, fuzzy, kde-format
-#| msgid "Replacement"
+#, kde-format
 msgid "&Replacement:"
-msgstr "Septembro"
+msgstr "An&stataŭigo:"
 
 #. i18n: ectx: property (title), widget (QGroupBox, gb_options)
 #: plugins/autoreplace/autoreplaceprefs.ui:220
@@ -6900,29 +6841,26 @@ msgstr "&Iloj"
 
 #. i18n: ectx: ToolBar (cryptographyToolBar)
 #: plugins/cryptography/cryptographychatui.rc:12
-#, fuzzy, kde-format
+#, kde-format
 msgid "Cryptography Toolbar"
-msgstr "Nova libro"
+msgstr ""
 
 #: plugins/cryptography/cryptographyguiclient.cpp:56
-#, fuzzy, kde-format
-#| msgid "Cryptograph&y"
+#, kde-format
 msgid "Cryptography"
-msgstr "Ĉ&ifreco"
+msgstr "Kriptografio"
 
 #: plugins/cryptography/cryptographyguiclient.cpp:82
-#, fuzzy, kde-format
-#| msgid "Message"
+#, kde-format
 msgctxt "@action toggle action"
 msgid "Encrypt Messages"
-msgstr "Mesaĝo"
+msgstr ""
 
 #: plugins/cryptography/cryptographyguiclient.cpp:84
-#, fuzzy, kde-format
-#| msgid "&Message"
+#, kde-format
 msgctxt "@action toggle action"
 msgid "Sign Messages"
-msgstr "&Mesaĝo"
+msgstr ""
 
 #: plugins/cryptography/cryptographyguiclient.cpp:86
 #, kde-format
@@ -6939,10 +6877,9 @@ msgid ""
 msgstr ""
 
 #: plugins/cryptography/cryptographyguiclient.cpp:111
-#, fuzzy, kde-format
-#| msgid "Private Phone"
+#, kde-format
 msgid "No Private Key"
-msgstr "Privata Telefonnumero"
+msgstr ""
 
 #: plugins/cryptography/cryptographyguiclient.cpp:165
 #, kde-format
@@ -7033,10 +6970,9 @@ msgid ""
 msgstr ""
 
 #: plugins/cryptography/cryptographypreferences.cpp:43
-#, fuzzy, kde-format
-#| msgid "Private Phone"
+#, kde-format
 msgid "Private Key: "
-msgstr "Privata Telefonnumero"
+msgstr ""
 
 #: plugins/cryptography/cryptographypreferences.cpp:46
 #, kde-format
@@ -7145,10 +7081,9 @@ msgstr ""
 
 #. i18n: ectx: property (toolTip), widget (QListWidget, keyList)
 #: plugins/cryptography/exportkeysbase.ui:27
-#, fuzzy, kde-format
-#| msgid "Address Book"
+#, kde-format
 msgid "Select Keys to Export"
-msgstr "Adresaro"
+msgstr ""
 
 #. i18n: ectx: property (whatsThis), widget (QListWidget, keyList)
 #: plugins/cryptography/exportkeysbase.ui:30
@@ -7745,10 +7680,9 @@ msgid "Parsing history from kopete ..."
 msgstr ""
 
 #: plugins/history2/history2plugin.cpp:47
-#, fuzzy, kde-format
-#| msgid "History"
+#, kde-format
 msgid "History2"
-msgstr "Historio"
+msgstr ""
 
 #. i18n: ectx: property (whatsThis), widget (QPushButton, import2)
 #: plugins/history2/history2prefsui.ui:150
@@ -9304,10 +9238,9 @@ msgstr ""
 
 #. i18n: ectx: label, entry (Service), group (Translator plugin)
 #: plugins/translator/translatorconfig.kcfg:15
-#, fuzzy, kde-format
-#| msgid "Translate"
+#, kde-format
 msgid "Translation service"
-msgstr "Traduki"
+msgstr ""
 
 #. i18n: ectx: label, entry (IncomingDontTranslate), group (Translator plugin)
 #: plugins/translator/translatorconfig.kcfg:20
@@ -9505,10 +9438,9 @@ msgid "Hebrew"
 msgstr "Hebrea"
 
 #: plugins/translator/translatorlanguages.cpp:62
-#, fuzzy, kde-format
-#| msgid "&Find"
+#, kde-format
 msgid "Hindi"
-msgstr "&Trovu"
+msgstr ""
 
 #: plugins/translator/translatorlanguages.cpp:63
 #, kde-format
@@ -9538,10 +9470,9 @@ msgstr "Itala"
 
 #: plugins/translator/translatorlanguages.cpp:68
 #: plugins/translator/translatorlanguages.cpp:103
-#, fuzzy, kde-format
-#| msgid "Manganese"
+#, kde-format
 msgid "Japanese"
-msgstr "Mangano"
+msgstr ""
 
 #: plugins/translator/translatorlanguages.cpp:69
 #: plugins/translator/translatorlanguages.cpp:104
@@ -9565,16 +9496,14 @@ msgid "Macedonian"
 msgstr "Makedona"
 
 #: plugins/translator/translatorlanguages.cpp:73
-#, fuzzy, kde-format
-#| msgid "Male"
+#, kde-format
 msgid "Malay"
-msgstr "Malina"
+msgstr ""
 
 #: plugins/translator/translatorlanguages.cpp:74
-#, fuzzy, kde-format
-#| msgid "Male"
+#, kde-format
 msgid "Maltese"
-msgstr "Malina"
+msgstr ""
 
 #: plugins/translator/translatorlanguages.cpp:75
 #, kde-format
@@ -9582,10 +9511,9 @@ msgid "Norwegian"
 msgstr "Norvega"
 
 #: plugins/translator/translatorlanguages.cpp:76
-#, fuzzy, kde-format
-#| msgid "Germany"
+#, kde-format
 msgid "Persian"
-msgstr "Germanio"
+msgstr ""
 
 #: plugins/translator/translatorlanguages.cpp:77
 #, kde-format
@@ -9594,16 +9522,14 @@ msgstr "Pola"
 
 #: plugins/translator/translatorlanguages.cpp:78
 #: plugins/translator/translatorlanguages.cpp:105
-#, fuzzy, kde-format
-#| msgid "Promethium"
+#, kde-format
 msgid "Portuguese"
-msgstr "Promecio"
+msgstr ""
 
 #: plugins/translator/translatorlanguages.cpp:79
-#, fuzzy, kde-format
-#| msgid "Roman Jarosz"
+#, kde-format
 msgid "Romanian"
-msgstr "Roman Jarosz"
+msgstr ""
 
 #: plugins/translator/translatorlanguages.cpp:80
 #: plugins/translator/translatorlanguages.cpp:106
@@ -9612,10 +9538,9 @@ msgid "Russian"
 msgstr "Rusa"
 
 #: plugins/translator/translatorlanguages.cpp:81
-#, fuzzy, kde-format
-#| msgid "Searching"
+#, kde-format
 msgid "Serbian"
-msgstr "Ŝerĉado"
+msgstr ""
 
 #: plugins/translator/translatorlanguages.cpp:82
 #, kde-format
@@ -9674,10 +9599,9 @@ msgid "Welsh"
 msgstr "Kimra"
 
 #: plugins/translator/translatorlanguages.cpp:93
-#, fuzzy, kde-format
-#| msgid "Finish"
+#, kde-format
 msgid "Yiddish"
-msgstr "Fini"
+msgstr ""
 
 #: plugins/translator/translatorplugin.cpp:76
 #, kde-format
@@ -11373,9 +11297,9 @@ msgstr ""
 #. i18n: ectx: property (text), widget (QLabel, uiSurnamea)
 #: protocols/gadu/ui/gadueditaccountui.ui:570
 #: protocols/gadu/ui/gadusearch.ui:133
-#, fuzzy, kde-format
+#, kde-format
 msgid "Surname:"
-msgstr "Uzantonomo:"
+msgstr ""
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1_5_3)
 #: protocols/gadu/ui/gadueditaccountui.ui:577
@@ -11757,10 +11681,9 @@ msgid "The certificate is self-signed."
 msgstr ""
 
 #: protocols/groupwise/gwaccount.cpp:777 protocols/jabber/jabberaccount.cpp:534
-#, fuzzy, kde-format
-#| msgid "Certificate has been revoked."
+#, kde-format
 msgid "The certificate has been revoked."
-msgstr "Atestilo estas revokita."
+msgstr ""
 
 #: protocols/groupwise/gwaccount.cpp:781 protocols/jabber/jabberaccount.cpp:538
 #, kde-format
@@ -12298,9 +12221,9 @@ msgstr ""
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: protocols/groupwise/ui/gwaccountpreferences.ui:92
 #: protocols/meanwhile/ui/meanwhileaddcontact.ui:33
-#, fuzzy, kde-format
+#, kde-format
 msgid "&User ID:"
-msgstr "Uzanto id.:"
+msgstr ""
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, autoConnect)
 #: protocols/groupwise/ui/gwaccountpreferences.ui:120
@@ -12742,10 +12665,9 @@ msgstr ""
 #. i18n: ectx: property (text), widget (QTreeWidget, propsView)
 #: protocols/groupwise/ui/gwcontactprops.ui:195
 #: protocols/groupwise/ui/gwcontactprops.ui:200
-#, fuzzy, kde-format
-#| msgid "View Columns"
+#, kde-format
 msgid "New Column"
-msgstr "Vidigi kolumnojn"
+msgstr ""
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, GroupWiseContactSearchWidget)
 #: protocols/groupwise/ui/gwcontactsearch.ui:13
@@ -13469,10 +13391,9 @@ msgid "Client"
 msgstr "Kliento"
 
 #: protocols/jabber/jabberbasecontact.cpp:265
-#, fuzzy, kde-format
-#| msgid "User Info"
+#, kde-format
 msgid "User Mood"
-msgstr "Uzanto-informo"
+msgstr ""
 
 #: protocols/jabber/jabberbasecontact.cpp:267
 #: protocols/oscar/icq/icqcontact.cpp:468
@@ -13497,10 +13418,9 @@ msgid "OpenPGP"
 msgstr ""
 
 #: protocols/jabber/jabberbasecontact.cpp:275
-#, fuzzy, kde-format
-#| msgid "&Message"
+#, kde-format
 msgid "Message Events"
-msgstr "&Mesaĝo"
+msgstr ""
 
 #: protocols/jabber/jabberbasecontact.cpp:277
 #, kde-format
@@ -13948,16 +13868,14 @@ msgid "Answer for incoming call"
 msgstr ""
 
 #: protocols/jabber/libjingle.cpp:342
-#, fuzzy, kde-format
-#| msgid "Accept"
+#, kde-format
 msgid "Accepted"
-msgstr "Akcepti"
+msgstr ""
 
 #: protocols/jabber/libjingle.cpp:351
-#, fuzzy, kde-format
-#| msgid "C&hange..."
+#, kde-format
 msgid "Calling..."
-msgstr "Ŝ&anĝi..."
+msgstr ""
 
 #: protocols/jabber/libjingle.cpp:356
 #, kde-format
@@ -13965,9 +13883,9 @@ msgid "Rejected"
 msgstr ""
 
 #: protocols/jabber/libjingle.cpp:368
-#, fuzzy, kde-format
+#, kde-format
 msgid "Call in progress"
-msgstr "En laboro"
+msgstr ""
 
 #: protocols/jabber/libjingle.cpp:375
 #, kde-format
@@ -13975,17 +13893,15 @@ msgid "Other side hung up"
 msgstr ""
 
 #: protocols/jabber/libjingle.cpp:429
-#, fuzzy, kde-format
-#| msgid "Loading..."
+#, kde-format
 msgid "Waiting..."
-msgstr "Ŝargas..."
+msgstr ""
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, LibjingleCallDialog)
 #: protocols/jabber/libjinglecalldialog.ui:6
-#, fuzzy, kde-format
-#| msgid "GoogleTalk"
+#, kde-format
 msgid "Libjingle Voice Call"
-msgstr "GoogleTalk"
+msgstr ""
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: protocols/jabber/libjinglecalldialog.ui:14
@@ -13995,10 +13911,9 @@ msgstr ""
 
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #: protocols/jabber/libjinglecalldialog.ui:28
-#, fuzzy, kde-format
-#| msgid "Status:"
+#, kde-format
 msgid "Call Status:"
-msgstr "Stato:"
+msgstr ""
 
 #. i18n: ectx: property (text), widget (QPushButton, acceptButton)
 #: protocols/jabber/libjinglecalldialog.ui:42
@@ -14922,10 +14837,9 @@ msgstr ""
 
 #. i18n: ectx: attribute (title), widget (QWidget, TabPage)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:958
-#, fuzzy, kde-format
-#| msgid "&Jingle"
+#, kde-format
 msgid "&Libjingle"
-msgstr "&Jingle"
+msgstr ""
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_17)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:964
@@ -15310,17 +15224,15 @@ msgstr ""
 #: protocols/jabber/ui/dlgvcard.ui:76
 #: protocols/oscar/icq/ui/icqworkinfowidget.ui:150
 #: protocols/qq/ui/qqvcard.ui:621
-#, fuzzy, kde-format
-#| msgid "Web page:"
+#, kde-format
 msgid "Homepage:"
-msgstr "TTT-paĝo:"
+msgstr ""
 
 #. i18n: ectx: property (text), widget (QLabel, lblBirthday)
 #: protocols/jabber/ui/dlgvcard.ui:110
-#, fuzzy, kde-format
-#| msgid "Birthday"
+#, kde-format
 msgid "Birthday:"
-msgstr "Naskiĝdato"
+msgstr "Naskiĝdato:"
 
 #. i18n: ectx: property (text), widget (QLabel, lblTimezone)
 #: protocols/jabber/ui/dlgvcard.ui:127
@@ -15478,10 +15390,9 @@ msgstr ""
 
 #. i18n: ectx: property (text), widget (QLabel, labelClientId)
 #: protocols/jabber/ui/dlgxoauth2.ui:55
-#, fuzzy, kde-format
-#| msgid "Client"
+#, kde-format
 msgid "Client ID"
-msgstr "Kliento"
+msgstr ""
 
 #. i18n: ectx: property (text), widget (QLabel, labelClientSecretKey)
 #: protocols/jabber/ui/dlgxoauth2.ui:65
@@ -15491,10 +15402,9 @@ msgstr ""
 
 #. i18n: ectx: property (text), widget (QLabel, labelRefreshToken)
 #: protocols/jabber/ui/dlgxoauth2.ui:79
-#, fuzzy, kde-format
-#| msgid "Refresh"
+#, kde-format
 msgid "Refresh Token"
-msgstr "Refreŝigi"
+msgstr ""
 
 #: protocols/jabber/ui/jabberaddcontactpage.cpp:57
 #, kde-format
@@ -15750,10 +15660,9 @@ msgstr ""
 
 #. i18n: ectx: property (text), widget (QCheckBox, ck_messages)
 #: protocols/jabber/ui/privacyrule.ui:79
-#, fuzzy, kde-format
-#| msgid "&Message"
+#, kde-format
 msgid "Messages"
-msgstr "&Mesaĝo"
+msgstr ""
 
 #. i18n: ectx: property (text), widget (QCheckBox, ck_queries)
 #: protocols/jabber/ui/privacyrule.ui:86
@@ -17194,10 +17103,9 @@ msgid "UTF-16 Unicode"
 msgstr "UTF-16 Unicode"
 
 #: protocols/oscar/icq/icqprotocol.cpp:600
-#, fuzzy, kde-format
-#| msgid "single"
+#, kde-format
 msgid "Single"
-msgstr "unutrako"
+msgstr ""
 
 #: protocols/oscar/icq/icqprotocol.cpp:601
 #, kde-format
@@ -18244,10 +18152,9 @@ msgstr ""
 
 #. i18n: ectx: property (text), widget (QLineEdit, edtServerAddress)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:387
-#, fuzzy, kde-format
-#| msgid "login.icq.com"
+#, kde-format
 msgid "slogin.icq.com"
-msgstr "login.icq.com"
+msgstr ""
 
 #. i18n: ectx: property (text), widget (QCheckBox, optionEnableProxy)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:418
@@ -18308,10 +18215,9 @@ msgstr ""
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_4)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:544
-#, fuzzy, kde-format
-#| msgid "Connection"
+#, kde-format
 msgid "Peer Connection Options"
-msgstr "Konekto"
+msgstr ""
 
 #. i18n: ectx: attribute (title), widget (QWidget, tabVisible)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:741
@@ -18369,9 +18275,9 @@ msgstr ""
 #. i18n: ectx: property (text), widget (QLabel, nickNameLabel)
 #: protocols/oscar/icq/ui/icqgeneralinfo.ui:71
 #: protocols/oscar/icq/ui/icqsearchbase.ui:41
-#, fuzzy, kde-format
+#, kde-format
 msgid "&Nickname:"
-msgstr "Karesnomo:"
+msgstr ""
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel3)
 #. i18n: ectx: property (text), widget (QLabel, firstNameLabel)
@@ -18463,9 +18369,9 @@ msgstr ""
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: protocols/oscar/icq/ui/icqhomeinfowidget.ui:55
-#, fuzzy, kde-format
+#, kde-format
 msgid "&Address:"
-msgstr "Adreso:"
+msgstr ""
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel10)
 #. i18n: ectx: property (text), widget (QLabel, textLabel2)
@@ -19508,16 +19414,15 @@ msgstr "Dragono"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, cbZodiac)
 #: protocols/qq/ui/qqvcard.ui:578
-#, fuzzy, kde-format
-#| msgid "Shape"
+#, kde-format
 msgid "Snake"
-msgstr "Formo"
+msgstr ""
 
 #. i18n: ectx: property (text), item, widget (QComboBox, cbZodiac)
 #: protocols/qq/ui/qqvcard.ui:583
-#, fuzzy, kde-format
+#, kde-format
 msgid "Horse"
-msgstr "Nazoj"
+msgstr ""
 
 #. i18n: ectx: property (text), item, widget (QComboBox, cbZodiac)
 #: protocols/qq/ui/qqvcard.ui:588
@@ -20380,228 +20285,3 @@ msgstr ""
 #, kde-format
 msgid "User Info for %1"
 msgstr ""
-
-#~ msgid "Unknown error"
-#~ msgstr "Nekonata eraro"
-
-#~ msgid "Skype (%1)"
-#~ msgstr "Skype (%1)"
-
-#~ msgid "Canceled"
-#~ msgstr "Rompita"
-
-#~ msgid "Resume"
-#~ msgstr "Daŭri"
-
-#~ msgid "Hold"
-#~ msgstr "Teni"
-
-#, fuzzy
-#~ msgid "In progress"
-#~ msgstr "En laboro"
-
-#~ msgid "Failed"
-#~ msgstr "Fiaskis"
-
-#~ msgid "Call"
-#~ msgstr "Voko"
-
-#~ msgid "Time:"
-#~ msgstr "Tempo:"
-
-#~ msgid "skype"
-#~ msgstr "skype"
-
-#~ msgid "s"
-#~ msgstr "s"
-
-#~ msgid "Bus"
-#~ msgstr "Buso"
-
-#~ msgid "Timeout:"
-#~ msgstr "Tempolimo:"
-
-#~ msgid "Could not open file for writing."
-#~ msgstr "Ne eblis malfermi por skribado."
-
-#~ msgid "Categories:"
-#~ msgstr "Kategorioj:"
-
-#~ msgid "scs.msg.yahoo.com"
-#~ msgstr "scs.msg.yahoo.com"
-
-#~ msgid "P&ort:"
-#~ msgstr "&Pordo:"
-
-#~ msgid "Anniversary:"
-#~ msgstr "Jubileo:"
-
-#~ msgctxt "Person's name suffix or prefix"
-#~ msgid "Title:"
-#~ msgstr "Titolo:"
-
-#~ msgid "Add >>"
-#~ msgstr "Aldoni >>"
-
-#~ msgid "<< Remove"
-#~ msgstr "<< Forigi"
-
-#~ msgid "Invite"
-#~ msgstr "Invitu"
-
-#~ msgctxt "@action"
-#~ msgid "Accept"
-#~ msgstr "Akcepti"
-
-#~ msgid "Yahoo"
-#~ msgstr "Jahuo"
-
-#~ msgid "Custom"
-#~ msgstr "Propra"
-
-#~ msgid "MSN"
-#~ msgstr "MSN"
-
-#~ msgid "GoogleTalk"
-#~ msgstr "GoogleTalk"
-
-#~ msgid "Skype"
-#~ msgstr "Skype"
-
-#~ msgid "IRC"
-#~ msgstr "IRC"
-
-#~ msgid "QQ"
-#~ msgstr "QQ"
-
-#~ msgid "Work Address"
-#~ msgstr "Laboradreso"
-
-#~ msgid "Anniversary"
-#~ msgstr "Jubileo"
-
-#~ msgid "Notes"
-#~ msgstr "Notoj"
-
-#~ msgid "messenger.hotmail.com"
-#~ msgstr "messenger.hotmail.com"
-
-#~ msgid "HTTP"
-#~ msgstr "HTTP"
-
-#~ msgid "Username:"
-#~ msgstr "Uzantnomo:"
-
-#~ msgid "General Options"
-#~ msgstr "Ĝeneralaj opcioj"
-
-#, fuzzy
-#~| msgid "Phone"
-#~ msgid "Phones"
-#~ msgstr "Telefono"
-
-#~ msgid "WLM"
-#~ msgstr "WLM"
-
-#~ msgid "History"
-#~ msgstr "Historio"
-
-#~ msgid "Channel"
-#~ msgstr "Kanalo"
-
-#~ msgid "Users"
-#~ msgstr "Uzantoj"
-
-#~ msgid "Search for:"
-#~ msgstr "Serĉu por:"
-
-#~ msgid "&Username:"
-#~ msgstr "&Uzantonomo:"
-
-#~ msgid "&Edit..."
-#~ msgstr "&Redakto"
-
-#~ msgid "&CTCP:"
-#~ msgstr "&CTCP:"
-
-#~ msgid "Windows"
-#~ msgstr "Fenestroj"
-
-#~ msgid "Active Window"
-#~ msgstr "Aktiva fenestro"
-
-#~ msgid "KNotify"
-#~ msgstr "KNotify"
-
-#~ msgctxt "@item:inlistbox"
-#~ msgid "Ignore"
-#~ msgstr "Ignori"
-
-#~ msgid "Network Configuration"
-#~ msgstr "Retagordo"
-
-#~ msgid "&New..."
-#~ msgstr "&Nova..."
-
-#~ msgid "&Host:"
-#~ msgstr "&Servilo:"
-
-#~ msgid "&Description:"
-#~ msgstr "&Priskribo:"
-
-#~ msgid "Ne&w"
-#~ msgstr "&Nova"
-
-#~ msgid "Remo&ve"
-#~ msgstr "&Forigu"
-
-#, fuzzy
-#~| msgid "GoogleTalk"
-#~ msgid "&Google Talk"
-#~ msgstr "GoogleTalk"
-
-#, fuzzy
-#~| msgid "GoogleTalk"
-#~ msgid "Invalid Google Talk"
-#~ msgstr "GoogleTalk"
-
-#, fuzzy
-#~| msgid "History"
-#~ msgid "Chat History2"
-#~ msgstr "Historio"
-
-#, fuzzy
-#~| msgid "&Format"
-#~ msgid "Form"
-#~ msgstr "&Formatu"
-
-#~ msgid "Ignore"
-#~ msgstr "Ignori"
-
-#~ msgctxt "@action"
-#~ msgid "Ignore"
-#~ msgstr "Ignori"
-
-#~ msgid "€"
-#~ msgstr "€"
-
-#~ msgid "larouche@kde.org"
-#~ msgstr "larouche@kde.org"
-
-#, fuzzy
-#~| msgid "Store sent messages encry&pted"
-#~ msgid "This message is encrypted."
-#~ msgstr "Konservi senditajn mesaĝojn ĉ&ifrite"
-
-#, fuzzy
-#~| msgid "A&utomatic end of line detection"
-#~ msgid "Automatic Brightness"
-#~ msgstr "Aŭtomata ekkono de linifino"
-
-#, fuzzy
-#~| msgid "&Background color:"
-#~ msgid "Background Color"
-#~ msgstr "&Fonkoloro:"
-
-#~ msgid "Set"
-#~ msgstr "Difini"
