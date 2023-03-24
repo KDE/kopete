@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-03-21 19:56+0300\n"
+"PO-Revision-Date: 2023-03-23 14:38+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -13110,7 +13110,7 @@ msgstr "Açıklama:"
 #: protocols/groupwise/ui/gwchatprops.ui:246
 #, kde-format
 msgid "Date and time the chatroom was created"
-msgstr "Sohbet odasının oluşturulduğu tarih ve saat"
+msgstr "Sohbet odasının oluşturulduğu tarih ve zaman"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, archive)
 #: protocols/groupwise/ui/gwchatprops.ui:265
