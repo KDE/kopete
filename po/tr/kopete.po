@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-03-24 19:48+0300\n"
+"PO-Revision-Date: 2023-03-29 21:03+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -14933,7 +14933,7 @@ msgid ""
 "many Jabber servers."
 msgstr ""
 "Eklemek istediğiniz hesabın Jabber Kimliği. Bu kimlik kullanıcı adını ve "
-"alanı (E-posta adresi gibi) içermelidir, çünkü birçok Jabber sunucusu vardır."
+"alanı (E-posta adresi gibi) içermelidir; çünkü birçok Jabber sunucusu vardır."
 
 #. i18n: ectx: property (text), widget (QLabel, lblID)
 #. i18n: ectx: property (text), widget (QLabel, TextLabel1_3)
@@ -15229,7 +15229,7 @@ msgid ""
 "many Jabber servers."
 msgstr ""
 "Kullanmak istediğiniz hesabın Jabber Kimliği. Bu kimlik kullanıcı adını ve "
-"alanı (e-posta adresi gibi) içermelidir, çünkü birçok Jabber sunucusu vardır."
+"alanı (e-posta adresi gibi) içermelidir; çünkü birçok Jabber sunucusu vardır."
 
 #. i18n: ectx: property (whatsThis), widget (QLineEdit, mID)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:84
@@ -15240,7 +15240,7 @@ msgid ""
 "are many Jabber servers."
 msgstr ""
 "Kullanmak istediğiniz hesabın Jabber Kimliği. Bu kimlik kullanıcı adını ve "
-"alanı (ör: tuncay@jabber.org) içermelidir, çünkü birçok Jabber sunucusu "
+"alanı (ör: tuncay@jabber.org) içermelidir; çünkü birçok Jabber sunucusu "
 "vardır."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbAutoConnect)
@@ -19740,7 +19740,7 @@ msgstr ""
 #, kde-format
 msgid ""
 "Could not sign on to %1 with account %2 because the password was incorrect."
-msgstr "%2 hesabıyla %1'e bağlanılamadı, çünkü verilen parola hatalı."
+msgstr "%2 hesabıyla %1 sunucusuna bağlanılamadı; çünkü verilen parola hatalı."
 
 #: protocols/oscar/oscaraccount.cpp:1262
 #, kde-format
