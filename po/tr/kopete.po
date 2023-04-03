@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-03-24 19:48+0300\n"
+"PO-Revision-Date: 2023-04-02 17:28+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -13876,7 +13876,7 @@ msgstr "Sunucu ile kimlik doğrulamada bir hata oluştu: %1"
 #: protocols/jabber/jabberaccount.cpp:994
 #, kde-format
 msgid "Transport Layer Security (TLS) problem."
-msgstr "Aktarım Katmanı Güvenliği (TLS) sorunu."
+msgstr "Taşıma Katmanı Güvenliği (TLS) sorunu."
 
 #: protocols/jabber/jabberaccount.cpp:997
 #, kde-format
