@@ -1471,7 +1471,7 @@ msgstr "Remove"
 #: plugins/urlpicpreview/urlpicpreviewprefsbase.ui:37
 #, kde-format
 msgid "Preview"
-msgstr "Vista preliminari"
+msgstr "Vista preliminar"
 
 #: kopete/config/appearance/contactlisttoken.cpp:45
 #, kde-format
@@ -2539,7 +2539,7 @@ msgstr "Jack"
 #, kde-format
 msgctxt "preview of a chat session"
 msgid "Preview Session"
-msgstr "Session de Vista preliminari"
+msgstr "Session de Vista preliminar"
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:608
 #, kde-format
@@ -8100,7 +8100,7 @@ msgstr "Include file de Latex."
 #: plugins/latex/latexguiclient.cpp:46
 #, kde-format
 msgid "Preview Latex Images"
-msgstr "Vista preliminari de imagines LaTeX"
+msgstr "Vista preliminar de imagines LaTeX"
 
 #: plugins/latex/latexguiclient.cpp:68
 #, kde-format
@@ -8119,7 +8119,7 @@ msgstr "Nulle formula de LaTeX"
 #: plugins/latex/latexguiclient.cpp:74
 #, kde-format
 msgid "<b>Preview of the LaTeX message :</b> <br />%1"
-msgstr "<b>Vista preliminari del message de LaTeX :</b> <br />%1"
+msgstr "<b>Vista preliminar del message de LaTeX :</b> <br />%1"
 
 #: plugins/latex/latexplugin.cpp:97
 #, kde-format
@@ -10211,13 +10211,13 @@ msgstr "Scala imagines al latitude"
 #: plugins/urlpicpreview/urlpicpreviewplugin.cpp:141
 #, kde-format
 msgid "Preview of:"
-msgstr "Vista preliminari de:"
+msgstr "Vista preliminar de:"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, URLPicPreviewPrefsUI)
 #: plugins/urlpicpreview/urlpicpreviewprefsbase.ui:19
 #, kde-format
 msgid "Picture Preview Preferences"
-msgstr "Preferentias de vista preliminari de pictura"
+msgstr "Preferentias de vista preliminar de pictura"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, restrictPreviews)
 #: plugins/urlpicpreview/urlpicpreviewprefsbase.ui:44
@@ -10228,14 +10228,14 @@ msgid ""
 "Otherwise, an unlimited number of previews are generated."
 msgstr ""
 "Si marcate, solmente le seligite numero de picturas es discargate e "
-"monstrate como vista preliminari.\n"
-"Alteremente, un numero illimitate de vista preliminari es generate."
+"monstrate como vista preliminar.\n"
+"Alteremente, un numero illimitate de vista preliminar es generate."
 
 #. i18n: ectx: property (text), widget (QCheckBox, restrictPreviews)
 #: plugins/urlpicpreview/urlpicpreviewprefsbase.ui:47
 #, kde-format
 msgid "&Restrict number of previews:"
-msgstr "&Restringe numero de vista preliminari: "
+msgstr "&Restringe numero de vista preliminar: "
 
 #. i18n: ectx: property (whatsThis), widget (QSpinBox, previewAmount)
 #: plugins/urlpicpreview/urlpicpreviewprefsbase.ui:57
@@ -10257,7 +10257,7 @@ msgid ""
 "Otherwise, the images are not scaled at all and appear in their original "
 "size."
 msgstr ""
-"Si marcate, imagines in vista preliminari essera scalate a basso al latitude "
+"Si marcate, imagines in vista preliminar essera scalate a basso al latitude "
 "specificate.\n"
 "Alteremente, le imagines non essera scalate e illos apparera in lor grandor "
 "original."
@@ -10288,7 +10288,7 @@ msgstr " pixel"
 #: plugins/urlpicpreview/urlpicpreviewprefsbase.ui:165
 #, kde-format
 msgid "Link Preview"
-msgstr "Vista preliminari de ligamine"
+msgstr "Vista preliminar de ligamine"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, enableLinkPreview)
 #: plugins/urlpicpreview/urlpicpreviewprefsbase.ui:173
@@ -10300,13 +10300,13 @@ msgstr "Il crea un pictura preliminar del ligamine."
 #: plugins/urlpicpreview/urlpicpreviewprefsbase.ui:176
 #, kde-format
 msgid "Enable lin&k preview"
-msgstr "Habilita vista preliminari de &ligamine"
+msgstr "Habilita vista preliminar de &ligamine"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: plugins/urlpicpreview/urlpicpreviewprefsbase.ui:203
 #, kde-format
 msgid "Abort creating previe&w after"
-msgstr "Aborta crear &vista preliminari postea"
+msgstr "Aborta crear &vista preliminar postea"
 
 #. i18n: ectx: property (whatsThis), widget (KIntNumInput, timeoutLinkPreview)
 #: plugins/urlpicpreview/urlpicpreviewprefsbase.ui:220
@@ -10316,7 +10316,7 @@ msgid ""
 "automatically.\n"
 "Use 0 seconds to never abort the creation."
 msgstr ""
-"Postea le specificate numero de secundas le creation de vista preliminari es "
+"Postea le specificate numero de secundas le creation de vista preliminar es "
 "abortate automaticamente.\n"
 "Usa 0 secundas pro jammais abortar le creation."
 
