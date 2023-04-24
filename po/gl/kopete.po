@@ -12,14 +12,14 @@
 # Xosé <xosecalvo@edu.xunta.es>, 2009.
 # Adrián Chaves Fernández (Gallaecio) <adriyetichaves@gmail.com>, 2011, 2012, 2015, 2017.
 # Marce Villarino <mvillarino@kde-espana.es>, 2012, 2013, 2014.
-# Adrián Chaves (Gallaecio) <adrian@chaves.io>, 2017, 2018, 2019, 2020.
+# Adrián Chaves (Gallaecio) <adrian@chaves.io>, 2017, 2018, 2019, 2020, 2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2020-01-11 11:20+0100\n"
+"PO-Revision-Date: 2023-04-23 08:24+0200\n"
 "Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
 "Language: gl\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 19.08.3\n"
+"X-Generator: Lokalize 22.12.3\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -1391,7 +1391,7 @@ msgstr "Mostrar as liñas da &póla da árbore"
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:247
 #, kde-format
 msgid "In&dent contacts"
-msgstr "&Indentar os contactos"
+msgstr "&Sangrar os contactos"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_contactListHideVerticalScrollBar)
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:262
@@ -4307,7 +4307,7 @@ msgstr "Jessica Hall"
 #: kopete/main.cpp:77
 #, kde-format
 msgid "Kopete Docugoddess, Bug and Patch Testing."
-msgstr "Docu-deusa de Kopete; probas de fallos e parches."
+msgstr "Deusa da documentación de Kopete; probas de fallos e parches."
 
 #: kopete/main.cpp:78
 #, kde-format
@@ -4625,7 +4625,7 @@ msgstr "proporción de uv"
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:64
 #, kde-format
 msgid "full luma range"
-msgstr "Gama de luminancia completa"
+msgstr "Gama de luminosidade completa"
 
 #. i18n: Luminance Coring Level (=> Improves SNR (Signat-to-Noise-Ratio) by HF filtering)
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:66
@@ -7068,6 +7068,7 @@ msgstr "Eliminar os alias"
 msgid "Delete"
 msgstr "Eliminar"
 
+# well-spelled: dsp, hx, xq
 #: plugins/autoreplace/autoreplaceconfig.cpp:68
 #, kde-format
 msgctxt "list_of_words_to_replace"
@@ -9724,6 +9725,7 @@ msgstr "Efectos"
 msgid "L4m3r t4lk"
 msgstr "L4m3r t4lk"
 
+# well-spelled: OnDaS, MaIúScUlAs
 #. i18n: ectx: property (text), widget (QCheckBox, m_casewaves)
 #: plugins/texteffect/texteffectprefs.ui:216
 #, kde-format
@@ -10482,7 +10484,7 @@ msgstr ""
 #: plugins/webpresence/webpresenceprefs.ui:97
 #, kde-format
 msgid "XHTML (simple look)"
-msgstr "XHMTL (estilo simple)"
+msgstr "XHTML (estilo simple)"
 
 #. i18n: ectx: property (toolTip), widget (QRadioButton, kcfg_formatXML)
 #: plugins/webpresence/webpresenceprefs.ui:104
@@ -13855,7 +13857,7 @@ msgstr "Non se puido estabelecer unha conexión segura."
 #: protocols/jabber/jabberaccount.cpp:943
 #, kde-format
 msgid "There was a Transport Layer Security (TLS) error: %1"
-msgstr "Produciuse un erro no Transport Layer Security (TSL):%1"
+msgstr "Produciuse un erro no Transport Layer Security (TLS):%1"
 
 #: protocols/jabber/jabberaccount.cpp:950
 #, kde-format
@@ -13922,7 +13924,7 @@ msgstr "Produciuse un erro ao autenticarse no servidor: %1"
 #: protocols/jabber/jabberaccount.cpp:994
 #, kde-format
 msgid "Transport Layer Security (TLS) problem."
-msgstr "Problema co Transport Layer Security (TSL)."
+msgstr "Problema co Transport Layer Security (TLS)."
 
 #: protocols/jabber/jabberaccount.cpp:997
 #, kde-format
@@ -14758,7 +14760,7 @@ msgstr "Excitado"
 #: protocols/jabber/tasks/mood.cpp:121
 #, kde-format
 msgid "Flirtatious"
-msgstr "Ligón/Ligona"
+msgstr "Coqueta/o"
 
 #: protocols/jabber/tasks/mood.cpp:123
 #, kde-format
@@ -14878,7 +14880,7 @@ msgstr "Ofendido"
 #: protocols/jabber/tasks/mood.cpp:169
 #, kde-format
 msgid "Playful"
-msgstr "Xoguetón/Xoguetona"
+msgstr "Bromista"
 
 #: protocols/jabber/tasks/mood.cpp:171
 #, kde-format
@@ -16183,7 +16185,7 @@ msgstr "Identificador do cliente"
 #: protocols/jabber/ui/dlgxoauth2.ui:65
 #, kde-format
 msgid "Client Secret Key"
-msgstr "Chave segreda do cliente"
+msgstr "Chave secreta do cliente"
 
 #. i18n: ectx: property (text), widget (QLabel, labelRefreshToken)
 #: protocols/jabber/ui/dlgxoauth2.ui:79
@@ -16614,6 +16616,7 @@ msgstr "Atopar usuarios polo seu identificador"
 msgid "&Find"
 msgstr "&Atopar"
 
+# well-spelled: rosaliadecastro
 #. i18n: ectx: property (text), widget (QLabel, textLabel3_2)
 #: protocols/meanwhile/ui/meanwhileaddcontact.ui:71
 #, kde-format
@@ -17533,7 +17536,7 @@ msgstr "Antillas"
 #: protocols/oscar/icq/icqprotocol.cpp:289
 #, kde-format
 msgid "French Guiana"
-msgstr "Guaiana Francesa"
+msgstr "Güiana Francesa"
 
 #: protocols/oscar/icq/icqprotocol.cpp:349
 #, kde-format
@@ -17679,7 +17682,7 @@ msgstr "Persa"
 #: protocols/oscar/icq/icqprotocol.cpp:521
 #, kde-format
 msgid "Punjabi"
-msgstr "Punxabi"
+msgstr "Punjabi"
 
 #. i18n("Chamorro")
 #. i18n("Mongolian")
@@ -17931,7 +17934,7 @@ msgstr "Tailandés TIS-620"
 #: protocols/oscar/oscarencodingselectiondialog.cpp:85
 #, kde-format
 msgid "UTF-8 Unicode"
-msgstr "UTF-8 Unicoide"
+msgstr "Unicode UTF-8"
 
 #: protocols/oscar/icq/icqprotocol.cpp:588
 #: protocols/oscar/oscarencodingselectiondialog.cpp:86
@@ -18624,7 +18627,7 @@ msgstr "está a durmir"
 #, kde-format
 msgctxt "@item icq xtraz status, water sport"
 msgid "surfing"
-msgstr "surfeando"
+msgstr "navegando"
 
 #: protocols/oscar/icq/icqstatusmanager.cpp:165
 #, kde-format
@@ -19641,7 +19644,7 @@ msgstr "Engadir ao menú"
 #: protocols/oscar/liboscar/client.h:406
 #, kde-format
 msgid "Join me in this Chat."
-msgstr "Úniteme nesta conversa."
+msgstr "Úneme nesta conversa."
 
 #: protocols/oscar/liboscar/tasks/filetransfertask.cpp:296
 #, kde-format
@@ -19855,16 +19858,13 @@ msgid "Sign on to %1 with your account %2 failed."
 msgstr "Fallou a identificación en %1 coa conta %2."
 
 #: protocols/oscar/oscaraccount.cpp:1308
-#, fuzzy, kde-format
-#| msgid ""
-#| "The %1 server thinks the client you are using is too old. Please report "
-#| "this as a bug at http://bugs.kde.org"
+#, kde-format
 msgid ""
 "The %1 server thinks the client you are using is too old. Please report this "
 "as a bug at https://bugs.kde.org"
 msgstr ""
 "O servidor %1 pensa que o cliente que está a empregar é demasiado vello. "
-"Informe deste fallo en http://bugs.kde.org"
+"Informe deste fallo en https://bugs.kde.org"
 
 #: protocols/oscar/oscaraccount.cpp:1314
 #, kde-format
@@ -20094,7 +20094,7 @@ msgid ""
 "the \"Connect All\" button, or at startup when automatic connection at "
 "startup is enabled."
 msgstr ""
-"Se marca a casiña a conta non se conectará cando prema o botón de «Conectar "
+"Se marca a caixa a conta non se conectará cando prema o botón de «Conectar "
 "todo» ou cando a conexión automática ao inicio estea activada."
 
 #. i18n: ectx: property (text), widget (QPushButton, buttonVCard)
@@ -20217,7 +20217,7 @@ msgstr ""
 "sempre que se abra unha instancia de conversa, por exemplo, cando se abre "
 "unha xanela de conversa.</dd>\n"
 "<dt>Automaticamente</dt><dd>Intentar descargar a imaxe do contacto sempre "
-"que exista. <b>Nota:</b>isto abre un sócket que permite que o outro usuario "
+"que exista. <b>Nota:</b>isto abre un socket que permite que o outro usuario "
 "saiba que está a descargar a súa imaxe.</dd></dl>"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, DownloadPicture)
@@ -20561,13 +20561,13 @@ msgstr ""
 #: protocols/sms/services/smsclientprefs.ui:49
 #, kde-format
 msgid "SMSClient Settings"
-msgstr "Opcións do ClienteSMS"
+msgstr "Opcións de SMSClient"
 
 #. i18n: ectx: property (text), widget (QLabel)
 #: protocols/sms/services/smsclientprefs.ui:79
 #, kde-format
 msgid "SMSClient &program:"
-msgstr "&Programa de ClienteSMS:"
+msgstr "&Programa de SMSClient:"
 
 #. i18n: ectx: property (text), widget (QLabel)
 #: protocols/sms/services/smsclientprefs.ui:90
@@ -20580,7 +20580,7 @@ msgstr "Forn&ecedor:"
 #: protocols/sms/services/smsclientprefs.ui:116
 #, kde-format
 msgid "SMSClient &config path:"
-msgstr "Ruta de &configuración do ClienteSMS:"
+msgstr "Ruta de &configuración de SMSClient:"
 
 #: protocols/sms/services/smssend.cpp:57
 #, kde-format
