@@ -3,13 +3,14 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2020-05-01 12:46+0100\n"
+"PO-Revision-Date: 2023-05-22 22:18+0100\n"
 "Last-Translator: Pedro Morais <morais@kde.org>\n"
 "Language-Team: pt <kde-i18n-pt@kde.org>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-POFile-IgnoreConsistency: &Send Message\n"
 "X-POFile-SpellExtra: WinPopup BODY Duncan GroupWise OscarSocket DCC MSN\n"
 "X-POFile-SpellExtra: CONTACT Passport METACONTACT NET Hotmail DISPLAYNAME\n"
 "X-POFile-SpellExtra: FORMATTEDTIMESTAMP Oscar Yahoo UIN Mac passport\n"
@@ -2830,7 +2831,7 @@ msgstr "Cor usada para as hiperligações nas conversas"
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:221
 #, kde-format
 msgid "&Link color:"
-msgstr "Cor das &ligações:"
+msgstr "Cor da &ligação:"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_2)
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:254
