@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-05-03 12:26+0300\n"
+"PO-Revision-Date: 2023-05-24 01:44+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 23.03.70\n"
+"X-Generator: Lokalize 23.07.70\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -10551,8 +10551,8 @@ msgid ""
 "Unable to connect to the local mDNS server. Please ensure the Avahi daemon "
 "is running."
 msgstr ""
-"Yerel mDNS sunucusuna bağlanamadı. Lütfen Avahi hizmetinin çalıştığından "
-"emin olun."
+"Yerel mDNS sunucusuna bağlanamadı. Lütfen Avahi ardalan sürecinin "
+"çalıştığından emin olun."
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, BonjourAccountPreferences)
 #: protocols/bonjour/bonjouraccountpreferences.ui:13
