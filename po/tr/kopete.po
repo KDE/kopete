@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-05-28 11:23+0300\n"
+"PO-Revision-Date: 2023-05-29 12:49+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -6702,7 +6702,7 @@ msgstr ""
 #: libkopete/ui/kopetepasswordwidgetbase.ui:34
 #, kde-format
 msgid "Remember password"
-msgstr "Parolayı hatırla"
+msgstr "Parolayı anımsa"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: libkopete/ui/kopetepasswordwidgetbase.ui:60
@@ -6725,8 +6725,8 @@ msgid ""
 "your password whenever it is needed."
 msgstr ""
 "Parolanızı buraya girin. Parolanızı kaydetmemeyi tercih ederseniz yukarıdaki "
-"parolayı hatırla kutusunu imlemeyin, böylece gerektiği her zaman parolanız "
-"size sorulacaktır."
+"parolayı anımsa kutusunu işaretlemeyin, böylece gerektiği her zaman "
+"parolanız size sorulacaktır."
 
 #: libkopete/ui/kopetestdaction.cpp:79
 #, kde-format
@@ -10931,7 +10931,7 @@ msgstr "Sunucuya veri gönderimi başarısız."
 #: protocols/gadu/gaducommands.cpp:345 protocols/gadu/gaducommands.cpp:354
 #, kde-format
 msgid "Password reminding finished prematurely due to a connection error."
-msgstr "Bağlantı hatasından dolayı şifre hatırlatma tamamlanamadı."
+msgstr "Bağlantı hatasından dolayı parola anımsatma tamamlanamadı."
 
 #: protocols/gadu/gaducommands.cpp:362
 #, kde-format
@@ -10946,12 +10946,12 @@ msgstr "Başarısız. Lütfen yeniden deneyin."
 #: protocols/gadu/gaducommands.cpp:363
 #, kde-format
 msgid "Remind Password"
-msgstr "Parolayı Hatırla"
+msgstr "Parolayı Anımsa"
 
 #: protocols/gadu/gaducommands.cpp:363
 #, kde-format
 msgid "Remind password finished: "
-msgstr "Parola hatırlatma bitti: "
+msgstr "Parola anımsatma bitti: "
 
 #: protocols/gadu/gaducommands.cpp:404
 #, kde-format
@@ -16498,7 +16498,7 @@ msgstr "Meanwhile Eklentisi"
 msgid ""
 "<qt>You must deselect password remembering or enter a valid password.</qt>"
 msgstr ""
-"<qt>Parola hatırlamayı seçmemeli ve geçerli bir parola girmelisiniz.</qt>"
+"<qt>Parola anımsatmayı seçmemeli ve geçerli bir parola girmelisiniz.</qt>"
 
 #: protocols/meanwhile/meanwhileeditaccountwidget.cpp:161
 #, kde-format
