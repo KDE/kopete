@@ -19,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.11.4\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Accelerator-Marker: &\n"
 "X-Text-Markup: kde4\n"
 
@@ -356,8 +356,7 @@ msgstr "送信中のメッセージ"
 #, kde-format
 msgid "One other person in the chat"
 msgid_plural "%1 other people in the chat"
-msgstr[0] "1 人がチャット中"
-msgstr[1] "%1 人がチャット中"
+msgstr[0] "%1 人がチャット中"
 
 #: kopete/chatwindow/chatview.cpp:455
 #, kde-format
@@ -5743,14 +5742,12 @@ msgstr "エイリアス “%1” はそれ自身に展開されます。"
 msgid "\"%2\" requires at least %1 argument."
 msgid_plural "\"%2\" requires at least %1 arguments."
 msgstr[0] "“%2” は最低 %1 個の引数を必要とします。"
-msgstr[1] "“%2” は最低 %1 個の引数を必要とします。"
 
 #: libkopete/kopetecommand.cpp:106
 #, kde-format
 msgid "\"%2\" has a maximum of %1 argument."
 msgid_plural "\"%2\" has a maximum of %1 arguments."
 msgstr[0] "“%2” は最大 %1 個の引数を必要とします。"
-msgstr[1] "“%2” は最大 %1 個の引数を必要とします。"
 
 #: libkopete/kopetecommand.cpp:110
 #, kde-format
@@ -6381,7 +6378,6 @@ msgstr "追加情報..."
 msgid "+ %1 more message"
 msgid_plural "+ %1 more messages"
 msgstr[0] "+ あと %1 件のメッセージ"
-msgstr[1] "+ あと %1 件のメッセージ"
 
 #: libkopete/private/kopeteviewmanager.cpp:353
 #, fuzzy, kde-format
@@ -7197,9 +7193,6 @@ msgid_plural ""
 "encrypted messages to them:\n"
 "%2"
 msgstr[0] ""
-"%2 にメッセージを暗号化して送るには、そのコンタクトの公開鍵を選択する必要があ"
-"ります。"
-msgstr[1] ""
 "以下のメタコンタクトにメッセージを暗号化して送るには、公開鍵を選択する必要が"
 "あります:\n"
 "%2"
@@ -7209,7 +7202,6 @@ msgstr[1] ""
 msgid "Missing public key"
 msgid_plural "Missing public keys"
 msgstr[0] "公開鍵が選択されていません"
-msgstr[1] "公開鍵が選択されていません"
 
 #: plugins/cryptography/cryptographyplugin.cpp:93
 #, fuzzy, kde-format
@@ -9509,14 +9501,12 @@ msgstr "一般情報"
 msgid "<b>Average message length:</b> %1 character<br>"
 msgid_plural "<b>Average message length:</b> %1 characters<br>"
 msgstr[0] "<b>平均メッセージ長:</b> %1 文字<br/>"
-msgstr[1] "<b>平均メッセージ長:</b> %1 文字<br/>"
 
 #: plugins/statistics/statisticsdialog.cpp:420
 #, kde-format
 msgid "<b>Time between two messages:</b> %1 second"
 msgid_plural "<b>Time between two messages:</b> %1 seconds"
 msgstr[0] "<b>二つのメッセージ間の時間: </b> %1 秒"
-msgstr[1] "<b>二つのメッセージ間の時間: </b> %1 秒"
 
 #: plugins/statistics/statisticsdialog.cpp:425
 #, kde-format
@@ -13456,8 +13446,7 @@ msgstr "検索中"
 #, kde-format
 msgid "1 matching user found"
 msgid_plural "%1 matching users found"
-msgstr[0] "1 名の該当ユーザがいます"
-msgstr[1] "%1 名の該当ユーザがいます"
+msgstr[0] "%1 名の該当ユーザがいます"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: protocols/groupwise/ui/gwshowinvitation.ui:51
