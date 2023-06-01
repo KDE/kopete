@@ -4899,7 +4899,7 @@ msgstr "Actiu"
 #: libkopete/avdevice/videodevice.cpp:3687
 #, kde-format
 msgid "Brightness"
-msgstr "Lluminositat"
+msgstr "Brillantor"
 
 #: libkopete/avdevice/videodevice.cpp:128
 #: libkopete/avdevice/videodevice.cpp:3693
@@ -4926,7 +4926,7 @@ msgstr "Balanç de blancs"
 #: libkopete/avdevice/videodevice.cpp:152
 #, kde-format
 msgid "Automatic Brightness/Contrast Correction"
-msgstr "Activa la correcció automàtica de la lluminositat/contrast"
+msgstr "Activa la correcció automàtica de la brillantor/contrast"
 
 #: libkopete/avdevice/videodevice.cpp:155
 #, kde-format
