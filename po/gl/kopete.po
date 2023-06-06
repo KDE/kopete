@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-04-23 08:24+0200\n"
+"PO-Revision-Date: 2023-06-05 14:56+0200\n"
 "Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
 "Language: gl\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 22.12.3\n"
+"X-Generator: Lokalize 23.04.1\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -2151,8 +2151,8 @@ msgid ""
 "other windows."
 msgstr ""
 "Cando se reciba unha mensaxe nova, se xa existe unha xanela de conversa "
-"activa para ese contacto a xanela aparece no escritorio actual por riba de "
-"todas as demais xanelas."
+"activa para ese contacto a xanela aparece no escritorio actual por riba das "
+"demais xanelas."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_raiseMessageWindow)
 #: kopete/config/behavior/behaviorconfig_events.ui:185
@@ -4282,7 +4282,7 @@ msgstr "Autor do estilo Hacker"
 #: kopete/main.cpp:75
 #, kde-format
 msgid "Luciash d' Being"
-msgstr "Luciash d' Being"
+msgstr "Luciash d'Being"
 
 #: kopete/main.cpp:75
 #, kde-format
@@ -4455,7 +4455,7 @@ msgstr "xabigf@gmx.net, mgl.branco@gmail.com"
 #: kopete/main.cpp:101
 #, kde-format
 msgid "Do not load plugins. This option overrides all other options."
-msgstr "Non cargar os complementos. Esta opción anula todas as demais."
+msgstr "Non cargar os complementos. Esta opción anula as demais."
 
 #: kopete/main.cpp:102
 #, kde-format
@@ -14011,7 +14011,7 @@ msgstr "Conversa en grupo Jabber"
 msgid ""
 "You cannot join the room %1 because the maximum number of users has been "
 "reached"
-msgstr "Non pode entrar na sala %1, acadouse o aforo máximo."
+msgstr "Non pode entrar na sala %1, acadouse a capacidade máxima."
 
 #: protocols/jabber/jabberaccount.cpp:1681
 #, kde-format
