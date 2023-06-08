@@ -9706,13 +9706,13 @@ msgstr "Afi&g..."
 #: plugins/texteffect/texteffectprefs.ui:104
 #, kde-format
 msgid "Move &Up"
-msgstr "Mou am&unt"
+msgstr "Mou cap am&unt"
 
 #. i18n: ectx: property (text), widget (QPushButton, mColorsDown)
 #: plugins/texteffect/texteffectprefs.ui:111
 #, kde-format
 msgid "Move &Down"
-msgstr "Mou a&vall"
+msgstr "Mou cap a&vall"
 
 #. i18n: ectx: property (text), widget (QCheckBox, m_colorRandom)
 #: plugins/texteffect/texteffectprefs.ui:137
