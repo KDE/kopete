@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-06-04 02:03+0300\n"
+"PO-Revision-Date: 2023-06-11 21:51+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -8243,8 +8243,8 @@ msgid ""
 "None of the supported media players (Amarok, KsCD, JuK, Kaffeine, Quod "
 "Libet, or Qmmp) are playing anything."
 msgstr ""
-"Desteklenen ortam oynatıcılardan (Amarok, KsCD, JuK, Kaffeine, Quod Libet "
-"veya Qmmp) hiçbiri bir şey çalmıyor."
+"Desteklenen ortam oynatıcılardan (Amarok, KsCD, JuK, Kafein, Quod Libet veya "
+"Qmmp) hiçbiri bir şey çalmıyor."
 
 #: plugins/nowlistening/nowlisteningguiclient.cpp:68
 #, kde-format
@@ -10408,7 +10408,7 @@ msgstr ""
 "ISO-8859-1 (Latin 1) karakter kümesi kodlamasını kullanan HTML 4.01 "
 "Transitional.\n"
 "\n"
-"Bu sürüm birçok web tarayıcı ile kolaylıkla açılabilir."
+"Bu sürüm birçok web tarayıcısı ile kolaylıkla açılabilir."
 
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_formatHTML)
 #: plugins/webpresence/webpresenceprefs.ui:79
