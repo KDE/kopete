@@ -1636,7 +1636,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 			<title
 >Andere protocollen</title>
 			<para
->As well as the protocols named above, &kopete; has support for several other protocols. In most cases, this is not enabled by default or an additional plugin must be installed. Meanwhile, SMS, Skype and SILC are provided in this way. However, the &kopete; team are not responsible for these protocols.</para>
+>Evenals de bovenstaande genoemde protocollen heeft &kopete; ondersteuning voor verschillende andere protocollen. In de meeste gevallen is dit niet standaard ingeschakeld of er moet een extra plug-in worden geïnstalleerd. Ondertussen worden SMS en SILC op deze manier geleverd. Zie Echter het team van &kopete; is voor deze protocollen niet verantwoordelijk.</para>
 		</sect2>
 	</sect1>
 </chapter>
