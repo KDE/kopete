@@ -11,6 +11,7 @@
   <name xml:lang="de">Kopete</name>
   <name xml:lang="el">Kopete</name>
   <name xml:lang="en-GB">Kopete</name>
+  <name xml:lang="eo">Kopete</name>
   <name xml:lang="es">Kopete</name>
   <name xml:lang="et">Kopete</name>
   <name xml:lang="eu">Kopete</name>
@@ -43,6 +44,7 @@
   <summary xml:lang="de">Instant-Messenger</summary>
   <summary xml:lang="el">Διαχειριστής στιγμιαίων μηνυμάτων</summary>
   <summary xml:lang="en-GB">Instant Messenger</summary>
+  <summary xml:lang="eo">Tujmesaĝilo</summary>
   <summary xml:lang="es">Mensajería instantánea</summary>
   <summary xml:lang="et">Kiirsuhtlusrakendus</summary>
   <summary xml:lang="eu">Bat-bateko mezularitza</summary>
@@ -139,6 +141,7 @@
     <p xml:lang="de">Funktionen:</p>
     <p xml:lang="el">Χαρακτηριστικά:</p>
     <p xml:lang="en-GB">Features:</p>
+    <p xml:lang="eo">Trajtoj:</p>
     <p xml:lang="es">Funcionalidades:</p>
     <p xml:lang="et">Omadused:</p>
     <p xml:lang="eu">Eginbideak:</p>
@@ -300,6 +303,7 @@
       <caption xml:lang="de">Chat-Fenster von Kopete</caption>
       <caption xml:lang="el">Συνομιλία Kopete</caption>
       <caption xml:lang="en-GB">Kopete chat</caption>
+      <caption xml:lang="eo">Kopete-babilo</caption>
       <caption xml:lang="es">Charla de Kopete</caption>
       <caption xml:lang="et">Kopete vestlus</caption>
       <caption xml:lang="eu">Kopete berriketa</caption>
