@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-06-05 14:56+0200\n"
+"PO-Revision-Date: 2023-06-17 16:12+0200\n"
 "Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
 "Language: gl\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 23.04.1\n"
+"X-Generator: Lokalize 23.04.2\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -268,7 +268,7 @@ msgstr "Compoñente de edición de texto de conversa"
 #: kopete/chatwindow/chattexteditpart.cpp:480
 #, kde-format
 msgid "A simple rich text editor part"
-msgstr "Un compoñente para a edición simple de texto enriquecido"
+msgstr "Un compoñente de editor simple de de texto enriquecido"
 
 #: kopete/chatwindow/chattexteditpart.cpp:482
 #, kde-format
@@ -5072,7 +5072,7 @@ msgstr "Cromatismo AGC"
 #: libkopete/avdevice/videodevice.cpp:3752
 #, kde-format
 msgid "Color Killer"
-msgstr "Eliminador de cor"
+msgstr "Mata cores"
 
 #: libkopete/avdevice/videodevice.cpp:3756
 #, kde-format
@@ -5519,7 +5519,7 @@ msgstr "Reconectar ou desconectar."
 #: libkopete/kopetebehaviorsettings.kcfg:48
 #, kde-format
 msgid "Raise message view on new messages."
-msgstr "Elevar a xanela ao entraren mensaxes novas."
+msgstr "Elevar a vista ao entraren mensaxes novas."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:52
@@ -14255,7 +14255,7 @@ msgstr "Son da chamada"
 #: protocols/jabber/jabbercontact.cpp:281
 #, kde-format
 msgid "Jingle Video call"
-msgstr "Son da chamada con vídeo"
+msgstr "Chamada de vídeo de Jingle"
 
 #: protocols/jabber/jabbercontact.cpp:321
 #, kde-format
@@ -15373,7 +15373,7 @@ msgstr "Usar o &vello cifrado SSL."
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:322
 #, kde-format
 msgid "Allow plain-te&xt password authentication"
-msgstr "Permitir a autenticación do contrasinal con te&xto en limpo"
+msgstr "Permitir a autenticación do contrasinal con te&xto plano"
 
 #. i18n: ectx: property (text), widget (QCheckBox, optionOverrideServer)
 #. i18n: ectx: property (text), widget (QCheckBox, cbCustomServer)

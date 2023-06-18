@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: kdeorg\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-05-22 14:00\n"
+"PO-Revision-Date: 2023-06-17 04:11\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -2354,7 +2354,7 @@ msgid ""
 "Make sure that the archive is a valid ZIP or TAR archive."
 msgstr ""
 "无法打开指定的存档。\n"
-"请确定存档是一个有效的 ZIP 或 TAR 压缩包。"
+"请确定存档是一个有效的 ZIP 或 TAR 压缩文件。"
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:454
 #, kde-format
@@ -10696,7 +10696,7 @@ msgstr "状态错误"
 msgid ""
 "Password changing finished prematurely due to a session related problem (try "
 "again later)."
-msgstr "由于会话相关的问题(请稍后重试)，密码改变过早结束。"
+msgstr "由于会话相关的问题，密码更改操作过早结束 (请稍后重试)。"
 
 #: protocols/gadu/gaducommands.cpp:421
 #, kde-format
@@ -13531,7 +13531,7 @@ msgstr "提供的证书错误。(请检查您的用户 ID 和密码)"
 #: protocols/jabber/jabberaccount.cpp:980
 #, kde-format
 msgid "Temporary failure, please try again later."
-msgstr "临时失败，请稍后重试。"
+msgstr "暂时失败，请稍后重试。"
 
 #: protocols/jabber/jabberaccount.cpp:987
 #, kde-format
