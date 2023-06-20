@@ -148,7 +148,7 @@ msgstr ""
 #: kopete/addaccountwizard/addaccountwizardpage2.ui:74
 #, kde-format
 msgid "Use a custom color for this account"
-msgstr "Empregar unha cor personalizada para esta conta"
+msgstr "Usar unha cor personalizada para esta conta"
 
 #. i18n: ectx: property (whatsThis), widget (QPushButton, mButtonAccountSetColor)
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, mUseColor)
@@ -171,7 +171,7 @@ msgid ""
 "Use &custom color\n"
 "for account:"
 msgstr ""
-"Empregar unha &cor personalizada\n"
+"Usar unha &cor personalizada\n"
 "para a conta:"
 
 #. i18n: ectx: property (toolTip), widget (KColorButton, mColorButton)
@@ -685,8 +685,7 @@ msgstr ""
 #, kde-format
 msgid "Use a compact variant of the chat style for chatrooms."
 msgstr ""
-"Empregar unha variante compacta do estilo de conversa para as salas de "
-"conversas."
+"Usar unha variante compacta do estilo de conversa para as salas de conversas."
 
 #. i18n: ectx: label, entry, group (Appearance)
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:49
@@ -775,7 +774,7 @@ msgstr "E&stabelecer a fonte…"
 #: kopete/chatwindow/kopeteemailwindow.cpp:243
 #, kde-format
 msgid "Set Text &Color..."
-msgstr "Estabelecer a &cor do texto…"
+msgstr "Definir a &cor do texto…"
 
 #: kopete/chatwindow/kopeteemailwindow.cpp:247
 #, kde-format
@@ -928,7 +927,7 @@ msgstr "&Cambiar a identidade…"
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:162
 #, kde-format
 msgid "Set C&olor..."
-msgstr "Estabelecer &cor…"
+msgstr "Definir &cor…"
 
 #: kopete/config/accounts/kopeteaccountconfig.cpp:573
 #, kde-format
@@ -957,7 +956,7 @@ msgstr "&Retirar a identidade"
 #: kopete/config/accounts/kopeteaccountconfig.cpp:605
 #, kde-format
 msgid "Set &Default"
-msgstr "Estabelecer como &predeterminado"
+msgstr "Definir como &predeterminado"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, KopeteAccountConfigBase)
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:15
@@ -1003,12 +1002,12 @@ msgid ""
 "metacontact: Kopete will use the contact of the account with the greatest "
 "priority (if all contacts have the same online status)."
 msgstr ""
-"Empregue arrastrar e soltar para aumentar ou minguar a prioridade das "
-"contas. As contas que estean por riba doutras teñen maior prioridade.\n"
+"Use arrastrar e soltar para aumentar ou minguar a prioridade das contas. As "
+"contas que estean por riba doutras teñen maior prioridade.\n"
 "\n"
-"A prioridade emprégase para determinar que contacto empregar cando prema un "
-"metacontacto. Kopete emprega o contacto que estea na conta con maior "
-"prioridade, sempre e canto todos os contactos teñan o mesmo estado en liña."
+"A prioridade úsase para determinar que contacto usar cando prema un "
+"metacontacto. Kopete usa o contacto que estea na conta con maior prioridade, "
+"sempre e canto todos os contactos teñan o mesmo estado en liña."
 
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:88
@@ -1092,7 +1091,7 @@ msgstr "Cambiar a &identidade…"
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:156
 #, kde-format
 msgid "Set a custom color for this account"
-msgstr "Empregar unha cor personalizada para esta conta"
+msgstr "Usar unha cor personalizada para esta conta"
 
 #. i18n: ectx: property (title), widget (QGroupBox, mGroupBoxIdentities)
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:185
@@ -1148,7 +1147,7 @@ msgstr "Permite editar as propiedades da conta."
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:237
 #, kde-format
 msgid "Set the selected identity as default identity"
-msgstr "Estabelecer a identidade seleccionada como identidade predeterminada"
+msgstr "Definir a identidade seleccionada como identidade predeterminada"
 
 #. i18n: ectx: property (text), widget (QPushButton, mButtonIdentitySetDefault)
 #: kopete/config/accounts/kopeteaccountconfigbase.ui:240
@@ -1233,7 +1232,7 @@ msgid ""
 msgstr ""
 "Xa que as barras de desprazamento vertical ocupan espazo, introduciuse a "
 "posibilidade de agochalas automaticamente. As barras de desprazamento "
-"verticais non se mostran ata que se desprace o rato por riba da lista de "
+"verticais non se amosan ata que se desprace o rato por riba da lista de "
 "contactos.<br>\n"
 "(<b>Desactivada</b> se a opción «<b>Agochar a barra de desprazamento "
 "vertical</b>» está seleccionada máis arriba)."
@@ -1355,7 +1354,7 @@ msgstr "Orde dos contactos:"
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:114
 #, kde-format
 msgid "Use contact photos &when available"
-msgstr "Empregar os avatares dos contactos cando estean &dispoñíbeis"
+msgstr "Usar os avatares dos contactos cando estean &dispoñíbeis"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_contactListIconBorders)
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:142
@@ -1379,13 +1378,13 @@ msgstr "Clasificar os metacontactos por &grupo"
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:200
 #, kde-format
 msgid "Show offline contacts in a &separate group"
-msgstr "Mostrar os contactos desconectados nun grupo &separado."
+msgstr "Amosar os contactos desconectados nun grupo &separado."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_contactListTreeView)
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:213
 #, kde-format
 msgid "Show tree &branch lines"
-msgstr "Mostrar as liñas da &póla da árbore"
+msgstr "Amosar as liñas da &póla da árbore"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_contactListIndentContact)
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:247
@@ -1409,7 +1408,7 @@ msgstr "&Agochar a barra de desprazamento vertical"
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:272
 #, kde-format
 msgid "Show identities in status bar instead of accounts"
-msgstr "Mostrar as identidades na barra de estado no canto das contas."
+msgstr "Amosar as identidades na barra de estado no canto das contas."
 
 #. i18n: ectx: property (text), widget (QPushButton, mEditTooltips)
 #: kopete/config/appearance/appearanceconfig_contactlist.ui:287
@@ -1420,7 +1419,7 @@ msgstr "Cambiar os contidos dos &consellos…"
 #: kopete/config/appearance/contactlistlayouteditwidget.cpp:44
 #, kde-format
 msgid "Show Icon"
-msgstr "Mostrar a icona"
+msgstr "Amosar a icona"
 
 #: kopete/config/appearance/contactlistlayoutwidget.cpp:152
 #, kde-format
@@ -1570,8 +1569,8 @@ msgid ""
 "Using the arrow buttons, put on the right the items you want to see in the "
 "contact tooltips. You can then sort them."
 msgstr ""
-"Ao empregar os botóns coas frechas pode pór os elementos que queira ver na "
-"lista de contactos. Pode ademais ordenalos."
+"Ao usar os botóns coas frechas pode pór os elementos que queira ver na lista "
+"de contactos. Pode ademais ordenalos."
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel2)
 #: kopete/config/appearance/tooltipeditwidget.ui:151
@@ -1698,7 +1697,7 @@ msgstr "Ausencia automática"
 #: kopete/config/behavior/behaviorconfig_away.ui:23
 #, kde-format
 msgid "&Use auto away"
-msgstr "&Empregar a ausencia automática"
+msgstr "&Usar a ausencia automática"
 
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #: kopete/config/behavior/behaviorconfig_away.ui:41
@@ -1734,13 +1733,13 @@ msgstr "Mensaxe de ausencia automática"
 #: kopete/config/behavior/behaviorconfig_away.ui:129
 #, kde-format
 msgid "Display the &last away message used"
-msgstr "Mostrar a ú&ltima mensaxe de ausencia empregada"
+msgstr "Amosar a ú&ltima mensaxe de ausencia empregada"
 
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_useCustomAwayMessage)
 #: kopete/config/behavior/behaviorconfig_away.ui:136
 #, kde-format
 msgid "Display the &following away message:"
-msgstr "Mostrar a &seguinte mensaxe de ausencia:"
+msgstr "Amosar a &seguinte mensaxe de ausencia:"
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: kopete/config/behavior/behaviorconfig_away.ui:145
@@ -1772,7 +1771,7 @@ msgstr "Conversar"
 #: kopete/config/behavior/behaviorconfig_chat.ui:20
 #, kde-format
 msgid "Show events in chat &window"
-msgstr "Mostrar os eventos na &xanela de conversa"
+msgstr "Amosar os eventos na &xanela de conversa"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_highlightEnabled)
 #: kopete/config/behavior/behaviorconfig_chat.ui:33
@@ -1796,7 +1795,7 @@ msgstr "Activar o &texto enriquecido de maneira predeterminada"
 #: kopete/config/behavior/behaviorconfig_chat.ui:66
 #, kde-format
 msgid "&Always show tabs"
-msgstr "&Mostrar sempre os separadores"
+msgstr "&Amosar sempre os separadores"
 
 #. i18n: ectx: property (title), widget (QGroupBox, interfaceGroup)
 #: kopete/config/behavior/behaviorconfig_chat.ui:73
@@ -1851,7 +1850,7 @@ msgstr "Agrupar as mensaxes do mesmo metacontacto na mesma xanela de conversa"
 #: kopete/config/behavior/behaviorconfig_chat.ui:126
 #, kde-format
 msgid "Show message dates"
-msgstr "Mostrar as datas das mensaxes."
+msgstr "Amosar as datas das mensaxes."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_truncateContactName)
 #: kopete/config/behavior/behaviorconfig_chat.ui:141
@@ -1917,7 +1916,7 @@ msgstr ""
 #: kopete/config/behavior/behaviorconfig_events.ui:32
 #, kde-format
 msgid "Animate s&ystem tray icon"
-msgstr "Mostrar a icona na bandexa do &sistema."
+msgstr "Amosar a icona na bandexa do &sistema."
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_trayflashNotifyLeftClickOpensMessage)
 #: kopete/config/behavior/behaviorconfig_events.ui:66
@@ -1971,7 +1970,7 @@ msgstr "Animar se hai unha mensaxe nunha conversa aberta"
 #: kopete/config/behavior/behaviorconfig_events.ui:97
 #, kde-format
 msgid "Use a single notification for messages from the same sender"
-msgstr "Empregar unha única notificación para as mensaxes dunha mesma persoa."
+msgstr "Usar unha única notificación para as mensaxes dunha mesma persoa."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_balloonGroupMessageNotificationsPerSender)
 #: kopete/config/behavior/behaviorconfig_events.ui:94
@@ -2004,8 +2003,8 @@ msgid ""
 "displayed in the new message popup the \"Ignore\" button will close this "
 "chat window."
 msgstr ""
-"Se xa hai unha xanela de conversa aberta para o remitente da mensaxe "
-"mostrado na notificación, o botón «Ignorar» pecharaa."
+"Se xa hai unha xanela de conversa aberta para o remitente da mensaxe amosado "
+"na notificación, o botón «Ignorar» pecharaa."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_balloonNotifyIgnoreClosesChatView)
 #: kopete/config/behavior/behaviorconfig_events.ui:110
@@ -2062,12 +2061,12 @@ msgstr ""
 "De se activar, os eventos das xanela de conversa que estiveren no escritorio "
 "actual xestiónanse como eventos da xanela de conversa activa: non se animan "
 "nin a icona na bandexa do sistema nin a icona na lista de contactos do autor "
-"da mensaxe senón que se emprega a notificación «Recepción dunha mensaxe na "
+"da mensaxe senón que se usa a notificación «Recepción dunha mensaxe na "
 "xanela activa». Tamén as xanelas de conversa doutros escritorios fan que se "
 "emitan notificacións.\n"
 "De non se activar todas as xanelas de conversa excepto a activa notificarano "
-"empregando animacións, se for o caso, de que ocorreu un evento, indicándoo "
-"tamén coa notificación «Recepción dunha mensaxe»."
+"usando animacións, se for o caso, de que ocorreu un evento, indicándoo tamén "
+"coa notificación «Recepción dunha mensaxe»."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_queueOnlyMessagesOnAnotherDesktop)
 #: kopete/config/behavior/behaviorconfig_events.ui:137
@@ -2178,7 +2177,7 @@ msgstr "Bandexa do sistema"
 #: kopete/config/behavior/behaviorconfig_general.ui:26
 #, kde-format
 msgid "Show the icon in the system tray"
-msgstr "Mostrar a icona na bandexa do sistema."
+msgstr "Amosar a icona na bandexa do sistema."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_showSystemTray)
 #: kopete/config/behavior/behaviorconfig_general.ui:29
@@ -2190,7 +2189,7 @@ msgid ""
 "has the same effect."
 msgstr ""
 "De maneira predeterminada, a icona da bandexa do sistema indica as mensaxes "
-"recibidas animándose e mostrando unha notificación. Ao premer a icona co "
+"recibidas animándose e amosando unha notificación. Ao premer a icona co "
 "botón central ou esquerdo do rato, ao igual que ao premer o botón «Ver» da "
 "mensaxe, ábrese unha xanela de conversa coas mensaxes novas."
 
@@ -2198,7 +2197,7 @@ msgstr ""
 #: kopete/config/behavior/behaviorconfig_general.ui:32
 #, kde-format
 msgid "Show system &tray icon"
-msgstr "Mostrar a icona na &bandexa do sistema."
+msgstr "Amosar a icona na &bandexa do sistema."
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_startDocked)
 #: kopete/config/behavior/behaviorconfig_general.ui:42
@@ -2256,7 +2255,7 @@ msgstr "Abrir as mensaxes au&tomaticamente"
 #: kopete/config/behavior/behaviorconfig_general.ui:77
 #, kde-format
 msgid "Use a message queue to store incoming messages"
-msgstr "Empregar a quenda de mensaxes para almacenar as mensaxes entrantes"
+msgstr "Usar a quenda de mensaxes para almacenar as mensaxes entrantes"
 
 #. i18n: ectx: property (whatsThis), widget (QRadioButton, kcfg_useMessageQueue)
 #: kopete/config/behavior/behaviorconfig_general.ui:80
@@ -2268,7 +2267,7 @@ msgid ""
 "animations."
 msgstr ""
 "Almacenar as mensaxes recibidas nunha quenda de mensaxes. As mensaxes novas "
-"son aquelas mensaxes que non se poden mostrar nunha xanela existente. Só se "
+"son aquelas mensaxes que non se poden amosar nunha xanela existente. Só se "
 "avisa das mensaxes na quenda mediante unha xanela de conversa e a animación "
 "da icona na bandexa do sistema."
 
@@ -2276,7 +2275,7 @@ msgstr ""
 #: kopete/config/behavior/behaviorconfig_general.ui:83
 #, kde-format
 msgid "Use message &queue"
-msgstr "Empregar a &quenda de mensaxes"
+msgstr "Usar a &quenda de mensaxes"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_queueUnreadMessages)
 #: kopete/config/behavior/behaviorconfig_general.ui:93
@@ -2298,7 +2297,7 @@ msgstr ""
 "aberta pero inactiva. Só se advirte das mensaxes recibidas na quenda cunha "
 "xanela de conversa e a animación da icona na bandexa do sistema. Con esta "
 "opción desactivada só as mensaxes novas recibidas entran na quenda de "
-"mensaxes, é dicir, as mensaxes que non se poden mostrar nunha xanela xa "
+"mensaxes, é dicir, as mensaxes que non se poden amosar nunha xanela xa "
 "aberta."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_queueUnreadMessages)
@@ -2319,7 +2318,7 @@ msgstr "Estado inicial"
 #: kopete/config/behavior/behaviorconfig_general.ui:115
 #, kde-format
 msgid "Set the initial status"
-msgstr "Estabelecer o estado inicial"
+msgstr "Definir o estado inicial"
 
 #. i18n: ectx: property (whatsThis), widget (QComboBox, kcfg_initialStatus)
 #: kopete/config/behavior/behaviorconfig_general.ui:118
@@ -2772,7 +2771,7 @@ msgstr "Realzar o &fondo:"
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:234
 #, kde-format
 msgid "Color used for links in chats"
-msgstr "Empregar cores para as ligazóns nas salas de conversa"
+msgstr "Usar cores para as ligazóns nas salas de conversa"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1_3)
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:221
@@ -2836,7 +2835,7 @@ msgstr "Aparencia da xanela de conversa"
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:34
 #, kde-format
 msgid "Display"
-msgstr "Mostrar"
+msgstr "Amosar"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_groupConsecutiveMessages)
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:40
@@ -2897,13 +2896,13 @@ msgstr "Para cada separador"
 #: kopete/config/chatwindow/chatwindowconfig_tab.ui:23
 #, kde-format
 msgid "Show contact name"
-msgstr "Mostrar o nome do contacto"
+msgstr "Amosar o nome do contacto"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_HoverClose)
 #: kopete/config/chatwindow/chatwindowconfig_tab.ui:33
 #, kde-format
 msgid "Show close button"
-msgstr "Mostrar o botón de pechar."
+msgstr "Amosar o botón de pechar."
 
 #: kopete/config/plugins/kopetepluginconfig.cpp:53
 #, kde-format
@@ -3037,7 +3036,7 @@ msgstr "Marca de posición"
 #: plugins/webpresence/webpresenceprefs.ui:187
 #, kde-format
 msgid "Display Name"
-msgstr "Nome para mostrar"
+msgstr "Nome para amosar"
 
 #: kopete/contactlist/contactlistlayoutmanager.cpp:62
 #: libkopete/kopeteglobal.cpp:142
@@ -3208,7 +3207,7 @@ msgstr "&Anular toda a selección"
 #: kopete/contactlist/kopeteaddrbookexport.cpp:131
 #, kde-format
 msgid "<Not Set>"
-msgstr "<Sen estabelecer>"
+msgstr "<Sen definir>"
 
 #: kopete/contactlist/kopeteaddrbookexport.cpp:189
 #, kde-format
@@ -3224,8 +3223,8 @@ msgstr "Exportar"
 #, kde-format
 msgid "Set address book fields using the selected data from Kopete"
 msgstr ""
-"Estabelecer os campos do caderno de enderezos empregando os datos "
-"seleccionados no Kopete"
+"Definir os campos do caderno de enderezos usando os datos seleccionados no "
+"Kopete"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, AddressBookExportUI)
 #: kopete/contactlist/kopeteaddrbookexportui.ui:13
@@ -3503,7 +3502,7 @@ msgstr "Iconas"
 #: kopete/contactlist/kopetegvipropswidget.ui:120
 #, kde-format
 msgid "Use custom &icons"
-msgstr "Empregar &iconas personalizadas"
+msgstr "Usar &iconas personalizadas"
 
 #. i18n: ectx: property (text), widget (QLabel, lblOpen)
 #: kopete/contactlist/kopetegvipropswidget.ui:127
@@ -3612,14 +3611,14 @@ msgstr "&Importar contactos"
 #: kopete/contactlist/kopetemetalvipropswidget.ui:135
 #, kde-format
 msgid "Display Name Source"
-msgstr "Fonte do nome para mostrar"
+msgstr "Fonte do nome para amosar"
 
 #. i18n: ectx: property (text), widget (QRadioButton, radioNameKABC)
 #: kopete/contactlist/kopetemetalvipropswidget.ui:141
 #, kde-format
 msgid "Use address book &name (needs address book link)"
 msgstr ""
-"Empregar o &nome do caderno de enderezos (necesítase unha ligazón ao caderno)"
+"Usar o &nome do caderno de enderezos (necesítase unha ligazón ao caderno)"
 
 #. i18n: ectx: property (text), widget (QRadioButton, radioNameContact)
 #. i18n: ectx: property (text), widget (QRadioButton, radioPhotoContact)
@@ -3654,7 +3653,7 @@ msgstr "Fonte da imaxe"
 #, kde-format
 msgid "U&se address book photo (needs address book link)"
 msgstr ""
-"&Empregar o avatar do caderno de enderezos (necesita unha ligazón ao caderno)"
+"&Usar o avatar do caderno de enderezos (necesita unha ligazón ao caderno)"
 
 #. i18n: ectx: property (text), widget (QTreeWidget, addresseeListView)
 #. i18n: ectx: property (text), widget (QLabel, photoLabel)
@@ -3697,13 +3696,13 @@ msgstr "A&vanzado"
 #: kopete/contactlist/kopetemetalvipropswidget.ui:386
 #, kde-format
 msgid "Check to set custom icons for this contact"
-msgstr "Marque para estabelecer iconas personalizadas para este contacto"
+msgstr "Marque para definir iconas personalizadas para este contacto"
 
 #. i18n: ectx: property (text), widget (QCheckBox, chkUseCustomIcons)
 #: kopete/contactlist/kopetemetalvipropswidget.ui:389
 #, kde-format
 msgid "Use custom status &icons"
-msgstr "Empregar &iconas de estado personalizadas"
+msgstr "Usar &iconas de estado personalizadas"
 
 #. i18n: ectx: property (text), widget (QLabel, lblOnline)
 #: kopete/contactlist/kopetemetalvipropswidget.ui:396
@@ -3753,7 +3752,7 @@ msgstr "Identidade da conta"
 #: kopete/identity/accountidentitybase.ui:38
 #, kde-format
 msgid "Select the identity to be used by the accounts:"
-msgstr "Seleccione a identidade a empregar coas contas seguintes:"
+msgstr "Seleccione a identidade a usar coas contas seguintes:"
 
 #. i18n: ectx: property (text), widget (QLabel, accounts)
 #: kopete/identity/accountidentitybase.ui:69
@@ -3830,7 +3829,7 @@ msgstr "Quitar o avatar"
 #: kopete/identity/identitygeneral.ui:127
 #, kde-format
 msgid "Show as:"
-msgstr "Mostrar como:"
+msgstr "Amosar como:"
 
 #. i18n: ectx: property (text), widget (QLabel, nickNameLabel)
 #. i18n: ectx: property (text), widget (QLabel, lblNickName)
@@ -3940,7 +3939,7 @@ msgstr "&En liña"
 #: kopete/kopetewindow.cpp:451
 #, kde-format
 msgid "&Set Status"
-msgstr "&Estabelecer o estado"
+msgstr "&Definir o estado"
 
 #: kopete/kopetewindow.cpp:479
 #, kde-format
@@ -3950,17 +3949,17 @@ msgstr "Configurar os atallos &globais…"
 #: kopete/kopetewindow.cpp:488
 #, kde-format
 msgid "Show &All"
-msgstr "Mostralo &todo"
+msgstr "Amosalo &todo"
 
 #: kopete/kopetewindow.cpp:493
 #, kde-format
 msgid "Show Offline &Users"
-msgstr "Mostrar os &usuarios sen conexión"
+msgstr "Amosar os &usuarios sen conexión"
 
 #: kopete/kopetewindow.cpp:497
 #, kde-format
 msgid "Show Empty &Groups"
-msgstr "Mostrar os &grupos baleiros"
+msgstr "Amosar os &grupos baleiros"
 
 #: kopete/kopetewindow.cpp:519
 #, kde-format
@@ -3975,12 +3974,12 @@ msgstr "Ler a vindeira mensaxe pendente"
 #: kopete/kopetewindow.cpp:525
 #, kde-format
 msgid "Show/Hide Contact List"
-msgstr "Mostrar/agochar a lista de contactos"
+msgstr "Amosar/agochar a lista de contactos"
 
 #: kopete/kopetewindow.cpp:529
 #, kde-format
 msgid "Show or hide the contact list"
-msgstr "Mostrar ou agochar a lista de contactos"
+msgstr "Amosar ou agochar a lista de contactos"
 
 #: kopete/kopetewindow.cpp:531 kopete/kopetewindow.cpp:535
 #, kde-format
@@ -4473,7 +4472,7 @@ msgid ""
 "Auto-connect the specified accounts. Use a comma-separated list\n"
 "to auto-connect multiple accounts."
 msgstr ""
-"Conectar automaticamente as contas indicadas. Empregue unha lista\n"
+"Conectar automaticamente as contas indicadas. Use unha lista\n"
 "separada por comas para conectar automaticamente varias contas."
 
 #: kopete/main.cpp:107
@@ -4482,7 +4481,7 @@ msgid ""
 "Do not load the specified plugin. Use a comma-separated list\n"
 "to disable multiple plugins."
 msgstr ""
-"Non cargar o complemento indicado. Empregue unha lista\n"
+"Non cargar o complemento indicado. Use unha lista\n"
 "separada por comas para desactivar varios complementos."
 
 #: kopete/main.cpp:109
@@ -4493,9 +4492,9 @@ msgid ""
 "--noplugins is set and overrides all other plugin related\n"
 "command line options."
 msgstr ""
-"Cargar só os complementos indicados. Empregue unha lista\n"
+"Cargar só os complementos indicados. Use unha lista\n"
 "separada por comas para cargar varios complementos.\n"
-"Esta opción non ten efecto cando se emprega o parámetro\n"
+"Esta opción non ten efecto cando se usa o parámetro\n"
 "«--noplugins» e anula todas as outras opcións da liña de\n"
 "ordes relacionadas cos complementos."
 
@@ -5139,8 +5138,8 @@ msgid ""
 "%2</qt>"
 msgstr ""
 "<qt>Outra aplicación engadiulle un enderezo a este contacto. <br /"
-">Gustaríalle empregalo en Kopete?<br /><b>Protocolo:</b> %1<br /><b>Enderezo:"
-"</b> %2</qt>"
+">Gustaríalle usalo en Kopete?<br /><b>Protocolo:</b> %1<br /><b>Enderezo:</"
+"b> %2</qt>"
 
 #: libkopete/kabcpersistence.cpp:350
 #, kde-format
@@ -5156,7 +5155,7 @@ msgstr "Usar"
 #: libkopete/kabcpersistence.cpp:351 protocols/gadu/ui/gadueditaccountui.ui:389
 #, kde-format
 msgid "Do Not Use"
-msgstr "Non empregar"
+msgstr "Non usar"
 
 #: libkopete/kabcpersistence.cpp:372
 #, kde-format
@@ -5165,7 +5164,7 @@ msgid ""
 "be connected to add contacts.  Please connect these accounts and try again.</"
 "qt>"
 msgstr ""
-"<qt>Unha ou máis contas que empregan %1 están desconectadas. A maioría dos "
+"<qt>Unha ou máis contas que usan %1 están desconectadas. A maioría dos "
 "sistemas teñen que estar conectados para engadiren contactos. Conecte estas "
 "contas e inténteo de novo.</qt>"
 
@@ -5459,25 +5458,25 @@ msgstr "Tempo de espera do agochado automático."
 #: libkopete/kopeteappearancesettings.kcfg:235
 #, kde-format
 msgid "Show offline users in contact list."
-msgstr "Mostrar os usuarios desconectados na lista de contactos."
+msgstr "Amosar os usuarios desconectados na lista de contactos."
 
 #. i18n: ectx: label, entry, group (ContactList)
 #: libkopete/kopeteappearancesettings.kcfg:240
 #, kde-format
 msgid "Show empty groups in contact list."
-msgstr "Mostrar os grupos baleiros na lista de contactos."
+msgstr "Amosar os grupos baleiros na lista de contactos."
 
 #. i18n: ectx: label, entry, group (ContactList)
 #: libkopete/kopeteappearancesettings.kcfg:245
 #, kde-format
 msgid "Show identities in status bar instead of accounts."
-msgstr "Mostrar as identidades na barra de estado no canto das contas."
+msgstr "Amosar as identidades na barra de estado no canto das contas."
 
 #. i18n: ectx: label, entry, group (ContactList)
 #: libkopete/kopeteappearancesettings.kcfg:249
 #, kde-format
 msgid "Show offline users in a separate group."
-msgstr "Mostrar os usuarios desconectados nun grupo separado."
+msgstr "Amosar os usuarios desconectados nun grupo separado."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:12
@@ -5489,13 +5488,13 @@ msgstr "Iniciar Kopete na bandexa."
 #: libkopete/kopetebehaviorsettings.kcfg:16
 #, kde-format
 msgid "Show Kopete in system tray."
-msgstr "Mostrar Kopete na bandexa do sistema."
+msgstr "Amosar Kopete na bandexa do sistema."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:20
 #, kde-format
 msgid "Use message queue."
-msgstr "Empregar a quenda de mensaxes."
+msgstr "Usar a quenda de mensaxes."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:24
@@ -5507,7 +5506,7 @@ msgstr "Almacenar as mensaxes da quenda."
 #: libkopete/kopetebehaviorsettings.kcfg:28
 #, kde-format
 msgid "Use mouse navigation only in contact list."
-msgstr "Empregar a navegación co rato só na lista de contactos."
+msgstr "Usar a navegación co rato só na lista de contactos."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:32
@@ -5525,7 +5524,7 @@ msgstr "Elevar a vista ao entraren mensaxes novas."
 #: libkopete/kopetebehaviorsettings.kcfg:52
 #, kde-format
 msgid "Show events in chat window."
-msgstr "Mostrar os eventos na xanela de conversa."
+msgstr "Amosar os eventos na xanela de conversa."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:56
@@ -5607,13 +5606,13 @@ msgstr "Activar o texto enriquecido de maneira predeterminada."
 #: libkopete/kopetebehaviorsettings.kcfg:113
 #, kde-format
 msgid "Show send button in Chat Window."
-msgstr "Mostrar o botón de enviar na xanela de conversa."
+msgstr "Amosar o botón de enviar na xanela de conversa."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:117
 #, kde-format
 msgid "Show message dates."
-msgstr "Mostrar as datas das mensaxes."
+msgstr "Amosar as datas das mensaxes."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:121
@@ -5631,7 +5630,7 @@ msgstr "Truncar o nome do contacto por riba dun máximo de caracteres."
 #: libkopete/kopetebehaviorsettings.kcfg:129
 #, kde-format
 msgid "Maximum number of messages to show in a chat window."
-msgstr "Número máximo de mensaxes mostradas na xanela de conversa."
+msgstr "Número máximo de mensaxes amosadas na xanela de conversa."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:133
@@ -5649,7 +5648,7 @@ msgstr "Complemento escollido para a vista da xanela de conversa."
 #: libkopete/kopetebehaviorsettings.kcfg:144
 #, kde-format
 msgid "Use auto away."
-msgstr "Empregar a ausencia automática."
+msgstr "Usar a ausencia automática."
 
 #. i18n: ectx: label, entry, group (AutoAway)
 #: libkopete/kopetebehaviorsettings.kcfg:148
@@ -5674,8 +5673,7 @@ msgstr "Confirmar antes de volver co modo de ausencia automática"
 #, kde-format
 msgid "When setting the auto away message, use the latest away message."
 msgstr ""
-"Cando se empregue a ausencia automática escoller a última mensaxe de "
-"ausencia."
+"Cando se use a ausencia automática escoller a última mensaxe de ausencia."
 
 #. i18n: ectx: label, entry, group (AutoAway)
 #: libkopete/kopetebehaviorsettings.kcfg:164
@@ -5713,19 +5711,19 @@ msgstr "Activar o desprazamento suave na lista de contactos."
 #: libkopete/kopetebehaviorsettings.kcfg:186
 #, kde-format
 msgid "Always show tabs."
-msgstr "Mostrar sempre os separadores."
+msgstr "Amosar sempre os separadores."
 
 #. i18n: ectx: label, entry, group (ChatWindowSettings)
 #: libkopete/kopetebehaviorsettings.kcfg:190
 #, kde-format
 msgid "Show contact name for each tab."
-msgstr "Mostrar o nome do contacto en cada separador."
+msgstr "Amosar o nome do contacto en cada separador."
 
 #. i18n: ectx: label, entry, group (ChatWindowSettings)
 #: libkopete/kopetebehaviorsettings.kcfg:194
 #, kde-format
 msgid "Show close button for each tab."
-msgstr "Mostrar o botón de pechar para cada separador."
+msgstr "Amosar o botón de pechar para cada separador."
 
 #: libkopete/kopetechatsession.cpp:293
 #, kde-format
@@ -5894,7 +5892,7 @@ msgid ""
 "will not function."
 msgstr ""
 "Produciuse un erro: o acceso ao intérprete de ordes está restrinxido no "
-"sistema. A orde «/exec» non poderá empregarse."
+"sistema. A orde «/exec» non poderá usarse."
 
 #: libkopete/kopetecommandhandler.cpp:381
 #, kde-format
@@ -6101,7 +6099,7 @@ msgstr "Nome personalizado"
 #: libkopete/kopeteglobal.cpp:208
 #, kde-format
 msgid "Shown even if offline"
-msgstr "Mostrar mesmo cando estea sen conexión"
+msgstr "Amosar mesmo cando estea sen conexión"
 
 #: libkopete/kopetegroup.cpp:36
 #, kde-format
@@ -6214,7 +6212,7 @@ msgid ""
 "you want to save the password in the <b>unsafe</b> configuration file "
 "instead?</qt>"
 msgstr ""
-"<qt>Kopete non pode gardar o contrasinal con seguranza na súa carteira.<br /"
+"<qt>Kopete non pode gardar o contrasinal con seguridade na súa carteira.<br /"
 ">Quere gardar o contrasinal no ficheiro de configuración, a pesar de <b>non "
 "ser moi seguro</b>?</qt>"
 
@@ -6651,8 +6649,8 @@ msgid ""
 "The display name of the contact.  Leave it empty to use the contact's "
 "nickname."
 msgstr ""
-"O nome para mostrar do contacto. Déixeo baleiro se prefire empregar o alcume "
-"do contacto."
+"O nome para amosar do contacto. Déixeo baleiro se prefire usar o alcume do "
+"contacto."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, textLabel7)
 #. i18n: ectx: property (whatsThis), widget (KLineEdit, m_displayNameEdit)
@@ -6665,15 +6663,15 @@ msgid ""
 "Leave it empty if you want to see the contact's nickname as their display "
 "name."
 msgstr ""
-"Insira o nome para mostrar do contacto. Así é como aparecerá este contacto "
-"na lista de contactos.\n"
-"Déixeo baleiro se prefire que apareza co alcume como nome para mostrar."
+"Insira o nome para amosar do contacto. Así é como aparecerá este contacto na "
+"lista de contactos.\n"
+"Déixeo baleiro se prefire que apareza co alcume como nome para amosar."
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel7)
 #: libkopete/ui/contactaddednotifywidget.ui:113
 #, kde-format
 msgid "Display name:"
-msgstr "Nome para mostrar:"
+msgstr "Nome para amosar:"
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, textLabel5)
 #: libkopete/ui/contactaddednotifywidget.ui:141
@@ -6831,7 +6829,7 @@ msgstr "Contactos"
 #: plugins/addbookmarks/addbookmarksprefsui.ui:31
 #, kde-format
 msgid "Use Subfolder for Each Contact"
-msgstr "Empregar un subcartafol para cada contacto"
+msgstr "Usar un subcartafol para cada contacto"
 
 #. i18n: ectx: property (text), widget (QRadioButton, yesButton)
 #: plugins/addbookmarks/addbookmarksprefsui.ui:55
@@ -6873,7 +6871,7 @@ msgstr "Orde:"
 #: plugins/alias/aliasdialog.ui:47
 #, kde-format
 msgid "This is the command that you want to run when you execute this alias. "
-msgstr "Esta é a orde que quere que se execute ao empregar este alias. "
+msgstr "Esta é a orde que quere que se execute ao usar este alias. "
 
 #. i18n: ectx: property (whatsThis), widget (KLineEdit, command)
 #: plugins/alias/aliasdialog.ui:54
@@ -6888,9 +6886,9 @@ msgid ""
 "Do not include the '/' in the command (if you do it will be stripped off "
 "anyway).</qt>"
 msgstr ""
-"<qt>Esta é a orde que quere que se execute ao empregar este alias.\n"
+"<qt>Esta é a orde que quere que se execute ao usar este alias.\n"
 "\n"
-"Pode empregar as variábeis <b>%1, %2, …, %9</b> na orde, que se substituirán "
+"Pode usar as variábeis <b>%1, %2, …, %9</b> na orde, que se substituirán "
 "polos parámetros do alias. A variábel <b>%s</b> substitúese por todos os "
 "parámetros. <b>%n</b> substitúese polo seu alcume.\n"
 "\n"
@@ -7033,8 +7031,8 @@ msgid ""
 "<qt>Could not add alias <b>%1</b>. This command is already being handled "
 "either by another alias or Kopete itself.</qt>"
 msgstr ""
-"<qt>Non se puido engadir o alias <b>%1</b>. Esta orde xa a está a empregar "
-"outro alias ou o propio Kopete.</qt>"
+"<qt>Non se puido engadir o alias <b>%1</b>. Esta orde xa a está a usar outro "
+"alias ou o propio Kopete.</qt>"
 
 #: plugins/alias/aliaspreferences.cpp:322
 #: plugins/alias/aliaspreferences.cpp:405
@@ -7048,8 +7046,8 @@ msgid ""
 "<qt>Could not add alias <b>%1</b>. This command is already being handled by "
 "either another alias or Kopete itself.</qt>"
 msgstr ""
-"<qt>Non se puido engadir o alias <b>%1</b>. Esta orde xa a está a empregar "
-"outro alias ou o propio Kopete.</qt>"
+"<qt>Non se puido engadir o alias <b>%1</b>. Esta orde xa a está a usar outro "
+"alias ou o propio Kopete.</qt>"
 
 #: plugins/alias/aliaspreferences.cpp:426
 #, kde-format
@@ -7547,7 +7545,7 @@ msgstr "Acción"
 #: plugins/highlight/highlightprefsbase.ui:245
 #, kde-format
 msgid "Set the message importance to:"
-msgstr "Estabelecer a importancia da mensaxe como:"
+msgstr "Definir a importancia da mensaxe como:"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, m_importance)
 #: plugins/highlight/highlightprefsbase.ui:262
@@ -7632,7 +7630,7 @@ msgstr ""
 #: plugins/history2/history2config.kcfg:11
 #, kde-format
 msgid "Show previous messages in new chats."
-msgstr "Mostrar nas conversas novas as mensaxes previas."
+msgstr "Amosar nas conversas novas as mensaxes previas."
 
 #. i18n: ectx: label, entry (Number_Auto_chatwindow), group (History2 Plugin)
 #. i18n: ectx: label, entry (Number_Auto_chatwindow), group (History Plugin)
@@ -7640,7 +7638,7 @@ msgstr "Mostrar nas conversas novas as mensaxes previas."
 #: plugins/history2/history2config.kcfg:16
 #, kde-format
 msgid "Number of messages to show."
-msgstr "Número de mensaxes para mostrar."
+msgstr "Número de mensaxes para amosar."
 
 #. i18n: ectx: label, entry (Number_ChatWindow), group (History2 Plugin)
 #. i18n: ectx: label, entry (Number_ChatWindow), group (History Plugin)
@@ -7935,8 +7933,8 @@ msgid ""
 "The number of messages that are shown when browsing history in the chat "
 "window"
 msgstr ""
-"O número de mensaxes que se mostran cando se navega no historial na xanela "
-"de conversa"
+"O número de mensaxes que se amosan cando se navega no historial na xanela de "
+"conversa"
 
 #. i18n: ectx: property (text), widget (QLabel, lblNoLinesPerPage)
 #: plugins/history/historyprefsui.ui:75 plugins/history2/history2prefsui.ui:97
@@ -7976,7 +7974,7 @@ msgstr ""
 #: plugins/history/historyprefsui.ui:98 plugins/history2/history2prefsui.ui:107
 #, kde-format
 msgid "Number of messages to show:"
-msgstr "Número de mensaxes para mostrar:"
+msgstr "Número de mensaxes para amosar:"
 
 # skip-rule: PT-2013-dual_browse
 #. i18n: ectx: property (whatsThis), widget (QSpinBox, Number_ChatWindow)
@@ -8003,7 +8001,7 @@ msgstr ""
 #: plugins/history/historyprefsui.ui:160 plugins/history2/history2prefsui.ui:68
 #, kde-format
 msgid "Show chat history in new chats"
-msgstr "Mostrar o historial da conversa nas conversas novas"
+msgstr "Amosar o historial da conversa nas conversas novas"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: plugins/history/historyviewer.ui:39 plugins/history2/history2viewer.ui:39
@@ -8154,7 +8152,7 @@ msgid ""
 "This plugin requires that the ImageMagick convert program be installed in "
 "order to work."
 msgstr ""
-"O complemento KopeteTeX permítelle a Kopete mostrar fórmulas LaTeX na xanela "
+"O complemento KopeteTeX permítelle a Kopete amosar fórmulas LaTeX na xanela "
 "de conversa. O remitente debe envolver a fórmula entre dous pares de signos "
 "de dólar, é dicir, «$$fórmula$$».\n"
 "O complemento require o programa de conversión ImageMagick para funcionar."
@@ -8242,7 +8240,7 @@ msgstr ", e "
 msgid ""
 "Show explicitly the current music listened via a menu or /media command."
 msgstr ""
-"Mostrar explicitamente a música actual cando se escoita a través dun menú ou "
+"Amosar explicitamente a música actual cando se escoita a través dun menú ou "
 "da orde «/media»."
 
 #. i18n: ectx: label, entry (ChatAdvertising), group (Now Listening Plugin)
@@ -8342,7 +8340,7 @@ msgstr "Mensa&xe"
 #: plugins/nowlistening/nowlisteningprefs.ui:70
 #, kde-format
 msgid "Use this message when advertising:"
-msgstr "Empregar esta mensaxe cando se anuncie:"
+msgstr "Usar esta mensaxe cando se anuncie:"
 
 #. i18n: ectx: property (text), widget (QLabel, helperLabel)
 #: plugins/nowlistening/nowlisteningprefs.ui:78
@@ -8607,7 +8605,7 @@ msgid ""
 "that the conversation is now insecure."
 msgstr ""
 "Fallou a autenticación de %1. Para garantir que non está a falar cun "
-"impostor, probe de novo a empregar o método de verificación manual da pegada "
+"impostor, probe de novo a usar o método de verificación manual da pegada "
 "dixital. Por agora a conversa non é segura."
 
 #: plugins/otr/authenticationwizard.cpp:367
@@ -8622,8 +8620,8 @@ msgid ""
 "to an imposter, try again using the manual fingerprint verification method."
 msgstr ""
 "%1 interrompeu o proceso de autenticación. Para garantir que non está a "
-"falar cun impostor probe de novo a empregar o método de verificación manual "
-"da pegada dixital."
+"falar cun impostor probe de novo a usar o método de verificación manual da "
+"pegada dixital."
 
 #: plugins/otr/authenticationwizard.cpp:377
 #, kde-format
@@ -9754,7 +9752,7 @@ msgstr "Non traducir as mensaxes recibidas."
 #: plugins/translator/translatorconfig.kcfg:25
 #, kde-format
 msgid "Show the original incoming message"
-msgstr "Mostrar a mensaxe recibida orixinalmente"
+msgstr "Amosar a mensaxe recibida orixinalmente"
 
 #. i18n: ectx: label, entry (IncomingTranslate), group (Translator plugin)
 #: plugins/translator/translatorconfig.kcfg:30
@@ -9772,7 +9770,7 @@ msgstr "Non traducir as mensaxes ao envialas."
 #: plugins/translator/translatorconfig.kcfg:40
 #, kde-format
 msgid "Show the original outgoing message"
-msgstr "Mostrar a mensaxe enviada orixinalmente"
+msgstr "Amosar a mensaxe enviada orixinalmente"
 
 #. i18n: ectx: label, entry (OutgoingTranslate), group (Translator plugin)
 #: plugins/translator/translatorconfig.kcfg:45
@@ -9784,7 +9782,7 @@ msgstr "Traducir as mensaxes directamente ao envialas."
 #: plugins/translator/translatorconfig.kcfg:50
 #, kde-format
 msgid "Show dialog before sending message"
-msgstr "Mostrar un diálogo antes de enviar as mensaxes."
+msgstr "Amosar un diálogo antes de enviar as mensaxes."
 
 #: plugins/translator/translatordialog.cpp:26
 #, kde-format
@@ -10158,7 +10156,7 @@ msgstr "Non traducir"
 #: plugins/translator/translatorprefsbase.ui:182
 #, kde-format
 msgid "Show the original message"
-msgstr "Mostrar a mensaxe orixinal"
+msgstr "Amosar a mensaxe orixinal"
 
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_IncomingTranslate)
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_OutgoingTranslate)
@@ -10178,7 +10176,7 @@ msgstr "Mensaxes saíntes"
 #: plugins/translator/translatorprefsbase.ui:199
 #, kde-format
 msgid "Show dialog before sending"
-msgstr "Mostrar o diálogo antes de enviar"
+msgstr "Amosar o diálogo antes de enviar"
 
 #. i18n: ectx: label, entry (PreviewAmount), group (URLPicPreview Plugin)
 #: plugins/urlpicpreview/urlpicpreview.kcfg:9
@@ -10223,7 +10221,7 @@ msgid ""
 "displayed as previews.\n"
 "Otherwise, an unlimited number of previews are generated."
 msgstr ""
-"De se marcar, só se descargan e mostran como previsualización a cantidade "
+"De se marcar, só se descargan e amosan como previsualización a cantidade "
 "seleccionada de imaxes.\n"
 "De non se marcar xérase un número indefinido de previsualizacións."
 
@@ -10314,7 +10312,7 @@ msgid ""
 msgstr ""
 "Interrómpese automaticamente transcorrido o tempo indicado para a creación "
 "da previsualización.\n"
-"Empregue 0 segundos se quere que nunca se interrompa a creación destas."
+"Use 0 segundos se quere que nunca se interrompa a creación destas."
 
 #. i18n: ectx: property (suffix), widget (KIntNumInput, timeoutLinkPreview)
 #: plugins/urlpicpreview/urlpicpreviewprefsbase.ui:226
@@ -10356,7 +10354,7 @@ msgstr "Formatado XML"
 #: plugins/webpresence/webpresenceconfig.kcfg:34
 #, kde-format
 msgid "XML transformation with a XSLT sheet"
-msgstr "Transformación XML empregando unha folla XSLT"
+msgstr "Transformación XML usando unha folla XSLT"
 
 #. i18n: ectx: label, entry (formatStylesheetURL), group (Web Presence Plugin)
 #: plugins/webpresence/webpresenceconfig.kcfg:39
@@ -10374,19 +10372,19 @@ msgstr "Substituír o texto do protocolo con imaxes en (X)HTML"
 #: plugins/webpresence/webpresenceconfig.kcfg:48
 #, kde-format
 msgid "Use one of your IM names as display name"
-msgstr "Empregar un dos seus nomes de mensaxería como nome para mostrar"
+msgstr "Usar un dos seus nomes de mensaxería como nome para amosar"
 
 #. i18n: ectx: label, entry (showAnotherName), group (Web Presence Plugin)
 #: plugins/webpresence/webpresenceconfig.kcfg:53
 #, kde-format
 msgid "Use another name as display name"
-msgstr "Empregar outro nome como nome para mostrar"
+msgstr "Usar outro nome como nome para amosar"
 
 #. i18n: ectx: label, entry (showThisName), group (Web Presence Plugin)
 #: plugins/webpresence/webpresenceconfig.kcfg:58
 #, kde-format
 msgid "Desired display name"
-msgstr "Nome para mostrar"
+msgstr "Nome para amosar"
 
 #. i18n: ectx: label, entry (includeIMAddress), group (Web Presence Plugin)
 #: plugins/webpresence/webpresenceconfig.kcfg:62
@@ -10433,7 +10431,7 @@ msgid ""
 "HTML 4.01 Transitional using the ISO-8859-1 (aka. Latin 1) character set "
 "encoding."
 msgstr ""
-"HTML 4.01 Transitional empregando o sistema de codificación de caracteres "
+"HTML 4.01 Transitional usando o sistema de codificación de caracteres "
 "ISO-8859-1 (coñecida como Latin 1)."
 
 #. i18n: ectx: property (whatsThis), widget (QRadioButton, kcfg_formatHTML)
@@ -10445,7 +10443,7 @@ msgid ""
 "\n"
 "This version should be easily opened by most web browsers."
 msgstr ""
-"HTML 4.01 Transitional empregando a codificación do conxunto de caracteres "
+"HTML 4.01 Transitional usando a codificación do conxunto de caracteres "
 "ISO-8859-1 (coñecida como Latin 1).\n"
 "\n"
 "Esta versión debería tratarse correctamente pola maioría dos navegadores web."
@@ -10473,8 +10471,8 @@ msgid ""
 "your web server serves it out with the correct mime type, such as "
 "application/xhtml+xml."
 msgstr ""
-"A páxina resultante empregará a recomendación estrita do W3C para XHTML 1.0. "
-"A codificación de caracteres é UTF-8.\n"
+"A páxina resultante usará a recomendación estrita do W3C para XHTML 1.0. A "
+"codificación de caracteres é UTF-8.\n"
 "\n"
 "Lembre que algúns navegadores web son incompatíbeis con XHTML. Deberíase "
 "asegurar ademais de que o servidor web o envíe no tipo MIME correcto, como "
@@ -10491,13 +10489,13 @@ msgstr "XHTML (estilo simple)"
 #, kde-format
 msgid "Save the output in XML format using UTF-8 character set."
 msgstr ""
-"Garde o resultado en formato XML empregando o conxunto de caracteres UTF-8."
+"Garde o resultado en formato XML usando o conxunto de caracteres UTF-8."
 
 #. i18n: ectx: property (whatsThis), widget (QRadioButton, kcfg_formatXML)
 #: plugins/webpresence/webpresenceprefs.ui:107
 #, kde-format
 msgid "Save the output in XML format using the UTF-8 encoding."
-msgstr "Garde o resultado en formato XML empregando a codificación UTF-8."
+msgstr "Garde o resultado en formato XML usando a codificación UTF-8."
 
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_formatXML)
 #: plugins/webpresence/webpresenceprefs.ui:110
@@ -10509,7 +10507,7 @@ msgstr "&XML"
 #: plugins/webpresence/webpresenceprefs.ui:117
 #, kde-format
 msgid "XML transformation &using this XSLT sheet:"
-msgstr "Transformación XML &empregando esta folla XSLT:"
+msgstr "Transformación XML &usando esta folla XSLT:"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_useImagesHTML)
 #: plugins/webpresence/webpresenceprefs.ui:157
@@ -10541,7 +10539,7 @@ msgstr ""
 " \n"
 "Lembre que ten que copiar manualmente os ficheiros PNG ao lugar.\n"
 "\n"
-"De maneira predeterminada empréganse os seguintes ficheiros:\n"
+"De maneira predeterminada úsanse os seguintes ficheiros:\n"
 "\n"
 "images/msn_protocol.png\n"
 "images/icq_protocol.png\n"
@@ -10563,7 +10561,7 @@ msgstr "&Substitúe o texto do protocolo con imaxes en (X)HTML."
 #: plugins/webpresence/webpresenceprefs.ui:199
 #, kde-format
 msgid "Use one of &your IM names"
-msgstr "Empregar un dos &seus nomes de mensaxería"
+msgstr "Usar un dos &seus nomes de mensaxería"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_includeIMAddress)
 #: plugins/webpresence/webpresenceprefs.ui:209
@@ -10575,7 +10573,7 @@ msgstr "&Incluír o enderezo de mensaxería instantánea"
 #: plugins/webpresence/webpresenceprefs.ui:216
 #, kde-format
 msgid "Use another &name:"
-msgstr "Empregar outro &nome:"
+msgstr "Usar outro &nome:"
 
 #: protocols/bonjour/bonjouraccount.cpp:205
 #, kde-format
@@ -10833,7 +10831,7 @@ msgstr "Exportar os contactos cando haxa cambios"
 #: protocols/gadu/gaduaccount.cpp:772
 #, kde-format
 msgid "connection using SSL was not possible, retrying without."
-msgstr "Non foi posíbel a conexión empregando SSL, inténtase sen el."
+msgstr "Non foi posíbel a conexión usando SSL, inténtase sen el."
 
 #: protocols/gadu/gaduaccount.cpp:797
 #, kde-format
@@ -11028,7 +11026,7 @@ msgstr "Cambiouse o contrasinal."
 #: protocols/gadu/gaducontact.cpp:193 protocols/qq/qqcontact.cpp:144
 #, kde-format
 msgid "Show Profile"
-msgstr "Mostrar o perfil"
+msgstr "Amosar o perfil"
 
 #: protocols/gadu/gaducontact.cpp:247
 #, kde-format
@@ -11532,7 +11530,7 @@ msgstr ""
 #: protocols/gadu/ui/gaduadd.ui:302
 #, kde-format
 msgid "Offline to contact when you set \"&Just for friends\""
-msgstr "Sen conexión para o contacto cando se estabeleza «&Só para amigos»."
+msgstr "Sen conexión para o contacto cando se defina «&Só para amigos»."
 
 #. i18n: ectx: property (text), item, widget (KComboBox, cb_type)
 #. i18n: ectx: property (text), widget (QTreeWidget, groups)
@@ -11559,7 +11557,7 @@ msgstr ""
 #: protocols/gadu/ui/gaduawayui.ui:62
 #, kde-format
 msgid "Set your status to Online."
-msgstr "Estabelecer o seu estado como «En liña»."
+msgstr "Definir o seu estado como «En liña»."
 
 #. i18n: ectx: property (whatsThis), widget (QRadioButton, onlineButton_)
 #: protocols/gadu/ui/gaduawayui.ui:65
@@ -11568,7 +11566,7 @@ msgid ""
 "Set your status to Online, indicating that you are available to chat with "
 "anyone who wishes."
 msgstr ""
-"Estabelecer o seu estado como «En liña», indicando que está dispoñíbel para "
+"Definir o seu estado como «En liña», indicando que está dispoñíbel para "
 "conversar con calquera."
 
 #. i18n: ectx: property (toolTip), widget (QRadioButton, awayButton_)
@@ -11668,7 +11666,7 @@ msgid ""
 "account manually via the icon in the bottom of the main Kopete window."
 msgstr ""
 "Marque isto para desactivar a conexión automática. Se o activa, pódese "
-"conectar a esta conta manualmente empregando a icona do baixo da xanela "
+"conectar a esta conta manualmente usando a icona do baixo da xanela "
 "principal de Kopete."
 
 #. i18n: ectx: property (text), widget (QCheckBox, mAutoLogon)
@@ -11782,9 +11780,9 @@ msgid ""
 msgstr ""
 "Esta opción úsase cando falla o servidor de balance de carga primario do "
 "Gadu-Gadu. Se isto se marca, Kopete intentará conectarse co servidor actual "
-"directamente empregando a información sobre este gardada na cache. Isto "
-"evita os erros de conexión derivados da non resposta do servidor de balance "
-"de carga primario. Na práctica isto só é de axuda moi raramente."
+"directamente usando a información sobre este gardada na cache. Isto evita os "
+"erros de conexión derivados da non resposta do servidor de balance de carga "
+"primario. Na práctica isto só é de axuda moi raramente."
 
 #. i18n: ectx: property (text), widget (QCheckBox, cacheServersCheck__)
 #: protocols/gadu/ui/gadueditaccountui.ui:277
@@ -11796,7 +11794,7 @@ msgstr "Información do servidor &caché"
 #: protocols/gadu/ui/gadueditaccountui.ui:290
 #, kde-format
 msgid "&Use direct connections (DCC)"
-msgstr "&Empregar conexións directas (DCC)"
+msgstr "&Usar conexións directas (DCC)"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, exportCheck_)
 #: protocols/gadu/ui/gadueditaccountui.ui:300
@@ -11859,7 +11857,7 @@ msgstr ""
 #: protocols/gadu/ui/gadueditaccountui.ui:356
 #, kde-format
 msgid "Use protocol encr&yption (SSL):"
-msgstr "Empregar o protocolo de cifra&do (SSL):"
+msgstr "Usar o protocolo de cifra&do (SSL):"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, useTls_)
 #: protocols/gadu/ui/gadueditaccountui.ui:379
@@ -12049,7 +12047,7 @@ msgstr "Crear conta - Gadu-Gadu"
 #: protocols/gadu/ui/gaduregisteraccountui.ui:244
 #, kde-format
 msgid "A confirmation of the password you would like to use."
-msgstr "Unha confirmación do contrasinal que quere empregar."
+msgstr "Unha confirmación do contrasinal que quere usar."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, labelPasswordVerify)
 #. i18n: ectx: property (whatsThis), widget (KLineEdit, valuePasswordVerify)
@@ -12057,7 +12055,7 @@ msgstr "Unha confirmación do contrasinal que quere empregar."
 #: protocols/gadu/ui/gaduregisteraccountui.ui:247
 #, kde-format
 msgid "A confirmation of the password you would like to use for this account."
-msgstr "Unha confirmación do contrasinal que quere empregar para esta conta."
+msgstr "Unha confirmación do contrasinal que quere usar para esta conta."
 
 #. i18n: ectx: property (text), widget (QLabel, labelPasswordVerify)
 #: protocols/gadu/ui/gaduregisteraccountui.ui:69
@@ -12071,7 +12069,7 @@ msgstr "Repetir o con&trasinal:"
 #: protocols/gadu/ui/gaduregisteraccountui.ui:228
 #, kde-format
 msgid "The password you would like to use."
-msgstr "O contrasinal que quere empregar."
+msgstr "O contrasinal que quere usar."
 
 #. i18n: ectx: property (whatsThis), widget (KLineEdit, valuePassword)
 #. i18n: ectx: property (whatsThis), widget (QLabel, labelPassword)
@@ -12079,7 +12077,7 @@ msgstr "O contrasinal que quere empregar."
 #: protocols/gadu/ui/gaduregisteraccountui.ui:231
 #, kde-format
 msgid "The password you would like to use for this account."
-msgstr "O contrasinal que quere empregar para esta conta."
+msgstr "O contrasinal que quere usar para esta conta."
 
 #. i18n: ectx: property (toolTip), widget (KLineEdit, valueEmailAddress)
 #. i18n: ectx: property (toolTip), widget (QLabel, labelEmailAddress)
@@ -12096,8 +12094,7 @@ msgstr "O seu enderezo de correo electrónico."
 #, kde-format
 msgid "The E-mail address you would like to use to register this account."
 msgstr ""
-"O enderezo de correo electrónico que quere empregar para rexistrar esta "
-"conta."
+"O enderezo de correo electrónico que quere usar para rexistrar esta conta."
 
 #. i18n: ectx: property (text), widget (QLabel, labelEmailAddress)
 #: protocols/gadu/ui/gaduregisteraccountui.ui:135
@@ -12122,8 +12119,8 @@ msgid ""
 "The text from the image below.  This is used to prevent abusive automated "
 "registration scripts."
 msgstr ""
-"O texto da imaxe de embaixo.  Isto emprégase para previr os rexistros "
-"abusivos automatizados."
+"O texto da imaxe de embaixo.  Isto úsase para previr os rexistros abusivos "
+"automatizados."
 
 #. i18n: ectx: property (text), widget (QLabel, labelVerificationSequence)
 #: protocols/gadu/ui/gaduregisteraccountui.ui:181
@@ -12162,8 +12159,8 @@ msgid ""
 "registration abuse.</i>"
 msgstr ""
 "<i>Escriba as letras e números que aparecen na imaxe no campo <b>Secuencia "
-"de Verificación</b>. Isto emprégase para evitar rexistros automatizados "
-"abusivos.</i>"
+"de Verificación</b>. Isto úsase para evitar rexistros automatizados abusivos."
+"</i>"
 
 #. i18n: ectx: property (text), widget (QRadioButton, radioByData)
 #: protocols/gadu/ui/gadusearch.ui:52
@@ -12329,7 +12326,7 @@ msgstr "O propósito do certificado é incorrecto."
 #: protocols/groupwise/gwaccount.cpp:773 protocols/jabber/jabberaccount.cpp:530
 #, kde-format
 msgid "The certificate is self-signed."
-msgstr "O certificado está asinado con seguranza."
+msgstr "O certificado está asinado con seguridade."
 
 #: protocols/groupwise/gwaccount.cpp:777 protocols/jabber/jabberaccount.cpp:534
 #, kde-format
@@ -12523,7 +12520,7 @@ msgstr "Conv&idar"
 #: protocols/qq/qqchatsession.cpp:74 protocols/qq/qqchatsession.cpp:498
 #, kde-format
 msgid "Security Status"
-msgstr "Estado de seguranza"
+msgstr "Estado de seguridade"
 
 #: protocols/groupwise/gwmessagemanager.cpp:83
 #: protocols/qq/qqchatsession.cpp:76
@@ -12782,7 +12779,7 @@ msgstr "Falta o arquivo principal."
 #: protocols/groupwise/libgroupwise/gwerror.cpp:100
 #, kde-format
 msgid "Expired password in use"
-msgstr "Estase a empregar un contrasinal caduco"
+msgstr "Estase a usar un contrasinal caduco"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:103
 #, kde-format
@@ -12898,7 +12895,7 @@ msgid ""
 "account manually using the icon in the bottom of the main Kopete window"
 msgstr ""
 "Marque isto para desactivar o inicio automático. De se marcar pódese "
-"conectar a esta conta manualmente empregando a icona no fondo da xanela "
+"conectar a esta conta manualmente usando a icona no fondo da xanela "
 "principal de Kopete"
 
 #. i18n: ectx: property (toolTip), widget (QLabel, labelServer)
@@ -13048,8 +13045,8 @@ msgstr "Un identificador de usuario correcto"
 msgid ""
 "Use this field to add a contact if you already know the user's exact User ID"
 msgstr ""
-"Empregue este campo para engadir un contacto novo se xa sabe o identificador "
-"de usuario exacto"
+"Use este campo para engadir un contacto novo se xa sabe o identificador de "
+"usuario exacto"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, GroupWiseChatProps)
 #: protocols/groupwise/ui/gwchatprops.ui:13
@@ -13315,7 +13312,7 @@ msgstr "USER_ID"
 #: protocols/groupwise/ui/gwcontactprops.ui:134
 #, kde-format
 msgid "Change the display name used for this contact"
-msgstr "Cambiar o nome para mostrar que se usa para este contacto"
+msgstr "Cambiar o nome para amosar que se usa para este contacto"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel14)
 #: protocols/groupwise/ui/gwcontactprops.ui:78
@@ -13333,7 +13330,7 @@ msgstr "USER_STATUS"
 #: protocols/groupwise/ui/gwcontactprops.ui:121
 #, kde-format
 msgid "&Display name:"
-msgstr "&Nome para mostrar:"
+msgstr "&Nome para amosar:"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel15)
 #: protocols/groupwise/ui/gwcontactprops.ui:172
@@ -13648,7 +13645,7 @@ msgstr "Editar a información do usuario…"
 #: protocols/jabber/jabberaccount.cpp:252
 #, kde-format
 msgid "Set Mood"
-msgstr "Estabelecer o estado de ánimo"
+msgstr "Definir o estado de ánimo"
 
 #: protocols/jabber/jabberaccount.cpp:318
 #, kde-format
@@ -13934,7 +13931,7 @@ msgstr "Problema do Simple Authentication and Security Layer (SASL)."
 #: protocols/jabber/jabberaccount.cpp:1004
 #, kde-format
 msgid "There was an error in the security layer: %1"
-msgstr "Produciuse un erro no nivel de seguranza: %1"
+msgstr "Produciuse un erro no nivel de seguridade: %1"
 
 #: protocols/jabber/jabberaccount.cpp:1011
 #, kde-format
@@ -14177,7 +14174,7 @@ msgstr "Marcador de conversa en grupo"
 #: protocols/jabber/jabberchatsession.cpp:70
 #, kde-format
 msgid "Show audio calls"
-msgstr "Mostrar as chamadas de son"
+msgstr "Amosar as chamadas de son"
 
 #: protocols/jabber/jabberchatsession.cpp:74
 #, kde-format
@@ -14218,7 +14215,7 @@ msgstr "Chamar o contacto"
 #: protocols/jabber/jabbercontact.cpp:185
 #, kde-format
 msgid "Set Availability"
-msgstr "Estabelecer a dispoñibilidade"
+msgstr "Definir a dispoñibilidade"
 
 #: protocols/jabber/jabbercontact.cpp:195
 #, kde-format
@@ -15169,7 +15166,7 @@ msgstr "Os novos contrasinais non casan. Insíraos de novo."
 #, kde-format
 msgid "For security reasons, you are not allowed to set an empty password."
 msgstr ""
-"Por motivos de seguranza non se lle permite empregar un contrasinal baleiro."
+"Por motivos de seguridade non se lle permite usar un contrasinal baleiro."
 
 #: protocols/jabber/ui/dlgjabberchangepassword.cpp:88
 #: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:52
@@ -15270,7 +15267,7 @@ msgstr "Configuración b&ásica"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:81
 #, kde-format
 msgid "The Jabber ID for the account you would like to use."
-msgstr "O identificador de Jabber da conta que quere empregar."
+msgstr "O identificador de Jabber da conta que quere usar."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, TextLabel1_3)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:68
@@ -15280,9 +15277,9 @@ msgid ""
 "include the username and the domain (like an E-mail address), as there are "
 "many Jabber servers."
 msgstr ""
-"O identificador de Jabber para a conta que quere empregar. Note que debe "
-"incluír o nome de usuario e o dominio (como o enderezo de correo-e), xa que "
-"hai moitos servidores Jabber."
+"O identificador de Jabber para a conta que quere usar. Note que debe incluír "
+"o nome de usuario e o dominio (como o enderezo de correo-e), xa que hai "
+"moitos servidores Jabber."
 
 #. i18n: ectx: property (whatsThis), widget (QLineEdit, mID)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:84
@@ -15292,7 +15289,7 @@ msgid ""
 "include the username and the domain (for example, joe@jabber.org), as there "
 "are many Jabber servers."
 msgstr ""
-"O identificador de Jabber para a conta que quere empregar.  Note que debe "
+"O identificador de Jabber para a conta que quere usar.  Note que debe "
 "incluír un nome de usuario e o dominio (por exemplo, rosalia@jabber.org), xa "
 "que hai moitos servidores Jabber."
 
@@ -15339,8 +15336,8 @@ msgid ""
 "If you have an existing Jabber account and would like to change its "
 "password, you can use this button to enter a new password."
 msgstr ""
-"Se xa ten unha conta Jabber e quere cambiarlle o contrasinal pode empregar "
-"este botón para inserir un contrasinal novo."
+"Se xa ten unha conta Jabber e quere cambiarlle o contrasinal pode usar este "
+"botón para inserir un contrasinal novo."
 
 #. i18n: ectx: attribute (title), widget (QWidget, TabPage)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:285
@@ -15428,7 +15425,7 @@ msgstr "Configuracións locais"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:579
 #, kde-format
 msgid "The resource name you would like to use on the Jabber network."
-msgstr "O nome do recurso que quere empregar na rede Jabber."
+msgstr "O nome do recurso que quere usar na rede Jabber."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, TextLabel3_3)
 #. i18n: ectx: property (whatsThis), widget (QLineEdit, mResource)
@@ -15443,10 +15440,9 @@ msgid ""
 "different resource names, so you may wish to enter 'Home' or 'Work' here, "
 "for example."
 msgstr ""
-"O nome do recurso que queira empregar na rede Jabber.  Jabber permite "
-"acceder coa mesma conta desde varios sitios con distintos nomes. Insira aquí "
-"o nome do sitio desde o que está a entrar, como por exemplo «Casa» ou "
-"«Traballo»."
+"O nome do recurso que queira usar na rede Jabber.  Jabber permite acceder "
+"coa mesma conta desde varios sitios con distintos nomes. Insira aquí o nome "
+"do sitio desde o que está a entrar, como por exemplo «Casa» ou «Traballo»."
 
 #. i18n: ectx: property (text), widget (QLabel, TextLabel3_3)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:522
@@ -15565,7 +15561,7 @@ msgstr "Detectar automaticamente o enderezo IP externo"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:867
 #, kde-format
 msgid "First port to use:"
-msgstr "Primeiro porto a empregar:"
+msgstr "Primeiro porto a usar:"
 
 #. i18n: ectx: property (toolTip), widget (QSpinBox, firstPortEdit)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:881
@@ -15575,8 +15571,8 @@ msgid ""
 "One media type uses 2 ports and each new Jingle session will use the next 2 "
 "available ports."
 msgstr ""
-"Indique o primeiro porto entrante a empregar nas sesións de Jingle.\n"
-"Un tipo de medio emprega 2 portos e cada nova sesión de Jingle empregará os "
+"Indique o primeiro porto entrante a usar nas sesións de Jingle.\n"
+"Un tipo de medio usa 2 portos e cada nova sesión de Jingle usará os "
 "seguintes 2 portos dispoñíbeis."
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_3)
@@ -15590,7 +15586,7 @@ msgstr "Recursos"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:913
 #, kde-format
 msgid "Microphone to use:"
-msgstr "Micrófono a empregar:"
+msgstr "Micrófono a usar:"
 
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:927
@@ -15701,7 +15697,7 @@ msgstr ""
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1129
 #, kde-format
 msgid "Al&ways send displayed notifications"
-msgstr "Mostrar sempre as notificacións de envío"
+msgstr "Amosar sempre as notificacións de envío"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbSendComposingEvent)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1142
@@ -16696,7 +16692,7 @@ msgstr "Identificador do cliente"
 #: protocols/meanwhile/ui/meanwhileeditaccount.ui:216
 #, kde-format
 msgid "Use custom client identifier"
-msgstr "Empregar un identificador de cliente personalizado"
+msgstr "Usar un identificador de cliente personalizado"
 
 #. i18n: ectx: property (text), widget (QLabel, lblClientIdentifier)
 #: protocols/meanwhile/ui/meanwhileeditaccount.ui:235
@@ -16995,9 +16991,9 @@ msgid ""
 "screen name from AIM, AOL, or .Mac.<br><br>If you do not currently have an "
 "AIM screen name, please click the button to create one."
 msgstr ""
-"Para conectar á rede de Mensaxería Instantánea de AOL, precisa empregar un "
-"nome de pantalla de AIM, AOL ou Mac. <br><br>Se non ten aínda un nome de "
-"pantalla AIM, prema o botón para crealo."
+"Para conectar á rede de Mensaxería Instantánea de AOL, precisa usar un nome "
+"de pantalla de AIM, AOL ou Mac. <br><br>Se non ten aínda un nome de pantalla "
+"AIM, prema o botón para crealo."
 
 #. i18n: ectx: property (toolTip), widget (QLabel, lblAccountId)
 #. i18n: ectx: property (toolTip), widget (QLineEdit, edtAccountId)
@@ -17101,7 +17097,7 @@ msgstr "Opcións de conexión directa"
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:564
 #, kde-format
 msgid "The ports to use for direct connections."
-msgstr "Os portos que se empregarán nas conexión directas."
+msgstr "Os portos que se usarán nas conexión directas."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, lblPort)
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:453
@@ -17111,8 +17107,8 @@ msgid ""
 "The ports to use when listening for direct connections. These must not be "
 "blocked by a firewall or router."
 msgstr ""
-"Portos que empregar cando se obteña información desde conexións directas. "
-"Non poden estar bloqueados por unha devasa ou un router."
+"Portos que usar cando se obteña información desde conexións directas. Non "
+"poden estar bloqueados por unha devasa ou un router."
 
 #. i18n: ectx: property (text), widget (QLabel, lblPort)
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:456
@@ -17157,8 +17153,8 @@ msgid ""
 "Use AOL proxy server instead of direct connections. If you are behind a "
 "router that you do not control, you will probably want this."
 msgstr ""
-"Empregar servidores proxy AOL en vez de conexións directas. Se está tras un "
-"router que non controla, probabelmente lle interese."
+"Usar servidores mandatarios AOL en vez de conexións directas. Se está tras "
+"un router que non controla, probabelmente lle interese."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, chkFileProxy)
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:509
@@ -17171,7 +17167,7 @@ msgid ""
 "unblocked. If a direct connection fails, a proxy connection will be tried "
 "regardless of this setting."
 msgstr ""
-"Use o servidor proxy de AOL para cousas que normalmente necesitan unha "
+"Use o servidor mandatario de AOL para cousas que normalmente necesitan unha "
 "conexión directa, como transferencias de ficheiros. Interesaralle se hai "
 "unha devasa ou router que bloquee as conexións ao computador e non as poida "
 "desbloquear. Se unha conexión directa falla probarase unha conexión con "
@@ -17182,7 +17178,7 @@ msgstr ""
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:626
 #, kde-format
 msgid "&Use proxy instead"
-msgstr "&Empregar proxy no seu lugar"
+msgstr "&Usar proxy no seu lugar"
 
 #. i18n: ectx: property (toolTip), widget (QLabel, lblTimeout)
 #. i18n: ectx: property (toolTip), widget (QSpinBox, sbxTimeout)
@@ -17221,7 +17217,7 @@ msgstr "T&empo de espera (seg):"
 #, kde-format
 msgid "Default to the following &encoding for messages:"
 msgstr ""
-"Empregar a seguinte c&odificación para as mensaxes de maneira predeterminada:"
+"Usar a seguinte c&odificación para as mensaxes de maneira predeterminada:"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_4)
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:663
@@ -17367,12 +17363,12 @@ msgstr "Escoller a codificación…"
 #: protocols/oscar/icq/ui/xtrazicqstatusdialog.cpp:29
 #, kde-format
 msgid "Set Xtraz Status"
-msgstr "Estabelecer o estado en Xtraz"
+msgstr "Definir o estado en Xtraz"
 
 #: protocols/oscar/icq/icqaccount.cpp:191
 #, kde-format
 msgid "Set Status..."
-msgstr "Estabelecer o estado…"
+msgstr "Definir o estado…"
 
 #: protocols/oscar/icq/icqaccount.cpp:350
 #, kde-format
@@ -18859,8 +18855,8 @@ msgid ""
 "If you have an existing ICQ account and would like to change its password, "
 "you can use this button to enter a new password."
 msgstr ""
-"Se ten xa unha conta en ICQ e quere cambiar o contrasinal, pode empregar "
-"este botón para inserir un contrasinal novo."
+"Se ten xa unha conta en ICQ e quere cambiar o contrasinal, pode usar este "
+"botón para inserir un contrasinal novo."
 
 #. i18n: ectx: property (text), widget (QPushButton, buttonChangePassword)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:191
@@ -19035,7 +19031,7 @@ msgstr "Sobrepor a configuración de proxy do sistema."
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:430
 #, kde-format
 msgid "Proxy server is SOCKS5"
-msgstr "O servidor proxy é de tipo SOCKS5."
+msgstr "O servidor mandatario é de tipo SOCKS5."
 
 #. i18n: ectx: property (toolTip), widget (QLabel, lblProxyServer)
 #. i18n: ectx: property (toolTip), widget (QLineEdit, edtProxyServerAddress)
@@ -19046,8 +19042,8 @@ msgid ""
 "The IP address or hostmask of the proxy server you wish to use for "
 "connecting to an ICQ server."
 msgstr ""
-"O enderezo IP ou a máscara do servidor proxy que queira usar para conectarse "
-"a un servidor ICQ."
+"O enderezo IP ou a máscara do servidor mandatario que queira usar para "
+"conectarse a un servidor ICQ."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, lblProxyServer)
 #. i18n: ectx: property (whatsThis), widget (QLineEdit, edtProxyServerAddress)
@@ -19059,9 +19055,10 @@ msgid ""
 "connecting to an ICQ server. The proxy server must support a CONNECT command "
 "and allow connections to the ICQ server port (normally 443 or 5190)."
 msgstr ""
-"O enderezo IP ou a máscara do servidor proxy que queira usar para conectarse "
-"a un servidor ICQ. O servidor proxy debe contar coa orde CONNECT e permitir "
-"conexións ao porto do servidor ICQ (443 ou 5190 normalmente)."
+"O enderezo IP ou a máscara do servidor mandatario que queira usar para "
+"conectarse a un servidor ICQ. O servidor mandatario debe contar coa orde "
+"CONNECT e permitir conexións ao porto do servidor ICQ (443 ou 5190 "
+"normalmente)."
 
 #. i18n: ectx: property (toolTip), widget (QLabel, lblProxyServerPort)
 #. i18n: ectx: property (toolTip), widget (QSpinBox, edtProxyServerPort)
@@ -19069,7 +19066,7 @@ msgstr ""
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:518
 #, kde-format
 msgid "The port that the proxy server listens to."
-msgstr "O porto no que escoita o servidor proxy."
+msgstr "O porto no que escoita o servidor mandatario."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, lblProxyServerPort)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:486
@@ -19078,7 +19075,7 @@ msgid ""
 "The port that the proxy server listens to. Normally this will be 3128 or "
 "8080."
 msgstr ""
-"O porto no que escoita o servidor proxy. Normalmente é o 3128 ou o 8080."
+"O porto no que escoita o servidor mandatario. Normalmente é o 3128 ou o 8080."
 
 #. i18n: ectx: property (whatsThis), widget (QSpinBox, edtProxyServerPort)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:521
@@ -19087,8 +19084,8 @@ msgid ""
 "The port that the proxy server listens to. Normally this will be 3128, 8080, "
 "or 443 (https)."
 msgstr ""
-"O porto no que escoita o servidor proxy. Normalmente é o 3128, 8080 ou o 443 "
-"(https)."
+"O porto no que escoita o servidor mandatario. Normalmente é o 3128, 8080 ou "
+"o 443 (https)."
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_4)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:544
@@ -19405,7 +19402,7 @@ msgid ""
 "you wish to add back to the Add Contact Wizard. You can only add one contact "
 "at a time."
 msgstr ""
-"Aquí é onde se mostran os resultados da busca. Ao premer dúas veces seguidas "
+"Aquí é onde se amosan os resultados da busca. Ao premer dúas veces seguidas "
 "unha ligazón, a xanela de busca péchase e escóllese o UIN do contacto "
 "seleccionado para engadir a través do panel de «Engadir un contacto». Só se "
 "pode engadir un contacto de cada vez."
@@ -19484,7 +19481,7 @@ msgstr "Ten que inserir un texto a buscar."
 #: protocols/oscar/icq/ui/icqsearchdialog.cpp:191
 #, kde-format
 msgid "You must be online to display user info."
-msgstr "Ten que estar en liña para mostrar a información do usuario."
+msgstr "Ten que estar en liña para amosar a información do usuario."
 
 #: protocols/oscar/icq/ui/icqsearchdialog.cpp:280
 #, kde-format
@@ -19863,8 +19860,8 @@ msgid ""
 "The %1 server thinks the client you are using is too old. Please report this "
 "as a bug at https://bugs.kde.org"
 msgstr ""
-"O servidor %1 pensa que o cliente que está a empregar é demasiado vello. "
-"Informe deste fallo en https://bugs.kde.org"
+"O servidor %1 pensa que o cliente que está a usar é demasiado vello. Informe "
+"deste fallo en https://bugs.kde.org"
 
 #: protocols/oscar/oscaraccount.cpp:1314
 #, kde-format
@@ -19910,7 +19907,7 @@ msgstr ""
 #: protocols/oscar/oscarencodingselectionbase.ui:22
 #, kde-format
 msgid "Use this &encoding when chatting with this contact:"
-msgstr "Empregar esta c&odificación cando converse con este contacto:"
+msgstr "Usar esta c&odificación cando converse con este contacto:"
 
 #: protocols/oscar/oscarencodingselectiondialog.cpp:29
 #, kde-format
@@ -19975,7 +19972,7 @@ msgstr "Versión do protocolo"
 #: protocols/qq/qqaccount.cpp:132
 #, kde-format
 msgid "Show my own video..."
-msgstr "Mostrar o vídeo propio…"
+msgstr "Amosar o vídeo propio…"
 
 #: protocols/qq/qqcontact.cpp:152
 #, kde-format
@@ -20066,7 +20063,7 @@ msgstr "Configuración da conta — QQ"
 #: protocols/qq/ui/qqeditaccountui.ui:123
 #, kde-format
 msgid "The user ID of the QQ contact you would like to use."
-msgstr "O identificador de usuario de QQ que quere empregar."
+msgstr "O identificador de usuario de QQ que quere usar."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, TextLabel1_3)
 #. i18n: ectx: property (whatsThis), widget (QLineEdit, m_login)
@@ -20077,7 +20074,7 @@ msgid ""
 "The user ID of the QQ contact you would like to use.  This should be in the "
 "form of a valid E-mail address."
 msgstr ""
-"O identificador de usuario do contacto MSN que queira empregar. Debe ser da "
+"O identificador de usuario do contacto MSN que queira usar. Debe ser da "
 "forma dun enderezo de correo electrónico correcto."
 
 #. i18n: ectx: property (text), widget (QLabel, TextLabel1_3)
@@ -20128,8 +20125,8 @@ msgid ""
 "Only modify these values if you want to use a special IM proxy server, like "
 "SIMP"
 msgstr ""
-"Modifique só estes valores se quere empregar un servidor de IM proxy "
-"especial, como SIMP"
+"Modifique só estes valores se quere usar un servidor de IM proxy especial, "
+"como SIMP"
 
 #. i18n: ectx: property (text), widget (QLineEdit, m_serverName)
 #: protocols/qq/ui/qqeditaccountui.ui:454
@@ -20247,13 +20244,13 @@ msgid ""
 msgstr ""
 "QQ Messenger permítelles aos usuarios descargar e usar emoticonas "
 "personalizadas. Se escolle esta opción, Kopete descarga esas emoticonas e "
-"móstraas."
+"amósaas."
 
 #. i18n: ectx: property (text), widget (QCheckBox, useCustomEmoticons)
 #: protocols/qq/ui/qqeditaccountui.ui:582
 #, kde-format
 msgid "&Download and show custom emoticons"
-msgstr "Descargar e mostrar as emoticonas &personalizadas"
+msgstr "Descargar e amosar as emoticonas &personalizadas"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, exportEmoticons)
 #: protocols/qq/ui/qqeditaccountui.ui:592
@@ -20715,7 +20712,7 @@ msgstr "Servizo de envío de &SMS:"
 #: protocols/sms/ui/smsactprefs.ui:105 protocols/sms/ui/smsactprefs.ui:140
 #, kde-format
 msgid "The delivery service that you would like to use."
-msgstr "O servizo de envío que quere empregar."
+msgstr "O servizo de envío que quere usar."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel)
 #. i18n: ectx: property (whatsThis), widget (QComboBox)
@@ -20725,8 +20722,8 @@ msgid ""
 "The delivery service that you would like to use.  Note that you will need to "
 "have this software installed prior to using this account."
 msgstr ""
-"O servizo de envío que queira empregar. Teña en conta que terá que ter o "
-"software instalado para poder empregar a conta."
+"O servizo de envío que queira usar. Teña en conta que terá que ter o "
+"software instalado para poder usar a conta."
 
 #. i18n: ectx: property (text), widget (QPushButton)
 #: protocols/sms/ui/smsactprefs.ui:151
@@ -20752,7 +20749,7 @@ msgstr ""
 #: protocols/sms/ui/smsactprefs.ui:188
 #, kde-format
 msgid "To use SMS, you will need an account with a delivery service."
-msgstr "Para empregar SMS precisará unha conta cun servizo de envío."
+msgstr "Para usar SMS precisará unha conta cun servizo de envío."
 
 #. i18n: ectx: property (title), widget (QGroupBox)
 #: protocols/sms/ui/smsactprefs.ui:234
@@ -20832,7 +20829,7 @@ msgid ""
 "your country."
 msgstr ""
 "Marque isto se quere activar a internacionalización do número de teléfono. "
-"Sen esta opción, só será quen de empregar SMS para contas do seu país."
+"Sen esta opción, só será quen de usar SMS para contas do seu país."
 
 #. i18n: ectx: property (text), widget (QLabel)
 #: protocols/sms/ui/smsactprefs.ui:331
@@ -21001,7 +20998,7 @@ msgstr "Engadir un contacto WinPopup"
 #: protocols/winpopup/ui/wpaddcontactbase.ui:137
 #, kde-format
 msgid "The hostname to which you want to send WinPopup messages."
-msgstr "O nome de servidor que quere empregar para enviar mensaxes WinPopup."
+msgstr "O nome de servidor que quere usar para enviar mensaxes WinPopup."
 
 #. i18n: ectx: property (text), widget (QLabel, TextLabel2_2)
 #: protocols/winpopup/ui/wpaddcontactbase.ui:77
@@ -21059,7 +21056,7 @@ msgstr "Configuración bási&ca"
 #: protocols/winpopup/ui/wpeditaccountbase.ui:82
 #, kde-format
 msgid "The hostname under which you want to send WinPopup messages."
-msgstr "O nome de servidor que quere empregar para enviar mensaxes WinPopup."
+msgstr "O nome de servidor que quere usar para enviar mensaxes WinPopup."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, label1)
 #. i18n: ectx: property (whatsThis), widget (QLineEdit, mHostName)
@@ -21071,9 +21068,9 @@ msgid ""
 "do not have to specify the true hostname in order to send messages, but you "
 "do if you want to receive them."
 msgstr ""
-"O nome de servidor que quere empregar para enviar mensaxes WinPopup. Note "
-"que non ten por que indicar o nome de servidor da máquina para enviar "
-"mensaxes, pero si para recibilas."
+"O nome de servidor que quere usar para enviar mensaxes WinPopup. Note que "
+"non ten por que indicar o nome de servidor da máquina para enviar mensaxes, "
+"pero si para recibilas."
 
 #. i18n: ectx: property (text), widget (QLabel, label1)
 #: protocols/winpopup/ui/wpeditaccountbase.ui:72
