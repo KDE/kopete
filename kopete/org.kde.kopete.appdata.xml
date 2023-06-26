@@ -78,6 +78,7 @@
     <p xml:lang="de">Kopete ist ein Instant-Messenger, der AIM, ICQ, Jabber, Gadu-Gadu und Novell GroupWise unterstützt.Es ist ein flexibles und erweiterbares System Multi-Protokoll-System für den persönlichen und geschäftlichen Gebrauch.</p>
     <p xml:lang="el">Το Kopete είναι ένας διαχειριστής στιγμιαίων μηνυμάτων με υποστήριξη AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger και άλλων. Έχει σχεδιαστεί να είναι ένα ευέλικτο και επεκτάσιμο σύστημα πολλών πρωτοκόλλων κατάλληλο για προσωπική και εταιρική χρήση.</p>
     <p xml:lang="en-GB">Kopete is an instant messenger supporting AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger, and more. It is designed to be a flexible and extensible multi-protocol system suitable for personal and enterprise use.</p>
+    <p xml:lang="eo">Kopete estas tujmesaĝilo subtenanta AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger kaj pli. Ĝi estas dezajnita por esti fleksebla kaj etendebla multprotokola sistemo taŭga por persona kaj entreprena uzo.</p>
     <p xml:lang="es">Kopete es un programa de mensajería instantánea que permite usar AIM, ICQ, Jabber, Gadu-Gadu y Novell GroupWise Messenger, entre otros. Está diseñado para ser un sistema multiprotocolo flexible y extensible, adecuado para el uso personal y empresarial.</p>
     <p xml:lang="et">Kopete on kiirsuhtlusrakendus, mis toetab AIM, ICQ, Jabberi, Gadu-Gadu, Novelli Groupwise Messengeri ja veel mitmeid muid protokolle. See on kavandatud paindlikuks ja laiendatavaks süsteemiks, mis sobib tarvitada nii üksikisikul kui ka ettevõttel.</p>
     <p xml:lang="eu">Kopete bat-bateko mezularitza aplikazio bat da, AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger, eta gehiago onartzen dituena. Norbanako edo enpresako erabilerarako sistema protokolo-anitz malgu eta hedagarri bat izateko  diseinatua dago.</p>
@@ -110,6 +111,7 @@
     <p xml:lang="de">Das Ziel von Kopete ist es, den Benutzern eine einzige, einfach zu bedienende Möglichkeit zum Zugriffauf alle ihre Instant-Messaging-Systeme. In der  Bedienungsoberfläche ist das Adressbuch des Systems integriert, damit Sie auf Ihre Kontakte aus anderen KDE-Anwendungen zugreifen können.</p>
     <p xml:lang="el">Ο στόχος του Kopete είναι να παρέχει στους χρήστες έναν μοναδικό τρόπο διευκόλυνσης πρόσβασης για όλα τα συστήματα διαχείρισης στιγμιαίων μηνυμάτων. Το περιβάλλλον χρήσης δίνει προτεραιότητα στον άνθρωπο και ενσωματώνεται στο βιβλίο διευθύνσεων του συστήματος για να μπορείτε να έχετε πρόσβαση σε επαφές από άλλες KDE εφαρμογές.</p>
     <p xml:lang="en-GB">The goal of Kopete is to provide users with a single easy-to-use way to access all of their instant messaging systems. The interface puts people first, and is integrated with the system address book to let you access your contacts from other KDE applications.</p>
+    <p xml:lang="eo">La celo de Kopete estas provizi uzantojn per ununura facile uzebla maniero por aliri ĉiujn iliajn tujmesaĝajn sistemojn. La interfaco metas homojn unue, kaj estas integrita kun la sistema adreslibro por permesi al vi aliri viajn kontaktojn de aliaj KDE-aplikoj.</p>
     <p xml:lang="es">El objetivo de Kopete es proporcionar a los usuarios un modo de fácil uso para acceder a todos sus sistemas de mensajería instantánea. La interfaz sitúa a las personas primero y está integrada con la libreta de direcciones del sistema para permitirle acceder a sus contactos desde otras aplicaciones de KDE.</p>
     <p xml:lang="et">Kopete eesmärk on pakkuda kasutajale hõlpsasti tarvitavat ühtset ligipääsu kõikvõimalikele kiirsuhtlussüsteemidele. Selle liides seab esikohale inimesed ning see on lõimitud süsteemse aadressiraamatuga, mis lubab kasutajal jõuda ka teiste KDE rakenduste kontaktideni.</p>
     <p xml:lang="eu">Kopeteren helburua da erabiltzaileei bat-bateko mezularitza sistema guztiak atzitzeko modu bakun eta erabilerraz bat eskaintzea. Interfazearen lehentasuna pertsonak dira, eta integratua dago sistemako helbide-liburuarekin beste KDE aplikazioetatik ere kontaktuak atzi ditzazun.</p>
@@ -174,6 +176,7 @@
       <li xml:lang="de">Kopete bietet Funktionen zur Verbesserung Ihrer Instant-Messaging-Erfahrung, wie z. B. Nachrichtenverschlüsselung, Archivierung und viele andere lustige und nützliche Effekte.</li>
       <li xml:lang="el">Το Kopete περιλαμβάνει εργαλεία βελτίωσης της εμπειρίας με τα στιγμιαία μηνύματα, όπως κρυπτογράφηση μηνυμάτων, αρχειθέτηση και πολλά άλλα διασκεδαστικά και χρήσιμα εφέ.</li>
       <li xml:lang="en-GB">Kopete features tools to enhance your instant messaging experience, such as message encryption, archiving, and many other fun and useful effects.</li>
+      <li xml:lang="eo">Kopete havas ilojn por plibonigi vian tujmesaĝan sperton, kiel ĉifrado de mesaĝoj, arkivado kaj multaj aliaj amuzaj kaj utilaj efikoj.</li>
       <li xml:lang="es">Kopete contiene herramientas para mejorar su experiencia de mensajería instantánea, como el cifrado de mensajes y su archivado, entre otros efectos divertidos y útiles.</li>
       <li xml:lang="et">Kopete pakub tööriistu kiirsuhtluskogemuse täiustamiseks, näiteks sõnumite krüptimine, arhiveerimine ja veel palju tulusaid ja lõbusaid asju.</li>
       <li xml:lang="eu">Kopetek zure bat-bateko mezularitza esperientzia areagotzeko tresnak eskaintzen ditu, hala nola mezuak zifratzea, artxibatzea, eta beste hainbat efektu dibertigarri eta baliagarri.</li>
@@ -204,6 +207,7 @@
       <li xml:lang="de">Kopete unterstützt alle gängigen Instant-Messaging-Protokolle, und das Kopete-Team stellt Vorlagen für Entwickler bereit, auf denen neue Module basieren können.</li>
       <li xml:lang="el">Το Kopete υποστηρίζει όλα τα γνωστά πρωτόκολλα στιγμιαίων μηνυμάτων και η ομάδα του Kopete παρέχει πρότυπα για προγραμματιστές ως υποδομή για νέα πρόσθετα.</li>
       <li xml:lang="en-GB">Kopete supports all commonly used instant messaging protocols, and the Kopete team provides templates for developers to base new plugins on.</li>
+      <li xml:lang="eo">Kopete subtenas ĉiujn kutime uzatajn tujmesaĝajn protokolojn, kaj la Kopete-teamo disponigas ŝablonojn por programistoj sur kiuj bazi novajn kromaĵojn.</li>
       <li xml:lang="es">Kopete permite usar todos los protocolos de mensajería instantánea más utilizados, y el equipo de Kopete proporciona plantillas para que los desarrolladores puedan basar nuevos complementos en ellas.</li>
       <li xml:lang="et">Kopete toetab kõiki levinumaid kiirsuhtlusprotokolle ning Kopete meeskond pakub välja malli, mis lubab arendajatel luua uusi pluginaid.</li>
       <li xml:lang="eu">Kopetek erabilera arrunteko bat-bateko mezularitza protokolo guztiak onartzen ditu, eta Kopete taldeak garatzaileei protokolo berrientzako oinarri gisa erabiltzeko txantiloiak  eskaintzen dizkie.</li>
@@ -234,6 +238,7 @@
       <li xml:lang="de">Die API bietet Entwicklern viele Funktionen, die Unterstützung eines neues Protokolls erleichtert.</li>
       <li xml:lang="el">Το API παρέχει στους προγραμματιστές πολλές λειτουργίες για τη διευκόλυνση υποστήριξης ενός νέου πρωτοκόλλου.</li>
       <li xml:lang="en-GB">The API provides developers with many features to make it easy to support a new protocol.</li>
+      <li xml:lang="eo">La API provizas al programistoj multajn funkciojn por faciligi subteni novan protokolon.</li>
       <li xml:lang="es">La API proporciona a los desarrolladores muchas funcionalidades para facilitar la implementación de nuevos protocolos.</li>
       <li xml:lang="et">API pakub arendajatele hulganisti võimalusi muuta uue protokolli toetamise võimalikult lihtsaks.</li>
       <li xml:lang="eu">APIak eginbide ugari eskaintzen die garatzaileei, protokolo berrientzako euskarria  ematea errazteko.</li>
@@ -264,6 +269,7 @@
       <li xml:lang="de">Alle Protokolle sind als Module ausgeführt und ermöglichen eine modulare Installation, Einrichtung und Nutzung.</li>
       <li xml:lang="el">Όλα τα πρωτόκολλα είναι πρόσθετα και επιτρέπουν αρθρωτή εγκατάσταση, διαμόρφωση και χρήση.</li>
       <li xml:lang="en-GB">All protocols are plugins and allow for modular installation, configuration, and usage.</li>
+      <li xml:lang="eo">Ĉiuj protokoloj estas kromprogramoj kaj permesas modulan instaladon, agordon kaj uzadon.</li>
       <li xml:lang="es">Todos los protocolos son complementos y permiten una instalación, configuración y uso modular.</li>
       <li xml:lang="et">Kõik protokollid on pluginad, mis lubab moodulitena paigaldamist, seadistamist ja kasutamist.</li>
       <li xml:lang="eu">Protokolo guztiak pluginak dira eta instalatze, konfiguratze eta erabilera  modularra ahalbidetzen dute.</li>
