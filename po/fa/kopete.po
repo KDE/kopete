@@ -21,7 +21,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  .r1608 (kopete)  #-#-#-#-#\n"
 "X-Generator: Lokalize 1.5\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: KBabel 1.11.4\n"
@@ -365,10 +365,11 @@ msgid "Message in Transit"
 msgstr "پیام در گذر"
 
 #: kopete/chatwindow/chatview.cpp:408
-#, kde-format
+#, fuzzy, kde-format
 msgid "One other person in the chat"
 msgid_plural "%1 other people in the chat"
 msgstr[0] "%1 فرد دیگر در گپ"
+msgstr[1] ""
 
 #: kopete/chatwindow/chatview.cpp:455
 #, kde-format
@@ -5827,16 +5828,18 @@ msgid "Alias \"%1\" expands to itself."
 msgstr "‌نام‌گردان »%1« به خودش گسترش یافت."
 
 #: libkopete/kopetecommand.cpp:102
-#, kde-format
+#, fuzzy, kde-format
 msgid "\"%2\" requires at least %1 argument."
 msgid_plural "\"%2\" requires at least %1 arguments."
 msgstr[0] "»%2« حداقل به %1 نشانوند نیاز دارد."
+msgstr[1] ""
 
 #: libkopete/kopetecommand.cpp:106
-#, kde-format
+#, fuzzy, kde-format
 msgid "\"%2\" has a maximum of %1 argument."
 msgid_plural "\"%2\" has a maximum of %1 arguments."
 msgstr[0] "»%2« بیشینه %1 نشانوند دارد."
+msgstr[1] ""
 
 #: libkopete/kopetecommand.cpp:110
 #, kde-format
@@ -6479,6 +6482,7 @@ msgstr "اطلاعات بیشتر..."
 msgid "+ %1 more message"
 msgid_plural "+ %1 more messages"
 msgstr[0] "%1 در حال نوشتن پیام است"
+msgstr[1] ""
 
 #: libkopete/private/kopeteviewmanager.cpp:353
 #, fuzzy, kde-format
@@ -7301,12 +7305,14 @@ msgid_plural ""
 "encrypted messages to them:\n"
 "%2"
 msgstr[0] "مجوز عمومی برای خواندن پیامهای اتاق گپ"
+msgstr[1] ""
 
 #: plugins/cryptography/cryptographyguiclient.cpp:176
-#, kde-format
+#, fuzzy, kde-format
 msgid "Missing public key"
 msgid_plural "Missing public keys"
 msgstr[0] "فاقد کلید عمومی"
+msgstr[1] ""
 
 #: plugins/cryptography/cryptographyplugin.cpp:93
 #, fuzzy, kde-format
@@ -9571,6 +9577,7 @@ msgstr "اطلاعات عمومی"
 msgid "<b>Average message length:</b> %1 character<br>"
 msgid_plural "<b>Average message length:</b> %1 characters<br>"
 msgstr[0] "<b>میانگین طول پیام :</b> %1 نویسه‌ها<br>"
+msgstr[1] ""
 
 #: plugins/statistics/statisticsdialog.cpp:420
 #, fuzzy, kde-format
@@ -9578,6 +9585,7 @@ msgstr[0] "<b>میانگین طول پیام :</b> %1 نویسه‌ها<br>"
 msgid "<b>Time between two messages:</b> %1 second"
 msgid_plural "<b>Time between two messages:</b> %1 seconds"
 msgstr[0] "<b>زمان بین دو پیام : </b> %1 ثانیه"
+msgstr[1] ""
 
 #: plugins/statistics/statisticsdialog.cpp:425
 #, kde-format
@@ -13551,10 +13559,11 @@ msgid "Searching"
 msgstr "جستجو"
 
 #: protocols/groupwise/ui/gwsearch.cpp:391
-#, kde-format
+#, fuzzy, kde-format
 msgid "1 matching user found"
 msgid_plural "%1 matching users found"
 msgstr[0] "%1 کاربر مطابق پیدا شد"
+msgstr[1] ""
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: protocols/groupwise/ui/gwshowinvitation.ui:51
