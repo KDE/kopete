@@ -21353,27 +21353,3 @@ msgstr "La configuració ha fallat"
 #, kde-format
 msgid "User Info for %1"
 msgstr "Informació d'usuari per a %1"
-
-#~ msgid ""
-#~ "A network connection was disconnected.  The application is now in offline "
-#~ "mode.  Do you want the application to resume network operations when the "
-#~ "network is available again?"
-#~ msgstr ""
-#~ "Una connexió de xarxa s'ha desconnectat. L'aplicació ara està en mode "
-#~ "desconnectat. Voleu que l'aplicació reiniciï les operacions en tornar a "
-#~ "estar la xarxa disponible?"
-
-#~ msgid ""
-#~ "This application is currently in offline mode.  Do you want to connect?"
-#~ msgstr ""
-#~ "Aquesta aplicació està actualment en mode desconnectat. Voleu connectar?"
-
-#~ msgid ""
-#~ "This application is currently in offline mode.  Do you want to connect in "
-#~ "order to carry out this operation?"
-#~ msgstr ""
-#~ "Aquesta aplicació està actualment en mode desconnectat. Voleu connectar-"
-#~ "la per tal de poder seguir amb aquesta operació?"
-
-#~ msgid "Leave Offline Mode?"
-#~ msgstr "Sortir del mode desconnectat?"

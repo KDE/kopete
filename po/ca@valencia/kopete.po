@@ -3466,7 +3466,7 @@ msgstr "Fes un metacontacte"
 #: kopete/kopetewindow.cpp:1409
 #, kde-format
 msgid "Add Contact"
-msgstr "Afig contacte"
+msgstr "Afig un contacte"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:1042
 #, kde-format
