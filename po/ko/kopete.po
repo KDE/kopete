@@ -3916,7 +3916,7 @@ msgid ""
 "'Quit' from the 'File' menu to quit the application.</qt>"
 msgstr ""
 "<qt>주 창을 닫아도 Kopete는 시스템 트레이에서 실행됩니다. '파일' 메뉴의 '종"
-"료'를 사용하여 프로그램을 종료하십시오.</qt>"
+"료'를 사용하여 앱을 종료하십시오.</qt>"
 
 #: kopete/kopetewindow.cpp:860
 #, kde-format
@@ -5026,7 +5026,7 @@ msgstr "발광체 2"
 #: libkopete/contactlist/xmlcontactstorage.cpp:128
 #, kde-format
 msgid "Could not find contactlist.xml in Kopete application data."
-msgstr "Kopete 프로그램 데이터에서 contactlist.xml 파일을 찾을 수 없습니다."
+msgstr "Kopete 앱 데이터에서 contactlist.xml 파일을 찾을 수 없습니다."
 
 #: libkopete/contactlist/xmlcontactstorage.cpp:226
 #, kde-format
@@ -5055,8 +5055,8 @@ msgid ""
 "you like to use it in Kopete?<br /><b>Protocol:</b> %1<br /><b>Address:</b> "
 "%2</qt>"
 msgstr ""
-"<qt>다른 프로그램이 이 연락처에 주소를 추가했습니다.<br />Kopete에서 이 주소"
-"를사용하시겠습니까?<br /><b>프로토콜:</b> %1<br /><b>주소:</b> %2</qt>"
+"<qt>다른 앱이 이 연락처에 주소를 추가했습니다.<br />Kopete에서 이 주소를사용"
+"하시겠습니까?<br /><b>프로토콜:</b> %1<br /><b>주소:</b> %2</qt>"
 
 #: libkopete/kabcpersistence.cpp:350
 #, kde-format
