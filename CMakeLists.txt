@@ -68,12 +68,6 @@ find_package(KF5Libkleo ${LIBKLEO_LIB_VERSION_LIB} CONFIG REQUIRED)
 
 ### Alphabetical list of optional packages ###
 
-find_package(ALSA QUIET)
-set_package_properties(ALSA PROPERTIES DESCRIPTION "Alsa is advanced linux sound Architecture" URL "http://www.alsa-project.org" TYPE OPTIONAL PURPOSE "Required for the Jabber protocol with libjingle support")
-
-find_package(EXPAT QUIET)
-set_package_properties(EXPAT PROPERTIES DESCRIPTION "Expat is a stream oriented XML parser" URL "http://expat.sourceforge.net/" TYPE OPTIONAL PURPOSE "Required for the Jabber protocol with libjingle support")
-
 find_package(GLIB2 QUIET)
 set_package_properties(GLIB2 PROPERTIES DESCRIPTION "GLib library" URL "http://www.gtk.org" TYPE OPTIONAL PURPOSE "Required for the Nowlistening plugin with XMMS player support")
 
@@ -92,9 +86,6 @@ set_package_properties(Libgadu PROPERTIES DESCRIPTION "A library providing suppo
 find_package(LibMeanwhile QUIET)
 set_package_properties(LibMeanwhile PROPERTIES DESCRIPTION "A library for protocol support for connection to sametime servers" URL "http://meanwhile.sourceforge.net/" TYPE OPTIONAL PURPOSE "Required for the meanwhile protocol")
 
-find_package(LiboRTP QUIET)
-set_package_properties(LiboRTP PROPERTIES DESCRIPTION "oRTP provides an API to send rtp packets" URL "http://www.linphone.org/index.php/eng/code_review/ortp/" TYPE OPTIONAL PURPOSE "Required for the Jabber protocol with libjingle support")
-
 find_package(LibOTR QUIET)
 set_package_properties(LibOTR PROPERTIES DESCRIPTION "Library to encrypt messages with off-the-record encryption" URL "http://www.cypherpunks.ca/otr/" TYPE OPTIONAL PURPOSE "Required for the OTR plugin")
 
@@ -107,12 +98,6 @@ set_package_properties(LibXml2 PROPERTIES DESCRIPTION "Libraries used to develop
 find_package(LibXslt QUIET)
 set_package_properties(LibXslt PROPERTIES DESCRIPTION "A library to transform XML files into other XML files" URL "http://www.xmlsoft.org/XSLT/" TYPE OPTIONAL PURPOSE "Required for the Webpresence plugin")
 
-find_package(Mediastreamer QUIET)
-set_package_properties(Mediastreamer PROPERTIES DESCRIPTION "A streaming enginer specialized for voice/video telephony applications" URL "http://www.linphone.org/index.php/eng/code_review/mediastreamer2/" TYPE OPTIONAL PURPOSE "Required for the Jabber protocol with libjingle support")
-
-find_package(OpenSSL QUIET)
-set_package_properties(OpenSSL PROPERTIES DESCRIPTION "OpenSSL implementation of SSL" URL "https://www.openssl.org/" TYPE OPTIONAL PURPOSE "Required for the Jabber protocol with libjingle support")
-
 find_package(Qca-qt5 2.1.0)
 set_package_properties(Qca-qt5 PROPERTIES DESCRIPTION "Support for encryption"
                        URL "http://download.kde.org/stable/qca-qt5/"
@@ -123,12 +108,6 @@ find_package(Gpgmepp ${GPGMEPP_LIB_VERSION} CONFIG REQUIRED)
 
 find_package(Sqlite QUIET)
 set_package_properties(Sqlite PROPERTIES DESCRIPTION "SQLite is a Binary-Database" URL "http://www.sqlite.org" TYPE OPTIONAL PURPOSE "Required for the Statistic plugin")
-
-find_package(Speex QUIET)
-set_package_properties(Speex PROPERTIES DESCRIPTION "Speex is an encoder/decoder for the speex audio format" URL "http://www.speex.org/" TYPE OPTIONAL PURPOSE "Required for the Jabber protocol with Jingle support")
-
-find_package(SRTP QUIET)
-set_package_properties(SRTP PROPERTIES DESCRIPTION "SRTP provides an implementation of the Secure Real-time Transport protocol(SRTP)" URL "http://srtp.sourceforge.net/srtp.html" TYPE OPTIONAL PURPOSE "Required for the Jabber protocol with libjingle support")
 
 find_package(Xmms QUIET)
 set_package_properties(Xmms PROPERTIES DESCRIPTION "X Multimedia System development libraries" URL "http://www.xmms.org/" TYPE OPTIONAL PURPOSE "Required for the Nowlistening plugin with XMMS player support")

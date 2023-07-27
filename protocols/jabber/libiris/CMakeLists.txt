@@ -18,7 +18,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/xmpp/zlib
     ${CMAKE_CURRENT_SOURCE_DIR}/src/xmpp/base64
     ${CMAKE_CURRENT_SOURCE_DIR}/src/xmpp/xmpp-core
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/xmpp/jingle
     ${CMAKE_CURRENT_SOURCE_DIR}/src/jdns/include/jdns
     ${CMAKE_CURRENT_SOURCE_DIR}/src/irisnet/noncore
     ${CMAKE_CURRENT_SOURCE_DIR}/src/irisnet/noncore/legacy

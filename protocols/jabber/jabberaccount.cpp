@@ -79,14 +79,6 @@
 #include <sys/utsname.h>
 #include <KSharedConfig>
 
-#ifdef LIBJINGLE_SUPPORT
-#include "libjingle.h"
-#endif
-
-#ifdef JINGLE_SUPPORT
-#include "jinglecallsmanager.h"
-#endif
-
 #define KOPETE_CAPS_NODE "http://kopete.kde.org/jabber/caps"
 
 JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId)
@@ -101,9 +93,6 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	m_resourcePool = nullptr;
 	m_contactPool = nullptr;
 
-#ifdef JINGLE_SUPPORT
-	m_jcm = nullptr;
-#endif
 	m_bookmarks = new JabberBookmarks(this);
 	m_removing=false;
 	m_notifiedUserCannotBindTransferPort = false;
@@ -149,10 +138,6 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	QObject::connect ( m_jabberClient, SIGNAL (debugMessage(QString)),
 	                   this, SLOT (slotClientDebugMessage(QString)) );
 
-#ifdef LIBJINGLE_SUPPORT
-	m_libjingle = new Libjingle;
-#endif
-
 }
 
 JabberAccount::~JabberAccount ()
@@ -183,16 +168,6 @@ void JabberAccount::cleanup ()
 
 	delete m_contactPool;
 	m_contactPool = nullptr;
-
-#ifdef LIBJINGLE_SUPPORT
-	delete m_libjingle;
-	m_libjingle = nullptr;
-#endif
-
-#ifdef JINGLE_SUPPORT
-	delete m_jcm;
-	m_jcm = nullptr;
-#endif
 }
 
 void JabberAccount::setS5BServerPort ( int port )
@@ -460,11 +435,6 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 			break;
 	}
-
-#ifdef LIBJINGLE_SUPPORT
-	m_libjingle->setUser(myself()->contactId (), password);
-#endif
-
 }
 
 void JabberAccount::slotClientDebugMessage ( const QString &msg )
@@ -622,15 +592,6 @@ void JabberAccount::slotConnected ()
 {
 	qDebug (JABBER_PROTOCOL_LOG) << "Connected to Jabber server.";
 
-#ifdef LIBJINGLE_SUPPORT
-	loginLibjingle();
-#endif
-
-#ifdef JINGLE_SUPPORT
-	qCDebug(JABBER_PROTOCOL_LOG) << "Create JingleCallsManager";
-	m_jcm = new JingleCallsManager(this);
-#endif
-
 	qDebug (JABBER_PROTOCOL_LOG) << "Requesting roster...";
 	m_jabberClient->requestRoster ();
 }
@@ -669,10 +630,6 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{
-
-		#ifdef LIBJINGLE_SUPPORT
-			m_libjingle->logout();
-		#endif
 			xmppStatus.setIsAvailable( false );
 			qDebug (JABBER_PROTOCOL_LOG) << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD";
 			disconnect (Manual, xmppStatus);	
@@ -692,9 +649,6 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 	}
 	else
 	{
-#ifdef LIBJINGLE_SUPPORT
-		m_libjingle->setStatus(xmppStatus.typeString());
-#endif
 		setPresence ( xmppStatus );
 	}
 }
@@ -791,12 +745,6 @@ void JabberAccount::slotCSDisconnected ()
 	/* It seems that we don't get offline notifications when going offline
 	 * with the protocol, so clear all resources manually. */
 	resourcePool()->clear();
-
-#ifdef JINGLE_SUPPORT
-	delete m_jcm;
-	m_jcm = nullptr;
-#endif
-
 }
 
 void JabberAccount::handleStreamError (int streamError, int streamCondition, int connectorCode, const QString &server, Kopete::Account::DisconnectReason &errorClass, QString additionalErrMsg)
@@ -1811,77 +1759,6 @@ void JabberAccount::slotUnregisterFinished( )
 	if(m_removing)  //it may be because this is now the timer.
 		Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
 }
-
-#ifdef LIBJINGLE_SUPPORT
-
-void JabberAccount::loginLibjingle()
-{
-	if ( ! enabledLibjingle() || m_libjingle->isConnected() )
-		return;
-
-	bool customServer = configGroup()->readEntry("CustomServer", false);
-
-	if ( customServer ) {
-		m_libjingle->setServer(server(), port());
-		m_libjingle->login();
-		return;
-	}
-
-	XMPP::Jid jid(myself()->contactId());
-
-	/* We need to specify server only if jabber account is not google's one */
-	if ( jid.domain() == "gmail.com" ) {
-		m_libjingle->login();
-		return;
-	}
-
-	XMPP::ServiceResolver * resolver = new XMPP::ServiceResolver;
-	resolver->setProtocol(XMPP::ServiceResolver::IPv4); // libjingle does not support ipv6
-	QObject::connect(resolver, SIGNAL(resultReady(QHostAddress,quint16)), this, SLOT(loginLibjingleResolver(QHostAddress,quint16)));
-	QObject::connect(resolver, SIGNAL(error(XMPP::ServiceResolver::Error)), resolver, SLOT(deleteLater()));
-	resolver->start("xmpp-client", "tcp", jid.domain(), 5222);
-}
-
-void JabberAccount::loginLibjingleResolver(const QHostAddress &address, quint16 port)
-{
-	XMPP::ServiceResolver * resolver = qobject_cast<XMPP::ServiceResolver *>(sender());
-	if ( resolver ) {
-		QObject::disconnect(resolver, 0, 0, 0);
-		resolver->deleteLater();
-	}
-
-	qDebug (JABBER_PROTOCOL_LOG) << "address:" << address.toString() << "port:" << port;
-
-	m_libjingle->setServer(address.toString(), port);
-	m_libjingle->login();
-}
-
-bool JabberAccount::enabledLibjingle()
-{
-	return configGroup()->readEntry("Libjingle", true) && !configGroup()->readEntry("UseXOAuth2", false);
-}
-
-void JabberAccount::enableLibjingle(bool b)
-{
-	configGroup()->writeEntry("Libjingle", b);
-	if ( ! b )
-		m_libjingle->logout();
-	else if ( isConnected() )
-		loginLibjingle();
-}
-
-bool JabberAccount::supportLibjingle(const QString &user)
-{
-	return ( enabledLibjingle() && m_libjingle->isOnline(user) );
-}
-
-void JabberAccount::makeLibjingleCall(const QString &user)
-{
-	if ( enabledLibjingle() )
-		m_libjingle->makeCall(user);
-}
-
-#endif
 
 void JabberAccount::setMergeMessages(bool b)
 {

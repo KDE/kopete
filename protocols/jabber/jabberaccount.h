@@ -43,14 +43,6 @@ class JabberProtocol;
 class JabberTransport;
 class JabberBookmarks;
 
-#ifdef LIBJINGLE_SUPPORT
-class Libjingle;
-#endif
-
-#ifdef JINGLE_SUPPORT
-class JingleCallsManager;
-#endif
-
 namespace Kopete {
 class MetaContact;
 class StatusMessage;
@@ -150,21 +142,6 @@ public:
      */
     void setOldEncrypted(bool b);
 
-#ifdef LIBJINGLE_SUPPORT
-    bool enabledLibjingle();
-    void enableLibjingle(bool b);
-    bool supportLibjingle(const QString &user);
-    void makeLibjingleCall(const QString &user);
-#endif
-
-#ifdef JINGLE_SUPPORT
-    JingleCallsManager *jingleCallsManager() const
-    {
-        return m_jcm;
-    }
-
-#endif
-
 public Q_SLOTS:
     /* Connects to the server. */
     void connectWithPassword(const QString &password) Q_DECL_OVERRIDE;
@@ -250,13 +227,6 @@ private:
     /* last status for this account */
     XMPP::Status m_lastStatus;
 
-#ifdef LIBJINGLE_SUPPORT
-    Libjingle *m_libjingle;
-#endif
-
-#ifdef JINGLE_SUPPORT
-    JingleCallsManager *m_jcm;
-#endif
 private Q_SLOTS:
     /* Connects to the server. */
     void slotConnect();
@@ -343,12 +313,6 @@ private Q_SLOTS:
     /* update our capabilities for myself contact */
     void slotUpdateOurCapabilities();
 
-#ifdef LIBJINGLE_SUPPORT
-    void loginLibjingle();
-    void loginLibjingleResolver(const QHostAddress &address, quint16 port);
-#endif
-
-    //void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
 };
 
 /*class JabberMoodAction : public QAction

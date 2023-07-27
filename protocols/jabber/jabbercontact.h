@@ -113,17 +113,6 @@ public Q_SLOTS:
 	 */
 	//void voiceCall();
 	 
-	 /**
-	  * This is the JabberContact level slot for starting a Jingle Video call.
-	  * See later for params...
-	  */
-#ifdef JINGLE_SUPPORT
-	void showSessionsGui();
-	void startJingleSession();
-	void startJingleAudioCall();
-	void startJingleVideoCall();
-#endif
-
 private Q_SLOTS:
 
 	/**
@@ -207,10 +196,6 @@ private Q_SLOTS:
 	 * slot received by the syncTimer.
 	 */
 	void slotDelayedSync();
-
-#ifdef LIBJINGLE_SUPPORT
-	void makeLibjingleCallAction();
-#endif
 
 private:
 

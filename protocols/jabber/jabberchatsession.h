@@ -86,13 +86,6 @@ private Q_SLOTS:
 
     void slotSendFile();
 
-#ifdef JINGLE_SUPPORT
-    void slotJingleAudioCall();
-    void slotJingleVideoCall();
-    void slotJingleSession();
-    void slotJingleSessionGui();
-#endif
-
 private:
     enum  Event {
         Delivered, Displayed,

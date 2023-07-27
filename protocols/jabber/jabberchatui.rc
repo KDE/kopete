@@ -3,16 +3,12 @@
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
-			<Action name="jingleSession" />
-			<Action name="jingleSessionsGui" />
 		</Menu>
 	</MenuBar>
 
 
 	<ToolBar name="statusToolBar">
 		<Action name="jabberDisplayPicture" />
-		<Action name="jingleSession" />
-		<Action name="jingleSessionsGui" />
 	</ToolBar>
 
 

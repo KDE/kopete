@@ -35,12 +35,6 @@
 #include <filetransfer.h>
 #include <xmpp_tasks.h>
 
-#ifdef IRIS_JINGLE
-#ifdef JINGLE_SUPPORT
-#include <jinglesessionmanager.h>
-#endif
-#endif
-
 #include "privacymanager.h"
 
 #include "xoauth2provider.h"
@@ -753,24 +747,6 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 					   this, SLOT (slotIncomingFileTransfer()) );
 		}
 	}
-
-	/*if (jingleEnabled())
-	{*/
-
-#ifdef IRIS_JINGLE
-#ifdef JINGLE_SUPPORT
-		d->jabberClient->setJingleEnabled(true);
-		
-		{
-			using namespace XMPP;
-			QObject::connect ( d->jabberClient->jingleSessionManager(), SIGNAL (incomingSession()),
-					   this, SLOT (slotIncomingJingleSession()) );
-		}
-#else
-		d->jabberClient->setJingleEnabled(false);
-#endif
-#endif
-	/*}*/
 
 	/* This should only be done here to connect the signals, otherwise it is a
 	 * bad idea.

@@ -30,9 +30,6 @@
 /**
   *@author Till Gerken <till@tantalo.net>
   */
-#ifdef JINGLE_SUPPORT
-class Item;
-#endif
 
 class JabberEditAccountWidget: public QWidget, public Ui::DlgJabberEditAccountWidget, public KopeteEditAccountWidget
 {
@@ -60,12 +57,6 @@ private Q_SLOTS:
 private:
 	JabberProtocol *m_protocol;
 
-#ifdef JINGLE_SUPPORT
-	QList<Item> outputDevices;
-	QList<Item> inputDevices;
-
-	void checkAudioDevices();
-#endif
 	void reopen ();
 	void writeConfig ();
 

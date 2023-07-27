@@ -50,11 +50,6 @@
 
 #include "xmpp.h"
 
-#ifdef JINGLE_SUPPORT
-//FIXME:Should be replaced by Solid.
-#include "alsaio.h"
-#endif
-
 JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, JabberAccount * ident, QWidget * parent)
 						: QWidget(parent), DlgJabberEditAccountWidget(), KopeteEditAccountWidget (ident)
 {
@@ -75,32 +70,6 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 
 	connect (cbAdjustPriority, SIGNAL (toggled(bool)), this, SLOT (awayPriorityToggled(bool)));
 	
-#ifdef JINGLE_SUPPORT
-	checkAudioDevices();
-#else
-	/*Remove the Jingle tab*/
-	for (int i = 0; i < tabWidget10->count(); i++)
-	{
-		if (tabWidget10->tabText(i) == QLatin1String("&Jingle"))
-		{
-			tabWidget10->removeTab(i);
-			break;
-		}
-	}
-#endif
-
-#ifndef LIBJINGLE_SUPPORT
-	//Remove Libjingle tab
-	for ( int i=0; i<tabWidget10->count(); ++i )
-	{
-		if ( tabWidget10->tabText(i) == QLatin1String("&Libjingle") )
-		{
-			tabWidget10->removeTab(i);
-			break;
-		}
-	}
-#endif
-
 	if (account())
 	{
 		// we are working with an existing account
@@ -130,39 +99,6 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 JabberEditAccountWidget::~JabberEditAccountWidget ()
 {
 }
-
-#ifdef JINGLE_SUPPORT
-void JabberEditAccountWidget::checkAudioDevices()
-{
-	qCDebug(JABBER_PROTOCOL_LOG) << "Start.";
-	/*Solid::DeviceNotifier *notifier = Solid::DeviceNotifier::instance();
-	foreach (const Solid::Device &device, Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface, QString()))
-	//foreach (const Solid::Device &device, Solid::Device::allDevices())
-	{
-		qCDebug(JABBER_PROTOCOL_LOG) << "Found :";
-		qCDebug(JABBER_PROTOCOL_LOG) << device.udi().toLatin1().constData();
-	}*/
-	QList<Item> devices = getAlsaItems();
-	for (int i = 0; i < devices.count(); i++)
-	{
-		if (devices.at(i).dir == Item::Input)
-		{
-			qCDebug(JABBER_PROTOCOL_LOG) << "Microphone :" << devices.at(i).name << "(" << devices.at(i).id << ")";
-			audioInputsCombo->addItem(devices.at(i).name);
-			inputDevices << devices.at(i);
-		}
-		else if (devices.at(i).dir == Item::Output)
-		{
-			qCDebug(JABBER_PROTOCOL_LOG) << "Audio output :" << devices.at(i).name << "(" << devices.at(i).id << ")";
-			audioOutputsCombo->addItem(devices.at(i).name);
-			outputDevices << devices.at(i);
-		}
-
-	}
-	qCDebug(JABBER_PROTOCOL_LOG) << "End.";
-
-}
-#endif
 
 JabberAccount *JabberEditAccountWidget::account ()
 {
@@ -226,31 +162,6 @@ void JabberEditAccountWidget::reopen ()
 
 	leProxyJID->setText (account()->configGroup()->readEntry("ProxyJID", QString()));
 
-#ifdef JINGLE_SUPPORT
-	//Jingle
-	firstPortEdit->setValue(account()->configGroup()->readEntry("JingleFirstPort", QString("9000")).toInt());
-	
-	for (int i = 0; i < inputDevices.count(); i++)
-	{
-		if (inputDevices.at(i).id == account()->configGroup()->readEntry("JingleInputDevice", QString("default")))
-		{
-			audioInputsCombo->setCurrentIndex(i);
-			break;
-		}
-	}
-	
-	for (int i = 0; i < outputDevices.count(); i++)
-	{
-		if (outputDevices.at(i).id == account()->configGroup()->readEntry("JingleOutputDevice", QString("default")))
-		{
-			audioOutputsCombo->setCurrentIndex(i);
-			break;
-		}
-	}
-	
-	autoDetectIPBox->setChecked(account()->configGroup()->readEntry("JingleAutoDetectIP", false));
-#endif
-
 	// Privacy
 	cbSendEvents->setChecked( account()->configGroup()->readEntry("SendEvents", true) );
 	cbSendDeliveredEvent->setChecked( account()->configGroup()->readEntry("SendDeliveredEvent", true) );
@@ -262,11 +173,6 @@ void JabberEditAccountWidget::reopen ()
 
 	mergeMessages->setChecked(account()->mergeMessages());
 	oldEncrypted->setChecked(account()->oldEncrypted());
-
-#ifdef LIBJINGLE_SUPPORT
-	Libjingle->setChecked(account()->enabledLibjingle());
-#endif
-
 }
 
 Kopete::Account *JabberEditAccountWidget::apply ()
@@ -322,14 +228,6 @@ void JabberEditAccountWidget::writeConfig ()
 
 	account()->configGroup()->writeEntry("Port", QString::number (mPort->value ()));
 
-#ifdef JINGLE_SUPPORT
-	account()->configGroup()->writeEntry("JingleFirstPort", QString::number(firstPortEdit->value()));
-	account()->configGroup()->writeEntry("JingleInputDevice", inputDevices.at(audioInputsCombo->currentIndex()).id);
-	account()->configGroup()->writeEntry("JingleOutputDevice", outputDevices.at(audioOutputsCombo->currentIndex()).id);
-
-	account()->configGroup()->writeEntry("JingleAutoDetectIP", autoDetectIPBox->isChecked());
-#endif
-
 	account()->setExcludeConnect(cbAutoConnect->isChecked());
 
 	KConfigGroup config = KSharedConfig::openConfig()->group("Jabber");
@@ -350,11 +248,6 @@ void JabberEditAccountWidget::writeConfig ()
 
 	account()->setMergeMessages(mergeMessages->isChecked());
 	account()->setOldEncrypted(oldEncrypted->isChecked());
-
-#ifdef LIBJINGLE_SUPPORT
-	account()->enableLibjingle(Libjingle->isChecked() && !cbUseXOAuth2->isChecked());
-#endif
-
 }
 
 bool JabberEditAccountWidget::validateData ()

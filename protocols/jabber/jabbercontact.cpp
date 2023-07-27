@@ -62,10 +62,6 @@
 #include "jabbertransport.h"
 #include "dlgjabbervcard.h"
 
-#ifdef JINGLE_SUPPORT
-#include "jinglecallsmanager.h"
-#endif
-
 /**
  * JabberContact constructor
  */
@@ -166,22 +162,6 @@ QList<QAction *> *JabberContact::customContextMenuActions ()
 	connect(removeAuthAction, SIGNAL(triggered(bool)), SLOT(slotRemoveAuth()));
 	actionAuthorization->addAction(removeAuthAction);
 
-#ifdef LIBJINGLE_SUPPORT
-
-	if ( account()->enabledLibjingle() ) {
-
-		QAction *libjingleCallAction;
-		libjingleCallAction = new QAction( this );
-        libjingleCallAction->setIcon( (QIcon::fromTheme("voicecall") ) );
-		libjingleCallAction->setText( i18n ("Call contact") );
-		libjingleCallAction->setEnabled( account()->supportLibjingle(contactId()) );
-		connect(libjingleCallAction, SIGNAL(triggered(bool)), SLOT(makeLibjingleCallAction()));
-		actions->append(libjingleCallAction);
-
-	}
-
-#endif
-
     KActionMenu *actionSetAvailability = new KActionMenu ( KIcon(QStringLiteral("user-identity"), 0, QStringList() << QString() << QStringLiteral("user-online")), i18n ("Set Availability"), this );
 
 #define QAction(status, text, name, slot) \
@@ -269,26 +249,6 @@ QList<QAction *> *JabberContact::customContextMenuActions ()
 	actions->append( actionAuthorization );
 	actions->append( actionSetAvailability );
 	actions->append( actionSelectResource );
-
-#if 0
-	QAction *testAction = new QAction(i18n("Test action"), this);
-	actionJingleAudioCall->setEnabled( true );
-	actionCollection->append( testAction );
-
-	QAction *actionJingleAudioCall = new QAction(i18n("Jingle Audio call"), this);
-	connect(actionJingleAudioCall, SIGNAL(triggered(bool)), SLOT(slotJingleAudioCall()));
-	
-	QAction *actionJingleVideoCall = new QAction(i18n("Jingle Video call"), this);
-	connect(actionJingleVideoCall, SIGNAL(triggered(bool)), SLOT(slotJingleVideoCall()));
-
-	// Check if the current contact support jingle calls, also honor lock by default.
-	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( mRosterItem.jid() );
-	actionJingleAudioCall->setEnabled( bestResource->features().canJingleAudio() );
-	actionJingleVideoCall->setEnabled( bestResource->features().canJingleVideo() );
-	
-	actionCollection->append( actionJingleAudioCall );
-	actionCollection->append( actionJingleVideoCall );
-#endif
 
 	// temporary action collection, used to apply Kiosk policy to the actions
 	KActionCollection tempCollection((QObject*)0);
@@ -1381,67 +1341,4 @@ void JabberContact::slotDiscoFinished( )
 		return;
 	}
 }
-
-#ifdef JINGLE_SUPPORT
-void JabberContact::showSessionsGui()
-{
-	account()->jingleCallsManager()->showCallsGui();
-}
-
-void JabberContact::startJingleSession()
-{
-	startJingleVideoCall(); //Only to show the message.
-
-	account()->jingleCallsManager()->startNewSession(/*to*/fullAddress());
-	account()->jingleCallsManager()->showCallsGui();
-}
-
-void JabberContact::startJingleAudioCall()
-{
-	startJingleVideoCall(); //Only to show the message.
-
-	//There should also have a list of jingle features supported by the responder client.
-	//--> Will be done in Iris as iris should now what features are supported by the responder client.
-	account()->jingleCallsManager()->startNewSession(/*to*/fullAddress());
-}
-
-void JabberContact::startJingleVideoCall()
-{
-	qCDebug(JABBER_PROTOCOL_LOG) << "Start a Jingle Session";
-
-	//JingleCallsManager should manage messages itself.
-	/*XMPP::Jid jid = rosterItem().jid();
-	JabberResource *bestResource;
-	XMPP::Resource resource = account()->resourcePool()->bestJabberResource( jid )->resource();
-	if (&resource)
-	{
-		JabberChatSession *mManager = manager ( resource.name(), Kopete::Contact::CanCreate );
-		Kopete::Message m = Kopete::Message ( this, mManager->members());
-		m.setPlainBody( i18n("Starting a Jingle session with %1", metaContact()->displayName()) );
-		m.setDirection( Kopete::Message::Internal );
-		mManager->appendMessage ( m, resource.name() );
-	}
-	else
-	{
-		if (!manager(CannotCreate))
-			return;
-		Kopete::Message msg;
-		msg.setPlainBody( "Failed to start a Jingle session, is your contact Online ?" );
-		manager(CannotCreate)->appendMessage( msg );
-		;
-		//FIXME:How to write a message in the chat dialog when contact is offline ?
-	}*/
-
-	//TODO:implement me !
-}
-#endif
-
-#ifdef LIBJINGLE_SUPPORT
-
-void JabberContact::makeLibjingleCallAction()
-{
-	account()->makeLibjingleCall(contactId());
-}
-
-#endif
 

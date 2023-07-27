@@ -66,55 +66,6 @@ JabberChatSession::JabberChatSession (JabberProtocol *protocol, const JabberBase
     mResource = jid.resource().isEmpty() ? resource : jid.resource();
     slotUpdateDisplayName();
 
-#ifdef JINGLE_SUPPORT
-    QAction *jingleSessionGui = new QAction(i18n("Show audio calls"), members().first());
-    jingleSessionGui->setIcon(QIcon::fromTheme(QStringLiteral("voicecall")));
-    connect(jingleSessionGui, SIGNAL(triggered(bool)), SLOT(slotJingleSessionGui()));
-
-    QAction *jingleSession = new QAction(i18n("Start audio call"), members().first());
-    jingleSession->setIcon(QIcon::fromTheme(QStringLiteral("voicecall")));
-    connect(jingleSession, SIGNAL(triggered(bool)), SLOT(slotJingleSession()));
-
-    Kopete::ContactPtrList chatMembers = members();
-    if (!chatMembers.isEmpty()) {
-        JabberResource *bestResource = account()->resourcePool()->bestJabberResource(static_cast<JabberBaseContact *>(chatMembers.first())->rosterItem().jid());
-        if (bestResource) {
-            jingleSessionGui->setEnabled(bestResource->features().canJingle());
-            jingleSession->setEnabled(bestResource->features().canJingle());
-        } else {
-            jingleSessionGui->setEnabled(false);
-            jingleSession->setEnabled(false);
-        }
-    }
-
-    /*QAction *jingleaudiocall = new QAction(i18n("Jingle Audio call" ), members().first());
-    connect(jingleaudiocall, SIGNAL(triggered(bool)), SLOT (slotJingleAudioCall()));
-
-    jingleaudiocall->setEnabled( false );
-
-    QAction *jinglevideocall = new QAction(i18n("Jingle Video call" ), members().first());
-    connect(jinglevideocall, SIGNAL(triggered(bool)), SLOT (slotJingleVideoCall()));
-
-    jinglevideocall->setEnabled( false );*/
-
-    //Kopete::ContactPtrList chatMembers = members ();
-    //if ( chatMembers.first () )
-    //{
-    // Check if the current contact support Audio calls, also honor lock by default.
-    // FIXME: we should use the active resource
-    //jingleaudiocall->setEnabled( bestResource->features().canJingleAudio() );
-    //jinglevideocall->setEnabled( bestResource->features().canJingleVideo() );
-    //}
-
-    //FIXME : Toolbar does not show any action (either for MSN or XMPP)
-    //	  It should be corrected in trunk.
-    //actionCollection()->addAction( "jabberJingleaudiocall", jingleaudiocall );
-    //actionCollection()->addAction( "jabberJinglevideocall", jinglevideocall );
-    actionCollection()->addAction("jingleSession", jingleSession);
-    actionCollection()->addAction("jingleSessionsGui", jingleSessionGui);
-
-#endif
-
     setXMLFile(QStringLiteral("jabberchatui.rc"));
 }
 
@@ -478,31 +429,4 @@ void JabberChatSession::slotSendFile()
     QList<Kopete::Contact *> contacts = members();
     contacts.first()->sendFile();
 }
-
-#ifdef JINGLE_SUPPORT
-void JabberChatSession::slotJingleAudioCall()
-{
-    QList<Kopete::Contact *> contacts = members();
-    static_cast<JabberContact *>(contacts.first())->startJingleAudioCall();
-}
-
-void JabberChatSession::slotJingleVideoCall()
-{
-    QList<Kopete::Contact *> contacts = members();
-    static_cast<JabberContact *>(contacts.first())->startJingleVideoCall();
-}
-
-void JabberChatSession::slotJingleSessionGui()
-{
-    QList<Kopete::Contact *> contacts = members();
-    static_cast<JabberContact *>(contacts.first())->showSessionsGui();
-}
-
-void JabberChatSession::slotJingleSession()
-{
-    QList<Kopete::Contact *> contacts = members();
-    static_cast<JabberContact *>(contacts.first())->startJingleSession();
-}
-
-#endif
 
