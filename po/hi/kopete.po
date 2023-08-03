@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-12-26 00:53+0000\n"
+"POT-Creation-Date: 2023-08-03 00:46+0000\n"
 "PO-Revision-Date: 2021-08-21 16:25+0530\n"
 "Last-Translator: Raghavendra Kamath <raghu@raghukamath.com>\n"
 "Language-Team: kde-hindi\n"
@@ -1564,7 +1564,6 @@ msgstr ""
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, AVDeviceConfig_VideoDevice)
 #: kopete/config/avdevice/avdeviceconfig_videodevice.ui:20
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:31
 #, kde-format
 msgid "Video"
 msgstr "वीडियो"
@@ -1864,7 +1863,7 @@ msgstr "कार्यक्रम"
 #. i18n: ectx: property (title), widget (QGroupBox, notifyGroupBox)
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_8)
 #: kopete/config/behavior/behaviorconfig_events.ui:20
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1047
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:897
 #, kde-format
 msgid "Notifications"
 msgstr "सूचनाएँ"
@@ -2276,7 +2275,7 @@ msgstr "ऑफ़लाइन"
 #: plugins/statistics/statisticsdialog.cpp:646
 #: protocols/bonjour/bonjourprotocol.cpp:38 protocols/gadu/gaduprotocol.cpp:88
 #: protocols/gadu/gaduprotocol.cpp:93 protocols/groupwise/gwprotocol.cpp:53
-#: protocols/jabber/jabbercontact.cpp:194
+#: protocols/jabber/jabbercontact.cpp:174
 #: protocols/jabber/jabberprotocol.cpp:68
 #: protocols/meanwhile/meanwhileprotocol.cpp:40
 #: protocols/oscar/aim/aimstatusmanager.cpp:79
@@ -2296,7 +2295,7 @@ msgstr "ऑनलाइन"
 #: plugins/statistics/statisticscontact.cpp:273
 #: plugins/statistics/statisticsdialog.cpp:363
 #: plugins/statistics/statisticsdialog.cpp:648
-#: protocols/groupwise/gwprotocol.cpp:57 protocols/jabber/jabbercontact.cpp:196
+#: protocols/groupwise/gwprotocol.cpp:57 protocols/jabber/jabbercontact.cpp:176
 #: protocols/jabber/jabberprotocol.cpp:69
 #: protocols/meanwhile/meanwhileprotocol.cpp:44
 #: protocols/oscar/aim/aimstatusmanager.cpp:75
@@ -2326,7 +2325,7 @@ msgstr "व्यस्त"
 #: kopete/config/status/statusconfig_manager.cpp:70
 #: libkopete/kopeteonlinestatus.cpp:170 libkopete/kopetestatusmanager.cpp:301
 #: protocols/gadu/gaduprotocol.cpp:79 protocols/gadu/gaduprotocol.cpp:86
-#: protocols/jabber/jabbercontact.cpp:199
+#: protocols/jabber/jabbercontact.cpp:179
 #: protocols/jabber/jabberprotocol.cpp:73
 #: protocols/oscar/aim/aimstatusmanager.cpp:85
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:812
@@ -2877,7 +2876,7 @@ msgid "Free For Chat"
 msgstr "गपशप के लिए मुफ्त"
 
 #: kopete/config/status/statusconfig_manager.cpp:64
-#: protocols/jabber/jabbercontact.cpp:197
+#: protocols/jabber/jabbercontact.cpp:177
 #: protocols/jabber/jabberprotocol.cpp:70
 #, kde-format
 msgid "Extended Away"
@@ -4967,9 +4966,7 @@ msgstr "मूल (&B)"
 msgid "Treble"
 msgstr "यात्रा"
 
-#. i18n: ectx: property (text), widget (QPushButton, muteButton)
 #: libkopete/avdevice/videodevice.cpp:3703
-#: protocols/jabber/libjinglecalldialog.ui:63
 #, kde-format
 msgid "Mute"
 msgstr ""
@@ -6212,7 +6209,6 @@ msgstr "कनेक्शन हो रहा है"
 #: plugins/translator/translatorlanguages.cpp:33
 #: plugins/translator/translatorlanguages.cpp:96
 #: protocols/groupwise/gwprotocol.cpp:65
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:37
 #: protocols/oscar/aim/aimstatusmanager.cpp:33
 #: protocols/oscar/icq/icqprotocol.cpp:455
 #: protocols/oscar/icq/icqprotocol.cpp:534
@@ -6325,7 +6321,7 @@ msgid "File transfer %1 cancelled."
 msgstr "फ़ाइल स्थांतरण %1 रद्द."
 
 #: libkopete/kopetetransfermanager.cpp:513 protocols/gadu/gaducontact.cpp:100
-#: protocols/jabber/jabbercontact.cpp:1116
+#: protocols/jabber/jabbercontact.cpp:1076
 #: protocols/jabber/jabbergroupcontact.cpp:355
 #: protocols/jabber/jabbergroupmembercontact.cpp:300
 #: protocols/oscar/oscarcontact.cpp:364 protocols/qq/qqcontact.cpp:412
@@ -6343,7 +6339,6 @@ msgstr ""
 
 #: libkopete/kopetetransfermanager.cpp:551
 #: libkopete/kopetetransfermanager.cpp:592
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:34
 #, kde-format
 msgid "File Transfer"
 msgstr "फ़ाइल हस्तांरण"
@@ -7575,8 +7570,8 @@ msgstr "क्या आप पुराने इतिहास फ़ाइ�
 msgid "History Converter"
 msgstr "इतिहास कनवर्टर"
 
-#: plugins/history/converter.cpp:45 protocols/jabber/jabberaccount.cpp:1245
-#: protocols/jabber/jabbercontact.cpp:1013
+#: plugins/history/converter.cpp:45 protocols/jabber/jabberaccount.cpp:1193
+#: protocols/jabber/jabbercontact.cpp:973
 #, kde-format
 msgid "Keep"
 msgstr "रखें"
@@ -12205,77 +12200,77 @@ msgstr ""
 msgid "Unable to Connect '%1'"
 msgstr " '%1'से जुड़ने में अक्षम"
 
-#: protocols/groupwise/gwaccount.cpp:735 protocols/jabber/jabberaccount.cpp:492
+#: protocols/groupwise/gwaccount.cpp:735 protocols/jabber/jabberaccount.cpp:462
 #, kde-format
 msgid "The host name does not match the one in the certificate."
 msgstr "होस्ट नाम जो प्रमाणपत्र में दिया गया है, उससे मेल नहीं खाता."
 
-#: protocols/groupwise/gwaccount.cpp:739 protocols/jabber/jabberaccount.cpp:496
+#: protocols/groupwise/gwaccount.cpp:739 protocols/jabber/jabberaccount.cpp:466
 #, kde-format
 msgid "The certificate is invalid."
 msgstr "प्रमाणपत्र अवैध है."
 
-#: protocols/groupwise/gwaccount.cpp:743 protocols/jabber/jabberaccount.cpp:500
+#: protocols/groupwise/gwaccount.cpp:743 protocols/jabber/jabberaccount.cpp:470
 #, kde-format
 msgid "No certificate was presented."
 msgstr "कोई प्रमाणपत्र प्रस्तुत नहीं किया गया है."
 
-#: protocols/groupwise/gwaccount.cpp:753 protocols/jabber/jabberaccount.cpp:510
+#: protocols/groupwise/gwaccount.cpp:753 protocols/jabber/jabberaccount.cpp:480
 #, kde-format
 msgid "The Certificate Authority rejected the certificate."
 msgstr "प्रमाणपत्र प्राधिकारी ने प्रमाणपत्र को नकार दिया है."
 
-#: protocols/groupwise/gwaccount.cpp:757 protocols/jabber/jabberaccount.cpp:514
+#: protocols/groupwise/gwaccount.cpp:757 protocols/jabber/jabberaccount.cpp:484
 #, kde-format
 msgid "The certificate is not trusted."
 msgstr "प्रमाणपत्र भरोसेमंद नहीं है."
 
-#: protocols/groupwise/gwaccount.cpp:761 protocols/jabber/jabberaccount.cpp:518
+#: protocols/groupwise/gwaccount.cpp:761 protocols/jabber/jabberaccount.cpp:488
 #, kde-format
 msgid "The signature is invalid."
 msgstr "हस्ताक्षर अवैध है."
 
-#: protocols/groupwise/gwaccount.cpp:765 protocols/jabber/jabberaccount.cpp:522
+#: protocols/groupwise/gwaccount.cpp:765 protocols/jabber/jabberaccount.cpp:492
 #, kde-format
 msgid "The Certificate Authority is invalid."
 msgstr "प्रमाणपत्र अधिकारी अवैध है."
 
-#: protocols/groupwise/gwaccount.cpp:769 protocols/jabber/jabberaccount.cpp:526
+#: protocols/groupwise/gwaccount.cpp:769 protocols/jabber/jabberaccount.cpp:496
 #, kde-format
 msgid "Invalid certificate purpose."
 msgstr "प्रमाणपत्र का अवैध प्रयोजन."
 
-#: protocols/groupwise/gwaccount.cpp:773 protocols/jabber/jabberaccount.cpp:530
+#: protocols/groupwise/gwaccount.cpp:773 protocols/jabber/jabberaccount.cpp:500
 #, kde-format
 msgid "The certificate is self-signed."
 msgstr "प्रमाणपत्र स्व-हस्ताक्षरित है."
 
-#: protocols/groupwise/gwaccount.cpp:777 protocols/jabber/jabberaccount.cpp:534
+#: protocols/groupwise/gwaccount.cpp:777 protocols/jabber/jabberaccount.cpp:504
 #, kde-format
 msgid "The certificate has been revoked."
 msgstr "प्रमाणपत्र रद्द कर दिया गया है."
 
-#: protocols/groupwise/gwaccount.cpp:781 protocols/jabber/jabberaccount.cpp:538
+#: protocols/groupwise/gwaccount.cpp:781 protocols/jabber/jabberaccount.cpp:508
 #, kde-format
 msgid "Maximum certificate chain length was exceeded."
 msgstr "अधिकतम प्रमाणपत्र चैन लंबाई अधिक हो चुका है."
 
-#: protocols/groupwise/gwaccount.cpp:785 protocols/jabber/jabberaccount.cpp:542
+#: protocols/groupwise/gwaccount.cpp:785 protocols/jabber/jabberaccount.cpp:512
 #, kde-format
 msgid "The certificate has expired."
 msgstr "प्रमाणपत्र की मियाद ख़त्म हो चुकी है."
 
-#: protocols/groupwise/gwaccount.cpp:789 protocols/jabber/jabberaccount.cpp:546
+#: protocols/groupwise/gwaccount.cpp:789 protocols/jabber/jabberaccount.cpp:516
 #, kde-format
 msgid "The Certificate Authority has expired."
 msgstr "प्रमाणपत्र अधिकार की अवधि पहले ही बीत चुकी है."
 
-#: protocols/groupwise/gwaccount.cpp:793 protocols/jabber/jabberaccount.cpp:550
+#: protocols/groupwise/gwaccount.cpp:793 protocols/jabber/jabberaccount.cpp:520
 #, kde-format
 msgid "Validity is unknown."
 msgstr "वैधता अज्ञात है."
 
-#: protocols/groupwise/gwaccount.cpp:804 protocols/jabber/jabberaccount.cpp:561
+#: protocols/groupwise/gwaccount.cpp:804 protocols/jabber/jabberaccount.cpp:531
 #, kde-format
 msgid ""
 "<qt><p>The identity and the certificate of server %1 could not be validated "
@@ -12283,8 +12278,8 @@ msgid ""
 msgstr ""
 
 #: protocols/groupwise/gwaccount.cpp:810 protocols/groupwise/gwaccount.cpp:815
-#: protocols/jabber/jabberaccount.cpp:567
-#: protocols/jabber/jabberaccount.cpp:572
+#: protocols/jabber/jabberaccount.cpp:537
+#: protocols/jabber/jabberaccount.cpp:542
 #, kde-format
 msgid ""
 "<qt><p>The certificate of server %1 could not be validated for account %2: "
@@ -13500,7 +13495,7 @@ msgstr "निमंत्रण संदेश"
 msgid "Would you like to join the conversation?"
 msgstr "क्या आप वार्तालाप में शामिल होना चाहते हैं?"
 
-#: protocols/jabber/jabberaccount.cpp:203
+#: protocols/jabber/jabberaccount.cpp:178
 #, kde-format
 msgid ""
 "Could not bind the Jabber file transfer manager to a local port. Please "
@@ -13508,46 +13503,46 @@ msgid ""
 "the account settings."
 msgstr ""
 
-#: protocols/jabber/jabberaccount.cpp:204
+#: protocols/jabber/jabberaccount.cpp:179
 #, kde-format
 msgid "Failed to start Jabber File Transfer Manager"
 msgstr "जैबर फ़ाइल ट्रांसफर प्रबंधक प्रारंभ करने में असफल."
 
-#: protocols/jabber/jabberaccount.cpp:221
+#: protocols/jabber/jabberaccount.cpp:196
 #, kde-format
 msgid "Join Groupchat..."
 msgstr "समूह-गपशप से जुड़ें"
 
-#: protocols/jabber/jabberaccount.cpp:234
+#: protocols/jabber/jabberaccount.cpp:209
 #, kde-format
 msgid "Services..."
 msgstr "सेवाएँ..."
 
-#: protocols/jabber/jabberaccount.cpp:241
+#: protocols/jabber/jabberaccount.cpp:216
 #: protocols/jabber/ui/dlgxmppconsole.cpp:32
 #, kde-format
 msgid "XML Console"
 msgstr ""
 
-#: protocols/jabber/jabberaccount.cpp:247
+#: protocols/jabber/jabberaccount.cpp:222
 #: protocols/oscar/aim/aimaccount.cpp:241
 #: protocols/oscar/icq/icqaccount.cpp:138
 #, kde-format
 msgid "Edit User Info..."
 msgstr "उपयोक्ता जानकारी का संपादन करें..."
 
-#: protocols/jabber/jabberaccount.cpp:252
+#: protocols/jabber/jabberaccount.cpp:227
 #, fuzzy, kde-format
 #| msgid "&Set Font..."
 msgid "Set Mood"
 msgstr "फ़ॉन्ट नियत करें... (&S)"
 
-#: protocols/jabber/jabberaccount.cpp:318
+#: protocols/jabber/jabberaccount.cpp:293
 #, kde-format
 msgid "Please connect first."
 msgstr "कृपया पहले कनेक्ट हों."
 
-#: protocols/jabber/jabberaccount.cpp:318
+#: protocols/jabber/jabberaccount.cpp:293
 #: protocols/jabber/ui/dlgjabberchatjoin.cpp:143
 #: protocols/jabber/ui/dlgjabberchatroomslist.cpp:93
 #: protocols/jabber/ui/dlgjabberregister.cpp:53
@@ -13556,157 +13551,157 @@ msgstr "कृपया पहले कनेक्ट हों."
 msgid "Jabber Error"
 msgstr "जैबर त्रुटि"
 
-#: protocols/jabber/jabberaccount.cpp:452
+#: protocols/jabber/jabberaccount.cpp:427
 #, kde-format
 msgid ""
 "SSL support could not be initialized for account %1. This is most likely "
 "because TLS support for QCA is not available."
 msgstr ""
 
-#: protocols/jabber/jabberaccount.cpp:454
+#: protocols/jabber/jabberaccount.cpp:429
 #: protocols/jabber/ui/jabberregisteraccount.cpp:294
 #, kde-format
 msgid "Jabber SSL Error"
 msgstr "जैबर एसएसएल त्रुटि"
 
-#: protocols/jabber/jabberaccount.cpp:579
+#: protocols/jabber/jabberaccount.cpp:549
 #, kde-format
 msgid "Jabber Connection Certificate Problem"
 msgstr "जैबर कनेक्शन प्रमाणपत्र समस्या"
 
-#: protocols/jabber/jabberaccount.cpp:613
+#: protocols/jabber/jabberaccount.cpp:583
 #, kde-format
 msgid ""
 "An encrypted connection with the Jabber server could not be established."
 msgstr "जैबर सर्वर से एनक्रिप्टेड कनेक्शन बनाया नहीं जा सका."
 
-#: protocols/jabber/jabberaccount.cpp:614
+#: protocols/jabber/jabberaccount.cpp:584
 #, kde-format
 msgid "Jabber Connection Error"
 msgstr "जैबर कनेक्शन त्रुटि"
 
-#: protocols/jabber/jabberaccount.cpp:820
+#: protocols/jabber/jabberaccount.cpp:768
 #, kde-format
 msgid "Malformed packet received."
 msgstr "गलत पैकेट प्राप्त."
 
-#: protocols/jabber/jabberaccount.cpp:825
+#: protocols/jabber/jabberaccount.cpp:773
 #, kde-format
 msgid "There was an unrecoverable error in the protocol."
 msgstr "प्रोटोकॉल में वहाँ बरामद करने से अयोग्य त्रुटि हुई. "
 
-#: protocols/jabber/jabberaccount.cpp:832
+#: protocols/jabber/jabberaccount.cpp:780
 #, kde-format
 msgid "Generic stream error."
 msgstr "जेनेरिक स्ट्रीम त्रुटि."
 
-#: protocols/jabber/jabberaccount.cpp:836
+#: protocols/jabber/jabberaccount.cpp:784
 #, kde-format
 msgid "There was a conflict in the information received."
 msgstr "प्राप्त जानकारी में विरोधाभास है."
 
-#: protocols/jabber/jabberaccount.cpp:839
+#: protocols/jabber/jabberaccount.cpp:787
 #, kde-format
 msgid "The stream timed out."
 msgstr "स्ट्रीम टाइम आउट हो गया."
 
-#: protocols/jabber/jabberaccount.cpp:842
+#: protocols/jabber/jabberaccount.cpp:790
 #, kde-format
 msgid "Internal server error."
 msgstr "आंतरिक सर्वर त्रुटि."
 
-#: protocols/jabber/jabberaccount.cpp:845
+#: protocols/jabber/jabberaccount.cpp:793
 #, kde-format
 msgid "Stream packet received from an invalid address."
 msgstr "अवैध पता से स्ट्रीम पैकेट प्राप्त हुआ."
 
-#: protocols/jabber/jabberaccount.cpp:848
+#: protocols/jabber/jabberaccount.cpp:796
 #, kde-format
 msgid "Malformed stream packet received."
 msgstr "खराब स्ट्रीम पैकेट प्राप्त हुआ."
 
-#: protocols/jabber/jabberaccount.cpp:852
+#: protocols/jabber/jabberaccount.cpp:800
 #, kde-format
 msgid "Policy violation in the protocol stream."
 msgstr "प्रोटोकॉल स्ट्रीम में पॉलिसी अतिक्रमण."
 
-#: protocols/jabber/jabberaccount.cpp:856
+#: protocols/jabber/jabberaccount.cpp:804
 #, kde-format
 msgid "Resource constraint."
 msgstr "रिसोर्स प्रतिबन्ध."
 
-#: protocols/jabber/jabberaccount.cpp:860
+#: protocols/jabber/jabberaccount.cpp:808
 #, kde-format
 msgid "System shutdown."
 msgstr "तंत्र को बंद करें."
 
-#: protocols/jabber/jabberaccount.cpp:863
+#: protocols/jabber/jabberaccount.cpp:811
 #, kde-format
 msgid "Unknown reason."
 msgstr "अज्ञात कारण."
 
-#: protocols/jabber/jabberaccount.cpp:867
+#: protocols/jabber/jabberaccount.cpp:815
 #, kde-format
 msgid "There was an error in the protocol stream: %1"
 msgstr "प्रोटोकॉल स्ट्रीम: %1 में वहाँ एक त्रुटि हुई. "
 
-#: protocols/jabber/jabberaccount.cpp:875
+#: protocols/jabber/jabberaccount.cpp:823
 #, kde-format
 msgid "Host not found."
 msgstr "होस्ट नहीं मिला."
 
-#: protocols/jabber/jabberaccount.cpp:878
+#: protocols/jabber/jabberaccount.cpp:826
 #, kde-format
 msgid "Address is already in use."
 msgstr "पता पहले से ही उपयोग में है."
 
-#: protocols/jabber/jabberaccount.cpp:881
+#: protocols/jabber/jabberaccount.cpp:829
 #, kde-format
 msgid "Connection refused."
 msgstr "कनेक्शन अस्वीकृत"
 
-#: protocols/jabber/jabberaccount.cpp:884
+#: protocols/jabber/jabberaccount.cpp:832
 #, kde-format
 msgid "Connection attempt already in progress."
 msgstr "कनेक्शन प्रयास पहले ही प्रगति पर है."
 
-#: protocols/jabber/jabberaccount.cpp:887
+#: protocols/jabber/jabberaccount.cpp:835
 #, kde-format
 msgid "Network failure."
 msgstr "नेटवर्क असफल."
 
-#: protocols/jabber/jabberaccount.cpp:890
+#: protocols/jabber/jabberaccount.cpp:838
 #, kde-format
 msgid "Socket timed out."
 msgstr "सॉकेट टाइम आउट हो गया."
 
-#: protocols/jabber/jabberaccount.cpp:893
+#: protocols/jabber/jabberaccount.cpp:841
 #, fuzzy, kde-format
 #| msgid "Timeout for direct connections."
 msgid "Remote closed connection."
 msgstr "प्रत्यक्ष कनेक्शनों के लिए टाइमआउट"
 
-#: protocols/jabber/jabberaccount.cpp:897
+#: protocols/jabber/jabberaccount.cpp:845
 #, kde-format
 msgid "Unexpected error condition (%1)."
 msgstr ""
 
-#: protocols/jabber/jabberaccount.cpp:901
+#: protocols/jabber/jabberaccount.cpp:849
 #, kde-format
 msgid "There was a connection error: %1"
 msgstr "वहाँ एक कनेक्शन त्रुटि हुई: %1"
 
-#: protocols/jabber/jabberaccount.cpp:909
+#: protocols/jabber/jabberaccount.cpp:857
 #, kde-format
 msgid "Unknown host."
 msgstr "अज्ञात होस्ट."
 
-#: protocols/jabber/jabberaccount.cpp:913
+#: protocols/jabber/jabberaccount.cpp:861
 #, kde-format
 msgid "Could not connect to a required remote resource."
 msgstr "वांछित रिमोट रीसोर्स से कनेक्ट नहीं हो सका."
 
-#: protocols/jabber/jabberaccount.cpp:916
+#: protocols/jabber/jabberaccount.cpp:864
 #, kde-format
 msgid ""
 "It appears we have been redirected to another server; I do not know how to "
@@ -13715,138 +13710,138 @@ msgstr ""
 "ऐसा लगता है कि हम अन्य सर्वर को रीडायरेक्ट हो गए हैं, मुझे नहीं पता कि इसे कैसे हैण्डल किया "
 "जाए."
 
-#: protocols/jabber/jabberaccount.cpp:919
+#: protocols/jabber/jabberaccount.cpp:867
 #, kde-format
 msgid "Unsupported protocol version."
 msgstr "असमर्थित प्रोटोकॉल संस्करण."
 
-#: protocols/jabber/jabberaccount.cpp:922
-#: protocols/jabber/jabberaccount.cpp:939
-#: protocols/jabber/jabberaccount.cpp:983
-#: protocols/jabber/jabberaccount.cpp:1000
-#: protocols/jabber/jabberaccount.cpp:1017
-#: protocols/jabber/jabberaccount.cpp:1025
+#: protocols/jabber/jabberaccount.cpp:870
+#: protocols/jabber/jabberaccount.cpp:887
+#: protocols/jabber/jabberaccount.cpp:931
+#: protocols/jabber/jabberaccount.cpp:948
+#: protocols/jabber/jabberaccount.cpp:965
+#: protocols/jabber/jabberaccount.cpp:973
 #, kde-format
 msgid "Unknown error."
 msgstr "अज्ञात त्रुटि."
 
-#: protocols/jabber/jabberaccount.cpp:926
+#: protocols/jabber/jabberaccount.cpp:874
 #, kde-format
 msgid "There was a negotiation error: %1"
 msgstr "वहाँ एक निगोशिएशन त्रुटि हुई: %1"
 
-#: protocols/jabber/jabberaccount.cpp:933
+#: protocols/jabber/jabberaccount.cpp:881
 #, kde-format
 msgid "Server rejected our request to start the TLS handshake."
 msgstr "टीएलएस हैण्डशेक प्रारंभ करने के निवेदन को सर्वर ने नकार दिया."
 
-#: protocols/jabber/jabberaccount.cpp:936
+#: protocols/jabber/jabberaccount.cpp:884
 #, kde-format
 msgid "Failed to establish a secure connection."
 msgstr "सुरक्षित कनेक्शन बनाने में असफल."
 
-#: protocols/jabber/jabberaccount.cpp:943
+#: protocols/jabber/jabberaccount.cpp:891
 #, kde-format
 msgid "There was a Transport Layer Security (TLS) error: %1"
 msgstr "वहाँ पर एक ट्रांसपोर्ट लेयर सुरक्षा त्रुटि हुई: %1"
 
-#: protocols/jabber/jabberaccount.cpp:950
+#: protocols/jabber/jabberaccount.cpp:898
 #, kde-format
 msgid "Login failed with unknown reason."
 msgstr "अज्ञात कारण के साथ लॉगइन असफल."
 
-#: protocols/jabber/jabberaccount.cpp:953
+#: protocols/jabber/jabberaccount.cpp:901
 #, kde-format
 msgid "No appropriate authentication mechanism available."
 msgstr "कोई समुचित प्राधिकरण मेकेनिज्म उपलब्ध नहीं."
 
-#: protocols/jabber/jabberaccount.cpp:956
+#: protocols/jabber/jabberaccount.cpp:904
 #, kde-format
 msgid "Bad SASL authentication protocol."
 msgstr "खराब एसएएसएल प्रमाणीकरण प्रोटोकॉल."
 
-#: protocols/jabber/jabberaccount.cpp:959
+#: protocols/jabber/jabberaccount.cpp:907
 #, kde-format
 msgid "Server failed mutual authentication."
 msgstr "सर्वर म्युचुअल प्रमाणीकरण असफल."
 
-#: protocols/jabber/jabberaccount.cpp:962
+#: protocols/jabber/jabberaccount.cpp:910
 #, kde-format
 msgid "Encryption is required but not present."
 msgstr "एनक्रिप्शन आवश्यक है, परंतु यह उपलब्ध नहीं है."
 
-#: protocols/jabber/jabberaccount.cpp:965
+#: protocols/jabber/jabberaccount.cpp:913
 #, kde-format
 msgid "Invalid user ID."
 msgstr "अवैध उपयोक्ता आईडी."
 
-#: protocols/jabber/jabberaccount.cpp:968
+#: protocols/jabber/jabberaccount.cpp:916
 #, kde-format
 msgid "Invalid mechanism."
 msgstr "अवैध मेकेनिज़्म."
 
-#: protocols/jabber/jabberaccount.cpp:971
+#: protocols/jabber/jabberaccount.cpp:919
 #, kde-format
 msgid "Invalid realm."
 msgstr "अवैध रीयल्म."
 
-#: protocols/jabber/jabberaccount.cpp:974
+#: protocols/jabber/jabberaccount.cpp:922
 #, kde-format
 msgid "Mechanism too weak."
 msgstr "मेकेनिज़्म बहुत कमजोर है."
 
-#: protocols/jabber/jabberaccount.cpp:977
+#: protocols/jabber/jabberaccount.cpp:925
 #, kde-format
 msgid "Wrong credentials supplied. (check your user ID and password)"
 msgstr "गलत क्रेडेन्शियल दिया गया. (अपना उपयोक्ता आईडी तथा पासवर्ड जाँचें)"
 
-#: protocols/jabber/jabberaccount.cpp:980
+#: protocols/jabber/jabberaccount.cpp:928
 #, kde-format
 msgid "Temporary failure, please try again later."
 msgstr "अस्थाई असफलता, कृपया थोड़ी देर बाद फिर कोशिश करें."
 
-#: protocols/jabber/jabberaccount.cpp:987
+#: protocols/jabber/jabberaccount.cpp:935
 #, kde-format
 msgid "There was an error authenticating with the server: %1"
 msgstr "सर्वर: %1 के साथ प्रामाणिकरण में त्रुटि हुई"
 
-#: protocols/jabber/jabberaccount.cpp:994
+#: protocols/jabber/jabberaccount.cpp:942
 #, kde-format
 msgid "Transport Layer Security (TLS) problem."
 msgstr "ट्रांसपोर्ट लेयर सुरक्षा (टीएलएस) समस्या."
 
-#: protocols/jabber/jabberaccount.cpp:997
+#: protocols/jabber/jabberaccount.cpp:945
 #, kde-format
 msgid "Simple Authentication and Security Layer (SASL) problem."
 msgstr "सरल प्रामाणीकरण तथा सुरक्षा स्तर (एसएएसएल) समस्या."
 
-#: protocols/jabber/jabberaccount.cpp:1004
+#: protocols/jabber/jabberaccount.cpp:952
 #, kde-format
 msgid "There was an error in the security layer: %1"
 msgstr "वहाँ पर सुरक्षा स्तर में त्रुटि हुई: %1"
 
-#: protocols/jabber/jabberaccount.cpp:1011
+#: protocols/jabber/jabberaccount.cpp:959
 #, kde-format
 msgid "No permission to bind the resource."
 msgstr "रीसोर्स बाइन्ड करने के लिए कोई अनुमति नहीं."
 
-#: protocols/jabber/jabberaccount.cpp:1014
+#: protocols/jabber/jabberaccount.cpp:962
 #, kde-format
 msgid "The resource is already in use."
 msgstr "रीसोर्स पहले से ही उपयोग में है."
 
-#: protocols/jabber/jabberaccount.cpp:1021
+#: protocols/jabber/jabberaccount.cpp:969
 #, kde-format
 msgid "Could not bind a resource: %1"
 msgstr "रीसोर्स: %1 बाइंड नहीं कर सकता"
 
-#: protocols/jabber/jabberaccount.cpp:1034
+#: protocols/jabber/jabberaccount.cpp:982
 #, fuzzy, kde-format
 #| msgid "Connection problem with Jabber server %1"
 msgid "Kopete: Connection problem with Jabber server %1"
 msgstr "जैबर सर्वर %1 से कनेक्शन में त्रुटि"
 
-#: protocols/jabber/jabberaccount.cpp:1242
+#: protocols/jabber/jabberaccount.cpp:1190
 #, kde-format
 msgid ""
 "The Jabber user %1 removed %2's subscription to him/her. This account will "
@@ -13854,65 +13849,65 @@ msgid ""
 "delete the contact?"
 msgstr ""
 
-#: protocols/jabber/jabberaccount.cpp:1245
-#: protocols/jabber/jabbercontact.cpp:1012
+#: protocols/jabber/jabberaccount.cpp:1193
+#: protocols/jabber/jabbercontact.cpp:972
 #, kde-format
 msgid "Notification"
 msgstr "अधिसूचना"
 
-#: protocols/jabber/jabberaccount.cpp:1429
+#: protocols/jabber/jabberaccount.cpp:1377
 #, kde-format
 msgid "Waiting for authorization"
 msgstr "अनुमोदन के लिए इंतजार में.."
 
-#: protocols/jabber/jabberaccount.cpp:1646
+#: protocols/jabber/jabberaccount.cpp:1594
 #, kde-format
 msgid "A password is required to join the room %1."
 msgstr "कमरा %1 में शामिल होने के लिए पासवर्ड आवश्यक है."
 
-#: protocols/jabber/jabberaccount.cpp:1656
+#: protocols/jabber/jabberaccount.cpp:1604
 #, kde-format
 msgid "Error trying to join %1 : nickname %2 is already in use"
 msgstr "%1 में शामिल होने की कोशिश में त्रुटि. उप नाम %2 पहले से ही उपयोग में है"
 
-#: protocols/jabber/jabberaccount.cpp:1657
+#: protocols/jabber/jabberaccount.cpp:1605
 #: protocols/jabber/jabberprotocol.cpp:510
 #, fuzzy, kde-format
 msgid "Provide your nickname"
 msgstr "अपना उपनाम दें"
 
-#: protocols/jabber/jabberaccount.cpp:1669
+#: protocols/jabber/jabberaccount.cpp:1617
 #, fuzzy, kde-format
 msgid "You cannot join the room %1 because you have been banned"
 msgstr "आप %1 में शामिल नहीं हो सकते चूंकि आप प्रतिबंधित हैं"
 
-#: protocols/jabber/jabberaccount.cpp:1670
-#: protocols/jabber/jabberaccount.cpp:1676
-#: protocols/jabber/jabberaccount.cpp:1685
+#: protocols/jabber/jabberaccount.cpp:1618
+#: protocols/jabber/jabberaccount.cpp:1624
+#: protocols/jabber/jabberaccount.cpp:1633
 #, kde-format
 msgid "Jabber Group Chat"
 msgstr "जैबर समूह गपशप"
 
-#: protocols/jabber/jabberaccount.cpp:1675
+#: protocols/jabber/jabberaccount.cpp:1623
 #, fuzzy, kde-format
 msgid ""
 "You cannot join the room %1 because the maximum number of users has been "
 "reached"
 msgstr "आप कमरा %1 में शामिल नहीं हो सकते चूँकि इसकी अधिकतम उपयोक्ता सीमा आ चुकी है."
 
-#: protocols/jabber/jabberaccount.cpp:1681
+#: protocols/jabber/jabberaccount.cpp:1629
 #, kde-format
 msgid "No reason given by the server"
 msgstr "सर्वर द्वारा कोई कारण नहीं दिया गया"
 
-#: protocols/jabber/jabberaccount.cpp:1684
+#: protocols/jabber/jabberaccount.cpp:1632
 #, kde-format
 msgid ""
 "There was an error processing your request for groupchat %1. (Reason: %2, "
 "Code %3)"
 msgstr ""
 
-#: protocols/jabber/jabberaccount.cpp:1757
+#: protocols/jabber/jabberaccount.cpp:1705
 #, kde-format
 msgid ""
 "Do you want to also unregister \"%1\" from the Jabber server ?\n"
@@ -13920,22 +13915,22 @@ msgid ""
 "and you will never be able to connect to this account with any client"
 msgstr ""
 
-#: protocols/jabber/jabberaccount.cpp:1760
+#: protocols/jabber/jabberaccount.cpp:1708
 #, kde-format
 msgid "Unregister"
 msgstr "पंजीकरण हटाएँ"
 
-#: protocols/jabber/jabberaccount.cpp:1761
+#: protocols/jabber/jabberaccount.cpp:1709
 #, kde-format
 msgid "Remove and Unregister"
 msgstr "मिटाएँ तथा पंजीकरण हटाएँ"
 
-#: protocols/jabber/jabberaccount.cpp:1762
+#: protocols/jabber/jabberaccount.cpp:1710
 #, fuzzy, kde-format
 msgid "Remove only from Kopete"
 msgstr "सिर्फ केऑप्टी से मिटाएँ"
 
-#: protocols/jabber/jabberaccount.cpp:1806
+#: protocols/jabber/jabberaccount.cpp:1754
 #, fuzzy, kde-format
 msgid ""
 "An error occurred while trying to remove the account:\n"
@@ -13944,7 +13939,7 @@ msgstr ""
 "खाता मिटाने की कोशिश के दौरान एक त्रुटि हुई:\n"
 " %1"
 
-#: protocols/jabber/jabberaccount.cpp:1807
+#: protocols/jabber/jabberaccount.cpp:1755
 #, kde-format
 msgid "Jabber Account Unregistration"
 msgstr "जैबर ख़ाता अपंजीकरण"
@@ -14063,97 +14058,65 @@ msgstr "उपनाम का संपादन करें..."
 msgid "Groupchat Bookmark"
 msgstr "समूह गपशप पुस्तचिन्ह"
 
-#: protocols/jabber/jabberchatsession.cpp:70
-#, kde-format
-msgid "Show audio calls"
-msgstr ""
-
-#: protocols/jabber/jabberchatsession.cpp:74
-#, kde-format
-msgid "Start audio call"
-msgstr ""
-
-#: protocols/jabber/jabberchatsession.cpp:150
+#: protocols/jabber/jabberchatsession.cpp:101
 #, kde-format
 msgctxt "a contact's online status in parenthesis."
 msgid " (%1)"
 msgstr " (%1)"
 
-#: protocols/jabber/jabbercontact.cpp:144
+#: protocols/jabber/jabbercontact.cpp:140
 #, kde-format
 msgid "Authorization"
 msgstr "अनुमोदन"
 
-#: protocols/jabber/jabbercontact.cpp:150
+#: protocols/jabber/jabbercontact.cpp:146
 #, kde-format
 msgid "(Re)send Authorization To"
 msgstr "अनुमोदन इन्हें (फिर से ) भेजें"
 
-#: protocols/jabber/jabbercontact.cpp:157
+#: protocols/jabber/jabbercontact.cpp:153
 #, kde-format
 msgid "(Re)request Authorization From"
 msgstr "अनुमोदन फ़ॉर्म निवेदन"
 
-#: protocols/jabber/jabbercontact.cpp:164
+#: protocols/jabber/jabbercontact.cpp:160
 #, kde-format
 msgid "Remove Authorization From"
 msgstr "से अनुमोदन हटाएँ"
 
-#: protocols/jabber/jabbercontact.cpp:176
-#, fuzzy, kde-format
-#| msgid "Contact"
-msgid "Call contact"
-msgstr "सम्पर्क"
-
-#: protocols/jabber/jabbercontact.cpp:185
+#: protocols/jabber/jabbercontact.cpp:165
 #, kde-format
 msgid "Set Availability"
 msgstr "उपलब्धता नियत करें"
 
-#: protocols/jabber/jabbercontact.cpp:195
+#: protocols/jabber/jabbercontact.cpp:175
 #, kde-format
 msgid "Free to Chat"
 msgstr "गपशप के लिए मुफ्त"
 
-#: protocols/jabber/jabbercontact.cpp:198
+#: protocols/jabber/jabbercontact.cpp:178
 #: protocols/oscar/aim/aimstatusmanager.cpp:69
 #: protocols/oscar/icq/icqstatusmanager.cpp:77
 #, kde-format
 msgid "Do Not Disturb"
 msgstr "विध्न न डालें"
 
-#: protocols/jabber/jabbercontact.cpp:203
+#: protocols/jabber/jabbercontact.cpp:183
 #, kde-format
 msgid "Select Resource"
 msgstr "रिसोर्स चुनें"
 
-#: protocols/jabber/jabbercontact.cpp:220
+#: protocols/jabber/jabbercontact.cpp:200
 #, kde-format
 msgid "Automatic (best/default resource)"
 msgstr "स्वचलित (सर्वोत्तम/डिफ़ॉल्ट रिसोर्स)"
 
-#: protocols/jabber/jabbercontact.cpp:274
-#, fuzzy, kde-format
-#| msgid "Destination"
-msgid "Test action"
-msgstr "गंतव्य"
-
-#: protocols/jabber/jabbercontact.cpp:278
-#, kde-format
-msgid "Jingle Audio call"
-msgstr ""
-
 #: protocols/jabber/jabbercontact.cpp:281
-#, kde-format
-msgid "Jingle Video call"
-msgstr ""
-
-#: protocols/jabber/jabbercontact.cpp:321
 #, kde-format
 msgid "The original message is : <i>\" %1 \"</i><br />"
 msgstr "मूल संदेश है : <i>\" %1 \"</i><br />"
 
-#: protocols/jabber/jabbercontact.cpp:322
+#: protocols/jabber/jabbercontact.cpp:282
 #, kde-format
 msgid ""
 "<qt><i>%1</i> has invited you to join the conference <b>%2</b><br />%3<br /"
@@ -14161,45 +14124,45 @@ msgid ""
 "OK.<br />If you want to decline, press Cancel.</qt>"
 msgstr ""
 
-#: protocols/jabber/jabbercontact.cpp:328
+#: protocols/jabber/jabbercontact.cpp:288
 #, kde-format
 msgid "Invited to a conference - Jabber Plugin"
 msgstr "कॉन्फ्रेंस में निमंत्रित किया गया - जैबर प्लगइन"
 
-#: protocols/jabber/jabbercontact.cpp:345
+#: protocols/jabber/jabbercontact.cpp:305
 #, kde-format
 msgid "Message has been displayed"
 msgstr "संदेश प्रदर्शित कर दिया गया है"
 
-#: protocols/jabber/jabbercontact.cpp:348
-#: protocols/jabber/jabbercontact.cpp:376
+#: protocols/jabber/jabbercontact.cpp:308
+#: protocols/jabber/jabbercontact.cpp:336
 #, kde-format
 msgid "Message has been delivered"
 msgstr "संदेश प्रेषित कर दिया गया"
 
-#: protocols/jabber/jabbercontact.cpp:357
+#: protocols/jabber/jabbercontact.cpp:317
 #, kde-format
 msgid "Message stored on the server, contact offline"
 msgstr "सर्वर में संदेश भंडारित है, ऑफ़लाइन सम्पर्क करें"
 
-#: protocols/jabber/jabbercontact.cpp:365
+#: protocols/jabber/jabbercontact.cpp:325
 #, fuzzy, kde-format
 msgid "%1 has ended his/her participation in the chat session."
 msgstr "%1 ने गपशप सत्र में अपनी भागीदारी समाप्त कर दी है."
 
-#: protocols/jabber/jabbercontact.cpp:415
+#: protocols/jabber/jabbercontact.cpp:375
 #: protocols/jabber/jabbergroupcontact.cpp:180
 #: protocols/jabber/jabbergroupmembercontact.cpp:211
 #, kde-format
 msgid "Your message could not be delivered: \"%1\", Reason: \"%2\""
 msgstr "आपका संदेश भेजा नहीं जा सका: \"%1\", कारण: \"%2\""
 
-#: protocols/jabber/jabbercontact.cpp:1011
+#: protocols/jabber/jabbercontact.cpp:971
 #, fuzzy, kde-format
 msgid "Do you also want to remove user %1's authorization to see your status?"
 msgstr "क्या आप '%1' को अपनी सम्पर्क सूची से मिटाना चाहते हैं?"
 
-#: protocols/jabber/jabbercontact.cpp:1185
+#: protocols/jabber/jabbercontact.cpp:1145
 #, kde-format
 msgid ""
 "You have preselected a resource for contact %1, but you still have open chat "
@@ -14207,7 +14170,7 @@ msgid ""
 "opened chat windows."
 msgstr ""
 
-#: protocols/jabber/jabbercontact.cpp:1189
+#: protocols/jabber/jabbercontact.cpp:1149
 #, kde-format
 msgid "Jabber Resource Selector"
 msgstr "जैबर रीसोर्स चयनक"
@@ -14418,126 +14381,6 @@ msgstr "मिटाएँ नहीं"
 #, kde-format
 msgid "Please enter your nickname for the room %1"
 msgstr "कमरा %1 के लिए कृपया अपना उपनाम भरें"
-
-#. i18n: ectx: property (windowTitle), widget (QMainWindow, jingleCallsGui)
-#: protocols/jabber/jingle/jinglecallsgui.ui:13
-#, fuzzy, kde-format
-msgid "Main Window"
-msgstr "विंडोविंग"
-
-#. i18n: ectx: property (windowTitle), widget (QToolBar, toolBar)
-#: protocols/jabber/jingle/jinglecallsgui.ui:50
-#, fuzzy, kde-format
-#| msgid "Main Toolbar"
-msgid "Toolbar"
-msgstr "मुख्य औज़ार पट्टी"
-
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:28
-#, kde-format
-msgid "Audio"
-msgstr ""
-
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:70
-#, kde-format
-msgid "Choose the contents you want to accept:"
-msgstr ""
-
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:77
-#, fuzzy, kde-format
-#| msgid "Show Offline &Users"
-msgid "New Jingle session from %1"
-msgstr "ऑफ़लाइन उपयोक्ता दिखाएँ (&U)"
-
-#. i18n: ectx: property (windowTitle), widget (QDialog, jingleContentDialog)
-#: protocols/jabber/jingle/jinglecontentdialog.ui:19
-#, fuzzy, kde-format
-#| msgid "Away Dialog"
-msgid "Dialog"
-msgstr "दूर संवाद "
-
-#: protocols/jabber/libjingle.cpp:102
-#, kde-format
-msgid "Cannot start process %1. Check your installation of Kopete."
-msgstr ""
-
-#: protocols/jabber/libjingle.cpp:332
-#, fuzzy, kde-format
-#| msgid "E&xclude from connect all"
-msgid "Answer for incoming call"
-msgstr "सभी कनेक्ट से अलग (&x)"
-
-#: protocols/jabber/libjingle.cpp:342
-#, fuzzy, kde-format
-#| msgid "Accept"
-msgid "Accepted"
-msgstr "स्वीकृत"
-
-#: protocols/jabber/libjingle.cpp:351
-#, fuzzy, kde-format
-#| msgid "C&hange..."
-msgid "Calling..."
-msgstr "बदलें... (&h)"
-
-#: protocols/jabber/libjingle.cpp:356
-#, fuzzy, kde-format
-#| msgid "Reject"
-msgid "Rejected"
-msgstr "अस्वीकृत"
-
-#: protocols/jabber/libjingle.cpp:368
-#, fuzzy, kde-format
-#| msgid "Session in progress."
-msgid "Call in progress"
-msgstr "सत्र प्रगति पर है."
-
-#: protocols/jabber/libjingle.cpp:375
-#, kde-format
-msgid "Other side hung up"
-msgstr ""
-
-#: protocols/jabber/libjingle.cpp:429
-#, fuzzy, kde-format
-#| msgid "Waiting for other peer..."
-msgid "Waiting..."
-msgstr "अन्य पीअर के लिए इंतजार किया जा रहा है..."
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, LibjingleCallDialog)
-#: protocols/jabber/libjinglecalldialog.ui:6
-#, fuzzy, kde-format
-#| msgid "GoogleTalk"
-msgid "Libjingle Voice Call"
-msgstr "गूगलटाक"
-
-#. i18n: ectx: property (text), widget (QLabel, label)
-#: protocols/jabber/libjinglecalldialog.ui:14
-#, kde-format
-msgid "Calling with:"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QLabel, label_2)
-#: protocols/jabber/libjinglecalldialog.ui:28
-#, fuzzy, kde-format
-#| msgid "Status:"
-msgid "Call Status:"
-msgstr "स्थिति:"
-
-#. i18n: ectx: property (text), widget (QPushButton, acceptButton)
-#: protocols/jabber/libjinglecalldialog.ui:42
-#, kde-format
-msgid "Accept"
-msgstr "स्वीकृत"
-
-#. i18n: ectx: property (text), widget (QPushButton, rejectButton)
-#: protocols/jabber/libjinglecalldialog.ui:49
-#, kde-format
-msgid "Reject"
-msgstr "अस्वीकृत"
-
-#. i18n: ectx: property (text), widget (QPushButton, hangupButton)
-#: protocols/jabber/libjinglecalldialog.ui:56
-#, kde-format
-msgid "Hang up"
-msgstr ""
 
 #: protocols/jabber/tasks/mood.cpp:77 protocols/jabber/ui/privacyruledlg.cpp:46
 #: protocols/jabber/ui/privacyruledlg.cpp:96
@@ -15430,103 +15273,22 @@ msgid ""
 "<li>The \"Proxy JID\" can be configured per account.</li></ul></i>"
 msgstr ""
 
-#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:844
-#, fuzzy, kde-format
-#| msgid "Single"
-msgid "&Jingle"
-msgstr "एकल"
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox_2)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:852
-#, fuzzy, kde-format
-#| msgid "Network:"
-msgid "Network"
-msgstr "नेटवर्क:"
-
-#. i18n: ectx: property (text), widget (QCheckBox, autoDetectIPBox)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:858
-#, fuzzy, kde-format
-#| msgid "Home Extra Address"
-msgid "Auto-detect external IP address"
-msgstr "घर का अतिरिक्त पता"
-
-#. i18n: ectx: property (text), widget (QLabel, label)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:867
-#, kde-format
-msgid "First port to use:"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QSpinBox, firstPortEdit)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:881
-#, kde-format
-msgid ""
-"Set the first incoming port to use for Jingle sessions.\n"
-"One media type uses 2 ports and each new Jingle session will use the next 2 "
-"available ports."
-msgstr ""
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox_3)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:905
-#: protocols/oscar/icq/icqprotocol.cpp:656
-#, kde-format
-msgid "Media"
-msgstr "मीडिया"
-
-#. i18n: ectx: property (text), widget (QLabel, label_2)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:913
-#, kde-format
-msgid "Microphone to use:"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QLabel, label_3)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:927
-#, kde-format
-msgid "Audio output:"
-msgstr ""
-
-#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:958
-#, fuzzy, kde-format
-#| msgid "Single"
-msgid "&Libjingle"
-msgstr "एकल"
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox_17)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:964
-#, fuzzy, kde-format
-#| msgid "GSMLib Settings"
-msgid "Libjingle settings"
-msgstr "जीएसएमलिब विन्यास"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, Libjingle)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:970
-#, kde-format
-msgid "This enable libjingle voice call"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, Libjingle)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:973
-#, kde-format
-msgid "Enable libjingle support"
-msgstr ""
-
 #. i18n: ectx: attribute (title), widget (QWidget, privacyTab)
 #. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:994
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:844
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:642
 #, kde-format
 msgid "Pri&vacy"
 msgstr "गोपनीयता (&v)"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_7)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1006
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:856
 #, kde-format
 msgid "General Privacy"
 msgstr "सामान्य गोपनीयता"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbHideSystemInfo)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1018
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:868
 #, kde-format
 msgid ""
 "By default, Kopete gives the other users some info about your system and the "
@@ -15534,26 +15296,26 @@ msgid ""
 msgstr ""
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbHideSystemInfo)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1021
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:871
 #, kde-format
 msgid "&Hide system and client info"
 msgstr "तंत्र तथा क्लाएंट जानकारी छुपाएँ (&H)"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbSendEvents)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1062
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:912
 #, fuzzy, kde-format
 msgid ""
 "Check this box if you always want to send notifications to your contacts."
 msgstr "यदि आप अपने सम्पर्कों को सूचनाएँ हमेशा भेजना चाहते हैं तो इस बक्से को चेक करें."
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendEvents)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1065
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:915
 #, kde-format
 msgid "Always send not&ifications"
 msgstr "सूचनाएँ हमेशा भेजें (&i)"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbSendDeliveredEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1110
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:960
 #, kde-format
 msgid ""
 "<qt>Check this box to send the <b>Delivered notification</b> to your "
@@ -15562,13 +15324,13 @@ msgid ""
 msgstr ""
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendDeliveredEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1113
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:963
 #, kde-format
 msgid "Alwa&ys send delivered notifications"
 msgstr "भेजने की सूचना हमेशा भेजें (&y)"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbSendDisplayedEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1126
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:976
 #, kde-format
 msgid ""
 "<qt>Check this box to send the <b>Displayed notification</b> to your "
@@ -15577,13 +15339,13 @@ msgid ""
 msgstr ""
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendDisplayedEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1129
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:979
 #, kde-format
 msgid "Al&ways send displayed notifications"
 msgstr ""
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbSendComposingEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1142
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:992
 #, kde-format
 msgid ""
 "<qt>Check this box to send the <b>Typing notification</b> to your contacts : "
@@ -15592,26 +15354,26 @@ msgid ""
 msgstr ""
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendComposingEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1145
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:995
 #, kde-format
 msgid "Always send &typing notifications"
 msgstr "टाइप करने की सूचनाएँ हमेशा भेजें (&t)"
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendGoneEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1155
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1005
 #, kde-format
 msgid "Always send &gone notifications (closing the window)"
 msgstr "भेजा गया की सूचना हमेशा भेजें (विंडो को बन्द करते हुए) (&g)"
 
 #. i18n: ectx: property (text), widget (QPushButton, privacyListsButton)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1172
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1022
 #, fuzzy, kde-format
 #| msgid "Privacy Options"
 msgid "Privacy Lists"
 msgstr "गोपनीयता विकल्प"
 
 #. i18n: ectx: property (text), widget (QCheckBox, oldEncrypted)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1179
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1029
 #, kde-format
 msgid ""
 "When recipient does not support OpenPGP XEP-0027 wrap PGP block to message "
@@ -16111,25 +15873,25 @@ msgstr "सर्वर सूची प्राप्त नहीं कर �
 msgid "Could not parse the server list."
 msgstr "सर्वर सूची पार्से नहीं कर सका."
 
-#: protocols/jabber/ui/jabbereditaccountwidget.cpp:284
+#: protocols/jabber/ui/jabbereditaccountwidget.cpp:190
 #, kde-format
 msgid ""
 "The changes you just made will take effect next time you log in with Jabber."
 msgstr ""
 
-#: protocols/jabber/ui/jabbereditaccountwidget.cpp:285
+#: protocols/jabber/ui/jabbereditaccountwidget.cpp:191
 #, kde-format
 msgid "Jabber Changes During Online Jabber Session"
 msgstr "ऑनलाइन जैबर सत्र के दौरान जैबर परिवर्तित होता है"
 
-#: protocols/jabber/ui/jabbereditaccountwidget.cpp:365
+#: protocols/jabber/ui/jabbereditaccountwidget.cpp:258
 #, kde-format
 msgid ""
 "The Jabber ID you have chosen is invalid. Please make sure it is in the form "
 "user@server.com, like an email address."
 msgstr ""
 
-#: protocols/jabber/ui/jabbereditaccountwidget.cpp:367
+#: protocols/jabber/ui/jabbereditaccountwidget.cpp:260
 #, kde-format
 msgid "Invalid Jabber ID"
 msgstr "अवैध जैबर आईडी"
@@ -18066,6 +17828,11 @@ msgstr "खुदरा दुकानें"
 #, kde-format
 msgid "Health and Beauty"
 msgstr "स्वास्थ्य तथा सुंदरता"
+
+#: protocols/oscar/icq/icqprotocol.cpp:656
+#, kde-format
+msgid "Media"
+msgstr "मीडिया"
 
 #: protocols/oscar/icq/icqprotocol.cpp:657
 #, kde-format
@@ -21034,6 +20801,106 @@ msgstr "कॉन्फ़िगुरेशन असफल"
 #, kde-format
 msgid "User Info for %1"
 msgstr "%1 के लिए उपयोक्ता जानकारी"
+
+#, fuzzy
+#~| msgid "Contact"
+#~ msgid "Call contact"
+#~ msgstr "सम्पर्क"
+
+#, fuzzy
+#~| msgid "Destination"
+#~ msgid "Test action"
+#~ msgstr "गंतव्य"
+
+#, fuzzy
+#~ msgid "Main Window"
+#~ msgstr "विंडोविंग"
+
+#, fuzzy
+#~| msgid "Main Toolbar"
+#~ msgid "Toolbar"
+#~ msgstr "मुख्य औज़ार पट्टी"
+
+#, fuzzy
+#~| msgid "Show Offline &Users"
+#~ msgid "New Jingle session from %1"
+#~ msgstr "ऑफ़लाइन उपयोक्ता दिखाएँ (&U)"
+
+#, fuzzy
+#~| msgid "Away Dialog"
+#~ msgid "Dialog"
+#~ msgstr "दूर संवाद "
+
+#, fuzzy
+#~| msgid "E&xclude from connect all"
+#~ msgid "Answer for incoming call"
+#~ msgstr "सभी कनेक्ट से अलग (&x)"
+
+#, fuzzy
+#~| msgid "Accept"
+#~ msgid "Accepted"
+#~ msgstr "स्वीकृत"
+
+#, fuzzy
+#~| msgid "C&hange..."
+#~ msgid "Calling..."
+#~ msgstr "बदलें... (&h)"
+
+#, fuzzy
+#~| msgid "Reject"
+#~ msgid "Rejected"
+#~ msgstr "अस्वीकृत"
+
+#, fuzzy
+#~| msgid "Session in progress."
+#~ msgid "Call in progress"
+#~ msgstr "सत्र प्रगति पर है."
+
+#, fuzzy
+#~| msgid "Waiting for other peer..."
+#~ msgid "Waiting..."
+#~ msgstr "अन्य पीअर के लिए इंतजार किया जा रहा है..."
+
+#, fuzzy
+#~| msgid "GoogleTalk"
+#~ msgid "Libjingle Voice Call"
+#~ msgstr "गूगलटाक"
+
+#, fuzzy
+#~| msgid "Status:"
+#~ msgid "Call Status:"
+#~ msgstr "स्थिति:"
+
+#~ msgid "Accept"
+#~ msgstr "स्वीकृत"
+
+#~ msgid "Reject"
+#~ msgstr "अस्वीकृत"
+
+#, fuzzy
+#~| msgid "Single"
+#~ msgid "&Jingle"
+#~ msgstr "एकल"
+
+#, fuzzy
+#~| msgid "Network:"
+#~ msgid "Network"
+#~ msgstr "नेटवर्क:"
+
+#, fuzzy
+#~| msgid "Home Extra Address"
+#~ msgid "Auto-detect external IP address"
+#~ msgstr "घर का अतिरिक्त पता"
+
+#, fuzzy
+#~| msgid "Single"
+#~ msgid "&Libjingle"
+#~ msgstr "एकल"
+
+#, fuzzy
+#~| msgid "GSMLib Settings"
+#~ msgid "Libjingle settings"
+#~ msgstr "जीएसएमलिब विन्यास"
 
 #~ msgid ""
 #~ "This application is currently in offline mode.  Do you want to connect?"

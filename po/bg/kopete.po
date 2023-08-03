@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-12-26 00:53+0000\n"
+"POT-Creation-Date: 2023-08-03 00:46+0000\n"
 "PO-Revision-Date: 2013-08-07 23:43+0300\n"
 "Last-Translator: Yasen Pramatarov <yasen@lindeas.com>\n"
 "Language-Team: Bulgarian <dict@ludost.net>\n"
@@ -1551,7 +1551,6 @@ msgstr "Изпълнение"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, AVDeviceConfig_VideoDevice)
 #: kopete/config/avdevice/avdeviceconfig_videodevice.ui:20
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:31
 #, kde-format
 msgid "Video"
 msgstr "Видео"
@@ -1847,7 +1846,7 @@ msgstr "Събития"
 #. i18n: ectx: property (title), widget (QGroupBox, notifyGroupBox)
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_8)
 #: kopete/config/behavior/behaviorconfig_events.ui:20
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1047
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:897
 #, kde-format
 msgid "Notifications"
 msgstr "Известяване"
@@ -2285,7 +2284,7 @@ msgstr "Изключен"
 #: plugins/statistics/statisticsdialog.cpp:646
 #: protocols/bonjour/bonjourprotocol.cpp:38 protocols/gadu/gaduprotocol.cpp:88
 #: protocols/gadu/gaduprotocol.cpp:93 protocols/groupwise/gwprotocol.cpp:53
-#: protocols/jabber/jabbercontact.cpp:194
+#: protocols/jabber/jabbercontact.cpp:174
 #: protocols/jabber/jabberprotocol.cpp:68
 #: protocols/meanwhile/meanwhileprotocol.cpp:40
 #: protocols/oscar/aim/aimstatusmanager.cpp:79
@@ -2305,7 +2304,7 @@ msgstr "Включен"
 #: plugins/statistics/statisticscontact.cpp:273
 #: plugins/statistics/statisticsdialog.cpp:363
 #: plugins/statistics/statisticsdialog.cpp:648
-#: protocols/groupwise/gwprotocol.cpp:57 protocols/jabber/jabbercontact.cpp:196
+#: protocols/groupwise/gwprotocol.cpp:57 protocols/jabber/jabbercontact.cpp:176
 #: protocols/jabber/jabberprotocol.cpp:69
 #: protocols/meanwhile/meanwhileprotocol.cpp:44
 #: protocols/oscar/aim/aimstatusmanager.cpp:75
@@ -2335,7 +2334,7 @@ msgstr "Зает"
 #: kopete/config/status/statusconfig_manager.cpp:70
 #: libkopete/kopeteonlinestatus.cpp:170 libkopete/kopetestatusmanager.cpp:301
 #: protocols/gadu/gaduprotocol.cpp:79 protocols/gadu/gaduprotocol.cpp:86
-#: protocols/jabber/jabbercontact.cpp:199
+#: protocols/jabber/jabbercontact.cpp:179
 #: protocols/jabber/jabberprotocol.cpp:73
 #: protocols/oscar/aim/aimstatusmanager.cpp:85
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:812
@@ -2856,7 +2855,7 @@ msgid "Free For Chat"
 msgstr "Свободен за разговор"
 
 #: kopete/config/status/statusconfig_manager.cpp:64
-#: protocols/jabber/jabbercontact.cpp:197
+#: protocols/jabber/jabbercontact.cpp:177
 #: protocols/jabber/jabberprotocol.cpp:70
 #, kde-format
 msgid "Extended Away"
@@ -4863,9 +4862,7 @@ msgstr "Ниски"
 msgid "Treble"
 msgstr "Високи"
 
-#. i18n: ectx: property (text), widget (QPushButton, muteButton)
 #: libkopete/avdevice/videodevice.cpp:3703
-#: protocols/jabber/libjinglecalldialog.ui:63
 #, kde-format
 msgid "Mute"
 msgstr "Заглушаване"
@@ -6079,7 +6076,6 @@ msgstr "Свързване"
 #: plugins/translator/translatorlanguages.cpp:33
 #: plugins/translator/translatorlanguages.cpp:96
 #: protocols/groupwise/gwprotocol.cpp:65
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:37
 #: protocols/oscar/aim/aimstatusmanager.cpp:33
 #: protocols/oscar/icq/icqprotocol.cpp:455
 #: protocols/oscar/icq/icqprotocol.cpp:534
@@ -6193,7 +6189,7 @@ msgid "File transfer %1 cancelled."
 msgstr "Файловият пренос %1 е отменен."
 
 #: libkopete/kopetetransfermanager.cpp:513 protocols/gadu/gaducontact.cpp:100
-#: protocols/jabber/jabbercontact.cpp:1116
+#: protocols/jabber/jabbercontact.cpp:1076
 #: protocols/jabber/jabbergroupcontact.cpp:355
 #: protocols/jabber/jabbergroupmembercontact.cpp:300
 #: protocols/oscar/oscarcontact.cpp:364 protocols/qq/qqcontact.cpp:412
@@ -6214,7 +6210,6 @@ msgstr ""
 
 #: libkopete/kopetetransfermanager.cpp:551
 #: libkopete/kopetetransfermanager.cpp:592
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:34
 #, kde-format
 msgid "File Transfer"
 msgstr "Пренос на файл"
@@ -7449,8 +7444,8 @@ msgstr "Искате ли старите файлове с историята д
 msgid "History Converter"
 msgstr "Конвертиране на историята"
 
-#: plugins/history/converter.cpp:45 protocols/jabber/jabberaccount.cpp:1245
-#: protocols/jabber/jabbercontact.cpp:1013
+#: plugins/history/converter.cpp:45 protocols/jabber/jabberaccount.cpp:1193
+#: protocols/jabber/jabbercontact.cpp:973
 #, kde-format
 msgid "Keep"
 msgstr "Запазване"
@@ -12010,77 +12005,77 @@ msgstr ""
 msgid "Unable to Connect '%1'"
 msgstr "Връзката с \"%1\" беше неуспешна"
 
-#: protocols/groupwise/gwaccount.cpp:735 protocols/jabber/jabberaccount.cpp:492
+#: protocols/groupwise/gwaccount.cpp:735 protocols/jabber/jabberaccount.cpp:462
 #, kde-format
 msgid "The host name does not match the one in the certificate."
 msgstr "Името на хоста не съвпада с това в удостоверението."
 
-#: protocols/groupwise/gwaccount.cpp:739 protocols/jabber/jabberaccount.cpp:496
+#: protocols/groupwise/gwaccount.cpp:739 protocols/jabber/jabberaccount.cpp:466
 #, fuzzy, kde-format
 msgid "The certificate is invalid."
 msgstr "Удостоверителят е невалиден."
 
-#: protocols/groupwise/gwaccount.cpp:743 protocols/jabber/jabberaccount.cpp:500
+#: protocols/groupwise/gwaccount.cpp:743 protocols/jabber/jabberaccount.cpp:470
 #, kde-format
 msgid "No certificate was presented."
 msgstr "Не е представено удостоверение."
 
-#: protocols/groupwise/gwaccount.cpp:753 protocols/jabber/jabberaccount.cpp:510
+#: protocols/groupwise/gwaccount.cpp:753 protocols/jabber/jabberaccount.cpp:480
 #, kde-format
 msgid "The Certificate Authority rejected the certificate."
 msgstr "Удостоверителят отхвърли удостоверението."
 
-#: protocols/groupwise/gwaccount.cpp:757 protocols/jabber/jabberaccount.cpp:514
+#: protocols/groupwise/gwaccount.cpp:757 protocols/jabber/jabberaccount.cpp:484
 #, fuzzy, kde-format
 msgid "The certificate is not trusted."
 msgstr "Удостоверението е ненадеждно."
 
-#: protocols/groupwise/gwaccount.cpp:761 protocols/jabber/jabberaccount.cpp:518
+#: protocols/groupwise/gwaccount.cpp:761 protocols/jabber/jabberaccount.cpp:488
 #, kde-format
 msgid "The signature is invalid."
 msgstr "Подписът е невалиден."
 
-#: protocols/groupwise/gwaccount.cpp:765 protocols/jabber/jabberaccount.cpp:522
+#: protocols/groupwise/gwaccount.cpp:765 protocols/jabber/jabberaccount.cpp:492
 #, kde-format
 msgid "The Certificate Authority is invalid."
 msgstr "Удостоверителят е невалиден."
 
-#: protocols/groupwise/gwaccount.cpp:769 protocols/jabber/jabberaccount.cpp:526
+#: protocols/groupwise/gwaccount.cpp:769 protocols/jabber/jabberaccount.cpp:496
 #, kde-format
 msgid "Invalid certificate purpose."
 msgstr "Невалидна цел на удостоверението."
 
-#: protocols/groupwise/gwaccount.cpp:773 protocols/jabber/jabberaccount.cpp:530
+#: protocols/groupwise/gwaccount.cpp:773 protocols/jabber/jabberaccount.cpp:500
 #, kde-format
 msgid "The certificate is self-signed."
 msgstr "Удостоверението е самоподписано."
 
-#: protocols/groupwise/gwaccount.cpp:777 protocols/jabber/jabberaccount.cpp:534
+#: protocols/groupwise/gwaccount.cpp:777 protocols/jabber/jabberaccount.cpp:504
 #, kde-format
 msgid "The certificate has been revoked."
 msgstr "Удостоверението е анулирано."
 
-#: protocols/groupwise/gwaccount.cpp:781 protocols/jabber/jabberaccount.cpp:538
+#: protocols/groupwise/gwaccount.cpp:781 protocols/jabber/jabberaccount.cpp:508
 #, kde-format
 msgid "Maximum certificate chain length was exceeded."
 msgstr "Надхвърлена е максималната дължина на веригата от удостоверения."
 
-#: protocols/groupwise/gwaccount.cpp:785 protocols/jabber/jabberaccount.cpp:542
+#: protocols/groupwise/gwaccount.cpp:785 protocols/jabber/jabberaccount.cpp:512
 #, kde-format
 msgid "The certificate has expired."
 msgstr "Удостоверението е с изтекъл срок."
 
-#: protocols/groupwise/gwaccount.cpp:789 protocols/jabber/jabberaccount.cpp:546
+#: protocols/groupwise/gwaccount.cpp:789 protocols/jabber/jabberaccount.cpp:516
 #, fuzzy, kde-format
 msgid "The Certificate Authority has expired."
 msgstr "Удостоверителят е невалиден."
 
-#: protocols/groupwise/gwaccount.cpp:793 protocols/jabber/jabberaccount.cpp:550
+#: protocols/groupwise/gwaccount.cpp:793 protocols/jabber/jabberaccount.cpp:520
 #, kde-format
 msgid "Validity is unknown."
 msgstr ""
 
-#: protocols/groupwise/gwaccount.cpp:804 protocols/jabber/jabberaccount.cpp:561
+#: protocols/groupwise/gwaccount.cpp:804 protocols/jabber/jabberaccount.cpp:531
 #, fuzzy, kde-format
 msgid ""
 "<qt><p>The identity and the certificate of server %1 could not be validated "
@@ -12090,8 +12085,8 @@ msgstr ""
 "%2: %3</p><p>Искате ли да продължите?</p></qt>"
 
 #: protocols/groupwise/gwaccount.cpp:810 protocols/groupwise/gwaccount.cpp:815
-#: protocols/jabber/jabberaccount.cpp:567
-#: protocols/jabber/jabberaccount.cpp:572
+#: protocols/jabber/jabberaccount.cpp:537
+#: protocols/jabber/jabberaccount.cpp:542
 #, kde-format
 msgid ""
 "<qt><p>The certificate of server %1 could not be validated for account %2: "
@@ -13322,7 +13317,7 @@ msgstr "Съобщение за покана"
 msgid "Would you like to join the conversation?"
 msgstr "Искате ли да се включите в разговора?"
 
-#: protocols/jabber/jabberaccount.cpp:203
+#: protocols/jabber/jabberaccount.cpp:178
 #, fuzzy, kde-format
 msgid ""
 "Could not bind the Jabber file transfer manager to a local port. Please "
@@ -13333,45 +13328,45 @@ msgstr ""
 "локалния порт. Моля, проверете дали портът вече не се използва или изберете "
 "друг от настройката на сметката."
 
-#: protocols/jabber/jabberaccount.cpp:204
+#: protocols/jabber/jabberaccount.cpp:179
 #, kde-format
 msgid "Failed to start Jabber File Transfer Manager"
 msgstr "Грешка при стартиране на мениджъра за трансфер на файлове"
 
-#: protocols/jabber/jabberaccount.cpp:221
+#: protocols/jabber/jabberaccount.cpp:196
 #, kde-format
 msgid "Join Groupchat..."
 msgstr "Включване в групов разговор..."
 
-#: protocols/jabber/jabberaccount.cpp:234
+#: protocols/jabber/jabberaccount.cpp:209
 #, kde-format
 msgid "Services..."
 msgstr "Услуги..."
 
-#: protocols/jabber/jabberaccount.cpp:241
+#: protocols/jabber/jabberaccount.cpp:216
 #: protocols/jabber/ui/dlgxmppconsole.cpp:32
 #, kde-format
 msgid "XML Console"
 msgstr "XML конзола"
 
-#: protocols/jabber/jabberaccount.cpp:247
+#: protocols/jabber/jabberaccount.cpp:222
 #: protocols/oscar/aim/aimaccount.cpp:241
 #: protocols/oscar/icq/icqaccount.cpp:138
 #, kde-format
 msgid "Edit User Info..."
 msgstr "Редактиране на информация за потребител..."
 
-#: protocols/jabber/jabberaccount.cpp:252
+#: protocols/jabber/jabberaccount.cpp:227
 #, kde-format
 msgid "Set Mood"
 msgstr "Задаване на настроение"
 
-#: protocols/jabber/jabberaccount.cpp:318
+#: protocols/jabber/jabberaccount.cpp:293
 #, kde-format
 msgid "Please connect first."
 msgstr "Моля, първо се свържете."
 
-#: protocols/jabber/jabberaccount.cpp:318
+#: protocols/jabber/jabberaccount.cpp:293
 #: protocols/jabber/ui/dlgjabberchatjoin.cpp:143
 #: protocols/jabber/ui/dlgjabberchatroomslist.cpp:93
 #: protocols/jabber/ui/dlgjabberregister.cpp:53
@@ -13380,7 +13375,7 @@ msgstr "Моля, първо се свържете."
 msgid "Jabber Error"
 msgstr "Грешка в Jabber"
 
-#: protocols/jabber/jabberaccount.cpp:452
+#: protocols/jabber/jabberaccount.cpp:427
 #, fuzzy, kde-format
 msgid ""
 "SSL support could not be initialized for account %1. This is most likely "
@@ -13389,286 +13384,286 @@ msgstr ""
 "Не може да бъде инициализирана защитена връзка (SSL) за сметката %1. Най-"
 "вероятно приставката QSSL не е инсталирана на компютъра ви."
 
-#: protocols/jabber/jabberaccount.cpp:454
+#: protocols/jabber/jabberaccount.cpp:429
 #: protocols/jabber/ui/jabberregisteraccount.cpp:294
 #, kde-format
 msgid "Jabber SSL Error"
 msgstr "Грешка в Jabber SSL"
 
-#: protocols/jabber/jabberaccount.cpp:579
+#: protocols/jabber/jabberaccount.cpp:549
 #, kde-format
 msgid "Jabber Connection Certificate Problem"
 msgstr "Проблем с удостоверение при свързване с Jabber"
 
-#: protocols/jabber/jabberaccount.cpp:613
+#: protocols/jabber/jabberaccount.cpp:583
 #, kde-format
 msgid ""
 "An encrypted connection with the Jabber server could not be established."
 msgstr "Не може да бъде установена защитена връзка с Jabber."
 
-#: protocols/jabber/jabberaccount.cpp:614
+#: protocols/jabber/jabberaccount.cpp:584
 #, kde-format
 msgid "Jabber Connection Error"
 msgstr "Грешка при свързване с Jabber"
 
-#: protocols/jabber/jabberaccount.cpp:820
+#: protocols/jabber/jabberaccount.cpp:768
 #, kde-format
 msgid "Malformed packet received."
 msgstr "Получен е повреден пакет."
 
-#: protocols/jabber/jabberaccount.cpp:825
+#: protocols/jabber/jabberaccount.cpp:773
 #, kde-format
 msgid "There was an unrecoverable error in the protocol."
 msgstr "Непоправима грешка в протокола."
 
-#: protocols/jabber/jabberaccount.cpp:832
+#: protocols/jabber/jabberaccount.cpp:780
 #, fuzzy, kde-format
 msgid "Generic stream error."
 msgstr "Вътрешна грешка на сървъра."
 
-#: protocols/jabber/jabberaccount.cpp:836
+#: protocols/jabber/jabberaccount.cpp:784
 #, kde-format
 msgid "There was a conflict in the information received."
 msgstr "Конфликт в получената информация."
 
-#: protocols/jabber/jabberaccount.cpp:839
+#: protocols/jabber/jabberaccount.cpp:787
 #, kde-format
 msgid "The stream timed out."
 msgstr "Просрочено време за връзка."
 
-#: protocols/jabber/jabberaccount.cpp:842
+#: protocols/jabber/jabberaccount.cpp:790
 #, kde-format
 msgid "Internal server error."
 msgstr "Вътрешна грешка на сървъра."
 
-#: protocols/jabber/jabberaccount.cpp:845
+#: protocols/jabber/jabberaccount.cpp:793
 #, kde-format
 msgid "Stream packet received from an invalid address."
 msgstr "Получен е пакет от невалиден адрес."
 
-#: protocols/jabber/jabberaccount.cpp:848
+#: protocols/jabber/jabberaccount.cpp:796
 #, kde-format
 msgid "Malformed stream packet received."
 msgstr "Получен е повреден пакет."
 
-#: protocols/jabber/jabberaccount.cpp:852
+#: protocols/jabber/jabberaccount.cpp:800
 #, kde-format
 msgid "Policy violation in the protocol stream."
 msgstr "Нарушение на правилата в потока."
 
-#: protocols/jabber/jabberaccount.cpp:856
+#: protocols/jabber/jabberaccount.cpp:804
 #, kde-format
 msgid "Resource constraint."
 msgstr "Ограничение на място."
 
-#: protocols/jabber/jabberaccount.cpp:860
+#: protocols/jabber/jabberaccount.cpp:808
 #, kde-format
 msgid "System shutdown."
 msgstr "Изключване на компютъра."
 
-#: protocols/jabber/jabberaccount.cpp:863
+#: protocols/jabber/jabberaccount.cpp:811
 #, kde-format
 msgid "Unknown reason."
 msgstr "Неизвестна причина."
 
-#: protocols/jabber/jabberaccount.cpp:867
+#: protocols/jabber/jabberaccount.cpp:815
 #, kde-format
 msgid "There was an error in the protocol stream: %1"
 msgstr "Грешка в потока на протокол: %1"
 
-#: protocols/jabber/jabberaccount.cpp:875
+#: protocols/jabber/jabberaccount.cpp:823
 #, kde-format
 msgid "Host not found."
 msgstr "Хостът не е открит."
 
-#: protocols/jabber/jabberaccount.cpp:878
+#: protocols/jabber/jabberaccount.cpp:826
 #, kde-format
 msgid "Address is already in use."
 msgstr "Адресът вече се използва."
 
-#: protocols/jabber/jabberaccount.cpp:881
+#: protocols/jabber/jabberaccount.cpp:829
 #, kde-format
 msgid "Connection refused."
 msgstr "Връзката е отказана."
 
-#: protocols/jabber/jabberaccount.cpp:884
+#: protocols/jabber/jabberaccount.cpp:832
 #, kde-format
 msgid "Connection attempt already in progress."
 msgstr "Вече тече опит за връзка."
 
-#: protocols/jabber/jabberaccount.cpp:887
+#: protocols/jabber/jabberaccount.cpp:835
 #, kde-format
 msgid "Network failure."
 msgstr "Мрежова грешка."
 
-#: protocols/jabber/jabberaccount.cpp:890
+#: protocols/jabber/jabberaccount.cpp:838
 #, kde-format
 msgid "Socket timed out."
 msgstr "Просрочено времето за сокета."
 
-#: protocols/jabber/jabberaccount.cpp:893
+#: protocols/jabber/jabberaccount.cpp:841
 #, fuzzy, kde-format
 msgid "Remote closed connection."
 msgstr "Използване на &директни връзки (DCC)"
 
-#: protocols/jabber/jabberaccount.cpp:897
+#: protocols/jabber/jabberaccount.cpp:845
 #, kde-format
 msgid "Unexpected error condition (%1)."
 msgstr ""
 
-#: protocols/jabber/jabberaccount.cpp:901
+#: protocols/jabber/jabberaccount.cpp:849
 #, kde-format
 msgid "There was a connection error: %1"
 msgstr "Грешка при връзка: %1"
 
-#: protocols/jabber/jabberaccount.cpp:909
+#: protocols/jabber/jabberaccount.cpp:857
 #, kde-format
 msgid "Unknown host."
 msgstr "Неизвестен хост."
 
-#: protocols/jabber/jabberaccount.cpp:913
+#: protocols/jabber/jabberaccount.cpp:861
 #, kde-format
 msgid "Could not connect to a required remote resource."
 msgstr "Грешка при свързване със заявеното отдалечено място."
 
-#: protocols/jabber/jabberaccount.cpp:916
+#: protocols/jabber/jabberaccount.cpp:864
 #, kde-format
 msgid ""
 "It appears we have been redirected to another server; I do not know how to "
 "handle this."
 msgstr "Изглежда сте пренасочени към друг сървър. Няма решение на това."
 
-#: protocols/jabber/jabberaccount.cpp:919
+#: protocols/jabber/jabberaccount.cpp:867
 #, kde-format
 msgid "Unsupported protocol version."
 msgstr "Неподдържана версия на протокола."
 
-#: protocols/jabber/jabberaccount.cpp:922
-#: protocols/jabber/jabberaccount.cpp:939
-#: protocols/jabber/jabberaccount.cpp:983
-#: protocols/jabber/jabberaccount.cpp:1000
-#: protocols/jabber/jabberaccount.cpp:1017
-#: protocols/jabber/jabberaccount.cpp:1025
+#: protocols/jabber/jabberaccount.cpp:870
+#: protocols/jabber/jabberaccount.cpp:887
+#: protocols/jabber/jabberaccount.cpp:931
+#: protocols/jabber/jabberaccount.cpp:948
+#: protocols/jabber/jabberaccount.cpp:965
+#: protocols/jabber/jabberaccount.cpp:973
 #, kde-format
 msgid "Unknown error."
 msgstr "Неизвестна грешка."
 
-#: protocols/jabber/jabberaccount.cpp:926
+#: protocols/jabber/jabberaccount.cpp:874
 #, kde-format
 msgid "There was a negotiation error: %1"
 msgstr "Грешка при договаряне: %1"
 
-#: protocols/jabber/jabberaccount.cpp:933
+#: protocols/jabber/jabberaccount.cpp:881
 #, kde-format
 msgid "Server rejected our request to start the TLS handshake."
 msgstr "Сървърът отхвърли заявката за договаряне на TLS."
 
-#: protocols/jabber/jabberaccount.cpp:936
+#: protocols/jabber/jabberaccount.cpp:884
 #, kde-format
 msgid "Failed to establish a secure connection."
 msgstr "Грешка при установяване на защитена връзка."
 
-#: protocols/jabber/jabberaccount.cpp:943
+#: protocols/jabber/jabberaccount.cpp:891
 #, kde-format
 msgid "There was a Transport Layer Security (TLS) error: %1"
 msgstr "TLS грешка: %1"
 
-#: protocols/jabber/jabberaccount.cpp:950
+#: protocols/jabber/jabberaccount.cpp:898
 #, kde-format
 msgid "Login failed with unknown reason."
 msgstr "Неизвестна грешка при влизане."
 
-#: protocols/jabber/jabberaccount.cpp:953
+#: protocols/jabber/jabberaccount.cpp:901
 #, kde-format
 msgid "No appropriate authentication mechanism available."
 msgstr "Няма подходящ механизъм за проверка на автентичността."
 
-#: protocols/jabber/jabberaccount.cpp:956
+#: protocols/jabber/jabberaccount.cpp:904
 #, kde-format
 msgid "Bad SASL authentication protocol."
 msgstr "Невалиден SASL протокол за проверка на автентичността."
 
-#: protocols/jabber/jabberaccount.cpp:959
+#: protocols/jabber/jabberaccount.cpp:907
 #, kde-format
 msgid "Server failed mutual authentication."
 msgstr "Грешка при взаимна проверка на автентичността."
 
-#: protocols/jabber/jabberaccount.cpp:962
+#: protocols/jabber/jabberaccount.cpp:910
 #, kde-format
 msgid "Encryption is required but not present."
 msgstr "Необходимо е шифроване, но такова липсва."
 
-#: protocols/jabber/jabberaccount.cpp:965
+#: protocols/jabber/jabberaccount.cpp:913
 #, kde-format
 msgid "Invalid user ID."
 msgstr "Невалидна самоличност."
 
-#: protocols/jabber/jabberaccount.cpp:968
+#: protocols/jabber/jabberaccount.cpp:916
 #, kde-format
 msgid "Invalid mechanism."
 msgstr "Невалиден механизъм."
 
-#: protocols/jabber/jabberaccount.cpp:971
+#: protocols/jabber/jabberaccount.cpp:919
 #, kde-format
 msgid "Invalid realm."
 msgstr "Невалидна област."
 
-#: protocols/jabber/jabberaccount.cpp:974
+#: protocols/jabber/jabberaccount.cpp:922
 #, kde-format
 msgid "Mechanism too weak."
 msgstr "Механизмът е прекалено слаб."
 
-#: protocols/jabber/jabberaccount.cpp:977
+#: protocols/jabber/jabberaccount.cpp:925
 #, kde-format
 msgid "Wrong credentials supplied. (check your user ID and password)"
 msgstr "Написали сте грешни самоличност и/или парола. (Моля, проверете ги)"
 
-#: protocols/jabber/jabberaccount.cpp:980
+#: protocols/jabber/jabberaccount.cpp:928
 #, kde-format
 msgid "Temporary failure, please try again later."
 msgstr "Временен проблем. Моля, опитайте отново по-късно."
 
-#: protocols/jabber/jabberaccount.cpp:987
+#: protocols/jabber/jabberaccount.cpp:935
 #, kde-format
 msgid "There was an error authenticating with the server: %1"
 msgstr "Грешка при проверка автентичността на сървъра: %1"
 
-#: protocols/jabber/jabberaccount.cpp:994
+#: protocols/jabber/jabberaccount.cpp:942
 #, kde-format
 msgid "Transport Layer Security (TLS) problem."
 msgstr "TLS проблем."
 
-#: protocols/jabber/jabberaccount.cpp:997
+#: protocols/jabber/jabberaccount.cpp:945
 #, kde-format
 msgid "Simple Authentication and Security Layer (SASL) problem."
 msgstr "SASL проблем."
 
-#: protocols/jabber/jabberaccount.cpp:1004
+#: protocols/jabber/jabberaccount.cpp:952
 #, kde-format
 msgid "There was an error in the security layer: %1"
 msgstr "Грешка в сигурността: %1"
 
-#: protocols/jabber/jabberaccount.cpp:1011
+#: protocols/jabber/jabberaccount.cpp:959
 #, kde-format
 msgid "No permission to bind the resource."
 msgstr "Нямате права за това място."
 
-#: protocols/jabber/jabberaccount.cpp:1014
+#: protocols/jabber/jabberaccount.cpp:962
 #, kde-format
 msgid "The resource is already in use."
 msgstr "Мястото вече се използва."
 
-#: protocols/jabber/jabberaccount.cpp:1021
+#: protocols/jabber/jabberaccount.cpp:969
 #, kde-format
 msgid "Could not bind a resource: %1"
 msgstr "Грешка при свързване на място: %1"
 
-#: protocols/jabber/jabberaccount.cpp:1034
+#: protocols/jabber/jabberaccount.cpp:982
 #, fuzzy, kde-format
 msgid "Kopete: Connection problem with Jabber server %1"
 msgstr "Проблем с връзката към Jabber сървъра %1"
 
-#: protocols/jabber/jabberaccount.cpp:1242
+#: protocols/jabber/jabberaccount.cpp:1190
 #, fuzzy, kde-format
 msgid ""
 "The Jabber user %1 removed %2's subscription to him/her. This account will "
@@ -13678,46 +13673,46 @@ msgstr ""
 "Потребителят на Jabber %1 премахна записването на %2. Тази сметка няма да "
 "може повече да вижда състоянието. Искате ли да контактът да бъде изтрит?"
 
-#: protocols/jabber/jabberaccount.cpp:1245
-#: protocols/jabber/jabbercontact.cpp:1012
+#: protocols/jabber/jabberaccount.cpp:1193
+#: protocols/jabber/jabbercontact.cpp:972
 #, kde-format
 msgid "Notification"
 msgstr "Известяване"
 
-#: protocols/jabber/jabberaccount.cpp:1429
+#: protocols/jabber/jabberaccount.cpp:1377
 #, kde-format
 msgid "Waiting for authorization"
 msgstr "Изчакване за оторизация"
 
-#: protocols/jabber/jabberaccount.cpp:1646
+#: protocols/jabber/jabberaccount.cpp:1594
 #, kde-format
 msgid "A password is required to join the room %1."
 msgstr "Необходима е парола за влизане в стая %1."
 
-#: protocols/jabber/jabberaccount.cpp:1656
+#: protocols/jabber/jabberaccount.cpp:1604
 #, kde-format
 msgid "Error trying to join %1 : nickname %2 is already in use"
 msgstr "Грешка при опит за влизане в %1. Псевдонимът %2 вече се използва"
 
-#: protocols/jabber/jabberaccount.cpp:1657
+#: protocols/jabber/jabberaccount.cpp:1605
 #: protocols/jabber/jabberprotocol.cpp:510
 #, fuzzy, kde-format
 msgid "Provide your nickname"
 msgstr "Вашият псевдоним"
 
-#: protocols/jabber/jabberaccount.cpp:1669
+#: protocols/jabber/jabberaccount.cpp:1617
 #, fuzzy, kde-format
 msgid "You cannot join the room %1 because you have been banned"
 msgstr "Не можете да влезете в стая %1, защото сте отстранени."
 
-#: protocols/jabber/jabberaccount.cpp:1670
-#: protocols/jabber/jabberaccount.cpp:1676
-#: protocols/jabber/jabberaccount.cpp:1685
+#: protocols/jabber/jabberaccount.cpp:1618
+#: protocols/jabber/jabberaccount.cpp:1624
+#: protocols/jabber/jabberaccount.cpp:1633
 #, kde-format
 msgid "Jabber Group Chat"
 msgstr "Конферентна връзка в Jabber"
 
-#: protocols/jabber/jabberaccount.cpp:1675
+#: protocols/jabber/jabberaccount.cpp:1623
 #, fuzzy, kde-format
 msgid ""
 "You cannot join the room %1 because the maximum number of users has been "
@@ -13726,12 +13721,12 @@ msgstr ""
 "Не можете да влезете в стая %1, защото е достигнат максималния брой "
 "потребители"
 
-#: protocols/jabber/jabberaccount.cpp:1681
+#: protocols/jabber/jabberaccount.cpp:1629
 #, kde-format
 msgid "No reason given by the server"
 msgstr "Не е посочена причина от сървъра"
 
-#: protocols/jabber/jabberaccount.cpp:1684
+#: protocols/jabber/jabberaccount.cpp:1632
 #, fuzzy, kde-format
 msgid ""
 "There was an error processing your request for groupchat %1. (Reason: %2, "
@@ -13740,7 +13735,7 @@ msgstr ""
 "Грешка при обработка на заявката за групов разговор %1. (Причина: %2, Код: "
 "%3)"
 
-#: protocols/jabber/jabberaccount.cpp:1757
+#: protocols/jabber/jabberaccount.cpp:1705
 #, fuzzy, kde-format
 msgid ""
 "Do you want to also unregister \"%1\" from the Jabber server ?\n"
@@ -13751,22 +13746,22 @@ msgstr ""
 "Ако го направите, списъка с всички контакти ще бъде премахнат от сървъра и "
 "няма да можете повече да се свършете към тази сметка."
 
-#: protocols/jabber/jabberaccount.cpp:1760
+#: protocols/jabber/jabberaccount.cpp:1708
 #, kde-format
 msgid "Unregister"
 msgstr "Отписване"
 
-#: protocols/jabber/jabberaccount.cpp:1761
+#: protocols/jabber/jabberaccount.cpp:1709
 #, kde-format
 msgid "Remove and Unregister"
 msgstr "Премахване и отписване"
 
-#: protocols/jabber/jabberaccount.cpp:1762
+#: protocols/jabber/jabberaccount.cpp:1710
 #, fuzzy, kde-format
 msgid "Remove only from Kopete"
 msgstr "Премахване само от Kopete"
 
-#: protocols/jabber/jabberaccount.cpp:1806
+#: protocols/jabber/jabberaccount.cpp:1754
 #, fuzzy, kde-format
 msgid ""
 "An error occurred while trying to remove the account:\n"
@@ -13775,7 +13770,7 @@ msgstr ""
 "Възникна грешка при опит за премахване на сметка:\n"
 "%1"
 
-#: protocols/jabber/jabberaccount.cpp:1807
+#: protocols/jabber/jabberaccount.cpp:1755
 #, kde-format
 msgid "Jabber Account Unregistration"
 msgstr "Отписване на сметка в Jabber"
@@ -13888,95 +13883,65 @@ msgstr "Редактиране на псевдоним..."
 msgid "Groupchat Bookmark"
 msgstr "Отметка за групов разговор"
 
-#: protocols/jabber/jabberchatsession.cpp:70
-#, kde-format
-msgid "Show audio calls"
-msgstr ""
-
-#: protocols/jabber/jabberchatsession.cpp:74
-#, kde-format
-msgid "Start audio call"
-msgstr ""
-
-#: protocols/jabber/jabberchatsession.cpp:150
+#: protocols/jabber/jabberchatsession.cpp:101
 #, kde-format
 msgctxt "a contact's online status in parenthesis."
 msgid " (%1)"
 msgstr " (%1)"
 
-#: protocols/jabber/jabbercontact.cpp:144
+#: protocols/jabber/jabbercontact.cpp:140
 #, kde-format
 msgid "Authorization"
 msgstr "Оторизация"
 
-#: protocols/jabber/jabbercontact.cpp:150
+#: protocols/jabber/jabbercontact.cpp:146
 #, kde-format
 msgid "(Re)send Authorization To"
 msgstr "(Повторно) Изпращане на оторизация до"
 
-#: protocols/jabber/jabbercontact.cpp:157
+#: protocols/jabber/jabbercontact.cpp:153
 #, kde-format
 msgid "(Re)request Authorization From"
 msgstr "(Повторна) Заявка за оторизация от"
 
-#: protocols/jabber/jabbercontact.cpp:164
+#: protocols/jabber/jabbercontact.cpp:160
 #, kde-format
 msgid "Remove Authorization From"
 msgstr "Премахване на оторизация от"
 
-#: protocols/jabber/jabbercontact.cpp:176
-#, fuzzy, kde-format
-msgid "Call contact"
-msgstr "Контакт"
-
-#: protocols/jabber/jabbercontact.cpp:185
+#: protocols/jabber/jabbercontact.cpp:165
 #, kde-format
 msgid "Set Availability"
 msgstr "Задаване на достъпност"
 
-#: protocols/jabber/jabbercontact.cpp:195
+#: protocols/jabber/jabbercontact.cpp:175
 #, kde-format
 msgid "Free to Chat"
 msgstr "Свободен за разговор"
 
-#: protocols/jabber/jabbercontact.cpp:198
+#: protocols/jabber/jabbercontact.cpp:178
 #: protocols/oscar/aim/aimstatusmanager.cpp:69
 #: protocols/oscar/icq/icqstatusmanager.cpp:77
 #, kde-format
 msgid "Do Not Disturb"
 msgstr "Не ме безпокойте"
 
-#: protocols/jabber/jabbercontact.cpp:203
+#: protocols/jabber/jabbercontact.cpp:183
 #, kde-format
 msgid "Select Resource"
 msgstr "Избор на място"
 
-#: protocols/jabber/jabbercontact.cpp:220
+#: protocols/jabber/jabbercontact.cpp:200
 #, kde-format
 msgid "Automatic (best/default resource)"
 msgstr "Автоматично (най-добро място /по подразбиране)"
 
-#: protocols/jabber/jabbercontact.cpp:274
-#, fuzzy, kde-format
-msgid "Test action"
-msgstr "Описание"
-
-#: protocols/jabber/jabbercontact.cpp:278
-#, kde-format
-msgid "Jingle Audio call"
-msgstr ""
-
 #: protocols/jabber/jabbercontact.cpp:281
-#, kde-format
-msgid "Jingle Video call"
-msgstr ""
-
-#: protocols/jabber/jabbercontact.cpp:321
 #, fuzzy, kde-format
 msgid "The original message is : <i>\" %1 \"</i><br />"
 msgstr "Оригинално съобщение: <i>\" %1 \"</i><br>"
 
-#: protocols/jabber/jabbercontact.cpp:322
+#: protocols/jabber/jabbercontact.cpp:282
 #, fuzzy, kde-format
 msgid ""
 "<qt><i>%1</i> has invited you to join the conference <b>%2</b><br />%3<br /"
@@ -13987,47 +13952,47 @@ msgstr ""
 "искате да приемете, просто <b>въведете псевдонима си</b> и натиснете "
 "ОК<br>Ако искате да откажете, натиснете \"Отказ\"</qt>"
 
-#: protocols/jabber/jabbercontact.cpp:328
+#: protocols/jabber/jabbercontact.cpp:288
 #, kde-format
 msgid "Invited to a conference - Jabber Plugin"
 msgstr "Покана за конференция - приставка за Jabber"
 
-#: protocols/jabber/jabbercontact.cpp:345
+#: protocols/jabber/jabbercontact.cpp:305
 #, kde-format
 msgid "Message has been displayed"
 msgstr "Съобщението е показано"
 
-#: protocols/jabber/jabbercontact.cpp:348
-#: protocols/jabber/jabbercontact.cpp:376
+#: protocols/jabber/jabbercontact.cpp:308
+#: protocols/jabber/jabbercontact.cpp:336
 #, kde-format
 msgid "Message has been delivered"
 msgstr "Съобщението е доставено"
 
-#: protocols/jabber/jabbercontact.cpp:357
+#: protocols/jabber/jabbercontact.cpp:317
 #, kde-format
 msgid "Message stored on the server, contact offline"
 msgstr "Съобщението е съхранено на сървъра, защото контакта не е включен"
 
-#: protocols/jabber/jabbercontact.cpp:365
+#: protocols/jabber/jabbercontact.cpp:325
 #, fuzzy, kde-format
 msgid "%1 has ended his/her participation in the chat session."
 msgstr "%1 завършиха участието си в разговора."
 
-#: protocols/jabber/jabbercontact.cpp:415
+#: protocols/jabber/jabbercontact.cpp:375
 #: protocols/jabber/jabbergroupcontact.cpp:180
 #: protocols/jabber/jabbergroupmembercontact.cpp:211
 #, kde-format
 msgid "Your message could not be delivered: \"%1\", Reason: \"%2\""
 msgstr "Съобщението не може да бъде доставено: \"%1\". Причина: \"%2\""
 
-#: protocols/jabber/jabbercontact.cpp:1011
+#: protocols/jabber/jabbercontact.cpp:971
 #, fuzzy, kde-format
 msgid "Do you also want to remove user %1's authorization to see your status?"
 msgstr ""
 "Искате ли да премахнете оторизацията на потребител \"%1\", така че да може "
 "да вижда състоянието ви?"
 
-#: protocols/jabber/jabbercontact.cpp:1185
+#: protocols/jabber/jabbercontact.cpp:1145
 #, kde-format
 msgid ""
 "You have preselected a resource for contact %1, but you still have open chat "
@@ -14037,7 +14002,7 @@ msgstr ""
 "Избрахте ново място за контакт %1, но все още имате отворен прозорец за "
 "разговор с него. Новоизбраното място ще бъде важи само за новите прозорци."
 
-#: protocols/jabber/jabbercontact.cpp:1189
+#: protocols/jabber/jabbercontact.cpp:1149
 #, kde-format
 msgid "Jabber Resource Selector"
 msgstr "Избор на място - Jabber"
@@ -14248,115 +14213,6 @@ msgstr "Без премахване"
 #, fuzzy, kde-format
 msgid "Please enter your nickname for the room %1"
 msgstr "Моля, въведете име на новата група:"
-
-#. i18n: ectx: property (windowTitle), widget (QMainWindow, jingleCallsGui)
-#: protocols/jabber/jingle/jinglecallsgui.ui:13
-#, fuzzy, kde-format
-msgid "Main Window"
-msgstr "Вдовец/ица"
-
-#. i18n: ectx: property (windowTitle), widget (QToolBar, toolBar)
-#: protocols/jabber/jingle/jinglecallsgui.ui:50
-#, fuzzy, kde-format
-msgid "Toolbar"
-msgstr "Лента за форматиране"
-
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:28
-#, kde-format
-msgid "Audio"
-msgstr "Звук"
-
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:70
-#, fuzzy, kde-format
-msgid "Choose the contents you want to accept:"
-msgstr "Сметки за игнориране:"
-
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:77
-#, fuzzy, kde-format
-msgid "New Jingle session from %1"
-msgstr "Показване на изкл&ючените потребители"
-
-#. i18n: ectx: property (windowTitle), widget (QDialog, jingleContentDialog)
-#: protocols/jabber/jingle/jinglecontentdialog.ui:19
-#, fuzzy, kde-format
-msgid "Dialog"
-msgstr "Прозорец за отсъствие"
-
-#: protocols/jabber/libjingle.cpp:102
-#, kde-format
-msgid "Cannot start process %1. Check your installation of Kopete."
-msgstr ""
-
-#: protocols/jabber/libjingle.cpp:332
-#, fuzzy, kde-format
-msgid "Answer for incoming call"
-msgstr "&Да не се влияе от \"свързване на всички\""
-
-#: protocols/jabber/libjingle.cpp:342
-#, fuzzy, kde-format
-msgid "Accepted"
-msgstr "Приемане"
-
-#: protocols/jabber/libjingle.cpp:351
-#, fuzzy, kde-format
-msgid "Calling..."
-msgstr "&Промяна..."
-
-#: protocols/jabber/libjingle.cpp:356
-#, fuzzy, kde-format
-msgid "Rejected"
-msgstr "Задължително"
-
-#: protocols/jabber/libjingle.cpp:368
-#, fuzzy, kde-format
-msgid "Call in progress"
-msgstr "Сесията тече."
-
-#: protocols/jabber/libjingle.cpp:375
-#, kde-format
-msgid "Other side hung up"
-msgstr ""
-
-#: protocols/jabber/libjingle.cpp:429
-#, fuzzy, kde-format
-msgid "Waiting..."
-msgstr "Чакане на отговор..."
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, LibjingleCallDialog)
-#: protocols/jabber/libjinglecalldialog.ui:6
-#, fuzzy, kde-format
-msgid "Libjingle Voice Call"
-msgstr "GoogleTalk"
-
-#. i18n: ectx: property (text), widget (QLabel, label)
-#: protocols/jabber/libjinglecalldialog.ui:14
-#, kde-format
-msgid "Calling with:"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QLabel, label_2)
-#: protocols/jabber/libjinglecalldialog.ui:28
-#, fuzzy, kde-format
-msgid "Call Status:"
-msgstr "Състояние:"
-
-#. i18n: ectx: property (text), widget (QPushButton, acceptButton)
-#: protocols/jabber/libjinglecalldialog.ui:42
-#, kde-format
-msgid "Accept"
-msgstr "Приемане"
-
-#. i18n: ectx: property (text), widget (QPushButton, rejectButton)
-#: protocols/jabber/libjinglecalldialog.ui:49
-#, fuzzy, kde-format
-msgid "Reject"
-msgstr "Отхвърляне"
-
-#. i18n: ectx: property (text), widget (QPushButton, hangupButton)
-#: protocols/jabber/libjinglecalldialog.ui:56
-#, fuzzy, kde-format
-msgid "Hang up"
-msgstr "Затваряне"
 
 #: protocols/jabber/tasks/mood.cpp:77 protocols/jabber/ui/privacyruledlg.cpp:46
 #: protocols/jabber/ui/privacyruledlg.cpp:96
@@ -15248,98 +15104,22 @@ msgstr ""
 "Kopete.</li>\n"
 "<li>Проксито може да бъде настроено за всяка отделна сметка.</li></ul></i>"
 
-#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:844
-#, fuzzy, kde-format
-msgid "&Jingle"
-msgstr "Сам/а"
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox_2)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:852
-#, fuzzy, kde-format
-msgid "Network"
-msgstr "&Мрежа:"
-
-#. i18n: ectx: property (text), widget (QCheckBox, autoDetectIPBox)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:858
-#, fuzzy, kde-format
-msgid "Auto-detect external IP address"
-msgstr "Домашен адрес"
-
-#. i18n: ectx: property (text), widget (QLabel, label)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:867
-#, kde-format
-msgid "First port to use:"
-msgstr ""
-
-#. i18n: ectx: property (toolTip), widget (QSpinBox, firstPortEdit)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:881
-#, kde-format
-msgid ""
-"Set the first incoming port to use for Jingle sessions.\n"
-"One media type uses 2 ports and each new Jingle session will use the next 2 "
-"available ports."
-msgstr ""
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox_3)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:905
-#: protocols/oscar/icq/icqprotocol.cpp:656
-#, kde-format
-msgid "Media"
-msgstr "Медии"
-
-#. i18n: ectx: property (text), widget (QLabel, label_2)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:913
-#, kde-format
-msgid "Microphone to use:"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QLabel, label_3)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:927
-#, kde-format
-msgid "Audio output:"
-msgstr ""
-
-#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:958
-#, fuzzy, kde-format
-msgid "&Libjingle"
-msgstr "Сам/а"
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox_17)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:964
-#, fuzzy, kde-format
-msgid "Libjingle settings"
-msgstr "Настройки на GSMLib"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, Libjingle)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:970
-#, kde-format
-msgid "This enable libjingle voice call"
-msgstr ""
-
-#. i18n: ectx: property (text), widget (QCheckBox, Libjingle)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:973
-#, kde-format
-msgid "Enable libjingle support"
-msgstr ""
-
 #. i18n: ectx: attribute (title), widget (QWidget, privacyTab)
 #. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:994
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:844
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:642
 #, kde-format
 msgid "Pri&vacy"
 msgstr "&Поверителност"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_7)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1006
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:856
 #, kde-format
 msgid "General Privacy"
 msgstr "Обща поверителност"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbHideSystemInfo)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1018
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:868
 #, fuzzy, kde-format
 msgid ""
 "By default, Kopete gives the other users some info about your system and the "
@@ -15350,13 +15130,13 @@ msgstr ""
 "скрита."
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbHideSystemInfo)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1021
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:871
 #, kde-format
 msgid "&Hide system and client info"
 msgstr "&Скриване на информацията за системата и клиента"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbSendEvents)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1062
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:912
 #, fuzzy, kde-format
 msgid ""
 "Check this box if you always want to send notifications to your contacts."
@@ -15365,13 +15145,13 @@ msgstr ""
 "контакти."
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendEvents)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1065
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:915
 #, kde-format
 msgid "Always send not&ifications"
 msgstr "Изпращане &на известие винаги"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbSendDeliveredEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1110
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:960
 #, fuzzy, kde-format
 msgid ""
 "<qt>Check this box to send the <b>Delivered notification</b> to your "
@@ -15383,13 +15163,13 @@ msgstr ""
 "бъде изпратено известие, че сте го получили.</qt>"
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendDeliveredEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1113
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:963
 #, kde-format
 msgid "Alwa&ys send delivered notifications"
 msgstr "Изпращане на ИДС (известие за доставка на съобщение) в&инаги"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbSendDisplayedEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1126
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:976
 #, fuzzy, kde-format
 msgid ""
 "<qt>Check this box to send the <b>Displayed notification</b> to your "
@@ -15401,13 +15181,13 @@ msgstr ""
 "изпратено известие, че сте го прочели.</qt>"
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendDisplayedEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1129
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:979
 #, kde-format
 msgid "Al&ways send displayed notifications"
 msgstr "Изпращане на известие за видяно съобщение &винаги"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbSendComposingEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1142
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:992
 #, fuzzy, kde-format
 msgid ""
 "<qt>Check this box to send the <b>Typing notification</b> to your contacts : "
@@ -15420,25 +15200,25 @@ msgstr ""
 "отговаряте.</qt>"
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendComposingEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1145
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:995
 #, kde-format
 msgid "Always send &typing notifications"
 msgstr "Изпращане на известие за пи&сане винаги"
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendGoneEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1155
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1005
 #, kde-format
 msgid "Always send &gone notifications (closing the window)"
 msgstr "Изпращане на известие за &отсъствие винаги (затваряне на прозореца)"
 
 #. i18n: ectx: property (text), widget (QPushButton, privacyListsButton)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1172
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1022
 #, fuzzy, kde-format
 msgid "Privacy Lists"
 msgstr "Настройки на поверителност"
 
 #. i18n: ectx: property (text), widget (QCheckBox, oldEncrypted)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1179
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1029
 #, kde-format
 msgid ""
 "When recipient does not support OpenPGP XEP-0027 wrap PGP block to message "
@@ -15929,19 +15709,19 @@ msgstr "Грешка при изтегляне на списъка със сър
 msgid "Could not parse the server list."
 msgstr "Грешка при обработка на списъка със сървърите."
 
-#: protocols/jabber/ui/jabbereditaccountwidget.cpp:284
+#: protocols/jabber/ui/jabbereditaccountwidget.cpp:190
 #, kde-format
 msgid ""
 "The changes you just made will take effect next time you log in with Jabber."
 msgstr ""
 "Направените промени ще влезнат в действие при следващото влизане в Jabber."
 
-#: protocols/jabber/ui/jabbereditaccountwidget.cpp:285
+#: protocols/jabber/ui/jabbereditaccountwidget.cpp:191
 #, kde-format
 msgid "Jabber Changes During Online Jabber Session"
 msgstr "Сървърът е променен по време на сесията"
 
-#: protocols/jabber/ui/jabbereditaccountwidget.cpp:365
+#: protocols/jabber/ui/jabbereditaccountwidget.cpp:258
 #, kde-format
 msgid ""
 "The Jabber ID you have chosen is invalid. Please make sure it is in the form "
@@ -15950,7 +15730,7 @@ msgstr ""
 "Избраната от вас самоличност за Jabber е невалидна. Моля, проверете дали е "
 "във формата user@jabber.org (като е-поща)."
 
-#: protocols/jabber/ui/jabbereditaccountwidget.cpp:367
+#: protocols/jabber/ui/jabbereditaccountwidget.cpp:260
 #, kde-format
 msgid "Invalid Jabber ID"
 msgstr "Невалидна самоличност за Jabber"
@@ -17884,6 +17664,11 @@ msgstr "Търговски комплекси"
 #, kde-format
 msgid "Health and Beauty"
 msgstr "Здраве и красота"
+
+#: protocols/oscar/icq/icqprotocol.cpp:656
+#, kde-format
+msgid "Media"
+msgstr "Медии"
 
 #: protocols/oscar/icq/icqprotocol.cpp:657
 #, kde-format
@@ -20945,3 +20730,97 @@ msgstr "Настройването беше неуспешно"
 #, kde-format
 msgid "User Info for %1"
 msgstr "Информация за потребител %1"
+
+#, fuzzy
+#~ msgid "Call contact"
+#~ msgstr "Контакт"
+
+#, fuzzy
+#~ msgid "Test action"
+#~ msgstr "Описание"
+
+#, fuzzy
+#~ msgid "Main Window"
+#~ msgstr "Вдовец/ица"
+
+#, fuzzy
+#~ msgid "Toolbar"
+#~ msgstr "Лента за форматиране"
+
+#~ msgid "Audio"
+#~ msgstr "Звук"
+
+#, fuzzy
+#~ msgid "Choose the contents you want to accept:"
+#~ msgstr "Сметки за игнориране:"
+
+#, fuzzy
+#~ msgid "New Jingle session from %1"
+#~ msgstr "Показване на изкл&ючените потребители"
+
+#, fuzzy
+#~ msgid "Dialog"
+#~ msgstr "Прозорец за отсъствие"
+
+#, fuzzy
+#~ msgid "Answer for incoming call"
+#~ msgstr "&Да не се влияе от \"свързване на всички\""
+
+#, fuzzy
+#~ msgid "Accepted"
+#~ msgstr "Приемане"
+
+#, fuzzy
+#~ msgid "Calling..."
+#~ msgstr "&Промяна..."
+
+#, fuzzy
+#~ msgid "Rejected"
+#~ msgstr "Задължително"
+
+#, fuzzy
+#~ msgid "Call in progress"
+#~ msgstr "Сесията тече."
+
+#, fuzzy
+#~ msgid "Waiting..."
+#~ msgstr "Чакане на отговор..."
+
+#, fuzzy
+#~ msgid "Libjingle Voice Call"
+#~ msgstr "GoogleTalk"
+
+#, fuzzy
+#~ msgid "Call Status:"
+#~ msgstr "Състояние:"
+
+#~ msgid "Accept"
+#~ msgstr "Приемане"
+
+#, fuzzy
+#~ msgid "Reject"
+#~ msgstr "Отхвърляне"
+
+#, fuzzy
+#~ msgid "Hang up"
+#~ msgstr "Затваряне"
+
+#, fuzzy
+#~ msgid "&Jingle"
+#~ msgstr "Сам/а"
+
+#, fuzzy
+#~ msgid "Network"
+#~ msgstr "&Мрежа:"
+
+#, fuzzy
+#~ msgid "Auto-detect external IP address"
+#~ msgstr "Домашен адрес"
+
+#, fuzzy
+#~ msgid "&Libjingle"
+#~ msgstr "Сам/а"
+
+#, fuzzy
+#~ msgid "Libjingle settings"
+#~ msgstr "Настройки на GSMLib"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-12-26 00:53+0000\n"
+"POT-Creation-Date: 2023-08-03 00:46+0000\n"
 "PO-Revision-Date: 2013-05-26 14:38+0100\n"
 "Last-Translator: Andrius Štikonas <andrius@stikonas.eu>\n"
 "Language-Team: Lithuanian <kde-i18n-lt@kde.org>\n"
@@ -1561,7 +1561,6 @@ msgstr "Vykdyti"
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, AVDeviceConfig_VideoDevice)
 #: kopete/config/avdevice/avdeviceconfig_videodevice.ui:20
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:31
 #, kde-format
 msgid "Video"
 msgstr "Video"
@@ -1859,7 +1858,7 @@ msgstr "Įvykiai"
 #. i18n: ectx: property (title), widget (QGroupBox, notifyGroupBox)
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_8)
 #: kopete/config/behavior/behaviorconfig_events.ui:20
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1047
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:897
 #, kde-format
 msgid "Notifications"
 msgstr "Pranešimai"
@@ -2292,7 +2291,7 @@ msgstr "Neprisijungęs (-usi)"
 #: plugins/statistics/statisticsdialog.cpp:646
 #: protocols/bonjour/bonjourprotocol.cpp:38 protocols/gadu/gaduprotocol.cpp:88
 #: protocols/gadu/gaduprotocol.cpp:93 protocols/groupwise/gwprotocol.cpp:53
-#: protocols/jabber/jabbercontact.cpp:194
+#: protocols/jabber/jabbercontact.cpp:174
 #: protocols/jabber/jabberprotocol.cpp:68
 #: protocols/meanwhile/meanwhileprotocol.cpp:40
 #: protocols/oscar/aim/aimstatusmanager.cpp:79
@@ -2312,7 +2311,7 @@ msgstr "Prisijungęs (-usi)"
 #: plugins/statistics/statisticscontact.cpp:273
 #: plugins/statistics/statisticsdialog.cpp:363
 #: plugins/statistics/statisticsdialog.cpp:648
-#: protocols/groupwise/gwprotocol.cpp:57 protocols/jabber/jabbercontact.cpp:196
+#: protocols/groupwise/gwprotocol.cpp:57 protocols/jabber/jabbercontact.cpp:176
 #: protocols/jabber/jabberprotocol.cpp:69
 #: protocols/meanwhile/meanwhileprotocol.cpp:44
 #: protocols/oscar/aim/aimstatusmanager.cpp:75
@@ -2342,7 +2341,7 @@ msgstr "Užimtas (-a)"
 #: kopete/config/status/statusconfig_manager.cpp:70
 #: libkopete/kopeteonlinestatus.cpp:170 libkopete/kopetestatusmanager.cpp:301
 #: protocols/gadu/gaduprotocol.cpp:79 protocols/gadu/gaduprotocol.cpp:86
-#: protocols/jabber/jabbercontact.cpp:199
+#: protocols/jabber/jabbercontact.cpp:179
 #: protocols/jabber/jabberprotocol.cpp:73
 #: protocols/oscar/aim/aimstatusmanager.cpp:85
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:812
@@ -2861,7 +2860,7 @@ msgid "Free For Chat"
 msgstr "Laisvas pokalbiui"
 
 #: kopete/config/status/statusconfig_manager.cpp:64
-#: protocols/jabber/jabbercontact.cpp:197
+#: protocols/jabber/jabbercontact.cpp:177
 #: protocols/jabber/jabberprotocol.cpp:70
 #, kde-format
 msgid "Extended Away"
@@ -4891,9 +4890,7 @@ msgstr "Žemi"
 msgid "Treble"
 msgstr "Aukšti"
 
-#. i18n: ectx: property (text), widget (QPushButton, muteButton)
 #: libkopete/avdevice/videodevice.cpp:3703
-#: protocols/jabber/libjinglecalldialog.ui:63
 #, kde-format
 msgid "Mute"
 msgstr "Nutildyti"
@@ -6098,7 +6095,6 @@ msgstr "Jungiamasi"
 #: plugins/translator/translatorlanguages.cpp:33
 #: plugins/translator/translatorlanguages.cpp:96
 #: protocols/groupwise/gwprotocol.cpp:65
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:37
 #: protocols/oscar/aim/aimstatusmanager.cpp:33
 #: protocols/oscar/icq/icqprotocol.cpp:455
 #: protocols/oscar/icq/icqprotocol.cpp:534
@@ -6209,7 +6205,7 @@ msgid "File transfer %1 cancelled."
 msgstr "Failo siuntimas %1 atšauktas."
 
 #: libkopete/kopetetransfermanager.cpp:513 protocols/gadu/gaducontact.cpp:100
-#: protocols/jabber/jabbercontact.cpp:1116
+#: protocols/jabber/jabbercontact.cpp:1076
 #: protocols/jabber/jabbergroupcontact.cpp:355
 #: protocols/jabber/jabbergroupmembercontact.cpp:300
 #: protocols/oscar/oscarcontact.cpp:364 protocols/qq/qqcontact.cpp:412
@@ -6229,7 +6225,6 @@ msgstr ""
 
 #: libkopete/kopetetransfermanager.cpp:551
 #: libkopete/kopetetransfermanager.cpp:592
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:34
 #, kde-format
 msgid "File Transfer"
 msgstr "Failų siuntimai"
@@ -7490,8 +7485,8 @@ msgstr "Ar norite pašalinti senus istorijos failus?"
 msgid "History Converter"
 msgstr "Istorijos konverteris"
 
-#: plugins/history/converter.cpp:45 protocols/jabber/jabberaccount.cpp:1245
-#: protocols/jabber/jabbercontact.cpp:1013
+#: plugins/history/converter.cpp:45 protocols/jabber/jabberaccount.cpp:1193
+#: protocols/jabber/jabbercontact.cpp:973
 #, kde-format
 msgid "Keep"
 msgstr "Palikti"
@@ -12056,77 +12051,77 @@ msgstr ""
 msgid "Unable to Connect '%1'"
 msgstr "Nepavyko prisijungti '%1'"
 
-#: protocols/groupwise/gwaccount.cpp:735 protocols/jabber/jabberaccount.cpp:492
+#: protocols/groupwise/gwaccount.cpp:735 protocols/jabber/jabberaccount.cpp:462
 #, kde-format
 msgid "The host name does not match the one in the certificate."
 msgstr "Mazgo vardas neatitinka to, kuris nurodytas liudijime."
 
-#: protocols/groupwise/gwaccount.cpp:739 protocols/jabber/jabberaccount.cpp:496
+#: protocols/groupwise/gwaccount.cpp:739 protocols/jabber/jabberaccount.cpp:466
 #, kde-format
 msgid "The certificate is invalid."
 msgstr "Liudijimas negalioja."
 
-#: protocols/groupwise/gwaccount.cpp:743 protocols/jabber/jabberaccount.cpp:500
+#: protocols/groupwise/gwaccount.cpp:743 protocols/jabber/jabberaccount.cpp:470
 #, kde-format
 msgid "No certificate was presented."
 msgstr "Nepateiktas joks liudijimas."
 
-#: protocols/groupwise/gwaccount.cpp:753 protocols/jabber/jabberaccount.cpp:510
+#: protocols/groupwise/gwaccount.cpp:753 protocols/jabber/jabberaccount.cpp:480
 #, kde-format
 msgid "The Certificate Authority rejected the certificate."
 msgstr "Liudijimų įstaiga atmetė liudijimą."
 
-#: protocols/groupwise/gwaccount.cpp:757 protocols/jabber/jabberaccount.cpp:514
+#: protocols/groupwise/gwaccount.cpp:757 protocols/jabber/jabberaccount.cpp:484
 #, kde-format
 msgid "The certificate is not trusted."
 msgstr "Liudijimas nepatikimas."
 
-#: protocols/groupwise/gwaccount.cpp:761 protocols/jabber/jabberaccount.cpp:518
+#: protocols/groupwise/gwaccount.cpp:761 protocols/jabber/jabberaccount.cpp:488
 #, kde-format
 msgid "The signature is invalid."
 msgstr "Parašas negalioja."
 
-#: protocols/groupwise/gwaccount.cpp:765 protocols/jabber/jabberaccount.cpp:522
+#: protocols/groupwise/gwaccount.cpp:765 protocols/jabber/jabberaccount.cpp:492
 #, kde-format
 msgid "The Certificate Authority is invalid."
 msgstr "Liudijimų įstaigos įrašas neteisingas."
 
-#: protocols/groupwise/gwaccount.cpp:769 protocols/jabber/jabberaccount.cpp:526
+#: protocols/groupwise/gwaccount.cpp:769 protocols/jabber/jabberaccount.cpp:496
 #, kde-format
 msgid "Invalid certificate purpose."
 msgstr "Neteisinga liudijimo paskirtis."
 
-#: protocols/groupwise/gwaccount.cpp:773 protocols/jabber/jabberaccount.cpp:530
+#: protocols/groupwise/gwaccount.cpp:773 protocols/jabber/jabberaccount.cpp:500
 #, kde-format
 msgid "The certificate is self-signed."
 msgstr "Liudijimas yra paties pasirašytas."
 
-#: protocols/groupwise/gwaccount.cpp:777 protocols/jabber/jabberaccount.cpp:534
+#: protocols/groupwise/gwaccount.cpp:777 protocols/jabber/jabberaccount.cpp:504
 #, kde-format
 msgid "The certificate has been revoked."
 msgstr "Liudijimas buvo atšauktas."
 
-#: protocols/groupwise/gwaccount.cpp:781 protocols/jabber/jabberaccount.cpp:538
+#: protocols/groupwise/gwaccount.cpp:781 protocols/jabber/jabberaccount.cpp:508
 #, kde-format
 msgid "Maximum certificate chain length was exceeded."
 msgstr "Buvo viršytas maksimalus liudijimų grandinės ilgis."
 
-#: protocols/groupwise/gwaccount.cpp:785 protocols/jabber/jabberaccount.cpp:542
+#: protocols/groupwise/gwaccount.cpp:785 protocols/jabber/jabberaccount.cpp:512
 #, kde-format
 msgid "The certificate has expired."
 msgstr "Liudijimas paseno."
 
-#: protocols/groupwise/gwaccount.cpp:789 protocols/jabber/jabberaccount.cpp:546
+#: protocols/groupwise/gwaccount.cpp:789 protocols/jabber/jabberaccount.cpp:516
 #, kde-format
 msgid "The Certificate Authority has expired."
 msgstr "Liudijimo liudijimų įstaiga paseno."
 
-#: protocols/groupwise/gwaccount.cpp:793 protocols/jabber/jabberaccount.cpp:550
+#: protocols/groupwise/gwaccount.cpp:793 protocols/jabber/jabberaccount.cpp:520
 #, kde-format
 msgid "Validity is unknown."
 msgstr "Galiojimas nežinomas."
 
-#: protocols/groupwise/gwaccount.cpp:804 protocols/jabber/jabberaccount.cpp:561
+#: protocols/groupwise/gwaccount.cpp:804 protocols/jabber/jabberaccount.cpp:531
 #, kde-format
 msgid ""
 "<qt><p>The identity and the certificate of server %1 could not be validated "
@@ -12136,8 +12131,8 @@ msgstr ""
 "tapatybės ir liudijimo:</p><p>%3</p><p>%4</p><p>Ar norite tęsti?</p></qt>"
 
 #: protocols/groupwise/gwaccount.cpp:810 protocols/groupwise/gwaccount.cpp:815
-#: protocols/jabber/jabberaccount.cpp:567
-#: protocols/jabber/jabberaccount.cpp:572
+#: protocols/jabber/jabberaccount.cpp:537
+#: protocols/jabber/jabberaccount.cpp:542
 #, kde-format
 msgid ""
 "<qt><p>The certificate of server %1 could not be validated for account %2: "
@@ -13369,7 +13364,7 @@ msgstr "Kvietimo žinutė"
 msgid "Would you like to join the conversation?"
 msgstr "Ar norite prisijungti prie pokalbio?"
 
-#: protocols/jabber/jabberaccount.cpp:203
+#: protocols/jabber/jabberaccount.cpp:178
 #, kde-format
 msgid ""
 "Could not bind the Jabber file transfer manager to a local port. Please "
@@ -13380,45 +13375,45 @@ msgstr ""
 "prievado. Patikrinkite, gal failų persiuntimo prievadas jau naudojimas, arba "
 "parinkite kitą failų persiuntimo prievado numerį (prieigos nustatymuose)."
 
-#: protocols/jabber/jabberaccount.cpp:204
+#: protocols/jabber/jabberaccount.cpp:179
 #, kde-format
 msgid "Failed to start Jabber File Transfer Manager"
 msgstr "Nepavyko paleisti Jabber failų persiuntimo tvarkyklės"
 
-#: protocols/jabber/jabberaccount.cpp:221
+#: protocols/jabber/jabberaccount.cpp:196
 #, kde-format
 msgid "Join Groupchat..."
 msgstr "Jungtis prie grupės pokalbio..."
 
-#: protocols/jabber/jabberaccount.cpp:234
+#: protocols/jabber/jabberaccount.cpp:209
 #, kde-format
 msgid "Services..."
 msgstr "Paslaugos..."
 
-#: protocols/jabber/jabberaccount.cpp:241
+#: protocols/jabber/jabberaccount.cpp:216
 #: protocols/jabber/ui/dlgxmppconsole.cpp:32
 #, kde-format
 msgid "XML Console"
 msgstr "XML konsolė"
 
-#: protocols/jabber/jabberaccount.cpp:247
+#: protocols/jabber/jabberaccount.cpp:222
 #: protocols/oscar/aim/aimaccount.cpp:241
 #: protocols/oscar/icq/icqaccount.cpp:138
 #, kde-format
 msgid "Edit User Info..."
 msgstr "Keisti naudotojo info..."
 
-#: protocols/jabber/jabberaccount.cpp:252
+#: protocols/jabber/jabberaccount.cpp:227
 #, kde-format
 msgid "Set Mood"
 msgstr "Parinkti nuotaiką"
 
-#: protocols/jabber/jabberaccount.cpp:318
+#: protocols/jabber/jabberaccount.cpp:293
 #, kde-format
 msgid "Please connect first."
 msgstr "Prašome pirmiausia prisijungti."
 
-#: protocols/jabber/jabberaccount.cpp:318
+#: protocols/jabber/jabberaccount.cpp:293
 #: protocols/jabber/ui/dlgjabberchatjoin.cpp:143
 #: protocols/jabber/ui/dlgjabberchatroomslist.cpp:93
 #: protocols/jabber/ui/dlgjabberregister.cpp:53
@@ -13427,7 +13422,7 @@ msgstr "Prašome pirmiausia prisijungti."
 msgid "Jabber Error"
 msgstr "Jabber klaida"
 
-#: protocols/jabber/jabberaccount.cpp:452
+#: protocols/jabber/jabberaccount.cpp:427
 #, kde-format
 msgid ""
 "SSL support could not be initialized for account %1. This is most likely "
@@ -13436,149 +13431,149 @@ msgstr ""
 "Nepavyko įjungti SSL palaikymo paskyrai %1. Tikriausiai taip yra dėl to, kad "
 "TLS nepalaiko QCA."
 
-#: protocols/jabber/jabberaccount.cpp:454
+#: protocols/jabber/jabberaccount.cpp:429
 #: protocols/jabber/ui/jabberregisteraccount.cpp:294
 #, kde-format
 msgid "Jabber SSL Error"
 msgstr "Jabber SSL klaida"
 
-#: protocols/jabber/jabberaccount.cpp:579
+#: protocols/jabber/jabberaccount.cpp:549
 #, kde-format
 msgid "Jabber Connection Certificate Problem"
 msgstr "Jabber jungties liudijimo problema"
 
-#: protocols/jabber/jabberaccount.cpp:613
+#: protocols/jabber/jabberaccount.cpp:583
 #, kde-format
 msgid ""
 "An encrypted connection with the Jabber server could not be established."
 msgstr "Nepavyko sukurti užkoduotos jungties su Jabber serveriu."
 
-#: protocols/jabber/jabberaccount.cpp:614
+#: protocols/jabber/jabberaccount.cpp:584
 #, kde-format
 msgid "Jabber Connection Error"
 msgstr "Jabber ryšio klaida"
 
-#: protocols/jabber/jabberaccount.cpp:820
+#: protocols/jabber/jabberaccount.cpp:768
 #, kde-format
 msgid "Malformed packet received."
 msgstr "Gautas sugadintas paketas."
 
-#: protocols/jabber/jabberaccount.cpp:825
+#: protocols/jabber/jabberaccount.cpp:773
 #, kde-format
 msgid "There was an unrecoverable error in the protocol."
 msgstr "Neatstatoma klaida protokole."
 
-#: protocols/jabber/jabberaccount.cpp:832
+#: protocols/jabber/jabberaccount.cpp:780
 #, kde-format
 msgid "Generic stream error."
 msgstr "Bendrinė srauto problema."
 
-#: protocols/jabber/jabberaccount.cpp:836
+#: protocols/jabber/jabberaccount.cpp:784
 #, kde-format
 msgid "There was a conflict in the information received."
 msgstr "Gauta konfliktuojanti informacija."
 
-#: protocols/jabber/jabberaccount.cpp:839
+#: protocols/jabber/jabberaccount.cpp:787
 #, kde-format
 msgid "The stream timed out."
 msgstr "Srautas per ilgai nieko neatsakė."
 
-#: protocols/jabber/jabberaccount.cpp:842
+#: protocols/jabber/jabberaccount.cpp:790
 #, kde-format
 msgid "Internal server error."
 msgstr "Vidinė serverio klaida."
 
-#: protocols/jabber/jabberaccount.cpp:845
+#: protocols/jabber/jabberaccount.cpp:793
 #, kde-format
 msgid "Stream packet received from an invalid address."
 msgstr "Srautas gavo paketą iš neteisingo adreso."
 
-#: protocols/jabber/jabberaccount.cpp:848
+#: protocols/jabber/jabberaccount.cpp:796
 #, kde-format
 msgid "Malformed stream packet received."
 msgstr "Gautas sugadinas srauto paketas."
 
-#: protocols/jabber/jabberaccount.cpp:852
+#: protocols/jabber/jabberaccount.cpp:800
 #, kde-format
 msgid "Policy violation in the protocol stream."
 msgstr "Taisyklių pažeidimas protokolo sraute."
 
-#: protocols/jabber/jabberaccount.cpp:856
+#: protocols/jabber/jabberaccount.cpp:804
 #, kde-format
 msgid "Resource constraint."
 msgstr "Resursų apribojimas."
 
-#: protocols/jabber/jabberaccount.cpp:860
+#: protocols/jabber/jabberaccount.cpp:808
 #, kde-format
 msgid "System shutdown."
 msgstr "Kompiuterio išjungimas."
 
-#: protocols/jabber/jabberaccount.cpp:863
+#: protocols/jabber/jabberaccount.cpp:811
 #, kde-format
 msgid "Unknown reason."
 msgstr "Nežinoma priežastis."
 
-#: protocols/jabber/jabberaccount.cpp:867
+#: protocols/jabber/jabberaccount.cpp:815
 #, kde-format
 msgid "There was an error in the protocol stream: %1"
 msgstr "Protokolo sraute įvyko klaida: %1"
 
-#: protocols/jabber/jabberaccount.cpp:875
+#: protocols/jabber/jabberaccount.cpp:823
 #, kde-format
 msgid "Host not found."
 msgstr "Mazgas nerastas."
 
-#: protocols/jabber/jabberaccount.cpp:878
+#: protocols/jabber/jabberaccount.cpp:826
 #, kde-format
 msgid "Address is already in use."
 msgstr "Adresas jau naudojamas."
 
-#: protocols/jabber/jabberaccount.cpp:881
+#: protocols/jabber/jabberaccount.cpp:829
 #, kde-format
 msgid "Connection refused."
 msgstr "Prisijungimas atmestas."
 
-#: protocols/jabber/jabberaccount.cpp:884
+#: protocols/jabber/jabberaccount.cpp:832
 #, kde-format
 msgid "Connection attempt already in progress."
 msgstr "Jau bandoma prisijungti."
 
-#: protocols/jabber/jabberaccount.cpp:887
+#: protocols/jabber/jabberaccount.cpp:835
 #, kde-format
 msgid "Network failure."
 msgstr "Tinklo klaida."
 
-#: protocols/jabber/jabberaccount.cpp:890
+#: protocols/jabber/jabberaccount.cpp:838
 #, kde-format
 msgid "Socket timed out."
 msgstr "Jungtis per ilgai nieko neatsakė."
 
-#: protocols/jabber/jabberaccount.cpp:893
+#: protocols/jabber/jabberaccount.cpp:841
 #, kde-format
 msgid "Remote closed connection."
 msgstr "Nutolęs mazgas nutraukė jungtį."
 
-#: protocols/jabber/jabberaccount.cpp:897
+#: protocols/jabber/jabberaccount.cpp:845
 #, kde-format
 msgid "Unexpected error condition (%1)."
 msgstr "Neatpažinta klaida: (%1)."
 
-#: protocols/jabber/jabberaccount.cpp:901
+#: protocols/jabber/jabberaccount.cpp:849
 #, kde-format
 msgid "There was a connection error: %1"
 msgstr "Įvyko jungties klaida: %1."
 
-#: protocols/jabber/jabberaccount.cpp:909
+#: protocols/jabber/jabberaccount.cpp:857
 #, kde-format
 msgid "Unknown host."
 msgstr "Nežinomas mazgas."
 
-#: protocols/jabber/jabberaccount.cpp:913
+#: protocols/jabber/jabberaccount.cpp:861
 #, kde-format
 msgid "Could not connect to a required remote resource."
 msgstr "Nepavyko prisijungti prie reikiamo nutolusio resurso."
 
-#: protocols/jabber/jabberaccount.cpp:916
+#: protocols/jabber/jabberaccount.cpp:864
 #, kde-format
 msgid ""
 "It appears we have been redirected to another server; I do not know how to "
@@ -13587,139 +13582,139 @@ msgstr ""
 "Panašu į tai, kad mus bando peradresuoti į kitą serverį, o aš nežinau, kaip "
 "tai padaryti."
 
-#: protocols/jabber/jabberaccount.cpp:919
+#: protocols/jabber/jabberaccount.cpp:867
 #, kde-format
 msgid "Unsupported protocol version."
 msgstr "Nepalaikoma protokolo versija."
 
-#: protocols/jabber/jabberaccount.cpp:922
-#: protocols/jabber/jabberaccount.cpp:939
-#: protocols/jabber/jabberaccount.cpp:983
-#: protocols/jabber/jabberaccount.cpp:1000
-#: protocols/jabber/jabberaccount.cpp:1017
-#: protocols/jabber/jabberaccount.cpp:1025
+#: protocols/jabber/jabberaccount.cpp:870
+#: protocols/jabber/jabberaccount.cpp:887
+#: protocols/jabber/jabberaccount.cpp:931
+#: protocols/jabber/jabberaccount.cpp:948
+#: protocols/jabber/jabberaccount.cpp:965
+#: protocols/jabber/jabberaccount.cpp:973
 #, kde-format
 msgid "Unknown error."
 msgstr "Nežinoma klaida."
 
-#: protocols/jabber/jabberaccount.cpp:926
+#: protocols/jabber/jabberaccount.cpp:874
 #, kde-format
 msgid "There was a negotiation error: %1"
 msgstr "Įvyko derybų klaida: %1"
 
-#: protocols/jabber/jabberaccount.cpp:933
+#: protocols/jabber/jabberaccount.cpp:881
 #, kde-format
 msgid "Server rejected our request to start the TLS handshake."
 msgstr "Serveris atmetė mūsų prašymą pradėti TLS susitarimą."
 
-#: protocols/jabber/jabberaccount.cpp:936
+#: protocols/jabber/jabberaccount.cpp:884
 #, kde-format
 msgid "Failed to establish a secure connection."
 msgstr "Nepavyko užmegzti saugaus ryšio."
 
-#: protocols/jabber/jabberaccount.cpp:943
+#: protocols/jabber/jabberaccount.cpp:891
 #, kde-format
 msgid "There was a Transport Layer Security (TLS) error: %1"
 msgstr "Įvyko Transporto lygmens saugumo (TLS) klaida: %1"
 
-#: protocols/jabber/jabberaccount.cpp:950
+#: protocols/jabber/jabberaccount.cpp:898
 #, kde-format
 msgid "Login failed with unknown reason."
 msgstr "Registravimasis nepavyko dėl nesuprantamų priežasčių."
 
-#: protocols/jabber/jabberaccount.cpp:953
+#: protocols/jabber/jabberaccount.cpp:901
 #, kde-format
 msgid "No appropriate authentication mechanism available."
 msgstr "Neprieinamas nei vienas tinkamas autentifikavimo mechanizmas."
 
-#: protocols/jabber/jabberaccount.cpp:956
+#: protocols/jabber/jabberaccount.cpp:904
 #, kde-format
 msgid "Bad SASL authentication protocol."
 msgstr "Blogas SASL autentifikacijos protokolas."
 
-#: protocols/jabber/jabberaccount.cpp:959
+#: protocols/jabber/jabberaccount.cpp:907
 #, kde-format
 msgid "Server failed mutual authentication."
 msgstr "Serveris nesugebėjo įvykdyti sėkmingo abipusio autentifikavimosi."
 
-#: protocols/jabber/jabberaccount.cpp:962
+#: protocols/jabber/jabberaccount.cpp:910
 #, kde-format
 msgid "Encryption is required but not present."
 msgstr "Kodavimas yra privalomas, bet jo nėra."
 
-#: protocols/jabber/jabberaccount.cpp:965
+#: protocols/jabber/jabberaccount.cpp:913
 #, kde-format
 msgid "Invalid user ID."
 msgstr "Netinkamas naudotojo ID."
 
-#: protocols/jabber/jabberaccount.cpp:968
+#: protocols/jabber/jabberaccount.cpp:916
 #, kde-format
 msgid "Invalid mechanism."
 msgstr "Netinkamas mechanizmas."
 
-#: protocols/jabber/jabberaccount.cpp:971
+#: protocols/jabber/jabberaccount.cpp:919
 #, kde-format
 msgid "Invalid realm."
 msgstr "Neteisinga sritis."
 
-#: protocols/jabber/jabberaccount.cpp:974
+#: protocols/jabber/jabberaccount.cpp:922
 #, kde-format
 msgid "Mechanism too weak."
 msgstr "Mechanizmas per silpnas."
 
-#: protocols/jabber/jabberaccount.cpp:977
+#: protocols/jabber/jabberaccount.cpp:925
 #, kde-format
 msgid "Wrong credentials supplied. (check your user ID and password)"
 msgstr ""
 "Pateikti neteisingi prisijungimo duomenys (patikrinkite naudotojo ID ir "
 "slaptažodį)"
 
-#: protocols/jabber/jabberaccount.cpp:980
+#: protocols/jabber/jabberaccount.cpp:928
 #, kde-format
 msgid "Temporary failure, please try again later."
 msgstr "Laikinas nesklandumas, prašom bandyti vėliau."
 
-#: protocols/jabber/jabberaccount.cpp:987
+#: protocols/jabber/jabberaccount.cpp:935
 #, kde-format
 msgid "There was an error authenticating with the server: %1"
 msgstr "Nepavyko autentifikuotis serveryje: %1"
 
-#: protocols/jabber/jabberaccount.cpp:994
+#: protocols/jabber/jabberaccount.cpp:942
 #, kde-format
 msgid "Transport Layer Security (TLS) problem."
 msgstr "Transporto lygmens saugumo (TLS) klaida."
 
-#: protocols/jabber/jabberaccount.cpp:997
+#: protocols/jabber/jabberaccount.cpp:945
 #, kde-format
 msgid "Simple Authentication and Security Layer (SASL) problem."
 msgstr "Paprasto autentifikacijos ir saugumo lygmens (SASL) problema."
 
-#: protocols/jabber/jabberaccount.cpp:1004
+#: protocols/jabber/jabberaccount.cpp:952
 #, kde-format
 msgid "There was an error in the security layer: %1"
 msgstr "Saugumo lygmens klaida: %1"
 
-#: protocols/jabber/jabberaccount.cpp:1011
+#: protocols/jabber/jabberaccount.cpp:959
 #, kde-format
 msgid "No permission to bind the resource."
 msgstr "Neturite teisių susieti resursą."
 
-#: protocols/jabber/jabberaccount.cpp:1014
+#: protocols/jabber/jabberaccount.cpp:962
 #, kde-format
 msgid "The resource is already in use."
 msgstr "Resursas jau naudojamas"
 
-#: protocols/jabber/jabberaccount.cpp:1021
+#: protocols/jabber/jabberaccount.cpp:969
 #, kde-format
 msgid "Could not bind a resource: %1"
 msgstr "Nepavyko susieti resurso: %1"
 
-#: protocols/jabber/jabberaccount.cpp:1034
+#: protocols/jabber/jabberaccount.cpp:982
 #, kde-format
 msgid "Kopete: Connection problem with Jabber server %1"
 msgstr "Kopete: Jungties su Jabber serveriu problema %1"
 
-#: protocols/jabber/jabberaccount.cpp:1242
+#: protocols/jabber/jabberaccount.cpp:1190
 #, kde-format
 msgid ""
 "The Jabber user %1 removed %2's subscription to him/her. This account will "
@@ -13730,48 +13725,48 @@ msgstr ""
 "daugiau nebegalės matyti jo prisijungimo būsenos. Gal norite ištrinti šį "
 "kontaktą?"
 
-#: protocols/jabber/jabberaccount.cpp:1245
-#: protocols/jabber/jabbercontact.cpp:1012
+#: protocols/jabber/jabberaccount.cpp:1193
+#: protocols/jabber/jabbercontact.cpp:972
 #, kde-format
 msgid "Notification"
 msgstr "Pranešimas"
 
-#: protocols/jabber/jabberaccount.cpp:1429
+#: protocols/jabber/jabberaccount.cpp:1377
 #, kde-format
 msgid "Waiting for authorization"
 msgstr "Laukiama autorizacijos"
 
-#: protocols/jabber/jabberaccount.cpp:1646
+#: protocols/jabber/jabberaccount.cpp:1594
 #, kde-format
 msgid "A password is required to join the room %1."
 msgstr "Norint prisijungti prie pokalbių kambario %1 reikalingas slaptažodis."
 
-#: protocols/jabber/jabberaccount.cpp:1656
+#: protocols/jabber/jabberaccount.cpp:1604
 #, kde-format
 msgid "Error trying to join %1 : nickname %2 is already in use"
 msgstr "Klaida jungiantis prie %1 : slapyvardis %2 jau naudojamas"
 
-#: protocols/jabber/jabberaccount.cpp:1657
+#: protocols/jabber/jabberaccount.cpp:1605
 #: protocols/jabber/jabberprotocol.cpp:510
 #, kde-format
 msgid "Provide your nickname"
 msgstr "Pateikite savo slapyvardį"
 
-#: protocols/jabber/jabberaccount.cpp:1669
+#: protocols/jabber/jabberaccount.cpp:1617
 #, kde-format
 msgid "You cannot join the room %1 because you have been banned"
 msgstr ""
 "Jūs negalite prisijungti prie pokalbių kambario %1, kadangi jūs buvote "
 "paskelbtas nepageidaujamu."
 
-#: protocols/jabber/jabberaccount.cpp:1670
-#: protocols/jabber/jabberaccount.cpp:1676
-#: protocols/jabber/jabberaccount.cpp:1685
+#: protocols/jabber/jabberaccount.cpp:1618
+#: protocols/jabber/jabberaccount.cpp:1624
+#: protocols/jabber/jabberaccount.cpp:1633
 #, kde-format
 msgid "Jabber Group Chat"
 msgstr "Jabber grupinis pokalbis"
 
-#: protocols/jabber/jabberaccount.cpp:1675
+#: protocols/jabber/jabberaccount.cpp:1623
 #, kde-format
 msgid ""
 "You cannot join the room %1 because the maximum number of users has been "
@@ -13780,12 +13775,12 @@ msgstr ""
 "Jūs negalite prisijungti prie pokalbių kambario %1, kadangi pasiektas "
 "maksimalus naudotojų skaičius"
 
-#: protocols/jabber/jabberaccount.cpp:1681
+#: protocols/jabber/jabberaccount.cpp:1629
 #, kde-format
 msgid "No reason given by the server"
 msgstr "Serveris nepateikė jokių priežasčių"
 
-#: protocols/jabber/jabberaccount.cpp:1684
+#: protocols/jabber/jabberaccount.cpp:1632
 #, kde-format
 msgid ""
 "There was an error processing your request for groupchat %1. (Reason: %2, "
@@ -13794,7 +13789,7 @@ msgstr ""
 "Apdorojant jūsų prašymą pokalbių grupei %1 įvyko klaida. (Priežastis: %2, "
 "kodas %3)"
 
-#: protocols/jabber/jabberaccount.cpp:1757
+#: protocols/jabber/jabberaccount.cpp:1705
 #, kde-format
 msgid ""
 "Do you want to also unregister \"%1\" from the Jabber server ?\n"
@@ -13806,22 +13801,22 @@ msgstr ""
 "pašalintas iš serverio ir jūs daugiau niekada nebegalėsite prisijungti prie "
 "šios paskyros iš bet kokio kliento"
 
-#: protocols/jabber/jabberaccount.cpp:1760
+#: protocols/jabber/jabberaccount.cpp:1708
 #, kde-format
 msgid "Unregister"
 msgstr "Išsiregistruoti"
 
-#: protocols/jabber/jabberaccount.cpp:1761
+#: protocols/jabber/jabberaccount.cpp:1709
 #, kde-format
 msgid "Remove and Unregister"
 msgstr "Pašalinti ir išsiregistruoti"
 
-#: protocols/jabber/jabberaccount.cpp:1762
+#: protocols/jabber/jabberaccount.cpp:1710
 #, kde-format
 msgid "Remove only from Kopete"
 msgstr "Pašalinti tik iš Kopete"
 
-#: protocols/jabber/jabberaccount.cpp:1806
+#: protocols/jabber/jabberaccount.cpp:1754
 #, kde-format
 msgid ""
 "An error occurred while trying to remove the account:\n"
@@ -13830,7 +13825,7 @@ msgstr ""
 "Bandant panaikinti šią paskyrą įvyko klaida:\n"
 "%1"
 
-#: protocols/jabber/jabberaccount.cpp:1807
+#: protocols/jabber/jabberaccount.cpp:1755
 #, kde-format
 msgid "Jabber Account Unregistration"
 msgstr "Jaber paskyros išregistravimas"
@@ -13948,95 +13943,65 @@ msgstr "Keisti žymeles..."
 msgid "Groupchat Bookmark"
 msgstr "Grupinio pokalbio žymelė"
 
-#: protocols/jabber/jabberchatsession.cpp:70
-#, kde-format
-msgid "Show audio calls"
-msgstr "Rodyti audio skambučius"
-
-#: protocols/jabber/jabberchatsession.cpp:74
-#, kde-format
-msgid "Start audio call"
-msgstr "Pradėti audio skambutį"
-
-#: protocols/jabber/jabberchatsession.cpp:150
+#: protocols/jabber/jabberchatsession.cpp:101
 #, kde-format
 msgctxt "a contact's online status in parenthesis."
 msgid " (%1)"
 msgstr " (%1)"
 
-#: protocols/jabber/jabbercontact.cpp:144
+#: protocols/jabber/jabbercontact.cpp:140
 #, kde-format
 msgid "Authorization"
 msgstr "Įgaliojimai"
 
-#: protocols/jabber/jabbercontact.cpp:150
+#: protocols/jabber/jabbercontact.cpp:146
 #, kde-format
 msgid "(Re)send Authorization To"
 msgstr "(Per)siųsti įgaliojimus"
 
-#: protocols/jabber/jabbercontact.cpp:157
+#: protocols/jabber/jabbercontact.cpp:153
 #, kde-format
 msgid "(Re)request Authorization From"
 msgstr "(Per)prašyti įgaliojimus iš"
 
-#: protocols/jabber/jabbercontact.cpp:164
+#: protocols/jabber/jabbercontact.cpp:160
 #, kde-format
 msgid "Remove Authorization From"
 msgstr "Atimti įgaliojimus iš"
 
-#: protocols/jabber/jabbercontact.cpp:176
-#, kde-format
-msgid "Call contact"
-msgstr "Skambinti kontaktui"
-
-#: protocols/jabber/jabbercontact.cpp:185
+#: protocols/jabber/jabbercontact.cpp:165
 #, kde-format
 msgid "Set Availability"
 msgstr "Nustatyti būseną"
 
-#: protocols/jabber/jabbercontact.cpp:195
+#: protocols/jabber/jabbercontact.cpp:175
 #, kde-format
 msgid "Free to Chat"
 msgstr "Laisvas pokalbiui"
 
-#: protocols/jabber/jabbercontact.cpp:198
+#: protocols/jabber/jabbercontact.cpp:178
 #: protocols/oscar/aim/aimstatusmanager.cpp:69
 #: protocols/oscar/icq/icqstatusmanager.cpp:77
 #, kde-format
 msgid "Do Not Disturb"
 msgstr "Netrukdyti"
 
-#: protocols/jabber/jabbercontact.cpp:203
+#: protocols/jabber/jabbercontact.cpp:183
 #, kde-format
 msgid "Select Resource"
 msgstr "Pasirinkite resursą"
 
-#: protocols/jabber/jabbercontact.cpp:220
+#: protocols/jabber/jabbercontact.cpp:200
 #, kde-format
 msgid "Automatic (best/default resource)"
 msgstr "Automatinis (geriausias/numatytas resursas)"
 
-#: protocols/jabber/jabbercontact.cpp:274
-#, kde-format
-msgid "Test action"
-msgstr "Tikrinti veiksmą"
-
-#: protocols/jabber/jabbercontact.cpp:278
-#, kde-format
-msgid "Jingle Audio call"
-msgstr "Jingle Audio skambutis"
-
 #: protocols/jabber/jabbercontact.cpp:281
-#, kde-format
-msgid "Jingle Video call"
-msgstr "Jingle Video skambutis"
-
-#: protocols/jabber/jabbercontact.cpp:321
 #, kde-format
 msgid "The original message is : <i>\" %1 \"</i><br />"
 msgstr "Pradinis pranešimas: <i>„%1“</i><br />"
 
-#: protocols/jabber/jabbercontact.cpp:322
+#: protocols/jabber/jabbercontact.cpp:282
 #, kde-format
 msgid ""
 "<qt><i>%1</i> has invited you to join the conference <b>%2</b><br />%3<br /"
@@ -14048,45 +14013,45 @@ msgstr ""
 "slapyvardį</b> ir spauskite OK.<br />Jei nesutinkate – spauskite „Nutraukti“."
 "</qt>"
 
-#: protocols/jabber/jabbercontact.cpp:328
+#: protocols/jabber/jabbercontact.cpp:288
 #, kde-format
 msgid "Invited to a conference - Jabber Plugin"
 msgstr "Pakvietė į konferenciją – Jabber priedas"
 
-#: protocols/jabber/jabbercontact.cpp:345
+#: protocols/jabber/jabbercontact.cpp:305
 #, kde-format
 msgid "Message has been displayed"
 msgstr "Žinutė buvo parodyta"
 
-#: protocols/jabber/jabbercontact.cpp:348
-#: protocols/jabber/jabbercontact.cpp:376
+#: protocols/jabber/jabbercontact.cpp:308
+#: protocols/jabber/jabbercontact.cpp:336
 #, kde-format
 msgid "Message has been delivered"
 msgstr "Žinutė buvo pristatyta"
 
-#: protocols/jabber/jabbercontact.cpp:357
+#: protocols/jabber/jabbercontact.cpp:317
 #, kde-format
 msgid "Message stored on the server, contact offline"
 msgstr "Pranešimas išsaugotas serveryje, kontaktas neprisijungęs"
 
-#: protocols/jabber/jabbercontact.cpp:365
+#: protocols/jabber/jabbercontact.cpp:325
 #, kde-format
 msgid "%1 has ended his/her participation in the chat session."
 msgstr "%1 išėjo iš pokalbio"
 
-#: protocols/jabber/jabbercontact.cpp:415
+#: protocols/jabber/jabbercontact.cpp:375
 #: protocols/jabber/jabbergroupcontact.cpp:180
 #: protocols/jabber/jabbergroupmembercontact.cpp:211
 #, kde-format
 msgid "Your message could not be delivered: \"%1\", Reason: \"%2\""
 msgstr "Jūsų pranešimas negali būti pristatytas „%1“, priežastis: „%2“"
 
-#: protocols/jabber/jabbercontact.cpp:1011
+#: protocols/jabber/jabbercontact.cpp:971
 #, kde-format
 msgid "Do you also want to remove user %1's authorization to see your status?"
 msgstr "Ar tuo pačiu pašalinti naudotojo „%1“ teisę matyti jūsų būseną?"
 
-#: protocols/jabber/jabbercontact.cpp:1185
+#: protocols/jabber/jabbercontact.cpp:1145
 #, kde-format
 msgid ""
 "You have preselected a resource for contact %1, but you still have open chat "
@@ -14097,7 +14062,7 @@ msgstr ""
 "langus su šiuo kontaktu. Parinkti resursai bus pritaikyti tik naujai "
 "atidarytiems pokalbių langams."
 
-#: protocols/jabber/jabbercontact.cpp:1189
+#: protocols/jabber/jabbercontact.cpp:1149
 #, kde-format
 msgid "Jabber Resource Selector"
 msgstr "Jabber resursų parinkėjas"
@@ -14309,116 +14274,6 @@ msgstr "Nepašalinti"
 #, kde-format
 msgid "Please enter your nickname for the room %1"
 msgstr "Įveskite savo slapyvardį pokalbių kambariui %1"
-
-#. i18n: ectx: property (windowTitle), widget (QMainWindow, jingleCallsGui)
-#: protocols/jabber/jingle/jinglecallsgui.ui:13
-#, kde-format
-msgid "Main Window"
-msgstr "Pagrindinis Langas"
-
-#. i18n: ectx: property (windowTitle), widget (QToolBar, toolBar)
-#: protocols/jabber/jingle/jinglecallsgui.ui:50
-#, kde-format
-msgid "Toolbar"
-msgstr "Įrankinė"
-
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:28
-#, kde-format
-msgid "Audio"
-msgstr "Audio"
-
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:70
-#, kde-format
-msgid "Choose the contents you want to accept:"
-msgstr "Pasirinkite, kokį turinį norite priimti:"
-
-#: protocols/jabber/jingle/jinglecontentdialog.cpp:77
-#, kde-format
-msgid "New Jingle session from %1"
-msgstr "Nauja Jingle sesija iš %1"
-
-#. i18n: ectx: property (windowTitle), widget (QDialog, jingleContentDialog)
-#: protocols/jabber/jingle/jinglecontentdialog.ui:19
-#, kde-format
-msgid "Dialog"
-msgstr "Dialogas"
-
-#: protocols/jabber/libjingle.cpp:102
-#, kde-format
-msgid "Cannot start process %1. Check your installation of Kopete."
-msgstr "Nepavyko pradėti proceso %1. Patikrinkite Kopete diegimą."
-
-#: protocols/jabber/libjingle.cpp:332
-#, kde-format
-msgid "Answer for incoming call"
-msgstr "Atsakymas įeinančiam skambučiui"
-
-#: protocols/jabber/libjingle.cpp:342
-#, kde-format
-msgid "Accepted"
-msgstr "Priimtas"
-
-#: protocols/jabber/libjingle.cpp:351
-#, kde-format
-msgid "Calling..."
-msgstr "Skambinama..."
-
-#: protocols/jabber/libjingle.cpp:356
-#, kde-format
-msgid "Rejected"
-msgstr "Atmestas"
-
-#: protocols/jabber/libjingle.cpp:368
-#, kde-format
-msgid "Call in progress"
-msgstr "Vyksta pokalbis"
-
-#: protocols/jabber/libjingle.cpp:375
-#, kde-format
-msgid "Other side hung up"
-msgstr "Kita pusė padėjo ragelį"
-
-#: protocols/jabber/libjingle.cpp:429
-#, kde-format
-msgid "Waiting..."
-msgstr "Laukiama..."
-
-#. i18n: ectx: property (windowTitle), widget (QWidget, LibjingleCallDialog)
-#: protocols/jabber/libjinglecalldialog.ui:6
-#, fuzzy, kde-format
-#| msgid "Jingle Video call"
-msgid "Libjingle Voice Call"
-msgstr "Jingle Video skambutis"
-
-#. i18n: ectx: property (text), widget (QLabel, label)
-#: protocols/jabber/libjinglecalldialog.ui:14
-#, kde-format
-msgid "Calling with:"
-msgstr "Skambinama su:"
-
-#. i18n: ectx: property (text), widget (QLabel, label_2)
-#: protocols/jabber/libjinglecalldialog.ui:28
-#, kde-format
-msgid "Call Status:"
-msgstr "Skambučio būsena:"
-
-#. i18n: ectx: property (text), widget (QPushButton, acceptButton)
-#: protocols/jabber/libjinglecalldialog.ui:42
-#, kde-format
-msgid "Accept"
-msgstr "Priimti"
-
-#. i18n: ectx: property (text), widget (QPushButton, rejectButton)
-#: protocols/jabber/libjinglecalldialog.ui:49
-#, kde-format
-msgid "Reject"
-msgstr "Atmesti"
-
-#. i18n: ectx: property (text), widget (QPushButton, hangupButton)
-#: protocols/jabber/libjinglecalldialog.ui:56
-#, kde-format
-msgid "Hang up"
-msgstr "Padėti ragelį"
 
 #: protocols/jabber/tasks/mood.cpp:77 protocols/jabber/ui/privacyruledlg.cpp:46
 #: protocols/jabber/ui/privacyruledlg.cpp:96
@@ -15301,101 +15156,22 @@ msgstr ""
 "<li>Lauko „Proxy JID“ reikšmė gali būti skirtinga kiekvienai paskyrai.</li></"
 "ul></i>"
 
-#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:844
-#, kde-format
-msgid "&Jingle"
-msgstr "&Jingle"
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox_2)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:852
-#, kde-format
-msgid "Network"
-msgstr "Tinklas"
-
-#. i18n: ectx: property (text), widget (QCheckBox, autoDetectIPBox)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:858
-#, kde-format
-msgid "Auto-detect external IP address"
-msgstr "Automatiškai aptikti išorinį IP adresą"
-
-#. i18n: ectx: property (text), widget (QLabel, label)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:867
-#, kde-format
-msgid "First port to use:"
-msgstr "Pirmas naudojamas prievadas:"
-
-#. i18n: ectx: property (toolTip), widget (QSpinBox, firstPortEdit)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:881
-#, kde-format
-msgid ""
-"Set the first incoming port to use for Jingle sessions.\n"
-"One media type uses 2 ports and each new Jingle session will use the next 2 "
-"available ports."
-msgstr ""
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox_3)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:905
-#: protocols/oscar/icq/icqprotocol.cpp:656
-#, kde-format
-msgid "Media"
-msgstr "Laikmena"
-
-#. i18n: ectx: property (text), widget (QLabel, label_2)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:913
-#, kde-format
-msgid "Microphone to use:"
-msgstr "Naudojamas mikrofonas:"
-
-#. i18n: ectx: property (text), widget (QLabel, label_3)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:927
-#, kde-format
-msgid "Audio output:"
-msgstr "Audio išvestis:"
-
-#. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:958
-#, fuzzy, kde-format
-#| msgid "&Jingle"
-msgid "&Libjingle"
-msgstr "&Jingle"
-
-#. i18n: ectx: property (title), widget (QGroupBox, groupBox_17)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:964
-#, fuzzy, kde-format
-#| msgid "Google Talk libjingle settings"
-msgid "Libjingle settings"
-msgstr "Google Talk libjingle nuostatos"
-
-#. i18n: ectx: property (toolTip), widget (QCheckBox, Libjingle)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:970
-#, fuzzy, kde-format
-#| msgid "This enable Google Talk libjingle voice call"
-msgid "This enable libjingle voice call"
-msgstr "Tai įgalins Google Talk libjingle balso skambučius"
-
-#. i18n: ectx: property (text), widget (QCheckBox, Libjingle)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:973
-#, kde-format
-msgid "Enable libjingle support"
-msgstr ""
-
 #. i18n: ectx: attribute (title), widget (QWidget, privacyTab)
 #. i18n: ectx: attribute (title), widget (QWidget, TabPage)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:994
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:844
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:642
 #, kde-format
 msgid "Pri&vacy"
 msgstr "Pri&vatumas"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_7)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1006
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:856
 #, kde-format
 msgid "General Privacy"
 msgstr "Bendrosios privatumo nuostatos"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbHideSystemInfo)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1018
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:868
 #, kde-format
 msgid ""
 "By default, Kopete gives the other users some info about your system and the "
@@ -15403,13 +15179,13 @@ msgid ""
 msgstr ""
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbHideSystemInfo)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1021
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:871
 #, kde-format
 msgid "&Hide system and client info"
 msgstr "&Slėpti sistemos ir kliento informaciją"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbSendEvents)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1062
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:912
 #, kde-format
 msgid ""
 "Check this box if you always want to send notifications to your contacts."
@@ -15417,13 +15193,13 @@ msgstr ""
 "Pažymėkite šią parinktį, jei norite visada siųsti pranešimus savo kontaktams."
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendEvents)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1065
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:915
 #, kde-format
 msgid "Always send not&ifications"
 msgstr "&Visada siųsti pranešimus"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbSendDeliveredEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1110
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:960
 #, kde-format
 msgid ""
 "<qt>Check this box to send the <b>Delivered notification</b> to your "
@@ -15432,13 +15208,13 @@ msgid ""
 msgstr ""
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendDeliveredEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1113
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:963
 #, kde-format
 msgid "Alwa&ys send delivered notifications"
 msgstr "Visada siųsti &pristatymo pranešimus"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbSendDisplayedEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1126
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:976
 #, kde-format
 msgid ""
 "<qt>Check this box to send the <b>Displayed notification</b> to your "
@@ -15447,13 +15223,13 @@ msgid ""
 msgstr ""
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendDisplayedEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1129
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:979
 #, kde-format
 msgid "Al&ways send displayed notifications"
 msgstr "Visada siųsti pa&rodytus pranešimus"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbSendComposingEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1142
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:992
 #, kde-format
 msgid ""
 "<qt>Check this box to send the <b>Typing notification</b> to your contacts : "
@@ -15462,25 +15238,25 @@ msgid ""
 msgstr ""
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendComposingEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1145
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:995
 #, kde-format
 msgid "Always send &typing notifications"
 msgstr "Visada siųsti r&ašymo pranešimus"
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendGoneEvent)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1155
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1005
 #, kde-format
 msgid "Always send &gone notifications (closing the window)"
 msgstr "Visada siųsti &išėjimo pranešimus (lango uždarymas)"
 
 #. i18n: ectx: property (text), widget (QPushButton, privacyListsButton)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1172
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1022
 #, kde-format
 msgid "Privacy Lists"
 msgstr "Privatumo sąrašai"
 
 #. i18n: ectx: property (text), widget (QCheckBox, oldEncrypted)
-#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1179
+#: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1029
 #, kde-format
 msgid ""
 "When recipient does not support OpenPGP XEP-0027 wrap PGP block to message "
@@ -15977,19 +15753,19 @@ msgstr "Nepavyksta gauti serverių sąrašo."
 msgid "Could not parse the server list."
 msgstr "Nepavyksta išnagrinėti serverių sąrašo."
 
-#: protocols/jabber/ui/jabbereditaccountwidget.cpp:284
+#: protocols/jabber/ui/jabbereditaccountwidget.cpp:190
 #, kde-format
 msgid ""
 "The changes you just made will take effect next time you log in with Jabber."
 msgstr ""
 "Jūsų padaryti pasikeitimai įsigalios kitą kartą prisijungus prie Jabber."
 
-#: protocols/jabber/ui/jabbereditaccountwidget.cpp:285
+#: protocols/jabber/ui/jabbereditaccountwidget.cpp:191
 #, kde-format
 msgid "Jabber Changes During Online Jabber Session"
 msgstr "Jabber pakeitimai prisijungimo metu."
 
-#: protocols/jabber/ui/jabbereditaccountwidget.cpp:365
+#: protocols/jabber/ui/jabbereditaccountwidget.cpp:258
 #, kde-format
 msgid ""
 "The Jabber ID you have chosen is invalid. Please make sure it is in the form "
@@ -15998,7 +15774,7 @@ msgstr ""
 "Jūsų parinktas Jabber ID yra netaisyklingas. Įsitikinkite, kad jis atrodo "
 "panašiai kaip naudotojas@serveris.com (analogiškai pašto adresui)."
 
-#: protocols/jabber/ui/jabbereditaccountwidget.cpp:367
+#: protocols/jabber/ui/jabbereditaccountwidget.cpp:260
 #, kde-format
 msgid "Invalid Jabber ID"
 msgstr "Netinkamas Jabber ID"
@@ -17919,6 +17695,11 @@ msgstr "Parduotuvės"
 #, kde-format
 msgid "Health and Beauty"
 msgstr "Sveikata ir grožis"
+
+#: protocols/oscar/icq/icqprotocol.cpp:656
+#, kde-format
+msgid "Media"
+msgstr "Laikmena"
 
 #: protocols/oscar/icq/icqprotocol.cpp:657
 #, kde-format
@@ -20925,6 +20706,119 @@ msgstr "Konfigūravimas nepavyko"
 #, kde-format
 msgid "User Info for %1"
 msgstr "Naudotojo %1 informacija"
+
+#~ msgid "Show audio calls"
+#~ msgstr "Rodyti audio skambučius"
+
+#~ msgid "Start audio call"
+#~ msgstr "Pradėti audio skambutį"
+
+#~ msgid "Call contact"
+#~ msgstr "Skambinti kontaktui"
+
+#~ msgid "Test action"
+#~ msgstr "Tikrinti veiksmą"
+
+#~ msgid "Jingle Audio call"
+#~ msgstr "Jingle Audio skambutis"
+
+#~ msgid "Jingle Video call"
+#~ msgstr "Jingle Video skambutis"
+
+#~ msgid "Main Window"
+#~ msgstr "Pagrindinis Langas"
+
+#~ msgid "Toolbar"
+#~ msgstr "Įrankinė"
+
+#~ msgid "Audio"
+#~ msgstr "Audio"
+
+#~ msgid "Choose the contents you want to accept:"
+#~ msgstr "Pasirinkite, kokį turinį norite priimti:"
+
+#~ msgid "New Jingle session from %1"
+#~ msgstr "Nauja Jingle sesija iš %1"
+
+#~ msgid "Dialog"
+#~ msgstr "Dialogas"
+
+#~ msgid "Cannot start process %1. Check your installation of Kopete."
+#~ msgstr "Nepavyko pradėti proceso %1. Patikrinkite Kopete diegimą."
+
+#~ msgid "Answer for incoming call"
+#~ msgstr "Atsakymas įeinančiam skambučiui"
+
+#~ msgid "Accepted"
+#~ msgstr "Priimtas"
+
+#~ msgid "Calling..."
+#~ msgstr "Skambinama..."
+
+#~ msgid "Rejected"
+#~ msgstr "Atmestas"
+
+#~ msgid "Call in progress"
+#~ msgstr "Vyksta pokalbis"
+
+#~ msgid "Other side hung up"
+#~ msgstr "Kita pusė padėjo ragelį"
+
+#~ msgid "Waiting..."
+#~ msgstr "Laukiama..."
+
+#, fuzzy
+#~| msgid "Jingle Video call"
+#~ msgid "Libjingle Voice Call"
+#~ msgstr "Jingle Video skambutis"
+
+#~ msgid "Calling with:"
+#~ msgstr "Skambinama su:"
+
+#~ msgid "Call Status:"
+#~ msgstr "Skambučio būsena:"
+
+#~ msgid "Accept"
+#~ msgstr "Priimti"
+
+#~ msgid "Reject"
+#~ msgstr "Atmesti"
+
+#~ msgid "Hang up"
+#~ msgstr "Padėti ragelį"
+
+#~ msgid "&Jingle"
+#~ msgstr "&Jingle"
+
+#~ msgid "Network"
+#~ msgstr "Tinklas"
+
+#~ msgid "Auto-detect external IP address"
+#~ msgstr "Automatiškai aptikti išorinį IP adresą"
+
+#~ msgid "First port to use:"
+#~ msgstr "Pirmas naudojamas prievadas:"
+
+#~ msgid "Microphone to use:"
+#~ msgstr "Naudojamas mikrofonas:"
+
+#~ msgid "Audio output:"
+#~ msgstr "Audio išvestis:"
+
+#, fuzzy
+#~| msgid "&Jingle"
+#~ msgid "&Libjingle"
+#~ msgstr "&Jingle"
+
+#, fuzzy
+#~| msgid "Google Talk libjingle settings"
+#~ msgid "Libjingle settings"
+#~ msgstr "Google Talk libjingle nuostatos"
+
+#, fuzzy
+#~| msgid "This enable Google Talk libjingle voice call"
+#~ msgid "This enable libjingle voice call"
+#~ msgstr "Tai įgalins Google Talk libjingle balso skambučius"
 
 #~ msgid ""
 #~ "A network connection was disconnected.  The application is now in offline "
