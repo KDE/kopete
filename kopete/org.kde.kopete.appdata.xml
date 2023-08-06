@@ -116,7 +116,7 @@
     <p xml:lang="eu">Kopeteren helburua da erabiltzaileei bat-bateko mezularitza sistema guztiak atzitzeko modu bakun eta erabilerraz bat eskaintzea. Interfazearen lehentasuna pertsonak dira, eta integratua dago sistemako helbide-liburuarekin beste KDE aplikazioetatik ere kontaktuak atzi ditzazun.</p>
     <p xml:lang="fi">Kopeten päämääränä on tarjota käyttäjille yksi helppokäyttöinen tapa käyttää kaikki pikaviestijärjestelmiään. Käyttöliittymä asettaa ihmisen ensimmäiseksi ja on yhteydessä järjestelmän osoitekirjaan, jolloin muidenkin KDE-sovellusten yhteystiedot ovat käytettävissä.</p>
     <p xml:lang="fr">L'objectif de Kopete est de fournir aux utilisateurs un point d'accès unique et intuitif pour tous leurs systèmes de messagerie instantanée. L'interface, intégrée au carnet d'adresse du système, vous permet d'accéder à vos contacts depuis d'autres applications KDE.</p>
-    <p xml:lang="gl">O obxectivo de Kopete é fornecer aos usuarios unha forma única e fácil de usar para acceder a todos os seus sistemas de mensaxaría instantánea. A interface antepón ás persoas, e está integrada co caderno de enderezos do sistema para permitirlle acceder aos seus contactos doutras aplicacións de KDE.</p>
+    <p xml:lang="gl">O obxectivo de Kopete é fornecer aos usuarios unha forma única e fácil de usar para acceder a todos os seus sistemas de mensaxaría instantánea. A interface antepón ás persoas, e está integrada coa axenda de enderezos do sistema para permitirlle acceder aos seus contactos doutras aplicacións de KDE.</p>
     <p xml:lang="ia">Le objectivo de Kopete ese fornir al usatores un singule e facile modo de accesso a lor systema de messageria instantanee. Le interfacie pone le personas como prime e es integrate con le adressario per permitter le acesso a vostre contactos per altere applicationes de KDE.</p>
     <p xml:lang="id">Tujuan Kopete adalah untuk menyediakan pengguna dengan satu cara mudah digunakan untuk mengakses semua sistem perpesanan instan mereka. Antarmuka mengutamakan orang, dan terintegrasi dengan buku alamat sistem untuk menyegerakan kamu mengakses kontakmu dari aplikasi KDE lainnya.</p>
     <p xml:lang="it">L'obbiettivo di Kopete è mettere a disposizione degli utenti un singolo modo facile da usare per accedere a tutti i loro sistemi di messaggistica istantanea. L'interfaccia mette le persone al centro, e si integra con la rubrica degli indirizzi di sistema, consentendoti di accedere ai tuoi contatti da altre applicazioni KDE.</p>
@@ -314,7 +314,7 @@
       <caption xml:lang="eu">Kopete berriketa</caption>
       <caption xml:lang="fi">Kopete-keskustelu</caption>
       <caption xml:lang="fr">Chat Kopete</caption>
-      <caption xml:lang="gl">Conversa de Kopete</caption>
+      <caption xml:lang="gl">Charla de Kopete</caption>
       <caption xml:lang="ia">Chat (Conversation in directo) de Kopete</caption>
       <caption xml:lang="id">Chat Kopete</caption>
       <caption xml:lang="it">Chat Kopete</caption>
