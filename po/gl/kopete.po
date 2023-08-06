@@ -68,7 +68,7 @@ msgid ""
 "<h2>Welcome to Kopete</h2><p>Which messaging service do you want to connect "
 "to?</p>"
 msgstr ""
-"<h2>Benvido a Kopete</h2><p>A que servizo de mensaxería se quere conectar?</"
+"<h2>Benvido a Kopete</h2><p>A que servizo de mensaxaría se quere conectar?</"
 "p>"
 
 #: kopete/addaccountwizard/addaccountwizard.cpp:87
@@ -109,7 +109,7 @@ msgstr "Actualmente este protocolo non permite engadir contas."
 #: kopete/addaccountwizard/addaccountwizardpage1.ui:19
 #, kde-format
 msgid "Step One: Select Messaging Service"
-msgstr "Paso 1: Escolla o servizo de mensaxería"
+msgstr "Paso 1: Escolla o servizo de mensaxaría"
 
 #. i18n: ectx: property (text), widget (QLabel, m_header)
 #: kopete/addaccountwizard/addaccountwizardpage1.ui:32
@@ -119,7 +119,7 @@ msgid ""
 "<p>Select the messaging service from the list below.</p>"
 msgstr ""
 "<h2>Benvido ao asistente para engadir unha conta</h2>\n"
-"<p>Escolla un servizo de mensaxería da seguinte lista.</p>"
+"<p>Escolla un servizo de mensaxaría da seguinte lista.</p>"
 
 #. i18n: ectx: property (text), widget (QTreeWidget, protocolListView)
 #: kopete/addaccountwizard/addaccountwizardpage1.ui:52
@@ -231,7 +231,7 @@ msgstr "A persoa usuaria saíu."
 #, kde-format
 msgid "Chat style could not be found, or is invalid."
 msgstr ""
-"Non se puido atopar o estilo da interface de conversa ou este é incorrecto."
+"Non se puido atopar o estilo da interface de charla ou este é incorrecto."
 
 #: kopete/chatwindow/chatmessagepart.cpp:1389
 #, kde-format
@@ -263,7 +263,7 @@ msgstr "Kopete"
 #: kopete/chatwindow/chattexteditpart.cpp:479
 #, kde-format
 msgid "Chat Text Edit Part"
-msgstr "Compoñente de edición de texto de conversa"
+msgstr "Compoñente de edición de texto de charla"
 
 #: kopete/chatwindow/chattexteditpart.cpp:480
 #, kde-format
@@ -297,7 +297,7 @@ msgid ""
 "sure you want to clear this chat?</qt>"
 msgstr ""
 "<qt>Recibiu unha mensaxe de <b>%1</b> neste último segundo. Seguro que quere "
-"limpar esta conversa?</qt>"
+"limpar esta charla?</qt>"
 
 #: kopete/chatwindow/chatview.cpp:260 kopete/chatwindow/chatview.cpp:363
 #: kopete/chatwindow/kopeteemailwindow.cpp:477
@@ -309,7 +309,7 @@ msgstr "Mensaxe sen ler"
 #, kde-format
 msgctxt "@action:button"
 msgid "Clear Chat"
-msgstr "Limpar a conversa"
+msgstr "Limpar a charla"
 
 #: kopete/chatwindow/chatview.cpp:356
 #: kopete/chatwindow/kopeteemailwindow.cpp:470
@@ -325,14 +325,14 @@ msgstr ""
 #: kopete/chatwindow/kopeteemailwindow.cpp:471
 #, kde-format
 msgid "Closing Group Chat"
-msgstr "Pechando a conversa co grupo."
+msgstr "Pechando a charla co grupo."
 
 #: kopete/chatwindow/chatview.cpp:358 kopete/chatwindow/chatview.cpp:364
 #: kopete/chatwindow/chatview.cpp:370
 #, kde-format
 msgctxt "@action:button"
 msgid "Close Chat"
-msgstr "Pechar a conversa"
+msgstr "Pechar a charla"
 
 #: kopete/chatwindow/chatview.cpp:362
 #: kopete/chatwindow/kopeteemailwindow.cpp:476
@@ -342,7 +342,7 @@ msgid ""
 "sure you want to close this chat?</qt>"
 msgstr ""
 "<qt>Acaba de recibir unha mensaxe de <b>%1</b> neste último segundo. Seguro "
-"que quere pechar a conversa?</qt>"
+"que quere pechar a charla?</qt>"
 
 #: kopete/chatwindow/chatview.cpp:368
 #: kopete/chatwindow/kopeteemailwindow.cpp:482
@@ -351,7 +351,7 @@ msgid ""
 "You have a message send in progress, which will be aborted if this chat is "
 "closed. Are you sure you want to close this chat?"
 msgstr ""
-"Está a enviar unha mensaxe, envío que se interromperá se pecha a conversa. "
+"Está a enviar unha mensaxe, envío que se interromperá se pecha a charla. "
 "Seguro que quere pechala?"
 
 #: kopete/chatwindow/chatview.cpp:369
@@ -364,8 +364,8 @@ msgstr "Mensaxe en tránsito"
 #, kde-format
 msgid "One other person in the chat"
 msgid_plural "%1 other people in the chat"
-msgstr[0] "Hai outra persoa na conversa."
-msgstr[1] "Hai outras %1 persoas na conversa."
+msgstr[0] "Hai outra persoa na charla."
+msgstr[1] "Hai outras %1 persoas na charla."
 
 #: kopete/chatwindow/chatview.cpp:455
 #, kde-format
@@ -398,7 +398,7 @@ msgstr "%1 cambiou a súa mensaxe de estado: %2"
 #: kopete/chatwindow/chatview.cpp:564
 #, kde-format
 msgid "%1 has joined the chat."
-msgstr "%1 uniuse á conversa."
+msgstr "%1 uniuse á charla."
 
 #: kopete/chatwindow/chatview.cpp:587
 #, kde-format
@@ -408,12 +408,12 @@ msgstr "A mensaxe de estado de %1 é: %2"
 #: kopete/chatwindow/chatview.cpp:618
 #, kde-format
 msgid "%1 has left the chat."
-msgstr "%1 deixou a conversa."
+msgstr "%1 deixou a charla."
 
 #: kopete/chatwindow/chatview.cpp:620
 #, kde-format
 msgid "%1 has left the chat (%2)."
-msgstr "%1 deixou a conversa (%2)."
+msgstr "%1 deixou a charla (%2)."
 
 #: kopete/chatwindow/chatview.cpp:725
 #, kde-format
@@ -457,7 +457,7 @@ msgstr "Enviar un ficheiro…"
 #: kopete/chatwindow/kopetechatwindow.cpp:393
 #, kde-format
 msgid "Close All Chats"
-msgstr "Pechar todas as conversas"
+msgstr "Pechar todas as charlas"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:398
 #, kde-format
@@ -482,7 +482,7 @@ msgstr "Completado do &alcume"
 #: kopete/chatwindow/kopetechatwindow.cpp:422
 #, kde-format
 msgid "&Detach Chat"
-msgstr "&Desprender a conversa"
+msgstr "&Desprender a charla"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:427
 #, kde-format
@@ -573,7 +573,7 @@ msgstr "Dereita"
 #: protocols/jabber/jabberchatui.rc:5 protocols/qq/qqchatui.rc:5
 #, kde-format
 msgid "&Chat"
-msgstr "&Conversa"
+msgstr "&Charla"
 
 #. i18n: ectx: Menu (format)
 #: kopete/chatwindow/kopetechatwindow.rc:20
@@ -610,7 +610,7 @@ msgstr "Barra de ferramentas principal"
 #: kopete/chatwindow/kopetechatwindow.rc:51
 #, kde-format
 msgid "Chat Toolbar"
-msgstr "Barra de conversa"
+msgstr "Barra de charla"
 
 #. i18n: ectx: ToolBar (statusToolBar)
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_contactListMetaContactSorting)
@@ -653,7 +653,7 @@ msgstr ""
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:20
 #, kde-format
 msgid "Emitted when the chat window style has changed."
-msgstr "Emitido cando o estilo de xanela de conversa cambie."
+msgstr "Emitido cando o estilo de xanela de charla cambie."
 
 #. i18n: ectx: label
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:24
@@ -665,7 +665,7 @@ msgstr "Emitido cando a variante de ChatWindowStyle cambie."
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:31
 #, kde-format
 msgid "Name of a Adium/Kopete chat window style."
-msgstr "Nome do estilo de xanela de conversa Adium/Kopete."
+msgstr "Nome do estilo de xanela de charla Adium/Kopete."
 
 #. i18n: ectx: label, entry, group (Appearance)
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:36
@@ -686,7 +686,7 @@ msgstr ""
 #, kde-format
 msgid "Use a compact variant of the chat style for chatrooms."
 msgstr ""
-"Usar unha variante compacta do estilo de conversa para as salas de conversas."
+"Usar unha variante compacta do estilo de charla para as salas de charlas."
 
 #. i18n: ectx: label, entry, group (Appearance)
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:49
@@ -714,28 +714,28 @@ msgstr "Desactivar o formato personalizado definido polas persoas usuarias."
 #: libkopete/kopeteappearancesettings.kcfg:55
 #, kde-format
 msgid "Chat text color."
-msgstr "Cor do texto na conversa."
+msgstr "Cor do texto na charla."
 
 #. i18n: ectx: label, entry, group (Appearance)
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:73
 #: libkopete/kopeteappearancesettings.kcfg:60
 #, kde-format
 msgid "Chat background color."
-msgstr "Cor de fondo na conversa."
+msgstr "Cor de fondo na charla."
 
 #. i18n: ectx: label, entry, group (Appearance)
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:78
 #: libkopete/kopeteappearancesettings.kcfg:65
 #, kde-format
 msgid "Chat link color."
-msgstr "Cor das ligazóns nas conversas."
+msgstr "Cor das ligazóns nas charlas."
 
 #. i18n: ectx: label, entry, group (Appearance)
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:83
 #: libkopete/kopeteappearancesettings.kcfg:75
 #, kde-format
 msgid "Chat font."
-msgstr "Fonte das conversas."
+msgstr "Fonte das charlas."
 
 #: kopete/chatwindow/kopetechatwindowstyle.cpp:373
 #, kde-format
@@ -797,7 +797,7 @@ msgstr "(%1) Seguinte >>"
 #: kopete/chatwindow/kopeteemailwindow.cpp:484
 #, kde-format
 msgid "Cl&ose Chat"
-msgstr "Pe&char a conversa"
+msgstr "Pe&char a charla"
 
 #: kopete/chatwindow/kopeteemailwindow.cpp:505
 #: kopete/chatwindow/kopeteemailwindow.cpp:523
@@ -1772,7 +1772,7 @@ msgstr "Conversar"
 #: kopete/config/behavior/behaviorconfig_chat.ui:20
 #, kde-format
 msgid "Show events in chat &window"
-msgstr "Amosar os eventos na &xanela de conversa"
+msgstr "Amosar os eventos na &xanela de charla"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_highlightEnabled)
 #: kopete/config/behavior/behaviorconfig_chat.ui:33
@@ -1808,44 +1808,44 @@ msgstr "Preferencia da &interface"
 #: kopete/config/behavior/behaviorconfig_chat.ui:85
 #, kde-format
 msgid "Chat Window Grouping &Policy"
-msgstr "&Política de agrupamento das xanelas de conversa"
+msgstr "&Política de agrupamento das xanelas de charla"
 
 #. i18n: ectx: property (whatsThis), widget (QComboBox, kcfg_chatWindowGroupPolicy)
 #: kopete/config/behavior/behaviorconfig_chat.ui:91
 #, kde-format
 msgid "Every chat will have its own window."
-msgstr "Cada conversa ten a súa xanela propia."
+msgstr "Cada charla ten a súa xanela propia."
 
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_chatWindowGroupPolicy)
 #: kopete/config/behavior/behaviorconfig_chat.ui:95
 #, kde-format
 msgid "Open All Messages in New Chat Window"
-msgstr "Abrir todas as mensaxes nunha xanela de conversa propia"
+msgstr "Abrir todas as mensaxes nunha xanela de charla propia"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_chatWindowGroupPolicy)
 #: kopete/config/behavior/behaviorconfig_chat.ui:100
 #, kde-format
 msgid "Group Messages From Same Account in Same Chat Window"
-msgstr "Agrupar as mensaxes da mesma conta na mesma xanela de conversa"
+msgstr "Agrupar as mensaxes da mesma conta na mesma xanela de charla"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_chatWindowGroupPolicy)
 #: kopete/config/behavior/behaviorconfig_chat.ui:105
 #, kde-format
 msgid "Group All Messages in Same Chat Window"
-msgstr "Agrupar todas as mensaxes na mesma xanela de conversa"
+msgstr "Agrupar todas as mensaxes na mesma xanela de charla"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_chatWindowGroupPolicy)
 #: kopete/config/behavior/behaviorconfig_chat.ui:110
 #, kde-format
 msgid "Group Messages From Contacts in Same Group in Same Chat Window"
 msgstr ""
-"Agrupar as mensaxes dos contactos do mesmo grupo na mesma xanela de conversa"
+"Agrupar as mensaxes dos contactos do mesmo grupo na mesma xanela de charla"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, kcfg_chatWindowGroupPolicy)
 #: kopete/config/behavior/behaviorconfig_chat.ui:115
 #, kde-format
 msgid "Group Messages From Same Metacontact in Same Chat Window"
-msgstr "Agrupar as mensaxes do mesmo metacontacto na mesma xanela de conversa"
+msgstr "Agrupar as mensaxes do mesmo metacontacto na mesma xanela de charla"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_showDates)
 #: kopete/config/behavior/behaviorconfig_chat.ui:126
@@ -1866,14 +1866,14 @@ msgid ""
 "Limit the maximum number of lines visible in a chat window to improve speed "
 "for complex layouts."
 msgstr ""
-"Limitar o número máximo de liñas visíbeis nunha xanela de conversa para "
+"Limitar o número máximo de liñas visíbeis nunha xanela de charla para "
 "mellorar a velocidade das configuracións complexas."
 
 #. i18n: ectx: property (text), widget (QLabel, txtChatViewBufferSize)
 #: kopete/config/behavior/behaviorconfig_chat.ui:190
 #, kde-format
 msgid "Ma&ximum number of chat window lines:"
-msgstr "Número &máximo de liñas da xanela de conversa:"
+msgstr "Número &máximo de liñas da xanela de charla:"
 
 #: kopete/config/behavior/behaviorconfig_events.cpp:29
 #, kde-format
@@ -1957,13 +1957,13 @@ msgid ""
 "open chat"
 msgstr ""
 "Animar a lista de contactos ou a icona da bandexa do sistema cando se "
-"reciban novas mensaxes e haxa unha conversa aberta."
+"reciban novas mensaxes e haxa unha charla aberta."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_animateOnMessageWithOpenChat)
 #: kopete/config/behavior/behaviorconfig_events.ui:84
 #, kde-format
 msgid "Animate on message with open chat"
-msgstr "Animar se hai unha mensaxe nunha conversa aberta"
+msgstr "Animar se hai unha mensaxe nunha charla aberta"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_balloonGroupMessageNotificationsPerSender)
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_balloonGroupMessageNotificationsPerSender)
@@ -1993,7 +1993,7 @@ msgid ""
 "The \"Ignore\" button of the new message popup closes the chat window for "
 "the sender"
 msgstr ""
-"O botón «Ignorar» da notificación de nova mensaxe pecha a xanela de conversa "
+"O botón «Ignorar» da notificación de nova mensaxe pecha a xanela de charla "
 "para o remitente."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_balloonNotifyIgnoreClosesChatView)
@@ -2004,20 +2004,20 @@ msgid ""
 "displayed in the new message popup the \"Ignore\" button will close this "
 "chat window."
 msgstr ""
-"Se xa hai unha xanela de conversa aberta para o remitente da mensaxe amosado "
+"Se xa hai unha xanela de charla aberta para o remitente da mensaxe amosado "
 "na notificación, o botón «Ignorar» pecharaa."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_balloonNotifyIgnoreClosesChatView)
 #: kopete/config/behavior/behaviorconfig_events.ui:110
 #, kde-format
 msgid "Button \"I&gnore\" in new message popups closes chat"
-msgstr "O botón «&Ignorar» nas notificacións de mensaxe nova pecha a conversa."
+msgstr "O botón «&Ignorar» nas notificacións de mensaxe nova pecha a charla."
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_queueOnlyHighlightedMessagesInGroupChats)
 #: kopete/config/behavior/behaviorconfig_events.ui:117
 #, kde-format
 msgid "Notify only highlighted messages in group chats"
-msgstr "Notificar só as mensaxes realzadas nas conversas en grupo."
+msgstr "Notificar só as mensaxes realzadas nas charlas en grupo."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_queueOnlyHighlightedMessagesInGroupChats)
 #: kopete/config/behavior/behaviorconfig_events.ui:120
@@ -2026,14 +2026,14 @@ msgid ""
 "In very active group chats, important messages can be singled out by "
 "preventing notifications for non-highlighted messages."
 msgstr ""
-"Nos grupos de conversa moi activos as mensaxes importantes poden separarse "
+"Nos grupos de charla moi activos as mensaxes importantes poden separarse "
 "excluíndo as mensaxes non realzadas de notificárense."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_queueOnlyHighlightedMessagesInGroupChats)
 #: kopete/config/behavior/behaviorconfig_events.ui:123
 #, kde-format
 msgid "Exclude non-&highlighted messages in group chats"
-msgstr "Excluír as mensaxes n&on realzadas nas conversas en grupo"
+msgstr "Excluír as mensaxes n&on realzadas nas charlas en grupo"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_queueOnlyMessagesOnAnotherDesktop)
 #: kopete/config/behavior/behaviorconfig_events.ui:130
@@ -2042,9 +2042,9 @@ msgid ""
 "Use the same notifications for events in the active chat window and other "
 "chat windows on the current desktop (usually less intrusive)"
 msgstr ""
-"Usar as mesma notificacións para os eventos na xanela activa da conversa que "
-"noutras xanelas de conversa do escritorio actual (habitualmente resulta "
-"menos intrusivo)."
+"Usar as mesma notificacións para os eventos na xanela activa da charla que "
+"noutras xanelas de charla do escritorio actual (habitualmente resulta menos "
+"intrusivo)."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_queueOnlyMessagesOnAnotherDesktop)
 #: kopete/config/behavior/behaviorconfig_events.ui:134
@@ -2059,13 +2059,13 @@ msgid ""
 "that an event has occurred using animations (if activated) and the "
 "\"Incoming Message\" event."
 msgstr ""
-"De se activar, os eventos das xanela de conversa que estiveren no escritorio "
-"actual xestiónanse como eventos da xanela de conversa activa: non se animan "
+"De se activar, os eventos das xanela de charla que estiveren no escritorio "
+"actual xestiónanse como eventos da xanela de charla activa: non se animan "
 "nin a icona na bandexa do sistema nin a icona na lista de contactos da "
 "persoa autora da mensaxe senón que se usa a notificación «Recepción dunha "
-"mensaxe na xanela activa». Tamén as xanelas de conversa doutros escritorios "
+"mensaxe na xanela activa». Tamén as xanelas de charla doutros escritorios "
 "fan que se emitan notificacións.\n"
-"De non se activar todas as xanelas de conversa excepto a activa notificarano "
+"De non se activar todas as xanelas de charla excepto a activa notificarano "
 "usando animacións, se for o caso, de que ocorreu un evento, indicándoo tamén "
 "coa notificación «Recepción dunha mensaxe»."
 
@@ -2073,7 +2073,7 @@ msgstr ""
 #: kopete/config/behavior/behaviorconfig_events.ui:137
 #, kde-format
 msgid "Treat all chats on the current des&ktop like active chats"
-msgstr "Tratar todas as conversas do escri&torio actual como activas"
+msgstr "Tratar todas as charlas do escri&torio actual como activas"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #: kopete/config/behavior/behaviorconfig_events.ui:147
@@ -2113,7 +2113,7 @@ msgid ""
 "Switch to the desktop which contains the chat window for the sender when "
 "opening his/her message"
 msgstr ""
-"Cambiar ao escritorio que contén a xanela de conversa con ese contacto cando "
+"Cambiar ao escritorio que contén a xanela de charla con ese contacto cando "
 "se abra a súa mensaxe."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_trayflashNotifySetCurrentDesktopToChatView)
@@ -2124,23 +2124,23 @@ msgid ""
 "opening his/her message will cause a switch to the desktop which contains "
 "this chat window."
 msgstr ""
-"Cando se reciba unha mensaxe nova, se xa existe unha xanela de conversa "
-"aberta para ese contacto a apertura da mensaxe fará que se cambie ao "
-"escritorio que a contén."
+"Cando se reciba unha mensaxe nova, se xa existe unha xanela de charla aberta "
+"para ese contacto a apertura da mensaxe fará que se cambie ao escritorio que "
+"a contén."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_trayflashNotifySetCurrentDesktopToChatView)
 #: kopete/config/behavior/behaviorconfig_events.ui:172
 #, kde-format
 msgid "Switch &to desktop containing chat on opening message"
-msgstr "&Cambiar ao escritorio coa conversa aberta ao abrir a mensaxe"
+msgstr "&Cambiar ao escritorio coa charla aberta ao abrir a mensaxe"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_raiseMessageWindow)
 #: kopete/config/behavior/behaviorconfig_events.ui:179
 #, kde-format
 msgid "Raise the chat window/tab on an incoming message"
 msgstr ""
-"Pór en primeiro plano a xanela ou separador de conversa cando se reciban "
-"novas mensaxes."
+"Pór en primeiro plano a xanela ou separador de charla cando se reciban novas "
+"mensaxes."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_raiseMessageWindow)
 #: kopete/config/behavior/behaviorconfig_events.ui:182
@@ -2150,9 +2150,9 @@ msgid ""
 "message this window will be put on the current desktop and in front of all "
 "other windows."
 msgstr ""
-"Cando se reciba unha mensaxe nova, se xa existe unha xanela de conversa "
-"activa para ese contacto a xanela aparece no escritorio actual por riba das "
-"demais xanelas."
+"Cando se reciba unha mensaxe nova, se xa existe unha xanela de charla activa "
+"para ese contacto a xanela aparece no escritorio actual por riba das demais "
+"xanelas."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_raiseMessageWindow)
 #: kopete/config/behavior/behaviorconfig_events.ui:185
@@ -2192,7 +2192,7 @@ msgstr ""
 "De maneira predeterminada, a icona da bandexa do sistema indica as mensaxes "
 "recibidas animándose e amosando unha notificación. Ao premer a icona co "
 "botón central ou esquerdo do rato, ao igual que ao premer o botón «Ver» da "
-"mensaxe, ábrese unha xanela de conversa coas mensaxes novas."
+"mensaxe, ábrese unha xanela de charla coas mensaxes novas."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_showSystemTray)
 #: kopete/config/behavior/behaviorconfig_general.ui:32
@@ -2242,9 +2242,9 @@ msgid ""
 "window to open. If there is already a chat window opened for that sender, "
 "the message will immediately be displayed there."
 msgstr ""
-"Se non houber unha xanela de conversa aberta, ábrese unha nova cando entre "
-"unha mensaxe. Se houber unha xanela de conversa xa aberta para o remitente "
-"da mensaxe, aparece alí a mensaxe de xeito inmediato."
+"Se non houber unha xanela de charla aberta, ábrese unha nova cando entre "
+"unha mensaxe. Se houber unha xanela de charla xa aberta para o remitente da "
+"mensaxe, aparece alí a mensaxe de xeito inmediato."
 
 #. i18n: ectx: property (text), widget (QRadioButton, mInstantMessageOpeningChk)
 #: kopete/config/behavior/behaviorconfig_general.ui:70
@@ -2269,8 +2269,8 @@ msgid ""
 msgstr ""
 "Almacenar as mensaxes recibidas nunha quenda de mensaxes. As mensaxes novas "
 "son aquelas mensaxes que non se poden amosar nunha xanela existente. Só as "
-"mensaxes na quenda provocan unha notificación mediante unha xanela de "
-"conversa e a animación da icona na bandexa do sistema."
+"mensaxes na quenda provocan unha notificación mediante unha xanela de charla "
+"e a animación da icona na bandexa do sistema."
 
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_useMessageQueue)
 #: kopete/config/behavior/behaviorconfig_general.ui:83
@@ -2294,9 +2294,9 @@ msgid ""
 "new incoming messages are queued, i.e. messages that cannot be displayed in "
 "an already open chat window."
 msgstr ""
-"As mensaxes sen ler son aquelas que aparecen nunha xanela de conversa xa "
+"As mensaxes sen ler son aquelas que aparecen nunha xanela de charla xa "
 "aberta pero inactiva. Só as mensaxes recibidas na quenda provocan unha "
-"notificación cunha xanela de conversa e a animación da icona na bandexa do "
+"notificación cunha xanela de charla e a animación da icona na bandexa do "
 "sistema. Con esta opción desactivada só as mensaxes novas recibidas entran "
 "na quenda de mensaxes, é dicir, as mensaxes que non se poden amosar nunha "
 "xanela xa aberta."
@@ -2440,7 +2440,7 @@ msgstr "(Sen variante)"
 #: kopete/config/chatwindow/chatwindowconfig.cpp:443
 #, kde-format
 msgid "Choose Chat Window Style to Install"
-msgstr "Escoller o estilo de xanela de conversa a instalar"
+msgstr "Escoller o estilo de xanela de charla a instalar"
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:453
 #, kde-format
@@ -2461,7 +2461,7 @@ msgstr "Non se pode abrir o arquivo"
 msgid "Could not find a suitable place to install the chat window style."
 msgstr ""
 "Non se puido atopar un lugar axeitado para instalar o estilo de xanela de "
-"conversa."
+"charla."
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:457
 #, kde-format
@@ -2471,8 +2471,7 @@ msgstr "Non se pode atopar o cartafol de estilos."
 #: kopete/config/chatwindow/chatwindowconfig.cpp:460
 #, kde-format
 msgid "The specified archive does not contain a valid chat window style."
-msgstr ""
-"O arquivo indicado non contén un estilo de xanela de conversa correcto."
+msgstr "O arquivo indicado non contén un estilo de xanela de charla correcto."
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:460
 #, kde-format
@@ -2482,7 +2481,7 @@ msgstr "Este estilo é incorrecto"
 #: kopete/config/chatwindow/chatwindowconfig.cpp:463
 #, kde-format
 msgid "The chat window style was successfully installed."
-msgstr "O estilo de xanela de conversa instalouse correctamente."
+msgstr "O estilo de xanela de charla instalouse correctamente."
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:463
 #, kde-format
@@ -2495,7 +2494,7 @@ msgid ""
 "An unknown error occurred while trying to install the chat window style."
 msgstr ""
 "Produciuse un erro descoñecido ao intentar instalar o estilo de xanela de "
-"conversa."
+"charla."
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:467
 #, kde-format
@@ -2507,7 +2506,7 @@ msgstr "Erro descoñecido"
 msgctxt "@info"
 msgid "The Chat Window Style <resource>%1</resource> was successfully deleted."
 msgstr ""
-"O estilo de xanela de conversa <resource>%1</resource> eliminouse "
+"O estilo de xanela de charla <resource>%1</resource> eliminouse "
 "correctamente."
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:501
@@ -2517,7 +2516,7 @@ msgid ""
 "An error occurred while trying to delete the <resource>%1</resource> Chat "
 "Window Style. Your account might not have permission to remove it."
 msgstr ""
-"Produciuse un erro ao eliminar o estilo de xanela de conversa <resource>%1</"
+"Produciuse un erro ao eliminar o estilo de xanela de charla <resource>%1</"
 "resource>. Pode que a súa conta non teña permiso para retiralo."
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:585
@@ -2669,7 +2668,7 @@ msgstr ""
 "weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-"
 "right:0px; -qt-block-indent:0; text-indent:0px;\">Fonte principal da xanela "
-"de conversa.</p>\n"
+"de charla.</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; "
 "margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></"
 "p></body></html>"
@@ -2736,7 +2735,7 @@ msgstr "Cor de primeiro plano das mensaxes realzadas."
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:169
 #, kde-format
 msgid "Color for the background of the chat window"
-msgstr "Cor para o fondo da xanela de conversa."
+msgstr "Cor para o fondo da xanela de charla."
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel2_2)
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:156
@@ -2772,7 +2771,7 @@ msgstr "Realzar o &fondo:"
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:234
 #, kde-format
 msgid "Color used for links in chats"
-msgstr "Usar cores para as ligazóns nas salas de conversa."
+msgstr "Usar cores para as ligazóns nas salas de charla."
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1_3)
 #: kopete/config/chatwindow/chatwindowconfig_colors.ui:221
@@ -2830,7 +2829,7 @@ msgstr "&Xestionar as emoticonas …"
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:20
 #, kde-format
 msgid "Chat Window Appearance"
-msgstr "Aparencia da xanela de conversa"
+msgstr "Aparencia da xanela de charla"
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:34
@@ -2866,7 +2865,7 @@ msgstr "Variante do estilo:"
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:124
 #, kde-format
 msgid "Get new Chat Window styles over the Internet"
-msgstr "Obter estilos novos para a xanela de conversa en Internet."
+msgstr "Obter estilos novos para a xanela de charla en Internet."
 
 #. i18n: ectx: property (text), widget (QPushButton, btnGetStyles)
 #: kopete/config/chatwindow/chatwindowconfig_style.ui:127
@@ -5221,7 +5220,7 @@ msgid ""
 "permission. If you need a service that supports connection from various "
 "locations at the same time, use the Jabber protocol."
 msgstr ""
-"A maioría dos servizos privativos de mensaxería instantánea non lle permiten "
+"A maioría dos servizos privativos de mensaxaría instantánea non lle permiten "
 "conectarse desde máis dun lugar. Comprobe que ninguén estea a usar a súa "
 "conta sen permiso. Se precisa un servizo que admita a conexión desde varios "
 "lugares á vez, use o protocolo Jabber."
@@ -5303,7 +5302,7 @@ msgstr "Activar que se permitan as emoticonas en Kopete."
 #: libkopete/kopeteappearancesettings.kcfg:70
 #, kde-format
 msgid "Whether using the system font for the chat window."
-msgstr "Se usar a fonte do sistema para a xanela de conversa."
+msgstr "Se usar a fonte do sistema para a xanela de charla."
 
 #. i18n: ectx: label, entry, group (Appearance)
 #: libkopete/kopeteappearancesettings.kcfg:82
@@ -5520,13 +5519,13 @@ msgstr "Elevar a vista ao entraren mensaxes novas."
 #: libkopete/kopetebehaviorsettings.kcfg:52
 #, kde-format
 msgid "Show events in chat window."
-msgstr "Amosar os eventos na xanela de conversa."
+msgstr "Amosar os eventos na xanela de charla."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:56
 #, kde-format
 msgid "Queue only highlighted messages in group chats"
-msgstr "Pór na quenda só as mensaxes realzadas nas conversas en grupo"
+msgstr "Pór na quenda só as mensaxes realzadas nas charlas en grupo"
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:60
@@ -5544,7 +5543,7 @@ msgstr "Unha única notificación para todas as mensaxes dun mesmo remitente."
 #: libkopete/kopetebehaviorsettings.kcfg:68
 #, kde-format
 msgid "Balloon Notification Ignore Closes Chat View"
-msgstr "Pechar a vista de conversa ao ignorar as notificacións de mensaxes."
+msgstr "Pechar a vista de charla ao ignorar as notificacións de mensaxes."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:72
@@ -5564,15 +5563,14 @@ msgstr ""
 #: libkopete/kopetebehaviorsettings.kcfg:80
 #, kde-format
 msgid "Animate on message with open chat."
-msgstr "Animar se hai unha mensaxe nunha conversa aberta."
+msgstr "Animar se hai unha mensaxe nunha charla aberta."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:84
 #, kde-format
 msgid "Trayflash Notification Set Current Desktop To Chat View"
 msgstr ""
-"As notificacións da bandexa restauran a vista de conversa no escritorio "
-"actual."
+"As notificacións da bandexa restauran a vista de charla no escritorio actual."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:88
@@ -5584,7 +5582,7 @@ msgstr "Activar os eventos mentres se estea ausente."
 #: libkopete/kopetebehaviorsettings.kcfg:94
 #, kde-format
 msgid "Chat window grouping policy."
-msgstr "Política de agrupamento das xanelas de conversa."
+msgstr "Política de agrupamento das xanelas de charla."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:105
@@ -5602,7 +5600,7 @@ msgstr "Activar o texto enriquecido de maneira predeterminada."
 #: libkopete/kopetebehaviorsettings.kcfg:113
 #, kde-format
 msgid "Show send button in Chat Window."
-msgstr "Amosar o botón de enviar na xanela de conversa."
+msgstr "Amosar o botón de enviar na xanela de charla."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:117
@@ -5626,7 +5624,7 @@ msgstr "Truncar o nome do contacto por riba dun máximo de caracteres."
 #: libkopete/kopetebehaviorsettings.kcfg:129
 #, kde-format
 msgid "Maximum number of messages to show in a chat window."
-msgstr "Número máximo de mensaxes amosadas na xanela de conversa."
+msgstr "Número máximo de mensaxes amosadas na xanela de charla."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:133
@@ -5638,7 +5636,7 @@ msgstr "Destacar as mensaxes que conteñan o seu alcume."
 #: libkopete/kopetebehaviorsettings.kcfg:137
 #, kde-format
 msgid "Selected view plugin for Chat Window."
-msgstr "Complemento escollido para a vista da xanela de conversa."
+msgstr "Complemento escollido para a vista da xanela de charla."
 
 #. i18n: ectx: label, entry, group (AutoAway)
 #: libkopete/kopetebehaviorsettings.kcfg:144
@@ -5749,13 +5747,13 @@ msgid ""
 "<qt>An error has occurred while creating a new chat window. The chat window "
 "has not been created.</qt>"
 msgstr ""
-"<qt>Produciuse un erro ao abrir unha xanela de conversa nova. Non se creou a "
-"xanela de conversa.</qt>"
+"<qt>Produciuse un erro ao abrir unha xanela de charla nova. Non se creou a "
+"xanela de charla.</qt>"
 
 #: libkopete/kopetechatsession.cpp:644
 #, kde-format
 msgid "Error While Creating Chat Window"
-msgstr "Erro ao crear a xanela de conversa"
+msgstr "Erro ao crear a xanela de charla"
 
 #: libkopete/kopetecommand.cpp:87
 #, kde-format
@@ -5808,7 +5806,7 @@ msgstr ""
 #: libkopete/kopetecommandhandler.cpp:111
 #, kde-format
 msgid "USAGE: /url - Opens last URL for current chat in default browser."
-msgstr "Uso: /url — Abre o último URL da conversa no navegador predeterminado."
+msgstr "Uso: /url — Abre o último URL da charla no navegador predeterminado."
 
 #: libkopete/kopetecommandhandler.cpp:114
 #, kde-format
@@ -5823,7 +5821,7 @@ msgstr "Uso: /part — Pecha a vista actual."
 #: libkopete/kopetecommandhandler.cpp:121
 #, kde-format
 msgid "USAGE: /clear - Clears the active view's chat buffer."
-msgstr "Uso: /clear — Baleira o búfer de conversa da vista activa."
+msgstr "Uso: /clear — Baleira o búfer de charla da vista activa."
 
 #: libkopete/kopetecommandhandler.cpp:127
 #, kde-format
@@ -5847,7 +5845,7 @@ msgid ""
 "USAGE: /say <text> - Say text in this chat. This is the same as just typing "
 "a message, but is very useful for scripts."
 msgstr ""
-"Uso: /say <mensaxe> — Envía a mensaxe á conversa actual. É o mesmo que "
+"Uso: /say <mensaxe> — Envía a mensaxe á charla actual. É o mesmo que "
 "escribir unha mensaxe directamente na interface, pero pode resultar moi útil "
 "ao crear guións."
 
@@ -5859,8 +5857,8 @@ msgid ""
 "members of the chat."
 msgstr ""
 "Uso: /exec [-o] <orde> — Executa a orde indicada e amosa a saída no búfer da "
-"conversa. Co parámetro -o, a saída envíaselle a todas as persoas que "
-"participan na conversa."
+"charla. Co parámetro -o, a saída envíaselle a todas as persoas que "
+"participan na charla."
 
 #: libkopete/kopetecommandhandler.cpp:248
 #, kde-format
@@ -6386,7 +6384,7 @@ msgid ""
 "connect with the same account from another location. Try connecting again "
 "later."
 msgstr ""
-"Kopete perdeu a canle usada para falar co sistema de mensaxería "
+"Kopete perdeu a canle usada para falar co sistema de mensaxaría "
 "instantánea.\n"
 "Isto pódese deber a que a conexión de rede está caída, a que o servizo está "
 "experimentando problemas ou a que o servizo se desconectara porque intentase "
@@ -6397,7 +6395,7 @@ msgstr ""
 #, kde-format
 msgid "Cannot connect with the instant messaging server or peers."
 msgstr ""
-"Non se pode conectar cos servidores ou parceiros de mensaxería instantánea."
+"Non se pode conectar cos servidores ou parceiros de mensaxaría instantánea."
 
 #: libkopete/kopeteutils.cpp:46
 #, kde-format
@@ -6412,7 +6410,7 @@ msgid ""
 "experiencing problems. Try connecting again later."
 msgstr ""
 "Isto significa que Kopete non pode acadar o servidor ou parceiros de "
-"mensaxería instantánea.\n"
+"mensaxaría instantánea.\n"
 "Pode deberse a que o acceso a Internet estea caído ou a que o servidor está "
 "experimentando problemas. Intente conectarse de novo máis tarde."
 
@@ -6762,7 +6760,7 @@ msgstr ""
 #: libkopete/ui/kopetestdaction.cpp:79
 #, kde-format
 msgid "Start &Chat..."
-msgstr "Iniciar unha &conversa…"
+msgstr "Iniciar unha &charla…"
 
 #: libkopete/ui/kopetestdaction.cpp:84
 #, kde-format
@@ -7625,7 +7623,7 @@ msgstr ""
 #: plugins/history2/history2config.kcfg:11
 #, kde-format
 msgid "Show previous messages in new chats."
-msgstr "Amosar nas conversas novas as mensaxes previas."
+msgstr "Amosar nas charlas novas as mensaxes previas."
 
 #. i18n: ectx: label, entry (Number_Auto_chatwindow), group (History2 Plugin)
 #. i18n: ectx: label, entry (Number_Auto_chatwindow), group (History Plugin)
@@ -7919,7 +7917,7 @@ msgstr "Non importar"
 #: plugins/history/historyprefsui.ui:32 plugins/history2/history2prefsui.ui:24
 #, kde-format
 msgid "Chat History"
-msgstr "Historial da conversa"
+msgstr "Historial da charla"
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, lblNoLinesPerPage)
 #: plugins/history/historyprefsui.ui:72 plugins/history2/history2prefsui.ui:94
@@ -7929,7 +7927,7 @@ msgid ""
 "window"
 msgstr ""
 "O número de mensaxes que se amosan cando se navega no historial na xanela de "
-"conversa"
+"charla"
 
 #. i18n: ectx: property (text), widget (QLabel, lblNoLinesPerPage)
 #: plugins/history/historyprefsui.ui:75 plugins/history2/history2prefsui.ui:97
@@ -7944,7 +7942,7 @@ msgstr "Número de mensaxes por páxina:"
 #: plugins/history2/history2prefsui.ui:117
 #, kde-format
 msgid "Color of history messages in the chat window"
-msgstr "Cor das mensaxes de historial na xanela de conversa"
+msgstr "Cor das mensaxes de historial na xanela de charla"
 
 #. i18n: ectx: property (text), widget (QLabel, colorLabel)
 #: plugins/history/historyprefsui.ui:85 plugins/history2/history2prefsui.ui:55
@@ -7963,7 +7961,7 @@ msgid ""
 "window when opening a new chat."
 msgstr ""
 "Este é o número de mensaxes que se engadirán automaticamente na xanela de "
-"conversa cando se abra unha nova conversa."
+"charla cando se abra unha nova charla."
 
 #. i18n: ectx: property (text), widget (QLabel, numberLabel)
 #: plugins/history/historyprefsui.ui:98 plugins/history2/history2prefsui.ui:107
@@ -7980,7 +7978,7 @@ msgid ""
 "The number of message that are shown when borwsing history in the chat window"
 msgstr ""
 "O número de mensaxes que aparecen mentres se navega no historial da xanela "
-"de conversa"
+"de charla"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, chkShowPrevious)
 #: plugins/history/historyprefsui.ui:157 plugins/history2/history2prefsui.ui:65
@@ -7989,14 +7987,14 @@ msgid ""
 "When a new chat is opened, automatically add the last few messages between "
 "you and that contact."
 msgstr ""
-"Cando se inicia unha nova conversa, automaticamente engadir as últimas "
+"Cando se inicia unha nova charla, automaticamente engadir as últimas "
 "mensaxes entre vostede e o contacto."
 
 #. i18n: ectx: property (text), widget (QCheckBox, chkShowPrevious)
 #: plugins/history/historyprefsui.ui:160 plugins/history2/history2prefsui.ui:68
 #, kde-format
 msgid "Show chat history in new chats"
-msgstr "Amosar o historial da conversa nas conversas novas"
+msgstr "Amosar o historial da charla nas charlas novas"
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: plugins/history/historyviewer.ui:39 plugins/history2/history2viewer.ui:39
@@ -8148,8 +8146,8 @@ msgid ""
 "order to work."
 msgstr ""
 "O complemento KopeteTeX permítelle a Kopete amosar fórmulas LaTeX na xanela "
-"de conversa. O remitente debe envolver a fórmula entre dous pares de signos "
-"de dólar, é dicir, «$$fórmula$$».\n"
+"de charla. O remitente debe envolver a fórmula entre dous pares de signos de "
+"dólar, é dicir, «$$fórmula$$».\n"
 "O complemento require o programa de conversión ImageMagick para funcionar."
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
@@ -8242,7 +8240,7 @@ msgstr ""
 #: plugins/nowlistening/nowlisteningconfig.kcfg:31
 #, kde-format
 msgid "Show the current music listened in chat window."
-msgstr "Publicar a música que se está a escoitar na xanela de conversa."
+msgstr "Publicar a música que se está a escoitar na xanela de charla."
 
 #. i18n: ectx: label, entry (StatusAdvertising), group (Now Listening Plugin)
 #: plugins/nowlistening/nowlisteningconfig.kcfg:36
@@ -8392,13 +8390,13 @@ msgid ""
 "window edit area."
 msgstr ""
 "&Defínao mediante «Ferramentas ->Enviar información sobre os recursos», ou "
-"escribindo «/media» na área de edición da xanela de conversa ."
+"escribindo «/media» na área de edición da xanela de charla ."
 
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_ChatAdvertising)
 #: plugins/nowlistening/nowlisteningprefs.ui:198
 #, kde-format
 msgid "&Show in chat window (automatic)"
-msgstr "Amo&sar na xanela de conversa (automático)."
+msgstr "Amo&sar na xanela de charla (automático)."
 
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_StatusAdvertising)
 #: plugins/nowlistening/nowlisteningprefs.ui:206
@@ -8636,7 +8634,7 @@ msgid ""
 msgstr ""
 "Escolla un segredo que só saiban vostede e %1. Se os segredos non coinciden, "
 "pode que estea a falar cun impostor. Non envíe o segredo pola xanela da "
-"conversa, ou este método de autenticación poderá poñerse en perigo con "
+"charla, ou este método de autenticación poderá poñerse en perigo con "
 "facilidade."
 
 #: plugins/otr/authenticationwizard.cpp:384
@@ -9436,7 +9434,7 @@ msgstr "Engadir o contacto á lista negra"
 #: plugins/privacy/privacyui.rc:18
 #, kde-format
 msgid "Privacy"
-msgstr "Intimidade"
+msgstr "Privacidade"
 
 #: plugins/statistics/statisticsdialog.cpp:50
 #, kde-format
@@ -10367,7 +10365,7 @@ msgstr "Substituír o texto do protocolo con imaxes en (X)HTML"
 #: plugins/webpresence/webpresenceconfig.kcfg:48
 #, kde-format
 msgid "Use one of your IM names as display name"
-msgstr "Usar un dos seus nomes de mensaxería como nome visual"
+msgstr "Usar un dos seus nomes de mensaxaría como nome visual"
 
 #. i18n: ectx: label, entry (showAnotherName), group (Web Presence Plugin)
 #: plugins/webpresence/webpresenceconfig.kcfg:53
@@ -10385,7 +10383,7 @@ msgstr "Nome visual"
 #: plugins/webpresence/webpresenceconfig.kcfg:62
 #, kde-format
 msgid "Include IM addresses"
-msgstr "Incluír o enderezo de mensaxería instantánea"
+msgstr "Incluír o enderezo de mensaxaría instantánea"
 
 #: plugins/webpresence/webpresenceplugin.cpp:194
 #, kde-format
@@ -10556,13 +10554,13 @@ msgstr "&Substitúe o texto do protocolo con imaxes en (X)HTML."
 #: plugins/webpresence/webpresenceprefs.ui:199
 #, kde-format
 msgid "Use one of &your IM names"
-msgstr "Usar un dos &seus nomes de mensaxería"
+msgstr "Usar un dos &seus nomes de mensaxaría"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_includeIMAddress)
 #: plugins/webpresence/webpresenceprefs.ui:209
 #, kde-format
 msgid "Include &IM addresses"
-msgstr "&Incluír o enderezo de mensaxería instantánea"
+msgstr "&Incluír o enderezo de mensaxaría instantánea"
 
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_showAnotherName)
 #: plugins/webpresence/webpresenceprefs.ui:216
@@ -11580,7 +11578,7 @@ msgid ""
 "trivial chat, and may not be able to reply immediately."
 msgstr ""
 "Definir o estado como «ocupado», o que significa que non quere que o amolen "
-"con conversas triviais e que pode que non responda inmediatamente."
+"con charlas triviais e que pode que non responda inmediatamente."
 
 #. i18n: ectx: property (toolTip), widget (QRadioButton, invisibleButton_)
 #: protocols/gadu/ui/gaduawayui.ui:94
@@ -12217,7 +12215,7 @@ msgstr "&Entrar nunha canle…"
 #: protocols/groupwise/gwaccount.cpp:88
 #, kde-format
 msgid "&Manage Privacy..."
-msgstr "X&estionar a intimidade…"
+msgstr "X&estionar a privacidade…"
 
 #: protocols/groupwise/gwaccount.cpp:254
 #: protocols/jabber/ui/jabberregisteraccount.cpp:292
@@ -12538,7 +12536,7 @@ msgstr "Estase a arquivar o estado"
 #: protocols/qq/qqchatsession.cpp:178
 #, kde-format
 msgid "An error occurred when trying to start a chat: %1"
-msgstr "Producise un erro ao intentar comezar unha conversa: %1"
+msgstr "Producise un erro ao intentar comezar unha charla: %1"
 
 #: protocols/groupwise/gwmessagemanager.cpp:238
 #: protocols/qq/qqchatsession.cpp:207
@@ -12593,7 +12591,7 @@ msgid ""
 "chat."
 msgstr ""
 "Todos os demais participante saíron e hai outras invitacións pendentes. As "
-"mensaxes non se enviarán ata que alguén máis se una á conversa."
+"mensaxes non se enviarán ata que alguén máis se una á charla."
 
 #: protocols/groupwise/gwmessagemanager.cpp:493
 #: protocols/qq/qqchatsession.cpp:462
@@ -12798,27 +12796,27 @@ msgstr "Versión do cliente incompatíbel"
 #: protocols/groupwise/libgroupwise/gwerror.cpp:115
 #, kde-format
 msgid "A duplicate chat was found"
-msgstr "Atopouse unha conversa duplicada"
+msgstr "Atopouse unha charla duplicada"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:118
 #, kde-format
 msgid "Chat not found"
-msgstr "Non se atopa a conversa"
+msgstr "Non se atopa a charla"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:121
 #, kde-format
 msgid "Invalid chat name"
-msgstr "O nome da conversa é incorrecto"
+msgstr "O nome da charla é incorrecto"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:124
 #, kde-format
 msgid "The chat is active"
-msgstr "A conversa está activa"
+msgstr "A charla está activa"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:127
 #, kde-format
 msgid "Chat is busy; try again"
-msgstr "A conversa está saturada; probe de novo"
+msgstr "A charla está saturada; probe de novo"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:130
 #, kde-format
@@ -12828,12 +12826,12 @@ msgstr "Intentouse de novo demasiado pronto. Probe de novo."
 #: protocols/groupwise/libgroupwise/gwerror.cpp:133
 #, kde-format
 msgid "Server's chat subsystem is not active"
-msgstr "O subsistema de conversa non está activo"
+msgstr "O subsistema de charla non está activo"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:136
 #, kde-format
 msgid "The chat update request is invalid"
-msgstr "A solicitude de actualización de conversa é incorrecta."
+msgstr "A solicitude de actualización de charla é incorrecta."
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:139
 #, kde-format
@@ -12848,7 +12846,7 @@ msgstr "A versión de cliente que usa o receptor é demasiado antiga"
 #: protocols/groupwise/libgroupwise/gwerror.cpp:145
 #, kde-format
 msgid "Chat has been removed from server"
-msgstr "Retirouse a conversa do servidor."
+msgstr "Retirouse a charla do servidor."
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:148
 #, kde-format
@@ -13051,7 +13049,7 @@ msgstr ""
 #: protocols/groupwise/ui/gwchatprops.ui:13
 #, kde-format
 msgid "GroupWise Chat Properties"
-msgstr "Propiedades da conversa GroupWise"
+msgstr "Propiedades da charla GroupWise"
 
 #. i18n: ectx: property (text), widget (QLabel, displayName)
 #: protocols/groupwise/ui/gwchatprops.ui:34
@@ -13514,12 +13512,12 @@ msgstr "Blo&queado"
 #, kde-format
 msgctxt "Account specific privacy settings"
 msgid "Manage Privacy for %1"
-msgstr "Xestionar a intimidade de %1"
+msgstr "Xestionar a privacidade de %1"
 
 #: protocols/groupwise/ui/gwprivacydialog.cpp:69
 #, kde-format
 msgid "Privacy settings have been administratively locked"
-msgstr "A configuración da intimidade bloqueouse administrativamente."
+msgstr "A configuración da privacidade bloqueouse administrativamente."
 
 #: protocols/groupwise/ui/gwprivacydialog.cpp:109
 #, kde-format
@@ -13537,7 +13535,7 @@ msgid ""
 "You can only change privacy settings while you are logged in to the "
 "GroupWise Messenger server."
 msgstr ""
-"Só pode cambiar a configuración da intimidade mentres estea identificado no "
+"Só pode cambiar a configuración da privacidade mentres estea identificado no "
 "servidor de GroupWise Messenger."
 
 #: protocols/groupwise/ui/gwprivacydialog.cpp:361
@@ -14002,7 +14000,7 @@ msgstr "Non pode entrar na sala %1, prohibíuselle a entrada."
 #: protocols/jabber/jabberaccount.cpp:1633
 #, kde-format
 msgid "Jabber Group Chat"
-msgstr "Conversa en grupo Jabber"
+msgstr "Charla en grupo Jabber"
 
 #: protocols/jabber/jabberaccount.cpp:1623
 #, kde-format
@@ -14265,7 +14263,7 @@ msgstr "Gardouse a mensaxe no servidor; o contacto está desconectado"
 #: protocols/jabber/jabbercontact.cpp:325
 #, kde-format
 msgid "%1 has ended his/her participation in the chat session."
-msgstr "%1 saíu da conversa na sala."
+msgstr "%1 saíu da charla na sala."
 
 #: protocols/jabber/jabbercontact.cpp:375
 #: protocols/jabber/jabbergroupcontact.cpp:180
@@ -14287,8 +14285,8 @@ msgid ""
 "opened chat windows."
 msgstr ""
 "Acaba de preseleccionar unha acción para o contacto %1 pero aínda ten unha "
-"xanela de conversa aberta para este. A acción seleccionada só se aplicará ás "
-"xanelas de conversa novas."
+"xanela de charla aberta para este. A acción seleccionada só se aplicará ás "
+"xanelas de charla novas."
 
 #: protocols/jabber/jabbercontact.cpp:1149
 #, kde-format
@@ -14982,12 +14980,12 @@ msgstr "&Executar"
 #: protocols/jabber/ui/dlgjabberbookmarkeditor.cpp:138
 #, kde-format
 msgid "Group Chat Name"
-msgstr "Nome da conversa de grupo"
+msgstr "Nome da charla de grupo"
 
 #: protocols/jabber/ui/dlgjabberbookmarkeditor.cpp:139
 #, kde-format
 msgid "Enter a name for the group chat:"
-msgstr "Insira un nome para a conversa de grupo:"
+msgstr "Insira un nome para a charla de grupo:"
 
 #. i18n: ectx: property (text), widget (QPushButton, autoJoinButton)
 #: protocols/jabber/ui/dlgjabberbookmarkeditor.ui:29
@@ -15092,7 +15090,7 @@ msgstr "Unirse"
 #: protocols/jabber/ui/dlgjabberchatroomslist.cpp:93
 #, kde-format
 msgid "Unable to retrieve the list of chat rooms."
-msgstr "Non se pode obter a lista de salas de conversas."
+msgstr "Non se pode obter a lista de salas de charlas."
 
 #: protocols/jabber/ui/dlgjabberchatroomslist.cpp:26
 #, kde-format
@@ -15411,7 +15409,7 @@ msgstr "I&ntimidade"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:856
 #, kde-format
 msgid "General Privacy"
-msgstr "Intimidade xeral"
+msgstr "Privacidade xeral"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, cbHideSystemInfo)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:868
@@ -15509,7 +15507,7 @@ msgstr "Enviar sempre as notificacións de &ausencia (pechar a xanela)"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1022
 #, kde-format
 msgid "Privacy Lists"
-msgstr "Listas de intimidade"
+msgstr "Listas de privacidade"
 
 #. i18n: ectx: property (text), widget (QCheckBox, oldEncrypted)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1029
@@ -16179,7 +16177,7 @@ msgstr "Aplicar"
 #: protocols/jabber/ui/privacydlg.cpp:39
 #, kde-format
 msgid "%1: Privacy Lists"
-msgstr "%1: listas de intimidade."
+msgstr "%1: listas de privacidade."
 
 #: protocols/jabber/ui/privacydlg.cpp:156
 #: protocols/jabber/ui/privacydlg.cpp:168
@@ -16223,7 +16221,7 @@ msgstr "Xa existe unha lista con ese nome."
 #: protocols/jabber/ui/privacyrule.ui:14
 #, kde-format
 msgid "Edit Privacy Rule"
-msgstr "Editar a regra de intimidade"
+msgstr "Editar a regra de privacidade"
 
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #: protocols/jabber/ui/privacyrule.ui:55
@@ -16287,7 +16285,7 @@ msgstr "Se:"
 #: protocols/jabber/ui/privacyruledlg.cpp:31
 #, kde-format
 msgid "Edit Privacy List Rule"
-msgstr "Editar as regras da lista de intimidade"
+msgstr "Editar as regras da lista de privacidade"
 
 #: protocols/jabber/ui/privacyruledlg.cpp:49
 #: protocols/jabber/ui/privacyruledlg.cpp:92
@@ -16519,7 +16517,7 @@ msgstr ""
 #: protocols/oscar/aim/aimaccount.cpp:238
 #, kde-format
 msgid "Join Chat..."
-msgstr "Unirse a unha conversa…"
+msgstr "Unirse a unha charla…"
 
 #: protocols/oscar/aim/aimaccount.cpp:244
 #: protocols/oscar/icq/icqaccount.cpp:141
@@ -16543,12 +16541,12 @@ msgstr "Non se pode editar a información da persoa usuaria"
 #, kde-format
 msgid "Joining an AIM chat room is not possible because you are not connected."
 msgstr ""
-"Non pode entrar nunha sala de conversas de AIM mentres está desconectado."
+"Non pode entrar nunha sala de charlas de AIM mentres está desconectado."
 
 #: protocols/oscar/aim/aimaccount.cpp:412
 #, kde-format
 msgid "Unable to Join AIM Chat Room"
-msgstr "Non se pode unir á sala de conversas de AIM"
+msgstr "Non se pode unir á sala de charlas de AIM"
 
 #: protocols/oscar/aim/aimcontact.cpp:71
 #, kde-format
@@ -16599,7 +16597,7 @@ msgstr "Advertir"
 #: protocols/oscar/aim/aimjoinchat.cpp:32
 #, kde-format
 msgid "Join AIM Chat Room"
-msgstr "Entrar na sala de conversas de AIM"
+msgstr "Entrar na sala de charlas de AIM"
 
 #: protocols/oscar/aim/aimprotocol.cpp:181
 #: protocols/oscar/icq/icqstatusmanager.cpp:94
@@ -16614,7 +16612,7 @@ msgid ""
 "Unable to connect to the chat room %1 because the account for %2 is not "
 "connected."
 msgstr ""
-"Non se pode conectar á sala de conversas %1 xa que a conta para %2 non está "
+"Non se pode conectar á sala de charlas %1 xa que a conta para %2 non está "
 "conectada."
 
 #: protocols/oscar/aim/aimprotocol.cpp:224
@@ -16774,7 +16772,7 @@ msgid ""
 "screen name from AIM, AOL, or .Mac.<br><br>If you do not currently have an "
 "AIM screen name, please click the button to create one."
 msgstr ""
-"Para conectar á rede de Mensaxería Instantánea de AOL, precisa usar un nome "
+"Para conectar á rede de Mensaxaría Instantánea de AOL, precisa usar un nome "
 "de pantalla de AIM, AOL ou Mac. <br><br>Se non ten aínda un nome de pantalla "
 "AIM, prema o botón para crealo."
 
@@ -17116,7 +17114,7 @@ msgstr "Perfil:"
 #: protocols/oscar/aim/ui/aimjoinchatbase.ui:22
 #, kde-format
 msgid "Please enter the name of the chat room you wish to join."
-msgstr "Insira o nome da sala de conversas na que queira entrar."
+msgstr "Insira o nome da sala de charlas na que queira entrar."
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: protocols/oscar/aim/ui/aimjoinchatbase.ui:61
@@ -18663,7 +18661,7 @@ msgstr "Configuración da co&nta"
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:230
 #, kde-format
 msgid "Privacy Options"
-msgstr "Opcións de intimidade"
+msgstr "Opcións de privacidade"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, chkRequireAuth)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:242
@@ -18746,7 +18744,7 @@ msgstr ""
 #, kde-format
 msgid "Make my status available via &ICQ's unified messaging center"
 msgstr ""
-"Facer visíbel o meu estado a través do Centro Integrado de Mensaxería do ICQ"
+"Facer visíbel o meu estado a través do Centro Integrado de Mensaxaría do ICQ"
 
 #. i18n: ectx: property (text), widget (QCheckBox, edtServerEncrypted)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:299
@@ -19430,7 +19428,7 @@ msgstr "Engadir ao menú"
 #: protocols/oscar/liboscar/client.h:406
 #, kde-format
 msgid "Join me in this Chat."
-msgstr "Úneme nesta conversa."
+msgstr "Úneme nesta charla."
 
 #: protocols/oscar/liboscar/tasks/filetransfertask.cpp:296
 #, kde-format
@@ -19510,7 +19508,7 @@ msgstr "."
 #: protocols/oscar/oscaraccount.cpp:469
 #, kde-format
 msgid "Chat Room Invitation"
-msgstr "Invitación a unha sala de conversas"
+msgstr "Invitación a unha sala de charlas"
 
 #: protocols/oscar/oscaraccount.cpp:623
 #, kde-format
@@ -19667,12 +19665,12 @@ msgstr "Iconas das amizades"
 #: protocols/oscar/oscarcontact.cpp:253
 #, kde-format
 msgid "Group chat"
-msgstr "Conversa en grupo"
+msgstr "Charla en grupo"
 
 #: protocols/oscar/oscarcontact.cpp:255
 #, kde-format
 msgid "Voice chat"
-msgstr "Conversa con voz"
+msgstr "Charla con voz"
 
 #: protocols/oscar/oscarcontact.cpp:259
 #, kde-format
@@ -19950,8 +19948,7 @@ msgstr ""
 #, kde-format
 msgid "Au&tomatically open a chat window when someone starts a conversation"
 msgstr ""
-"Abrir &automaticamente unha xanela de conversa cando alguén inicie unha "
-"conversa"
+"Abrir &automaticamente unha xanela de charla cando alguén inicie unha charla"
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, textLabel1_4)
 #: protocols/qq/ui/qqeditaccountui.ui:533
@@ -19971,8 +19968,8 @@ msgstr ""
 "os contactos</p>\n"
 "<dl><dt>Só</dt><dd>A imaxe non se descarga automaticamente a non ser que a "
 "persoa usuaria o solicite.</dd>\n"
-"<dt>Cando se abra unha conversa</dt><dd>Descárgase a imaxe cando se abra "
-"unha xanela de conversa co contacto.</dd>\n"
+"<dt>Cando se abra unha charla</dt><dd>Descárgase a imaxe cando se abra unha "
+"xanela de charla co contacto.</dd>\n"
 "<dt>Automaticamente</dt><dd>Sempre que a persoa usuaria teña unha imaxe, "
 "descárgaa. <b>Nota:</b>isto abre unha toma que permite saber que se está a "
 "descargar a imaxe.</dd></dl>"
@@ -19999,9 +19996,9 @@ msgstr ""
 "<qt><p>Indique cando debe descargar Kopete as imaxes dos contactos.</p>\n"
 "<dl><dt>Só manualmente<dl><dd>A imaxe non se descarga automaticamente, só "
 "cando a persoa usuaria o solicite.</dd>\n"
-"<dt>Ao abrir unha conversa</dt><dd>Intentar descargar a imaxe do contacto "
-"sempre que se abra unha instancia de conversa, por exemplo, cando se abre "
-"unha xanela de conversa.</dd>\n"
+"<dt>Ao abrir unha charla</dt><dd>Intentar descargar a imaxe do contacto "
+"sempre que se abra unha instancia de charla, por exemplo, cando se abre unha "
+"xanela de charla.</dd>\n"
 "<dt>Automaticamente</dt><dd>Intentar descargar a imaxe do contacto sempre "
 "que exista. <b>Nota:</b>isto abre unha toma que permite que a outra persoa "
 "usuaria saiba que está a descargar a súa imaxe.</dd></dl>"
@@ -20016,7 +20013,7 @@ msgstr "Só manualmente"
 #: protocols/qq/ui/qqeditaccountui.ui:564
 #, kde-format
 msgid "When a Chat is Open (default)"
-msgstr "Cando haxa unha conversa aberta (predeterminado)"
+msgstr "Cando haxa unha charla aberta (predeterminado)"
 
 #. i18n: ectx: property (text), item, widget (QComboBox, DownloadPicture)
 #: protocols/qq/ui/qqeditaccountui.ui:569
@@ -20543,7 +20540,7 @@ msgstr "Para usar SMS precisará unha conta cun servizo de envío."
 #: protocols/sms/ui/smsactprefs.ui:234
 #, kde-format
 msgid "Messaging Preferences"
-msgstr "Configuración da mensaxería"
+msgstr "Configuración da mensaxaría"
 
 #. i18n: ectx: property (text), widget (QLabel)
 #: protocols/sms/ui/smsactprefs.ui:253
