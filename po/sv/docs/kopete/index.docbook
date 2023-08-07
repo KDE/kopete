@@ -1654,7 +1654,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 			<title
 >Andra protokoll</title>
 			<para
->Förutom de protokoll som namnges ovan, stöder &kopete; flera andra protokoll. I de flesta fall är de inte normalt aktiverade, eller måste ett ytterligare insticksprogram installeras. För tillfället tillhandahålls SMS, Skype och SILC på detta sätt. &kopete;-gruppen är dock inte ansvarig för dessa protokoll.</para>
+>Förutom de protokoll som namnges ovan, stöder &kopete; flera andra protokoll. I de flesta fall är de inte normalt aktiverade, eller måste ett ytterligare insticksprogram installeras. För tillfället tillhandahålls SMS och SILC på detta sätt. &kopete;-gruppen är dock inte ansvarig för dessa protokoll.</para>
 		</sect2>
 	</sect1>
 </chapter>
