@@ -1,12 +1,12 @@
 # Translation of kopete.po to Korean.
 # Park J. K. <segfault@byus.net>, 2004.
-# Shinjo Park <kde@peremen.name>, 2007, 2009, 2011, 2012, 2013, 2014, 2015, 2017, 2018, 2020, 2021, 2022.
+# Shinjo Park <kde@peremen.name>, 2007, 2009, 2011, 2012, 2013, 2014, 2015, 2017, 2018, 2020, 2021, 2022, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2022-05-15 22:35+0200\n"
+"PO-Revision-Date: 2023-08-08 00:23+0200\n"
 "Last-Translator: Shinjo Park <kde@peremen.name>\n"
 "Language-Team: Korean <kde-kr@kde.org>\n"
 "Language: ko\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Lokalize 21.12.3\n"
+"X-Generator: Lokalize 22.12.3\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -3085,7 +3085,7 @@ msgstr "대화 상대 선택"
 #: kopete/contactlist/kabcexport.cpp:94
 #, kde-format
 msgid "No writeable address book resource found."
-msgstr "쓸 수 있는 주소록 자원을 찾을 수 없습니다."
+msgstr "쓸 수 있는 주소록 리소스를 찾을 수 없습니다."
 
 #: kopete/contactlist/kabcexport.cpp:95
 #, kde-format
@@ -13522,7 +13522,7 @@ msgstr "프로토콜 스트림 정책 위반입니다."
 #: protocols/jabber/jabberaccount.cpp:856
 #, kde-format
 msgid "Resource constraint."
-msgstr "사용 가능한 자원이 없습니다."
+msgstr "사용 가능한 리소스가 없습니다."
 
 #: protocols/jabber/jabberaccount.cpp:860
 #, kde-format
@@ -13592,7 +13592,7 @@ msgstr "알 수 없는 호스트입니다."
 #: protocols/jabber/jabberaccount.cpp:913
 #, kde-format
 msgid "Could not connect to a required remote resource."
-msgstr "필요한 원격 자원에 연결할 수 없습니다."
+msgstr "필요한 원격 리소스에 연결할 수 없습니다."
 
 #: protocols/jabber/jabberaccount.cpp:916
 #, kde-format
@@ -13715,17 +13715,17 @@ msgstr "보안 계층에서 오류 발생: %1"
 #: protocols/jabber/jabberaccount.cpp:1011
 #, kde-format
 msgid "No permission to bind the resource."
-msgstr "자원을 연결할 수 있는 권한이 없습니다."
+msgstr "리소스를 연결할 수 있는 권한이 없습니다."
 
 #: protocols/jabber/jabberaccount.cpp:1014
 #, kde-format
 msgid "The resource is already in use."
-msgstr "자원이 이미 사용 중입니다."
+msgstr "리소스가 이미 사용 중입니다."
 
 #: protocols/jabber/jabberaccount.cpp:1021
 #, kde-format
 msgid "Could not bind a resource: %1"
-msgstr "자원을 연결할 수 없음: %1"
+msgstr "리소스를 연결할 수 없음: %1"
 
 #: protocols/jabber/jabberaccount.cpp:1034
 #, kde-format
@@ -14008,12 +14008,12 @@ msgstr "방해하지 마시오"
 #: protocols/jabber/jabbercontact.cpp:203
 #, kde-format
 msgid "Select Resource"
-msgstr "자원 선택"
+msgstr "리소스 선택"
 
 #: protocols/jabber/jabbercontact.cpp:220
 #, kde-format
 msgid "Automatic (best/default resource)"
-msgstr "자동 (기본/최적의 자원)"
+msgstr "자동 (기본/최적의 리소스)"
 
 #: protocols/jabber/jabbercontact.cpp:274
 #, kde-format
@@ -14091,13 +14091,13 @@ msgid ""
 "windows for this contact. The preselected resource will only apply to newly "
 "opened chat windows."
 msgstr ""
-"%1 님의 자원을 미리 선택했으나, 현재 %1 님과 대화 창이 열려 있습니다. 미리 선"
-"택한 자원은 새로 연 대화 창에만 적용됩니다."
+"%1 님의 리소스를 미리 선택했으나, 현재 %1 님과 대화 창이 열려 있습니다. 미리 "
+"선택한 리소스는 새로 연 대화 창에만 적용됩니다."
 
 #: protocols/jabber/jabbercontact.cpp:1189
 #, kde-format
 msgid "Jabber Resource Selector"
-msgstr "Jabber 자원 선택기"
+msgstr "Jabber 리소스 선택기"
 
 #: protocols/jabber/jabbergroupchatmanager.cpp:185
 #: protocols/jabber/jabberprotocol.cpp:532
@@ -14148,7 +14148,7 @@ msgstr "인증 상태"
 #: protocols/jabber/jabberprotocol.cpp:87
 #, kde-format
 msgid "Available Resources"
-msgstr "사용 가능한 자원"
+msgstr "사용 가능한 리소스"
 
 #: protocols/jabber/jabberprotocol.cpp:88
 #, kde-format
@@ -15188,7 +15188,7 @@ msgstr "위치 설정"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:579
 #, kde-format
 msgid "The resource name you would like to use on the Jabber network."
-msgstr "Jabber 네트워크에서 사용할 자원 이름입니다."
+msgstr "Jabber 네트워크에서 사용할 리소스 이름입니다."
 
 #. i18n: ectx: property (whatsThis), widget (QLabel, TextLabel3_3)
 #. i18n: ectx: property (whatsThis), widget (QLineEdit, mResource)
@@ -15203,15 +15203,15 @@ msgid ""
 "different resource names, so you may wish to enter 'Home' or 'Work' here, "
 "for example."
 msgstr ""
-"Jabber 네트워크에서 사용할 자원 이름입니다. Jabber는 서로 다른 이름을 사용하"
-"여 같은 계정으로 여러 곳에서 연결할 수 있습니다. 예를 들어서 'Home'이나 "
+"Jabber 네트워크에서 사용할 리소스 이름입니다. Jabber는 서로 다른 이름을 사용"
+"하여 같은 계정으로 여러 곳에서 연결할 수 있습니다. 예를 들어서 'Home'이나 "
 "'Work' 등으로 접속 장소를 구분할 수 있습니다."
 
 #. i18n: ectx: property (text), widget (QLabel, TextLabel3_3)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:522
 #, kde-format
 msgid "R&esource:"
-msgstr "자원(&E):"
+msgstr "리소스(&E):"
 
 #. i18n: ectx: property (text), widget (QLabel, TextLabel3_3_2)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:585
@@ -15231,11 +15231,11 @@ msgid ""
 "If two resources have the same priority, the messages will be sent to the "
 "one most recently connected.</qt>"
 msgstr ""
-"<qt>각각의 자원은 서로 다른 <b>우선 순위</b>를 가질 수 있습니다. 메시지는 가"
-"장 높은 우선 순위를 가지고 있는 자원으로 전달됩니다.\n"
+"<qt>각각의 리소스는 서로 다른 <b>우선 순위</b>를 가질 수 있습니다. 메시지는 "
+"가장 높은 우선 순위를 가지고 있는 리소스로 전달됩니다.\n"
 "\n"
-"만약 두 자원이 같은 우선 순위를 가지고 있으면 최근에 연결한 자원으로 전달됩니"
-"다.</qt>"
+"만약 두 리소스가 같은 우선 순위를 가지고 있으면 최근에 연결한 리소스로 전달됩"
+"니다.</qt>"
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbAdjustPriority)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:649
@@ -15247,7 +15247,7 @@ msgstr "부재 중 우선 순위:"
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:696
 #, kde-format
 msgid "Merge all messages from all resources to one window/tab"
-msgstr "모든 자원에서 온 메시지를 한 창/탭으로 합치기"
+msgstr "모든 리소스에서 온 메시지를 한 창/탭으로 합치기"
 
 #. i18n: ectx: attribute (title), widget (QWidget, TabPage)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:723
