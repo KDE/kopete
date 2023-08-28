@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-08-22 23:15+0300\n"
+"PO-Revision-Date: 2023-08-26 12:23+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -4372,7 +4372,7 @@ msgstr "Zack Rusin"
 #: kopete/main.cpp:88
 #, kde-format
 msgid "Former developer, original Gadu plugin author"
-msgstr "Biçimlendirici Geliştirici, orijinal Gadu eklentisi yazarı"
+msgstr "Önceki geliştirici, özgün Gadu eklentisi yazarı"
 
 #: kopete/main.cpp:89
 #, kde-format
@@ -4387,7 +4387,7 @@ msgstr "Daniel Stone"
 #: kopete/main.cpp:90
 #, kde-format
 msgid "Former developer, Jabber plugin author"
-msgstr "Önceki geliştirici, Jabber eklenti yazarı"
+msgstr "Önceki geliştirici, Jabber eklentisinin yazarı"
 
 #: kopete/main.cpp:91
 #, kde-format
@@ -8230,7 +8230,7 @@ msgstr "Belirtilen ortam oynatıcısını kullan."
 #: plugins/nowlistening/nowlisteningconfig.kcfg:51
 #, kde-format
 msgid "Selected Media Player for source of listening advertising."
-msgstr "Şimdi dinleniyor kaynağı için seçili ortam oynatıcı."
+msgstr "Şimdi dinleniyor kaynağı için seçili ortam oynatıcısı."
 
 #: plugins/nowlistening/nowlisteningguiclient.cpp:41
 #, kde-format
@@ -13635,7 +13635,7 @@ msgstr "Jabber SSL Hatası"
 #: protocols/jabber/jabberaccount.cpp:579
 #, kde-format
 msgid "Jabber Connection Certificate Problem"
-msgstr "Jabber Bağlantısı  Sertifika Sorunu"
+msgstr "Jabber Bağlantı Sertifikası Sorunu"
 
 #: protocols/jabber/jabberaccount.cpp:613
 #, kde-format
@@ -13646,7 +13646,7 @@ msgstr "Jabber sunucusu ile şifreli bir bağlantı sağlanamadı."
 #: protocols/jabber/jabberaccount.cpp:614
 #, kde-format
 msgid "Jabber Connection Error"
-msgstr "Jabber Bağlanma Hatası"
+msgstr "Jabber Bağlantısı Hatası"
 
 #: protocols/jabber/jabberaccount.cpp:820
 #, kde-format
@@ -14017,7 +14017,7 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:1807
 #, kde-format
 msgid "Jabber Account Unregistration"
-msgstr "Jabber Hesabı Üyelikten Çıkış"
+msgstr "Jabber Hesap Kaydını Silme"
 
 #: protocols/jabber/jabberbasecontact.cpp:107
 #, kde-format
@@ -15724,7 +15724,7 @@ msgstr ""
 #: protocols/jabber/ui/dlgjabberregisteraccount.ui:20
 #, kde-format
 msgid "Register Account - Jabber"
-msgstr "Jabber-Hesabına Kayıt Ol"
+msgstr "Hesap Kaydı  - Jabber"
 
 #. i18n: ectx: property (text), widget (QPushButton, btnChooseServer)
 #: protocols/jabber/ui/dlgjabberregisteraccount.ui:47
