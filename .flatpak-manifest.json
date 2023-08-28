@@ -1,0 +1,112 @@
+{
+    "id": "org.kde.kopete",
+    "branch": "master",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "5.15-22.08",
+    "sdk": "org.kde.Sdk",
+    "command": "kopete",
+    "tags": ["nightly"],
+    "desktop-file-name-suffix": " (Nightly)",
+    "finish-args": ["--share=ipc", "--socket=x11", "--socket=wayland" ],
+
+    "modules": [
+        {
+            "name": "boost",
+            "buildsystem": "simple",
+            "build-commands": [
+                "./bootstrap.sh --prefix=/app --with-libraries=system",
+                "./b2 -j $FLATPAK_BUILDER_N_JOBS install"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://boostorg.jfrog.io/artifactory/main/release/1.78.0/source/boost_1_78_0.tar.bz2",
+                    "sha256": "8681f175d4bdb26c52222665793eef08490d7758529330f98d3b29dd0735bccc"
+                }
+            ]
+        },
+        {
+            "name": "gpgme",
+            "sources": [{
+                "type": "archive",
+                "url": "https://gnupg.org/ftp/gcrypt/gpgme/gpgme-1.20.0.tar.bz2",
+                "sha256": "25a5785a5da356689001440926b94e967d02e13c49eb7743e35ef0cf22e42750"
+            }],
+            "modules": [
+                {
+                    "name": "libgpg-error",
+                    "sources": [{
+                        "type": "archive",
+                        "url": "https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.42.tar.bz2",
+                        "sha256": "fc07e70f6c615f8c4f590a8e37a9b8dd2e2ca1e9408f8e60459c67452b925e23"
+                    }],
+                    "cleanup": [ "/lib/libgpg-error.la" ],
+                    "modules": [
+                        {
+                            "name": "gettext",
+                            "sources": [{
+                                "type": "archive",
+                                "url": "https://ftp.gnu.org/pub/gnu/gettext/gettext-0.19.8.tar.gz",
+                                "sha256": "3da4f6bd79685648ecf46dab51d66fcdddc156f41ed07e580a696a38ac61d48f"
+                            }]
+                        }
+                    ]
+                },
+                {
+                    "name": "libassuan",
+                    "sources": [{
+                        "type": "archive",
+                        "url": "https://gnupg.org/ftp/gcrypt/libassuan/libassuan-2.5.5.tar.bz2",
+                        "sha256": "8e8c2fcc982f9ca67dcbb1d95e2dc746b1739a4668bc20b3a3c5be632edb34e4"
+                    }],
+                    "cleanup": [
+                        "/lib/libassuan.la"
+                    ]
+                }
+            ],
+            "cleanup": [
+                "/lib/libgpgme*.la",
+                "/lib/libqgpgme.la"
+            ]
+        },
+        {
+            "config-opts": [ "-DENABLE_TESTING=OFF" ],
+            "name": "kdelibs4support",
+            "buildsystem": "cmake-ninja",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://invent.kde.org/frameworks/kdelibs4support.git",
+                    "tag": "v5.85.0",
+                    "x-checker-data": {
+                        "type": "git",
+                        "tag-pattern": "^v([\\d.]+)$"
+                    }
+                }
+            ]
+        },
+        {
+            "config-opts": [ "-DENABLE_TESTING=OFF" ],
+            "name": "kjs",
+            "buildsystem": "cmake-ninja",
+            "sources": [ { "type": "git", "url": "https://invent.kde.org/frameworks/kjs.git", "tag": "v5.85.0" } ]
+        },
+        {
+            "config-opts": [ "-DENABLE_TESTING=OFF" ],
+            "name": "khtml",
+            "buildsystem": "cmake-ninja",
+            "sources": [ { "type": "git", "url": "https://invent.kde.org/frameworks/khtml.git", "tag": "v5.85.0" } ]
+        },
+        { "name": "grantlee", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://github.com/steveire/grantlee.git" } ] },
+        { "name": "kpimtextedit", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://invent.kde.org/kde/kpimtextedit" } ] },
+        { "name": "kidentitymanagement", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://invent.kde.org/kde/kidentitymanagement" } ] },
+        { "name": "libkleo", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://invent.kde.org/kde/libkleo" } ] },
+        {
+            "name": "kopete",
+            "buildsystem": "cmake-ninja",
+            "sources": [
+                { "type": "dir", "path": "." }
+            ]
+        }
+    ]
+}
