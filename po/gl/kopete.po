@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-06-24 14:29+0200\n"
+"PO-Revision-Date: 2023-09-03 11:55+0200\n"
 "Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
 "Language: gl\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 23.04.2\n"
+"X-Generator: Lokalize 23.04.3\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -3172,8 +3172,8 @@ msgid ""
 "This wizard helps you export instant messaging contacts to the KDE address "
 "book."
 msgstr ""
-"Este panel axuda a exportar os contactos de mensaxaría instantánea á axenda "
-"de enderezos de KDE."
+"Este asistente axuda a exportar os contactos de mensaxaría instantánea á "
+"axenda de enderezos de KDE."
 
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #: kopete/contactlist/kabcexport_page1.ui:32
@@ -19411,8 +19411,8 @@ msgid ""
 msgstr ""
 "Aquí é onde se amosan os resultados da busca. Ao premer dúas veces seguidas "
 "unha ligazón, a xanela de busca péchase e escóllese o UIN do contacto "
-"seleccionado para engadir a través do panel de «Engadir un contacto». Só se "
-"pode engadir un contacto de cada vez."
+"seleccionado para engadir a través do asistente de «Engadir un contacto». Só "
+"se pode engadir un contacto de cada vez."
 
 #. i18n: ectx: property (whatsThis), widget (QPushButton, searchButton)
 #: protocols/oscar/icq/ui/icqsearchbase.ui:239

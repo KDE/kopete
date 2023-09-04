@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-08-26 12:23+0300\n"
+"PO-Revision-Date: 2023-09-03 21:19+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -306,7 +306,7 @@ msgstr ""
 #: kopete/chatwindow/kopeteemailwindow.cpp:477
 #, kde-format
 msgid "Unread Message"
-msgstr "Okunmamış İleti"
+msgstr "Okunmayan İleti"
 
 #: kopete/chatwindow/chatview.cpp:261
 #, kde-format
@@ -2269,7 +2269,7 @@ msgstr "&İleti kuyruğu kullan"
 #: kopete/config/behavior/behaviorconfig_general.ui:93
 #, kde-format
 msgid "Also add unread messages to queue"
-msgstr "Okunmamış iletileri de kuyruğa ekle"
+msgstr "Okunmayan iletileri de kuyruğa ekle"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_queueUnreadMessages)
 #: kopete/config/behavior/behaviorconfig_general.ui:96
@@ -2281,10 +2281,10 @@ msgid ""
 "new incoming messages are queued, i.e. messages that cannot be displayed in "
 "an already open chat window."
 msgstr ""
-"Okunmamış iletiler, zaten açık; ancak pasif d urumdaki bir sohbet "
+"Okunmayan iletiler, halihazırda açık; ancak devre dışı durumdaki bir sohbet "
 "penceresinde görüntülenecek olan iletilerdir. Yalnızca gelen ve kuyruğa "
-"atılmış iletiler, sohbet penceresi ve sistem tepsi simgesi animasyonları "
-"yoluyla uyarıyı tetikler. Bu seçenek pasif hale getirilirse yalnızca yeni "
+"atılmış iletiler, sohbet penceresi ve sistem tepsi simgesi canlandırmaları "
+"yoluyla uyarıyı tetikler. Bu seçenek devre dışı bırakırılrsa yalnızca yeni "
 "gelen iletiler, yani zaten açık durumdaki bir sohbet penceresinde "
 "görüntülenemeyecek olan iletiler kuyruğa atılır."
 
@@ -2292,7 +2292,7 @@ msgstr ""
 #: kopete/config/behavior/behaviorconfig_general.ui:99
 #, kde-format
 msgid "Queue unrea&d messages"
-msgstr "&Okunmamış iletileri kuyruğa ekle"
+msgstr "&Okunmayan iletileri kuyruğa ekle"
 
 #. i18n: ectx: label, entry, group (Behavior)
 #. i18n: ectx: property (title), widget (QGroupBox, initialStatusGroup)
@@ -2564,7 +2564,7 @@ msgstr "Gönderilmekte olan ileti."
 #: kopete/config/chatwindow/chatwindowconfig.cpp:629
 #, kde-format
 msgid "Delivered message."
-msgstr "Gönderilmiş ileti."
+msgstr "İleti teslim edildi."
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:634
 #, kde-format
@@ -5473,7 +5473,7 @@ msgstr "İleti kuyruğu kullan."
 #: libkopete/kopetebehaviorsettings.kcfg:24
 #, kde-format
 msgid "Queue unread messages."
-msgstr "Okunmamış iletileri kuyruğa ekle."
+msgstr "Okunmayan iletileri kuyruğa ekle."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:28
