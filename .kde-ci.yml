@@ -22,5 +22,5 @@ Dependencies:
     'frameworks/kcmutils': '@stable'
     'frameworks/kdnssd': '@stable'
     'libraries/phonon': '@stable'
-    'pim/kidentitymanagement': '@same'
-    'pim/kleopatra': '@same'
+    'pim/kidentitymanagement': '@stable'
+    'pim/libkleo': '@stable'
