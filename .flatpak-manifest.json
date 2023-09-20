@@ -99,6 +99,21 @@
         },
         { "name": "grantlee", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://github.com/steveire/grantlee.git" } ] },
         { "name": "kpimtextedit", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://invent.kde.org/kde/kpimtextedit" } ] },
+        {
+            "name": "kirigami-addons",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DBUILD_TESTING=OFF",
+                "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.kde.org/stable/kirigami-addons/kirigami-addons-0.10.0.tar.xz",
+                    "sha256": "9897e70bf167f579cec06d09d49a9a27aba184cbd1b2fce2c3ae757a87b01216",
+                }
+            ]
+        },
         { "name": "kidentitymanagement", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://invent.kde.org/kde/kidentitymanagement" } ] },
         { "name": "libkleo", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://invent.kde.org/kde/libkleo" } ] },
         {
