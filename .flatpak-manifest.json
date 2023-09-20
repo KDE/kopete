@@ -77,7 +77,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/frameworks/kdelibs4support.git",
-                    "tag": "v5.85.0",
+                    "tag": "v5.104.0",
                     "x-checker-data": {
                         "type": "git",
                         "tag-pattern": "^v([\\d.]+)$"
@@ -89,16 +89,16 @@
             "config-opts": [ "-DENABLE_TESTING=OFF" ],
             "name": "kjs",
             "buildsystem": "cmake-ninja",
-            "sources": [ { "type": "git", "url": "https://invent.kde.org/frameworks/kjs.git", "tag": "v5.85.0" } ]
+            "sources": [ { "type": "git", "url": "https://invent.kde.org/frameworks/kjs.git", "tag": "v5.104.0" } ]
         },
         {
             "config-opts": [ "-DENABLE_TESTING=OFF" ],
             "name": "khtml",
             "buildsystem": "cmake-ninja",
-            "sources": [ { "type": "git", "url": "https://invent.kde.org/frameworks/khtml.git", "tag": "v5.85.0" } ]
+            "sources": [ { "type": "git", "url": "https://invent.kde.org/frameworks/khtml.git", "tag": "v5.104.0" } ]
         },
         { "name": "grantlee", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://github.com/steveire/grantlee.git" } ] },
-        { "name": "kpimtextedit", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://invent.kde.org/kde/kpimtextedit" } ] },
+        { "name": "kpimtextedit", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://invent.kde.org/kde/kpimtextedit", branch: "release/23.08" } ] },
         {
             "name": "kirigami-addons",
             "buildsystem": "cmake-ninja",
@@ -114,8 +114,8 @@
                 }
             ]
         },
-        { "name": "kidentitymanagement", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://invent.kde.org/kde/kidentitymanagement" } ] },
-        { "name": "libkleo", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://invent.kde.org/kde/libkleo" } ] },
+        { "name": "kidentitymanagement", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://invent.kde.org/kde/kidentitymanagement", branch: "release/23.08" } ] },
+        { "name": "libkleo", "buildsystem": "cmake-ninja", "sources": [ { "type": "git", "url": "https://invent.kde.org/kde/libkleo", branch: "release/23.08" } ] },
         {
             "name": "kopete",
             "buildsystem": "cmake-ninja",
