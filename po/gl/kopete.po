@@ -12,14 +12,14 @@
 # Xosé <xosecalvo@edu.xunta.es>, 2009.
 # Adrián Chaves Fernández (Gallaecio) <adriyetichaves@gmail.com>, 2011, 2012, 2015, 2017.
 # Marce Villarino <mvillarino@kde-espana.es>, 2012, 2013, 2014.
-# Adrián Chaves (Gallaecio) <adrian@chaves.io>, 2017, 2018, 2019, 2020, 2023.
+# SPDX-FileCopyrightText: 2023 Adrián Chaves (Gallaecio)
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: kopete\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-08-03 00:46+0000\n"
-"PO-Revision-Date: 2023-09-03 11:55+0200\n"
+"PO-Revision-Date: 2023-09-30 14:14+0200\n"
 "Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
 "Language: gl\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 23.04.3\n"
+"X-Generator: Lokalize 23.08.1\n"
 
 #. i18n: ectx: property (text), widget (QCheckBox, fastLearner)
 #: doc-dev/t3/tutorialprefs.ui:16
@@ -92,7 +92,7 @@ msgstr ""
 #: kopete/addaccountwizard/addaccountwizard.cpp:172
 #, kde-format
 msgid "Cannot load the %1 protocol plugin."
-msgstr "Non se pode cargar o complemento do protocolo %1."
+msgstr "Non é posíbel cargar o complemento do protocolo %1."
 
 #: kopete/addaccountwizard/addaccountwizard.cpp:173
 #: kopete/addaccountwizard/addaccountwizard.cpp:181
@@ -231,7 +231,7 @@ msgstr "A persoa usuaria saíu."
 #, kde-format
 msgid "Chat style could not be found, or is invalid."
 msgstr ""
-"Non se puido atopar o estilo da interface de charla ou este é incorrecto."
+"Non foi posíbel atopar o estilo da interface de charla ou este é incorrecto."
 
 #: kopete/chatwindow/chatmessagepart.cpp:1389
 #, kde-format
@@ -1881,8 +1881,8 @@ msgid ""
 "Animation is not possible as your Qt version does not support the mng video "
 "format."
 msgstr ""
-"Non se pode aplicar a animación xa que a súa versión de Qt non é compatíbel "
-"co formato de vídeo mng."
+"Non é posíbel aplicar a animación xa que a súa versión de Qt non é "
+"compatíbel co formato de vídeo mng."
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, BehaviorConfig_Events)
 #: kopete/config/behavior/behaviorconfig_events.ui:14
@@ -1903,7 +1903,7 @@ msgstr "Notificacións"
 #, kde-format
 msgid "Animate the system tray icon on an incoming message"
 msgstr ""
-"Animar a icona da bandexa do sistema cando se reciba unha nova mensaxe."
+"Animar a icona da área de notificación cando se reciba unha nova mensaxe."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_trayflashNotify)
 #: kopete/config/behavior/behaviorconfig_events.ui:29
@@ -1956,7 +1956,7 @@ msgid ""
 "Animate the contact list or the system tray icon on an incoming message with "
 "open chat"
 msgstr ""
-"Animar a lista de contactos ou a icona da bandexa do sistema cando se "
+"Animar a lista de contactos ou a icona da área de notificación cando se "
 "reciban novas mensaxes e haxa unha charla aberta."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_animateOnMessageWithOpenChat)
@@ -2061,7 +2061,7 @@ msgid ""
 msgstr ""
 "De se activar, os eventos das xanela de charla que estiveren no escritorio "
 "actual xestiónanse como eventos da xanela de charla activa: non se animan "
-"nin a icona na bandexa do sistema nin a icona na lista de contactos da "
+"nin a icona na área de notificación nin a icona na lista de contactos da "
 "persoa autora da mensaxe senón que se usa a notificación «Recepción dunha "
 "mensaxe na xanela activa». Tamén as xanelas de charla doutros escritorios "
 "fan que se emitan notificacións.\n"
@@ -2172,13 +2172,13 @@ msgstr "Xeral"
 #: kopete/config/behavior/behaviorconfig_general.ui:20
 #, kde-format
 msgid "System Tray"
-msgstr "Bandexa do sistema"
+msgstr "Área de notificación"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_showSystemTray)
 #: kopete/config/behavior/behaviorconfig_general.ui:26
 #, kde-format
 msgid "Show the icon in the system tray"
-msgstr "Amosar a icona na bandexa do sistema."
+msgstr "Amosar a icona na área de notificación."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_showSystemTray)
 #: kopete/config/behavior/behaviorconfig_general.ui:29
@@ -2189,22 +2189,22 @@ msgid ""
 "a new chat window. Pressing the \"View\" button in the notification popup "
 "has the same effect."
 msgstr ""
-"De maneira predeterminada, a icona da bandexa do sistema indica as mensaxes "
-"recibidas animándose e amosando unha notificación. Ao premer a icona co "
-"botón central ou esquerdo do rato, ao igual que ao premer o botón «Ver» da "
-"mensaxe, ábrese unha xanela de charla coas mensaxes novas."
+"De maneira predeterminada, a icona da área de notificación indica as "
+"mensaxes recibidas animándose e amosando unha notificación. Ao premer a "
+"icona co botón central ou esquerdo do rato, ao igual que ao premer o botón "
+"«Ver» da mensaxe, ábrese unha xanela de charla coas mensaxes novas."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_showSystemTray)
 #: kopete/config/behavior/behaviorconfig_general.ui:32
 #, kde-format
 msgid "Show system &tray icon"
-msgstr "Amosar a icona na &bandexa do sistema."
+msgstr "Amosar a icona na &área de notificación."
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, kcfg_startDocked)
 #: kopete/config/behavior/behaviorconfig_general.ui:42
 #, kde-format
 msgid "Start with the main window minimized to the system tray"
-msgstr "Iniciar coa xanela principal minimizada na bandexa do sistema."
+msgstr "Iniciar coa xanela principal minimizada na área de notificación."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_startDocked)
 #: kopete/config/behavior/behaviorconfig_general.ui:45
@@ -2214,7 +2214,7 @@ msgid ""
 "icon."
 msgstr ""
 "Iniciar coa xanela principal agochada. O único elemento visíbel é a icona da "
-"bandexa do sistema."
+"área de notificación."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_startDocked)
 #: kopete/config/behavior/behaviorconfig_general.ui:48
@@ -2270,7 +2270,7 @@ msgstr ""
 "Almacenar as mensaxes recibidas nunha quenda de mensaxes. As mensaxes novas "
 "son aquelas mensaxes que non se poden amosar nunha xanela existente. Só as "
 "mensaxes na quenda provocan unha notificación mediante unha xanela de charla "
-"e a animación da icona na bandexa do sistema."
+"e a animación da icona na área de notificación."
 
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_useMessageQueue)
 #: kopete/config/behavior/behaviorconfig_general.ui:83
@@ -2296,10 +2296,10 @@ msgid ""
 msgstr ""
 "As mensaxes sen ler son aquelas que aparecen nunha xanela de charla xa "
 "aberta pero inactiva. Só as mensaxes recibidas na quenda provocan unha "
-"notificación cunha xanela de charla e a animación da icona na bandexa do "
-"sistema. Con esta opción desactivada só as mensaxes novas recibidas entran "
-"na quenda de mensaxes, é dicir, as mensaxes que non se poden amosar nunha "
-"xanela xa aberta."
+"notificación cunha xanela de charla e a animación da icona na área de "
+"notificación. Con esta opción desactivada só as mensaxes novas recibidas "
+"entran na quenda de mensaxes, é dicir, as mensaxes que non se poden amosar "
+"nunha xanela xa aberta."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_queueUnreadMessages)
 #: kopete/config/behavior/behaviorconfig_general.ui:99
@@ -2448,25 +2448,25 @@ msgid ""
 "The specified archive cannot be opened.\n"
 "Make sure that the archive is a valid ZIP or TAR archive."
 msgstr ""
-"Non se pode abrir o ficheiro indicado.\n"
+"Non é posíbel abrir o ficheiro indicado.\n"
 "Asegúrese de que o ficheiro é un arquivo ZIP ou TAR correcto."
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:454
 #, kde-format
 msgid "Cannot Open Archive"
-msgstr "Non se pode abrir o arquivo"
+msgstr "Non é posíbel abrir o arquivo"
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:457
 #, kde-format
 msgid "Could not find a suitable place to install the chat window style."
 msgstr ""
-"Non se puido atopar un lugar axeitado para instalar o estilo de xanela de "
+"Non foi posíbel atopar un lugar axeitado para instalar o estilo de xanela de "
 "charla."
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:457
 #, kde-format
 msgid "Cannot Find Styles Directory"
-msgstr "Non se pode atopar o cartafol de estilos."
+msgstr "Non é posíbel atopar o cartafol de estilos."
 
 #: kopete/config/chatwindow/chatwindowconfig.cpp:460
 #, kde-format
@@ -3063,7 +3063,7 @@ msgstr "A disposición «%1» é unha das predeterminadas e non pode eliminarse.
 #: kopete/contactlist/contactlistlayoutmanager.cpp:363
 #, kde-format
 msgid "Cannot Delete Default Layouts"
-msgstr "Non se poden eliminar as disposicións predeterminadas."
+msgstr "Non é posíbel eliminar as disposicións predeterminadas."
 
 #: kopete/contactlist/contactlistmodel.cpp:425
 #, kde-format
@@ -3989,13 +3989,14 @@ msgid ""
 "<qt>Closing the main window will keep Kopete running in the system tray. Use "
 "'Quit' from the 'File' menu to quit the application.</qt>"
 msgstr ""
-"<qt>Ao pechar a xanela principal, Kopete mantense en execución na bandexa do "
-"sistema. Use «Saír» desde o menú «Ficheiro» para pechar a aplicación.</qt>"
+"<qt>Ao pechar a xanela principal, Kopete mantense en execución na área de "
+"notificación. Use «Saír» desde o menú «Ficheiro» para pechar a aplicación.</"
+"qt>"
 
 #: kopete/kopetewindow.cpp:860
 #, kde-format
 msgid "Docking in System Tray"
-msgstr "Ancorado na bandexa do sistema."
+msgstr "Ancorado na área de notificación."
 
 #: kopete/kopetewindow.cpp:1146
 #, kde-format
@@ -5102,18 +5103,18 @@ msgstr "Iluminador 2"
 #, kde-format
 msgid "Could not find contactlist.xml in Kopete application data."
 msgstr ""
-"Non se puido atopar o ficheiro «contactlist.xml» na información de "
+"Non foi posíbel atopar o ficheiro «contactlist.xml» na información de "
 "aplicación de Kopete."
 
 #: libkopete/contactlist/xmlcontactstorage.cpp:226
 #, kde-format
 msgid "Could not open contact list file."
-msgstr "Non se puido abrir o ficheiro da lista de contactos."
+msgstr "Non foi posíbel abrir o ficheiro da lista de contactos."
 
 #: libkopete/contactlist/xmlcontactstorage.cpp:261
 #, kde-format
 msgid "Could not write contact list to a file."
-msgstr "Non se puido escribir a lista de contactos ficheiro."
+msgstr "Non foi posíbel escribir a lista de contactos ficheiro."
 
 #: libkopete/kabcpersistence.cpp:305
 #, kde-format
@@ -5123,7 +5124,7 @@ msgstr "<qt>«%1» non está admitido por Kopete.</qt>"
 #: libkopete/kabcpersistence.cpp:306
 #, kde-format
 msgid "Could Not Sync with KDE Address Book"
-msgstr "Non se puido sincronizar coa axenda de enderezos de KDE"
+msgstr "Non foi posíbel sincronizar coa axenda de enderezos de KDE"
 
 #: libkopete/kabcpersistence.cpp:349
 #, kde-format
@@ -5200,7 +5201,7 @@ msgstr "<qt>Non foi posíbel engadir o contacto.</qt>"
 #: libkopete/kabcpersistence.cpp:421
 #, kde-format
 msgid "Could Not Add Contact"
-msgstr "Non se puido engadir o contacto"
+msgstr "Non foi posíbel engadir o contacto"
 
 #: libkopete/kopeteaccount.cpp:217
 #, kde-format
@@ -5483,7 +5484,7 @@ msgstr "Iniciar Kopete na bandexa."
 #: libkopete/kopetebehaviorsettings.kcfg:16
 #, kde-format
 msgid "Show Kopete in system tray."
-msgstr "Amosar Kopete na bandexa do sistema."
+msgstr "Amosar Kopete na área de notificación."
 
 #. i18n: ectx: label, entry, group (Behavior)
 #: libkopete/kopetebehaviorsettings.kcfg:20
@@ -5948,7 +5949,7 @@ msgstr ""
 #: libkopete/kopetemetacontact.cpp:333 libkopete/kopetemetacontact.cpp:404
 #, kde-format
 msgid "User is Not Reachable"
-msgstr "Non se pode contactar coa persoa usuaria"
+msgstr "Non é posíbel contactar coa persoa usuaria"
 
 #: libkopete/kopetecontact.cpp:509
 #, kde-format
@@ -6164,7 +6165,7 @@ msgstr "<qt><i>%1</i> está agora %2.</qt>"
 #: libkopete/kopetemimetypehandler.cpp:144
 #, kde-format
 msgid "Unable to find the file %1."
-msgstr "Non se pode atopar o ficheiro %1."
+msgstr "Non é posíbel atopar o ficheiro %1."
 
 #: libkopete/kopetemimetypehandler.cpp:146
 #, kde-format
@@ -6213,7 +6214,7 @@ msgstr ""
 #: libkopete/kopetepassword.cpp:294
 #, kde-format
 msgid "Unable to Store Secure Password"
-msgstr "Non se pode almacenar o contrasinal de xeito seguro"
+msgstr "Non é posíbel almacenar o contrasinal de xeito seguro"
 
 #: libkopete/kopetepassword.cpp:295
 #, kde-format
@@ -6395,12 +6396,12 @@ msgstr ""
 #, kde-format
 msgid "Cannot connect with the instant messaging server or peers."
 msgstr ""
-"Non se pode conectar cos servidores ou parceiros de mensaxaría instantánea."
+"Non é posíbel conectar cos servidores ou parceiros de mensaxaría instantánea."
 
 #: libkopete/kopeteutils.cpp:46
 #, kde-format
 msgid "Cannot connect."
-msgstr "Non se pode conectar."
+msgstr "Non é posíbel conectar."
 
 #: libkopete/kopeteutils.cpp:48
 #, kde-format
@@ -7031,7 +7032,7 @@ msgstr ""
 #: plugins/alias/aliaspreferences.cpp:405
 #, kde-format
 msgid "Could Not Add Alias"
-msgstr "Non se puido engadir o alias"
+msgstr "Non foi posíbel engadir o alias"
 
 #: plugins/alias/aliaspreferences.cpp:403
 #, kde-format
@@ -7606,7 +7607,7 @@ msgstr "Convertedor do historial"
 #: plugins/history/converter.cpp:100
 #, kde-format
 msgid "Parsing the old history in %1"
-msgstr "Estase a analizar o historial antigo de %1"
+msgstr "Analizando o historial antigo de %1"
 
 #: plugins/history/converter.cpp:108
 #, kde-format
@@ -7614,7 +7615,7 @@ msgid ""
 "Parsing the old history in %1:\n"
 "%2"
 msgstr ""
-"Estase a interpretar o historial antigo de %1:\n"
+"Interpretando o historial antigo de %1:\n"
 "%2"
 
 #. i18n: ectx: label, entry (Auto_chatwindow), group (History2 Plugin)
@@ -7673,7 +7674,7 @@ msgstr "Todo"
 #: plugins/history/historydialog.cpp:216
 #, kde-format
 msgid "Loading..."
-msgstr "Estase a cargar…"
+msgstr "Cargando…"
 
 #: plugins/history/historydialog.cpp:467
 #, kde-format
@@ -7766,7 +7767,7 @@ msgstr "Interromper a garda"
 #: plugins/history2/history2import.cpp:124
 #, kde-format
 msgid "Saving"
-msgstr "Estase a gardar"
+msgstr "Gardando"
 
 #: plugins/history/historyimport.cpp:262
 #: plugins/history2/history2import.cpp:331
@@ -7811,7 +7812,7 @@ msgstr "Interpretando o historial de Pidgin…"
 #: plugins/history2/history2import.cpp:347
 #, kde-format
 msgid "Parsing history"
-msgstr "Estase a analizar o historial"
+msgstr "Analizando o historial"
 
 #: plugins/history/historyimport.cpp:305
 #: plugins/history2/history2import.cpp:370
@@ -7868,7 +7869,7 @@ msgstr "Información: supúxose que %1 é un dos alcumes dos seus contactos.\n"
 #: plugins/history2/history2import.cpp:617
 #, kde-format
 msgid "Cannot map Nickname to Account"
-msgstr "Non se pode asociar o alcume coa conta"
+msgstr "Non é posíbel asociar o alcume coa conta"
 
 #: plugins/history/historyimport.cpp:549
 #: plugins/history2/history2import.cpp:618
@@ -8061,7 +8062,7 @@ msgstr "Obter o historial desde &Kopete…"
 #: plugins/history2/history2import.cpp:279
 #, kde-format
 msgid "Parsing history from kopete ..."
-msgstr "Estase a interpretar o historial de Kopete…"
+msgstr "Interpretando o historial de Kopete…"
 
 #: plugins/history2/history2plugin.cpp:47
 #, kde-format
@@ -8130,8 +8131,8 @@ msgid ""
 "Please get the software from www.imagemagick.org or from your distribution's "
 "package manager."
 msgstr ""
-"Non se pode atopar o programa «convert» de Magick, necesario para renderizar "
-"as fórmulas LaTeX.\n"
+"Non é posíbel atopar o programa «convert» de Magick, necesario para "
+"renderizar as fórmulas LaTeX.\n"
 "Consígao mediante o xestor de paquetes da súa distribución ou obtéñao de "
 "«imagemagick.org»."
 
@@ -8315,7 +8316,7 @@ msgstr "Intérprete descoñecido"
 #: plugins/nowlistening/nowlisteningprefs.ui:14
 #, kde-format
 msgid "Now Listening"
-msgstr "Estase a escoitar"
+msgstr "Escoitando"
 
 #. i18n: ectx: property (text), widget (QLabel, advertiseNewMediaToBuddiesLabel)
 #: plugins/nowlistening/nowlisteningprefs.ui:26
@@ -8355,7 +8356,7 @@ msgstr "Comezar con:"
 #: plugins/nowlistening/nowlisteningprefs.ui:109
 #, kde-format
 msgid "Now Listening To: "
-msgstr "Estase a escoitar: "
+msgstr "Escoitando: "
 
 #. i18n: ectx: property (text), widget (QLabel, m_perTrackLabel)
 #: plugins/nowlistening/nowlisteningprefs.ui:116
@@ -8429,12 +8430,12 @@ msgstr "U&sar o reprodutor multimedia indicado."
 #: plugins/otr/authenticationwizard.cpp:54
 #, kde-format
 msgid "Waiting for %1..."
-msgstr "Estase a agardar por %1…"
+msgstr "Agardando por %1…"
 
 #: plugins/otr/authenticationwizard.cpp:55
 #, kde-format
 msgid "Checking if answers match..."
-msgstr "Estase a comprobar se as respostas casan…"
+msgstr "Comprobando se as respostas casan…"
 
 #: plugins/otr/authenticationwizard.cpp:82
 #, kde-format
@@ -8650,7 +8651,7 @@ msgstr ""
 #, kde-format
 msgctxt "@title"
 msgid "Authenticating contact..."
-msgstr "Estase a autenticar o contacto…"
+msgstr "Autenticando o contacto…"
 
 #. i18n: ectx: label, entry (rbAlways), group (Policy)
 #: plugins/otr/kopete_otr.kcfg:9
@@ -8876,7 +8877,7 @@ msgstr ""
 #: plugins/otr/otrlchatinterface.cpp:957
 #, kde-format
 msgid "<b>Authenticating contact...</b>"
-msgstr "<b>Estase a autenticar o contacto…</b>"
+msgstr "<b>Autenticando o contacto…</b>"
 
 #: plugins/otr/otrlconfinterface.cpp:68
 #, kde-format
@@ -10574,8 +10575,8 @@ msgid ""
 "Unable to publish Bonjour service. Currently the Bonjour plugin only works "
 "with Avahi."
 msgstr ""
-"Non se pode publicar o servizo Bonjour. De momento o complemento só funciona "
-"con Avahi."
+"Non é posíbel publicar o servizo Bonjour. De momento o complemento só "
+"funciona con Avahi."
 
 #: protocols/bonjour/bonjouraccount.cpp:218
 #, kde-format
@@ -10583,7 +10584,7 @@ msgid ""
 "Unable to connect to the local mDNS server. Please ensure the Avahi daemon "
 "is running."
 msgstr ""
-"Non se pode conectar ao servidor mDNS local. Asegúrese que de o servizo de "
+"Non é posíbel conectar ao servidor mDNS local. Asegúrese que de o servizo de "
 "Avahi esta executándose."
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, BonjourAccountPreferences)
@@ -10829,7 +10830,7 @@ msgstr "Non foi posíbel a conexión usando SSL, inténtase sen el."
 #: protocols/gadu/gaduaccount.cpp:797
 #, kde-format
 msgid "unable to connect to the Gadu-Gadu server(\"%1\")."
-msgstr "non se pode conectar ao servidor Gadu-Gadu («%1»)."
+msgstr "non é posíbel conectar ao servidor Gadu-Gadu («%1»)."
 
 #: protocols/gadu/gaduaccount.cpp:799 protocols/gadu/gaducommands.cpp:344
 #: protocols/gadu/gaducommands.cpp:353 protocols/gadu/gaducommands.cpp:403
@@ -10865,7 +10866,7 @@ msgstr "Gardar a lista de contactos da conta %1 como"
 #: protocols/gadu/gaduaccount.cpp:1044
 #, kde-format
 msgid "Unable to create temporary file."
-msgstr "Non se pode crear un ficheiro temporal."
+msgstr "Non é posíbel crear un ficheiro temporal."
 
 #: protocols/gadu/gaduaccount.cpp:1044 protocols/gadu/gaduaccount.cpp:1057
 #, kde-format
@@ -10902,7 +10903,7 @@ msgstr "Gadu-Gadu"
 #: protocols/gadu/gaducommands.cpp:153 protocols/gadu/gaducommands.cpp:244
 #, kde-format
 msgid "Unable to retrieve token."
-msgstr "Non se pode obter o elemento."
+msgstr "Non é posíbel obter o elemento."
 
 #: protocols/gadu/gaducommands.cpp:192
 #, kde-format
@@ -11192,7 +11193,7 @@ msgstr "&Rexistrar"
 #: protocols/gadu/gaduregisteraccount.cpp:76
 #, kde-format
 msgid "Retrieving token"
-msgstr "Estase a obter un token"
+msgstr "Obtendo un token"
 
 #: protocols/gadu/gaduregisteraccount.cpp:98
 #, kde-format
@@ -11250,7 +11251,7 @@ msgstr "ausente"
 #: protocols/gadu/gadusession.cpp:601
 #, kde-format
 msgid "resolving host"
-msgstr "estase a resolver o servidor"
+msgstr "Resolvendo o servidor"
 
 #: protocols/gadu/gadusession.cpp:603
 #, kde-format
@@ -11275,17 +11276,17 @@ msgstr "conectando co concentrador"
 #: protocols/gadu/gadusession.cpp:611
 #, kde-format
 msgid "connecting to server"
-msgstr "estase a conectar co servidor"
+msgstr "Conectando co servidor"
 
 #: protocols/gadu/gadusession.cpp:613
 #, kde-format
 msgid "retrieving key"
-msgstr "estase a obter a chave"
+msgstr "Obtendo a chave"
 
 #: protocols/gadu/gadusession.cpp:615
 #, kde-format
 msgid "waiting for reply"
-msgstr "estase a agardar pola resposta"
+msgstr "Agardando pola resposta"
 
 #: protocols/gadu/gadusession.cpp:617
 #, kde-format
@@ -11295,17 +11296,17 @@ msgstr "conectado"
 #: protocols/gadu/gadusession.cpp:619
 #, kde-format
 msgid "sending query"
-msgstr "estase a enviar a petición"
+msgstr "Enviando a consulta"
 
 #: protocols/gadu/gadusession.cpp:621
 #, kde-format
 msgid "reading header"
-msgstr "estase a ler a cabeceira"
+msgstr "Lendo a cabeceira"
 
 #: protocols/gadu/gadusession.cpp:623
 #, kde-format
 msgid "parsing data"
-msgstr "estase a analizar a información"
+msgstr "Analizando a información"
 
 #: protocols/gadu/gadusession.cpp:625
 #, kde-format
@@ -11350,12 +11351,12 @@ msgstr "Número de erro descoñecido %1."
 #: protocols/gadu/gadusession.cpp:655
 #, kde-format
 msgid "Unable to resolve server address. DNS failure."
-msgstr "Non se pode resolver o enderezo do servidor. Fallo do DNS."
+msgstr "Non é posíbel resolver o enderezo do servidor. Fallo do DNS."
 
 #: protocols/gadu/gadusession.cpp:657
 #, kde-format
 msgid "Unable to connect to server."
-msgstr "Non se pode conectar co servidor."
+msgstr "Non é posíbel conectar co servidor."
 
 #: protocols/gadu/gadusession.cpp:659
 #, kde-format
@@ -11384,7 +11385,7 @@ msgid ""
 "Try to turn off encryption support in the Gadu account settings, then "
 "reconnect."
 msgstr ""
-"Non se pode conectar mediante unha canle cifrada.\n"
+"Non é posíbel conectar mediante unha canle cifrada.\n"
 "Intente desactivar a funcionalidade de cifrado nas opcións da conta de Gadu "
 "e reconéctese."
 
@@ -12247,7 +12248,7 @@ msgstr ""
 #, kde-format
 msgctxt "message sending failed using the named local account"
 msgid "Unable to Send Message on Account '%1'"
-msgstr "Non se pode enviar as mensaxes da conta «%1»."
+msgstr "Non é posíbel enviar as mensaxes da conta «%1»."
 
 #: protocols/groupwise/gwaccount.cpp:587
 #, kde-format
@@ -12278,7 +12279,7 @@ msgstr ""
 #: protocols/groupwise/gwaccount.cpp:660
 #, kde-format
 msgid "Unable to Connect '%1'"
-msgstr "Non se pode ligar con «%1»."
+msgstr "Non é posíbel ligar con «%1»."
 
 #: protocols/groupwise/gwaccount.cpp:735 protocols/jabber/jabberaccount.cpp:462
 #, kde-format
@@ -12530,7 +12531,7 @@ msgstr "A conversa é segura"
 #: protocols/qq/qqchatsession.cpp:80 protocols/qq/qqchatsession.cpp:505
 #, kde-format
 msgid "Archiving Status"
-msgstr "Estase a arquivar o estado"
+msgstr "Arquivando o estado"
 
 #: protocols/groupwise/gwmessagemanager.cpp:210
 #: protocols/qq/qqchatsession.cpp:178
@@ -12545,7 +12546,7 @@ msgid ""
 "Your message could not be sent. You cannot send messages while your status "
 "is Appear Offline. "
 msgstr ""
-"Non se puido enviar a mensaxe. Non se poden enviar mensaxes mentres o seu "
+"Non foi posíbel enviar a mensaxe. Non se poden enviar mensaxes mentres o seu "
 "estado sexa «Aparecer desconectado»."
 
 #: protocols/groupwise/gwmessagemanager.cpp:327
@@ -12776,7 +12777,7 @@ msgstr "Falta o arquivo principal."
 #: protocols/groupwise/libgroupwise/gwerror.cpp:100
 #, kde-format
 msgid "Expired password in use"
-msgstr "Estase a usar un contrasinal caduco"
+msgstr "Usando un contrasinal caduco"
 
 #: protocols/groupwise/libgroupwise/gwerror.cpp:103
 #, kde-format
@@ -13265,7 +13266,7 @@ msgstr "Buscar salas de conversas"
 #: protocols/groupwise/ui/gwchatsearchdialog.cpp:71
 #, kde-format
 msgid "Updating chatroom list..."
-msgstr "Estase a actualizar a lista de salas de conversas…"
+msgstr "Actualizando a lista de salas de conversas…"
 
 #: protocols/groupwise/ui/gwcontactproperties.cpp:84
 #, kde-format
@@ -13608,7 +13609,7 @@ msgid ""
 "check if the file transfer port is already in use, or choose another port in "
 "the account settings."
 msgstr ""
-"Non se puido asociar o xestor de transferencias de ficheiros de Jabber ao "
+"Non foi posíbel asociar o xestor de transferencias de ficheiros de Jabber ao "
 "porto local. Comprobe que o porto para o xestor de transferencia de "
 "ficheiros non estea a usarse xa, ou escolla outro porto na configuración da "
 "conta."
@@ -13616,7 +13617,8 @@ msgstr ""
 #: protocols/jabber/jabberaccount.cpp:179
 #, kde-format
 msgid "Failed to start Jabber File Transfer Manager"
-msgstr "Non se puido iniciar o xestor de transferencia de ficheiros de Jabber"
+msgstr ""
+"Non foi posíbel iniciar o xestor de transferencia de ficheiros de Jabber"
 
 #: protocols/jabber/jabberaccount.cpp:196
 #, kde-format
@@ -13666,8 +13668,8 @@ msgid ""
 "SSL support could not be initialized for account %1. This is most likely "
 "because TLS support for QCA is not available."
 msgstr ""
-"Non se puido inicializar a compatibilidade con SSL para a conta %1. Débese "
-"probabelmente a que non se dispón de TLS para QCA."
+"Non foi posíbel inicializar a compatibilidade con SSL para a conta %1. "
+"Débese probabelmente a que non se dispón de TLS para QCA."
 
 #: protocols/jabber/jabberaccount.cpp:429
 #: protocols/jabber/ui/jabberregisteraccount.cpp:294
@@ -13684,7 +13686,7 @@ msgstr "Problema de certificación da conexión Jabber"
 #, kde-format
 msgid ""
 "An encrypted connection with the Jabber server could not be established."
-msgstr "Non se puido estabelecer unha conexión cifrada co servidor Jabber."
+msgstr "Non foi posíbel estabelecer unha conexión cifrada co servidor Jabber."
 
 #: protocols/jabber/jabberaccount.cpp:584
 #, kde-format
@@ -13809,7 +13811,7 @@ msgstr "Descoñécese este servidor."
 #: protocols/jabber/jabberaccount.cpp:861
 #, kde-format
 msgid "Could not connect to a required remote resource."
-msgstr "Non se puido conectar co recurso remoto requirido."
+msgstr "Non foi posíbel conectar co recurso remoto requirido."
 
 #: protocols/jabber/jabberaccount.cpp:864
 #, kde-format
@@ -13848,7 +13850,7 @@ msgstr "O servidor rexeitou a nosa solicitude de comezar o protocolo TLS."
 #: protocols/jabber/jabberaccount.cpp:884
 #, kde-format
 msgid "Failed to establish a secure connection."
-msgstr "Non se puido estabelecer unha conexión segura."
+msgstr "Non foi posíbel estabelecer unha conexión segura."
 
 #: protocols/jabber/jabberaccount.cpp:891
 #, kde-format
@@ -13945,7 +13947,7 @@ msgstr "O recurso xa está en uso."
 #: protocols/jabber/jabberaccount.cpp:969
 #, kde-format
 msgid "Could not bind a resource: %1"
-msgstr "Non se puido ligar o servizo %1"
+msgstr "Non foi posíbel ligar o servizo %1"
 
 #: protocols/jabber/jabberaccount.cpp:982
 #, kde-format
@@ -14157,7 +14159,7 @@ msgstr "Mensaxe"
 #: protocols/jabber/jabberbasecontact.cpp:619
 #, kde-format
 msgid "Failed to download Jabber contact photo."
-msgstr "Non se puido descargar a imaxe do contacto de Jabber."
+msgstr "Non foi posíbel descargar a imaxe do contacto de Jabber."
 
 #: protocols/jabber/jabberbookmarks.cpp:235
 #: protocols/jabber/jabberbookmarks.cpp:252
@@ -15071,7 +15073,7 @@ msgid ""
 "Your password could not be changed. Either your server does not support this "
 "feature or the administrator does not allow you to change your password."
 msgstr ""
-"Non se puido cambiar o contrasinal. Ou ben o servidor non permite esa "
+"Non foi posíbel cambiar o contrasinal. Ou ben o servidor non permite esa "
 "funcionalidade ou ben o administrador non lle permite cambialo."
 
 #: protocols/jabber/ui/dlgjabberchatjoin.cpp:34
@@ -15090,7 +15092,7 @@ msgstr "Unirse"
 #: protocols/jabber/ui/dlgjabberchatroomslist.cpp:93
 #, kde-format
 msgid "Unable to retrieve the list of chat rooms."
-msgstr "Non se pode obter a lista de salas de charlas."
+msgstr "Non é posíbel obter a lista de salas de charlas."
 
 #: protocols/jabber/ui/dlgjabberchatroomslist.cpp:26
 #, kde-format
@@ -15526,7 +15528,7 @@ msgid ""
 "Unable to retrieve registration form.\n"
 "Reason: \"%1\""
 msgstr ""
-"Non se pode obter o formulario de rexistro.\n"
+"Non é posíbel obter o formulario de rexistro.\n"
 "Razón: «%1»"
 
 #: protocols/jabber/ui/dlgjabberregister.cpp:95
@@ -15700,7 +15702,7 @@ msgstr "Obtendo o formulario de busca…"
 #: protocols/jabber/ui/dlgsearch.cpp:84
 #, kde-format
 msgid "Unable to retrieve search form."
-msgstr "Non se pode obter o formulario de busca."
+msgstr "Non é posíbel obter o formulario de busca."
 
 #: protocols/jabber/ui/dlgsearch.cpp:149
 #, kde-format
@@ -15991,17 +15993,17 @@ msgstr "Escoller o servidor de Jabber"
 #: protocols/jabber/ui/jabberchooseserver.cpp:52
 #, kde-format
 msgid "Retrieving server list..."
-msgstr "Estase a obter a lista de servidores…"
+msgstr "Obtendo a lista de servidores…"
 
 #: protocols/jabber/ui/jabberchooseserver.cpp:120
 #, kde-format
 msgid "Could not retrieve server list."
-msgstr "Non se puido obter a lista do servidor."
+msgstr "Non foi posíbel obter a lista do servidor."
 
 #: protocols/jabber/ui/jabberchooseserver.cpp:135
 #, kde-format
 msgid "Could not parse the server list."
-msgstr "Non se puido analizar a lista do servidor."
+msgstr "Non foi posíbel analizar a lista do servidor."
 
 #: protocols/jabber/ui/jabbereditaccountwidget.cpp:190
 #, kde-format
@@ -16058,7 +16060,7 @@ msgstr ""
 #: protocols/jabber/ui/jabberregisteraccount.cpp:268
 #, kde-format
 msgid "Connecting to server..."
-msgstr "Estase a ligar co servidor…"
+msgstr "Ligando co servidor…"
 
 #: protocols/jabber/ui/jabberregisteraccount.cpp:341
 #, kde-format
@@ -16086,7 +16088,7 @@ msgid ""
 "Unable to create an account on the server. The Jabber ID is probably already "
 "in use."
 msgstr ""
-"Non se pode crear unha conta no servidor. Ese identificador de Jabber "
+"Non é posíbel crear unha conta no servidor. Ese identificador de Jabber "
 "probabelmente xa estea collido."
 
 #: protocols/jabber/ui/jabberregisteraccount.cpp:408
@@ -16347,12 +16349,12 @@ msgstr "<qt>0 non é un número de porto correcto.</qt>"
 #: protocols/meanwhile/meanwhilesession.cpp:204
 #, kde-format
 msgid "Could not connect to server"
-msgstr "Non se puido conectar ao servidor"
+msgstr "Non foi posíbel conectar ao servidor"
 
 #: protocols/meanwhile/meanwhilesession.cpp:605
 #, kde-format
 msgid "Could not connect to redirected server"
-msgstr "Non se puido conectar ao servidor redirixido"
+msgstr "Non foi posíbel conectar ao servidor redirixido"
 
 #: protocols/meanwhile/meanwhilesession.cpp:997
 #, kde-format
@@ -16529,13 +16531,13 @@ msgstr "I&nvisíbel"
 #, kde-format
 msgid "Editing your user info is not possible because you are not connected."
 msgstr ""
-"Non se pode editar a súa información de persoa usuaria xa que non está "
+"Non é posíbel editar a súa información de persoa usuaria xa que non está "
 "conectado."
 
 #: protocols/oscar/aim/aimaccount.cpp:388
 #, kde-format
 msgid "Unable to edit user info"
-msgstr "Non se pode editar a información da persoa usuaria"
+msgstr "Non é posíbel editar a información da persoa usuaria"
 
 #: protocols/oscar/aim/aimaccount.cpp:410
 #, kde-format
@@ -16546,7 +16548,7 @@ msgstr ""
 #: protocols/oscar/aim/aimaccount.cpp:412
 #, kde-format
 msgid "Unable to Join AIM Chat Room"
-msgstr "Non se pode unir á sala de charlas de AIM"
+msgstr "Non é posíbel unir á sala de charlas de AIM"
 
 #: protocols/oscar/aim/aimcontact.cpp:71
 #, kde-format
@@ -16612,7 +16614,7 @@ msgid ""
 "Unable to connect to the chat room %1 because the account for %2 is not "
 "connected."
 msgstr ""
-"Non se pode conectar á sala de charlas %1 xa que a conta para %2 non está "
+"Non é posíbel conectar á sala de charlas %1 xa que a conta para %2 non está "
 "conectada."
 
 #: protocols/oscar/aim/aimprotocol.cpp:224
@@ -16624,7 +16626,7 @@ msgstr "Perfil de persoa usuaria"
 #: protocols/oscar/icq/icqstatusmanager.cpp:35
 #, kde-format
 msgid "Connecting..."
-msgstr "Estase a conectar…"
+msgstr "Conectando…"
 
 #: protocols/oscar/aim/aimstatusmanager.cpp:35
 #: protocols/oscar/icq/icqstatusmanager.cpp:39
@@ -16697,7 +16699,7 @@ msgstr "Gardar o &perfil"
 #: protocols/oscar/aim/aimuserinfo.cpp:114
 #, kde-format
 msgid "Requesting User Profile, please wait..."
-msgstr "Estase a solicitar o perfil da persoa usuaria; agarde un anaco…"
+msgstr "Solicitando o perfil da persoa usuaria; agarde un anaco…"
 
 #: protocols/oscar/aim/aimuserinfo.cpp:196
 #, kde-format
@@ -18331,7 +18333,7 @@ msgstr "está a comer"
 #, kde-format
 msgctxt "@item icq xtraz status"
 msgid "watching tv"
-msgstr "estase a ver a tele"
+msgstr "Vendo a tele"
 
 #: protocols/oscar/icq/icqstatusmanager.cpp:152
 #, kde-format
@@ -18565,7 +18567,7 @@ msgstr "O contrasinal novo ten que ter entre 6 e 8 caracteres."
 #: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:105
 #, kde-format
 msgid "Your password could not be changed."
-msgstr "Non se puido cambiar o contrasinal."
+msgstr "Non foi posíbel cambiar o contrasinal."
 
 #: protocols/oscar/icq/ui/icqchangepassworddialog.cpp:100
 #, kde-format
@@ -19588,12 +19590,13 @@ msgstr ""
 msgid ""
 "Could not sign on to %1 with account %2 because the password was incorrect."
 msgstr ""
-"Non se puido acceder a %1 coa conta %2 porque o contrasinal era incorrecto."
+"Non foi posíbel acceder a %1 coa conta %2 porque o contrasinal era "
+"incorrecto."
 
 #: protocols/oscar/oscaraccount.cpp:1262
 #, kde-format
 msgid "Could not sign on to %1 with nonexistent account %2."
-msgstr "Non se puido acceder a %1 coa conta %2 porque non hai tal conta."
+msgstr "Non foi posíbel acceder a %1 coa conta %2 porque non hai tal conta."
 
 #: protocols/oscar/oscaraccount.cpp:1266
 #, kde-format
@@ -19611,7 +19614,7 @@ msgstr ""
 msgid ""
 "Could not sign on to %1 as there are too many clients from the same computer."
 msgstr ""
-"Non se puido acceder a %1 porque hai demasiados clientes desde o mesmo "
+"Non foi posíbel acceder a %1 porque hai demasiados clientes desde o mesmo "
 "computador."
 
 #: protocols/oscar/oscaraccount.cpp:1282
@@ -19809,7 +19812,7 @@ msgstr ""
 #: protocols/qq/qqsocket.cpp:153
 #, kde-format
 msgid "Unable to lookup %1"
-msgstr "Non se pode consultar %1"
+msgstr "Non é posíbel consultar %1"
 
 #: protocols/qq/qqsocket.cpp:232
 #, kde-format
@@ -20295,7 +20298,7 @@ msgstr "Non se reciben imaxes da cámara."
 #: protocols/sms/serviceloader.cpp:46
 #, kde-format
 msgid "Could not load service %1."
-msgstr "Non se puido cargar o servizo %1."
+msgstr "Non foi posíbel cargar o servizo %1."
 
 #: protocols/sms/serviceloader.cpp:47
 #, kde-format
@@ -20324,7 +20327,7 @@ msgstr "Configuracións de GSMLib"
 #: protocols/sms/smscontact.cpp:59
 #, kde-format
 msgid "Could Not Send Message"
-msgstr "Non se puido enviar a mensaxe"
+msgstr "Non foi posíbel enviar a mensaxe"
 
 #: protocols/sms/services/smsclient.cpp:69
 #, kde-format
@@ -20417,12 +20420,12 @@ msgstr "Opcións do fornecedor"
 #: protocols/sms/services/smssendprovider.cpp:205
 #, kde-format
 msgid "Could not determine which argument should contain the message."
-msgstr "Non se puido determinar que argumento debe conter a mensaxe."
+msgstr "Non foi posíbel determinar que argumento debe conter a mensaxe."
 
 #: protocols/sms/services/smssendprovider.cpp:212
 #, kde-format
 msgid "Could not determine which argument should contain the number."
-msgstr "Non se puido determinar que argumento debe conter o número."
+msgstr "Non foi posíbel determinar que argumento debe conter o número."
 
 #: protocols/sms/smsaccount.cpp:92
 #, kde-format
@@ -20758,7 +20761,7 @@ msgid ""
 "A message file could not be removed; maybe the permissions are incorrect.\n"
 "Fix this (may require the root password)?"
 msgstr ""
-"Non se puido retirar un ficheiro de mensaxe. Pode que os permisos estean "
+"Non foi posíbel retirar un ficheiro de mensaxe. Pode que os permisos estean "
 "mal\n"
 "Quere arranxalo (pode que requira o contrasinal de administrador)?"
 
