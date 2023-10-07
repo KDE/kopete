@@ -7212,9 +7212,9 @@ msgid ""
 "You have not selected a private key for yourself, so signing is not "
 "possible. Please select a private key in the Cryptography preferences dialog."
 msgstr ""
-"No heu seleccionat cap clau privada per a vós mateix, per tant no és "
-"possible signar. Seleccioneu una clau privada en el diàleg de les "
-"preferències de Criptografia."
+"No heu seleccionat cap clau privada per a tu, per tant no és possible "
+"signar. Seleccioneu una clau privada en el diàleg de les preferències de "
+"Criptografia."
 
 #: plugins/cryptography/cryptographyguiclient.cpp:111
 #, kde-format
@@ -7373,10 +7373,10 @@ msgid ""
 "their name in your contact list and choosing \"Select Public Key\".</para>"
 msgstr ""
 "<para>Abans que pugueu signar missatges o rebre'n d'encriptats, cal que "
-"seleccioneu una clau privada per a vós mateix.</para><para>Abans de poder "
-"enviar missatges encriptats a algú, cal que seleccioneu la seua clau pública "
-"fent clic amb el botó dret en el seu nom de la vostra llista de contactes i "
-"triar «Seleccioneu la clau pública».</para>"
+"seleccioneu una clau privada per a tu.</para><para>Abans de poder enviar "
+"missatges encriptats a algú, cal que seleccioneu la seua clau pública fent "
+"clic amb el botó dret en el seu nom de la vostra llista de contactes i triar "
+"«Seleccioneu la clau pública».</para>"
 
 #: plugins/cryptography/cryptographypreferences.cpp:57
 #, kde-format
