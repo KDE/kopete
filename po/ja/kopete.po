@@ -21190,27 +21190,3 @@ msgstr "設定失敗"
 #, kde-format
 msgid "User Info for %1"
 msgstr "%1 のユーザ情報"
-
-#~ msgid ""
-#~ "A network connection was disconnected.  The application is now in offline "
-#~ "mode.  Do you want the application to resume network operations when the "
-#~ "network is available again?"
-#~ msgstr ""
-#~ "ネットワーク接続が失われました。アプリケーションは現在オフラインモードで"
-#~ "す。ネットワークに再接続したときに、アプリケーションのネットワーク作業を再"
-#~ "開しますか？"
-
-#~ msgid ""
-#~ "This application is currently in offline mode.  Do you want to connect?"
-#~ msgstr ""
-#~ "アプリケーションは現在オフラインモードです。ネットワークに接続しますか？"
-
-#~ msgid ""
-#~ "This application is currently in offline mode.  Do you want to connect in "
-#~ "order to carry out this operation?"
-#~ msgstr ""
-#~ "アプリケーションは現在オフラインモードです。この操作を実行するためにネット"
-#~ "ワークに接続しますか？"
-
-#~ msgid "Leave Offline Mode?"
-#~ msgstr "オフラインモードを終了？"
