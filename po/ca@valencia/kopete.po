@@ -721,7 +721,7 @@ msgstr "Color de fons del xat."
 #: libkopete/kopeteappearancesettings.kcfg:65
 #, kde-format
 msgid "Chat link color."
-msgstr "Color dels enllaços al xat."
+msgstr "Color dels enllaços en el xat."
 
 #. i18n: ectx: label, entry, group (Appearance)
 #: kopete/chatwindow/kopetechatwindowsettings.kcfg:83
@@ -3292,7 +3292,7 @@ msgstr "Crea grup nou..."
 #: kopete/contactlist/kopetecontactlistview.cpp:174
 #, kde-format
 msgid "&Move To"
-msgstr "&Mou a"
+msgstr "&Mou cap a"
 
 #: kopete/contactlist/kopetecontactlistview.cpp:177
 #, kde-format
@@ -4463,7 +4463,8 @@ msgstr "Deshabita la connexió automàtica"
 #, kde-format
 msgid "URLs to pass to kopete / emoticon themes to install"
 msgstr ""
-"URL que s'ha de passar a Kopete / temes d'emoticones que s'han d'instal·lar"
+"Els URL que s'han de passar a Kopete / temes d'emoticones que s'han "
+"d'instal·lar"
 
 #: kopete/main.cpp:104
 #, kde-format
@@ -7436,7 +7437,7 @@ msgstr "Exporta les claus marcades cap a la llibreta d'adreces"
 #, kde-format
 msgctxt "@item:inlistbox"
 msgid "&lt;No metacontacts with keys to export&gt;"
-msgstr "&lt;No hi ha cap metacontacte amb claus per a exportar&gt;"
+msgstr "&lt;No hi ha cap metacontacte amb claus que s'haja d'exportar&gt;"
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: plugins/cryptography/exportkeysbase.ui:17
@@ -10352,7 +10353,7 @@ msgstr "Retard en segons abans d'actualitzar el fitxer"
 #: plugins/webpresence/webpresenceconfig.kcfg:15
 #, kde-format
 msgid "The URL where the file should be uploaded to"
-msgstr "L'URL a on s'ha de pujar el fitxer"
+msgstr "L'URL cap a on s'ha de pujar el fitxer"
 
 #. i18n: ectx: label, entry (formatHTML), group (Web Presence Plugin)
 #: plugins/webpresence/webpresenceconfig.kcfg:19
@@ -10986,7 +10987,7 @@ msgstr "S'ha produït un error de registre"
 #: protocols/gadu/gaducommands.cpp:293
 #, kde-format
 msgid "Incorrect data sent to server."
-msgstr "Dades incorrectes enviades al servidor."
+msgstr "Dades incorrectes enviades cap al servidor."
 
 #: protocols/gadu/gaducommands.cpp:345 protocols/gadu/gaducommands.cpp:354
 #, kde-format
@@ -11836,7 +11837,7 @@ msgid ""
 "list will result in exporting your list to server."
 msgstr ""
 "Mantín sincronitzades la llista de contactes local i la del servidor. "
-"Qualsevol canvi en la llista local farà que esta s'exporte al servidor."
+"Qualsevol canvi en la llista local farà que esta s'exporte cap al servidor."
 
 #. i18n: ectx: property (text), widget (QCheckBox, exportCheck_)
 #: protocols/gadu/ui/gadueditaccountui.ui:303
