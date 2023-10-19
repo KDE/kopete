@@ -14312,7 +14312,7 @@ msgstr "A mensaxe non se puido enviar: «%1». Razón: «%2»."
 #: protocols/jabber/jabbercontact.cpp:1011
 #, kde-format
 msgid "Do you also want to remove user %1's authorization to see your status?"
-msgstr "Está seguro de que quere retirar a «%1» da lista de contactos?"
+msgstr "Seguro que quere retirar a «%1» da lista de contactos?"
 
 #: protocols/jabber/jabbercontact.cpp:1185
 #, kde-format
