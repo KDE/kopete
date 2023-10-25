@@ -4057,7 +4057,7 @@ msgstr "Laurent Montel"
 #: kopete/main.cpp:49
 #, kde-format
 msgid "Porting to KF5"
-msgstr "Adaptació al KF5"
+msgstr "Adaptació a KF5"
 
 #: kopete/main.cpp:50
 #, kde-format
@@ -4671,7 +4671,7 @@ msgstr "Filtre de bandes"
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:92
 #, kde-format
 msgid "rgb gamma"
-msgstr "Gamma del RGB"
+msgstr "Gamma de RGB"
 
 #. i18n: Reset Level
 #: libkopete/avdevice/dummy-V4L2apiCustomStrings.cpp:94
@@ -6436,7 +6436,7 @@ msgstr[1] "%1 estan escrivint un missatge"
 #, kde-format
 msgctxt "@title %1 is contact's name"
 msgid "Incoming file transfer request from <i>%1</i>"
-msgstr "Sol·licitud de transferència de fitxer entrant de <i>%1</i>"
+msgstr "Sol·licitud de transferència de fitxer entrant des de <i>%1</i>"
 
 #: libkopete/private/kopeteviewmanager.cpp:355
 #, kde-format
@@ -8149,8 +8149,8 @@ msgid ""
 msgstr ""
 "No puc trobar el programa «convert» del Magick.\n"
 "Es necessita «convert» per a representar les fórmules LaTeX.\n"
-"Aneu a www.imagemagick.org o al lloc de la vostra distribució per a "
-"aconseguir el paquet correcte."
+"Aneu fins a www.imagemagick.org o fins al lloc de la vostra distribució per "
+"a aconseguir el paquet correcte."
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: plugins/latex/latexprefsbase.ui:34
@@ -16892,7 +16892,7 @@ msgid ""
 "Unable to connect to the chat room %1 because the account for %2 is not "
 "connected."
 msgstr ""
-"No es pot connectar a la sala de xat %1 perquè el compte per a %2 no està "
+"No es pot connectar amb la sala de xat %1 perquè el compte per a %2 no està "
 "connectat."
 
 #: protocols/oscar/aim/aimprotocol.cpp:224
