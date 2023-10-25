@@ -571,7 +571,7 @@ Comment[zh_CN]=收到了一条消息
 Comment[zh_HK]=收到新訊息
 Comment[zh_TW]=接收到的訊息
 Contexts=contact,group,class
-Sound=KDE-Im-Message-In.ogg
+Sound=message-new-instant
 Action=Sound|Popup|Taskbar
 Persistant=true
 
@@ -689,7 +689,7 @@ Comment[x-test]=xxAn incoming message in the active chat window has been receive
 Comment[zh_CN]=活动聊天窗口收到了一条消息
 Comment[zh_TW]=目前聊天室裡接收到的訊息
 Contexts=contact,group,class
-Sound=KDE-Im-Message-In.ogg
+Sound=message-new-instant
 Action=Sound
 
 [Event/kopete_outgoing]
@@ -818,7 +818,7 @@ Comment[zh_CN]=发出了一条消息
 Comment[zh_HK]=訊息已發出
 Comment[zh_TW]=送出去的訊息
 Contexts=contact,group,class
-Sound=KDE-Im-Message-Out.ogg
+Sound=message-sent-instant
 Action=None
 
 [Event/kopete_contact_online]
@@ -946,7 +946,7 @@ Comment[x-test]=xxA contact has come onlinexx
 Comment[zh_CN]=联系人上线
 Comment[zh_HK]=有個聯絡人已上線
 Comment[zh_TW]=聯絡人已上線
-Sound=KDE-Im-Contact-In.ogg
+Sound=message-contact-in
 Action=Popup
 
 [Event/kopete_contact_offline]
@@ -1088,7 +1088,7 @@ Comment[x-test]=xxA contact has gone offlinexx
 Comment[zh_CN]=联系人离线
 Comment[zh_HK]=有個聯絡人已離線
 Comment[zh_TW]=聯絡人已離線
-Sound=KDE-Im-Contact-Out.ogg
+Sound=message-contact-out
 Action=None
 Contexts=contact,group
 
@@ -1369,7 +1369,7 @@ Comment[x-test]=xxA highlighted message has been receivedxx
 Comment[zh_CN]=收到了突出显示的消息
 Comment[zh_HK]=收到一個加強顯示的訊息
 Comment[zh_TW]=已接收到高亮度訊息
-Sound=KDE-Im-Highlight-Msg.ogg
+Sound=message-highlight
 Action=Sound|Popup|Taskbar
 Persistant=true
 
@@ -1892,7 +1892,7 @@ Comment[x-test]=xxAn error on connection has occurredxx
 Comment[zh_CN]=发生了连接错误
 Comment[zh_HK]=連線發生錯誤
 Comment[zh_TW]=發生連線錯誤
-Sound=KDE-Im-Error-On-Connection.ogg
+Sound=dialog-error
 Action=Sound|Popup
 
 [Event/connection_lost]
@@ -2391,7 +2391,7 @@ Comment[uk]=Трапилась внутрішня помилка служби
 Comment[x-test]=xxAn internal service error has occurredxx
 Comment[zh_CN]=发生了内部服务错误
 Comment[zh_TW]=發生伺服器內部錯誤
-Sound=KDE-Im-Internal-Error.ogg
+Sound=dialog-error
 Action=Sound|Popup
 
 [Event/buzz_nudge]
@@ -2512,7 +2512,7 @@ Comment[x-test]=xxA contact has sent you a buzz/nudge.xx
 Comment[zh_CN]=联系人向您发送了闪屏振动。
 Comment[zh_HK]=有聯絡人傳了響聲或提示給您。
 Comment[zh_TW]=聯絡人送出來電震動或呼叫
-Sound=KDE-Im-Nudge.ogg
+Sound=message-attention
 Action=Popup|Sound|Taskbar
 
 [Event/message_dropped]
