@@ -53,6 +53,7 @@
   <summary xml:lang="ia">Messagero Instantanee</summary>
   <summary xml:lang="id">Perpesanan Instan</summary>
   <summary xml:lang="it">Messaggistica istantanea</summary>
+  <summary xml:lang="ka">მყისი შეტყობინებები</summary>
   <summary xml:lang="ko">인스턴트 메신저</summary>
   <summary xml:lang="nl">Instant-messenger</summary>
   <summary xml:lang="pl">Komunikator</summary>
@@ -87,6 +88,7 @@
     <p xml:lang="ia">Kopete es un messageria instantanee supportante AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger, e altere. Illo es designate per esser un systema de multi-protocollo  flexibile e extendibile apte per uso personal e de interprisa.</p>
     <p xml:lang="id">Kopete adalah perpesanan instan yang mendukung AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger, dan banyak lagi. Ini dirancang untuk menjadi sistem multi-protokol yang fleksibel dan dapat dikembangkan yang cocok untuk penggunaan pribadi dan perusahaan.</p>
     <p xml:lang="it">Kopete è un programma di messaggistica istantanea che supporta AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger e altri. È progettato per essere un sistema multi-protocollo flessibile ed estensibile, utile per uso personale e professionale.</p>
+    <p xml:lang="ka">Kopete ჩატის პროგრამაა AIM, ICQ, Japper, Gadu-Gadu, Novell Groupwse Messenger და სხვ. პროტოკოლებისთვის. ის განკუთვნილია, იყოს მოქნილი და გაფართოებადი მრავალპროტოკოლიან სისტემა, რომელიც მზადაა პერსონალური და საწარმოო გამოყენებისთვის.</p>
     <p xml:lang="ko">Kopete는 AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise 메신저 등 여러 프로토콜을 지원하는 인스턴트 메신저입니다. 개인 및 기업용으로 사용할 수 있는 확장 가능한 다중 프로토콜 시스템입니다.</p>
     <p xml:lang="nl">Kopete is een instant messenger die AIM, ICQ, Jabber, Gadu-Gadu, Novell GroupWise Messenger en meer ondersteunt. Het is ontworpen om een flexibel en uitbreidbaar multi-protocol systeem te zijn geschikt voor persoonlijk gebruik en in ondernemingen.</p>
     <p xml:lang="pl">Kopete jest komunikatorem internetowym obsługującym AIM, ICQ,  Jabber, Gadu-Gadu, Novell GroupWise Messenger i więcej. Został zaprojektowany jako elastyczny i rozszerzalny wieloprotokołowy system odpowiedni do użytku osobistego i w firmie.</p>
@@ -120,6 +122,7 @@
     <p xml:lang="ia">Le objectivo de Kopete ese fornir al usatores un singule e facile modo de accesso a lor systema de messageria instantanee. Le interfacie pone le personas como prime e es integrate con le adressario per permitter le acesso a vostre contactos per altere applicationes de KDE.</p>
     <p xml:lang="id">Tujuan Kopete adalah untuk menyediakan pengguna dengan satu cara mudah digunakan untuk mengakses semua sistem perpesanan instan mereka. Antarmuka mengutamakan orang, dan terintegrasi dengan buku alamat sistem untuk menyegerakan kamu mengakses kontakmu dari aplikasi KDE lainnya.</p>
     <p xml:lang="it">L'obbiettivo di Kopete è mettere a disposizione degli utenti un singolo modo facile da usare per accedere a tutti i loro sistemi di messaggistica istantanea. L'interfaccia mette le persone al centro, e si integra con la rubrica degli indirizzi di sistema, consentendoti di accedere ai tuoi contatti da altre applicazioni KDE.</p>
+    <p xml:lang="ka">Kopete-ის დანიშნულებაა, მომხმარებლებს მიაწოდოს ერთი წერტილი ყველა ჩატის პროტოკოლთან წვდომისთვის. ინტერფეისი ჯერ ხალხს ალაგებს და შეუძლია ბევრ სისტემურ მისამართებს წიგნთან ინტეგრაცია, რათა თქვენს კონტაქტებთან წვდომა, სხვა KDE-ის აპლიკაციებთანაც გქონდეთ.</p>
     <p xml:lang="ko">Kopete의 목표는 모든 인스턴트 메신저 시스템을 한 곳에서 한 번에 사용하는 것입니다. 인터페이스는 시스템 주소록과 통합되어 다른 KDE 앱의 연락처를 불러올 수 있도록 합니다.</p>
     <p xml:lang="nl">Het doel van Kopete is om gebruikers te voorzien van een enkel, gemakkelijk te gebruiken manier om teoegang te geven tot alle hun instant messaging systemen. Het interface zet mensen op de eerste plaats en is geïntegreerd met het adresboek van het systeem om u toegang te geven tot uw contacten vanuit andere KDE-toepassingen.</p>
     <p xml:lang="pl">Celem Kopete jest zapewnienie użytkownikom pojedynczego prostego sposobu na dostęp do wszystkich systemów porozumiewania się. Interfejs umieszcza ludzi na początku i jest zintegrowany z książką adresową systemu, aby umożliwić dostęp do kontaktów z innych aplikacji KDE.</p>
@@ -185,6 +188,7 @@
       <li xml:lang="ia">Instrumentos de characteristicas de Kopete per augmentar tu experientia de messageria instantanee, tal como cryptation, archivamente e altere effectos util e amusante.</li>
       <li xml:lang="id">Kopete memiliki alat untuk meningkatkan pengalaman pengiriman perpesanan instanmu, seperti enkripsi pesan, pengarsipan, dan banyak efek yang menyenangkan dan berguna lainnya.</li>
       <li xml:lang="it">Kopete include degli strumenti per migliorare l'esperienza d'uso della messaggistica istantanea, come ad esempio la cifratura dei messaggi, l'archiviazione, e vari altri effetti divertenti e utili.</li>
+      <li xml:lang="ka">Kopete-ს აქვს ფუნქციები, რათა თქვენი ჩატი უფრო სასიამოვნო და უსაფრთხო გადახადოს. მაგ: შეტყობინებების დაშიფვრა, დაარქივება და სხვა ბევრ გასართობი თუ სასარგებლო ეფექტი.</li>
       <li xml:lang="ko">Kopete는 메시지 암호화, 보관, 특수 효과 등 인스턴트 메신저 사용 경험을 풍푸하게 하는 도구를 제공합니다.</li>
       <li xml:lang="nl">Kopete bevat hulpmiddelen om uw ervaring met instant messeging te verbeteren, zoals versleuteling van berichten, archivering en vele andere grappige en nuttige effecten.</li>
       <li xml:lang="pl">Kopete zapewnia narzędzia do zwiększenia wrażeń z używania komunikatora internetowego takie jak szyfrowanie, archiwizowanie i wiele innych zabawnych i użytecznych efektów.</li>
@@ -216,6 +220,7 @@
       <li xml:lang="ia">Kopete supporta omne protocollos de messageria instantanee communemente usate, e le equipa de Kopete forni patronos per disveloppatores ubi basar lor plugin.</li>
       <li xml:lang="id">Kopete mendukung semua protokol perpesanan instan yang biasa digunakan, dan tim Kopete menyediakan templat bagi pengembang untuk dijadikan dasar plugin baru.</li>
       <li xml:lang="it">Kopete supporta tutti i protocolli più usati di messaggistica istantanea, e i suoi sviluppatori mettono a disposizione dei modelli per gli sviluppatori da usare come base per nuove estensioni.</li>
+      <li xml:lang="ka">Kopete-ს ყველა გავრცელებული ჩატის მხარდაჭერა გააჩნია და Kopete-ის გუნდი ასევე მოგაწოდებთ ნიმუშებს პროგრამისტებისთვის, რათა დამატებითი პროტოკოლებისთვის დამატებები ადვილად შექმნათ.</li>
       <li xml:lang="ko">Kopete는 자주 사용되는 인스턴트 메신저 프로토콜을 지원하며, Kopete 팀은 새 플러그인을 작성할 수 있는 기반을 제공합니다.</li>
       <li xml:lang="nl">Kopete ondersteunt alle algemeen gebruikte instant messaging protocollen en het team van Kopete biedt sjablonen voor ontwikkelaars om nieuwe plug-ins op te baseren.</li>
       <li xml:lang="pl">Kopete obsługuje wszystkie powszechnie stosowane protokoły porozumiewania się, a zespół Kopete zapewnia szablony dla programistów, na którym mogą oni tworzyć nowe wtyczki.</li>
@@ -247,6 +252,7 @@
       <li xml:lang="ia">Le API forni al disveloppatores multe characteristicas per facer facile supportar un nove protocollo.</li>
       <li xml:lang="id">API menyediakan banyak fitur kepada pengembang untuk memudahkan mendukung protokol baru.</li>
       <li xml:lang="it">L'API fornisce agli sviluppatori varie funzionalità per rendere semplice il supporto di nuovi protocolli.</li>
+      <li xml:lang="ka">API პროგრამისტებს ბევრ ფუნქციას მიაწოდებს და აადვილებს ახალი პროტოკოლის მხარდაჭერის დამატებას.</li>
       <li xml:lang="ko">API에서 제공하는 기능을 통하여 새로운 프로토콜 지원을 쉽게 작성할 수 있습니다.</li>
       <li xml:lang="nl">De API biedt ontwikkelaars vele functies om het gemakkelijk te maken om een nieuw protocol te ondersteunen.</li>
       <li xml:lang="pl">API zapewnia programistom wiele możliwości i przez to umożliwia łatwe pisanie obsługi dla nowych protokołów.</li>
@@ -278,6 +284,7 @@
       <li xml:lang="ia">Omne protocollos es plugin e permitte installation modular, configuration e usage.</li>
       <li xml:lang="id">Semua protokol adalah plugin dan memungkinkan instalasi modular, konfigurasi, dan penggunaan.</li>
       <li xml:lang="it">Tutti i protocolli sono estensioni e permettono modularità nell'installazione, configurazione ed uso.</li>
+      <li xml:lang="ka">ყველა პროტოკოლი დამატების სახითაა წარმოდგენილი და საშუალებას გაძლევთ, ისინი მოდულურად დააყენოთ, მოირგოთ თუ გამოიყენოთ.</li>
       <li xml:lang="ko">모든 프로토콜은 모듈화된 설치, 설정, 사용을 염두에 두고 플러그인으로 작성되어 있습니다.</li>
       <li xml:lang="nl">Alle protocollen zijn plug-ins en bieden modulaire installatie, configuratie en gebruik.</li>
       <li xml:lang="pl">Wszystkie protokoły są wtyczkami i umożliwiają modułową instalację, ustawianie i użycie.</li>
@@ -318,6 +325,7 @@
       <caption xml:lang="ia">Chat (Conversation in directo) de Kopete</caption>
       <caption xml:lang="id">Chat Kopete</caption>
       <caption xml:lang="it">Chat Kopete</caption>
+      <caption xml:lang="ka">Kopete-ის ჩატი</caption>
       <caption xml:lang="ko">Kopete 채팅</caption>
       <caption xml:lang="nl">Kopete chat</caption>
       <caption xml:lang="pl">Rozmowy Kopete</caption>
