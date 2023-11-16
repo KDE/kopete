@@ -189,7 +189,7 @@ msgid ""
 "If this is checked, the account will be connected right after you clicked on "
 "<i>Finished</i>."
 msgstr ""
-"Si està activada, el compte es connectarà tan bon punt feu clic en "
+"Si se selecciona, el compte es connectarà tan bon punt feu clic en "
 "«<i>Acaba</i>»."
 
 #. i18n: ectx: property (text), widget (QCheckBox, mConnectNow)
@@ -2053,13 +2053,13 @@ msgid ""
 "that an event has occurred using animations (if activated) and the "
 "\"Incoming Message\" event."
 msgstr ""
-"Si està activada, els esdeveniments de les finestres de xat de l'escriptori "
+"Si se selecciona, els esdeveniments de les finestres de xat de l'escriptori "
 "actual es gestionaran com esdeveniments en la finestra de xat activa: les "
 "icones de la safata del sistema i del remitent en la llista de contactes no "
 "s'animaran, i per a la notificació s'utilitzarà l'esdeveniment «Missatge "
 "entrant per al xat actiu». Les finestres de xat en els altres escriptoris "
 "activaran notificacions.\n"
-"Si no està activada, totes les finestres de xat excepte l'activa vos "
+"Si no se selecciona, totes les finestres de xat, excepte l'activa, vos "
 "notificaran amb animacions (si estan activades) que ha passat un "
 "esdeveniment de «Missatge entrant»."
 
@@ -2289,9 +2289,9 @@ msgstr ""
 "Els missatges sense llegir són els que es visualitzaran en una finestra de "
 "xat ja oberta però inactiva. Només els missatges entrants posats a la cua "
 "provoquen notificacions via finestra de xat i animacions en la icona de la "
-"safata del sistema. Amb esta opció desactivada, només es posen a la cua els "
-"missatges entrants nous, és a dir, els missatges que no es poden visualitzar "
-"en una finestra de xat ja oberta."
+"safata del sistema. Amb esta opció desseleccionada, només es posen a la cua "
+"els missatges entrants nous, és a dir, els missatges que no es poden "
+"visualitzar en una finestra de xat ja oberta."
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_queueUnreadMessages)
 #: kopete/config/behavior/behaviorconfig_general.ui:99
@@ -2801,8 +2801,8 @@ msgid ""
 "If this is checked, the text representation of emoticons in messages will be "
 "replaced by an image"
 msgstr ""
-"Si està marcada, en els missatges se substituirà la representació textual de "
-"les emoticones per una imatge"
+"Si se selecciona, en els missatges se substituirà la representació textual "
+"de les emoticones per una imatge"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_useEmoticons)
 #: kopete/config/chatwindow/chatwindowconfig_emoticons.ui:25
@@ -3691,7 +3691,8 @@ msgstr "A&vançat"
 #: kopete/contactlist/kopetemetalvipropswidget.ui:386
 #, kde-format
 msgid "Check to set custom icons for this contact"
-msgstr "Marqueu-la per a establir icones personalitzades per a este contacte"
+msgstr ""
+"Seleccioneu-la per a establir icones personalitzades per a este contacte"
 
 #. i18n: ectx: property (text), widget (QCheckBox, chkUseCustomIcons)
 #: kopete/contactlist/kopetemetalvipropswidget.ui:389
@@ -3969,7 +3970,7 @@ msgstr "Llig el següent missatge pendent"
 #: kopete/kopetewindow.cpp:525
 #, kde-format
 msgid "Show/Hide Contact List"
-msgstr "Mostra/oculta la llista de contactes"
+msgstr "Mostra o oculta la llista de contactes"
 
 #: kopete/kopetewindow.cpp:529
 #, kde-format
@@ -4057,7 +4058,7 @@ msgstr "Laurent Montel"
 #: kopete/main.cpp:49
 #, kde-format
 msgid "Porting to KF5"
-msgstr "Adaptació a KF5"
+msgstr "Adaptació als KF5"
 
 #: kopete/main.cpp:50
 #, kde-format
@@ -6730,7 +6731,7 @@ msgid ""
 "be stored in your wallet, so Kopete does not have to ask you for it each "
 "time it is needed."
 msgstr ""
-"Marqueu-la i introduïu la vostra contrasenya a baix si voleu que la "
+"Seleccioneu-la i introduïu la vostra contrasenya a baix si voleu que la "
 "contrasenya es guarde en la vostra cartera, per tal que Kopete no haja de "
 "preguntar-vos-la cada vegada que faça falta."
 
@@ -7467,7 +7468,7 @@ msgid ""
 "Check the box next to the name and key of each user that you want to export "
 "to the address book."
 msgstr ""
-"Activeu la casella al costat del nom i la clau de cada usuari del qual "
+"Seleccioneu la casella al costat del nom i la clau de cada usuari del qual "
 "vulgueu exportar cap a la llibreta d'adreces."
 
 #. i18n: ectx: property (toolTip), widget (QListWidget, keyList)
@@ -8529,7 +8530,7 @@ msgstr "Secret compartit"
 #, kde-format
 msgctxt "@info"
 msgid "Enter a secret passphrase known only to you and %1:"
-msgstr "Introduïu una frase de pas secreta coneguda només per vós i %1:"
+msgstr "Introduïu una frase de pas secreta coneguda només per tu i %1:"
 
 #: plugins/otr/authenticationwizard.cpp:180
 #, kde-format
@@ -8541,7 +8542,7 @@ msgstr "Autenticació amb %1"
 #, kde-format
 msgctxt "@info"
 msgid "Enter the secret passphrase known only to you and %1:"
-msgstr "Introduïu la frase de pas secreta coneguda només per vós i %1:"
+msgstr "Introduïu la frase de pas secreta coneguda només per tu i %1:"
 
 #: plugins/otr/authenticationwizard.cpp:194
 #, kde-format
@@ -10248,9 +10249,9 @@ msgid ""
 "displayed as previews.\n"
 "Otherwise, an unlimited number of previews are generated."
 msgstr ""
-"Si està marcada, només es descarrega la quantitat d'imatges seleccionada i "
-"es mostren com a previsualitzacions.\n"
-"Si no està marcada, es generarà un nombre il·limitat de previsualitzacions."
+"Si se selecciona, només es descarregarà la quantitat d'imatges seleccionada "
+"i es mostraran com a previsualitzacions.\n"
+"Si no se selecciona, es generarà un nombre il·limitat de previsualitzacions."
 
 #. i18n: ectx: property (text), widget (QCheckBox, restrictPreviews)
 #: plugins/urlpicpreview/urlpicpreviewprefsbase.ui:47
@@ -10278,10 +10279,10 @@ msgid ""
 "Otherwise, the images are not scaled at all and appear in their original "
 "size."
 msgstr ""
-"Si està marcada, les imatges previsualitzades s'amiden a l'amplària "
+"Si se selecciona, les imatges previsualitzades s'amidaran a l'amplària "
 "especificada.\n"
-"Si no està marcada, les imatges no s'escalen i apareixen en la seua mida "
-"original."
+"Si no se selecciona, les imatges no s'escalaran i apareixeran en la seua "
+"mida original."
 
 #. i18n: ectx: property (text), widget (QCheckBox, enableScaling)
 #: plugins/urlpicpreview/urlpicpreviewprefsbase.ui:114
@@ -11702,9 +11703,9 @@ msgid ""
 "Check to disable automatic connection. When checked, you may connect to this "
 "account manually via the icon in the bottom of the main Kopete window."
 msgstr ""
-"Marcar per a no connectar automàticament. Si es marca, podreu connectar-vos "
-"manualment amb este compte emprant la icona que hi ha en la part inferior de "
-"la finestra de Kopete."
+"Marcar per a no connectar automàticament. Si se selecciona, podreu connectar-"
+"vos manualment amb este compte emprant la icona que hi ha en la part "
+"inferior de la finestra de Kopete."
 
 #. i18n: ectx: property (text), widget (QCheckBox, mAutoLogon)
 #. i18n: ectx: property (text), widget (QCheckBox, chkAutoLogin)
@@ -11816,10 +11817,11 @@ msgid ""
 "only helps very rarely."
 msgstr ""
 "Esta opció s'utilitzarà sempre que el servidor de balanceig de la càrrega "
-"primari de Gadu-Gadu falle. Si està marcada, Kopete intentarà connectar "
-"directament als servidors reals emprant la informació emmagatzemada damunt "
-"seu. Açò evita errors de connexió quan el servidor principal de balanceig de "
-"la càrrega no respon. En la pràctica açò no resulta quasi mai necessari."
+"primari de Gadu-Gadu falle. Si se selecciona, Kopete intentarà connectar "
+"directament amb els servidors reals emprant la informació emmagatzemada "
+"damunt seu. Açò evita errors de connexió quan el servidor principal de "
+"balanceig de la càrrega no respon. En la pràctica açò no resulta quasi mai "
+"necessari."
 
 #. i18n: ectx: property (text), widget (QCheckBox, cacheServersCheck__)
 #: protocols/gadu/ui/gadueditaccountui.ui:277
@@ -12940,9 +12942,9 @@ msgid ""
 "Check to disable automatic connection.  If checked, you may connect to this "
 "account manually using the icon in the bottom of the main Kopete window"
 msgstr ""
-"Marcar per a no connectar automàticament. Si es marca, podreu connectar-vos "
-"manualment amb este compte emprant la icona que hi ha en la part inferior de "
-"la finestra de Kopete"
+"Marcar per a no connectar automàticament. Si se selecciona, podreu connectar-"
+"vos manualment amb este compte emprant la icona que hi ha en la part "
+"inferior de la finestra de Kopete"
 
 #. i18n: ectx: property (toolTip), widget (QLabel, labelServer)
 #. i18n: ectx: property (toolTip), widget (QLineEdit, mServer)
@@ -15355,9 +15357,9 @@ msgid ""
 "Check to disable automatic connection.  If checked, you can connect manually "
 "to this account, using the icon at the bottom of the main Kopete window"
 msgstr ""
-"Marqueu-la per a no connectar automàticament. Si es marca, podreu connectar-"
-"vos manualment amb este compte emprant la icona que hi ha en la part "
-"inferior de la finestra de Kopete"
+"Seleccioneu-la per a no connectar automàticament. Si se selecciona, podreu "
+"connectar-vos manualment amb este compte emprant la icona que hi ha en la "
+"part inferior de la finestra de Kopete"
 
 #. i18n: ectx: property (text), widget (QLabel, lblRegistration)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:182
@@ -15410,8 +15412,8 @@ msgid ""
 "Check this box to enable legacy SSL encrypted communication with the server. "
 "This is needed only for old servers."
 msgstr ""
-"Marcar esta casella per a activar l'encriptació SSL en la comunicació amb el "
-"servidor. Només cal per als servidors antics."
+"Seleccionar esta casella per a activar l'encriptació SSL en la comunicació "
+"amb el servidor. Només cal per als servidors antics."
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbUseSSL)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:315
@@ -15695,7 +15697,7 @@ msgid ""
 "client. Checking this box will hide that information."
 msgstr ""
 "Kopete dona per defecte als altres usuaris alguna informació sobre el vostre "
-"sistema i el client. Podeu marcar esta casella per tal d'ocultar esta "
+"sistema i el client. Podeu seleccionar esta casella per tal d'ocultar esta "
 "informació."
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbHideSystemInfo)
@@ -15710,8 +15712,8 @@ msgstr "&Oculta el sistema i la informació del client"
 msgid ""
 "Check this box if you always want to send notifications to your contacts."
 msgstr ""
-"Marqueu esta casella si voleu enviar sempre les notificacions als vostres "
-"contactes."
+"Seleccioneu esta casella si voleu enviar sempre les notificacions als "
+"vostres contactes."
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendEvents)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1065
@@ -15727,9 +15729,9 @@ msgid ""
 "contacts : when a message is delivered to Kopete, Kopete can notify your "
 "contact that it has received the message.</qt>"
 msgstr ""
-"<qt>Marqueu esta casella per a enviar les <b>notificacions trameses</b> als "
-"vostres contactes: quan un missatge es tramet a Kopete, este pot notificar "
-"que ha rebut el missatge.</qt>"
+"<qt>Seleccioneu esta casella per a enviar les <b>notificacions trameses</b> "
+"als vostres contactes: quan un missatge es tramet a Kopete, este pot "
+"notificar que ha rebut el missatge.</qt>"
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendDeliveredEvent)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1113
@@ -15745,9 +15747,10 @@ msgid ""
 "contacts : when a message is displayed in Kopete, Kopete can notify your "
 "contact that it has displayed the message.</qt>"
 msgstr ""
-"<qt>Marqueu esta casella per a enviar les <b>notificacions visualitzades</b> "
-"als vostres contactes: quan un missatge es visualitza en Kopete, este pot "
-"notificar al vostre contacte que s'ha visualitzat el missatge.</qt>"
+"<qt>Seleccioneu esta casella per a enviar les <b>notificacions "
+"visualitzades</b> als vostres contactes: quan un missatge es visualitza en "
+"Kopete, este pot notificar al vostre contacte que s'ha visualitzat el "
+"missatge.</qt>"
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendDisplayedEvent)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1129
@@ -15763,10 +15766,10 @@ msgid ""
 "when you are composing a message, you might want your contact to know that "
 "you are typing so that he/she knows you are answering.</qt>"
 msgstr ""
-"<qt>Marqueu esta casella per a enviar <b>notificacions de tecleig</b> als "
-"vostres contactes: quan esteu redactant un missatge, vos pot interessar que "
-"el vostre contacte sàpia que esteu teclejant, de manera que s'assabente que "
-"esteu contestant.</qt>"
+"<qt>Seleccioneu esta casella per a enviar <b>notificacions de tecleig</b> "
+"als vostres contactes: quan esteu redactant un missatge, vos pot interessar "
+"que el vostre contacte sàpia que esteu teclejant, de manera que s'assabente "
+"que esteu contestant.</qt>"
 
 #. i18n: ectx: property (text), widget (QCheckBox, cbSendComposingEvent)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:1145
@@ -18061,7 +18064,7 @@ msgstr "Col·leccions"
 #: protocols/oscar/icq/icqprotocol.cpp:674
 #, kde-format
 msgid "Computers"
-msgstr "Ordinadors"
+msgstr "Amfitrions"
 
 #: protocols/oscar/icq/icqprotocol.cpp:618
 #, kde-format
@@ -18963,10 +18966,10 @@ msgid ""
 "see your online status."
 msgstr ""
 "Activa el requisit d'una autorització, el qual no permetrà als usuaris "
-"afegir-vos a la seua llista de contactes sense que els hi autoritzeu. Marcar "
-"esta casella farà que hàgeu de confirmar qualsevol intent d'un usuari "
-"d'afegir-vos a la seua llista de contactes abans de veure el seu estat de "
-"connexió."
+"afegir-vos a la seua llista de contactes sense que els hi autoritzeu. "
+"Seleccionar esta casella farà que hàgeu de confirmar qualsevol intent d'un "
+"usuari d'afegir-vos a la seua llista de contactes abans de veure el seu "
+"estat de connexió."
 
 #. i18n: ectx: property (text), widget (QCheckBox, chkRequireAuth)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:248
@@ -18981,7 +18984,7 @@ msgstr ""
 #, kde-format
 msgid ""
 "Check this to hide your IP address from people when they view your user info"
-msgstr "Marqueu-la per a ocultar la vostra adreça IP als altres usuaris"
+msgstr "Seleccioneu-la per a ocultar la vostra adreça IP als altres usuaris"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, chkHideIP)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:258
@@ -18990,8 +18993,8 @@ msgid ""
 "Checking this box prevent people from seeing your IP address if they view "
 "your ICQ user details such as name, address, or age."
 msgstr ""
-"Marcant esta casella no permeteu als altres usuaris veure quina és la vostra "
-"IP si miren els detalls d'usuari ICQ com el nom, adreça o edat."
+"Seleccionant esta casella no permeteu als altres usuaris veure quina és la "
+"vostra IP si miren els detalls d'usuari ICQ com el nom, adreça o edat."
 
 #. i18n: ectx: property (text), widget (QCheckBox, chkHideIP)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:261
@@ -19003,7 +19006,8 @@ msgstr "Oculta l'adreça &IP"
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:268
 #, kde-format
 msgid "Check this box to enable Web Aware functionality."
-msgstr "Marqueu esta casella per a activar la funcionalitat coneixement web."
+msgstr ""
+"Seleccioneu esta casella per a activar la funcionalitat coneixement web."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, chkWebAware)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:271
@@ -19013,9 +19017,9 @@ msgid ""
 "to see your online status from ICQ's web page, and send you a message "
 "without necessarily having ICQ themselves."
 msgstr ""
-"Marqueu esta casella per a activar la funcionalitat coneixement web, la qual "
-"permet a la gent veja el vostre estat de connexió a través d'una pàgina web "
-"i enviar-vos un missatge sense necessitat de tindre ICQ."
+"Seleccioneu esta casella per a activar la funcionalitat coneixement web, la "
+"qual permet a la gent veja el vostre estat de connexió a través d'una pàgina "
+"web i enviar-vos un missatge sense necessitat de tindre ICQ."
 
 #. i18n: ectx: property (text), widget (QCheckBox, chkWebAware)
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:274
@@ -20162,9 +20166,9 @@ msgid ""
 "the \"Connect All\" button, or at startup when automatic connection at "
 "startup is enabled."
 msgstr ""
-"Si activeu esta casella de selecció, el compte no es connectarà quan premeu "
-"el botó «Connecta-ho tot», ni en iniciar en el cas que tingueu seleccionada "
-"la connexió automàtica en iniciar."
+"Si seleccioneu esta casella de selecció, el compte no es connectarà quan "
+"premeu el botó «Connecta-ho tot», ni en iniciar en el cas que tingueu "
+"seleccionada la connexió automàtica en iniciar."
 
 #. i18n: ectx: property (text), widget (QPushButton, buttonVCard)
 #: protocols/qq/ui/qqeditaccountui.ui:203
@@ -20313,7 +20317,7 @@ msgid ""
 "option is enabled, Kopete will download and display such emoticons."
 msgstr ""
 "El QQ Messenger permet els usuaris baixar i utilitzar emoticones "
-"personalitzades. Si s'activa esta opció, Kopete descarregarà estes "
+"personalitzades. Si se selecciona esta opció, Kopete descarregarà estes "
 "emoticones i les mostrarà."
 
 #. i18n: ectx: property (text), widget (QCheckBox, useCustomEmoticons)
@@ -20887,7 +20891,7 @@ msgstr "&Activa el número de telèfon internacional"
 #: protocols/sms/ui/smsactprefs.ui:301
 #, kde-format
 msgid "Check if you would like to enable phone number internationalization."
-msgstr "Marcar si voleu activar el número de telèfon internacional."
+msgstr "Seleccioneu-la si voleu activar el número de telèfon internacional."
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox)
 #: protocols/sms/ui/smsactprefs.ui:304
@@ -20897,8 +20901,9 @@ msgid ""
 "Without this option, you will only be able to use SMS for accounts within "
 "your country."
 msgstr ""
-"Marcar si voleu activar el número de telèfon internacional. Sense esta "
-"opció, tan sols podreu utilitzar comptes SMS que estiguen al vostre país."
+"Seleccioneu-la si voleu activar el número de telèfon internacional. Sense "
+"esta opció, tan sols podreu utilitzar comptes SMS que estiguen al vostre "
+"país."
 
 #. i18n: ectx: property (text), widget (QLabel)
 #: protocols/sms/ui/smsactprefs.ui:331
@@ -21072,7 +21077,7 @@ msgstr "El nom d'equip que voleu utilitzar per a enviar missatges WinPopup."
 #: protocols/winpopup/ui/wpaddcontactbase.ui:77
 #, kde-format
 msgid "Com&puter hostname:"
-msgstr "&Nom de l'ordinador:"
+msgstr "&Nom de l'amfitrió:"
 
 #. i18n: ectx: property (toolTip), widget (QLabel, TextLabel1_2)
 #. i18n: ectx: property (whatsThis), widget (QLabel, TextLabel1_2)
