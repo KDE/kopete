@@ -361,7 +361,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="lblPort" >
+             <widget class="QLabel" name="lblServerPort" >
               <property name="enabled" >
                <bool>false</bool>
               </property>
@@ -959,7 +959,7 @@
   <connection>
    <sender>optionOverrideServer</sender>
    <signal>toggled(bool)</signal>
-   <receiver>lblPort</receiver>
+   <receiver>lblServerPort</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
