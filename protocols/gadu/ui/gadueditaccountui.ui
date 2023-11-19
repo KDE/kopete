@@ -245,7 +245,7 @@ If you do not currently have an account, please click the button to create one.<
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="tab_2">
       <attribute name="title">
        <string>A&amp;ccount Preferences</string>
       </attribute>
@@ -675,7 +675,7 @@ If you do not currently have an account, please click the button to create one.<
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TabPage">
+     <widget class="QWidget" name="TabPage_2">
       <attribute name="title">
        <string>&amp;File Transfer</string>
       </attribute>

@@ -34,7 +34,7 @@
      <property name="currentIndex" >
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab" >
+     <widget class="QWidget" name="tab_1" >
       <attribute name="title" >
        <string>&amp;Colors</string>
       </attribute>
@@ -171,7 +171,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab" >
+     <widget class="QWidget" name="tab_2" >
       <attribute name="title" >
        <string>Effects</string>
       </attribute>

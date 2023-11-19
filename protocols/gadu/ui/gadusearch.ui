@@ -376,7 +376,7 @@
         <height>305</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout" >
+      <layout class="QGridLayout" name="gridLayout1" >
        <item row="0" column="0" >
         <widget class="QTreeWidget" name="listFound" >
          <property name="sizePolicy" >

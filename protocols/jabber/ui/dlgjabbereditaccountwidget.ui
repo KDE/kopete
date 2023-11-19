@@ -280,7 +280,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TabPage" >
+     <widget class="QWidget" name="TabPage1" >
       <attribute name="title" >
        <string>Co&amp;nnection</string>
       </attribute>
@@ -718,7 +718,7 @@ If two resources have the same priority, the messages will be sent to the one mo
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TabPage" >
+     <widget class="QWidget" name="TabPage2" >
       <attribute name="title" >
        <string>Fi&amp;le Transfer</string>
       </attribute>
@@ -839,7 +839,7 @@ If two resources have the same priority, the messages will be sent to the one mo
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TabPage" >
+     <widget class="QWidget" name="TabPage3" >
       <attribute name="title" >
        <string>Pri&amp;vacy</string>
       </attribute>

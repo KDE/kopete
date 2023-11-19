@@ -658,7 +658,7 @@
         <number>9</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="groupBox_4" >
+        <widget class="QGroupBox" name="groupBox_5" >
          <property name="title" >
           <string>Visibility Settings</string>
          </property>

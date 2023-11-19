@@ -22,7 +22,7 @@
      <property name="currentIndex" >
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab" >
+     <widget class="QWidget" name="tab_1" >
       <attribute name="title" >
        <string>&amp;General</string>
       </attribute>
@@ -241,7 +241,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab" >
+     <widget class="QWidget" name="tab_2" >
       <attribute name="title" >
        <string>&amp;Home Address</string>
       </attribute>
@@ -341,7 +341,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab" >
+     <widget class="QWidget" name="tab_3" >
       <attribute name="title" >
        <string>&amp;Work Address</string>
       </attribute>
@@ -435,7 +435,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab" >
+     <widget class="QWidget" name="tab_4" >
       <attribute name="title" >
        <string>Wor&amp;k Information</string>
       </attribute>
@@ -482,7 +482,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab" >
+     <widget class="QWidget" name="tab_5" >
       <attribute name="title" >
        <string>Phone &amp;Numbers</string>
       </attribute>
@@ -529,7 +529,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab" >
+     <widget class="QWidget" name="tab_6" >
       <attribute name="title" >
        <string>A&amp;bout</string>
       </attribute>

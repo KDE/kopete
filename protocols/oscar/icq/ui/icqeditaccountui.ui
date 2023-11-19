@@ -213,7 +213,7 @@ If you do not currently have an ICQ account, please click the button to create o
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="tab_2">
       <attribute name="title">
        <string comment="@title:tab">Accou&amp;nt Preferences</string>
       </attribute>
@@ -225,7 +225,7 @@ If you do not currently have an ICQ account, please click the button to create o
         <number>9</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="groupBox_4">
+        <widget class="QGroupBox" name="groupBox_5">
          <property name="title">
           <string>Privacy Options</string>
          </property>
