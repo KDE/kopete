@@ -198,7 +198,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 >Abans de començar...</title>
 <para
 >Si no esteu familiaritzat amb la Missatgeria Instantània, si us plau, llegiu la secció <link linkend="getting-started"
->Començant</link
+>Com començar</link
 > per aprendre el que cal d'aquest meravellós món abans de continuar.</para>
 </sect2>
 <sect2 id="intro-to-kopete-about">
@@ -244,7 +244,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 
 <chapter id="getting-started">
 <title
->Començant</title>
+>Com començar</title>
 <para
 >Per a usar el &kopete;, heu d'arranjar un o més comptes per als serveis de missatgeria instantània que voleu usar.</para>
 <para
@@ -1055,7 +1055,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 >Afegint i editant els comptes</title>
 <para
 >Us hem mostrat breument com afegir un compte a <link linkend="getting-started"
->Començant</link
+>Com començar</link
 >. Per a canviar després els arranjaments d'un compte, obriu el diàleg <guilabel
 >Configura el &kopete;</guilabel
 >, amb <menuchoice
