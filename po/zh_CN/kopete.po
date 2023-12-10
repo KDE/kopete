@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: kdeorg\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-11-25 02:33\n"
+"PO-Revision-Date: 2023-12-09 09:29\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -439,17 +439,17 @@ msgstr "关闭全部聊天"
 #: kopete/chatwindow/kopetechatwindow.cpp:398
 #, kde-format
 msgid "&Activate Next Active Tab"
-msgstr "激活下个活动标签(&A)"
+msgstr "激活下一个活动标签页(&A)"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:404
 #, kde-format
 msgid "&Activate Next Tab"
-msgstr "激活下个标签(&A)"
+msgstr "激活下一个标签页(&A)"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:410
 #, kde-format
 msgid "&Activate Previous Tab"
-msgstr "激活上个标签(&A)"
+msgstr "激活上一个标签页(&A)"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:418
 #, kde-format
@@ -459,22 +459,22 @@ msgstr "昵称补全(&K)"
 #: kopete/chatwindow/kopetechatwindow.cpp:422
 #, kde-format
 msgid "&Detach Chat"
-msgstr "漂移聊天(&D)"
+msgstr "分离聊天(&D)"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:427
 #, kde-format
 msgid "Close &All But This Tab"
-msgstr "关闭除此标签以外的全部标签(&A)"
+msgstr "关闭除此标签页以外的全部标签页(&A)"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:432
 #, kde-format
 msgid "&Move Tab to Window"
-msgstr "将标签移动到窗口(&M)"
+msgstr "将标签页移动到窗口(&M)"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:439
 #, kde-format
 msgid "&Tab Placement"
-msgstr "标签放置(&T)"
+msgstr "标签页放置(&T)"
 
 #: kopete/chatwindow/kopetechatwindow.cpp:452
 #, kde-format
@@ -1748,7 +1748,7 @@ msgstr "默认启用丰富文本(&R)"
 #: kopete/config/behavior/behaviorconfig_chat.ui:66
 #, kde-format
 msgid "&Always show tabs"
-msgstr "总是显示标签(&A)"
+msgstr "总是显示标签页(&A)"
 
 #. i18n: ectx: property (title), widget (QGroupBox, interfaceGroup)
 #: kopete/config/behavior/behaviorconfig_chat.ui:73
@@ -2057,7 +2057,7 @@ msgstr "打开消息时切换到包含聊天的桌面(&T)"
 #: kopete/config/behavior/behaviorconfig_events.ui:179
 #, kde-format
 msgid "Raise the chat window/tab on an incoming message"
-msgstr "收到消息时升起聊天窗口/标签"
+msgstr "收到消息时升起聊天窗口/标签页"
 
 #. i18n: ectx: property (whatsThis), widget (QCheckBox, kcfg_raiseMessageWindow)
 #: kopete/config/behavior/behaviorconfig_events.ui:182
@@ -2784,7 +2784,7 @@ msgstr "删除(&D)"
 #: kopete/config/chatwindow/chatwindowconfig_tab.ui:17
 #, kde-format
 msgid "For each tab"
-msgstr "对每一标签"
+msgstr "对每一标签页"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_ShowContactName)
 #: kopete/config/chatwindow/chatwindowconfig_tab.ui:23
@@ -5560,19 +5560,19 @@ msgstr "在联系人列表中启用平滑滚动。"
 #: libkopete/kopetebehaviorsettings.kcfg:186
 #, kde-format
 msgid "Always show tabs."
-msgstr "总是显示标签。"
+msgstr "总是显示标签页。"
 
 #. i18n: ectx: label, entry, group (ChatWindowSettings)
 #: libkopete/kopetebehaviorsettings.kcfg:190
 #, kde-format
 msgid "Show contact name for each tab."
-msgstr "在每个标签上显示联系人名称。"
+msgstr "在每个标签页上显示联系人名称。"
 
 #. i18n: ectx: label, entry, group (ChatWindowSettings)
 #: libkopete/kopetebehaviorsettings.kcfg:194
 #, kde-format
 msgid "Show close button for each tab."
-msgstr "在每个标签上显示关闭按钮。"
+msgstr "在每个标签页上显示关闭按钮。"
 
 #: libkopete/kopetechatsession.cpp:293
 #, kde-format
@@ -15078,7 +15078,7 @@ msgstr "处于离开状态时，将优先级调整为："
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:696
 #, kde-format
 msgid "Merge all messages from all resources to one window/tab"
-msgstr "合并所有资源里的所有消息到一个窗口/标签"
+msgstr "合并所有资源里的所有消息到一个窗口/标签页"
 
 #. i18n: ectx: attribute (title), widget (QWidget, TabPage)
 #: protocols/jabber/ui/dlgjabbereditaccountwidget.ui:723
