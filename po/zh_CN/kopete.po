@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: kdeorg\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-12-26 00:53+0000\n"
-"PO-Revision-Date: 2023-12-09 09:29\n"
+"PO-Revision-Date: 2023-12-17 11:32\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -3496,7 +3496,7 @@ msgstr "显示名称源"
 #: kopete/contactlist/kopetemetalvipropswidget.ui:141
 #, kde-format
 msgid "Use address book &name (needs address book link)"
-msgstr "使用地址簿名称(需要地址簿链接)(&N)"
+msgstr "使用地址簿名称 (需要地址簿链接) (&N)"
 
 #. i18n: ectx: property (text), widget (QRadioButton, radioNameContact)
 #. i18n: ectx: property (text), widget (QRadioButton, radioPhotoContact)
@@ -3530,7 +3530,7 @@ msgstr "照片源"
 #: kopete/contactlist/kopetemetalvipropswidget.ui:219
 #, kde-format
 msgid "U&se address book photo (needs address book link)"
-msgstr "使用地址簿照片(需要地址簿链接)(&S)"
+msgstr "使用地址簿照片 (需要地址簿链接) (&S)"
 
 #. i18n: ectx: property (text), widget (QTreeWidget, addresseeListView)
 #. i18n: ectx: property (text), widget (QLabel, photoLabel)
@@ -7981,7 +7981,7 @@ msgstr "通告消息的核心。"
 #: plugins/nowlistening/nowlisteningconfig.kcfg:17
 #, kde-format
 msgid "%track( by %artist)( on %album)"
-msgstr "%track (艺人：%artist)(专辑：%album)"
+msgstr "%track (艺人：%artist) (专辑：%album)"
 
 #. i18n: ectx: label, entry (Conjunction), group (Now Listening Plugin)
 #: plugins/nowlistening/nowlisteningconfig.kcfg:21
@@ -8131,7 +8131,7 @@ msgstr "对每一曲目："
 #: plugins/nowlistening/nowlisteningprefs.ui:129
 #, no-c-format, kde-format
 msgid "%track (by %artist)(on %album)"
-msgstr "%track (艺人：%artist)(专辑：%album)"
+msgstr "%track (艺人：%artist) (专辑：%album)"
 
 #. i18n: ectx: property (text), widget (QLabel, m_conjunctionLabel)
 #: plugins/nowlistening/nowlisteningprefs.ui:136
@@ -8160,7 +8160,7 @@ msgstr ""
 #: plugins/nowlistening/nowlisteningprefs.ui:198
 #, kde-format
 msgid "&Show in chat window (automatic)"
-msgstr "显示在聊天窗口(自动)(&S)"
+msgstr "显示在聊天窗口 (自动) (&S)"
 
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_StatusAdvertising)
 #: plugins/nowlistening/nowlisteningprefs.ui:206
@@ -10152,7 +10152,7 @@ msgstr ""
 #: plugins/webpresence/webpresenceprefs.ui:79
 #, kde-format
 msgid "HTML (simple loo&k)"
-msgstr "HTML(简洁外观)(&K)"
+msgstr "HTML (简洁外观) (&K)"
 
 #. i18n: ectx: property (toolTip), widget (QRadioButton, kcfg_formatXHTML)
 #: plugins/webpresence/webpresenceprefs.ui:89
@@ -11458,7 +11458,7 @@ msgstr "缓存服务器信息(&A)"
 #: protocols/gadu/ui/gadueditaccountui.ui:290
 #, kde-format
 msgid "&Use direct connections (DCC)"
-msgstr "使用直接连接(DCC)(&U)"
+msgstr "使用直接连接 (DCC) (&U)"
 
 #. i18n: ectx: property (toolTip), widget (QCheckBox, exportCheck_)
 #: protocols/gadu/ui/gadueditaccountui.ui:300
@@ -11521,7 +11521,7 @@ msgstr ""
 #: protocols/gadu/ui/gadueditaccountui.ui:356
 #, kde-format
 msgid "Use protocol encr&yption (SSL):"
-msgstr "使用协议加密(SSL)(&Y)："
+msgstr "使用协议加密 (SSL) (&Y)："
 
 #. i18n: ectx: property (text), item, widget (QComboBox, useTls_)
 #: protocols/gadu/ui/gadueditaccountui.ui:379
@@ -16766,7 +16766,7 @@ msgstr "在尝试使用不同连接方式之前，要等候的连接成功时间
 #: protocols/oscar/icq/ui/icqeditaccountui.ui:647
 #, kde-format
 msgid "T&imeout (secs):"
-msgstr "超时(&I)(秒)："
+msgstr "超时 (秒) (&I)："
 
 #. i18n: ectx: property (text), widget (QLabel, textLabel1)
 #: protocols/oscar/aim/ui/aimeditaccountui.ui:596
