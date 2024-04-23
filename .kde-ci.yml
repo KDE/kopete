@@ -24,3 +24,6 @@ Dependencies:
     'libraries/phonon': '@stable'
     'pim/kidentitymanagement': '@stable'
     'pim/libkleo': '@stable'
+
+Options:
+  require-passing-tests-on: ['Linux', 'FreeBSD', 'Windows']
