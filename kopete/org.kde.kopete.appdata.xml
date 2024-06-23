@@ -3,6 +3,9 @@
   <id>org.kde.kopete</id>
   <metadata_license>FSFAP</metadata_license>
   <project_license>GPL-2.0+</project_license>
+  <developer id="org.kde">
+    <name translate="no">KDE</name>
+  </developer>
   <name>Kopete</name>
   <name xml:lang="ca">Kopete</name>
   <name xml:lang="ca-valencia">Kopete</name>
